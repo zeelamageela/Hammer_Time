@@ -31,7 +31,7 @@ public class Rock_Colliders : MonoBehaviour
 // Update is called once per frame
     void Update()
     {
-        if (outOfPlay != false && GetComponent<Rock_Release>().released)
+        if (outOfPlay && GetComponent<Rock_Release>().released)
         {
             StartCoroutine(OutOfPlay());
         }

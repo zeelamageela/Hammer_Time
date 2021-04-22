@@ -1,10 +1,10 @@
-using System.Collections;
+ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 
-public enum GameState { START, REDTURN, YELLOWTURN, SCORE, RESET, END }
+public enum GameState { START, REDTURN, YELLOWTURN, SCORE, RESET, END, DEBUG }
 
 
 public class GameManager : MonoBehaviour
@@ -25,8 +25,6 @@ public class GameManager : MonoBehaviour
 
     int redRocks_left;
     int yellowRocks_left;
-    int redRock_current;
-    int yellowRock_current;
     public int redScore;
     public int yellowScore;
     //public GameHUD gHUD;
@@ -45,6 +43,7 @@ public class GameManager : MonoBehaviour
     public Slider yellowRocksLeft_Slider;
     public Button redButton;
     public Button yellowButton;
+    public GameObject db;
 
     public GameObject vcam_go;
     public CinemachineVirtualCamera vcam;
@@ -78,7 +77,7 @@ public class GameManager : MonoBehaviour
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
         rockTotal = rocksPerTeam * 2;
-        
+
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
 
@@ -126,15 +125,11 @@ public class GameManager : MonoBehaviour
         {
             hammer = 0;
             notHammer = 1;
-            redRock_current = rockCurrent / 2;
-            yellowRock_current = (rockCurrent / 2) + 1;
         }
         else
         {
             hammer = 1;
             notHammer = 0;
-            yellowRock_current = rockCurrent / 2;
-            redRock_current = (rockCurrent / 2) + 1;
         }
 
         for (int i = 1; i <= rockTotal; i++)
@@ -148,12 +143,12 @@ public class GameManager : MonoBehaviour
 
                 if (k <= yRocks)
                 {
-                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x, yellowRock_go.transform.position.y - ((k-1) * 0.4f));
+                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x, yellowRock_go.transform.position.y - ((k - 1) * 0.4f));
                 }
                 else if (k > yRocks)
                 {
                     float j = k - yRocks;
-                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x + 0.4f, yellowRock_go.transform.position.y - ((j-1) * 0.4f));
+                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x + 0.4f, yellowRock_go.transform.position.y - ((j - 1) * 0.4f));
                 }
 
                 Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
@@ -172,14 +167,14 @@ public class GameManager : MonoBehaviour
                 int k = (i / 2) + hammer;
                 if (k <= yRocks)
                 {
-                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x, redRock_go.transform.position.y - ((k-1) * 0.4f));
+                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x, redRock_go.transform.position.y - ((k - 1) * 0.4f));
                 }
                 else if (k > yRocks)
                 {
                     float j = k - yRocks;
-                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x - 0.4f, redRock_go.transform.position.y - ((j-1) * 0.4f));
+                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x - 0.4f, redRock_go.transform.position.y - ((j - 1) * 0.4f));
                 }
-                
+
 
                 Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
                 redRock_info.rockNumber = k;
@@ -190,6 +185,7 @@ public class GameManager : MonoBehaviour
                 rockList.Add(new Rock_List(redRock_go, redRock_info));
                 yield return new WaitForSeconds(0.1f);
             }
+            rockList.Sort();
         }
     }
 
@@ -210,8 +206,6 @@ public class GameManager : MonoBehaviour
         endCurrent++;
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
-        redRock_current = 0;
-        yellowRock_current = 0;
         rockCurrent = 0;
 
         if (redHammer)
@@ -251,7 +245,7 @@ public class GameManager : MonoBehaviour
         redRocks_left--;
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
-        
+
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
@@ -260,13 +254,12 @@ public class GameManager : MonoBehaviour
         redTurn_Display.text = redRock_1.name;
         redRocksLeft_Display.text = redRocks_left + " Rocks Left";
         redRocksLeft_Slider.maxValue = rocksPerTeam;
-        redRocksLeft_Slider.value = redRock_current;
+        redRocksLeft_Slider.value = redRock.rockNumber;
 
         yield return new WaitUntil(() => redRock.rest == true);
 
         redTurn_Display.enabled = false;
         vcam.enabled = false;
-        rockCurrent++;
 
         if (redRock.inHouse)
         {
@@ -275,18 +268,16 @@ public class GameManager : MonoBehaviour
             houseList.Add(new House_List(redRock_1, redRock));
         }
 
-        if (rockCurrent == rockTotal - 1)
+        ++rockCurrent;
+
+        if (rockCurrent <= rockTotal)
         {
-            StartCoroutine(Scoring());
+            StartCoroutine(CheckScore());
+            OnRedTurn();
         }
         else
         {
-            redTurn_Display.enabled = false;
-            yellowTurn_Display.enabled = true;
-            yellowTurn_Display.text = "Next Rock";
-            StartCoroutine(CheckScore());
-
-            OnYellowTurn();
+            StartCoroutine(Scoring());
         }
 
     }
@@ -336,22 +327,41 @@ public class GameManager : MonoBehaviour
             Debug.Log(yellowRock_1.name + " is " + distance + " from button");
             houseList.Add(new House_List(yellowRock_1, yellowRock));
         }
-        rockCurrent++;
-        if (rockCurrent < rockTotal)
+
+        for(int i = 0; i<= rockCurrent; i++)
+        {
+            GameObject go = rockList[i].rock;
+
+            if(rockList[i].rockInfo.outOfPlay)
+            {
+                go.SetActive(false);
+                float yRocks = rocksPerTeam * 0.5f;
+                int k = (i / 2);
+
+                if (k <= yRocks)
+                {
+                    go.transform.position = new Vector2(go.transform.position.x, go.transform.position.y - ((k - 1) * 0.4f));
+                }
+                else if (k > yRocks)
+                {
+                    float j = k - yRocks;
+                    go.transform.position = new Vector2(go.transform.position.x + 0.4f, go.transform.position.y - ((j - 1) * 0.4f));
+                }
+            }
+        }
+
+        ++rockCurrent;
+
+        if (rockCurrent <= rockTotal)
         {
             StartCoroutine(CheckScore());
+            OnRedTurn();
         }
         else
         {
-            redTurn_Display.enabled = false;
-            yellowTurn_Display.enabled = true;
-            yellowTurn_Display.text = "Next Rock";
             StartCoroutine(Scoring());
-
-
-            OnRedTurn();
         }
-            
+
     }
 
     IEnumerator CheckScore()
@@ -359,8 +369,28 @@ public class GameManager : MonoBehaviour
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;
 
+        houseList.Clear();
+
+        foreach (Rock_List rock in rockList)
+        {
+            if (rock.rockInfo.inHouse)
+            {
+                houseList.Add(new House_List(rock.rock, rock.rockInfo));
+            }
+            if (rock.rockInfo.outOfPlay)
+            {
+                rock.rock.SetActive(false);
+            }
+            if (rock.rockInfo.inPlay != true)
+            {
+                rock.rock.SetActive(false);
+            }
+            
+        }
+
         houseList.Sort();
-        foreach(House_List rock in houseList)
+
+        foreach (House_List rock in houseList)
         {
             Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
         }
@@ -373,52 +403,75 @@ public class GameManager : MonoBehaviour
 
         if (houseRock != 0)
         {
-            if (houseList[0].rockInfo.teamName == redRock.teamName)
+            if (houseList[0].rockInfo.teamName == rockList[0].rockInfo.teamName)
             {
                 for (int i = 0; i < houseRock; i++)
                 {
-                    if (houseList[i].rockInfo.teamName == redRock.teamName)
+                    if (houseList[i].rockInfo.teamName == rockList[0].rockInfo.teamName)
                     {
                         tempRedScore++;
                     }
                 }
                 redTurn_Display.enabled = true;
-                redTurn_Display.text = redRock.teamName + " is sitting " + tempRedScore;
+                redTurn_Display.text = houseList[0].rockInfo.teamName + " is sitting " + tempRedScore;
             }
 
-            else if (houseList[0].rockInfo.teamName == yellowRock.teamName)
+            else if (houseList[0].rockInfo.teamName == rockList[1].rockInfo.teamName)
             {
                 for (int i = 0; i < houseRock; i++)
                 {
-                    if (houseList[i].rockInfo.teamName == yellowRock.teamName)
+                    if (houseList[i].rockInfo.teamName == rockList[1].rockInfo.teamName)
                     {
                         tempYellowScore++;
                     }
                 }
                 yellowTurn_Display.enabled = true;
-                yellowTurn_Display.text = yellowRock.teamName + " is sitting " + tempYellowScore;
+                yellowTurn_Display.text = houseList[0].rockInfo.teamName + " is sitting " + tempYellowScore;
             }
         }
         else
         {
-            yellowTurn_Display.enabled = true;
-            yellowTurn_Display.text = "No Rocks";
+            mainDisplay.enabled = true;
+            mainDisplay.text = "No Rocks In House";
         }
     }
 
     IEnumerator Scoring()
     {
-        houseList.Sort();
-        foreach (House_List rock in houseList)
+        yellowTurn_Display.enabled = false;
+        redTurn_Display.enabled = false;
+
+        houseList.Clear();
+
+        foreach (Rock_List rock in rockList)
         {
-            Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " - " + rock.rockInfo.distance);
+            if (rock.rockInfo.inHouse)
+            {
+                houseList.Add(new House_List(rock.rock, rock.rockInfo));
+            }
+            if (rock.rockInfo.outOfPlay)
+            {
+                rock.rock.SetActive(false);
+            }
+            if (rock.rockInfo.inPlay != true)
+            {
+                rock.rock.SetActive(false);
+            }
+
         }
 
-        int houseRocks = houseList.Count;
-        if (houseList == null)
+        houseList.Sort();
+
+        foreach (House_List rock in houseList)
         {
-            yield break;
+            Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
         }
+
+        redRock = rockList[0].rockInfo;
+        yellowRock = rockList[1].rockInfo;
+
+        int houseRocks = houseList.Count;
+
         if (houseList[0].rockInfo.teamName == redRock.teamName)
         {
             StartCoroutine(RedCount());
@@ -504,4 +557,139 @@ public class GameManager : MonoBehaviour
             else yield return null;
         }
     }
+
+    public void OnDebug()
+    {
+
+        redButton.gameObject.SetActive(false);
+        yellowButton.gameObject.SetActive(false);
+
+        rockTotal = 16;
+        rockCurrent = 15;
+        redRocks_left = 1;
+        yellowRocks_left = 1;
+        redHammer = true;
+        StartCoroutine(DebugMode());
+        db.SetActive(false);
+        mainDisplay.enabled = false;
+        state = GameState.DEBUG;
+    }
+
+    IEnumerator DebugMode()
+    {
+        for (int i = 1; i < rockCurrent; i++)
+        {
+            Vector2 rockPlace = new Vector2(Random.Range(-2f, 2f), Random.Range(0f, 8f));
+
+            if (i % 2 == 1)
+            {
+                GameObject yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
+
+                float yRocks = rocksPerTeam * 0.5f;
+                int k = (i / 2) + 1;
+                yellowRock_go.transform.position = new Vector2(rockPlace.x, rockPlace.y);
+
+                Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
+                yellowRock_info.rockNumber = k;
+                yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
+                yellowRock_go.GetComponent<SpringJoint2D>().enabled = false;
+                yellowRock_go.GetComponent<Rock_Colliders>().enabled = true;
+                yellowRock_info.moving = false;
+                yellowRock_info.stopped = true;
+                yellowRock_info.rest = true;
+                rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            if (i % 2 == 0)
+            {
+                GameObject redRock_go = Instantiate(redShooter, redRocksInactive);
+
+                float yRocks = rocksPerTeam * 0.5f;
+                int k = (i / 2);
+
+                Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
+                redRock_info.rockNumber = k;
+                redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
+                redRock_go.GetComponent<SpringJoint2D>().enabled = false;
+                redRock_go.GetComponent<Rock_Colliders>().enabled = true;
+                
+                redRock_go.transform.position = new Vector2(rockPlace.x, rockPlace.y);
+
+                redRock_info.moving = false;
+                redRock_info.stopped = true;
+                redRock_info.rest = true;
+
+                rockList.Add(new Rock_List(redRock_go, redRock_info));
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        yield return new WaitForFixedUpdate();
+        
+        rockList.Sort();
+
+        yield return new WaitForFixedUpdate();
+
+        StartCoroutine(CheckScore());
+
+        yield return new WaitForFixedUpdate();
+
+        StartCoroutine(SetupRocksDebug());
+
+        yield return new WaitForFixedUpdate();
+
+        rockCurrent--;
+
+        yield return new WaitForFixedUpdate();
+
+        OnYellowTurn();
+
+    }
+
+    IEnumerator SetupRocksDebug()
+    {
+        for (int i = rockCurrent; i <= rockTotal; i++)
+        {
+            if (i % 2 == 1)
+            {
+                GameObject yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
+
+                float yRocks = rocksPerTeam * 0.5f;
+                int k = (i / 2) + 1;
+
+                yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x, yellowRock_go.transform.position.y - (0.4f));
+                Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
+                yellowRock_info.rockNumber = k;
+                yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
+                yellowRock_go.GetComponent<Rock_Flick>().enabled = false;
+                yellowRock_go.GetComponent<Rock_Release>().enabled = false;
+                yellowRock_go.GetComponent<Rock_Force>().enabled = false;
+                rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
+                yield return new WaitForSeconds(0.1f);
+            }
+            if (i % 2 == 0)
+            {
+                GameObject redRock_go = Instantiate(redShooter, redRocksInactive);
+                float yRocks = rocksPerTeam / 2f;
+                int k = (i / 2);
+
+                redRock_go.transform.position = new Vector2(redRock_go.transform.position.x, redRock_go.transform.position.y - (0.4f));
+
+                Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
+                redRock_info.rockNumber = k;
+                redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
+                redRock_go.GetComponent<Rock_Flick>().enabled = false;
+                redRock_go.GetComponent<Rock_Release>().enabled = false;
+                redRock_go.GetComponent<Rock_Force>().enabled = false;
+                rockList.Add(new Rock_List(redRock_go, redRock_info));
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+        rockList.Sort();
+        foreach (Rock_List rock in rockList)
+        {
+            Debug.Log(rockList.IndexOf(rock) + rock.rockInfo.teamName);
+        }
+    }
+
 }

@@ -20,11 +20,11 @@ public class Rock_List : IComparable<Rock_List>
         {
             return 1;
         }
-        else if (rockInfo.rockNumber <= other.rockInfo.rockNumber)
+        else if (rockInfo.rockNumber < other.rockInfo.rockNumber)
         {
             return -1;
         }
-        else if (rockInfo.rockNumber > other.rockInfo.rockNumber)
+        else if (rockInfo.rockNumber >= other.rockInfo.rockNumber)
         {
             return 1;
         }

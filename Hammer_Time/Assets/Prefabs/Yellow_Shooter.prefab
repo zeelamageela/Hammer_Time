@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnValue: 400
-  curl: {x: -0.025, y: 0}
+  curl: {x: -0.1, y: 0}
 --- !u!114 &-3200148751317697448
 MonoBehaviour:
   m_ObjectHideFlags: 0

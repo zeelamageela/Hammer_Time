@@ -45,7 +45,7 @@ public class Rock_Info : MonoBehaviour
 
         if (stopped == true && rest == false)
         {
-            StartCoroutine(Stopped());
+            rest = true;
         }
 
         if (hit == true && rest == true)
@@ -68,24 +68,7 @@ public class Rock_Info : MonoBehaviour
     {
         rest = true;
 
-        if (inPlay != true)
-        {
-            yield return new WaitForSeconds(1f);
-            Destroy(gameObject);
-        }
-
-        if (outOfPlay == true)
-        {
-            yield return new WaitForSeconds(1f);
-            Destroy(gameObject);
-        }
-        
-        if (inHouse == true)
-        {
-            yield return new WaitForSeconds(1f);
-        }
-
-        else yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
 
 
     }
