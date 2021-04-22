@@ -1,2 +1,2 @@
 # Hammer_Time
-Repository for some curling-related games
+Curling-related experiments and tests in Unity
