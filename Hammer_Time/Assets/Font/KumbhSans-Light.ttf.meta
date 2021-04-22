@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: a3a446e4ef6e94043851242aeb9746cd
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Kumbh Sans
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 411a31348f92a43818870380e956dc8e, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
