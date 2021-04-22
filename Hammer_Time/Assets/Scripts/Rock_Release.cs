@@ -29,6 +29,7 @@ public class Rock_Release : MonoBehaviour
             Debug.Log("Hog Line");
 
             released = true;
+            GetComponent<Rock_Info>().released = true;
             GetComponent<Rock_Force>().Release();
         }
 

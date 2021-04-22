@@ -72,7 +72,7 @@ public class Rock_Flick: MonoBehaviour
         vcam.enabled = true;
         GetComponent<Rock_Colliders>().enabled = true;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         shotTaken = true;
     }

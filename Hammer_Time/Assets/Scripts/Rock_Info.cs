@@ -9,23 +9,20 @@ public class Rock_Info : MonoBehaviour
 
     public bool stopped = false;
     public bool rest = false;
+    public bool released = false;
     public bool inPlay = true;
     public bool outOfPlay = false;
     public bool inHouse = false;
     public bool hit = false;
     public bool moving = false;
+    public bool shotTaken = false;
 
     public float distance;
-
-    List<Rock_List> rockList;
-
-    void Awake()
-    {
-    }
 
     void FixedUpdate()
     {
         distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
+        shotTaken = GetComponent<Rock_Flick>().shotTaken;
 
         if (transform.hasChanged)
         {
@@ -35,7 +32,7 @@ public class Rock_Info : MonoBehaviour
         }
         else moving = false;
         
-        if (GetComponent<Rock_Flick>().shotTaken && GetComponent<Rock_Release>().released)
+        if (shotTaken && released)
         {
             if (moving == false)
             {
@@ -43,7 +40,7 @@ public class Rock_Info : MonoBehaviour
             }
         }
 
-        if (stopped == true && rest == false)
+        if (stopped && rest == false)
         {
             rest = true;
         }
@@ -62,16 +59,5 @@ public class Rock_Info : MonoBehaviour
                 hit = false;
             }
         }
-    }
-
-    IEnumerator Stopped()
-    {
-        rest = true;
-
-        yield return new WaitForFixedUpdate();
-
-
-    }
-
-    
+    }   
 }

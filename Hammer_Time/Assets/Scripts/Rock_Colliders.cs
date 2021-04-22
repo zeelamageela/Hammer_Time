@@ -40,12 +40,30 @@ public class Rock_Colliders : MonoBehaviour
 
     IEnumerator OutOfPlay()
     {
-        body.velocity = Vector2.zero;
-        body.angularVelocity = 0f;
+        //body.velocity = Vector2.zero;
+        //body.angularVelocity = 0f;
 
         GetComponent<Rock_Info>().outOfPlay = true;
         GetComponent<Rock_Info>().stopped = true;
         GetComponent<Rock_Info>().inHouse = false;
+        GetComponent<Rock_Info>().rest = true;
+
+        yield return new WaitForSeconds(0.4f);
+
+        gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(0.4f);
+
+        if (GetComponent<Rock_Info>().teamName == "Red")
+        {
+            GameObject redInactive = GameObject.Find("RedInactive");
+            gameObject.transform.position = redInactive.transform.position;
+        }
+
+        yield return new WaitForSeconds(0.4f);
+
+        gameObject.SetActive(true);
+
         yield break;
     }
 
@@ -82,6 +100,18 @@ public class Rock_Colliders : MonoBehaviour
         if (collision.gameObject.tag == "Rock")
         {
             GetComponent<Rock_Info>().hit = true;
+        }
+
+        if (collision.gameObject.tag == "Boards")
+        {
+            outOfPlay = true;
+            GetComponent<Rock_Info>().outOfPlay = outOfPlay;
+            inPlay = false;
+            GetComponent<Rock_Info>().inPlay = inPlay;
+            Debug.Log("collider boards");
+            GetComponent<Rock_Info>().inHouse = false;
+            GetComponent<Rock_Info>().rest = true;
+            GetComponent<Rock_Info>().stopped = true;
         }
     }
 

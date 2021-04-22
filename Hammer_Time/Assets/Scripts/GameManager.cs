@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public Transform launcher;
     public Transform yellowRocksInactive;
     public Transform redRocksInactive;
+    public Collider2D boardCollider;
 
     int redRocks_left;
     int yellowRocks_left;
@@ -235,6 +236,8 @@ public class GameManager : MonoBehaviour
         redRock_1.GetComponent<Rock_Flick>().enabled = true;
         redRock_1.GetComponent<Rock_Release>().enabled = true;
         redRock_1.GetComponent<Rock_Force>().enabled = true;
+        redRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        boardCollider.enabled = false;
 
         state = GameState.REDTURN;
         StartCoroutine(RedTurn());
@@ -256,6 +259,9 @@ public class GameManager : MonoBehaviour
         redRocksLeft_Slider.maxValue = rocksPerTeam;
         redRocksLeft_Slider.value = redRock.rockNumber;
 
+        yield return new WaitUntil(() => redRock.shotTaken == true);
+        boardCollider.enabled = true;
+
         yield return new WaitUntil(() => redRock.rest == true);
 
         redTurn_Display.enabled = false;
@@ -263,9 +269,9 @@ public class GameManager : MonoBehaviour
 
         if (redRock.inHouse)
         {
+            redTurn_Display.enabled = true;
             float distance = redRock.distance;
-            Debug.Log(redRock_1.name + " is " + distance + " from button");
-            houseList.Add(new House_List(redRock_1, redRock));
+            redTurn_Display.text = redRock_1.name + " shot is " + distance + " from button";
         }
 
         ++rockCurrent;
@@ -297,7 +303,8 @@ public class GameManager : MonoBehaviour
         yellowRock_1.GetComponent<Rock_Flick>().enabled = true;
         yellowRock_1.GetComponent<Rock_Release>().enabled = true;
         yellowRock_1.GetComponent<Rock_Force>().enabled = true;
-
+        yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        boardCollider.enabled = false;
         state = GameState.YELLOWTURN;
         StartCoroutine(YellowTurn());
     }
@@ -316,6 +323,9 @@ public class GameManager : MonoBehaviour
         yellowRocksLeft_Slider.maxValue = rocksPerTeam;
         yellowRocksLeft_Slider.value = yellowRock.rockNumber;
 
+        yield return new WaitUntil(() => yellowRock.shotTaken == true);
+
+        boardCollider.enabled = true;
         yield return new WaitUntil(() => yellowRock.rest == true);
 
         yellowTurn_Display.enabled = false;
@@ -323,9 +333,9 @@ public class GameManager : MonoBehaviour
 
         if (yellowRock.inHouse)
         {
+            yellowTurn_Display.enabled = true;
             float distance = yellowRock.distance;
-            Debug.Log(yellowRock_1.name + " is " + distance + " from button");
-            houseList.Add(new House_List(yellowRock_1, yellowRock));
+            yellowTurn_Display.text = yellowRock_1.name + " shot is " + distance + " from button";
         }
 
         for(int i = 0; i<= rockCurrent; i++)
@@ -364,35 +374,87 @@ public class GameManager : MonoBehaviour
 
     }
 
+    IEnumerator AllStopped()
+    {
+        bool allSleeping = false;
+
+        while (!allSleeping)
+        {
+            allSleeping = true;
+
+            foreach (Rock_List rock in rockList)
+            {
+                Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
+                if (!rockRB.IsSleeping())
+                {
+                    allSleeping = false;
+                    yield return null;
+                    break;
+                }
+            }
+        }
+        yield return new WaitForFixedUpdate();
+    }
+
+    IEnumerator OutOfPlay()
+    {
+        foreach (Rock_List rock in rockList)
+        {
+            if (rock.rockInfo.outOfPlay)
+            {
+                rock.rock.SetActive(false);
+            }
+            else if (rock.rockInfo.inPlay != true)
+            {
+                rock.rock.SetActive(false);
+            }
+            else yield break;
+        }
+    }
+
     IEnumerator CheckScore()
     {
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;
 
+        StartCoroutine(AllStopped());
+        yield return new WaitForFixedUpdate();
+
+        StartCoroutine(OutOfPlay());
+        yield return new WaitForFixedUpdate();
+
         houseList.Clear();
+
 
         foreach (Rock_List rock in rockList)
         {
+            rock.rock.GetComponent<Rock_Colliders>().enabled = true;
+
             if (rock.rockInfo.inHouse)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
             }
-            if (rock.rockInfo.outOfPlay)
+            if (rock.rockInfo.outOfPlay && rock.rockInfo.stopped)
             {
                 rock.rock.SetActive(false);
             }
-            if (rock.rockInfo.inPlay != true)
+            if (rock.rockInfo.inPlay != true && rock.rockInfo.stopped)
             {
                 rock.rock.SetActive(false);
             }
             
         }
 
+        yield return new WaitForFixedUpdate();
+
         houseList.Sort();
 
-        foreach (House_List rock in houseList)
+        if (houseList.Count != 0)
         {
-            Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            foreach (House_List rock in houseList)
+            {
+                Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            }
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -403,11 +465,11 @@ public class GameManager : MonoBehaviour
 
         if (houseRock != 0)
         {
-            if (houseList[0].rockInfo.teamName == rockList[0].rockInfo.teamName)
+            if (houseList[0].rockInfo.teamName == "Red")
             {
                 for (int i = 0; i < houseRock; i++)
                 {
-                    if (houseList[i].rockInfo.teamName == rockList[0].rockInfo.teamName)
+                    if (houseList[i].rockInfo.teamName == "Red")
                     {
                         tempRedScore++;
                     }
@@ -564,10 +626,9 @@ public class GameManager : MonoBehaviour
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
 
-        rockTotal = 16;
-        rockCurrent = 15;
-        redRocks_left = 1;
-        yellowRocks_left = 1;
+        rockTotal = 8;
+        rockCurrent = rockTotal - 1;
+        rocksPerTeam = 1;
         redHammer = true;
         StartCoroutine(DebugMode());
         db.SetActive(false);
@@ -594,6 +655,7 @@ public class GameManager : MonoBehaviour
                 yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
                 yellowRock_go.GetComponent<SpringJoint2D>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Colliders>().enabled = true;
+
                 yellowRock_info.moving = false;
                 yellowRock_info.stopped = true;
                 yellowRock_info.rest = true;
