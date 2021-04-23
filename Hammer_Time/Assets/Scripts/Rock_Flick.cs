@@ -9,11 +9,20 @@ public class Rock_Flick: MonoBehaviour
 
     public float releaseTime = .15f;
 
-    private bool isPressed = false;
+    public bool isPressed = false;
     public bool shotTaken = false;
+
+    public Rock_Traj trajectory;
 
     GameObject launcher;
     Rigidbody2D launcher_rb;
+
+    Vector2 startPoint;
+    Vector2 endPoint;
+    Vector2 direction;
+    Vector2 force;
+    Vector2 pos;
+    float distance;
 
     Transform tFollowTarget;
     public GameObject vcam_go;
@@ -22,6 +31,9 @@ public class Rock_Flick: MonoBehaviour
     void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        GameObject traj = GameObject.Find("Trajectory");
+        trajectory = traj.GetComponent<Rock_Traj>();
 
         launcher = GameObject.FindWithTag("Launcher");
         launcher_rb = launcher.GetComponent<Rigidbody2D>();
@@ -45,8 +57,28 @@ public class Rock_Flick: MonoBehaviour
 
     void OnMouseDown()
     {
+
+        OnDrag();
         isPressed = true;
-        rb.isKinematic = true; 
+        rb.isKinematic = true;
+        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        trajectory.Show();
+    }
+
+    void OnDrag()
+    {
+
+        GameObject rock = gameObject;
+        endPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        distance = Vector2.Distance(startPoint, endPoint);
+        direction = (startPoint - endPoint).normalized;
+        force = direction * distance;
+
+        //just for debug
+        Debug.DrawLine(startPoint, endPoint);
+
+
+        trajectory.UpdateDots(transform.position, force);
     }
 
     void OnMouseUp()

@@ -1,4 +1,4 @@
- using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public Transform yellowRocksInactive;
     public Transform redRocksInactive;
     public Collider2D boardCollider;
+
+    public Rock_Traj trajectory;
 
     int redRocks_left;
     int yellowRocks_left;
@@ -64,6 +66,7 @@ public class GameManager : MonoBehaviour
         yellowRocksLeft_Display.enabled = false;
         redRocksLeft_Slider.enabled = false;
         yellowRocksLeft_Slider.enabled = false;
+        boardCollider.enabled = false;
 
         StartCoroutine(SetupGame());
     }
@@ -258,6 +261,10 @@ public class GameManager : MonoBehaviour
         redRocksLeft_Display.text = redRocks_left + " Rocks Left";
         redRocksLeft_Slider.maxValue = rocksPerTeam;
         redRocksLeft_Slider.value = redRock.rockNumber;
+
+        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == true);
+
+        trajectory.Show();
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
         boardCollider.enabled = true;

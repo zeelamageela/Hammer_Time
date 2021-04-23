@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1717864105993382553}
   - component: {fileID: 5165811189730541802}
   - component: {fileID: 5652066800655312109}
-  - component: {fileID: 1774597298067161846}
   m_Layer: 0
   m_Name: Launcher
   m_TagString: Launcher
@@ -105,15 +104,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1774597298067161846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4303390332044197276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b4af5194eaddd14da416fa2c65a8f6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

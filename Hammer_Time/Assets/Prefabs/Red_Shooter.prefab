@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: 2680404496690781294}
   - component: {fileID: -5155953064966958067}
   - component: {fileID: -290574429449357231}
-  - component: {fileID: 6102711220319878732}
   m_Layer: 6
   m_Name: Red_Shooter
   m_TagString: Rock
@@ -234,17 +233,3 @@ MonoBehaviour:
   button_measure: {fileID: 0}
   outOfPlay: 0
   inPlay: 0
---- !u!114 &6102711220319878732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 857868563430731881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef502cecd2b132749a226018e22a23b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isStatic: 0
-  isReference: 0
