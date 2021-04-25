@@ -7,7 +7,6 @@ public class Rock_Colliders : MonoBehaviour
     public Collider2D InPlay_Collider;
     public Collider2D boards_collider;
     public Collider2D house_collider;
-    public Transform button_measure;
 
     private Rigidbody2D body;
 
@@ -26,6 +25,9 @@ public class Rock_Colliders : MonoBehaviour
         GameObject boards = GameObject.Find("Grid/Boards");
         boards_collider = boards.GetComponent<Collider2D>();
 
+        GameObject house = GameObject.Find("House");
+        house_collider = house.GetComponent<Collider2D>();
+
     }
 
 // Update is called once per frame
@@ -33,7 +35,10 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (outOfPlay && GetComponent<Rock_Release>().released)
         {
-            StartCoroutine(OutOfPlay());
+            if (inPlay == false)
+            {
+                //StartCoroutine(OutOfPlay());
+            }
         }
     }
 
@@ -54,15 +59,11 @@ public class Rock_Colliders : MonoBehaviour
 
         yield return new WaitForSeconds(0.4f);
 
-        if (GetComponent<Rock_Info>().teamName == "Red")
-        {
-            GameObject redInactive = GameObject.Find("RedInactive");
-            gameObject.transform.position = redInactive.transform.position;
-        }
+        
 
         yield return new WaitForSeconds(0.4f);
 
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
 
         yield break;
     }
@@ -88,7 +89,7 @@ public class Rock_Colliders : MonoBehaviour
             GetComponent<Rock_Info>().stopped = true;
         }
 
-        if (collider.gameObject.tag == "House")
+        if (collider == house_collider)
         {
             GetComponent<Rock_Info>().inHouse = true;
             
@@ -105,9 +106,9 @@ public class Rock_Colliders : MonoBehaviour
         if (collision.gameObject.tag == "Boards")
         {
             outOfPlay = true;
-            GetComponent<Rock_Info>().outOfPlay = outOfPlay;
+            GetComponent<Rock_Info>().outOfPlay = true;
             inPlay = false;
-            GetComponent<Rock_Info>().inPlay = inPlay;
+            GetComponent<Rock_Info>().inPlay = false;
             Debug.Log("collider boards");
             GetComponent<Rock_Info>().inHouse = false;
             GetComponent<Rock_Info>().rest = true;

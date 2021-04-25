@@ -1,0 +1,708 @@
+fileFormatVersion: 2
+guid: f07c93c550683864090d118c91d7ab46
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -699034222281640848
+    second: Shooter_1_#[540,1200]_0
+  - first:
+      213: 3189303918744437805
+    second: Shooter_1_#[540,1200]_1
+  - first:
+      213: -8045618114058022310
+    second: Shooter_1_#[540,1200]_2
+  - first:
+      213: 353629781459332671
+    second: Shooter_1_#[540,1200]_3
+  - first:
+      213: -7137784229138752868
+    second: Shooter_1_#[540,1200]_4
+  - first:
+      213: -1111948215243369069
+    second: Shooter_1_#[540,1200]_5
+  - first:
+      213: 5183935372476313339
+    second: Shooter_1_#[540,1200]_6
+  - first:
+      213: -3130838493548353656
+    second: Shooter_1_#[540,1200]_7
+  - first:
+      213: -186680917535424467
+    second: Shooter_1_#[540,1200]_8
+  - first:
+      213: 7924740623969192956
+    second: Shooter_1_#[540,1200]_9
+  - first:
+      213: -211241545398037662
+    second: Shooter_1_#[540,1200]_10
+  - first:
+      213: 1216202216964379134
+    second: Shooter_1_#[540,1200]_11
+  - first:
+      213: -5593592437011530044
+    second: Shooter_1_#[540,1200]_12
+  - first:
+      213: 415876646583639586
+    second: Shooter_1_#[540,1200]_13
+  - first:
+      213: 2035943480718980475
+    second: Shooter_1_#[540,1200]_14
+  - first:
+      213: -8743998309151710675
+    second: Shooter_1_#[540,1200]_15
+  - first:
+      213: -8454154170724339261
+    second: Shooter_1_#[540,1200]_16
+  - first:
+      213: -2850733591711098862
+    second: Shooter_1_#[540,1200]_17
+  - first:
+      213: -3148427869080644465
+    second: Shooter_1_#[540,1200]_18
+  - first:
+      213: 4123098438548564700
+    second: Shooter_1_#[540,1200]_19
+  - first:
+      213: -1727683826216656282
+    second: Shooter_1_#[540,1200]_20
+  - first:
+      213: 8451449926938636276
+    second: Shooter_1_#[540,1200]_21
+  - first:
+      213: 5680387346959459557
+    second: Shooter_1_#[540,1200]_22
+  - first:
+      213: 8890632935213159125
+    second: Shooter_1_#[540,1200]_23
+  - first:
+      213: 4350345390394279997
+    second: Shooter_1_#[540,1200]_24
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4800
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 074bf0714188c46f0800000000000000
+      internalID: -699034222281640848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_1
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 4800
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d240685340fa24c20800000000000000
+      internalID: 3189303918744437805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_2
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 4800
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a529f19e3f8385090800000000000000
+      internalID: -8045618114058022310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_3
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 4800
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3ee1e1a96858e400800000000000000
+      internalID: 353629781459332671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_4
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 4800
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9a9ccaaf0f71fc90800000000000000
+      internalID: -7137784229138752868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3600
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3951ac55df09190f0800000000000000
+      internalID: -1111948215243369069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_6
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 3600
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfe680f61c901f740800000000000000
+      internalID: 5183935372476313339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_7
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 3600
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8876eee5af60d84d0800000000000000
+      internalID: -3130838493548353656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_8
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 3600
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2005ffc1b6c86df0800000000000000
+      internalID: -186680917535424467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_9
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 3600
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfb8ac44c955afd60800000000000000
+      internalID: 7924740623969192956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 263deb40fe4811df0800000000000000
+      internalID: -211241545398037662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_11
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2400
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef1543df871d0e010800000000000000
+      internalID: 1216202216964379134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_12
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2400
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cebd9d80519f52b0800000000000000
+      internalID: -5593592437011530044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_13
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 2400
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22e9ffd4b9d75c500800000000000000
+      internalID: 415876646583639586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_14
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 2400
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b75f60f0fcf114c10800000000000000
+      internalID: 2035943480718980475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1200
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2265629dd317a680800000000000000
+      internalID: -8743998309151710675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_16
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1200
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c1b691e29fccaa80800000000000000
+      internalID: -8454154170724339261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_17
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1200
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21859c4f6e82078d0800000000000000
+      internalID: -2850733591711098862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_18
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1200
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f84128eb8898e44d0800000000000000
+      internalID: -3148427869080644465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_19
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1200
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cdaa7ab4f20383930800000000000000
+      internalID: 4123098438548564700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6622b26b6b80608e0800000000000000
+      internalID: -1727683826216656282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_21
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ffad2c4ee4994570800000000000000
+      internalID: 8451449926938636276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_22
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 0
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e46422323ac4de40800000000000000
+      internalID: 5680387346959459557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_23
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 0
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d2d4cbcc8fd16b70800000000000000
+      internalID: 8890632935213159125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_1_#[540,1200]_24
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 0
+        width: 540
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3885bc55188f5c30800000000000000
+      internalID: 4350345390394279997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

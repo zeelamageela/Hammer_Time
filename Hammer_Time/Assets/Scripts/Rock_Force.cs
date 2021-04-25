@@ -11,10 +11,12 @@ public class Rock_Force : MonoBehaviour
 
     float velX = 0f;
     float velY = 0f;
-    Vector2 vel;
+    public Vector2 vel;
     bool turnStart;
     bool forceStart;
+    public bool flipAxis = false;
     //public bool moving;
+    int dirMult = 1;
 
     void Awake()
     {
@@ -23,13 +25,11 @@ public class Rock_Force : MonoBehaviour
 
     public void Release()
     {
-        Transform go = gameObject.transform;
-
-        if (go.position.x <= 0f)
+        if (flipAxis)
         {
-            turnValue = -turnValue;
-            curl = new Vector2 (-curl.x , curl.y);
+            dirMult = -1;
         }
+        
 
         turnStart = true;
         forceStart = true;
@@ -38,16 +38,15 @@ public class Rock_Force : MonoBehaviour
     }
 
 
-    void FixedUpdate() 
+    void FixedUpdate()
     {
         velX = body.angularVelocity;
-        vel = new Vector2 (velX, velY);
 
-        Vector2 start = transform.position;
+        vel = new Vector2(velX, velY);
         
         if (turnStart == true)
         {
-            body.AddTorque(turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
+            body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
             Debug.Log("Rotate");
             turnStart = false;
         }

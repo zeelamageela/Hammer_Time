@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 5983643169443896924}
   - component: {fileID: 1495279761}
   - component: {fileID: 8177174175490775799}
-  - component: {fileID: 2680404496690781294}
   - component: {fileID: -5155953064966958067}
+  - component: {fileID: 2680404496690781294}
   - component: {fileID: -290574429449357231}
+  - component: {fileID: 4719896315810094606}
   m_Layer: 6
   m_Name: Red_Shooter
   m_TagString: Rock
@@ -174,9 +175,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   releaseTime: 0.15
+  isPressed: 0
   shotTaken: 0
+  trajectory: {fileID: 0}
+  springDirection: {x: 0, y: 0}
+  force: {x: 0, y: 0}
+  springDistance: 0
+  springForce: 0
+  shooterIsPressed: 0
+  shooterMouseUp: 0
+  shooterForce: 0
   vcam_go: {fileID: 0}
   vcam: {fileID: 0}
+--- !u!114 &-5155953064966958067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857868563430731881}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16ea23e6c634e6947abf61d9b8687d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turnValue: 400
+  curl: {x: -0.2, y: 0}
+  vel: {x: 0, y: 0}
+  flipAxis: 0
 --- !u!114 &2680404496690781294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,20 +227,6 @@ MonoBehaviour:
   moving: 0
   shotTaken: 0
   distance: 0
---- !u!114 &-5155953064966958067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 857868563430731881}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16ea23e6c634e6947abf61d9b8687d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  turnValue: 400
-  curl: {x: -0.1, y: 0}
 --- !u!114 &-290574429449357231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,3 +245,29 @@ MonoBehaviour:
   button_measure: {fileID: 0}
   outOfPlay: 0
   inPlay: 0
+--- !u!61 &4719896315810094606
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857868563430731881}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 3.6, y: 3.6}
+    newSize: {x: 3.6, y: 3.6}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 3.6, y: 3.6}
+  m_EdgeRadius: 0

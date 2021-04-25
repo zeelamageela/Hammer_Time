@@ -19,10 +19,16 @@ public class Rock_Flick: MonoBehaviour
 
     Vector2 startPoint;
     Vector2 endPoint;
-    Vector2 direction;
-    Vector2 force;
+    public Vector2 springDirection;
+    public Vector2 force;
     Vector2 pos;
-    float distance;
+    public float springDistance;
+    public float springForce;
+
+    GameObject shooter;
+    public bool shooterIsPressed;
+    public bool shooterMouseUp;
+    public float shooterForce;
 
     Transform tFollowTarget;
     public GameObject vcam_go;
@@ -32,8 +38,8 @@ public class Rock_Flick: MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        GameObject traj = GameObject.Find("Trajectory");
-        trajectory = traj.GetComponent<Rock_Traj>();
+        GameObject traj_go = GameObject.Find("Trajectory");
+        trajectory = traj_go.GetComponent<Rock_Traj>();
 
         launcher = GameObject.FindWithTag("Launcher");
         launcher_rb = launcher.GetComponent<Rigidbody2D>();
@@ -44,6 +50,7 @@ public class Rock_Flick: MonoBehaviour
         vcam_go = GameObject.Find("CM vcam1");
         vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
 
+
         gameObject.transform.position = launcher.transform.position;
     }
 
@@ -52,40 +59,49 @@ public class Rock_Flick: MonoBehaviour
         if (isPressed)
         {
             rb.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (springDirection.x < 0f)
+            {
+                GetComponent<Rock_Force>().flipAxis = true;
+            }
+            else if (springDirection.y > 0f)
+            {
+                GetComponent<Rock_Force>().flipAxis = false;
+            }
+
+            OnDrag();
         }
     }
 
     void OnMouseDown()
     {
 
-        OnDrag();
         isPressed = true;
         rb.isKinematic = true;
-        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         trajectory.Show();
+        shooterIsPressed = true;
     }
 
     void OnDrag()
     {
 
         GameObject rock = gameObject;
-        endPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        distance = Vector2.Distance(startPoint, endPoint);
-        direction = (startPoint - endPoint).normalized;
-        force = direction * distance;
+        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        //just for debug
-        Debug.DrawLine(startPoint, endPoint);
+        endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
+        springDistance = Vector2.Distance(startPoint, endPoint);
+        force = GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
+        springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
+        springForce = force.magnitude;
 
-
-        trajectory.UpdateDots(transform.position, force);
+        shooterForce = springDirection.y;
     }
 
     void OnMouseUp()
     {
         isPressed = false;
         rb.isKinematic = false;
-
+        shooterIsPressed = false;
         StartCoroutine(Release());
     }
 

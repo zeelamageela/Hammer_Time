@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
     public void SetHammerRed()
     {
         redHammer = true;
+        db.SetActive(false);
         mainDisplay.gameObject.SetActive(false);
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
@@ -113,6 +114,7 @@ public class GameManager : MonoBehaviour
     public void SetHammerYellow()
     {
         redHammer = false;
+        db.SetActive(false);
         mainDisplay.gameObject.SetActive(false);
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
@@ -201,7 +203,7 @@ public class GameManager : MonoBehaviour
         houseList.Clear();
         foreach (Rock_List rock in rockList)
         {
-            rock.rockInfo.outOfPlay = true;
+            Destroy(rock.rock);
         }
         rockList.Clear();
 
@@ -283,15 +285,18 @@ public class GameManager : MonoBehaviour
 
         ++rockCurrent;
 
-        if (rockCurrent <= rockTotal)
+        if (rockCurrent < rockTotal)
         {
             StartCoroutine(CheckScore());
-            OnRedTurn();
         }
         else
         {
             StartCoroutine(Scoring());
         }
+
+        yield return new WaitForFixedUpdate();
+
+        OnYellowTurn();
 
     }
 
@@ -333,6 +338,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
         boardCollider.enabled = true;
+
         yield return new WaitUntil(() => yellowRock.rest == true);
 
         yellowTurn_Display.enabled = false;
@@ -345,39 +351,18 @@ public class GameManager : MonoBehaviour
             yellowTurn_Display.text = yellowRock_1.name + " shot is " + distance + " from button";
         }
 
-        for(int i = 0; i<= rockCurrent; i++)
-        {
-            GameObject go = rockList[i].rock;
-
-            if(rockList[i].rockInfo.outOfPlay)
-            {
-                go.SetActive(false);
-                float yRocks = rocksPerTeam * 0.5f;
-                int k = (i / 2);
-
-                if (k <= yRocks)
-                {
-                    go.transform.position = new Vector2(go.transform.position.x, go.transform.position.y - ((k - 1) * 0.4f));
-                }
-                else if (k > yRocks)
-                {
-                    float j = k - yRocks;
-                    go.transform.position = new Vector2(go.transform.position.x + 0.4f, go.transform.position.y - ((j - 1) * 0.4f));
-                }
-            }
-        }
-
         ++rockCurrent;
 
-        if (rockCurrent <= rockTotal)
+        if (rockCurrent < rockTotal)
         {
             StartCoroutine(CheckScore());
-            OnRedTurn();
         }
         else
         {
             StartCoroutine(Scoring());
         }
+
+        OnRedTurn();
 
     }
 
@@ -409,11 +394,12 @@ public class GameManager : MonoBehaviour
         {
             if (rock.rockInfo.outOfPlay)
             {
-                rock.rock.SetActive(false);
-            }
-            else if (rock.rockInfo.inPlay != true)
-            {
-                rock.rock.SetActive(false);
+                if (rock.rockInfo.inPlay == false)
+                {
+                    rock.rock.SetActive(false);
+                    Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber);
+                }
+                
             }
             else yield break;
         }
@@ -421,13 +407,16 @@ public class GameManager : MonoBehaviour
 
     IEnumerator CheckScore()
     {
+
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;
 
-        StartCoroutine(AllStopped());
+        //StartCoroutine(AllStopped());
+        //Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
-        StartCoroutine(OutOfPlay());
+        //StartCoroutine(OutOfPlay());
+        //Debug.Log("Out of play cull");
         yield return new WaitForFixedUpdate();
 
         houseList.Clear();
@@ -435,21 +424,11 @@ public class GameManager : MonoBehaviour
 
         foreach (Rock_List rock in rockList)
         {
-            rock.rock.GetComponent<Rock_Colliders>().enabled = true;
-
             if (rock.rockInfo.inHouse)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
-            }
-            if (rock.rockInfo.outOfPlay && rock.rockInfo.stopped)
-            {
-                rock.rock.SetActive(false);
-            }
-            if (rock.rockInfo.inPlay != true && rock.rockInfo.stopped)
-            {
-                rock.rock.SetActive(false);
-            }
-            
+                
+            } 
         }
 
         yield return new WaitForFixedUpdate();
@@ -521,6 +500,7 @@ public class GameManager : MonoBehaviour
             if (rock.rockInfo.outOfPlay)
             {
                 rock.rock.SetActive(false);
+                Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber);
             }
             if (rock.rockInfo.inPlay != true)
             {

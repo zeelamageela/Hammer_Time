@@ -40,7 +40,7 @@ public class Rock_Info : MonoBehaviour
             }
         }
 
-        if (stopped && rest == false)
+        if (stopped == true && rest == false)
         {
             rest = true;
         }

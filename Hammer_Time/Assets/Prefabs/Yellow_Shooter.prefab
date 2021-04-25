@@ -174,7 +174,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   releaseTime: 0.15
+  isPressed: 0
   shotTaken: 0
+  trajectory: {fileID: 0}
+  springDirection: {x: 0, y: 0}
+  force: {x: 0, y: 0}
+  springDistance: 0
+  springForce: 0
   vcam_go: {fileID: 0}
   vcam: {fileID: 0}
 --- !u!114 &-2407443072647762307
@@ -190,7 +196,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnValue: 400
-  curl: {x: -0.1, y: 0}
+  curl: {x: -0.2, y: 0}
+  vel: {x: 0, y: 0}
+  flipAxis: 0
 --- !u!114 &-3200148751317697448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,11 +215,13 @@ MonoBehaviour:
   rockNumber: 0
   stopped: 0
   rest: 0
+  released: 0
   inPlay: 0
   outOfPlay: 0
   inHouse: 0
   hit: 0
   moving: 0
+  shotTaken: 0
   distance: 0
 --- !u!114 &5757935471634775801
 MonoBehaviour:
