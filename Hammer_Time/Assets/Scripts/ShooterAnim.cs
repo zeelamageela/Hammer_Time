@@ -17,6 +17,10 @@ public class ShooterAnim : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    void OnMouseDown()
+    {
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -25,5 +29,20 @@ public class ShooterAnim : MonoBehaviour
         anim.SetBool("mouseDown", isPressed);
         anim.SetFloat("Pullback", pullback);
 
+    }
+
+    void OnDrag()
+    {
+
+        GameObject rock = gameObject;
+        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
+        springDistance = Vector2.Distance(startPoint, endPoint);
+        force = GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
+        springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
+        springForce = force.magnitude;
+
+        shooterForce = springDirection.y;
     }
 }
