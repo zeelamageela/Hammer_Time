@@ -140,7 +140,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 5027146118104172921}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 6768c3b512a9e4ed2a64a5d5289c58f0, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -181,6 +181,9 @@ MonoBehaviour:
   force: {x: 0, y: 0}
   springDistance: 0
   springForce: 0
+  shooterIsPressed: 0
+  shooterMouseUp: 0
+  shooterForce: 0
   vcam_go: {fileID: 0}
   vcam: {fileID: 0}
 --- !u!114 &-2407443072647762307
@@ -196,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnValue: 400
-  curl: {x: -0.2, y: 0}
+  curl: {x: -0.15, y: 0}
   vel: {x: 0, y: 0}
   flipAxis: 0
 --- !u!114 &-3200148751317697448
@@ -238,6 +241,7 @@ MonoBehaviour:
   InPlay_Collider: {fileID: 0}
   boards_collider: {fileID: 0}
   house_collider: {fileID: 0}
-  button_measure: {fileID: 0}
   outOfPlay: 0
   inPlay: 0
+  hit: 0
+  inHouse: 0

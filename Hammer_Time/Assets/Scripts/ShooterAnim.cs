@@ -5,27 +5,47 @@ using UnityEngine;
 public class ShooterAnim : MonoBehaviour
 {
     private Animator anim;
-    public GameObject square;
+    public GameObject gm;
+    public GameObject launcher;
+    GameManager gameManager;
     public bool isPressed = false;
     public float pullback;
     int currentRock;
     GameObject rock;
 
+    Vector2 startPoint;
+    Vector2 endPoint;
+    Vector2 force;
+    public float springDistance;
+    public Vector2 springDirection;
+    float springForce;
+
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
+        gameManager = gm.GetComponent<GameManager>();
     }
 
     void OnMouseDown()
     {
-
+        isPressed = true;
     }
-    // Update is called once per frame
+
+    private void OnMouseUp()
+    {
+        isPressed = false;
+    }
+
+
     void Update()
     {
-        
-        
+        currentRock = gameManager.rockCurrent;
+        if (isPressed)
+        {
+            OnDrag();
+        }
         anim.SetBool("mouseDown", isPressed);
         anim.SetFloat("Pullback", pullback);
 
@@ -34,15 +54,13 @@ public class ShooterAnim : MonoBehaviour
     void OnDrag()
     {
 
-        GameObject rock = gameObject;
+        GameObject rock = gameManager.rockList[currentRock].rock;
         startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
+        endPoint = launcher.transform.position;
         springDistance = Vector2.Distance(startPoint, endPoint);
-        force = GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
+        force = rock.GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
         springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
         springForce = force.magnitude;
-
-        shooterForce = springDirection.y;
     }
 }

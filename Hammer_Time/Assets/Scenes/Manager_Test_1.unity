@@ -154,9 +154,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ba4435eb7ac0e24bad74850c10a40cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  square: {fileID: 0}
+  gm: {fileID: 197219299}
+  launcher: {fileID: 448747563}
   isPressed: 0
   pullback: 0
+  springDistance: 0
+  springDirection: {x: 0, y: 0}
 --- !u!95 &46360571
 Animator:
   serializedVersion: 3
@@ -741,6 +744,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &448747563 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4303390332044197276, guid: 6dc4fbaee84b194488bc0a358b9cf8b8, type: 3}
+  m_PrefabInstance: {fileID: 3766675412487579793}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &503148746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -914,7 +922,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.062563896, y: -23.79066, z: -10}
+  m_LocalPosition: {x: -0.04798746, y: -23.79066, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4451,7 +4459,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171837316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.062563896, y: -23.79066, z: -10}
+  m_LocalPosition: {x: -0.04798746, y: -23.79066, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1385325366}

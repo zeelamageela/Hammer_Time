@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour
                 rockList.Add(new Rock_List(redRock_go, redRock_info));
                 yield return new WaitForSeconds(0.1f);
             }
-            rockList.Sort();
+            //rockList.Sort();
         }
     }
 
@@ -212,7 +212,10 @@ public class GameManager : MonoBehaviour
         endCurrent++;
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
+        redRocksLeft_Display.text = redRocks_left + " Rocks Left";
+        yellowRocksLeft_Display.text = yellowRocks_left + " Rocks Left";
         rockCurrent = 0;
+
 
         if (redHammer)
         {
@@ -317,6 +320,7 @@ public class GameManager : MonoBehaviour
         yellowRock_1.GetComponent<Rock_Force>().enabled = true;
         yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
         boardCollider.enabled = false;
+
         state = GameState.YELLOWTURN;
         StartCoroutine(YellowTurn());
     }
@@ -396,10 +400,9 @@ public class GameManager : MonoBehaviour
             {
                 if (rock.rockInfo.inPlay == false)
                 {
-                    rock.rock.SetActive(false);
                     Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber);
+                    rock.rock.GetComponent<Rock_Colliders>().OutOfPlay();
                 }
-                
             }
             else yield break;
         }
@@ -411,11 +414,11 @@ public class GameManager : MonoBehaviour
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;
 
-        //StartCoroutine(AllStopped());
-        //Debug.Log("All Stopped");
+        StartCoroutine(AllStopped());
+        Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
-        //StartCoroutine(OutOfPlay());
+        StartCoroutine(OutOfPlay());
         //Debug.Log("Out of play cull");
         yield return new WaitForFixedUpdate();
 
@@ -448,33 +451,42 @@ public class GameManager : MonoBehaviour
         int tempRedScore = 0;
         int tempYellowScore = 0;
         int houseRock = houseList.Count;
-
+        if (redHammer)
+        {
+            redRock = rockList[0].rockInfo;
+            yellowRock = rockList[1].rockInfo;
+        }
+        else
+        {
+            redRock = rockList[1].rockInfo;
+            yellowRock = rockList[0].rockInfo;
+        }
         if (houseRock != 0)
         {
-            if (houseList[0].rockInfo.teamName == "Red")
+            if (houseList[0].rockInfo.teamName == redRock.teamName)
             {
                 for (int i = 0; i < houseRock; i++)
                 {
-                    if (houseList[i].rockInfo.teamName == "Red")
+                    if (houseList[i].rockInfo.teamName == redRock.teamName)
                     {
                         tempRedScore++;
                     }
                 }
-                redTurn_Display.enabled = true;
-                redTurn_Display.text = houseList[0].rockInfo.teamName + " is sitting " + tempRedScore;
+                mainDisplay.enabled = true;
+                mainDisplay.text = redRock.teamName + " is sitting " + tempRedScore;
             }
 
-            else if (houseList[0].rockInfo.teamName == rockList[1].rockInfo.teamName)
+            else if (houseList[0].rockInfo.teamName == yellowRock.teamName)
             {
                 for (int i = 0; i < houseRock; i++)
                 {
-                    if (houseList[i].rockInfo.teamName == rockList[1].rockInfo.teamName)
+                    if (houseList[i].rockInfo.teamName == yellowRock.teamName)
                     {
                         tempYellowScore++;
                     }
                 }
-                yellowTurn_Display.enabled = true;
-                yellowTurn_Display.text = houseList[0].rockInfo.teamName + " is sitting " + tempYellowScore;
+                mainDisplay.enabled = true;
+                mainDisplay.text = yellowRock.teamName + " is sitting " + tempYellowScore;
             }
         }
         else
@@ -489,6 +501,8 @@ public class GameManager : MonoBehaviour
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;
 
+        StartCoroutine(AllStopped());
+
         houseList.Clear();
 
         foreach (Rock_List rock in rockList)
@@ -497,16 +511,6 @@ public class GameManager : MonoBehaviour
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
             }
-            if (rock.rockInfo.outOfPlay)
-            {
-                rock.rock.SetActive(false);
-                Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber);
-            }
-            if (rock.rockInfo.inPlay != true)
-            {
-                rock.rock.SetActive(false);
-            }
-
         }
 
         houseList.Sort();
@@ -516,8 +520,16 @@ public class GameManager : MonoBehaviour
             Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
         }
 
-        redRock = rockList[0].rockInfo;
-        yellowRock = rockList[1].rockInfo;
+        if (redHammer)
+        {
+            redRock = rockList[0].rockInfo;
+            yellowRock = rockList[1].rockInfo;
+        }
+        else
+        {
+            redRock = rockList[1].rockInfo;
+            yellowRock = rockList[0].rockInfo;
+        }
 
         int houseRocks = houseList.Count;
 
@@ -543,16 +555,16 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(YellowCount());
 
-            yellowTurn_Display.enabled = true;
+            mainDisplay.enabled = true;
 
             if (redHammer)
             {
-                yellowTurn_Display.text = yellowRock.teamName + " stole " + yellowScore;
+                mainDisplay.text = yellowRock.teamName + " stole " + yellowScore;
                 redHammer = true;
             }
             else
             {
-                yellowTurn_Display.text = yellowRock.teamName + " scored " + yellowScore;
+                mainDisplay.text = yellowRock.teamName + " scored " + yellowScore;
                 redHammer = true;
             }
         }
@@ -562,14 +574,14 @@ public class GameManager : MonoBehaviour
             if (redHammer)
             {
                 redHammer = true;
-                redTurn_Display.enabled = true;
-                redTurn_Display.text = redRock.teamName + " keeps hammer";
+                mainDisplay.enabled = true;
+                mainDisplay.text = redRock.teamName + " keeps hammer";
             }
             else
             {
                 redHammer = false;
-                yellowTurn_Display.enabled = true;
-                yellowTurn_Display.text = yellowRock.teamName + " keeps hammer";
+                mainDisplay.enabled = true;
+                mainDisplay.text = yellowRock.teamName + " keeps hammer";
             }
         }
 
@@ -737,7 +749,7 @@ public class GameManager : MonoBehaviour
         rockList.Sort();
         foreach (Rock_List rock in rockList)
         {
-            Debug.Log(rockList.IndexOf(rock) + rock.rockInfo.teamName);
+            Debug.Log(rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
         }
     }
 

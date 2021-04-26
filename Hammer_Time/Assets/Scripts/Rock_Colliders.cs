@@ -12,6 +12,8 @@ public class Rock_Colliders : MonoBehaviour
 
     public bool outOfPlay = false;
     public bool inPlay = false;
+    public bool hit = false;
+    public bool inHouse = false;
 
 
 // Start is called before the first frame update
@@ -37,33 +39,24 @@ public class Rock_Colliders : MonoBehaviour
         {
             if (inPlay == false)
             {
-                //StartCoroutine(OutOfPlay());
+                StartCoroutine(OutOfPlay());
             }
         }
     }
 
 
-    IEnumerator OutOfPlay()
+    public IEnumerator OutOfPlay()
     {
-        //body.velocity = Vector2.zero;
-        //body.angularVelocity = 0f;
-
-        GetComponent<Rock_Info>().outOfPlay = true;
-        GetComponent<Rock_Info>().stopped = true;
-        GetComponent<Rock_Info>().inHouse = false;
-        GetComponent<Rock_Info>().rest = true;
+        body.velocity = Vector2.zero;
+        body.angularVelocity = 0f;
 
         yield return new WaitForSeconds(0.4f);
+        GetComponent<Rock_Info>().stopped = true;
+        GetComponent<Rock_Info>().rest = true;
 
         gameObject.SetActive(false);
 
         yield return new WaitForSeconds(0.4f);
-
-        
-
-        yield return new WaitForSeconds(0.4f);
-
-        //gameObject.SetActive(true);
 
         yield break;
     }
@@ -75,44 +68,38 @@ public class Rock_Colliders : MonoBehaviour
         {
             Debug.Log("rock is in play");
             inPlay = true;
-            GetComponent<Rock_Info>().inPlay = true;
         }
 
-        if (collider == boards_collider && GetComponent<Rock_Release>().released == true)
+        if (collider == boards_collider)
         {
             outOfPlay = true;
-            GetComponent<Rock_Info>().outOfPlay = outOfPlay;
             inPlay = false;
-            GetComponent<Rock_Info>().inPlay = inPlay;
             Debug.Log("trigger boards");
-            GetComponent<Rock_Info>().inHouse = false;
+            inHouse = false;
             GetComponent<Rock_Info>().stopped = true;
+            
         }
 
         if (collider == house_collider)
         {
-            GetComponent<Rock_Info>().inHouse = true;
-            
+            inHouse = true;
+            Debug.Log("In House");
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnColliderEnter2D(Collider2D collider)
     {
-        if (collision.gameObject.tag == "Rock")
+        if (collider.gameObject.tag == "Rock")
         {
-            GetComponent<Rock_Info>().hit = true;
+            hit = true;
+            Debug.Log("Hit!");
         }
 
-        if (collision.gameObject.tag == "Boards")
+        if (collider == boards_collider)
         {
             outOfPlay = true;
-            GetComponent<Rock_Info>().outOfPlay = true;
             inPlay = false;
-            GetComponent<Rock_Info>().inPlay = false;
             Debug.Log("collider boards");
-            GetComponent<Rock_Info>().inHouse = false;
-            GetComponent<Rock_Info>().rest = true;
-            GetComponent<Rock_Info>().stopped = true;
         }
     }
 
@@ -124,15 +111,12 @@ public class Rock_Colliders : MonoBehaviour
         {
             Debug.Log("Out");
             outOfPlay = true;
-            GetComponent<Rock_Info>().outOfPlay = true;
             inPlay = false;
-            GetComponent<Rock_Info>().inPlay = false;
-            GetComponent<Rock_Info>().stopped = true;
         }
 
-        if (collider.gameObject.tag == "House")
+        if (collider == house_collider)
         {
-            GetComponent<Rock_Info>().inHouse = false;
+            inHouse = false;
         }
     }
 
