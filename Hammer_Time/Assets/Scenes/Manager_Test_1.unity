@@ -550,7 +550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   endTotal: 2
   redHammer: 0
-  rocksPerTeam: 1
+  rocksPerTeam: 4
   rockTotal: 0
   rockCurrent: 0
   redShooter: {fileID: 857868563430731881, guid: b8643296f64410a4b9b8924cfe485201, type: 3}
