@@ -22,7 +22,7 @@ public class Rock_Info : MonoBehaviour
     void FixedUpdate()
     {
         distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
-        shotTaken = GetComponent<Rock_Flick>().shotTaken;
+        shotTaken = GetComponent<Rock_Colliders>().shotTaken;
         inPlay = GetComponent<Rock_Colliders>().inPlay;
         outOfPlay = GetComponent<Rock_Colliders>().outOfPlay;
         hit = GetComponent<Rock_Colliders>().hit;
@@ -49,7 +49,7 @@ public class Rock_Info : MonoBehaviour
             rest = true;
         }
 
-        if (hit == true && rest == true)
+        if (hit == true)
         {
             if (transform.hasChanged)
             {

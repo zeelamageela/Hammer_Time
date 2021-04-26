@@ -10,7 +10,7 @@ public class Rock_Flick: MonoBehaviour
     public float releaseTime = .15f;
 
     public bool isPressed = false;
-    public bool shotTaken = false;
+    //public bool shotTaken = false;
 
     public Rock_Traj trajectory;
 
@@ -79,7 +79,7 @@ public class Rock_Flick: MonoBehaviour
         isPressed = true;
         rb.isKinematic = true;
         trajectory.Show();
-        shooterIsPressed = true;
+
     }
 
     void OnDrag()
@@ -118,10 +118,11 @@ public class Rock_Flick: MonoBehaviour
         vcam.LookAt = tFollowTarget;
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
-        GetComponent<Rock_Colliders>().enabled = true;
 
-        yield return new WaitForSeconds(2f);
+        launcher.GetComponent<Collider2D>().enabled = true;
 
-        shotTaken = true;
+        //yield return new WaitUntil(() => rb.position == launcher_rb.position);
+
+        //shotTaken = true;
     }
 }

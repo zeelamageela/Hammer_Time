@@ -46,14 +46,18 @@ public class ShooterAnim : MonoBehaviour
         {
             OnDrag();
         }
-        anim.SetBool("mouseDown", isPressed);
-        anim.SetFloat("Pullback", pullback);
+        else
+        {
+            anim.SetBool("mouseDown", false);
+        }
+        
+        anim.SetFloat("Pullback", springDirection.y);
 
     }
 
     void OnDrag()
     {
-
+        anim.SetBool("mouseDown", true);
         GameObject rock = gameManager.rockList[currentRock].rock;
         startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

@@ -109,7 +109,7 @@ Rigidbody2D:
   m_Material: {fileID: 6200000, guid: 6768c3b512a9e4ed2a64a5d5289c58f0, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!231 &5630555253050398330
 SpringJoint2D:
@@ -175,7 +175,6 @@ MonoBehaviour:
   rb: {fileID: 0}
   releaseTime: 0.15
   isPressed: 0
-  shotTaken: 0
   trajectory: {fileID: 0}
   springDirection: {x: 0, y: 0}
   force: {x: 0, y: 0}
@@ -241,7 +240,9 @@ MonoBehaviour:
   InPlay_Collider: {fileID: 0}
   boards_collider: {fileID: 0}
   house_collider: {fileID: 0}
+  launchCollider: {fileID: 0}
   outOfPlay: 0
   inPlay: 0
   hit: 0
   inHouse: 0
+  shotTaken: 0
