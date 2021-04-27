@@ -5,11 +5,16 @@ using UnityEngine;
 public class ShooterAnim : MonoBehaviour
 {
     private Animator anim;
-    public GameObject gm;
+    private Rigidbody2D rb;
+    public GameObject square;
+    Square_Flick squareFlick;
     public GameObject launcher;
-    GameManager gameManager;
+    Rigidbody2D launchRB;
     public bool isPressed = false;
+    public bool springReleased = false;
+    public bool isReleased = false;
     public float pullback;
+    public Transform shootRotation;
     int currentRock;
     GameObject rock;
 
@@ -18,53 +23,79 @@ public class ShooterAnim : MonoBehaviour
     Vector2 force;
     public float springDistance;
     public Vector2 springDirection;
-    float springForce;
+    float angle;
+    public float throwSpeed;
+    public bool extend;
+
+    int slowdownTimer;
 
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
-        gameManager = gm.GetComponent<GameManager>();
-    }
-
-    void OnMouseDown()
-    {
-        isPressed = true;
-    }
-
-    private void OnMouseUp()
-    {
-        isPressed = false;
+        rb = GetComponent<Rigidbody2D>();
+        squareFlick = square.GetComponent<Square_Flick>();
     }
 
 
     void Update()
     {
-        currentRock = gameManager.rockCurrent;
+        isPressed = squareFlick.isPressed;
+        springReleased = squareFlick.springReleased;
+        isReleased = squareFlick.isReleased;
+        extend = squareFlick.extend;
+        force = squareFlick.force;
+
         if (isPressed)
         {
-            OnDrag();
+            springDistance = squareFlick.springDistance;
+            pullback = springDistance / 1.5f;
+            anim.Play("Shooter_BackSwing2", 0, pullback);
+
+            if (pullback > 0.8f)
+            {
+                springDirection = square.GetComponent<Square_Flick>().springDirection;
+                angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
+            }
         }
-        else
+
+        if (isPressed == false && springReleased == true)
         {
-            anim.SetBool("mouseDown", false);
+            startPoint = square.transform.position;
+            endPoint = launcher.transform.position;
+            throwSpeed = startPoint.y - endPoint.y;
+            Debug.Log(throwSpeed);
+            anim.Play("Shooter_Shoot", 0, throwSpeed);
+
+            if (isReleased)
+            {
+                if (slowdownTimer >= 10)
+                {
+                    StartCoroutine(Slowdown());
+                }
+            }
         }
-        
-        anim.SetFloat("Pullback", springDirection.y);
 
+        if (extend)
+        {
+            rb.velocity = square.GetComponent<Rigidbody2D>().velocity;
+            Debug.Log("extend");
+        }
     }
 
-    void OnDrag()
+    IEnumerator Slowdown()
     {
-        anim.SetBool("mouseDown", true);
-        GameObject rock = gameManager.rockList[currentRock].rock;
-        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        slowdownTimer = 1;
+        Debug.Log("slowdon " + slowdownTimer);
+        rb.velocity = new Vector2(rb.velocity.x / slowdownTimer, rb.velocity.y / slowdownTimer);
 
-        endPoint = launcher.transform.position;
-        springDistance = Vector2.Distance(startPoint, endPoint);
-        force = rock.GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
-        springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
-        springForce = force.magnitude;
+        yield return new WaitForSeconds(0.1f);
+
+        slowdownTimer++;
     }
+
 }
+
+
