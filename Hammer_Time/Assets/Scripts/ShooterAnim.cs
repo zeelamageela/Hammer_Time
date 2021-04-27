@@ -50,7 +50,7 @@ public class ShooterAnim : MonoBehaviour
         if (isPressed)
         {
             springDistance = squareFlick.springDistance;
-            pullback = springDistance / 1.5f;
+            pullback = springDistance / 1.2f;
             anim.Play("Shooter_BackSwing2", 0, pullback);
 
             if (pullback > 0.8f)
@@ -65,7 +65,7 @@ public class ShooterAnim : MonoBehaviour
         {
             startPoint = square.transform.position;
             endPoint = launcher.transform.position;
-            throwSpeed = startPoint.y - endPoint.y;
+            throwSpeed = Vector2.Distance(startPoint, endPoint);
             Debug.Log(throwSpeed);
             anim.Play("Shooter_Shoot", 0, throwSpeed);
 
