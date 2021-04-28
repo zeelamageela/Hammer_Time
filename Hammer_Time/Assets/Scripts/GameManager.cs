@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject redShooter;
     public GameObject yellowShooter;
+    public GameObject shooterAnim;
+    GameObject shooterGO;
 
     public Transform launcher;
     public Transform yellowRocksInactive;
@@ -47,6 +49,7 @@ public class GameManager : MonoBehaviour
     public Slider yellowRocksLeft_Slider;
     public Button redButton;
     public Button yellowButton;
+    public Button sweepButton;
     public GameObject db;
 
     public GameObject vcam_go;
@@ -61,6 +64,8 @@ public class GameManager : MonoBehaviour
         state = GameState.START;
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
+        sweepButton.gameObject.SetActive(false);
+
         redTurn_Display.enabled = false;
         yellowTurn_Display.enabled = false;
         redRocksLeft_Display.enabled = false;
@@ -248,6 +253,8 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
+        shooterGO = Instantiate(shooterAnim);
+
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
 
@@ -292,16 +299,22 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => redRock.shotTaken == true);
         boardCollider.enabled = true;
 
+        yield return new WaitUntil(() => redRock.released == true);
+        sweepButton.gameObject.SetActive(true);
+
         yield return new WaitUntil(() => redRock.rest == true);
 
         redTurn_Display.enabled = false;
         vcam.enabled = false;
+        sweepButton.gameObject.SetActive(false);
 
         StartCoroutine(CheckScore());
     }
 
     public void OnYellowTurn()
     {
+        shooterGO = Instantiate(shooterAnim);
+
         Debug.Log("Yellow Turn");
         state = GameState.YELLOWTURN;
 
@@ -341,12 +354,17 @@ public class GameManager : MonoBehaviour
 
         boardCollider.enabled = true;
 
+        yield return new WaitUntil(() => yellowRock.released == true);
+        sweepButton.gameObject.SetActive(true);
+
         yield return new WaitUntil(() => yellowRock.rest == true);
 
         yellowTurn_Display.enabled = false;
         vcam.enabled = false;
+        sweepButton.gameObject.SetActive(false);
 
         StartCoroutine(CheckScore());
+
     }
 
     IEnumerator AllStopped()
@@ -390,6 +408,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator CheckScore()
     {
+        Destroy(shooterGO);
+
         Debug.Log("Check Score");
         yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = false;

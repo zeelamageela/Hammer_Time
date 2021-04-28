@@ -24,11 +24,7 @@ public class Rock_Flick: MonoBehaviour
     Vector2 pos;
     public float springDistance;
     public float springForce;
-
-    GameObject shooter;
-    public bool shooterIsPressed;
-    public bool shooterMouseUp;
-    public float shooterForce;
+    public bool springReleased;
 
     Transform tFollowTarget;
     public GameObject vcam_go;
@@ -49,7 +45,6 @@ public class Rock_Flick: MonoBehaviour
 
         vcam_go = GameObject.Find("CM vcam1");
         vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
-
 
         gameObject.transform.position = launcher.transform.position;
     }
@@ -78,7 +73,8 @@ public class Rock_Flick: MonoBehaviour
 
         isPressed = true;
         rb.isKinematic = true;
-        trajectory.Show();
+        //trajectory.Show();
+        GetComponent<SpriteRenderer>().enabled = false;
 
     }
 
@@ -93,15 +89,12 @@ public class Rock_Flick: MonoBehaviour
         force = GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
         springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
         springForce = force.magnitude;
-
-        shooterForce = springDirection.y;
     }
 
     void OnMouseUp()
     {
         isPressed = false;
         rb.isKinematic = false;
-        shooterIsPressed = false;
         StartCoroutine(Release());
     }
 
@@ -110,6 +103,7 @@ public class Rock_Flick: MonoBehaviour
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
+        springReleased = true;
         this.enabled = false;
 
         yield return new WaitForFixedUpdate();

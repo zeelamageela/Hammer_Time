@@ -10,6 +10,8 @@ public class Square_Flick : MonoBehaviour
 
     public bool isPressed = false;
 
+    public Collider2D hogLine;
+
     Vector2 startPoint;
     Vector2 endPoint;
     public Vector2 springDirection;
@@ -62,25 +64,25 @@ public class Square_Flick : MonoBehaviour
         StartCoroutine(Release());
     }
 
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider == hogLine)
+        {
+            Debug.Log(collider.gameObject.name);
+            isReleased = true;
+        }
+    }
+
     IEnumerator Release()
     {
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
-        yield return new WaitUntil(() => transform.position.y >= -25.6f);
-
         springReleased = true;
 
-        yield return new WaitUntil(() => transform.position.y >= -24.15f);
+
+        yield return new WaitUntil(() => transform.position.y >= -24f);
 
         extend = true;
-        Debug.Log(transform.position.y);
-
-        yield return new WaitUntil(() => transform.position.y >= -16f);
-
-        Debug.Log(transform.position.y);
-        isReleased = true;
-
-        //gameObject.SetActive(false);
     }
 }

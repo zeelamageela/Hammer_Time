@@ -29,8 +29,8 @@ public class Rock_Force : MonoBehaviour
         {
             dirMult = -1;
         }
-        
 
+        GetComponent<SpriteRenderer>().enabled = true;
         turnStart = true;
         forceStart = true;
 
@@ -55,8 +55,11 @@ public class Rock_Force : MonoBehaviour
         {
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
+
+            if (body.angularVelocity <= 0.01f)
+            {
+                GetComponent<Rock_Info>().stopped = true;
+            }
         }
-
-
     }
 }
