@@ -13,6 +13,9 @@ public class Debug_Random : MonoBehaviour
     // Start is called before the first frame update
     public void DebugStart()
     {
+        gm.redButton.gameObject.SetActive(false);
+        gm.yellowButton.gameObject.SetActive(false);
+
         rockTotal = 8;
         gm.rockTotal = rockTotal;
         gm.rockCurrent = rockTotal - 1;

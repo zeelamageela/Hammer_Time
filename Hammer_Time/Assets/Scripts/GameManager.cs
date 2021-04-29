@@ -680,9 +680,6 @@ public class GameManager : MonoBehaviour
     public void OnDebug()
     {
 
-        redButton.gameObject.SetActive(false);
-        yellowButton.gameObject.SetActive(false);
-
         db.SetActive(false);
         button.SetActive(true);
         house.SetActive(true);
