@@ -67,7 +67,7 @@ public class ShooterAnim : MonoBehaviour
         if (isPressed)
         {
 
-            if (springDistance > 0.1f)
+            if (springDistance > 0.1f && rock.transform.position.y < -25f)
             {
                 pullback = springDistance / 3f;
                 pullback = Mathf.Clamp(pullback, 0f, 1f);

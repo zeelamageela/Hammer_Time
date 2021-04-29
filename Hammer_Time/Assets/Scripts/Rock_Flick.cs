@@ -74,7 +74,7 @@ public class Rock_Flick: MonoBehaviour
         isPressed = true;
         rb.isKinematic = true;
         //trajectory.Show();
-        GetComponent<SpriteRenderer>().enabled = false;
+        GetComponent<SpriteRenderer>().enabled = true;
 
     }
 
@@ -98,7 +98,7 @@ public class Rock_Flick: MonoBehaviour
         StartCoroutine(Release());
     }
 
-    IEnumerator Release()
+    public IEnumerator Release()
     {
         yield return new WaitForSeconds(releaseTime);
 
@@ -119,4 +119,5 @@ public class Rock_Flick: MonoBehaviour
 
         //shotTaken = true;
     }
+
 }

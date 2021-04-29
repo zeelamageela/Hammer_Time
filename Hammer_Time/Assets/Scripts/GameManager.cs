@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     public int yellowScore;
     //public GameHUD gHUD;
 
+    public GameObject debug;
+
     public GameState state;
 
     Rock_Info redRock;
@@ -50,7 +52,11 @@ public class GameManager : MonoBehaviour
     public Button redButton;
     public Button yellowButton;
     public Button sweepButton;
+    public GameObject button;
+    public GameObject house;
+    public GameObject guard;
     public GameObject db;
+    public GameObject dbrandom;
 
     public GameObject vcam_go;
     public CinemachineVirtualCamera vcam;
@@ -92,6 +98,12 @@ public class GameManager : MonoBehaviour
         houseList = new List<House_List>();
 
         yield return new WaitForSeconds(1f);
+
+
+        button.SetActive(false);
+        house.SetActive(false);
+        guard.SetActive(false);
+        dbrandom.SetActive(false);
 
         redButton.gameObject.SetActive(true);
         yellowButton.gameObject.SetActive(true);
@@ -406,7 +418,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator CheckScore()
+    public IEnumerator CheckScore()
     {
         Destroy(shooterGO);
 
@@ -670,132 +682,11 @@ public class GameManager : MonoBehaviour
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
 
-        rockTotal = 8;
-        rockCurrent = rockTotal - 1;
-        rocksPerTeam = 1;
-        redHammer = true;
-        StartCoroutine(DebugMode());
         db.SetActive(false);
-        mainDisplay.enabled = false;
-        state = GameState.DEBUG;
-    }
-
-    IEnumerator DebugMode()
-    {
-        for (int i = 1; i < rockCurrent; i++)
-        {
-            Vector2 rockPlace = new Vector2(Random.Range(-2f, 2f), Random.Range(0f, 8f));
-
-            if (i % 2 == 1)
-            {
-                GameObject yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
-
-                float yRocks = rocksPerTeam * 0.5f;
-                int k = (i / 2) + 1;
-                yellowRock_go.transform.position = new Vector2(rockPlace.x, rockPlace.y);
-
-                Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
-                yellowRock_info.rockNumber = k;
-                yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
-                yellowRock_go.GetComponent<SpringJoint2D>().enabled = false;
-                yellowRock_go.GetComponent<Rock_Colliders>().enabled = true;
-
-                yellowRock_info.moving = false;
-                yellowRock_info.stopped = true;
-                yellowRock_info.rest = true;
-                rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            if (i % 2 == 0)
-            {
-                GameObject redRock_go = Instantiate(redShooter, redRocksInactive);
-
-                float yRocks = rocksPerTeam * 0.5f;
-                int k = (i / 2);
-
-                Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
-                redRock_info.rockNumber = k;
-                redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
-                redRock_go.GetComponent<SpringJoint2D>().enabled = false;
-                redRock_go.GetComponent<Rock_Colliders>().enabled = true;
-                
-                redRock_go.transform.position = new Vector2(rockPlace.x, rockPlace.y);
-
-                redRock_info.moving = false;
-                redRock_info.stopped = true;
-                redRock_info.rest = true;
-
-                rockList.Add(new Rock_List(redRock_go, redRock_info));
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
-        yield return new WaitForFixedUpdate();
-        
-        rockList.Sort();
-
-        yield return new WaitForFixedUpdate();
-
-        StartCoroutine(CheckScore());
-
-        yield return new WaitForFixedUpdate();
-
-        StartCoroutine(SetupRocksDebug());
-
-        yield return new WaitForFixedUpdate();
-
-        rockCurrent--;
-
-        yield return new WaitForFixedUpdate();
-
-        OnYellowTurn();
-
-    }
-
-    IEnumerator SetupRocksDebug()
-    {
-        for (int i = rockCurrent; i <= rockTotal; i++)
-        {
-            if (i % 2 == 1)
-            {
-                GameObject yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
-
-                float yRocks = rocksPerTeam * 0.5f;
-                int k = (i / 2) + 1;
-
-                yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x, yellowRock_go.transform.position.y - (0.4f));
-                Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
-                yellowRock_info.rockNumber = k;
-                yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
-                yellowRock_go.GetComponent<Rock_Flick>().enabled = false;
-                yellowRock_go.GetComponent<Rock_Release>().enabled = false;
-                yellowRock_go.GetComponent<Rock_Force>().enabled = false;
-                rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
-                yield return new WaitForSeconds(0.1f);
-            }
-            if (i % 2 == 0)
-            {
-                GameObject redRock_go = Instantiate(redShooter, redRocksInactive);
-                float yRocks = rocksPerTeam / 2f;
-                int k = (i / 2);
-
-                redRock_go.transform.position = new Vector2(redRock_go.transform.position.x, redRock_go.transform.position.y - (0.4f));
-
-                Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
-                redRock_info.rockNumber = k;
-                redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
-                redRock_go.GetComponent<Rock_Flick>().enabled = false;
-                redRock_go.GetComponent<Rock_Release>().enabled = false;
-                redRock_go.GetComponent<Rock_Force>().enabled = false;
-                rockList.Add(new Rock_List(redRock_go, redRock_info));
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
-        rockList.Sort();
-        foreach (Rock_List rock in rockList)
-        {
-            Debug.Log(rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
-        }
+        button.SetActive(true);
+        house.SetActive(true);
+        guard.SetActive(true);
+        dbrandom.SetActive(true);
     }
 
 }
