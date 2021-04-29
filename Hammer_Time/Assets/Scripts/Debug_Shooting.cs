@@ -13,20 +13,25 @@ public class Debug_Shooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rock = gm.rockList[gm.rockCurrent].rock;
-        rb = rock.GetComponent<Rigidbody2D>();
-        rockFlick = rock.GetComponent<Rock_Flick>();
-        rockInfo = rock.GetComponent<Rock_Info>();
-
         if (Input.GetKeyDown(KeyCode.H))
         {
+            rock = gm.rockList[gm.rockCurrent].rock;
+            rb = rock.GetComponent<Rigidbody2D>();
+            rockFlick = rock.GetComponent<Rock_Flick>();
+            rockInfo = rock.GetComponent<Rock_Info>();
+
             StartCoroutine(HouseShot());
         }
 
     }
 
-    public void OnHousePress()
+    public void OnHouse()
     {
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rb = rock.GetComponent<Rigidbody2D>();
+        rockFlick = rock.GetComponent<Rock_Flick>();
+        rockInfo = rock.GetComponent<Rock_Info>();
+
         StartCoroutine(HouseShot());
     }
 

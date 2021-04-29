@@ -6,16 +6,25 @@ public class Debug_Random : MonoBehaviour
 {
     public GameManager gm;
     GameObject rock;
+
+    public int rockTotal;
+    public int rocksPerTeam;
+    public bool redHammer;
     // Start is called before the first frame update
     public void DebugStart()
     {
-        gm.rockTotal = 8;
-        gm.rockCurrent = gm.rockTotal - 1;
-        gm.rocksPerTeam = 1;
-        gm.redHammer = true;
-        StartCoroutine(DebugMode());
+        rockTotal = 8;
+        gm.rockTotal = rockTotal;
+        gm.rockCurrent = rockTotal - 1;
+        rocksPerTeam = 1;
+        gm.rocksPerTeam = rocksPerTeam;
+        redHammer = true;
+        gm.redHammer = redHammer;
+
         gm.mainDisplay.enabled = false;
         gm.state = GameState.DEBUG;
+
+        StartCoroutine(DebugMode());
     }
 
     IEnumerator DebugMode()
@@ -129,10 +138,14 @@ public class Debug_Random : MonoBehaviour
                 yield return new WaitForSeconds(0.1f);
             }
         }
+
         gm.rockList.Sort();
         foreach (Rock_List rock in gm.rockList)
         {
             Debug.Log(gm.rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
         }
+
+        gm.CheckScore();
     }
+
 }
