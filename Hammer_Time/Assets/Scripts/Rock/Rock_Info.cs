@@ -48,6 +48,11 @@ public class Rock_Info : MonoBehaviour
         if (stopped == true && rest == false)
         {
             rest = true;
+
+            if (inPlay != true)
+            {
+                outOfPlay = true;
+            }
         }
 
         if (hit == true)

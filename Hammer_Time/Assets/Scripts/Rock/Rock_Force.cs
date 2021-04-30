@@ -8,10 +8,10 @@ public class Rock_Force : MonoBehaviour
 
     public float turnValue = 60f;
     public Vector2 curl;
+    public float scaleFactor;
 
     float velX = 0f;
     float velY = 0f;
-    public Vector2 vel;
     bool turnStart;
     bool forceStart;
     public bool flipAxis = false;
@@ -42,7 +42,7 @@ public class Rock_Force : MonoBehaviour
     {
         velX = body.angularVelocity;
 
-        vel = new Vector2(velX, velY);
+        Vector2 vel = new Vector2(velX * scaleFactor, velY);
         
         if (turnStart == true)
         {
@@ -56,9 +56,8 @@ public class Rock_Force : MonoBehaviour
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
 
-            if (body.angularVelocity <= 0.01f)
+            if (body.angularVelocity <= 0.01f && body.velocity.y <= 0.01f)
             {
-                //Debug.Log("Force Stop from RockForce");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
             }

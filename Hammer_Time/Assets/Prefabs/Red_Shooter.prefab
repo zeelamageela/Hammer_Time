@@ -195,9 +195,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16ea23e6c634e6947abf61d9b8687d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnValue: 400
-  curl: {x: -0.15, y: 0}
-  vel: {x: 0, y: 0}
+  turnValue: 485.91
+  curl: {x: -0.5, y: 0}
+  scaleFactor: 0.1
   flipAxis: 0
 --- !u!114 &2680404496690781294
 MonoBehaviour:

@@ -13,8 +13,8 @@ public class Debug_Shooting : MonoBehaviour
     Rock_Info rockInfo;
     Rock_Colliders rockCols;
 
-    public Vector2 houseForce;
     public Vector2 buttonForce;
+    public Vector2 houseForce;
     public Vector2 guardForce;
     
     public CinemachineVirtualCamera vcam;
@@ -23,10 +23,28 @@ public class Debug_Shooting : MonoBehaviour
 
     void Update()
     {
-
         if (gm.rockList != null)
         {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                gm.OnDebugReset();
+            }
             if (Input.GetKeyDown(KeyCode.H))
+            {
+                OnHouse();
+            }
+
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                OnGuard();
+            }
+
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                OnButton();
+            }
+
+            if (Input.GetKeyDown(KeyCode.S))
             {
                 rock = gm.rockList[gm.rockCurrent].rock;
                 rb = rock.GetComponent<Rigidbody2D>();
@@ -34,7 +52,9 @@ public class Debug_Shooting : MonoBehaviour
                 rockInfo = rock.GetComponent<Rock_Info>();
                 rockCols = rock.GetComponent<Rock_Colliders>();
 
-                StartCoroutine(HouseShot());
+                Debug.Log("Debug Stop");
+
+                rb.velocity = Vector2.zero;
             }
         }
     }
@@ -90,12 +110,11 @@ public class Debug_Shooting : MonoBehaviour
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
 
-        this.enabled = false;
+        //this.enabled = false;
     }
 
     IEnumerator ButtonShot()
     {
-        Debug.Log("gonna shoot");
 
         yield return new WaitForFixedUpdate();
 
@@ -113,12 +132,11 @@ public class Debug_Shooting : MonoBehaviour
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
 
-        this.enabled = false;
+        //this.enabled = false;
     }
 
     IEnumerator GuardShot()
     {
-        Debug.Log("gonna shoot");
 
         yield return new WaitForFixedUpdate();
 
@@ -136,6 +154,6 @@ public class Debug_Shooting : MonoBehaviour
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
 
-        this.enabled = false;
+        //this.enabled = false;
     }
 }

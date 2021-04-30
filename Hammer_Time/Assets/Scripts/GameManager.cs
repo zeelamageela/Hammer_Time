@@ -52,9 +52,6 @@ public class GameManager : MonoBehaviour
     public Button redButton;
     public Button yellowButton;
     public Button sweepButton;
-    public GameObject button;
-    public GameObject house;
-    public GameObject guard;
     public GameObject db;
     public GameObject dbrandom;
 
@@ -99,10 +96,6 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-
-        button.SetActive(false);
-        house.SetActive(false);
-        guard.SetActive(false);
         dbrandom.SetActive(false);
 
         redButton.gameObject.SetActive(true);
@@ -401,22 +394,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForFixedUpdate();
     }
 
-    IEnumerator OutOfPlay()
-    {
-        foreach (Rock_List rock in rockList)
-        {
-            if (rock.rockInfo.outOfPlay)
-            {
-                if (rock.rockInfo.inPlay == false)
-                {
-                    Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is out of play");
-                    rock.rock.GetComponent<Rock_Colliders>().OutOfPlay();
-                }
-            }
-            else yield break;
-        }
-    }
-
     public IEnumerator CheckScore()
     {
         state = GameState.CHECKSCORE;
@@ -433,12 +410,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
-        //StartCoroutine(OutOfPlay());
-        //Debug.Log("Out of play cull");
-        yield return new WaitForFixedUpdate();
-
         houseList.Clear();
-
 
         foreach (Rock_List rock in rockList)
         {
@@ -470,55 +442,41 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.5f);
 
-            int tempRedScore = 0;
-            int tempYellowScore = 0;
             int houseRock = houseList.Count;
 
-            if (redHammer)
+            // if the list isnt empty
+            if (houseList.Count != 0)
             {
-                redRock = rockList[1].rockInfo;
-                yellowRock = rockList[0].rockInfo;
-            }
-            else
-            {
-                redRock = rockList[0].rockInfo;
-                yellowRock = rockList[1].rockInfo;
-            }
+                int houseScore = 0;
+                string winningTeamName = houseList[0].rockInfo.teamName;
+                bool stopCounting = false;
 
-            if (houseRock != 0)
-            {
-                if (houseList[0].rockInfo.teamName == redRock.teamName)
+                // lets loop the list
+                for (int i = 0; i < houseList.Count; i++)
                 {
-                    for (int i = 0; i < houseRock; i++)
+                    if (!stopCounting)
                     {
-                        if (houseList[i].rockInfo.teamName == redRock.teamName)
+                        // lets only count until the team changes
+                        if (houseList[i].rockInfo.teamName == winningTeamName)
                         {
-                            tempRedScore++;
+                            houseScore++;
+                        }
+                        else if(houseList[i].rockInfo.teamName != winningTeamName)
+                        {
+                            stopCounting = true;
                         }
                     }
-                    mainDisplay.text = redRock.teamName + " is sitting " + tempRedScore;
-                    yield return new WaitForSeconds(1.5f);
                 }
 
-                else if (houseList[0].rockInfo.teamName == yellowRock.teamName)
-                {
-                    for (int i = 0; i < houseRock; i++)
-                    {
-                        if (houseList[i].rockInfo.teamName == yellowRock.teamName)
-                        {
-                            tempYellowScore++;
-                        }
-                    }
-                    mainDisplay.text = yellowRock.teamName + " is sitting " + tempYellowScore;
-                    yield return new WaitForSeconds(1.5f);
-                }
+
+                mainDisplay.text = winningTeamName + " is sitting " + houseScore;
+                yield return new WaitForSeconds(1.5f);
             }
-            else if (houseRock == 0)
+            else if (houseList.Count == 0)
             {
                 mainDisplay.text = "No Rocks In House";
                 yield return new WaitForSeconds(1.5f);
             }
-
 
             yield return new WaitForFixedUpdate();
 
@@ -527,8 +485,6 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             mainDisplay.gameObject.SetActive(false);
         }
-        
-
     }
 
     void NextTurn()
@@ -593,7 +549,7 @@ public class GameManager : MonoBehaviour
                 {
                     houseList.Add(new House_List(rock.rock, rock.rockInfo));
                 }
-                
+
             }
 
             yield return new WaitForFixedUpdate();
@@ -601,128 +557,151 @@ public class GameManager : MonoBehaviour
             houseList.Sort();
 
             yield return new WaitForFixedUpdate();
+            int houseRock = houseList.Count;
 
-            foreach (House_List rock in houseList)
+            // if the list isnt empty
+            if (houseList.Count != 0)
             {
-                Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
-            }
+                int houseScore = 0;
+                string winningTeamName = houseList[0].rockInfo.teamName;
+                bool stopCounting = false;
 
-
-            if (redHammer)
-            {
-                redRock = rockList[1].rockInfo;
-                yellowRock = rockList[0].rockInfo;
-            }
-            else
-            {
-                redRock = rockList[0].rockInfo;
-                yellowRock = rockList[1].rockInfo;
-            }
-
-            int houseRocks = houseList.Count;
-
-
-            if (houseList[0].rockInfo.teamName == redRock.teamName)
-            {
-                RedScore();
-
-                mainDisplay.gameObject.SetActive(true);
-
-                if (redHammer)
+                // lets loop the list
+                for (int i = 0; i < houseList.Count; i++)
                 {
-                    mainDisplay.text = redRock.teamName + " scored " + redScore;
-                    redHammer = false;
+                    if (!stopCounting)
+                    {
+                        // lets only count until the team changes
+                        if (houseList[i].rockInfo.teamName == winningTeamName)
+                        {
+                            houseScore++;
+                        }
+                        else if (houseList[i].rockInfo.teamName != winningTeamName)
+                        {
+                            stopCounting = true;
+                        }
+                    }
+                }
+
+                if (winningTeamName != rockList[1].rockInfo.teamName)
+                {
+                    mainDisplay.text = winningTeamName + " stole " + houseScore;
                 }
                 else
                 {
-                    mainDisplay.text = redRock.teamName + " stole " + redScore;
-                    redHammer = false;
+                    mainDisplay.text = winningTeamName + " scored " + houseScore;
                 }
+
+                if (winningTeamName == redRock.teamName)
+                {
+                    redScore = redScore + houseScore;
+                }
+                else if (winningTeamName == yellowRock.teamName)
+                {
+                    yellowScore = yellowScore + houseScore;
+                }
+
+                yield return new WaitForSeconds(1.5f);
             }
-
-            if (houseList[0].rockInfo.teamName == yellowRock.teamName)
+            else if (houseList.Count == 0)
             {
-                YellowScore();
+                mainDisplay.text = "No Rocks In House";
+                yield return new WaitForSeconds(1.5f);
+            }
+            //    foreach (House_List rock in houseList)
+            //    {
+            //        Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            //    }
 
-                mainDisplay.gameObject.SetActive(true);
 
+            //    if (redHammer)
+            //    {
+            //        redRock = rockList[1].rockInfo;
+            //        yellowRock = rockList[0].rockInfo;
+            //    }
+            //    else
+            //    {
+            //        redRock = rockList[0].rockInfo;
+            //        yellowRock = rockList[1].rockInfo;
+            //    }
+
+            //    int houseRocks = houseList.Count;
+
+
+            //    if (houseList[0].rockInfo.teamName == redRock.teamName)
+            //    {
+            //        RedScore();
+
+            //        mainDisplay.gameObject.SetActive(true);
+
+            //        if (redHammer)
+            //        {
+            //            mainDisplay.text = redRock.teamName + " scored " + redScore;
+            //            redHammer = false;
+            //        }
+            //        else
+            //        {
+            //            mainDisplay.text = redRock.teamName + " stole " + redScore;
+            //            redHammer = false;
+            //        }
+            //    }
+
+            //    if (houseList[0].rockInfo.teamName == yellowRock.teamName)
+            //    {
+            //        YellowScore();
+
+            //        mainDisplay.gameObject.SetActive(true);
+
+            //        if (redHammer)
+            //        {
+            //            mainDisplay.text = yellowRock.teamName + " stole " + yellowScore;
+            //            redHammer = true;
+            //        }
+            //        else
+            //        {
+            //            mainDisplay.text = yellowRock.teamName + " scored " + yellowScore;
+            //            redHammer = true;
+            //        }
+            //    }
+            //}
+
+            else
+            {
                 if (redHammer)
                 {
-                    mainDisplay.text = yellowRock.teamName + " stole " + yellowScore;
                     redHammer = true;
+                    mainDisplay.enabled = true;
+                    mainDisplay.text = redRock.teamName + " keeps hammer";
                 }
                 else
                 {
-                    mainDisplay.text = yellowRock.teamName + " scored " + yellowScore;
-                    redHammer = true;
+                    redHammer = false;
+                    mainDisplay.enabled = true;
+                    mainDisplay.text = yellowRock.teamName + " keeps hammer";
                 }
             }
+
+            yield return new WaitForSeconds(1f);
+
+            state = GameState.RESET;
+            StartCoroutine(ResetGame());
         }
 
-        else
-        {
-            if (redHammer)
-            {
-                redHammer = true;
-                mainDisplay.enabled = true;
-                mainDisplay.text = redRock.teamName + " keeps hammer";
-            }
-            else
-            {
-                redHammer = false;
-                mainDisplay.enabled = true;
-                mainDisplay.text = yellowRock.teamName + " keeps hammer";
-            }
-        }
-
-        yield return new WaitForSeconds(2f);
-
-        state = GameState.RESET;
-        StartCoroutine(ResetGame());
     }
-
-    void RedScore()
-    {
-        int houseRocks;
-
-        houseRocks = houseList.Count;
-
-        for (int i = 0; i < houseRocks; i++)
-        {
-            if (houseList[i].rockInfo.teamName == redRock.teamName)
-            {
-                redScore++;
-                Debug.Log("Red + " + redScore);
-            }
-            else break;
-        }
-    }
-
-    void YellowScore()
-    {
-        int houseRocks;
-
-        houseRocks = houseList.Count;
-
-        for (int i = 0; i < houseRocks; i++)
-        {
-            if (houseList[i].rockInfo.teamName == yellowRock.teamName)
-            {
-                yellowScore++;
-                Debug.Log("Yellow + " + yellowScore);
-            }
-            else break;
-        }
-    }
-
     public void OnDebug()
     {
-
         db.SetActive(false);
-        button.SetActive(true);
-        house.SetActive(true);
-        guard.SetActive(true);
+
+        GetComponent<Debug_Placement>().enabled = true;
+        GetComponent<Debug_Shooting>().enabled = true;
+        GetComponent<Debug_Random>().enabled = true;
+
         dbrandom.SetActive(true);
+    }
+
+    public void OnDebugReset()
+    {
+        StartCoroutine(Scoring());
     }
 
 }
