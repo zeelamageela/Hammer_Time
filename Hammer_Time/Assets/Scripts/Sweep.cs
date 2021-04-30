@@ -22,15 +22,11 @@ public class Sweep : MonoBehaviour
 
     public IEnumerator OnSweep()
     {
-        for (int i = 0; i < sweepTime; i++)
-        {
-            rb.drag = rb.drag - sweepAmt;
-            Debug.Log(rb.drag + " is current drag");
-            Debug.Log("Sweep Counter - " + i);
-            //rb.angularDrag = rb.angularDrag + sweepAmt;
-            yield return new WaitForFixedUpdate();
-        }
-        yield return new WaitForFixedUpdate();
+        rb.drag = rb.drag - sweepAmt;
+        Debug.Log(rb.drag + " is current drag");
+        rb.angularDrag = rb.angularDrag + sweepAmt;
+        yield return new WaitForSeconds(0.25f);
+        rb.drag = 0.38f;
 
     }
 }

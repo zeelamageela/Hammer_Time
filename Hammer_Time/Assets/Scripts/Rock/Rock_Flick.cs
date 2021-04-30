@@ -46,6 +46,7 @@ public class Rock_Flick: MonoBehaviour
         vcam_go = GameObject.Find("CM vcam1");
         vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
 
+        gameObject.transform.parent = null;
         gameObject.transform.position = launcher.transform.position;
     }
 
@@ -80,7 +81,6 @@ public class Rock_Flick: MonoBehaviour
 
     void OnDrag()
     {
-
         GameObject rock = gameObject;
         startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -104,7 +104,7 @@ public class Rock_Flick: MonoBehaviour
 
         GetComponent<SpringJoint2D>().enabled = false;
         springReleased = true;
-        //this.enabled = false;
+        this.enabled = false;
 
         yield return new WaitForFixedUpdate();
 

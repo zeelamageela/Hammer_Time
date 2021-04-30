@@ -10,7 +10,7 @@ public class Debug_Random : MonoBehaviour
     public int rockTotal;
     public int rocksPerTeam;
     public bool redHammer;
-    // Start is called before the first frame update
+
     public void DebugStart()
     {
         gm.redButton.gameObject.SetActive(false);
@@ -86,8 +86,6 @@ public class Debug_Random : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
-        StartCoroutine(gm.CheckScore());
-
         yield return new WaitForFixedUpdate();
 
         StartCoroutine(SetupRocksDebug());
@@ -148,7 +146,11 @@ public class Debug_Random : MonoBehaviour
             Debug.Log(gm.rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
         }
 
-        gm.CheckScore();
+        StartCoroutine(gm.CheckScore());
+        --gm.rockCurrent;
+
+        Debug.Log("Current Rock is " + gm.rockCurrent);
+
     }
 
 }

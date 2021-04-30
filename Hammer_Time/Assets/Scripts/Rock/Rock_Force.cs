@@ -58,7 +58,9 @@ public class Rock_Force : MonoBehaviour
 
             if (body.angularVelocity <= 0.01f)
             {
+                //Debug.Log("Force Stop from RockForce");
                 GetComponent<Rock_Info>().stopped = true;
+                GetComponent<Rock_Info>().rest = true;
             }
         }
     }

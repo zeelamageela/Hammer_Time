@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 
-public enum GameState { START, REDTURN, YELLOWTURN, SCORE, RESET, END, DEBUG }
+public enum GameState { START, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
 
 
 public class GameManager : MonoBehaviour
@@ -297,25 +297,21 @@ public class GameManager : MonoBehaviour
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
-        yellowTurn_Display.enabled = false;
         redTurn_Display.enabled = true;
         redTurn_Display.text = redRock_1.name;
         redRocksLeft_Display.text = redRocks_left + " Rocks Left";
         redRocksLeft_Slider.maxValue = rocksPerTeam;
         redRocksLeft_Slider.value = redRock.rockNumber;
 
-        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == true);
-
-        trajectory.Show();
-
         yield return new WaitUntil(() => redRock.shotTaken == true);
+
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => redRock.released == true);
         sweepButton.gameObject.SetActive(true);
 
         yield return new WaitUntil(() => redRock.rest == true);
-
+        Debug.Log("redRock at Rest");
         redTurn_Display.enabled = false;
         vcam.enabled = false;
         sweepButton.gameObject.SetActive(false);
@@ -353,6 +349,7 @@ public class GameManager : MonoBehaviour
         yellowRocks_left--;
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
+
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
@@ -374,6 +371,8 @@ public class GameManager : MonoBehaviour
         yellowTurn_Display.enabled = false;
         vcam.enabled = false;
         sweepButton.gameObject.SetActive(false);
+
+        StartCoroutine(AllStopped());
 
         StartCoroutine(CheckScore());
 
@@ -420,6 +419,8 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator CheckScore()
     {
+        state = GameState.CHECKSCORE;
+
         Destroy(shooterGO);
 
         Debug.Log("Check Score");
@@ -454,7 +455,7 @@ public class GameManager : MonoBehaviour
 
         if (rockList.Count == rockCurrent + 1)
         {
-            Debug.Log(rockList.Count + " equals " + rockCurrent + 1);
+            Debug.Log(rockList.Count + " equals " + (rockCurrent + 1));
             StartCoroutine(Scoring());
         }
         else
@@ -570,26 +571,6 @@ public class GameManager : MonoBehaviour
         redTurn_Display.enabled = false;
         mainDisplay.gameObject.SetActive(true);
 
-        houseList.Clear();
-
-        foreach (Rock_List rock in rockList)
-        {
-            if (rock.rockInfo.inHouse)
-            {
-                houseList.Add(new House_List(rock.rock, rock.rockInfo));
-            }
-        }
-
-        yield return new WaitForFixedUpdate();
-
-        houseList.Sort();
-
-        foreach (House_List rock in houseList)
-        {
-            Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
-        }
-
-
         if (redHammer)
         {
             redRock = rockList[1].rockInfo;
@@ -601,61 +582,84 @@ public class GameManager : MonoBehaviour
             yellowRock = rockList[1].rockInfo;
         }
 
-        int houseRocks = houseList.Count;
-
-        if (houseList[0].rockInfo.teamName == redRock.teamName)
+        if (houseList.Count != 0)
         {
-            for (int i = 0; i < houseRocks; i++)
+            Debug.Log("house list not null");
+            houseList.Clear();
+
+            foreach (Rock_List rock in rockList)
             {
-                if (houseList[i].rockInfo.teamName == redRock.teamName)
+                if (rock.rockInfo.inHouse)
                 {
-                    redScore++;
-                    Debug.Log("Red + " + redScore);
+                    houseList.Add(new House_List(rock.rock, rock.rockInfo));
                 }
-                else yield return null;
+                
             }
 
-            mainDisplay.gameObject.SetActive(true);
+            yield return new WaitForFixedUpdate();
+
+            houseList.Sort();
+
+            yield return new WaitForFixedUpdate();
+
+            foreach (House_List rock in houseList)
+            {
+                Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            }
+
 
             if (redHammer)
             {
-                mainDisplay.text = redRock.teamName + " scored " + redScore;
-                redHammer = false;
+                redRock = rockList[1].rockInfo;
+                yellowRock = rockList[0].rockInfo;
             }
             else
             {
-                mainDisplay.text = redRock.teamName + " stole " + redScore;
-                redHammer = false;
+                redRock = rockList[0].rockInfo;
+                yellowRock = rockList[1].rockInfo;
             }
-        }
 
-        else if (houseList[0].rockInfo.teamName == yellowRock.teamName)
-        {
-            for (int i = 0; i < houseRocks; i++)
+            int houseRocks = houseList.Count;
+
+
+            if (houseList[0].rockInfo.teamName == redRock.teamName)
             {
-                if (houseList[i].rockInfo.teamName == yellowRock.teamName)
+                RedScore();
+
+                mainDisplay.gameObject.SetActive(true);
+
+                if (redHammer)
                 {
-                    yellowScore++;
-                    Debug.Log("Yellow + " + yellowScore);
+                    mainDisplay.text = redRock.teamName + " scored " + redScore;
+                    redHammer = false;
                 }
-                else yield return null;
+                else
+                {
+                    mainDisplay.text = redRock.teamName + " stole " + redScore;
+                    redHammer = false;
+                }
             }
 
-            mainDisplay.gameObject.SetActive(true);
+            if (houseList[0].rockInfo.teamName == yellowRock.teamName)
+            {
+                YellowScore();
 
-            if (redHammer)
-            {
-                mainDisplay.text = yellowRock.teamName + " stole " + yellowScore;
-                redHammer = true;
-            }
-            else
-            {
-                mainDisplay.text = yellowRock.teamName + " scored " + yellowScore;
-                redHammer = true;
+                mainDisplay.gameObject.SetActive(true);
+
+                if (redHammer)
+                {
+                    mainDisplay.text = yellowRock.teamName + " stole " + yellowScore;
+                    redHammer = true;
+                }
+                else
+                {
+                    mainDisplay.text = yellowRock.teamName + " scored " + yellowScore;
+                    redHammer = true;
+                }
             }
         }
 
-        else if (houseRocks == 0)
+        else
         {
             if (redHammer)
             {
@@ -675,6 +679,40 @@ public class GameManager : MonoBehaviour
 
         state = GameState.RESET;
         StartCoroutine(ResetGame());
+    }
+
+    void RedScore()
+    {
+        int houseRocks;
+
+        houseRocks = houseList.Count;
+
+        for (int i = 0; i < houseRocks; i++)
+        {
+            if (houseList[i].rockInfo.teamName == redRock.teamName)
+            {
+                redScore++;
+                Debug.Log("Red + " + redScore);
+            }
+            else break;
+        }
+    }
+
+    void YellowScore()
+    {
+        int houseRocks;
+
+        houseRocks = houseList.Count;
+
+        for (int i = 0; i < houseRocks; i++)
+        {
+            if (houseList[i].rockInfo.teamName == yellowRock.teamName)
+            {
+                yellowScore++;
+                Debug.Log("Yellow + " + yellowScore);
+            }
+            else break;
+        }
     }
 
     public void OnDebug()

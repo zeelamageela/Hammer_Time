@@ -16,6 +16,7 @@ public class Rock_Info : MonoBehaviour
     public bool hit = false;
     public bool moving = false;
     public bool shotTaken = false;
+    public float velocity;
 
     public float distance;
 
