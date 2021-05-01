@@ -468,12 +468,13 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-
+                mainDisplay.enabled = true;
                 mainDisplay.text = winningTeamName + " is sitting " + houseScore;
                 yield return new WaitForSeconds(1.5f);
             }
             else if (houseList.Count == 0)
             {
+                mainDisplay.enabled = true;
                 mainDisplay.text = "No Rocks In House";
                 yield return new WaitForSeconds(1.5f);
             }
