@@ -38,18 +38,10 @@ public class TrajectoryLine : MonoBehaviour
         Vector3 B = new Vector3(0, -25, 0);
 
         pos.Add(new Vector3(launcher.transform.position.x, launcher.transform.position.y, 0f));
-        B.y = (velocity.y * 15f) + (force.y * 15f * 15f) / (2f * 145f);
+        B.y = (velocity.y * 10f) + (force.y * 10f * 10f) / (2f * 145f);
         pos.Add(new Vector3(0f, B.y, 0f));
-        //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
 
-        //velocity = circleTraj.velocity;
-        //force = circleTraj.force;
-        //lr.startWidth = 0.25f;
-        //lr.endWidth = 0.25f;
-        //lr.useWorldSpace = true; 
-        //lr.positionCount = 200;
-        //float t = 0f;
-        //Vector3 B = new Vector3(0, -25, 0);
+        //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
 
         //for (int i = 0; i < lr.positionCount; i++)
         //{

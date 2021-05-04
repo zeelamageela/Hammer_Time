@@ -37,7 +37,6 @@ public class Rock_Force : MonoBehaviour
         return;
     }
 
-
     void FixedUpdate()
     {
         velX = body.angularVelocity;
