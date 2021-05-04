@@ -71,12 +71,10 @@ public class Rock_Flick: MonoBehaviour
 
     void OnMouseDown()
     {
-
         isPressed = true;
         rb.isKinematic = true;
         //trajectory.Show();
         GetComponent<SpriteRenderer>().enabled = true;
-
     }
 
     void OnDrag()

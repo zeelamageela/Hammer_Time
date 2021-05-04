@@ -47,7 +47,7 @@ public class Rock_Colliders : MonoBehaviour
 
     public IEnumerator OutOfPlay()
     {
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.1f);
 
         GetComponent<Rock_Info>().stopped = true;
         GetComponent<Rock_Info>().rest = true;
@@ -55,7 +55,7 @@ public class Rock_Colliders : MonoBehaviour
         body.velocity = Vector2.zero;
         body.angularVelocity = 0f;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.5f);
 
         gameObject.SetActive(false);
     }
