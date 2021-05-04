@@ -14,6 +14,7 @@ public class Rock_Force : MonoBehaviour
     float velY = 0f;
     bool turnStart;
     bool forceStart;
+    bool debugVertex;
     public bool flipAxis = false;
     //public bool moving;
     int dirMult = 1;
@@ -33,7 +34,7 @@ public class Rock_Force : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = true;
         turnStart = true;
         forceStart = true;
-
+        debugVertex = true;
         return;
     }
 
@@ -49,6 +50,8 @@ public class Rock_Force : MonoBehaviour
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
             Debug.Log("Rotate");
             turnStart = false;
+
+            Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
         }
 
         if (forceStart == true)
@@ -61,6 +64,16 @@ public class Rock_Force : MonoBehaviour
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
             }
+
+            if (debugVertex)
+            {
+                if (body.velocity.x <= 0f)
+                {
+                    Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
+                    debugVertex = false;
+                }
+            }
+            
         }
     }
 }

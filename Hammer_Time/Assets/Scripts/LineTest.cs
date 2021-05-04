@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class LineTest : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public GameObject go1;
-    public GameObject go2;
-    public GameObject go3;
+
+    public GameObject launcher;
+    public GameObject endPoint;
     private LineRenderer lineRenderer;
 
     void Start()
@@ -21,7 +20,7 @@ public class LineTest : MonoBehaviour
         pos.z = 20;
         pos = Camera.main.ScreenToWorldPoint(pos);
 
-        DrawQuadraticBezierCurve(go1.transform.position, pos, go3.transform.position);
+        DrawQuadraticBezierCurve(launcher.transform.position, pos, endPoint.transform.position);
     }
 
     void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)

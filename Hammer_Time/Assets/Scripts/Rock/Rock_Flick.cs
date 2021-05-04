@@ -94,6 +94,7 @@ public class Rock_Flick: MonoBehaviour
         isPressed = false;
         rb.isKinematic = false;
         StartCoroutine(Release());
+        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
     }
 
     public IEnumerator Release()

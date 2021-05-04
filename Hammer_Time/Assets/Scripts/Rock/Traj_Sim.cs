@@ -12,6 +12,7 @@ public class Traj_Sim : MonoBehaviour
     GameObject launcher;
     GameObject circleTraj;
     Rock_Flick_Traj rockFlickTraj;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -48,15 +49,15 @@ public class Traj_Sim : MonoBehaviour
 
     public IEnumerator Release()
     {
-        yield return new WaitForSeconds(0.25f);
+        //yield return new WaitForSeconds(0.15f);
         rb.isKinematic = false;
         launcherCol.enabled = true;
         Debug.Log("Release the traj");
-        yield return new WaitForSeconds(releaseTime);
-        GetComponent<SpringJoint2D>().enabled = false;
+        //yield return new WaitForSeconds(releaseTime);
+        //GetComponent<SpringJoint2D>().enabled = false;
         //this.enabled = false;
 
-        //yield return new WaitUntil(() => launcherRb.position == rb.position);
+        yield return new WaitUntil(() => launcherRb.position == rb.position);
         //Debug.Log("origin");
         //gameObject.SetActive(false);
     }

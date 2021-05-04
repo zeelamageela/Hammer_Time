@@ -50,7 +50,7 @@ public class Rock_Flick_Traj : MonoBehaviour
             if (mouseDelta != Vector3.zero)
             {
                 Debug.Log("Mouse moving");
-                Instantiate(circleTrajPrefab, gameObject.transform);
+                //Instantiate(circleTrajPrefab, gameObject.transform);
             }
             // Then we store our mousePosition so that we can check it again next frame.
             lastMouseCoordinate = Input.mousePosition;

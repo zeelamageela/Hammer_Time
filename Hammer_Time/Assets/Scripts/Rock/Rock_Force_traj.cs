@@ -64,8 +64,6 @@ public class Rock_Force_traj : MonoBehaviour
         {
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
-
-            
         }
     }
 }

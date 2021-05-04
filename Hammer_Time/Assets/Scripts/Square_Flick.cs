@@ -22,6 +22,10 @@ public class Square_Flick : MonoBehaviour
     public bool isReleased;
     public bool extend;
 
+    public GameObject circleTrajPrefab;
+
+    Vector3 lastMouseCoordinate = Vector3.zero;
+    public Vector2 velocity;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,6 +37,15 @@ public class Square_Flick : MonoBehaviour
         if (isPressed)
         {
             rb.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
+
+            if (mouseDelta != Vector3.zero)
+            {
+                Debug.Log("Mouse moving");
+                Instantiate(circleTrajPrefab, gameObject.transform);
+            }
+            // Then we store our mousePosition so that we can check it again next frame.
+            lastMouseCoordinate = Input.mousePosition;
 
             OnDrag();
         }
