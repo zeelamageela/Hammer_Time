@@ -61,7 +61,7 @@ public class TrajectoryLine : MonoBehaviour
         //Debug.Log(B.y);
         //lr.SetPositions(pos.ToArray());
         Vector3 springForce3 = new Vector3(springForce.x, springForce.y, 0f);
-        //DrawQuadraticBezierCurve(launcher.transform.position, springForce, circle.transform.position);
+        DrawQuadraticBezierCurve(launcher.transform.position, springForce, circle.transform.position);
     }
 
     void DrawQuadraticBezierCurve(Vector3 launcher, Vector3 curlPoint, Vector3 circle)
@@ -72,7 +72,7 @@ public class TrajectoryLine : MonoBehaviour
 
         for (int i = 0; i < lr.positionCount; i++)
         {
-            B = (1 - t) * (1 - t) * -0.0026f * launcher - 0.035f * (1 - t) * t * pos + t * t * 0.33f * new Vector3(;
+            B = (1 - t) * (1 - t) * -0.0026f * launcher - 0.035f * (1 - t) * t * curlPoint + t * t * 0.33f * new Vector3(0f, 6.5f, 0f);
             lr.SetPosition(i, B);
             t += (1 / (float)lr.positionCount);
         }
