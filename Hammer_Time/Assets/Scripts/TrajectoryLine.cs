@@ -48,6 +48,11 @@ public class TrajectoryLine : MonoBehaviour
         //pos.Add(new Vector3(launcher.transform.position.x, launcher.transform.position.y, 0f));
         //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
         //Vector3 B = new Vector3(0f, 0f, 0f);
+        pos.Add(new Vector3(launcher.transform.position.x, launcher.transform.position.y, 0f));
+        B.y = (velocity.y * 10f) + (force.y * 10f * 10f) / (2f * 145f);
+        pos.Add(new Vector3(0f, B.y, 0f));
+
+        //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
 
         //X Velocity -> vi * t - (vi * t * t)/2t
         //B.x = (velocity.x * t) - ((velocity.x * t) / 2);
