@@ -1028,7 +1028,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06238842, y: -23.79066, z: -10}
+  m_LocalPosition: {x: -0.07083511, y: -23.79066, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -4932,7 +4932,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171837316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06238842, y: -23.79066, z: -10}
+  m_LocalPosition: {x: -0.07083511, y: -23.79066, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1385325366}
@@ -5085,12 +5085,10 @@ MonoBehaviour:
   springForce: {x: 0, y: 0}
   springDistance: 0
   springDirection: {x: 0, y: 0}
-  curlPoint: {x: 0.4, y: -2.25, z: 0}
-  yScaler: -0.01
-  yOffset: 1
-  xScaler: 1
-  xOffset: 1
-  targetPoint: {x: 0, y: -20, z: 0}
+  curlPoint: {x: 2, y: -2.25, z: 0}
+  yScaler: 4
+  xScaler: 4
+  targetPoint: {x: 0, y: -15, z: 0}
 --- !u!120 &1246941260
 LineRenderer:
   m_ObjectHideFlags: 0

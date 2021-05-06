@@ -38,8 +38,12 @@ public class TrajectoryLine : MonoBehaviour
         springDistance = Vector2.Distance(circle.transform.position, launcher.transform.position);
         springDirection = (Vector2)Vector3.Normalize(launcher.transform.position - circle.transform.position);
         Vector3 circlePos = circle.transform.position;
-        targetPoint.x = targetPoint.x * xScaler * springDirection.x * springDistance;
-        targetPoint.y = targetPoint.y * yScaler * springDirection.y * springDistance - 25f;
+        targetPoint.x = xScaler * springDirection.x * springDistance;
+        targetPoint.y = yScaler * springDirection.y * springDistance;
+        targetPoint = new Vector3(targetPoint.x, targetPoint.y, 0f);
+
+        curlPoint.x = (xScaler / 2) * springDistance * springDirection.x;
+        curlPoint.y = (yScaler / 2f) * springDistance * springDirection.y;
         //curlPoint.x = curlPoint.x * springDistance;
         //curlPoint.y = curlPoint.y * springDistance;
 
