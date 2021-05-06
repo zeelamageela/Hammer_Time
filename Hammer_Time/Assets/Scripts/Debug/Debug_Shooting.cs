@@ -121,9 +121,9 @@ public class Debug_Shooting : MonoBehaviour
         rock.GetComponent<SpringJoint2D>().enabled = false;
         rockFlick.enabled = false;
 
-        yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(buttonForce * 1000f);
+        yield return new WaitForSeconds(0.1f);
         Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
         rockCols.shotTaken = true;
 

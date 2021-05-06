@@ -80,7 +80,9 @@ public class Rock_Flick_Traj : MonoBehaviour
     private void OnMouseUp()
     {
         isPressed = false;
-        gameObject.SetActive(false);
+        rb.isKinematic = false;
+        GetComponent<Collider2D>().enabled = true;
+        //gameObject.SetActive(false);
     }
 
     
