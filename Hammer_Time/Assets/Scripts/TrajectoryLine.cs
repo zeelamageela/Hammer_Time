@@ -36,11 +36,12 @@ public class TrajectoryLine : MonoBehaviour
     {
         Debug.Log(collider.name);
 
-        if (collider != rock.GetComponent<Collider2D>())
+        if (collider == rock.GetComponent<Collider2D>())
         {
-            trajCollision = false;
+            Debug.Log(collider.name);
+            trajCollision = true;
         }
-        else trajCollision = true;
+        //else trajCollision = true;
     }
 
     private void Update()
@@ -72,12 +73,13 @@ public class TrajectoryLine : MonoBehaviour
             //pos.Add(B);
             //Vector2 B2 = new Vector2(B.x, B.y);
             lr.SetPosition(i, B);
+            //edgeCol.points[i] = new Vector2(B.x, B.y);
             //pos2D.Add(B2);
 
-            if (trajCollision)
-            {
-                break;
-            }
+            //if (trajCollision)
+            //{
+            //    break;
+            //}
 
             t += (1 / (float)lr.positionCount);
         }
