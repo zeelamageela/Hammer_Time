@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: -2407443072647762307}
   - component: {fileID: -3200148751317697448}
   - component: {fileID: 5757935471634775801}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Yellow_Shooter
   m_TagString: Rock
   m_Icon: {fileID: 0}

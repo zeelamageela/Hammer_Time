@@ -31,7 +31,7 @@ public class Traj_Transform : MonoBehaviour
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
 
             //scale the line based on the weight of the shot
-            weight = (weightScale * springDistance) / 3.25f;
+            weight = (weightScale * springDistance) / 4f;
             //weight = (weightScale);
             transform.localScale = new Vector3(1f, weight, 1f);
         }

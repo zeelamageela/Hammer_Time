@@ -66,7 +66,7 @@ public class Rock_Force : MonoBehaviour
 
             if (debugVertex)
             {
-                if (body.velocity.x <= 0f)
+                if (body.velocity.x <= 0.01f)
                 {
                     Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
                     debugVertex = false;

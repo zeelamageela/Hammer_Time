@@ -163,7 +163,7 @@ MonoBehaviour:
   springReleased: 0
   isReleased: 0
   pullback: 0
-  releasePoint: -24.15
+  releasePoint: -24.077
   backSwingPoint: -26.55
   throwDistance: 0
   springDistance: 0

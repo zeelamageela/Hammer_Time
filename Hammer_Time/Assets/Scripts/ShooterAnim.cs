@@ -120,7 +120,7 @@ public class ShooterAnim : MonoBehaviour
 
     IEnumerator Slowdown()
     {
-        Debug.Log("slowdon " + slowdownTimer);
+        //Debug.Log("slowdon " + slowdownTimer);
         rb.drag = 0.25f * slowdownTimer;
 
         yield return new WaitForFixedUpdate();

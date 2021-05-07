@@ -24,7 +24,7 @@ public class Sweep : MonoBehaviour
     {
         rb.drag = rb.drag - sweepAmt;
         Debug.Log(rb.drag + " is current drag");
-        rb.angularDrag = rb.angularDrag + sweepAmt;
+        rb.angularDrag = rb.angularDrag + sweepAmt / 2f;
         yield return new WaitForSeconds(0.25f);
         rb.drag = 0.38f;
 

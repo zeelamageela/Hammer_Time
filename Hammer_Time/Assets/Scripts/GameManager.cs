@@ -258,7 +258,7 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
-        //shooterGO = Instantiate(shooterAnim);
+        shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
@@ -309,12 +309,14 @@ public class GameManager : MonoBehaviour
         vcam.enabled = false;
         sweepButton.gameObject.SetActive(false);
 
+        StartCoroutine(AllStopped());
+
         StartCoroutine(CheckScore());
     }
 
     public void OnYellowTurn()
     {
-        //shooterGO = Instantiate(shooterAnim);
+        shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Yellow Turn");
         state = GameState.YELLOWTURN;
@@ -689,6 +691,8 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
+
     public void OnDebug()
     {
         db.SetActive(false);

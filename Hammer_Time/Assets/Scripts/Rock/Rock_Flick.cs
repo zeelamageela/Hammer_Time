@@ -38,8 +38,9 @@ public class Rock_Flick: MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLineGO = GameObject.Find("TrajectoryParent/TrajectoryLine");
         trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
 
         launcher = GameObject.FindWithTag("Launcher");
         launcher_rb = launcher.GetComponent<Rigidbody2D>();
@@ -74,7 +75,10 @@ public class Rock_Flick: MonoBehaviour
 
             if (mouseDelta != Vector3.zero)
             {
-                trajLine.DrawTrajectory();
+                if (springDistance > 0.25f)
+                {
+                    trajLine.DrawTrajectory();
+                }
             }
             // Then we store our mousePosition so that we can check it again next frame.
             lastMouseCoordinate = Input.mousePosition;
