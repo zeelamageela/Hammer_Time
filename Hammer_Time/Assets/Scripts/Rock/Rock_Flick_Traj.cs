@@ -14,12 +14,13 @@ public class Rock_Flick_Traj : MonoBehaviour
     Rigidbody2D launcherRb;
     Collider2D launcherCol;
     public GameObject launcher;
+    public GameObject trajLine;
 
     Transform trans;
     public Vector2 velocity;
     Vector2 startPoint;
     Vector2 endPoint;
-    public Vector2 force;
+    public float springDistance;
 
     Vector3 lastMouseCoordinate = Vector3.zero;
 
@@ -32,6 +33,7 @@ public class Rock_Flick_Traj : MonoBehaviour
         launcherRb = launcher.GetComponent<Rigidbody2D>();
         GetComponent<SpringJoint2D>().connectedBody = launcherRb;
         launcherCol.enabled = false;
+        trajLine.SetActive(false);
 
     }
     private void OnEnable()
@@ -40,6 +42,8 @@ public class Rock_Flick_Traj : MonoBehaviour
     }
     void Update()
     {
+        springDistance = Vector2.Distance(transform.position, launcher.transform.position);
+
         if (isPressed)
         {
             rb.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -51,6 +55,10 @@ public class Rock_Flick_Traj : MonoBehaviour
             {
                 Debug.Log("Mouse moving");
                 //Instantiate(circleTrajPrefab, gameObject.transform);
+                if (springDistance > 0.3f)
+                {
+                    trajLine.SetActive(true);
+                }
             }
             // Then we store our mousePosition so that we can check it again next frame.
             lastMouseCoordinate = Input.mousePosition;
@@ -69,13 +77,12 @@ public class Rock_Flick_Traj : MonoBehaviour
         //launcherCol.enabled = false;
     }
 
-    void OnMouseDrag()
-    {
-        startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //void OnMouseDrag()
+    //{
+    //    startPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
-        force = GetComponent<SpringJoint2D>().GetReactionForce(Time.deltaTime);
-    }
+    //    endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
+    //}
 
     private void OnMouseUp()
     {

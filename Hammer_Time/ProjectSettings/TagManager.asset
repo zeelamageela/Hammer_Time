@@ -8,6 +8,7 @@ TagManager:
   - Launcher
   - House
   - Boards
+  - Trajectory
   layers:
   - Default
   - TransparentFX

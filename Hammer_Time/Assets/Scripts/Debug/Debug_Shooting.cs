@@ -16,10 +16,14 @@ public class Debug_Shooting : MonoBehaviour
     public Vector2 buttonForce;
     public Vector2 houseForce;
     public Vector2 guardForce;
-    
+    public Vector2 takeoutForce;
+    public Vector2 customForce;
+
     public CinemachineVirtualCamera vcam;
     Transform tFollowTarget;
 
+    GameObject trajLineGO;
+    TrajectoryLine trajLine;
 
     void Update()
     {
@@ -42,6 +46,16 @@ public class Debug_Shooting : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.B))
             {
                 OnButton();
+            }
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                OnTakeout();
+            }
+
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                OnCustom();
             }
 
             if (Input.GetKeyDown(KeyCode.S))
@@ -67,6 +81,11 @@ public class Debug_Shooting : MonoBehaviour
         rockInfo = rock.GetComponent<Rock_Info>();
         rockCols = rock.GetComponent<Rock_Colliders>();
 
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
+
+
         StartCoroutine(HouseShot());
     }
 
@@ -77,6 +96,11 @@ public class Debug_Shooting : MonoBehaviour
         rockFlick = rock.GetComponent<Rock_Flick>();
         rockInfo = rock.GetComponent<Rock_Info>();
         rockCols = rock.GetComponent<Rock_Colliders>();
+
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
+
 
         StartCoroutine(ButtonShot());
     }
@@ -89,7 +113,43 @@ public class Debug_Shooting : MonoBehaviour
         rockInfo = rock.GetComponent<Rock_Info>();
         rockCols = rock.GetComponent<Rock_Colliders>();
 
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
+
+
         StartCoroutine(GuardShot());
+    }
+
+    public void OnTakeout()
+    {
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rb = rock.GetComponent<Rigidbody2D>();
+        rockFlick = rock.GetComponent<Rock_Flick>();
+        rockInfo = rock.GetComponent<Rock_Info>();
+        rockCols = rock.GetComponent<Rock_Colliders>();
+
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
+
+
+        StartCoroutine(TakeoutShot());
+    }
+
+    public void OnCustom()
+    {
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rb = rock.GetComponent<Rigidbody2D>();
+        rockFlick = rock.GetComponent<Rock_Flick>();
+        rockInfo = rock.GetComponent<Rock_Info>();
+        rockCols = rock.GetComponent<Rock_Colliders>();
+
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        trajLine.DrawTrajectory();
+
+        StartCoroutine(CustomShot());
     }
 
     IEnumerator HouseShot()
@@ -146,6 +206,47 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(guardForce * 1000f);
+        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        rockCols.shotTaken = true;
+
+        tFollowTarget = rock.transform;
+        vcam.LookAt = tFollowTarget;
+        vcam.Follow = tFollowTarget;
+        vcam.enabled = true;
+
+        //this.enabled = false;
+    }
+    IEnumerator TakeoutShot()
+    {
+        yield return new WaitForFixedUpdate();
+
+        rock.GetComponent<SpringJoint2D>().enabled = false;
+        rockFlick.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        rb.AddForce(takeoutForce * 1000f);
+        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        rockCols.shotTaken = true;
+
+        tFollowTarget = rock.transform;
+        vcam.LookAt = tFollowTarget;
+        vcam.Follow = tFollowTarget;
+        vcam.enabled = true;
+
+        //this.enabled = false;
+    }
+
+    IEnumerator CustomShot()
+    {
+        yield return new WaitForFixedUpdate();
+
+        rock.GetComponent<SpringJoint2D>().enabled = false;
+        rockFlick.enabled = false;
+
+        yield return new WaitForSeconds(0.1f);
+
+        rb.AddForce(customForce * 1000f);
         Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
         rockCols.shotTaken = true;
 

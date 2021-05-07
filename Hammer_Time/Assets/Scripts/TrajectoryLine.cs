@@ -6,64 +6,89 @@ public class TrajectoryLine : MonoBehaviour
 {
     private LineRenderer lr;
     public GameObject launcher;
+    public Traj_Transform trajTransform;
     public GameManager gm;
 
     GameObject rock;
-    Vector2 velocity;
-    Vector2 force;
-    public GameObject circle;
-    public Rock_Flick_Traj circleTraj;
-    Vector2 startPoint;
-    Vector2 endPoint;
-    public Vector2 springForce;
     public float springDistance;
-    public Vector2 springDirection;
+    public Vector3 springDirection;
+    public float angle;
+
+    public GameObject curlPointGO;
     public Vector3 curlPoint;
-    public float yScaler;
-    public float xScaler;
+    public GameObject targetPointGO;
     public Vector3 targetPoint;
+    public GameObject hogLinePointGO;
+    public Vector3 hogLinePoint;
 
 
     void Start()
     {
         lr = GetComponent<LineRenderer>();
-        //lr.material = new Material(Shader.Find("Sprites/Default"));
-        //circleTraj = GameObject.Find("CircleTraj").GetComponent<Rock_Flick_Traj>();
     }
 
-    void Update()
+    //void Update()
+    //{
+    //    //rock = gm.rockList[gm.rockCurrent].rock;
+
+    //    //springDistance = trajTransform.springDistance;
+    //    //springDirection = Vector3.Normalize(launcher.transform.position - circle.transform.position);
+    //    //targetPoint = targetPointGO.transform.position;
+    //    //curlPoint = curlPointGO.transform.position;
+
+    //    //Vector3 circlePos = circle.transform.position;
+    //    Vector3 curlPos = curlPointGO.transform.position;
+    //    Vector3 hogLinePos = hogLinePointGO.transform.position;
+    //    Vector3 targetPos = targetPointGO.transform.position;
+
+    //    hogLinePoint = hogLinePos;
+    //    curlPoint = curlPos;
+    //    targetPoint = targetPos;
+
+    //    //hogLinePointGO.transform.RotateAround(launcher.transform.position, new Vector3(0, 0, 1), -springDirection.x);
+    //    //List<Vector3> pos = new List<Vector3>();
+
+    //    //pos.Add(new Vector3(launcher.transform.position.x, launcher.transform.position.y, 0f));
+    //    //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
+
+    //    //lr.SetPositions(pos.ToArray());
+
+    //    DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);
+    //}
+
+    public void DrawTrajectory()
     {
-        //rock = gm.rockList[gm.rockCurrent].rock;
+        hogLinePoint = new Vector3(hogLinePointGO.transform.position.x, -15.75f, 0f);
+        curlPoint = curlPointGO.transform.position;
+        targetPoint = targetPointGO.transform.position;
 
-        springDistance = Vector2.Distance(circle.transform.position, launcher.transform.position);
-        springDirection = (Vector2)Vector3.Normalize(launcher.transform.position - circle.transform.position);
-        Vector3 circlePos = circle.transform.position;
-        targetPoint.x = xScaler * springDirection.x * springDistance;
-        targetPoint.y = yScaler * springDirection.y * springDistance;
-        targetPoint = new Vector3(targetPoint.x, targetPoint.y, 0f);
+        lr.positionCount = 20;
+        float t = 0f;
+        Vector3 B = new Vector3(0, -25, 0);
 
-        curlPoint.x = (xScaler / 2) * springDistance * springDirection.x;
-        curlPoint.y = (yScaler / 2f) * springDistance * springDirection.y;
-        //curlPoint.x = curlPoint.x * springDistance;
-        //curlPoint.y = curlPoint.y * springDistance;
+        lr.SetPosition(0, launcher.transform.position);
 
-        //List<Vector3> pos = new List<Vector3>();
+        for (int i = 1; i < lr.positionCount; i++)
+        {
+            B = ((1 - t) * (1 - t) * hogLinePoint) + (2 * (1 - t) * t * curlPoint) + (t * t * targetPoint);
+            lr.SetPosition(i, B);
+            t += (1 / (float)lr.positionCount);
+        }
 
-
-        //pos.Add(new Vector3(launcher.transform.position.x, launcher.transform.position.y, 0f));
-        //pos.Add(new Vector3(rock.transform.position.x, rock.transform.position.y, 0f));
-
-        //lr.SetPositions(pos.ToArray());
-        DrawQuadraticBezierCurve(launcher.transform.position, curlPoint, targetPoint);
+        //DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);
     }
+
     void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)
     {
         lr.positionCount = 200;
         float t = 0f;
         Vector3 B = new Vector3(0, -25, 0);
-        for (int i = 0; i < lr.positionCount; i++)
+
+        lr.SetPosition(0, launcher.transform.position);
+
+        for (int i = 1; i<lr.positionCount; i++)
         {
-            B = (1 - t) * (1 - t) * point0 + 2 * (1 - t) * t * point1 + t * t * point2;
+            B = ((1 - t) * (1 - t) * point0) + (2 * (1 - t) * t * point1) + (t * t * point2);
             lr.SetPosition(i, B);
             t += (1 / (float)lr.positionCount);
         }

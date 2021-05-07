@@ -7,7 +7,7 @@ public class HouseCamera : MonoBehaviour
     // Start is called before the first frame update
     
     public Camera cam;
-
+    public bool trajCamOn;
     void Start()
     {
         // Set this camera to render after the main camera
@@ -26,5 +26,7 @@ public class HouseCamera : MonoBehaviour
         {
             cam.depth = Camera.main.depth - 1;
         }
+
+
     }
 }
