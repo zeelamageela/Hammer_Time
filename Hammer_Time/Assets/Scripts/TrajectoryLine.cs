@@ -57,11 +57,14 @@ public class TrajectoryLine : MonoBehaviour
         hogLinePoint = new Vector3(hogLinePointGO.transform.position.x, -15.75f, 0f);
         curlPoint = curlPointGO.transform.position;
         targetPoint = targetPointGO.transform.position;
-
+        springDistance = trajTransform.springDistance;
         //List<Vector3> pos = new List<Vector3>();
         //List<Vector2> pos2D = new List<Vector2>();
-
+        //lr.positionCount = Mathf.RoundToInt(100 * (trajTransform.springDistance / 2));
         lr.positionCount = 100;
+        lr.startWidth = Mathf.Lerp(0f, 0.3f, springDistance / 3.25f);
+        lr.endWidth = Mathf.Lerp(0f, 0.5f, springDistance / 3.25f);
+
         float t = 0f;
         Vector3 B = new Vector3(0, -25, 0);
 
@@ -70,16 +73,8 @@ public class TrajectoryLine : MonoBehaviour
         for (int i = 1; i < lr.positionCount; i++)
         {
             B = ((1 - t) * (1 - t) * hogLinePoint) + (2 * (1 - t) * t * curlPoint) + (t * t * targetPoint);
-            //pos.Add(B);
-            //Vector2 B2 = new Vector2(B.x, B.y);
             lr.SetPosition(i, B);
-            //edgeCol.points[i] = new Vector2(B.x, B.y);
-            //pos2D.Add(B2);
-
-            //if (trajCollision)
-            //{
-            //    break;
-            //}
+            
 
             t += (1 / (float)lr.positionCount);
         }

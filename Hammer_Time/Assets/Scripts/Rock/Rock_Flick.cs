@@ -38,9 +38,9 @@ public class Rock_Flick: MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        trajLineGO = GameObject.Find("TrajectoryParent/TrajectoryLine");
+        trajLineGO = GameObject.Find("TrajectoryLine");
         trajLine = trajLineGO.GetComponent<TrajectoryLine>();
-        trajLine.DrawTrajectory();
+        //trajLine.DrawTrajectory();
 
         launcher = GameObject.FindWithTag("Launcher");
         launcher_rb = launcher.GetComponent<Rigidbody2D>();
@@ -62,26 +62,28 @@ public class Rock_Flick: MonoBehaviour
         {
             rb.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            //if (springDirection.x < 0f)
-            //{
-            //    GetComponent<Rock_Force>().flipAxis = true;
-            //}
-            //else if (springDirection.y > 0f)
-            //{
-            //    GetComponent<Rock_Force>().flipAxis = false;
-            //}
-            // First we find out how much it has moved, by comparing it with the stored coordinate.
-            Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
-
-            if (mouseDelta != Vector3.zero)
+            trajLine.DrawTrajectory();
+            
+            if (Input.GetKeyDown(KeyCode.O))
             {
-                if (springDistance > 0.25f)
-                {
-                    trajLine.DrawTrajectory();
-                }
+                GetComponent<Rock_Force>().flipAxis = true;
             }
-            // Then we store our mousePosition so that we can check it again next frame.
-            lastMouseCoordinate = Input.mousePosition;
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                GetComponent<Rock_Force>().flipAxis = false;
+            }
+            //First we find out how much it has moved, by comparing it with the stored coordinate.
+            //Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
+
+            //if (mouseDelta != Vector3.zero)
+            //{
+            //    if (springDistance > 0.25f)
+            //    {
+            //        trajLine.DrawTrajectory();
+            //    }
+            //}
+            //// Then we store our mousePosition so that we can check it again next frame.
+            //lastMouseCoordinate = Input.mousePosition;
 
             OnDrag();
 
@@ -94,7 +96,7 @@ public class Rock_Flick: MonoBehaviour
         isPressed = true;
         rb.isKinematic = true;
         //trajectory.Show();
-        GetComponent<SpriteRenderer>().enabled = true;
+        GetComponent<SpriteRenderer>().enabled = false;
     }
 
     void OnDrag()
@@ -109,14 +111,14 @@ public class Rock_Flick: MonoBehaviour
         springForce = force.magnitude;
 
         // First we find out how much it has moved, by comparing it with the stored coordinate.
-        Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
+        //Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
 
-        if (mouseDelta != Vector3.zero)
-        {
-            trajLine.DrawTrajectory();
-        }
-        // Then we store our mousePosition so that we can check it again next frame.
-        lastMouseCoordinate = Input.mousePosition;
+        //if (mouseDelta != Vector3.zero)
+        //{
+        //    trajLine.DrawTrajectory();
+        //}
+        //// Then we store our mousePosition so that we can check it again next frame.
+        //lastMouseCoordinate = Input.mousePosition;
     }
 
     public void OnMouseUp()

@@ -58,20 +58,20 @@ public class Rock_Force : MonoBehaviour
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
 
-            if (body.angularVelocity <= 0.01f && body.velocity.y <= 0.01f)
+            if (body.angularVelocity < 0.01f && body.velocity.y < 0.01f)
             {
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
             }
 
-            if (debugVertex)
-            {
-                if (body.velocity.x <= 0.01f)
-                {
-                    Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
-                    debugVertex = false;
-                }
-            }
+            //if (debugVertex)
+            //{
+            //    if (body.velocity.x <= 0.01f)
+            //    {
+            //        Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
+            //        debugVertex = false;
+            //    }
+            //}
             
         }
     }

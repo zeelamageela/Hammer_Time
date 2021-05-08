@@ -13,6 +13,8 @@ public class Traj_Transform : MonoBehaviour
     public float weightScale;
     public float weight;
     float angle;
+    bool flipAxis = false;
+
     
     void Update()
     {
@@ -33,7 +35,20 @@ public class Traj_Transform : MonoBehaviour
             //scale the line based on the weight of the shot
             weight = (weightScale * springDistance) / 4f;
             //weight = (weightScale);
-            transform.localScale = new Vector3(1f, weight, 1f);
+
+            flipAxis = rock.GetComponent<Rock_Force>().flipAxis;
+
+            if (flipAxis)
+            {
+                transform.localScale = new Vector3(-1f, weight, 1f);
+            }
+            else
+            {
+                transform.localScale = new Vector3(1f, weight, 1f);
+            }
+            
+
+            
         }
 
 

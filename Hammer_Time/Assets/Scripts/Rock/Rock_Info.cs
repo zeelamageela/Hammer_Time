@@ -49,7 +49,7 @@ public class Rock_Info : MonoBehaviour
         {
             rest = true;
 
-            if (inPlay != true)
+            if (!inPlay)
             {
                 outOfPlay = true;
             }

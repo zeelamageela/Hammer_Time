@@ -41,19 +41,19 @@ public class Rock_Colliders : MonoBehaviour
 // Update is called once per frame
     void Update()
     {
-
+        if (outOfPlay)
+        {
+            StartCoroutine(OutOfPlay());
+        }
     }
 
-
-    public IEnumerator OutOfPlay()
+    IEnumerator OutOfPlay()
     {
-        yield return new WaitForSeconds(0.1f);
+        body.velocity = Vector2.zero;
+        body.angularVelocity = 0f;
 
         GetComponent<Rock_Info>().stopped = true;
         GetComponent<Rock_Info>().rest = true;
-
-        body.velocity = Vector2.zero;
-        body.angularVelocity = 0f;
 
         yield return new WaitForSeconds(0.5f);
 

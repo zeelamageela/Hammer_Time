@@ -24,7 +24,6 @@ public class Debug_Random : MonoBehaviour
         redHammer = true;
         gm.redHammer = redHammer;
 
-        gm.mainDisplay.enabled = false;
         gm.state = GameState.DEBUG;
 
         StartCoroutine(DebugMode());

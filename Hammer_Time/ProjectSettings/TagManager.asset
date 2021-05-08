@@ -9,6 +9,7 @@ TagManager:
   - House
   - Boards
   - Trajectory
+  - ScoreCard
   layers:
   - Default
   - TransparentFX
