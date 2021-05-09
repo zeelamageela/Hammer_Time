@@ -19,9 +19,14 @@ public class Rock_Force : MonoBehaviour
     //public bool moving;
     int dirMult = 1;
 
+    GameObject trajLineGO;
+    TrajectoryLine trajLine;
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+
+        trajLineGO = GameObject.Find("TrajectoryLine");
+        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
     }
 
     public void Release()

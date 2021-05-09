@@ -134,6 +134,8 @@ public class GameHUD : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         scoreboard.SetActive(true);
+        float waitTime = 2.5f;
+        StartCoroutine(ScoreboardTimer(waitTime));
     }
 
     public void SetHammer(bool redHammer)

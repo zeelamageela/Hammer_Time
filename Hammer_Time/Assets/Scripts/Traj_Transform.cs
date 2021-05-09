@@ -26,7 +26,7 @@ public class Traj_Transform : MonoBehaviour
 
             //compute the distance and direction
             springDistance = rock.GetComponent<Rock_Flick>().springDistance;
-            springDirection = Vector3.Normalize(launcher.transform.position - rock.transform.position);
+            springDirection = rock.GetComponent<Rock_Flick>().springDirection;
 
             //convert the direction to an angle and rotate the trajectory
             angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;

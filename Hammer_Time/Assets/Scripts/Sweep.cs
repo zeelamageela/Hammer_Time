@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Sweep : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class Sweep : MonoBehaviour
 
     GameObject rock;
     Rigidbody2D rb;
+
+    public Button sweepButton;
 
     public int sweepTime;
     public float sweepAmt;
@@ -18,15 +21,22 @@ public class Sweep : MonoBehaviour
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         StartCoroutine(OnSweep());
+        sweepButton.gameObject.SetActive(false);
     }
 
     public IEnumerator OnSweep()
     {
-        rb.drag = rb.drag - sweepAmt;
-        Debug.Log(rb.drag + " is current drag");
-        rb.angularDrag = rb.angularDrag + sweepAmt / 2f;
-        yield return new WaitForSeconds(0.25f);
+        
+        for (int i = 0; i < sweepTime; i++)
+        {
+            float t = i / 100f;
+            rb.angularDrag = rb.angularDrag + (t * sweepAmt / 3f); 
+            rb.drag = (rb.drag - i * sweepAmt);
+            Debug.Log(rb.drag + " is current drag");
+        }
+        yield return new WaitForSeconds(0.75f);
         rb.drag = 0.38f;
+        sweepButton.gameObject.SetActive(true);
 
     }
 }

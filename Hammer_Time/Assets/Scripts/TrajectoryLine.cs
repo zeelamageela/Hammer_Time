@@ -61,7 +61,25 @@ public class TrajectoryLine : MonoBehaviour
         //List<Vector3> pos = new List<Vector3>();
         //List<Vector2> pos2D = new List<Vector2>();
         //lr.positionCount = Mathf.RoundToInt(100 * (trajTransform.springDistance / 2));
-        lr.positionCount = 100;
+        if (springDistance < 1)
+        {
+            lr.positionCount = 2;
+        }
+        else if (springDistance >= 1f)
+        {
+            if (springDistance < 1.25)
+            {
+                lr.positionCount = Mathf.RoundToInt(Mathf.Lerp(3f, 5f, springDistance));
+            }
+            else if (springDistance < 1.5)
+            {
+                lr.positionCount = Mathf.RoundToInt(Mathf.Lerp(5f, 100f, springDistance));
+            }
+            else
+            {
+                lr.positionCount = 100;
+            }
+        }
         lr.startWidth = Mathf.Lerp(0f, 0.3f, springDistance / 3.25f);
         lr.endWidth = Mathf.Lerp(0f, 0.5f, springDistance / 3.25f);
 
@@ -84,6 +102,11 @@ public class TrajectoryLine : MonoBehaviour
         //edgeCol.SetPoints(pos2D);
     }
 
+    public void Release()
+    {
+        lr.startWidth = 0.1f;
+        lr.endWidth = 0.1f;
+    }
     //void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)
     //{
     //    lr.positionCount = 200;
