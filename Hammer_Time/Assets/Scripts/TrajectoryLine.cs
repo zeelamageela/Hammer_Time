@@ -21,15 +21,12 @@ public class TrajectoryLine : MonoBehaviour
     public Vector3 targetPoint;
     public GameObject hogLinePointGO;
     public Vector3 hogLinePoint;
-    bool trajCollision;
 
 
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         edgeCol = GetComponent<EdgeCollider2D>();
-
-        trajCollision = false;
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -39,7 +36,6 @@ public class TrajectoryLine : MonoBehaviour
         if (collider == rock.GetComponent<Collider2D>())
         {
             Debug.Log(collider.name);
-            trajCollision = true;
         }
         //else trajCollision = true;
     }

@@ -11,14 +11,14 @@ public class RockBar : MonoBehaviour
     public Sprite yellowRockMouseOver;
     public Sprite yellowRockActive;
     public Sprite yellowRockDead;
-    public GameObject yellowRocks;
+    public Transform yellowRocks;
 
     public Sprite redRock;
     public GameObject redRockGO;
     public Sprite redRockMouseOver;
     public Sprite redRockActive;
     public Sprite redRockDead;
-    public GameObject redRocks;
+    public Transform redRocks;
 
     List<GameObject> rockList;
 
@@ -37,6 +37,7 @@ public class RockBar : MonoBehaviour
     public void ResetBar(bool redHammer, int rocksPerTeam, int yellowScore, int redScore)
     {
         activeRock = 0;
+        rockList = new List<GameObject>();
 
         if (redHammer)
         {
@@ -48,11 +49,11 @@ public class RockBar : MonoBehaviour
         }
     }
 
-    IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, GameObject hammerRockPos, GameObject notHammerRockPos)
+    IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, Transform hammerRockPos, Transform notHammerRockPos)
     {
         int totalRocks = rocksPerTeam * 2;
         float hammerOffset;
-        Vector3 hammerPos;
+        Vector3 rockPos;
         float hammerRockSpread;
 
         if (redHammer)
@@ -66,15 +67,18 @@ public class RockBar : MonoBehaviour
 
         for (int i = 0; i < totalRocks; i++)
         {
-            hammerRockSpread = (i * hammerOffset) / rocksPerTeam;
-            hammerPos = notHammerRockPos.transform.position + new Vector3(0f, -hammerRockSpread, 0f);
-            GameObject notHammer = Instantiate(notHammerRock, hammerPos, Quaternion.identity);
+            hammerRockSpread = (i / rocksPerTeam) * hammerOffset;
+
+            GameObject notHammer = Instantiate(notHammerRock, notHammerRockPos);
+            notHammer.transform.position = new Vector3(notHammer.transform.position.x - hammerRockSpread, 0f, 0f);
             rockList.Add(notHammer);
 
-            hammerPos = hammerRockPos.transform.position + new Vector3(0f, hammerRockSpread, 0f);
-            GameObject hammer = Instantiate(hammerRock, hammerPos, Quaternion.identity);
+            rockPos = hammerRockPos.transform.position + new Vector3(0f, hammerRockSpread, 0f);
+            GameObject hammer = Instantiate(hammerRock, hammerRockPos);
             rockList.Add(hammer);
         }
+
+        yield return new WaitForFixedUpdate();
     }
 
     public void BarUpdate(bool redHammer, int rockCurrent, int yellowScore, int redScore)

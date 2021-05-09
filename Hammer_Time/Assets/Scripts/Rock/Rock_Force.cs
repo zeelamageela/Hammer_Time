@@ -14,7 +14,7 @@ public class Rock_Force : MonoBehaviour
     float velY = 0f;
     bool turnStart;
     bool forceStart;
-    bool debugVertex;
+    //bool debugVertex;
     public bool flipAxis = false;
     //public bool moving;
     int dirMult = 1;
@@ -39,7 +39,7 @@ public class Rock_Force : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = true;
         turnStart = true;
         forceStart = true;
-        debugVertex = true;
+        //debugVertex = true;
         return;
     }
 

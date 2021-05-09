@@ -33,7 +33,9 @@ public class GameManager : MonoBehaviour
     int yellowRocks_left;
     public int redScore;
     public int yellowScore;
+
     public GameHUD gHUD;
+    public RockBar rockBar;
 
     public GameObject debug;
 
@@ -90,7 +92,6 @@ public class GameManager : MonoBehaviour
     public void SetHammerRed()
     {
         redHammer = true;
-
         gHUD.SetHammer(redHammer);
         db.SetActive(false);
         redButton.gameObject.SetActive(false);
@@ -116,6 +117,9 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SetupRocks()
     {
+
+        rockBar.ResetBar(redHammer, rocksPerTeam, yellowScore, redScore);
+
         int hammer;
         int notHammer;
 
@@ -226,6 +230,7 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
+        rockBar.BarUpdate(redHammer, rockCurrent, yellowScore, redScore);
         shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Red Turn");
@@ -281,6 +286,7 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
+        rockBar.BarUpdate(redHammer, rockCurrent, yellowScore, redScore);
         shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Yellow Turn");
