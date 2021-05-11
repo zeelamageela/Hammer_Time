@@ -20,25 +20,31 @@ public class RockBar : MonoBehaviour
     public Sprite redRockDead;
     public RectTransform redRocks;
 
-    List<GameObject> rockList;
+    public Text yellowScoreDisplay;
+    public Text redScoreDisplay;
+    
+    public List<GameObject> rockListUI;
 
-    int activeRock;
+    public float offset = 60f;
+
+    GameObject activeRock;
+    Rock_Info activeRockInfo;
+    public int rockCurrent;
     int rocksPerTeam;
-    int redRocksLeft;
-    int yellowRocksLeft;
 
     // Update is called once per frame
     void Start()
     {
         rocksPerTeam = gm.rocksPerTeam;
 
+        rockListUI = new List<GameObject>();
+
+        yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
+        redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
     }
 
-    public void ResetBar(bool redHammer, int rocksPerTeam, int yellowScore, int redScore)
+    public void ResetBar(bool redHammer)
     {
-        activeRock = 0;
-        rockList = new List<GameObject>();
-
         if (redHammer)
         {
             StartCoroutine(SetupBar(true, redRockGO, yellowRockGO, redRocks, yellowRocks));
@@ -51,55 +57,86 @@ public class RockBar : MonoBehaviour
 
     IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, RectTransform hammerRockPos, RectTransform notHammerRockPos)
     {
-        float hammerOffset;
-        Vector3 newHammerRockPos;
-        Vector3 newNotHammerRockPos;
-
         if (redHammer)
         {
-            hammerOffset = -10f;
+            offset = -60f;
         }
         else
         {
-            hammerOffset = 10f;
+            offset = 60f;
         }
 
         for (int i = 0; i < rocksPerTeam; i++)
         {
+            GameObject notHammer = Instantiate(notHammerRock);
+            notHammer.transform.SetParent(notHammerRockPos, false);
+            notHammer.transform.position += new Vector3(i * -offset, 0f, 0f);
+            notHammer.name = gm.rockList[2 * i].rock.name;
+            rockListUI.Add(notHammer);
 
-            //GameObject notHammer = Instantiate(notHammerRock, notHammerRockPos);
-            //newNotHammerRockPos = new Vector3((i / rocksPerTeam) * -hammerOffset, 0f, 0f);
-            //notHammer.transform.position = newNotHammerRockPos;
-            ////rockList.Add(notHammer);
-            //yield return new WaitForEndOfFrame();
-            //Debug.Log("notHammer RockPos is " + newNotHammerRockPos.x + ", " + newNotHammerRockPos.y);
+            yield return new WaitForSeconds(i * 0.02f);
 
-            GameObject hammer = Instantiate(hammerRock, new Vector3(i * hammerOffset, 0f, 0f), Quaternion.identity, hammerRockPos);
-            //hammer.transform.position = new Vector3(hammerRockPos.pivot.x + hammerOffset, 0f, 0f);
-            //newHammerRockPos = new Vector3((i / rocksPerTeam) * hammerOffset, 0f, 0f);
-            //hammer.transform.position = newHammerRockPos;
-            //Debug.Log("hammerRock's Pos is " + newHammerRockPos.x + ", " + newHammerRockPos.y);
-            //rockList.Add(hammer);
+            GameObject hammer = Instantiate(hammerRock);
+            hammer.transform.SetParent(hammerRockPos, false);
+            hammer.transform.position += new Vector3(i * offset, 0f, 0f);
+            hammer.name = gm.rockList[(2 * i) + 1].rock.name;
+            rockListUI.Add(hammer);
+        }
+
+        foreach (GameObject rock in rockListUI)
+        {
+            Debug.Log(rock.name);
         }
 
         yield return new WaitForFixedUpdate();
+
+        ActiveRock();
     }
 
-    public void BarUpdate(bool redHammer, int rockCurrent, int yellowScore, int redScore)
+    public void EndUpdate(int yellowScore, int redScore)
     {
-        if (redHammer)
-        {
+        yellowScoreDisplay.text = yellowScore.ToString();
+        redScoreDisplay.text = redScore.ToString();
 
+        if (rockListUI.Count != 0)
+        {
+            foreach (GameObject rock in rockListUI)
+            {
+                Destroy(rock);
+            }
+
+            rockListUI.Clear();
         }
     }
 
-    public void ActiveRock(bool redHammer, int rockCurrent)
+    public void ShotUpdate(int rockIndex, bool outOfPlay)
     {
+        if (outOfPlay)
+        {
+            DeadRock(rockIndex);
+        }
+    }
+
+    public void ActiveRock()
+    {
+        if (rockListUI.Count != 0)
+        {
+            rockCurrent = gm.rockCurrent;
+            rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
+            Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
+        }
 
     }
 
-    public void DeadRock(int rockCurrent, int redHammer)
+    public void DeadRock(int rockIndex)
     {
+        rockCurrent = gm.rockCurrent;
+        rockListUI[rockCurrent].GetComponent<RockBar_Dot>().DeadRockSprite();
+    }
 
+    public void IdleRock()
+    {
+        rockCurrent = gm.rockCurrent;
+        rockListUI[rockCurrent].gameObject.GetComponent<RockBar_Dot>().IdleRockSprite();
     }
 }

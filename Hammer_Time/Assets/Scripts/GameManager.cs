@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     public CinemachineVirtualCamera vcam;
     Transform tFollowTarget;
 
+    public ShootingKnob knob;
     public List<Rock_List> rockList;
     public List<House_List> houseList;
 
@@ -117,9 +118,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator SetupRocks()
     {
-
-        rockBar.ResetBar(redHammer, rocksPerTeam, yellowScore, redScore);
-
         int hammer;
         int notHammer;
 
@@ -189,6 +187,9 @@ public class GameManager : MonoBehaviour
             }
             //rockList.Sort();
         }
+
+        rockBar.ResetBar(redHammer);
+
     }
 
     IEnumerator ResetGame()
@@ -230,7 +231,6 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
-        rockBar.BarUpdate(redHammer, rockCurrent, yellowScore, redScore);
         shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Red Turn");
@@ -260,19 +260,28 @@ public class GameManager : MonoBehaviour
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
+        knob.ParentToRock(redRock_1);
+
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
-        gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
+        //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
+        rockBar.ActiveRock();
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
+        knob.UnParentandHide();
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => redRock.released == true);
         sweepButton.gameObject.SetActive(true);
 
         yield return new WaitUntil(() => redRock.rest == true);
+
+        if (!redRock.outOfPlay)
+        {
+            rockBar.IdleRock();
+        }
 
         sweepButton.gameObject.SetActive(false);
 
@@ -281,12 +290,20 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(AllStopped());
 
+        foreach (Rock_List rock in rockList)
+        {
+            bool outOfPlay;
+            int rockIndex;
+            rockIndex = rockList.IndexOf(rock);
+            outOfPlay = rock.rockInfo.outOfPlay;
+            rockBar.ShotUpdate(rockIndex, outOfPlay);
+        }
+
         StartCoroutine(CheckScore());
     }
 
     public void OnYellowTurn()
     {
-        rockBar.BarUpdate(redHammer, rockCurrent, yellowScore, redScore);
         shooterGO = Instantiate(shooterAnim);
 
         Debug.Log("Yellow Turn");
@@ -316,24 +333,42 @@ public class GameManager : MonoBehaviour
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
+        knob.ParentToRock(yellowRock_1);
+
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
+        rockBar.ActiveRock();
         gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
+        knob.UnParentandHide();
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => yellowRock.released == true);
         sweepButton.gameObject.SetActive(true);
 
         yield return new WaitUntil(() => yellowRock.rest == true);
+        
+        if (!yellowRock.outOfPlay)
+        {
+            rockBar.IdleRock();
+        }
 
         vcam.enabled = false;
         sweepButton.gameObject.SetActive(false);
 
         StartCoroutine(AllStopped());
+
+        foreach(Rock_List rock in rockList)
+        {
+            bool outOfPlay;
+            int rockIndex;
+            rockIndex = rockList.IndexOf(rock);
+            outOfPlay = rock.rockInfo.outOfPlay;
+            rockBar.ShotUpdate(rockIndex, outOfPlay);
+        }
 
         StartCoroutine(CheckScore());
 
@@ -588,6 +623,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        rockBar.EndUpdate(yellowScore, redScore);
         state = GameState.RESET;
         StartCoroutine(ResetGame());
     }

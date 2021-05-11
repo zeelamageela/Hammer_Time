@@ -29,8 +29,7 @@ public class Sweep : MonoBehaviour
         
         for (int i = 0; i < sweepTime; i++)
         {
-            float t = i / 100f;
-            rb.angularDrag = rb.angularDrag + (t * sweepAmt / 3f); 
+            //rb.angularDrag = rb.angularDrag + (t * sweepAmt / 3f); 
             rb.drag = (rb.drag - i * sweepAmt);
             Debug.Log(rb.drag + " is current drag");
         }
