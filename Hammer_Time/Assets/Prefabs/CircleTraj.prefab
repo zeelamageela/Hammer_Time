@@ -122,9 +122,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
+  circleTrajPrefab: {fileID: 0}
   isPressed: 0
   launcher: {fileID: 0}
+  trajLine: {fileID: 0}
   velocity: {x: 0, y: 0}
+  springDistance: 0
 --- !u!114 &6046215731780190697
 MonoBehaviour:
   m_ObjectHideFlags: 0

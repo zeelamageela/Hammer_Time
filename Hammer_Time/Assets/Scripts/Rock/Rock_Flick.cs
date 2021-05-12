@@ -59,6 +59,7 @@ public class Rock_Flick: MonoBehaviour
         if (isPressed)
         {
             rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
+
             trajLine.DrawTrajectory();
 
             if (Input.GetKeyDown(KeyCode.O))

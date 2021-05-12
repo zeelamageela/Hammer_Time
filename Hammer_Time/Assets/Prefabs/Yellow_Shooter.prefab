@@ -177,9 +177,7 @@ MonoBehaviour:
   isPressed: 0
   trajectory: {fileID: 0}
   springDirection: {x: 0, y: 0}
-  force: {x: 0, y: 0}
   springDistance: 0
-  springForce: 0
   springReleased: 0
   vcam_go: {fileID: 0}
   vcam: {fileID: 0}

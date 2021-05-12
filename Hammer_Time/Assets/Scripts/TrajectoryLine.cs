@@ -22,11 +22,22 @@ public class TrajectoryLine : MonoBehaviour
     public GameObject hogLinePointGO;
     public Vector3 hogLinePoint;
 
+    public GameObject aimCircle;
+    public int dotCount;
+    public GameObject dot;
+
+    public GameObject shootKnob;
+    Color knobColour;
+    List<GameObject> dots;
 
     void Start()
     {
         lr = GetComponent<LineRenderer>();
         edgeCol = GetComponent<EdgeCollider2D>();
+
+
+        dots = new List<GameObject>();
+        aimCircle.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -46,17 +57,28 @@ public class TrajectoryLine : MonoBehaviour
         {
             rock = gm.rockList[gm.rockCurrent].rock;
         }
+
+        knobColour = shootKnob.GetComponent<SpriteRenderer>().color;
     }
 
     public void DrawTrajectory()
-    {
+    { 
+
+        if (dots.Count != 0)
+        {
+            foreach (GameObject dot in dots)
+            {
+                Destroy(dot);
+            }
+            dots.Clear();
+        }
+        
         hogLinePoint = new Vector3(hogLinePointGO.transform.position.x, -15.75f, 0f);
         curlPoint = curlPointGO.transform.position;
         targetPoint = targetPointGO.transform.position;
         springDistance = trajTransform.springDistance;
-        //List<Vector3> pos = new List<Vector3>();
-        //List<Vector2> pos2D = new List<Vector2>();
-        //lr.positionCount = Mathf.RoundToInt(100 * (trajTransform.springDistance / 2));
+        List<Vector3> pos = new List<Vector3>();
+
         if (springDistance < 1)
         {
             lr.positionCount = 2;
@@ -76,8 +98,9 @@ public class TrajectoryLine : MonoBehaviour
                 lr.positionCount = 100;
             }
         }
+
         lr.startWidth = Mathf.Lerp(0f, 0.3f, springDistance / 3.25f);
-        lr.endWidth = Mathf.Lerp(0f, 0.5f, springDistance / 3.25f);
+        lr.endWidth = Mathf.Lerp(0f, 0.1f, springDistance / 3.25f);
 
         float t = 0f;
         Vector3 B = new Vector3(0, -25, 0);
@@ -88,10 +111,24 @@ public class TrajectoryLine : MonoBehaviour
         {
             B = ((1 - t) * (1 - t) * hogLinePoint) + (2 * (1 - t) * t * curlPoint) + (t * t * targetPoint);
             lr.SetPosition(i, B);
-            
-
+            pos.Add(B);
             t += (1 / (float)lr.positionCount);
         }
+
+        int counter = lr.positionCount / 20;
+
+        for (int i = 1; i < dotCount; i++)
+        {
+            Vector2 dotPos = lr.GetPosition(i * counter);
+            GameObject dotPlace = Instantiate(dot, dotPos, Quaternion.identity);
+            dotPlace.transform.parent = transform;
+            dotPlace.GetComponent<SpriteRenderer>().color = knobColour;
+            dots.Add(dotPlace);
+        }
+        aimCircle.GetComponent<SpriteRenderer>().enabled = true;
+
+        aimCircle.transform.position = lr.GetPosition(lr.positionCount - 1);
+        aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
         //lr.SetPositions(lr.GetPositions());
         //DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);
@@ -100,6 +137,7 @@ public class TrajectoryLine : MonoBehaviour
 
     public void Release()
     {
+        aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         lr.startWidth = 0.1f;
         lr.endWidth = 0.1f;
     }
