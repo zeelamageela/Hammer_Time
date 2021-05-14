@@ -10,6 +10,7 @@ public class ShootingKnob : MonoBehaviour
     public GameObject launcher;
     public GameObject hogLinePoint;
     public float distance;
+    public TrajectoryLine trajLine;
 
     Gradient gradient;
     GradientColorKey[] colorKey;
@@ -19,8 +20,8 @@ public class ShootingKnob : MonoBehaviour
     {
         lr = GetComponent<LineRenderer>();
         sr = GetComponent<SpriteRenderer>();
-        lr.startWidth = 0.175f;
-        lr.endWidth = 0.175f;
+        lr.startWidth = 0f;
+        lr.endWidth = 0f;
     }
 
     public void ParentToRock(GameObject rock)
@@ -31,7 +32,6 @@ public class ShootingKnob : MonoBehaviour
         }
         
         sr.enabled = true;
-
     }
 
     public void UnParentandHide()
@@ -39,6 +39,7 @@ public class ShootingKnob : MonoBehaviour
         transform.parent = null;
         sr.enabled = false;
         transform.position = new Vector3(0f, -25f, 0f);
+        
     }
 
     private void Update()

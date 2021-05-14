@@ -27,7 +27,8 @@ public class GameManager : MonoBehaviour
     public Collider2D boardCollider;
     public Collider2D launchCollider;
 
-    public Rock_Traj trajectory;
+    public GameObject yellowSpin;
+    public GameObject redSpin;
 
     int redRocks_left;
     int yellowRocks_left;
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
     public GameObject db;
     public GameObject dbrandom;
 
+    public CameraManager cm;
     public GameObject vcam_go;
     public CinemachineVirtualCamera vcam;
     Transform tFollowTarget;
@@ -83,8 +85,6 @@ public class GameManager : MonoBehaviour
         houseList = new List<House_List>();
 
         yield return new WaitForSeconds(1f);
-
-        dbrandom.SetActive(false);
 
         redButton.gameObject.SetActive(true);
         yellowButton.gameObject.SetActive(true);
@@ -236,12 +236,14 @@ public class GameManager : MonoBehaviour
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
 
-        vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
+        //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
 
-        tFollowTarget = launcher.transform;
-        vcam.LookAt = tFollowTarget;
-        vcam.Follow = tFollowTarget;
-        vcam.enabled = true;
+        //tFollowTarget = launcher.transform;
+        //vcam.LookAt = tFollowTarget;
+        //vcam.Follow = tFollowTarget;
+        //vcam.enabled = true;
+
+        cm.ShotSetup();
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
         redRock_1.GetComponent<Rock_Flick>().enabled = true;
@@ -270,6 +272,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
+        cm.RockFollow(redRock.transform);
         knob.UnParentandHide();
         boardCollider.enabled = true;
 
@@ -309,12 +312,14 @@ public class GameManager : MonoBehaviour
         Debug.Log("Yellow Turn");
         state = GameState.YELLOWTURN;
 
-        vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
+        cm.ShotSetup();
 
-        tFollowTarget = launcher.transform;
-        vcam.LookAt = tFollowTarget;
-        vcam.Follow = tFollowTarget;
-        vcam.enabled = true;
+        //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
+
+        //tFollowTarget = launcher.transform;
+        //vcam.LookAt = tFollowTarget;
+        //vcam.Follow = tFollowTarget;
+        //vcam.enabled = true;
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
         yellowRock_1.GetComponent<Rock_Flick>().enabled = true;
@@ -333,7 +338,6 @@ public class GameManager : MonoBehaviour
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
-        knob.ParentToRock(yellowRock_1);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
@@ -341,9 +345,17 @@ public class GameManager : MonoBehaviour
         rockBar.ActiveRock();
         gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
 
-        yield return new WaitUntil(() => yellowRock.shotTaken == true);
+        yield return new WaitUntil(() => yellowRock_1.GetComponent<Rock_Flick>().isPressed == true);
+
+        knob.ParentToRock(yellowRock_1);
+
+        yield return new WaitUntil(() => yellowRock_1.GetComponent<Rock_Flick>().isPressed == false);
 
         knob.UnParentandHide();
+
+        yield return new WaitUntil(() => yellowRock.shotTaken == true);
+
+        cm.RockFollow(yellowRock.transform);
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => yellowRock.released == true);
@@ -356,8 +368,9 @@ public class GameManager : MonoBehaviour
             rockBar.IdleRock();
         }
 
-        vcam.enabled = false;
         sweepButton.gameObject.SetActive(false);
+
+        vcam.enabled = false;
 
         StartCoroutine(AllStopped());
 

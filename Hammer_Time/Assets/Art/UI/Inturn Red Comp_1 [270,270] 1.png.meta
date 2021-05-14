@@ -1,79 +1,79 @@
 fileFormatVersion: 2
-guid: 6c977b75a26734958834cf75af8e69e7
+guid: 706e627a145e2c74a8cf765a8e519307
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3195983851031841397
-    second: Outturn Red Comp_1 [270,270]_0
+      213: -2384967188403226476
+    second: Inturn Red Comp_1 [270,270] 1_0
   - first:
-      213: -5316672708102091913
-    second: Outturn Red Comp_1 [270,270]_1
+      213: -3000853751794849108
+    second: Inturn Red Comp_1 [270,270] 1_1
   - first:
-      213: -2616380281108989719
-    second: Outturn Red Comp_1 [270,270]_2
+      213: -5306957723720784775
+    second: Inturn Red Comp_1 [270,270] 1_2
   - first:
-      213: 3777138248036927579
-    second: Outturn Red Comp_1 [270,270]_3
+      213: 6734140549326720385
+    second: Inturn Red Comp_1 [270,270] 1_3
   - first:
-      213: 700323539922768197
-    second: Outturn Red Comp_1 [270,270]_4
+      213: 5456126928243277383
+    second: Inturn Red Comp_1 [270,270] 1_4
   - first:
-      213: 1207716338124087154
-    second: Outturn Red Comp_1 [270,270]_5
+      213: 5145992798502756448
+    second: Inturn Red Comp_1 [270,270] 1_5
   - first:
-      213: 4517621380001361240
-    second: Outturn Red Comp_1 [270,270]_6
+      213: -8740421602288179818
+    second: Inturn Red Comp_1 [270,270] 1_6
   - first:
-      213: -148005921707919835
-    second: Outturn Red Comp_1 [270,270]_7
+      213: -7970682938736195232
+    second: Inturn Red Comp_1 [270,270] 1_7
   - first:
-      213: -1057505834865767508
-    second: Outturn Red Comp_1 [270,270]_8
+      213: -2447603759648332862
+    second: Inturn Red Comp_1 [270,270] 1_8
   - first:
-      213: 1255911826543968325
-    second: Outturn Red Comp_1 [270,270]_9
+      213: 6343884013814008736
+    second: Inturn Red Comp_1 [270,270] 1_9
   - first:
-      213: -6416497344286456817
-    second: Outturn Red Comp_1 [270,270]_10
+      213: 7259898492073006322
+    second: Inturn Red Comp_1 [270,270] 1_10
   - first:
-      213: 3041712747091276212
-    second: Outturn Red Comp_1 [270,270]_11
+      213: -4071530778369019570
+    second: Inturn Red Comp_1 [270,270] 1_11
   - first:
-      213: -1497343920430641069
-    second: Outturn Red Comp_1 [270,270]_12
+      213: 2538187258047104160
+    second: Inturn Red Comp_1 [270,270] 1_12
   - first:
-      213: -6844860618030927039
-    second: Outturn Red Comp_1 [270,270]_13
+      213: 7331516268337157321
+    second: Inturn Red Comp_1 [270,270] 1_13
   - first:
-      213: -310855384363761769
-    second: Outturn Red Comp_1 [270,270]_14
+      213: -7888754446487931842
+    second: Inturn Red Comp_1 [270,270] 1_14
   - first:
-      213: -6171741514049057002
-    second: Outturn Red Comp_1 [270,270]_15
+      213: 668600089803330215
+    second: Inturn Red Comp_1 [270,270] 1_15
   - first:
-      213: 1814960733010414139
-    second: Outturn Red Comp_1 [270,270]_16
+      213: 1255748465586241521
+    second: Inturn Red Comp_1 [270,270] 1_16
   - first:
-      213: 2326284317271341607
-    second: Outturn Red Comp_1 [270,270]_17
+      213: 3111037111638514886
+    second: Inturn Red Comp_1 [270,270] 1_17
   - first:
-      213: -4375514556803931633
-    second: Outturn Red Comp_1 [270,270]_18
+      213: -503920120863104579
+    second: Inturn Red Comp_1 [270,270] 1_18
   - first:
-      213: 2161917372565192056
-    second: Outturn Red Comp_1 [270,270]_19
+      213: 8266988070740289385
+    second: Inturn Red Comp_1 [270,270] 1_19
   - first:
-      213: 4055233016123909627
-    second: Outturn Red Comp_1 [270,270]_20
+      213: 2887534469091876454
+    second: Inturn Red Comp_1 [270,270] 1_20
   - first:
-      213: -3862595485147133026
-    second: Outturn Red Comp_1 [270,270]_21
+      213: 3890344924896832826
+    second: Inturn Red Comp_1 [270,270] 1_21
   - first:
-      213: 7974829902164405712
-    second: Outturn Red Comp_1 [270,270]_22
+      213: -6095572236307019500
+    second: Inturn Red Comp_1 [270,270] 1_22
   - first:
-      213: -7830450519876367307
-    second: Outturn Red Comp_1 [270,270]_23
+      213: 5728106411158530733
+    second: Inturn Red Comp_1 [270,270] 1_23
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -187,7 +187,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_0
+      name: Inturn Red Comp_1 [270,270] 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -201,14 +201,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 57a43a4216a6a5c20800000000000000
-      internalID: 3195983851031841397
+      spriteID: 498734e6af4e6eed0800000000000000
+      internalID: -2384967188403226476
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_1
+      name: Inturn Red Comp_1 [270,270] 1_1
       rect:
         serializedVersion: 2
         x: 270
@@ -222,14 +222,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77b8f8647526736b0800000000000000
-      internalID: -5316672708102091913
+      spriteID: caaae557963da56d0800000000000000
+      internalID: -3000853751794849108
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_2
+      name: Inturn Red Comp_1 [270,270] 1_2
       rect:
         serializedVersion: 2
         x: 540
@@ -243,14 +243,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9e8792b1fffb0bbd0800000000000000
-      internalID: -2616380281108989719
+      spriteID: 9746b975116e956b0800000000000000
+      internalID: -5306957723720784775
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_3
+      name: Inturn Red Comp_1 [270,270] 1_3
       rect:
         serializedVersion: 2
         x: 810
@@ -264,14 +264,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b5848c579371b6430800000000000000
-      internalID: 3777138248036927579
+      spriteID: 18d4c2e8629747d50800000000000000
+      internalID: 6734140549326720385
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_4
+      name: Inturn Red Comp_1 [270,270] 1_4
       rect:
         serializedVersion: 2
         x: 0
@@ -285,14 +285,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 541d0f09c8c08b900800000000000000
-      internalID: 700323539922768197
+      spriteID: 74e326f888e08bb40800000000000000
+      internalID: 5456126928243277383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_5
+      name: Inturn Red Comp_1 [270,270] 1_5
       rect:
         serializedVersion: 2
         x: 270
@@ -306,14 +306,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 27f525b5c9ba2c010800000000000000
-      internalID: 1207716338124087154
+      spriteID: 060a9738f2d3a6740800000000000000
+      internalID: 5145992798502756448
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_6
+      name: Inturn Red Comp_1 [270,270] 1_6
       rect:
         serializedVersion: 2
         x: 540
@@ -327,14 +327,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 85de0b0b5b0d1be30800000000000000
-      internalID: 4517621380001361240
+      spriteID: 69566788cd8c3b680800000000000000
+      internalID: -8740421602288179818
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_7
+      name: Inturn Red Comp_1 [270,270] 1_7
       rect:
         serializedVersion: 2
         x: 810
@@ -348,14 +348,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 526f1fbf56d22fdf0800000000000000
-      internalID: -148005921707919835
+      spriteID: 069cc530912726190800000000000000
+      internalID: -7970682938736195232
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_8
+      name: Inturn Red Comp_1 [270,270] 1_8
       rect:
         serializedVersion: 2
         x: 0
@@ -369,14 +369,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cab4ceccb0cf251f0800000000000000
-      internalID: -1057505834865767508
+      spriteID: 2c3204b395d580ed0800000000000000
+      internalID: -2447603759648332862
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_9
+      name: Inturn Red Comp_1 [270,270] 1_9
       rect:
         serializedVersion: 2
         x: 270
@@ -390,14 +390,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5408d52f625ed6110800000000000000
-      internalID: 1255911826543968325
+      spriteID: 0abc9a336e00a0850800000000000000
+      internalID: 6343884013814008736
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_10
+      name: Inturn Red Comp_1 [270,270] 1_10
       rect:
         serializedVersion: 2
         x: 540
@@ -411,14 +411,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f04819359a504f6a0800000000000000
-      internalID: -6416497344286456817
+      spriteID: 2f4d765c63750c460800000000000000
+      internalID: 7259898492073006322
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_11
+      name: Inturn Red Comp_1 [270,270] 1_11
       rect:
         serializedVersion: 2
         x: 810
@@ -432,14 +432,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4b13727b0a5563a20800000000000000
-      internalID: 3041712747091276212
+      spriteID: e41be3734540f77c0800000000000000
+      internalID: -4071530778369019570
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_12
+      name: Inturn Red Comp_1 [270,270] 1_12
       rect:
         serializedVersion: 2
         x: 0
@@ -453,14 +453,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 350142c33ad583be0800000000000000
-      internalID: -1497343920430641069
+      spriteID: 0a402510dd3793320800000000000000
+      internalID: 2538187258047104160
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_13
+      name: Inturn Red Comp_1 [270,270] 1_13
       rect:
         serializedVersion: 2
         x: 270
@@ -474,14 +474,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 143b435988b2201a0800000000000000
-      internalID: -6844860618030927039
+      spriteID: 9c4db37b337ceb560800000000000000
+      internalID: 7331516268337157321
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_14
+      name: Inturn Red Comp_1 [270,270] 1_14
       rect:
         serializedVersion: 2
         x: 540
@@ -495,14 +495,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 79ffa76ccae9fabf0800000000000000
-      internalID: -310855384363761769
+      spriteID: e34bdc890a3858290800000000000000
+      internalID: -7888754446487931842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_15
+      name: Inturn Red Comp_1 [270,270] 1_15
       rect:
         serializedVersion: 2
         x: 810
@@ -516,14 +516,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 61f0391dac1995aa0800000000000000
-      internalID: -6171741514049057002
+      spriteID: 7a295814d38574900800000000000000
+      internalID: 668600089803330215
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_16
+      name: Inturn Red Comp_1 [270,270] 1_16
       rect:
         serializedVersion: 2
         x: 0
@@ -537,14 +537,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b3a4e5cab29003910800000000000000
-      internalID: 1814960733010414139
+      spriteID: 1ff728283905d6110800000000000000
+      internalID: 1255748465586241521
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_17
+      name: Inturn Red Comp_1 [270,270] 1_17
       rect:
         serializedVersion: 2
         x: 270
@@ -558,14 +558,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 72a3589e24f984020800000000000000
-      internalID: 2326284317271341607
+      spriteID: 6cc554225cf9c2b20800000000000000
+      internalID: 3111037111638514886
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_18
+      name: Inturn Red Comp_1 [270,270] 1_18
       rect:
         serializedVersion: 2
         x: 540
@@ -579,14 +579,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f02a62c61bc0743c0800000000000000
-      internalID: -4375514556803931633
+      spriteID: db168c8e157b109f0800000000000000
+      internalID: -503920120863104579
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_19
+      name: Inturn Red Comp_1 [270,270] 1_19
       rect:
         serializedVersion: 2
         x: 810
@@ -600,14 +600,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 87d7e71656ca00e10800000000000000
-      internalID: 2161917372565192056
+      spriteID: 967edd699dd3ab270800000000000000
+      internalID: 8266988070740289385
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_20
+      name: Inturn Red Comp_1 [270,270] 1_20
       rect:
         serializedVersion: 2
         x: 0
@@ -621,14 +621,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bf5608f41f4174830800000000000000
-      internalID: 4055233016123909627
+      spriteID: 66edae20d45921820800000000000000
+      internalID: 2887534469091876454
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_21
+      name: Inturn Red Comp_1 [270,270] 1_21
       rect:
         serializedVersion: 2
         x: 270
@@ -642,14 +642,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e9b07c40fdd456ac0800000000000000
-      internalID: -3862595485147133026
+      spriteID: a3d2836e8184df530800000000000000
+      internalID: 3890344924896832826
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_22
+      name: Inturn Red Comp_1 [270,270] 1_22
       rect:
         serializedVersion: 2
         x: 540
@@ -663,14 +663,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0dd2ca62b894cae60800000000000000
-      internalID: 7974829902164405712
+      spriteID: 419cf28c85d286ba0800000000000000
+      internalID: -6095572236307019500
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Outturn Red Comp_1 [270,270]_23
+      name: Inturn Red Comp_1 [270,270] 1_23
       rect:
         serializedVersion: 2
         x: 810
@@ -684,8 +684,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 53c0f7b5db6a45390800000000000000
-      internalID: -7830450519876367307
+      spriteID: daaedb0ae625e7f40800000000000000
+      internalID: 5728106411158530733
       vertices: []
       indices: 
       edges: []

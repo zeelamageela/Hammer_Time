@@ -137,10 +137,10 @@ public class Rock_Flick: MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
-        tFollowTarget = gameObject.transform;
-        vcam.LookAt = tFollowTarget;
-        vcam.Follow = tFollowTarget;
-        vcam.enabled = true;
+        //tFollowTarget = gameObject.transform;
+        //vcam.LookAt = tFollowTarget;
+        //vcam.Follow = tFollowTarget;
+        //vcam.enabled = true;
 
         launcher.GetComponent<Collider2D>().enabled = true;
 

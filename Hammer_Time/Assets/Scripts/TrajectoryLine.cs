@@ -9,6 +9,7 @@ public class TrajectoryLine : MonoBehaviour
     public GameObject launcher;
     public Traj_Transform trajTransform;
     public GameManager gm;
+    public CameraManager cm;
 
     GameObject rock;
     public float springDistance;
@@ -35,9 +36,10 @@ public class TrajectoryLine : MonoBehaviour
         lr = GetComponent<LineRenderer>();
         edgeCol = GetComponent<EdgeCollider2D>();
 
-
         dots = new List<GameObject>();
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+
+        lr.enabled = false;
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -62,7 +64,8 @@ public class TrajectoryLine : MonoBehaviour
     }
 
     public void DrawTrajectory()
-    { 
+    {
+        lr.enabled = false;
 
         if (dots.Count != 0)
         {
@@ -125,6 +128,7 @@ public class TrajectoryLine : MonoBehaviour
             dotPlace.GetComponent<SpriteRenderer>().color = knobColour;
             dots.Add(dotPlace);
         }
+
         aimCircle.GetComponent<SpriteRenderer>().enabled = true;
 
         aimCircle.transform.position = lr.GetPosition(lr.positionCount - 1);
@@ -138,9 +142,12 @@ public class TrajectoryLine : MonoBehaviour
     public void Release()
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+
         lr.startWidth = 0.1f;
         lr.endWidth = 0.1f;
     }
+
+
     //void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)
     //{
     //    lr.positionCount = 200;

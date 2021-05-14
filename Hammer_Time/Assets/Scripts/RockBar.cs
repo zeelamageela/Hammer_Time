@@ -59,18 +59,14 @@ public class RockBar : MonoBehaviour
     {
         if (redHammer)
         {
-            offset = -60f;
-        }
-        else
-        {
-            offset = 60f;
+            offset = -offset;
         }
 
         for (int i = 0; i < rocksPerTeam; i++)
         {
             GameObject notHammer = Instantiate(notHammerRock);
             notHammer.transform.SetParent(notHammerRockPos, false);
-            notHammer.transform.position += new Vector3(i * -offset, 0f, 0f);
+            notHammer.transform.position += new Vector3((i * -offset) / 150f, 0f, 0f);
             notHammer.name = gm.rockList[2 * i].rock.name;
             rockListUI.Add(notHammer);
 
@@ -125,7 +121,6 @@ public class RockBar : MonoBehaviour
             rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
             Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
         }
-
     }
 
     public void DeadRock(int rockIndex)

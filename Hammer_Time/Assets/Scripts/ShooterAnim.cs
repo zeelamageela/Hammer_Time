@@ -89,7 +89,7 @@ public class ShooterAnim : MonoBehaviour
             throwDistance = Mathf.Clamp(throwDistance, backSwingPoint, releasePoint);
 
             throwSpeed = (throwDistance - backSwingPoint) / (releasePoint - backSwingPoint);
-            throwSpeed = (1f - pullback) + throwSpeed;
+            //throwSpeed = (1f - pullback) + throwSpeed;
             anim.Play("Shooter_2_Kick", 0, throwSpeed);
 
             if (rock.transform.position.y >= releasePoint)

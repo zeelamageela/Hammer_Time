@@ -71,5 +71,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
-  sweepTime: 12
-  sweepAmt: 0.085
+  sweepButton: {fileID: 0}
+  sweepTime: 150
+  sweepAmt: 0.0001
