@@ -9,9 +9,9 @@ public class TurnAnim : MonoBehaviour
 
     GameObject rock;
     Rock_Force rockForce;
-    bool inturn = true;
+    //bool inturn = true;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -24,22 +24,22 @@ public class TurnAnim : MonoBehaviour
             rock = gm.rockList[gm.rockCurrent].rock;
             rockForce = rock.GetComponent<Rock_Force>();
 
-            if (rockForce.flipAxis)
-            {
-                inturn = false;
-                SetTurn();
-            }
-            else
-            {
-                inturn = true;
-                SetTurn();
-            }
+            //if (rockForce.flipAxis)
+            //{
+            //    //inturn = false;
+            //    SetTurn(false);
+            //}
+            //else
+            //{
+            //    //inturn = true;
+            //    SetTurn(true);
+            //}
         }
 
 
     }
 
-    public void SetTurn()
+    public void SetTurn(bool inturn)
     {
         if (gm.rockList.Count != 0)
         {

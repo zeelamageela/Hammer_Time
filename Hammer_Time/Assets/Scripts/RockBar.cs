@@ -66,7 +66,8 @@ public class RockBar : MonoBehaviour
         {
             GameObject notHammer = Instantiate(notHammerRock);
             notHammer.transform.SetParent(notHammerRockPos, false);
-            notHammer.transform.position += new Vector3((i * -offset) / 150f, 0f, 0f);
+            notHammer.transform.position += new Vector3((i * -offset) / 125f, 0f, 0f);
+
             notHammer.name = gm.rockList[2 * i].rock.name;
             rockListUI.Add(notHammer);
 
@@ -74,7 +75,9 @@ public class RockBar : MonoBehaviour
 
             GameObject hammer = Instantiate(hammerRock);
             hammer.transform.SetParent(hammerRockPos, false);
-            hammer.transform.position += new Vector3(i * offset, 0f, 0f);
+
+            hammer.transform.position += new Vector3((i * offset) / 125f, 0f, 0f);
+
             hammer.name = gm.rockList[(2 * i) + 1].rock.name;
             rockListUI.Add(hammer);
         }
