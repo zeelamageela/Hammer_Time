@@ -269,11 +269,17 @@ public class GameManager : MonoBehaviour
 
         //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
         rockBar.ActiveRock();
+        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == true);
+
+        knob.ParentToRock(redRock_1);
+
+        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == false);
+
+        knob.UnParentandHide();
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         cm.RockFollow(redRock.transform);
-        knob.UnParentandHide();
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => redRock.released == true);
@@ -284,6 +290,10 @@ public class GameManager : MonoBehaviour
         if (!redRock.outOfPlay)
         {
             rockBar.IdleRock();
+        }
+        else
+        {
+            rockBar.DeadRock(rockCurrent);
         }
 
         sweepButton.gameObject.SetActive(false);
@@ -365,7 +375,13 @@ public class GameManager : MonoBehaviour
         
         if (!yellowRock.outOfPlay)
         {
+            Debug.Log("Idle Rockbar");
             rockBar.IdleRock();
+        }
+        else
+        {
+            Debug.Log("Dead Rockbar");
+            rockBar.DeadRock(rockCurrent);
         }
 
         sweepButton.gameObject.SetActive(false);
