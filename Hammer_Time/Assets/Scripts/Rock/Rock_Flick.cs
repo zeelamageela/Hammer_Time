@@ -12,8 +12,6 @@ public class Rock_Flick: MonoBehaviour
     public bool isPressed = false;
     //public bool shotTaken = false;
 
-    public Rock_Traj trajectory;
-
     GameObject launcher;
     Rigidbody2D launcher_rb;
 
