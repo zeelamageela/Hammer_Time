@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class RockBar : MonoBehaviour
 {
     public GameManager gm;
+    public RockManager rm;
+
     public Sprite yellowRock;
     public GameObject yellowRockGO;
     public Sprite yellowRockMouseOver;
@@ -20,6 +22,8 @@ public class RockBar : MonoBehaviour
     public Sprite redRockDead;
     public RectTransform redRocks;
 
+    public GameObject yellowTurnSelect;
+    public GameObject redTurnSelect;
     public Text yellowScoreDisplay;
     public Text redScoreDisplay;
     
@@ -41,6 +45,9 @@ public class RockBar : MonoBehaviour
 
         yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
         redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
+        yellowTurnSelect.SetActive(false);
+        redTurnSelect.SetActive(false);
+        
     }
 
     public void ResetBar(bool redHammer)
@@ -57,9 +64,15 @@ public class RockBar : MonoBehaviour
 
     IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, RectTransform hammerRockPos, RectTransform notHammerRockPos)
     {
+        bool redTurn;
         if (redHammer)
         {
             offset = -offset;
+            redTurn = false;
+        }
+        else
+        {
+            redTurn = true;
         }
 
         for (int i = 0; i < rocksPerTeam; i++)
@@ -89,7 +102,8 @@ public class RockBar : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
-        ActiveRock();
+        ActiveRock(redTurn);
+
     }
 
     public void EndUpdate(int yellowScore, int redScore)
@@ -116,13 +130,25 @@ public class RockBar : MonoBehaviour
         }
     }
 
-    public void ActiveRock()
+    public void ActiveRock(bool redTurn)
     {
         if (rockListUI.Count != 0)
         {
             rockCurrent = gm.rockCurrent;
             rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
             Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
+            Debug.Log("RedTurn is " + redTurn);
+
+            if (redTurn)
+            {
+                redTurnSelect.SetActive(true);
+                yellowTurnSelect.SetActive(false);
+            }
+            else
+            {
+                yellowTurnSelect.SetActive(true);
+                redTurnSelect.SetActive(false);
+            }
         }
     }
 

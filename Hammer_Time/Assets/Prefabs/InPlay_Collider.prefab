@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9206338973629190588}
   - component: {fileID: 9206338973629190589}
-  - component: {fileID: 628849380}
   m_Layer: 8
   m_Name: InPlay_Collider
   m_TagString: Untagged
@@ -58,19 +57,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.5672064, y: 7.560376}
   m_EdgeRadius: 0
---- !u!114 &628849380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9206338973629190578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26d877d01dc1e424b9ce2b092616aace, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 0}
-  sweepButton: {fileID: 0}
-  sweepTime: 150
-  sweepAmt: 0.0001

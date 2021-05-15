@@ -25,8 +25,8 @@ public class Rock_Force : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
 
-        trajLineGO = GameObject.Find("TrajectoryLine");
-        trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        //trajLineGO = GameObject.Find("TrajectoryLine");
+        //trajLine = trajLineGO.GetComponent<TrajectoryLine>();
     }
 
 

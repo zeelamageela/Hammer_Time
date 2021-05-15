@@ -49,6 +49,7 @@ public class Rock_Colliders : MonoBehaviour
 
     IEnumerator OutOfPlay()
     {
+        outOfPlay = true;
         body.velocity = Vector2.zero;
         body.angularVelocity = 0f;
 
@@ -112,7 +113,6 @@ public class Rock_Colliders : MonoBehaviour
         if (collider == InPlay_Collider)
         {
             Debug.Log("Out");
-            outOfPlay = true;
             inPlay = false;
             inHouse = false;
             StartCoroutine(OutOfPlay());

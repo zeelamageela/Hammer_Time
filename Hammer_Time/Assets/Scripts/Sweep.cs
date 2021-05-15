@@ -11,34 +11,65 @@ public class Sweep : MonoBehaviour
     Rigidbody2D rb;
 
     public Button sweepButton;
+    public Button whoaButton;
 
     public int sweepTime;
     public float sweepAmt;
 
-
-    public void Sweeping()
+    void Start()
     {
-        rock = gm.rockList[gm.rockCurrent].rock;
-        rb = rock.GetComponent<Rigidbody2D>();
-        StartCoroutine(OnSweep());
+        whoaButton.gameObject.SetActive(false);
         sweepButton.gameObject.SetActive(false);
     }
 
-    public IEnumerator OnSweep()
+    public void EnterSweepZone()
     {
-        
-        for (int i = 0; i < sweepTime; i++)
-        {
-            //Debug.Log("Angular Vel is " + rb.angularVelocity);
-            rb.angularDrag = rb.angularDrag + (i * (sweepAmt / 2f)); 
-            rb.drag = (rb.drag - (i * sweepAmt));
-            //Debug.Log("Swept Angular Vel is " + rb.angularVelocity);
-            //Debug.Log("Angular Drag is " + rb.angularDrag);
-            //Debug.Log(rb.drag + " is current drag");
-        }
-        yield return new WaitForSeconds(0.75f);
-        rb.drag = 0.38f;
         sweepButton.gameObject.SetActive(true);
+    }
 
+    public void ExitSweepZone()
+    {
+        sweepButton.gameObject.SetActive(false);
+        whoaButton.gameObject.SetActive(false);
+    }
+
+    public void OnSweep()
+    {
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rb = rock.GetComponent<Rigidbody2D>();
+
+        //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
+        float curl = rock.GetComponent<Rock_Force>().curl.x + (5f * sweepAmt);
+        rock.GetComponent<Rock_Force>().curl.x = curl;
+
+        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+        rb.drag = (rb.drag - (sweepAmt));
+
+        sweepButton.gameObject.SetActive(false);
+        whoaButton.gameObject.SetActive(true);
+    }
+
+    public void OnWhoa()
+    {
+        rb.drag = 0.38f;
+        rb.angularDrag = 0.24f;
+
+        sweepButton.gameObject.SetActive(true);
+        whoaButton.gameObject.SetActive(false);
+    }
+    
+    IEnumerator Sweeping()
+    {
+
+        yield return new WaitForSeconds(0.75f);
+
+        rb.drag = 0.38f;
+        rb.angularDrag = 0.24f;
+        whoaButton.gameObject.SetActive(true);
+    }
+
+    IEnumerator LagTime()
+    {
+        yield return new WaitForSeconds(sweepTime);
     }
 }

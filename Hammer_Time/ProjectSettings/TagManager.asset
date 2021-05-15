@@ -10,6 +10,7 @@ TagManager:
   - Boards
   - Trajectory
   - ScoreCard
+  - TurnSelector
   layers:
   - Default
   - TransparentFX

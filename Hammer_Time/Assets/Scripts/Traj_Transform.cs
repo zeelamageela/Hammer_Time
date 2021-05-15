@@ -5,6 +5,7 @@ using UnityEngine;
 public class Traj_Transform : MonoBehaviour
 {
     public GameManager gm;
+    public RockManager rm;
     GameObject rock;
     public GameObject launcher;
     public TrajectoryLine trajLine;
@@ -13,7 +14,7 @@ public class Traj_Transform : MonoBehaviour
     public float weightScale;
     public float weight;
     float angle;
-    bool flipAxis = false;
+    //bool flipAxis = false;
 
     
     void Update()
@@ -36,9 +37,7 @@ public class Traj_Transform : MonoBehaviour
             weight = (weightScale * springDistance) / 4f;
             //weight = (weightScale);
 
-            flipAxis = rock.GetComponent<Rock_Force>().flipAxis;
-
-            if (flipAxis)
+            if (rm.inturn)
             {
                 transform.localScale = new Vector3(-1f, weight, 1f);
             }

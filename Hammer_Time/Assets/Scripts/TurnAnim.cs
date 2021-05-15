@@ -6,24 +6,53 @@ public class TurnAnim : MonoBehaviour
 {
     private Animator anim;
     public GameManager gm;
+    public RockManager rm;
 
+    public Collider2D col;
     GameObject rock;
     Rock_Force rockForce;
-    //bool inturn = true;
-
+    //bool isPressed = false;
 
     void Start()
     {
         anim = GetComponent<Animator>();
     }
 
+
+
     void Update()
     {
         if (gm.rockList.Count != 0)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
-            rockForce = rock.GetComponent<Rock_Force>();
+            bool inturn = rm.inturn;
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+                if (hit.collider == col)
+                {
+                    if (inturn)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(IsPressed(inturn));
+                        Debug.Log("inturn is " + inturn);
+                    }
+                    else
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(IsPressed(inturn));
+                        Debug.Log("inturn is " + inturn);
+                    }
+
+                    Debug.Log(hit.collider.gameObject.name);
+                    Debug.Log("Is Pressed");
+                }
+            }
             //if (rockForce.flipAxis)
             //{
             //    //inturn = false;
@@ -35,26 +64,24 @@ public class TurnAnim : MonoBehaviour
             //    SetTurn(true);
             //}
         }
-
-
     }
 
-    public void SetTurn(bool inturn)
+    IEnumerator IsPressed(bool inturn)
     {
-        if (gm.rockList.Count != 0)
+        col.enabled = false;
+
+        if (inturn)
         {
-            if (inturn)
-            {
-                rockForce.flipAxis = false;
-                anim.SetBool("inturn", true);
-            }
-            else
-            {
-                rockForce.flipAxis = true;
-                anim.SetBool("inturn", false);
-            }
+            anim.SetBool("inturn", true);
+        }
+        else
+        {
+            anim.SetBool("inturn", false);
         }
 
+        yield return new WaitForSeconds(0.25f);
+        col.enabled = true;
     }
+
     
 }

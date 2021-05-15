@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public int rockTotal;
     public int rockCurrent;
 
+    public RockManager rm;
     public GameObject redShooter;
     public GameObject yellowShooter;
     public GameObject shooterAnim;
@@ -268,7 +269,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(redRock_1.name);
 
         //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
-        rockBar.ActiveRock();
+        rockBar.ActiveRock(true);
         yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == true);
 
         knob.ParentToRock(redRock_1);
@@ -283,7 +284,8 @@ public class GameManager : MonoBehaviour
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => redRock.released == true);
-        sweepButton.gameObject.SetActive(true);
+
+        rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
 
@@ -296,7 +298,7 @@ public class GameManager : MonoBehaviour
             rockBar.DeadRock(rockCurrent);
         }
 
-        sweepButton.gameObject.SetActive(false);
+        rm.GetComponent<Sweep>().ExitSweepZone();
 
         Debug.Log("redRock at Rest");
         vcam.enabled = false;
@@ -348,11 +350,10 @@ public class GameManager : MonoBehaviour
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
-
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
-        rockBar.ActiveRock();
+        rockBar.ActiveRock(false);
         gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
 
         yield return new WaitUntil(() => yellowRock_1.GetComponent<Rock_Flick>().isPressed == true);
@@ -369,7 +370,8 @@ public class GameManager : MonoBehaviour
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => yellowRock.released == true);
-        sweepButton.gameObject.SetActive(true);
+
+        rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
         
@@ -384,11 +386,13 @@ public class GameManager : MonoBehaviour
             rockBar.DeadRock(rockCurrent);
         }
 
-        sweepButton.gameObject.SetActive(false);
+        rm.GetComponent<Sweep>().ExitSweepZone();
 
         vcam.enabled = false;
 
         StartCoroutine(AllStopped());
+
+        yield return new WaitForEndOfFrame();
 
         foreach(Rock_List rock in rockList)
         {
@@ -398,6 +402,8 @@ public class GameManager : MonoBehaviour
             outOfPlay = rock.rockInfo.outOfPlay;
             rockBar.ShotUpdate(rockIndex, outOfPlay);
         }
+
+        yield return new WaitForEndOfFrame();
 
         StartCoroutine(CheckScore());
 
