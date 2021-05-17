@@ -8,8 +8,10 @@ public class RockManager : MonoBehaviour
     public CameraManager cm;
     public RockBar rb;
     public GameObject rock;
+    public ShootingKnob shootKnob;
 
-    public bool inturn = true;
+    public bool inturn;
+    bool isPressed;
 
     void OnEnable()
     {
@@ -22,7 +24,7 @@ public class RockManager : MonoBehaviour
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             
-            if (inturn)
+            if (!inturn)
             {
                 rock.GetComponent<Rock_Force>().flipAxis = true;
             }

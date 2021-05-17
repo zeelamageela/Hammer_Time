@@ -260,24 +260,15 @@ public class GameManager : MonoBehaviour
     IEnumerator RedTurn()
     {
         redRocks_left--;
-
+        rm.inturn = true;
         GameObject redRock_1 = rockList[rockCurrent].rock;
-
-        knob.ParentToRock(redRock_1);
 
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
         //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
         rockBar.ActiveRock(true);
-        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == true);
-
-        knob.ParentToRock(redRock_1);
-
-        yield return new WaitUntil(() => redRock_1.GetComponent<Rock_Flick>().isPressed == false);
-
-        knob.UnParentandHide();
-
+        
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         cm.RockFollow(redRock.transform);
@@ -347,6 +338,7 @@ public class GameManager : MonoBehaviour
     IEnumerator YellowTurn()
     {
         yellowRocks_left--;
+        rm.inturn = true;
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
@@ -354,15 +346,8 @@ public class GameManager : MonoBehaviour
         Debug.Log(yellowRock_1.name);
 
         rockBar.ActiveRock(false);
-        gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
+        //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
 
-        yield return new WaitUntil(() => yellowRock_1.GetComponent<Rock_Flick>().isPressed == true);
-
-        knob.ParentToRock(yellowRock_1);
-
-        yield return new WaitUntil(() => yellowRock_1.GetComponent<Rock_Flick>().isPressed == false);
-
-        knob.UnParentandHide();
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 

@@ -67,16 +67,16 @@ public class ShooterAnim : MonoBehaviour
         if (isPressed)
         {
 
-            if (springDistance > 0.1f && rock.transform.position.y < -25.1f)
+            if (springDistance > 0.5f && rock.transform.position.y < -25.1f)
             {
-                pullback = springDistance / 3f;
+                pullback = (springDistance) / 3f;
                 pullback = Mathf.Clamp(pullback, 0f, 1f);
                 anim.SetBool("mouseDown", false);
                 anim.Play("Shooter_2_Backswing", 0, pullback);
             }
 
 
-            if (pullback > 0.6f)
+            if (pullback >= 0.5f)
             {
                 angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
@@ -98,7 +98,7 @@ public class ShooterAnim : MonoBehaviour
                 float slideSpeed = (slidePos - releasePoint) / (-16.03f - releasePoint);
                 rj.enabled = true;
                 anim.SetBool("extend", true);
-                anim.Play("Shooter_2_Slide", 0, 0f);
+                anim.Play("Shooter_2_Slide", 0, (1f - slideSpeed));
             }
 
             if (isReleased)
@@ -111,7 +111,6 @@ public class ShooterAnim : MonoBehaviour
                 if (slowdownTimer <= 10)
                 {
                     StartCoroutine(Slowdown());
-
                 }
 
             }

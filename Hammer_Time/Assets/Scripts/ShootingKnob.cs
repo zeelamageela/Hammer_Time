@@ -12,6 +12,7 @@ public class ShootingKnob : MonoBehaviour
     public float distance;
     public TrajectoryLine trajLine;
 
+    
     Gradient gradient;
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
@@ -24,11 +25,12 @@ public class ShootingKnob : MonoBehaviour
         lr.endWidth = 0f;
     }
 
-    public void ParentToRock(GameObject rock)
+
+    public void ParentToRock()
     {
-        if (rock != null)
+        if (gm.rockList.Count != 0)
         {
-            transform.parent = rock.transform;
+            transform.parent = gm.rockList[gm.rockCurrent].rock.transform;
         }
         
         sr.enabled = true;
@@ -36,25 +38,24 @@ public class ShootingKnob : MonoBehaviour
 
     public void UnParentandHide()
     {
-        transform.parent = null;
         sr.enabled = false;
+        transform.parent = null;
         transform.position = new Vector3(0f, -25f, 0f);
-        
     }
+
 
     private void Update()
     {
-        //ColourChange();
-        Vector2 startPoint = launcher.transform.position;
-        Vector2 endPoint = transform.position;
-
-        distance = Vector2.Distance(startPoint, endPoint);
-
-        lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, hogLinePoint.transform.position.y, 0f));
-        lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
-
         if (sr.enabled)
         {
+            Vector2 startPoint = launcher.transform.position;
+            Vector2 endPoint = transform.position;
+
+            distance = Vector2.Distance(startPoint, endPoint);
+
+            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, hogLinePoint.transform.position.y, 0f));
+            lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
+
             lr.startColor = sr.color;
             lr.endColor = sr.color;
 
@@ -87,8 +88,9 @@ public class ShootingKnob : MonoBehaviour
             }
             else if (distance <= 1.6f)
             {
-                float distColor = (distance - 0.5f);
+                float distColor = (distance - 0.5f) / 0.5f;
                 sr.color = Color.Lerp(Color.red, Color.yellow, distColor);
+
                 //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
             }
         }

@@ -27,6 +27,9 @@ public class Rock_Flick: MonoBehaviour
 
     GameObject trajLineGO;
     TrajectoryLine trajLine;
+    GameObject shootKnobGO;
+    ShootingKnob shootKnob;
+
     Vector3 lastMouseCoordinate = Vector3.zero;
 
     Vector2 posScale = new Vector2(1f / 3f, 1f);
@@ -40,6 +43,9 @@ public class Rock_Flick: MonoBehaviour
 
         launcher = GameObject.FindWithTag("Launcher");
         launcher_rb = launcher.GetComponent<Rigidbody2D>();
+
+        shootKnobGO = GameObject.Find("ShootingKnob");
+        shootKnob = shootKnobGO.GetComponent<ShootingKnob>();
 
         GetComponent<SpringJoint2D>().connectedBody = launcher_rb;
         GetComponent<Rock_Colliders>().enabled = false;
@@ -60,27 +66,15 @@ public class Rock_Flick: MonoBehaviour
 
             trajLine.DrawTrajectory();
 
-            if (Input.GetKeyDown(KeyCode.O))
-            {
-                GetComponent<Rock_Force>().flipAxis = true;
-            }
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                GetComponent<Rock_Force>().flipAxis = false;
-            }
-
-            ////First we find out how much it has moved, by comparing it with the stored coordinate.
-            //Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
-
-            //if (mouseDelta != Vector3.zero)
+            shootKnob.ParentToRock();
+            //if (Input.GetKeyDown(KeyCode.O))
             //{
-            //    if (springDistance > 0.25f)
-            //    {
-            //        trajLine.DrawTrajectory();
-            //    }
+            //    GetComponent<Rock_Force>().flipAxis = true;
             //}
-            //// Then we store our mousePosition so that we can check it again next frame.
-            //lastMouseCoordinate = Input.mousePosition;
+            //if (Input.GetKeyDown(KeyCode.I))
+            //{
+            //    GetComponent<Rock_Force>().flipAxis = false;
+            //}
 
             OnDrag();
         }
@@ -88,6 +82,9 @@ public class Rock_Flick: MonoBehaviour
 
     void OnMouseDown()
     {
+
+        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+        GetComponent<SpringJoint2D>().frequency = 1.5f;
         isPressed = true;
         rb.isKinematic = true;
         GetComponent<SpriteRenderer>().enabled = false;
@@ -95,37 +92,43 @@ public class Rock_Flick: MonoBehaviour
 
     void OnDrag()
     {
-        GameObject rock = gameObject;
         startPoint = rb.position;
 
         endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
         springDistance = Vector2.Distance(startPoint, endPoint);
 
         springDirection = (Vector2)Vector3.Normalize(endPoint - startPoint);
-        //springDirection = Vector2.Scale(springDirection, posScale);
-
-        // First we find out how much it has moved, by comparing it with the stored coordinate.
-        //Vector3 mouseDelta = Input.mousePosition - lastMouseCoordinate;
-
-        //if (mouseDelta != Vector3.zero)
-        //{
-        //    trajLine.DrawTrajectory();
-        //}
-        //// Then we store our mousePosition so that we can check it again next frame.
-        //lastMouseCoordinate = Input.mousePosition;
     }
 
     public void OnMouseUp()
     {
         isPressed = false;
         rb.isKinematic = false;
-        StartCoroutine(Release());
-        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-        trajLine.Release();
+
+        if (springDistance <= 1.5f)
+        {
+            RockReset();
+        }
+        else
+        {
+            StartCoroutine(Release());
+            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+            trajLine.Release();
+            shootKnob.UnParentandHide();
+        }
+
         //trajLineGO.SetActive(false);
     }
 
-    public IEnumerator Release()
+    void RockReset()
+    {
+        transform.position = launcher_rb.position;
+        GetComponent<SpriteRenderer>().enabled = true;
+        GetComponent<SpringJoint2D>().dampingRatio = 1f;
+        GetComponent<SpringJoint2D>().frequency = 10000f;
+    }
+
+    IEnumerator Release()
     {
         yield return new WaitForSeconds(releaseTime);
 
