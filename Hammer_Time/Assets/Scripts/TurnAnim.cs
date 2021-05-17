@@ -40,17 +40,14 @@ public class TurnAnim : MonoBehaviour
                     {
                         rm.inturn = false;
                         StartCoroutine(IsPressed(inturn));
-                        Debug.Log("inturn is " + inturn);
                     }
                     else
                     {
                         rm.inturn = true;
                         StartCoroutine(IsPressed(inturn));
-                        Debug.Log("inturn is " + inturn);
                     }
 
                     Debug.Log(hit.collider.gameObject.name);
-                    Debug.Log("Is Pressed");
                 }
             }
             //if (rockForce.flipAxis)
@@ -72,11 +69,11 @@ public class TurnAnim : MonoBehaviour
 
         if (inturn)
         {
-            anim.SetBool("inturn", true);
+            anim.SetBool("inturn", false);
         }
         else
         {
-            anim.SetBool("inturn", false);
+            anim.SetBool("inturn", true);
         }
 
         yield return new WaitForSeconds(0.25f);

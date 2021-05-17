@@ -1722,8 +1722,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272161325}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 264, y: -467, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalPosition: {x: 264, y: -450, z: 0}
+  m_LocalScale: {x: 75, y: 75, z: 1}
   m_Children: []
   m_Father: {fileID: 558889063}
   m_RootOrder: 5
@@ -4577,6 +4577,7 @@ MonoBehaviour:
   cm: {fileID: 57450608}
   rb: {fileID: 558889064}
   rock: {fileID: 0}
+  shootKnob: {fileID: 0}
   inturn: 0
 --- !u!4 &545177318
 Transform:
@@ -7016,8 +7017,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919697563}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -264, y: -467, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalPosition: {x: -264, y: -450, z: 0}
+  m_LocalScale: {x: 75, y: 75, z: 1}
   m_Children: []
   m_Father: {fileID: 558889063}
   m_RootOrder: 6

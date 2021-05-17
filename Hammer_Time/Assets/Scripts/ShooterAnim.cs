@@ -98,7 +98,7 @@ public class ShooterAnim : MonoBehaviour
                 float slideSpeed = (slidePos - releasePoint) / (-16.03f - releasePoint);
                 rj.enabled = true;
                 anim.SetBool("extend", true);
-                anim.Play("Shooter_2_Slide", 0, (1f - slideSpeed));
+                anim.Play("Shooter_2_Slide", 0, 0f);
             }
 
             if (isReleased)

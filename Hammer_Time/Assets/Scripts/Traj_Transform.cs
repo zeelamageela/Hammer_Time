@@ -37,7 +37,7 @@ public class Traj_Transform : MonoBehaviour
             weight = (weightScale * springDistance) / 4f;
             //weight = (weightScale);
 
-            if (rm.inturn)
+            if (!rm.inturn)
             {
                 transform.localScale = new Vector3(-1f, weight, 1f);
             }

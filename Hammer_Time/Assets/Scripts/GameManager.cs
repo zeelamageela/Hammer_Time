@@ -261,6 +261,8 @@ public class GameManager : MonoBehaviour
     {
         redRocks_left--;
         rm.inturn = true;
+        Debug.Log("rmInturn is " + rm.inturn);
+
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
         redRock = redRock_1.GetComponent<Rock_Info>();
@@ -339,6 +341,7 @@ public class GameManager : MonoBehaviour
     {
         yellowRocks_left--;
         rm.inturn = true;
+        Debug.Log("rmInturn is " + rm.inturn);
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
@@ -359,6 +362,7 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
+        
         
         if (!yellowRock.outOfPlay)
         {
