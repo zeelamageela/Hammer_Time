@@ -39,6 +39,7 @@ public class ShootingKnob : MonoBehaviour
     public void UnParentandHide()
     {
         sr.enabled = false;
+        lr.enabled = false;
         transform.parent = null;
         transform.position = new Vector3(0f, -25f, 0f);
     }
@@ -82,14 +83,14 @@ public class ShootingKnob : MonoBehaviour
                 if (distance < 1.9f)
                 {
                     float distColor = (distance - 1.6f) / 0.25f;
-                    sr.color = Color.Lerp(Color.yellow, Color.green, distColor);
+                    sr.color = Color.Lerp(Color.red, Color.yellow, distColor);
                     //spriteRenderer.color = new Color(1f, 0.92f, 0.016f, 1f);
                 }
             }
             else if (distance <= 1.6f)
             {
                 float distColor = (distance - 0.5f) / 0.5f;
-                sr.color = Color.Lerp(Color.red, Color.yellow, distColor);
+                sr.color = Color.Lerp(Color.red, Color.red, distColor);
 
                 //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
             }
