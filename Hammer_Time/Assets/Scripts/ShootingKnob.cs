@@ -23,6 +23,7 @@ public class ShootingKnob : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         lr.startWidth = 0f;
         lr.endWidth = 0f;
+        lr.enabled = false;
     }
 
 
@@ -32,7 +33,7 @@ public class ShootingKnob : MonoBehaviour
         {
             transform.parent = gm.rockList[gm.rockCurrent].rock.transform;
         }
-        
+        lr.enabled = true;
         sr.enabled = true;
     }
 

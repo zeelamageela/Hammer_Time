@@ -142,7 +142,7 @@ public class TrajectoryLine : MonoBehaviour
     public void Release()
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
-
+        lr.enabled = false;
         lr.startWidth = 0.1f;
         lr.endWidth = 0.1f;
     }

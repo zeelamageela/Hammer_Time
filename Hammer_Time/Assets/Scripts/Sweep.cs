@@ -11,6 +11,8 @@ public class Sweep : MonoBehaviour
     GameObject rock;
     Rigidbody2D rb;
 
+    public GameObject sweeperGO;
+    public Sweeper sweeper;
     public SweepSelector sweepSel;
     public Button sweepButton;
     public Button hardButton;
@@ -29,6 +31,8 @@ public class Sweep : MonoBehaviour
         leftButton.gameObject.SetActive(false);
         rightButton.gameObject.SetActive(false);
 
+        sweeper.gameObject.SetActive(false);
+
         rm = GetComponent<RockManager>();
     }
 
@@ -37,6 +41,9 @@ public class Sweep : MonoBehaviour
         sweepButton.gameObject.SetActive(true);
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
+
+        sweeper.gameObject.SetActive(true);
+
         sweepSel.SetupSweepers();
     }
 
@@ -47,6 +54,9 @@ public class Sweep : MonoBehaviour
         leftButton.gameObject.SetActive(false);
         rightButton.gameObject.SetActive(false);
         hardButton.gameObject.SetActive(false);
+
+        sweeper.gameObject.SetActive(false);
+
         sweepSel.SweepEnd();
     }
 
@@ -57,7 +67,7 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(true);
         whoaButton.gameObject.SetActive(true);
-
+        sweeper.Sweep();
         StartCoroutine(SweepWeight());
     }
 
@@ -68,7 +78,7 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(false);
         whoaButton.gameObject.SetActive(true);
-
+        sweeper.Hard();
         StartCoroutine(SweepHard());
     }
 
@@ -118,6 +128,7 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(false);
         whoaButton.gameObject.SetActive(false);
+        sweeper.Whoa();
     }
 
     IEnumerator SweepWeight()

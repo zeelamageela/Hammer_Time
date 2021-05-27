@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject redShooter;
     public GameObject yellowShooter;
     public GameObject shooterAnim;
+    public Sweeper sweeper;
     GameObject shooterGO;
 
     public Transform launcher;
@@ -278,6 +279,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.released == true);
 
+        sweeper.AttachToRock(redRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
@@ -359,6 +361,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => yellowRock.released == true);
 
+        sweeper.AttachToRock(yellowRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
