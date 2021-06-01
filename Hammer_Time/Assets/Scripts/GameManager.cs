@@ -19,7 +19,10 @@ public class GameManager : MonoBehaviour
     public RockManager rm;
     public GameObject redShooter;
     public GameObject yellowShooter;
-    public GameObject shooterAnim;
+    public GameObject shooterAnimRed;
+    public GameObject shooterAnimYellow;
+
+    public SweeperManager sm;
     public Sweeper sweeper;
     GameObject shooterGO;
 
@@ -233,7 +236,7 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
-        shooterGO = Instantiate(shooterAnim);
+        shooterGO = Instantiate(shooterAnimRed);
 
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
@@ -260,8 +263,10 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RedTurn()
     {
+
         redRocks_left--;
         rm.inturn = true;
+        cm.TopViewAuto();
         Debug.Log("rmInturn is " + rm.inturn);
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
@@ -283,6 +288,8 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
+
+        cm.TopViewAuto();
 
         if (!redRock.outOfPlay)
         {
@@ -314,7 +321,7 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
-        shooterGO = Instantiate(shooterAnim);
+        shooterGO = Instantiate(shooterAnimYellow);
 
         Debug.Log("Yellow Turn");
         state = GameState.YELLOWTURN;
@@ -342,6 +349,7 @@ public class GameManager : MonoBehaviour
     IEnumerator YellowTurn()
     {
         yellowRocks_left--;
+        cm.TopViewAuto();
         rm.inturn = true;
         Debug.Log("rmInturn is " + rm.inturn);
 
@@ -361,7 +369,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => yellowRock.released == true);
 
-        sweeper.AttachToRock(yellowRock_1);
+        sm.Release(yellowRock_1);
+        //sweeper.AttachToRock(yellowRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);

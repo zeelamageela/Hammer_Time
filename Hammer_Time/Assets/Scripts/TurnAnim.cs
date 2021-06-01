@@ -8,6 +8,7 @@ public class TurnAnim : MonoBehaviour
     public GameManager gm;
     public RockManager rm;
 
+    public Camera uiCam;
     public Collider2D col;
     GameObject rock;
     Rock_Force rockForce;
@@ -29,7 +30,7 @@ public class TurnAnim : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 mousePos = uiCam.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);

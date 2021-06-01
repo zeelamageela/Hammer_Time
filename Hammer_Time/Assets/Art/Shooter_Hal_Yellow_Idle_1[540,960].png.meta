@@ -1,0 +1,2436 @@
+fileFormatVersion: 2
+guid: b8ca6b0fbacbf3b47baf1c462fa55d02
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5423256676065910251
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_0
+  - first:
+      213: -5905588815137655193
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_1
+  - first:
+      213: 3725782932081558979
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_2
+  - first:
+      213: -8212136036217299982
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_3
+  - first:
+      213: 7394697109613476270
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_4
+  - first:
+      213: 5003029967957702929
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_5
+  - first:
+      213: -4886293608157068874
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_6
+  - first:
+      213: 4831681731187768883
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_7
+  - first:
+      213: 4346139902138886187
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_8
+  - first:
+      213: 8343802010288494805
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_9
+  - first:
+      213: 3944272322006855277
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_10
+  - first:
+      213: -8137953387359360458
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_11
+  - first:
+      213: 9023004713561194813
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_12
+  - first:
+      213: -5777150198128309852
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_13
+  - first:
+      213: 6325079087709671990
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_14
+  - first:
+      213: -3617123813895969345
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_15
+  - first:
+      213: -7631050726350999596
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_16
+  - first:
+      213: 613010666187776900
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_17
+  - first:
+      213: -4519187642367984677
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_18
+  - first:
+      213: -2867271245411918703
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_19
+  - first:
+      213: -1423191452385194441
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_20
+  - first:
+      213: 7817797092866265327
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_21
+  - first:
+      213: -934345862938997701
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_22
+  - first:
+      213: 51237676499975194
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_23
+  - first:
+      213: 372687469535467159
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_24
+  - first:
+      213: 3768479087710287095
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_25
+  - first:
+      213: -5180151869841946630
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_26
+  - first:
+      213: 350396298842425646
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_27
+  - first:
+      213: -9040123709107276105
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_28
+  - first:
+      213: -7589928400415188214
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_29
+  - first:
+      213: 755090653599686188
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_30
+  - first:
+      213: 420611144637932795
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_31
+  - first:
+      213: -1212695518396013905
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_32
+  - first:
+      213: 6773907491964836260
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_33
+  - first:
+      213: 5114727486124162455
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_34
+  - first:
+      213: 2583786705187026464
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_35
+  - first:
+      213: 1408298213210090661
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_36
+  - first:
+      213: -1102049827944024976
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_37
+  - first:
+      213: 2086178428608238262
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_38
+  - first:
+      213: -1557065065083471241
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_39
+  - first:
+      213: -970778629016516771
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_40
+  - first:
+      213: 8507334940975373337
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_41
+  - first:
+      213: -2759041990382500161
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_42
+  - first:
+      213: 2562612730402737793
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_43
+  - first:
+      213: 7577760029277644529
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_44
+  - first:
+      213: 5270870188956448003
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_45
+  - first:
+      213: 2054228590008556627
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_46
+  - first:
+      213: -5307412338266524024
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_47
+  - first:
+      213: 1296168792624992326
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_48
+  - first:
+      213: -63621558210473179
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_49
+  - first:
+      213: -8293834599253604439
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_50
+  - first:
+      213: -820129140570702510
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_51
+  - first:
+      213: -1560319348041412329
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_52
+  - first:
+      213: -6511917335034376603
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_53
+  - first:
+      213: -3196408106285642347
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_54
+  - first:
+      213: -6161124720183881907
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_55
+  - first:
+      213: 7036707410483081265
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_56
+  - first:
+      213: -7701708653946432014
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_57
+  - first:
+      213: 8239212702291247588
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_58
+  - first:
+      213: -7889631104711565014
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_59
+  - first:
+      213: -4681170552372000266
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_60
+  - first:
+      213: -300346318858909518
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_61
+  - first:
+      213: 932663090199612624
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_62
+  - first:
+      213: 157537881290958004
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_63
+  - first:
+      213: -6299812612216269802
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_64
+  - first:
+      213: 4576778928683830382
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_65
+  - first:
+      213: 7867602669954699102
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_66
+  - first:
+      213: -3527946099788362987
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_67
+  - first:
+      213: 2588434120423469395
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_68
+  - first:
+      213: -8624230850590460211
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_69
+  - first:
+      213: -1390508839893425526
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_70
+  - first:
+      213: 7709405336798534663
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_71
+  - first:
+      213: 6198925947062427837
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_72
+  - first:
+      213: 7200686325114393863
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_73
+  - first:
+      213: -4059972859755098360
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_74
+  - first:
+      213: -4312604093020517253
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_75
+  - first:
+      213: 4004954001914478283
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_76
+  - first:
+      213: 6898493569576434251
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_77
+  - first:
+      213: -3297568720522370985
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_78
+  - first:
+      213: 2302537939307942927
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_79
+  - first:
+      213: -4663383705148910990
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_80
+  - first:
+      213: 5473139869685809751
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_81
+  - first:
+      213: -2628800741558281041
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_82
+  - first:
+      213: -743464246665545784
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_83
+  - first:
+      213: -6001616836447480913
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_84
+  - first:
+      213: -7600807665791386527
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_85
+  - first:
+      213: 3174689775910399354
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_86
+  - first:
+      213: 3748313866050384938
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_87
+  - first:
+      213: 2754407521091871598
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_88
+  - first:
+      213: -8548012908946840839
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_89
+  - first:
+      213: 6453371035470918661
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_90
+  - first:
+      213: 7740036309504981104
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_91
+  - first:
+      213: -6261702070728177979
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_92
+  - first:
+      213: -8590751175208321633
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_93
+  - first:
+      213: -1886912886686324737
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_94
+  - first:
+      213: 7619135320802294437
+    second: Shooter_Hal_Yellow_Idle_1[540,960]_95
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 270
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bed9ca69637434b40800000000000000
+      internalID: 5423256676065910251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_1
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 766333403422b0ea0800000000000000
+      internalID: -5905588815137655193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_2
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c54fe036d3a4b330800000000000000
+      internalID: 3725782932081558979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_3
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fb551ae8c1a80e80800000000000000
+      internalID: -8212136036217299982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_4
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea97e18a7dd3f9660800000000000000
+      internalID: 7394697109613476270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_5
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 119b0c8af355e6540800000000000000
+      internalID: 5003029967957702929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_6
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b149812ad5603cb0800000000000000
+      internalID: -4886293608157068874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_7
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33ef0376fe49d0340800000000000000
+      internalID: 4831681731187768883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_8
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b28a323d637905c30800000000000000
+      internalID: 4346139902138886187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d89f6398b32bc370800000000000000
+      internalID: 8343802010288494805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_10
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6eaf9a77cedcb630800000000000000
+      internalID: 3944272322006855277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_11
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63a22cbc28e201f80800000000000000
+      internalID: -8137953387359360458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_12
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d318d762bf6283d70800000000000000
+      internalID: 9023004713561194813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_13
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a90c72e08073dfa0800000000000000
+      internalID: -5777150198128309852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_14
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 632df272be137c750800000000000000
+      internalID: 6325079087709671990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_15
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb5ef1c3e056dcdc0800000000000000
+      internalID: -3617123813895969345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_16
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dfacd0abcf091690800000000000000
+      internalID: -7631050726350999596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_17
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 483e5a9f3f9d18800800000000000000
+      internalID: 613010666187776900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdb325f68ce9841c0800000000000000
+      internalID: -4519187642367984677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_19
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19cd7866ef76538d0800000000000000
+      internalID: -2867271245411918703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_20
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 73e45391aeecf3ce0800000000000000
+      internalID: -1423191452385194441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_21
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe0106619056e7c60800000000000000
+      internalID: 7817797092866265327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_22
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b3c4a2653698803f0800000000000000
+      internalID: -934345862938997701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_23
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1cb5e2356806b000800000000000000
+      internalID: 51237676499975194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_24
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79696e9674d0c2500800000000000000
+      internalID: 372687469535467159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_25
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f4b57693c35c4430800000000000000
+      internalID: 3768479087710287095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_26
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af7ce7be1576c18b0800000000000000
+      internalID: -5180151869841946630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e294d1bc39bdcd400800000000000000
+      internalID: 350396298842425646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_28
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b6f21912670b8280800000000000000
+      internalID: -9040123709107276105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_29
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0b9a9e35582ba690800000000000000
+      internalID: -7589928400415188214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_30
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2ed605e2fe9a7a00800000000000000
+      internalID: 755090653599686188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_31
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf4e6b88b9f46d500800000000000000
+      internalID: 420611144637932795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_32
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa22c45e9d3ab2fe0800000000000000
+      internalID: -1212695518396013905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_33
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a9dbe769f0c10e50800000000000000
+      internalID: 6773907491964836260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_34
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79d7b55bc892bf640800000000000000
+      internalID: 5114727486124162455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_35
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 026bc02a1547bd320800000000000000
+      internalID: 2583786705187026464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ac643073c74b8310800000000000000
+      internalID: 1408298213210090661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_37
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 074bd98358bb4b0f0800000000000000
+      internalID: -1102049827944024976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_38
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b2d64f4a3893fc10800000000000000
+      internalID: 2086178428608238262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_39
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77a778fa291346ae0800000000000000
+      internalID: -1557065065083471241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_40
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d570ee5faf91782f0800000000000000
+      internalID: -970778629016516771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_41
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91c1b161e00201670800000000000000
+      internalID: 8507334940975373337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_42
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb64dd28de9e5b9d0800000000000000
+      internalID: -2759041990382500161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_43
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18e8c8473ba309320800000000000000
+      internalID: 2562612730402737793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_44
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f66f32199c992960800000000000000
+      internalID: 7577760029277644529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 305f1f5b284e52940800000000000000
+      internalID: 5270870188956448003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_46
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35c59e2d406128c10800000000000000
+      internalID: 2054228590008556627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_47
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 886391529984856b0800000000000000
+      internalID: -5307412338266524024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_48
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6401c5546aaecf110800000000000000
+      internalID: 1296168792624992326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_49
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 523dec6a788fd1ff0800000000000000
+      internalID: -63621558210473179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_50
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a705a5ef5166ec80800000000000000
+      internalID: -8293834599253604439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_51
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25d365254e05e94f0800000000000000
+      internalID: -820129140570702510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_52
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71192d3e1d1a85ae0800000000000000
+      internalID: -1560319348041412329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_53
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56e41967fa501a5a0800000000000000
+      internalID: -6511917335034376603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59d4aab33c314a3d0800000000000000
+      internalID: -3196408106285642347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_55
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4fcf84c5b94f7aa0800000000000000
+      internalID: -6161124720183881907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_56
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 130f3369b1867a160800000000000000
+      internalID: 7036707410483081265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_57
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2f598fdd8c80e1590800000000000000
+      internalID: -7701708653946432014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_58
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e1c4fcac40975270800000000000000
+      internalID: 8239212702291247588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_59
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a216bc2bf46628290800000000000000
+      internalID: -7889631104711565014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_60
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f909dc3f24290fb0800000000000000
+      internalID: -4681170552372000266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_61
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b881d24d94f4dbf0800000000000000
+      internalID: -300346318858909518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_62
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0dc477a932c71fc00800000000000000
+      internalID: 932663090199612624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_63
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b4e30d4edfaf2200800000000000000
+      internalID: 157537881290958004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_64
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 614d2599ec19298a0800000000000000
+      internalID: -6299812612216269802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_65
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6c41b3df2cf38f30800000000000000
+      internalID: 4576778928683830382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_66
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5f8098a1f65f2d60800000000000000
+      internalID: 7867602669954699102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_67
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51bc36fc6b73a0fc0800000000000000
+      internalID: -3527946099788362987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_68
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35177505e17fbe320800000000000000
+      internalID: 2588434120423469395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_69
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc637990cb3905880800000000000000
+      internalID: -8624230850590460211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_70
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a82ac1dc39be3bce0800000000000000
+      internalID: -1390508839893425526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_71
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70c9061ce4f4dfa60800000000000000
+      internalID: 7709405336798534663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db0ab973e42070650800000000000000
+      internalID: 6198925947062427837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_73
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 705d473df0afde360800000000000000
+      internalID: 7200686325114393863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_74
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80f0298d13418a7c0800000000000000
+      internalID: -4059972859755098360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_75
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7ccd923d6d8624c0800000000000000
+      internalID: -4312604093020517253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_76
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bce34e11274749730800000000000000
+      internalID: 4004954001914478283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_77
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4a7beb0a5f5cbf50800000000000000
+      internalID: 6898493569576434251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_78
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75023de48beac32d0800000000000000
+      internalID: -3297568720522370985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_79
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f045f427e0244ff10800000000000000
+      internalID: 2302537939307942927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_80
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27211435a35584fb0800000000000000
+      internalID: -4663383705148910990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_81
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75286aaa6bf74fb40800000000000000
+      internalID: 5473139869685809751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_82
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fac922e47af948bd0800000000000000
+      internalID: -2628800741558281041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_83
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c7fb4ae43faea5f0800000000000000
+      internalID: -743464246665545784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_84
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa35b810949f5bca0800000000000000
+      internalID: -6001616836447480913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_85
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16c3072e2b1848690800000000000000
+      internalID: -7600807665791386527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_86
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a7d243de783ce0c20800000000000000
+      internalID: 3174689775910399354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_87
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a24ba9c0a9fa40430800000000000000
+      internalID: 3748313866050384938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_88
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6368550c0f993620800000000000000
+      internalID: 2754407521091871598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_89
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f225c27c8b5f5980800000000000000
+      internalID: -8548012908946840839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_90
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 504f90de3cafe8950800000000000000
+      internalID: 6453371035470918661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_91
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0787ba8d3022a6b60800000000000000
+      internalID: 7740036309504981104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_92
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c64be08427f919a0800000000000000
+      internalID: -6261702070728177979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_93
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9d30f7625587c880800000000000000
+      internalID: -8590751175208321633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_94
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff764f21ab650d5e0800000000000000
+      internalID: -1886912886686324737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Yellow_Idle_1[540,960]_95
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5aa7d04d43b9cb960800000000000000
+      internalID: 7619135320802294437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

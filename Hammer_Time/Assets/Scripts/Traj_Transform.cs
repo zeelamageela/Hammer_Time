@@ -37,6 +37,7 @@ public class Traj_Transform : MonoBehaviour
             weight = (weightScale * springDistance) / 4f;
             //weight = (weightScale);
 
+            //if the shot is not an inturn, flip the trajectory
             if (!rm.inturn)
             {
                 transform.localScale = new Vector3(-1f, weight, 1f);

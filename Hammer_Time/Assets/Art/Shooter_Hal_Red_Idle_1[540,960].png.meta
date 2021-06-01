@@ -1,0 +1,2436 @@
+fileFormatVersion: 2
+guid: 39147de8465100b45bddf4d62c1fb938
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8182902733158796157
+    second: Shooter_Hal_Red_Idle_1[540,960]_0
+  - first:
+      213: 3214654471532361525
+    second: Shooter_Hal_Red_Idle_1[540,960]_1
+  - first:
+      213: 2727546919601118147
+    second: Shooter_Hal_Red_Idle_1[540,960]_2
+  - first:
+      213: 8409018576788648930
+    second: Shooter_Hal_Red_Idle_1[540,960]_3
+  - first:
+      213: -6905592448815768177
+    second: Shooter_Hal_Red_Idle_1[540,960]_4
+  - first:
+      213: -1660484160343408006
+    second: Shooter_Hal_Red_Idle_1[540,960]_5
+  - first:
+      213: 6588869367967463766
+    second: Shooter_Hal_Red_Idle_1[540,960]_6
+  - first:
+      213: -8514849176788273054
+    second: Shooter_Hal_Red_Idle_1[540,960]_7
+  - first:
+      213: -7563920784231140758
+    second: Shooter_Hal_Red_Idle_1[540,960]_8
+  - first:
+      213: 666412632832633016
+    second: Shooter_Hal_Red_Idle_1[540,960]_9
+  - first:
+      213: -2749396991165928195
+    second: Shooter_Hal_Red_Idle_1[540,960]_10
+  - first:
+      213: 5132928857397970120
+    second: Shooter_Hal_Red_Idle_1[540,960]_11
+  - first:
+      213: 2970622233545662456
+    second: Shooter_Hal_Red_Idle_1[540,960]_12
+  - first:
+      213: 1654529495466689906
+    second: Shooter_Hal_Red_Idle_1[540,960]_13
+  - first:
+      213: 3915893993474979182
+    second: Shooter_Hal_Red_Idle_1[540,960]_14
+  - first:
+      213: -1132452725592210876
+    second: Shooter_Hal_Red_Idle_1[540,960]_15
+  - first:
+      213: -990337400509245407
+    second: Shooter_Hal_Red_Idle_1[540,960]_16
+  - first:
+      213: -4807801570989995548
+    second: Shooter_Hal_Red_Idle_1[540,960]_17
+  - first:
+      213: 293195088940211880
+    second: Shooter_Hal_Red_Idle_1[540,960]_18
+  - first:
+      213: -4819249398292179930
+    second: Shooter_Hal_Red_Idle_1[540,960]_19
+  - first:
+      213: 2665447661392682905
+    second: Shooter_Hal_Red_Idle_1[540,960]_20
+  - first:
+      213: 7285128297223106349
+    second: Shooter_Hal_Red_Idle_1[540,960]_21
+  - first:
+      213: 8392760506494050021
+    second: Shooter_Hal_Red_Idle_1[540,960]_22
+  - first:
+      213: -5931526115225878684
+    second: Shooter_Hal_Red_Idle_1[540,960]_23
+  - first:
+      213: 7792889588217510118
+    second: Shooter_Hal_Red_Idle_1[540,960]_24
+  - first:
+      213: 8230511548322849828
+    second: Shooter_Hal_Red_Idle_1[540,960]_25
+  - first:
+      213: 2504930560676146813
+    second: Shooter_Hal_Red_Idle_1[540,960]_26
+  - first:
+      213: -3197261104940719232
+    second: Shooter_Hal_Red_Idle_1[540,960]_27
+  - first:
+      213: 9126120654605440657
+    second: Shooter_Hal_Red_Idle_1[540,960]_28
+  - first:
+      213: -6787148289093750279
+    second: Shooter_Hal_Red_Idle_1[540,960]_29
+  - first:
+      213: -5024760176708887002
+    second: Shooter_Hal_Red_Idle_1[540,960]_30
+  - first:
+      213: -3170347886772537503
+    second: Shooter_Hal_Red_Idle_1[540,960]_31
+  - first:
+      213: 3683877977121726291
+    second: Shooter_Hal_Red_Idle_1[540,960]_32
+  - first:
+      213: 2446137226580437245
+    second: Shooter_Hal_Red_Idle_1[540,960]_33
+  - first:
+      213: 3821598175727498017
+    second: Shooter_Hal_Red_Idle_1[540,960]_34
+  - first:
+      213: -2814443850166626097
+    second: Shooter_Hal_Red_Idle_1[540,960]_35
+  - first:
+      213: 598448205835744662
+    second: Shooter_Hal_Red_Idle_1[540,960]_36
+  - first:
+      213: -5578231613802072504
+    second: Shooter_Hal_Red_Idle_1[540,960]_37
+  - first:
+      213: 7190234413922631998
+    second: Shooter_Hal_Red_Idle_1[540,960]_38
+  - first:
+      213: -4023311506071125308
+    second: Shooter_Hal_Red_Idle_1[540,960]_39
+  - first:
+      213: -1566100631721516305
+    second: Shooter_Hal_Red_Idle_1[540,960]_40
+  - first:
+      213: -7332905033509893993
+    second: Shooter_Hal_Red_Idle_1[540,960]_41
+  - first:
+      213: 3191386915821073108
+    second: Shooter_Hal_Red_Idle_1[540,960]_42
+  - first:
+      213: -1969356295990957107
+    second: Shooter_Hal_Red_Idle_1[540,960]_43
+  - first:
+      213: -7950173012528322133
+    second: Shooter_Hal_Red_Idle_1[540,960]_44
+  - first:
+      213: -942177694014895887
+    second: Shooter_Hal_Red_Idle_1[540,960]_45
+  - first:
+      213: -4652833362465787265
+    second: Shooter_Hal_Red_Idle_1[540,960]_46
+  - first:
+      213: -7102654895275162692
+    second: Shooter_Hal_Red_Idle_1[540,960]_47
+  - first:
+      213: -1103420616156648386
+    second: Shooter_Hal_Red_Idle_1[540,960]_48
+  - first:
+      213: 5166675379925936842
+    second: Shooter_Hal_Red_Idle_1[540,960]_49
+  - first:
+      213: 8646368457122379711
+    second: Shooter_Hal_Red_Idle_1[540,960]_50
+  - first:
+      213: -6101993939643138510
+    second: Shooter_Hal_Red_Idle_1[540,960]_51
+  - first:
+      213: -6336721562656272862
+    second: Shooter_Hal_Red_Idle_1[540,960]_52
+  - first:
+      213: -2954748416253752921
+    second: Shooter_Hal_Red_Idle_1[540,960]_53
+  - first:
+      213: -2231888595468116516
+    second: Shooter_Hal_Red_Idle_1[540,960]_54
+  - first:
+      213: -8856301867149772960
+    second: Shooter_Hal_Red_Idle_1[540,960]_55
+  - first:
+      213: 385679644057585225
+    second: Shooter_Hal_Red_Idle_1[540,960]_56
+  - first:
+      213: 6974337509429782199
+    second: Shooter_Hal_Red_Idle_1[540,960]_57
+  - first:
+      213: 4715717429533923471
+    second: Shooter_Hal_Red_Idle_1[540,960]_58
+  - first:
+      213: -2241718205416651840
+    second: Shooter_Hal_Red_Idle_1[540,960]_59
+  - first:
+      213: -5380700007563067042
+    second: Shooter_Hal_Red_Idle_1[540,960]_60
+  - first:
+      213: 4469376125513160183
+    second: Shooter_Hal_Red_Idle_1[540,960]_61
+  - first:
+      213: -2898084841515419523
+    second: Shooter_Hal_Red_Idle_1[540,960]_62
+  - first:
+      213: 7954284457726725757
+    second: Shooter_Hal_Red_Idle_1[540,960]_63
+  - first:
+      213: -5726459783168159158
+    second: Shooter_Hal_Red_Idle_1[540,960]_64
+  - first:
+      213: -167001157819002801
+    second: Shooter_Hal_Red_Idle_1[540,960]_65
+  - first:
+      213: -3369108649958175672
+    second: Shooter_Hal_Red_Idle_1[540,960]_66
+  - first:
+      213: 162714536977936067
+    second: Shooter_Hal_Red_Idle_1[540,960]_67
+  - first:
+      213: -3147833821982690609
+    second: Shooter_Hal_Red_Idle_1[540,960]_68
+  - first:
+      213: -406424777401015118
+    second: Shooter_Hal_Red_Idle_1[540,960]_69
+  - first:
+      213: -4969675652480453225
+    second: Shooter_Hal_Red_Idle_1[540,960]_70
+  - first:
+      213: 3384316867565706700
+    second: Shooter_Hal_Red_Idle_1[540,960]_71
+  - first:
+      213: -41999825792832986
+    second: Shooter_Hal_Red_Idle_1[540,960]_72
+  - first:
+      213: -6590072616833464965
+    second: Shooter_Hal_Red_Idle_1[540,960]_73
+  - first:
+      213: 5090064411107891951
+    second: Shooter_Hal_Red_Idle_1[540,960]_74
+  - first:
+      213: -4744713653576536547
+    second: Shooter_Hal_Red_Idle_1[540,960]_75
+  - first:
+      213: -535894506389008523
+    second: Shooter_Hal_Red_Idle_1[540,960]_76
+  - first:
+      213: -8072713738059275359
+    second: Shooter_Hal_Red_Idle_1[540,960]_77
+  - first:
+      213: -4211517782282299862
+    second: Shooter_Hal_Red_Idle_1[540,960]_78
+  - first:
+      213: 265105569338243874
+    second: Shooter_Hal_Red_Idle_1[540,960]_79
+  - first:
+      213: 96583837517171414
+    second: Shooter_Hal_Red_Idle_1[540,960]_80
+  - first:
+      213: 5929847100447940071
+    second: Shooter_Hal_Red_Idle_1[540,960]_81
+  - first:
+      213: -4959779395209566655
+    second: Shooter_Hal_Red_Idle_1[540,960]_82
+  - first:
+      213: 1282890586919270820
+    second: Shooter_Hal_Red_Idle_1[540,960]_83
+  - first:
+      213: 2441348912799893635
+    second: Shooter_Hal_Red_Idle_1[540,960]_84
+  - first:
+      213: -9198542491295722978
+    second: Shooter_Hal_Red_Idle_1[540,960]_85
+  - first:
+      213: -3023589881944543415
+    second: Shooter_Hal_Red_Idle_1[540,960]_86
+  - first:
+      213: -5062051313633277592
+    second: Shooter_Hal_Red_Idle_1[540,960]_87
+  - first:
+      213: 5824779311369023517
+    second: Shooter_Hal_Red_Idle_1[540,960]_88
+  - first:
+      213: -5485612690091631731
+    second: Shooter_Hal_Red_Idle_1[540,960]_89
+  - first:
+      213: -4173155265770146049
+    second: Shooter_Hal_Red_Idle_1[540,960]_90
+  - first:
+      213: -3566126141857689412
+    second: Shooter_Hal_Red_Idle_1[540,960]_91
+  - first:
+      213: -218961329288425596
+    second: Shooter_Hal_Red_Idle_1[540,960]_92
+  - first:
+      213: -5143699144453765846
+    second: Shooter_Hal_Red_Idle_1[540,960]_93
+  - first:
+      213: 4503019084472171231
+    second: Shooter_Hal_Red_Idle_1[540,960]_94
+  - first:
+      213: -7347196549410263770
+    second: Shooter_Hal_Red_Idle_1[540,960]_95
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 270
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3843f7ea15d707e80800000000000000
+      internalID: -8182902733158796157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_1
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 537be4bb53fbc9c20800000000000000
+      internalID: 3214654471532361525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_2
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cb1903e8713ad520800000000000000
+      internalID: 2727546919601118147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_3
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e3f52bb7d5d2b470800000000000000
+      internalID: 8409018576788648930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_4
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8d57b451486a20a0800000000000000
+      internalID: -6905592448815768177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_5
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a72819b2476c4f8e0800000000000000
+      internalID: -1660484160343408006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_6
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6593725e7cd507b50800000000000000
+      internalID: 6588869367967463766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_7
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 268f18d89cd25d980800000000000000
+      internalID: -8514849176788273054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_8
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 9600
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6275b24f1e870790800000000000000
+      internalID: -7563920784231140758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b862dd32c29f3900800000000000000
+      internalID: 666412632832633016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_10
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfce603e00e28d9d0800000000000000
+      internalID: -2749396991165928195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_11
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c4ce82b993db3740800000000000000
+      internalID: 5132928857397970120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_12
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ffdd50be25c93920800000000000000
+      internalID: 2970622233545662456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_13
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 275c2bf5fc116f610800000000000000
+      internalID: 1654529495466689906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_14
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e65792bf6dc085630800000000000000
+      internalID: 3915893993474979182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_15
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 442472efe38b840f0800000000000000
+      internalID: -1132452725592210876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_16
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 128dcda916d9142f0800000000000000
+      internalID: -990337400509245407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_17
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 8640
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e9839aa1f1474db0800000000000000
+      internalID: -4807801570989995548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ae9b264163a11400800000000000000
+      internalID: 293195088940211880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_19
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62497caa4369e1db0800000000000000
+      internalID: -4819249398292179930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_20
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99fd4b0a6829df420800000000000000
+      internalID: 2665447661392682905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_21
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2f212b8699f91560800000000000000
+      internalID: 7285128297223106349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_22
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ee5182c633197470800000000000000
+      internalID: 8392760506494050021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_23
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46f320ebc6cfeada0800000000000000
+      internalID: -5931526115225878684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_24
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e87b8fbac7e52c60800000000000000
+      internalID: 7792889588217510118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_25
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 424a88565a6a83270800000000000000
+      internalID: 8230511548322849828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_26
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 7680
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7e2f10c21d43c220800000000000000
+      internalID: 2504930560676146813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 083e5d107fb01a3d0800000000000000
+      internalID: -3197261104940719232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_28
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 196dc13126e76ae70800000000000000
+      internalID: 9126120654605440657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_29
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f1baa647943fc1a0800000000000000
+      internalID: -6787148289093750279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_30
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62edcb9dd37744ab0800000000000000
+      internalID: -5024760176708887002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_31
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 167338ae469a004d0800000000000000
+      internalID: -3170347886772537503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_32
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35f993e8083cf1330800000000000000
+      internalID: 3683877977121726291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_33
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df8af2ee8dc62f120800000000000000
+      internalID: 2446137226580437245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_34
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 123b48a0b4b090530800000000000000
+      internalID: 3821598175727498017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_35
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 6720
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc81986da3611f8d0800000000000000
+      internalID: -2814443850166626097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6953f45f87d1e4800800000000000000
+      internalID: 598448205835744662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_37
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8463978e6e32692b0800000000000000
+      internalID: -5578231613802072504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_38
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e31c5ad9a18d8c360800000000000000
+      internalID: 7190234413922631998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_39
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c283eb60835a28c0800000000000000
+      internalID: -4023311506071125308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_40
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe269b3e5c7144ae0800000000000000
+      internalID: -1566100631721516305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_41
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79808f139b94c3a90800000000000000
+      internalID: -7332905033509893993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_42
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d23852cd751a4c20800000000000000
+      internalID: 3191386915821073108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_43
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dcba74502e07ba4e0800000000000000
+      internalID: -1969356295990957107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_44
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 5760
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba92a5554cf4ba190800000000000000
+      internalID: -7950173012528322133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f802f01166bce2f0800000000000000
+      internalID: -942177694014895887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_46
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f72f32765b0dd6fb0800000000000000
+      internalID: -4652833362465787265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_47
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb34fe4110d4e6d90800000000000000
+      internalID: -7102654895275162692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_48
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3ce328bbccdfa0f0800000000000000
+      internalID: -1103420616156648386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_49
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acaed3242e7b3b740800000000000000
+      internalID: 5166675379925936842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_50
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb7fbe32d421ef770800000000000000
+      internalID: 8646368457122379711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_51
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23efbf577dc515ba0800000000000000
+      internalID: -6101993939643138510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_52
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22e8059ef417f08a0800000000000000
+      internalID: -6336721562656272862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_53
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 4800
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a90c8868ff9ef6d0800000000000000
+      internalID: -2954748416253752921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cdd90e0c52db601e0800000000000000
+      internalID: -2231888595468116516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_55
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 067b8e0ef58181580800000000000000
+      internalID: -8856301867149772960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_56
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 946c625c7953a5500800000000000000
+      internalID: 385679644057585225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_57
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b6ae316303d9c060800000000000000
+      internalID: 6974337509429782199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_58
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f88dc786408917140800000000000000
+      internalID: 4715717429533923471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_59
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c34d975b21d3e0e0800000000000000
+      internalID: -2241718205416651840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_60
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e51034ee9d9e355b0800000000000000
+      internalID: -5380700007563067042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_61
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f5d2d808e9660e30800000000000000
+      internalID: 4469376125513160183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_62
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 3840
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d78778cf03fe7c7d0800000000000000
+      internalID: -2898084841515419523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_63
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7e4639129b436e60800000000000000
+      internalID: 7954284457726725757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_64
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4293b3da278780b0800000000000000
+      internalID: -5726459783168159158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_65
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f409e1fe451beadf0800000000000000
+      internalID: -167001157819002801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_66
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84c0c8d78858e31d0800000000000000
+      internalID: -3369108649958175672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_67
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ceac506204124200800000000000000
+      internalID: 162714536977936067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_68
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc2f2cc11d5a054d0800000000000000
+      internalID: -3147833821982690609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_69
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b4681b71d61c5af0800000000000000
+      internalID: -406424777401015118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_70
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 795bef4135a280bb0800000000000000
+      internalID: -4969675652480453225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_71
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 2880
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccddd9a924287fe20800000000000000
+      internalID: 3384316867565706700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62a6df68169ca6ff0800000000000000
+      internalID: -41999825792832986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_73
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b75cc95eedb5b84a0800000000000000
+      internalID: -6590072616833464965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_74
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fea91f31d9a83a640800000000000000
+      internalID: 5090064411107891951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_75
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1eef951214672eb0800000000000000
+      internalID: -4744713653576536547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_76
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57f899529ce1098f0800000000000000
+      internalID: -535894506389008523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_77
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a3af8550a5f7ff80800000000000000
+      internalID: -8072713738059275359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_78
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2692ddf3eead85c0800000000000000
+      internalID: -4211517782282299862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_79
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22b32685c18dda300800000000000000
+      internalID: 265105569338243874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_80
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 1920
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6da414e0d72275100800000000000000
+      internalID: 96583837517171414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_81
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7ed549a258c0b4250800000000000000
+      internalID: 5929847100447940071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_82
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1466b380be25b2bb0800000000000000
+      internalID: -4959779395209566655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_83
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a9f307113ebdc110800000000000000
+      internalID: 1282890586919270820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_84
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3884930c6e961e120800000000000000
+      internalID: 2441348912799893635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_85
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e125bf21756385080800000000000000
+      internalID: -9198542491295722978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_86
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94fea34a50d0a06d0800000000000000
+      internalID: -3023589881944543415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_87
+      rect:
+        serializedVersion: 2
+        x: 3240
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 869c610762bffb9b0800000000000000
+      internalID: -5062051313633277592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_88
+      rect:
+        serializedVersion: 2
+        x: 3780
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d10f1353ce5c5d050800000000000000
+      internalID: 5824779311369023517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_89
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 960
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8b96b782503fd3b0800000000000000
+      internalID: -5485612690091631731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_90
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff638376569f516c0800000000000000
+      internalID: -4173155265770146049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_91
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb0965a0b23928ec0800000000000000
+      internalID: -3566126141857689412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_92
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48f4734c4d716fcf0800000000000000
+      internalID: -218961329288425596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_93
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a254a5f61e8ed98b0800000000000000
+      internalID: -5143699144453765846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_94
+      rect:
+        serializedVersion: 2
+        x: 2160
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdab4c2dfffed7e30800000000000000
+      internalID: 4503019084472171231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Hal_Red_Idle_1[540,960]_95
+      rect:
+        serializedVersion: 2
+        x: 2700
+        y: 0
+        width: 540
+        height: 960
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62dec695aa3890a90800000000000000
+      internalID: -7347196549410263770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

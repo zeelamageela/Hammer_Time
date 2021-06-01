@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SweepSelector : MonoBehaviour
 {
+    public Animator sweeper1;
+    public Animator sweeper2;
+
     public SpriteRenderer sweepFRspr;
     public SpriteRenderer sweepFLspr;
     public SpriteRenderer sweepRRspr;

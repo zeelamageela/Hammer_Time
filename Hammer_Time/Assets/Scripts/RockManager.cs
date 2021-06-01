@@ -8,10 +8,12 @@ public class RockManager : MonoBehaviour
     public CameraManager cm;
     public RockBar rb;
     public GameObject rock;
+    public Rock_Info rockInfo;
     public ShootingKnob shootKnob;
-
+    public Transform house;
     public bool inturn;
     bool isPressed;
+
 
     void OnEnable()
     {
@@ -23,7 +25,8 @@ public class RockManager : MonoBehaviour
         if (gm.rockList.Count != 0)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
-            
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+
             if (!inturn)
             {
                 rock.GetComponent<Rock_Force>().flipAxis = true;
@@ -31,6 +34,20 @@ public class RockManager : MonoBehaviour
             else
             {
                 rock.GetComponent<Rock_Force>().flipAxis = false;
+            }
+
+            //if (rock.transform.position.y >= -4f)
+            //{
+            //    cm.InPlayZoom(rock.transform.position.y);
+            //    cm.top.depth = -1;
+            //}
+
+            if (rockInfo.inPlay)
+            {
+                //Debug.Log("in House");
+                float dist = Vector2.Distance(rock.transform.position, house.position);
+                cm.top.depth = -1;
+                cm.InPlayZoom(dist);
             }
         }
     }

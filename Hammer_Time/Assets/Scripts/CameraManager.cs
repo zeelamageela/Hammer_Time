@@ -44,6 +44,8 @@ public class CameraManager : MonoBehaviour
         ui.depth = 2;
         top.depth = -1;
 
+        vcam.m_Lens.OrthographicSize = 7.5f;
+
         vcam.LookAt = launcher;
         vcam.Follow = launcher;
         vcam.enabled = true;
@@ -73,6 +75,22 @@ public class CameraManager : MonoBehaviour
         vcam.enabled = true;
     }
 
+    //public void InPlayZoom(float yPos)
+    //{
+    //    if (yPos >= -4f)
+    //    {
+    //        if (yPos <= 5f)
+    //        {
+    //            vcam.m_Lens.OrthographicSize = ((7.5f - 5f) * ((yPos - 5f) / -9f)) + 5f;
+    //        }
+    //    }
+    //}
+
+    public void InPlayZoom(float dist)
+    {
+        vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
+    }
+
     public void HouseView()
     {
         Debug.Log("House View");
@@ -89,9 +107,16 @@ public class CameraManager : MonoBehaviour
     
     public void TopViewAuto()
     {
-        Debug.Log("Top View");
+        Debug.Log("Top View Auto");
 
-        top.depth = 2;
+        if (top.depth == 2)
+        {
+            top.depth = -1;
+        }
+        else if (top.depth == -1)
+        {
+            top.depth = 2;
+        }
     }
 
     public void TopView()

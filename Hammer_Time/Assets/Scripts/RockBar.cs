@@ -43,15 +43,20 @@ public class RockBar : MonoBehaviour
 
         rockListUI = new List<GameObject>();
 
-        yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
-        redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
+        
         yellowTurnSelect.SetActive(false);
         redTurnSelect.SetActive(false);
-        
+        Debug.Log("yellow rocks position is " + yellowRocks.anchoredPosition.x + ", " + yellowRocks.anchoredPosition.y);
     }
 
     public void ResetBar(bool redHammer)
     {
+        //redRocks.anchoredPosition = new Vector2(-450f, 5f);
+        //yellowRocks.anchoredPosition = new Vector2(450f, 5f);
+
+        yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
+        redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
+
         if (redHammer)
         {
             StartCoroutine(SetupBar(true, redRockGO, yellowRockGO, redRocks, yellowRocks));
@@ -64,6 +69,7 @@ public class RockBar : MonoBehaviour
 
     IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, RectTransform hammerRockPos, RectTransform notHammerRockPos)
     {
+
         bool redTurn;
         if (redHammer)
         {
@@ -79,7 +85,7 @@ public class RockBar : MonoBehaviour
         {
             GameObject notHammer = Instantiate(notHammerRock);
             notHammer.transform.SetParent(notHammerRockPos, false);
-            notHammer.transform.position += new Vector3((i * -offset) / 125f, 0f, 0f);
+            notHammer.transform.position += new Vector3((i * -offset), 0f, 0f);
 
             notHammer.name = gm.rockList[2 * i].rock.name;
             rockListUI.Add(notHammer);
@@ -89,7 +95,7 @@ public class RockBar : MonoBehaviour
             GameObject hammer = Instantiate(hammerRock);
             hammer.transform.SetParent(hammerRockPos, false);
 
-            hammer.transform.position += new Vector3((i * offset) / 125f, 0f, 0f);
+            hammer.transform.position += new Vector3((i * offset), 0f, 0f);
 
             hammer.name = gm.rockList[(2 * i) + 1].rock.name;
             rockListUI.Add(hammer);
@@ -127,6 +133,17 @@ public class RockBar : MonoBehaviour
         if (outOfPlay)
         {
             DeadRock(rockIndex);
+        }
+
+        if (gm.rockList != null)
+        {
+            foreach (Rock_List rock in gm.rockList)
+            {
+                if (rock.rockInfo.outOfPlay)
+                {
+                    DeadRock(gm.rockList.IndexOf(rock));
+                }
+            }
         }
     }
 

@@ -11,6 +11,7 @@ public class Sweep : MonoBehaviour
     GameObject rock;
     Rigidbody2D rb;
 
+    public SweeperManager sm;
     public GameObject sweeperGO;
     public Sweeper sweeper;
     public SweepSelector sweepSel;
@@ -41,7 +42,6 @@ public class Sweep : MonoBehaviour
         sweepButton.gameObject.SetActive(true);
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
-
         sweeper.gameObject.SetActive(true);
 
         sweepSel.SetupSweepers();
