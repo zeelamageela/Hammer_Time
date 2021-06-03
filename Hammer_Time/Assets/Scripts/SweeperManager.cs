@@ -67,11 +67,9 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft()
     {
-        halFrontSR.flipX = false;
         halFront.yOffset = 0.6f;
         halFront.Sweep();
 
-        halBackSR.flipX = true;
         halBack.yOffset = 1.6f;
         halBack.Whoa();
     }

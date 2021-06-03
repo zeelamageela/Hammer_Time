@@ -237,6 +237,7 @@ public class GameManager : MonoBehaviour
     public void OnRedTurn()
     {
         shooterGO = Instantiate(shooterAnimRed);
+        sm.SetupSweepers();
 
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
@@ -284,7 +285,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.released == true);
 
-        sweeper.AttachToRock(redRock_1);
+        sm.Release(redRock_1);
+        //sweeper.AttachToRock(redRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
@@ -322,6 +324,7 @@ public class GameManager : MonoBehaviour
     public void OnYellowTurn()
     {
         shooterGO = Instantiate(shooterAnimYellow);
+        sm.SetupSweepers();
 
         Debug.Log("Yellow Turn");
         state = GameState.YELLOWTURN;

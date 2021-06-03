@@ -1078,7 +1078,7 @@ MonoBehaviour:
   yellowShooter: {fileID: 5027146118104172921, guid: 74c4cf13a306ff1458ed40ed72f1409a, type: 3}
   shooterAnimRed: {fileID: 3703111443046092690, guid: 5a60354807a425347ac99707e213cc9c, type: 3}
   shooterAnimYellow: {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
-  sm: {fileID: 0}
+  sm: {fileID: 2125354293}
   sweeper: {fileID: 1569662328}
   launcher: {fileID: 2563391621767102984}
   yellowRocksInactive: {fileID: 832581860}
@@ -4825,7 +4825,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
-  sm: {fileID: 0}
+  sm: {fileID: 2125354293}
   sweeperGO: {fileID: 1569662324}
   sweeper: {fileID: 1569662328}
   sweepSel: {fileID: 1345052346}
@@ -13718,7 +13718,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6790483232774857178, guid: 88a8c94ba151b8146927c48b8498d12a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.747
+      value: -1.11
       objectReference: {fileID: 0}
     - target: {fileID: 6790483232774857178, guid: 88a8c94ba151b8146927c48b8498d12a, type: 3}
       propertyPath: m_LocalPosition.y
