@@ -130,10 +130,10 @@ public class Rock_Flick: MonoBehaviour
 
     IEnumerator Release()
     {
+        springReleased = true;
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
-        springReleased = true;
         this.enabled = false;
 
         yield return new WaitForFixedUpdate();

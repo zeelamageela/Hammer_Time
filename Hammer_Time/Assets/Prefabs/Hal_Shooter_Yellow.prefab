@@ -157,13 +157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6831aa6a9ed72c4419fc35b9325920b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gm: {fileID: 0}
-  gmGO: {fileID: 0}
   isPressed: 0
   springReleased: 0
   isReleased: 0
   pullback: 0
-  releasePoint: -24.077
+  releasePoint: -24.2
   backSwingPoint: -26.55
   throwDistance: 0
   springDistance: 0

@@ -34,11 +34,11 @@ public class SweeperManager : MonoBehaviour
         {
             halFront.yOffset = 0.6f;
 
-            halBack.yOffset = 1.6f;
+            halBack.yOffset = 1.1f;
         }
         else
         {
-            halFront.yOffset = 1.6f;
+            halFront.yOffset = 1.1f;
 
             halBack.yOffset = 0.6f;
         }
@@ -46,9 +46,6 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepWeight()
     {
-        halFront.gameObject.SetActive(false);
-        halBack.gameObject.SetActive(true);
-
         halFront.Sweep();
         halBack.Sweep();
     }
@@ -70,8 +67,16 @@ public class SweeperManager : MonoBehaviour
         halFront.yOffset = 0.6f;
         halFront.Sweep();
 
-        halBack.yOffset = 1.6f;
+        halBack.yOffset = 1.1f;
         halBack.Whoa();
     }
 
+    public void SweepRight()
+    {
+        halFront.yOffset = 1.1f;
+        halFront.Whoa();
+
+        halBack.yOffset = 0.6f;
+        halBack.Sweep();
+    }
 }

@@ -9,7 +9,12 @@ public class Sweeper : MonoBehaviour
     Rigidbody2D rockRB;
     public float xOffset;
     public float yOffset;
+    Collider2D col;
 
+    private void Start()
+    {
+        col = GetComponent<BoxCollider2D>();
+    }
     public void AttachToRock(GameObject rock)
     {
         rockRB = rock.GetComponent<Rigidbody2D>();
@@ -22,6 +27,19 @@ public class Sweeper : MonoBehaviour
         {
             Vector3 followSpot = new Vector3((xOffset + rockRB.position.x), (rockRB.position.y + yOffset), 0f);
             transform.position = followSpot;
+
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+                if (hit.collider == col)
+                {
+                    Debug.Log(hit.collider.gameObject.name);
+                }
+            }
         }
     }
     public void Sweep()

@@ -8,8 +8,8 @@ public class ShooterAnim : MonoBehaviour
     private Rigidbody2D rb;
     private RelativeJoint2D rj;
 
-    public GameManager gm;
-    public GameObject gmGO;
+    GameManager gm;
+    GameObject gmGO;
 
     public bool isPressed = false;
     public bool springReleased = false;
@@ -75,12 +75,13 @@ public class ShooterAnim : MonoBehaviour
                 anim.Play("Shooter_2_Backswing", 0, pullback);
             }
 
-
             if (pullback >= 0.5f)
             {
                 angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
             }
+
+            
         }
 
         if (isPressed == false && springReleased == true)
@@ -98,7 +99,7 @@ public class ShooterAnim : MonoBehaviour
                 float slideSpeed = (slidePos - releasePoint) / (-16.03f - releasePoint);
                 rj.enabled = true;
                 anim.SetBool("extend", true);
-                anim.Play("Shooter_2_Slide", 0, 0f);
+                anim.Play("Shooter_2_Slide", 0, slideSpeed);
             }
 
             if (isReleased)
@@ -115,6 +116,7 @@ public class ShooterAnim : MonoBehaviour
 
             }
         }
+
     }
 
     IEnumerator Slowdown()

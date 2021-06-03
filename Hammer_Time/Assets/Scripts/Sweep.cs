@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class Sweep : MonoBehaviour
 {
     public GameManager gm;
+    public SweeperManager sm;
 
     RockManager rm;
     GameObject rock;
     Rigidbody2D rb;
 
-    public SweeperManager sm;
     public GameObject sweeperGO;
     public Sweeper sweeper;
     public SweepSelector sweepSel;
@@ -32,8 +32,8 @@ public class Sweep : MonoBehaviour
         leftButton.gameObject.SetActive(false);
         rightButton.gameObject.SetActive(false);
 
-        sweeper.gameObject.SetActive(false);
-
+        //sweeper.gameObject.SetActive(false);
+        sm.SetupSweepers();
         rm = GetComponent<RockManager>();
     }
 
@@ -42,7 +42,7 @@ public class Sweep : MonoBehaviour
         sweepButton.gameObject.SetActive(true);
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
-        sweeper.gameObject.SetActive(true);
+        //sweeper.gameObject.SetActive(true);
 
         sweepSel.SetupSweepers();
     }
@@ -55,8 +55,8 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(false);
         hardButton.gameObject.SetActive(false);
 
-        sweeper.gameObject.SetActive(false);
-
+        //sweeper.gameObject.SetActive(false);
+        sm.SetupSweepers();
         sweepSel.SweepEnd();
     }
 
@@ -67,7 +67,8 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(true);
         whoaButton.gameObject.SetActive(true);
-        sweeper.Sweep();
+
+        //sweeper.Sweep();
         StartCoroutine(SweepWeight());
     }
 
@@ -78,7 +79,8 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(false);
         whoaButton.gameObject.SetActive(true);
-        sweeper.Hard();
+
+        //sweeper.Hard();
         StartCoroutine(SweepHard());
     }
 
@@ -128,7 +130,8 @@ public class Sweep : MonoBehaviour
         rightButton.gameObject.SetActive(true);
         hardButton.gameObject.SetActive(false);
         whoaButton.gameObject.SetActive(false);
-        sweeper.Whoa();
+        
+        //sweeper.Whoa();
     }
 
     IEnumerator SweepWeight()
@@ -139,7 +142,7 @@ public class Sweep : MonoBehaviour
         //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
 
         yield return new WaitForSeconds(sweepTime);
-
+        sm.SweepWeight();
         sweepSel.SweepWeight();
         float curl = rock.GetComponent<Rock_Force>().curl.x + (5f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
@@ -157,7 +160,7 @@ public class Sweep : MonoBehaviour
         //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
 
         yield return new WaitForSeconds(sweepTime);
-
+        sm.SweepHard();
         sweepSel.SweepHard();
         rb.drag = (rb.drag - (1.5f * sweepAmt));
 
@@ -172,14 +175,16 @@ public class Sweep : MonoBehaviour
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
 
-        yield return new WaitForSeconds(sweepAmt);
+        yield return new WaitForSeconds(sweepTime);
 
         if (inturn)
         {
+            sm.SweepLeft();
             sweepSel.SweepLeft();
         }
         else
         {
+            sm.SweepRight();
             sweepSel.SweepRight();
         }
 
@@ -198,10 +203,12 @@ public class Sweep : MonoBehaviour
 
         if (inturn)
         {
+            sm.SweepRight();
             sweepSel.SweepRight();
         }
         else
         {
+            sm.SweepLeft();
             sweepSel.SweepLeft();
         }
 
@@ -217,7 +224,7 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
 
         yield return new WaitForSeconds(sweepTime);
-
+        sm.SweepWhoa();
         sweepSel.SweepWhoa();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
         
