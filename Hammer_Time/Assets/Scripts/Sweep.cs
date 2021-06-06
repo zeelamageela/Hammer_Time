@@ -14,7 +14,7 @@ public class Sweep : MonoBehaviour
 
     public GameObject sweeperGO;
     public Sweeper sweeper;
-    public SweepSelector sweepSel;
+    //public SweepSelector sweepSel;
     public Button sweepButton;
     public Button hardButton;
     public Button whoaButton;
@@ -26,11 +26,9 @@ public class Sweep : MonoBehaviour
 
     void Start()
     {
-        whoaButton.gameObject.SetActive(false);
-        sweepButton.gameObject.SetActive(false);
-        hardButton.gameObject.SetActive(false);
-        leftButton.gameObject.SetActive(false);
-        rightButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(false);
+        //sweepButton.gameObject.SetActive(false);
+        //hardButton.gameObject.SetActive(false);
 
         //sweeper.gameObject.SetActive(false);
         sm.SetupSweepers();
@@ -39,34 +37,28 @@ public class Sweep : MonoBehaviour
 
     public void EnterSweepZone()
     {
-        sweepButton.gameObject.SetActive(true);
-        leftButton.gameObject.SetActive(true);
-        rightButton.gameObject.SetActive(true);
+        //sweepButton.gameObject.SetActive(true);
         //sweeper.gameObject.SetActive(true);
 
-        sweepSel.SetupSweepers();
+        //sweepSel.SetupSweepers();
     }
 
     public void ExitSweepZone()
     {
-        sweepButton.gameObject.SetActive(false);
-        whoaButton.gameObject.SetActive(false);
-        leftButton.gameObject.SetActive(false);
-        rightButton.gameObject.SetActive(false);
-        hardButton.gameObject.SetActive(false);
+        //sweepButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(false);
+        //hardButton.gameObject.SetActive(false);
 
         //sweeper.gameObject.SetActive(false);
         sm.SetupSweepers();
-        sweepSel.SweepEnd();
+        //sweepSel.SweepEnd();
     }
 
     public void OnSweep()
     {
-        sweepButton.gameObject.SetActive(false);
-        leftButton.gameObject.SetActive(true);
-        rightButton.gameObject.SetActive(true);
-        hardButton.gameObject.SetActive(true);
-        whoaButton.gameObject.SetActive(true);
+        //sweepButton.gameObject.SetActive(false);
+        //hardButton.gameObject.SetActive(true);
+        //whoaButton.gameObject.SetActive(true);
 
         //sweeper.Sweep();
         StartCoroutine(SweepWeight());
@@ -74,11 +66,9 @@ public class Sweep : MonoBehaviour
 
     public void OnHard()
     {
-        sweepButton.gameObject.SetActive(false);
-        leftButton.gameObject.SetActive(true);
-        rightButton.gameObject.SetActive(true);
-        hardButton.gameObject.SetActive(false);
-        whoaButton.gameObject.SetActive(true);
+        //sweepButton.gameObject.SetActive(false);
+        //hardButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(true);
 
         //sweeper.Hard();
         StartCoroutine(SweepHard());
@@ -86,11 +76,9 @@ public class Sweep : MonoBehaviour
 
     public void OnLeft()
     {
-        sweepButton.gameObject.SetActive(true);
-        leftButton.gameObject.SetActive(false);
-        rightButton.gameObject.SetActive(true);
-        hardButton.gameObject.SetActive(false);
-        whoaButton.gameObject.SetActive(true);
+        //sweepButton.gameObject.SetActive(true);
+        //hardButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(true);
 
         if (rm.inturn)
         {
@@ -105,11 +93,9 @@ public class Sweep : MonoBehaviour
 
     public void OnRight()
     {
-        sweepButton.gameObject.SetActive(true);
-        leftButton.gameObject.SetActive(true);
-        rightButton.gameObject.SetActive(false);
-        hardButton.gameObject.SetActive(false);
-        whoaButton.gameObject.SetActive(true);
+        //sweepButton.gameObject.SetActive(true);
+        //hardButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(true);
 
         if (rm.inturn)
         {
@@ -125,11 +111,9 @@ public class Sweep : MonoBehaviour
     {
         StartCoroutine(Whoa());
 
-        sweepButton.gameObject.SetActive(true);
-        leftButton.gameObject.SetActive(true);
-        rightButton.gameObject.SetActive(true);
-        hardButton.gameObject.SetActive(false);
-        whoaButton.gameObject.SetActive(false);
+        //sweepButton.gameObject.SetActive(true);
+        //hardButton.gameObject.SetActive(false);
+        //whoaButton.gameObject.SetActive(false);
         
         //sweeper.Whoa();
     }
@@ -143,7 +127,7 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepTime);
         sm.SweepWeight();
-        sweepSel.SweepWeight();
+        //sweepSel.SweepWeight();
         float curl = rock.GetComponent<Rock_Force>().curl.x + (5f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
@@ -161,7 +145,7 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepTime);
         sm.SweepHard();
-        sweepSel.SweepHard();
+        //sweepSel.SweepHard();
         rb.drag = (rb.drag - (1.5f * sweepAmt));
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + (10f * sweepAmt);
@@ -180,12 +164,12 @@ public class Sweep : MonoBehaviour
         if (inturn)
         {
             sm.SweepLeft();
-            sweepSel.SweepLeft();
+            //sweepSel.SweepLeft();
         }
         else
         {
             sm.SweepRight();
-            sweepSel.SweepRight();
+            //sweepSel.SweepRight();
         }
 
         rb.drag = (rb.drag - (sweepAmt / 2f));
@@ -204,12 +188,12 @@ public class Sweep : MonoBehaviour
         if (inturn)
         {
             sm.SweepRight();
-            sweepSel.SweepRight();
+            //sweepSel.SweepRight();
         }
         else
         {
             sm.SweepLeft();
-            sweepSel.SweepLeft();
+            //sweepSel.SweepLeft();
         }
 
         rb.drag = (rb.drag - (sweepAmt / 2f));
@@ -225,7 +209,7 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepTime);
         sm.SweepWhoa();
-        sweepSel.SweepWhoa();
+        //sweepSel.SweepWhoa();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
         
         rb.drag = 0.38f;

@@ -4,79 +4,96 @@ using UnityEngine;
 
 public class SweeperManager : MonoBehaviour
 {
-    public Sweeper halFront;
-    public SpriteRenderer halFrontSR;
-    public Sweeper halBack;
-    public SpriteRenderer halBackSR;
+
+    public Sweeper sweeperL;
+    public Sweeper sweeperR;
+
+    public Sweep sweep;
+
+    public SweeperSelector sweepSel;
 
     public RockManager rm;
     public bool inturn;
 
-
+    public void Update()
+    {
+        if(sweeperL.sweep)
+        {
+            SweepLeft();
+            sweep.OnLeft();
+        }
+        if (sweeperR.sweep)
+        {
+            SweepRight();
+            sweep.OnRight();
+        }
+    }
     // Update is called once per frame
     public void SetupSweepers()
     {
-        halFront.gameObject.SetActive(false);
-        halBack.gameObject.SetActive(false);
+        sweepSel.gameObject.SetActive(false);
+        sweeperL.sweep = false;
+        sweeperL.hard = false;
+        sweeperL.whoa = true;
+
+        sweeperL.sweep = false;
+        sweeperL.hard = false;
+        sweeperL.whoa = true;
     }
 
     public void Release(GameObject rock)
     {
-        halFront.gameObject.SetActive(true);
-        halFront.AttachToRock(rock);
-
-        halBack.gameObject.SetActive(true);
-        halBack.AttachToRock(rock);
-
+        sweepSel.gameObject.SetActive(true);
+        sweepSel.AttachToRock(rock);
         inturn = rm.inturn;
 
         if (inturn)
         {
-            halFront.yOffset = 0.6f;
+            sweeperL.yOffset = 0.6f;
 
-            halBack.yOffset = 1.1f;
+            sweeperR.yOffset = 1.1f;
         }
         else
         {
-            halFront.yOffset = 1.1f;
+            sweeperL.yOffset = 1.1f;
 
-            halBack.yOffset = 0.6f;
+            sweeperR.yOffset = 0.6f;
         }
     }
 
     public void SweepWeight()
     {
-        halFront.Sweep();
-        halBack.Sweep();
+        sweeperL.Sweep();
+        sweeperR.Sweep();
     }
 
     public void SweepHard()
     {
-        halFront.Hard();
-        halBack.Hard();
+        sweeperL.Hard();
+        sweeperR.Hard();
     }
 
     public void SweepWhoa()
     {
-        halFront.Whoa();
-        halBack.Whoa();
+        sweeperL.Whoa();
+        sweeperR.Whoa();
     }
 
     public void SweepLeft()
     {
-        halFront.yOffset = 0.6f;
-        halFront.Sweep();
+        sweeperL.yOffset = 0.6f;
+        sweeperL.Sweep();
 
-        halBack.yOffset = 1.1f;
-        halBack.Whoa();
+        sweeperR.yOffset = 1.1f;
+        sweeperR.Whoa();
     }
 
     public void SweepRight()
     {
-        halFront.yOffset = 1.1f;
-        halFront.Whoa();
+        sweeperL.yOffset = 1.1f;
+        sweeperL.Whoa();
 
-        halBack.yOffset = 0.6f;
-        halBack.Sweep();
+        sweeperR.yOffset = 0.6f;
+        sweeperR.Sweep();
     }
 }

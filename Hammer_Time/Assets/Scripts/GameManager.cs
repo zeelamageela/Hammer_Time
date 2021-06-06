@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         state = GameState.START;
         redButton.gameObject.SetActive(false);
         yellowButton.gameObject.SetActive(false);
-        sweepButton.gameObject.SetActive(false);
+        //sweepButton.gameObject.SetActive(false);
 
         StartCoroutine(SetupGame());
     }
