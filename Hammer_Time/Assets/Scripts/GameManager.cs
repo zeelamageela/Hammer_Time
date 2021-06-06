@@ -374,7 +374,7 @@ public class GameManager : MonoBehaviour
 
         sm.Release(yellowRock_1);
         //sweeper.AttachToRock(yellowRock_1);
-        rm.GetComponent<Sweep>().EnterSweepZone();
+        //rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
         

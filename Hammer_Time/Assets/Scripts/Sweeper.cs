@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sweeper : MonoBehaviour
 {
+    public SweeperManager sm;
     public Animator anim;
     //public RelativeJoint2D rj;
     Rigidbody2D rockRB;
@@ -18,6 +19,7 @@ public class Sweeper : MonoBehaviour
     private void Start()
     {
         col = GetComponent<BoxCollider2D>();
+
     }
 
     private void Update()
@@ -28,35 +30,35 @@ public class Sweeper : MonoBehaviour
         Vector3 followSpot = new Vector3((xOffset + sweeperParent.position.x), (sweeperParent.position.y + yOffset), 0f);
         transform.position = followSpot;
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+        //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 
-            if (hit.collider == col)
-            {
-                if (sweep)
-                {
-                    Debug.Log("Hard!");
-                    Hard();
+        //    if (hit.collider == col)
+        //    {
+        //        if (sweep)
+        //        {
+        //            Debug.Log("Hard!");
+        //            Hard();
 
-                    if (hard)
-                    {
-                        Debug.Log("Whoa!");
-                        Whoa();
-                    }
-                }
-                else
-                {
-                    Debug.Log("Sweep!");
-                    Sweep();
-                }
+        //            if (hard)
+        //            {
+        //                Debug.Log("Whoa!");
+        //                Whoa();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Debug.Log("Sweep!");
+        //            Sweep();
+        //        }
                     
-                Debug.Log(hit.collider.gameObject.name);
-            }
-        }
+        //        Debug.Log(hit.collider.gameObject.name);
+        //    }
+        //}
     }
     public void Sweep()
     {
@@ -69,7 +71,7 @@ public class Sweeper : MonoBehaviour
 
     public void Hard()
     {
-        sweep = true;
+        sweep = false;
         hard = true;
         whoa = false;
         anim.SetBool("Sweep", false);

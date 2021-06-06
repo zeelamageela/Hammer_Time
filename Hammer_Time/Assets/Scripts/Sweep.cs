@@ -50,6 +50,7 @@ public class Sweep : MonoBehaviour
         //hardButton.gameObject.SetActive(false);
 
         //sweeper.gameObject.SetActive(false);
+        OnWhoa();
         sm.SetupSweepers();
         //sweepSel.SweepEnd();
     }
@@ -126,12 +127,12 @@ public class Sweep : MonoBehaviour
         //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
 
         yield return new WaitForSeconds(sweepTime);
-        sm.SweepWeight();
+        //sm.SweepWeight();
         //sweepSel.SweepWeight();
         float curl = rock.GetComponent<Rock_Force>().curl.x + (5f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
-        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+        //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
         rb.drag = (rb.drag - (sweepAmt));
 
     }
@@ -140,11 +141,13 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
-        //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
+        rb.drag = 0.38f;
+        rb.angularDrag = 0.24f;
 
         yield return new WaitForSeconds(sweepTime);
-        sm.SweepHard();
+        //sm.SweepHard();
         //sweepSel.SweepHard();
         rb.drag = (rb.drag - (1.5f * sweepAmt));
 
@@ -158,19 +161,23 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        rock.GetComponent<Rock_Force>().curl.x = -0.5f;
+
+        rb.drag = 0.38f;
+        rb.angularDrag = 0.24f;
 
         yield return new WaitForSeconds(sweepTime);
 
-        if (inturn)
-        {
-            sm.SweepLeft();
-            //sweepSel.SweepLeft();
-        }
-        else
-        {
-            sm.SweepRight();
-            //sweepSel.SweepRight();
-        }
+        //if (inturn)
+        //{
+        //    sm.SweepLeft();
+        //    //sweepSel.SweepLeft();
+        //}
+        //else
+        //{
+        //    sm.SweepRight();
+        //    //sweepSel.SweepRight();
+        //}
 
         rb.drag = (rb.drag - (sweepAmt / 2f));
 
@@ -182,19 +189,23 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        rock.GetComponent<Rock_Force>().curl.x = -0.5f;
+
+        rb.drag = 0.38f;
+        rb.angularDrag = 0.24f;
 
         yield return new WaitForSeconds(sweepAmt);
 
-        if (inturn)
-        {
-            sm.SweepRight();
-            //sweepSel.SweepRight();
-        }
-        else
-        {
-            sm.SweepLeft();
-            //sweepSel.SweepLeft();
-        }
+        //if (inturn)
+        //{
+        //    sm.SweepRight();
+        //    //sweepSel.SweepRight();
+        //}
+        //else
+        //{
+        //    sm.SweepLeft();
+        //    //sweepSel.SweepLeft();
+        //}
 
         rb.drag = (rb.drag - (sweepAmt / 2f));
 
@@ -208,7 +219,7 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
 
         yield return new WaitForSeconds(sweepTime);
-        sm.SweepWhoa();
+        //sm.SweepWhoa();
         //sweepSel.SweepWhoa();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
         
