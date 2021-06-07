@@ -83,7 +83,7 @@ public class SweeperManager : MonoBehaviour
         sweeperR.Hard();
         sweep.OnHard();
         hardButton.SetActive(false);
-        sweepButton.SetActive(true);
+        sweepButton.SetActive(false);
         whoaButton.SetActive(true);
     }
 
