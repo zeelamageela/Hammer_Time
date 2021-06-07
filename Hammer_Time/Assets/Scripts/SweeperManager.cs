@@ -50,6 +50,7 @@ public class SweeperManager : MonoBehaviour
         sweepSel.AttachToRock(rock);
         inturn = rm.inturn;
         //sweep.OnWhoa();
+        sweepButton.SetActive(true);
         hardButton.SetActive(false);
         whoaButton.SetActive(false);
         if (inturn)
@@ -82,6 +83,8 @@ public class SweeperManager : MonoBehaviour
         sweeperR.Hard();
         sweep.OnHard();
         hardButton.SetActive(false);
+        sweepButton.SetActive(true);
+        whoaButton.SetActive(true);
     }
 
     public void SweepWhoa()
@@ -90,6 +93,8 @@ public class SweeperManager : MonoBehaviour
         sweeperR.Whoa();
         sweep.OnWhoa();
         whoaButton.SetActive(false);
+        sweepButton.SetActive(true);
+        hardButton.SetActive(false);
     }
 
     public void SweepLeft()
