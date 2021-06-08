@@ -727,10 +727,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sweeperParent: {fileID: 1949947533}
-  launcher: {fileID: 2563391621767102984}
+  launcher: {fileID: 1954861158}
   sweep: {fileID: 1650477491}
   hard: {fileID: 765593632}
   whoa: {fileID: 1752824480}
+  angle: 0
 --- !u!1 &154884727
 GameObject:
   m_ObjectHideFlags: 0
@@ -11869,6 +11870,7 @@ MonoBehaviour:
   rm: {fileID: 545177317}
   sm: {fileID: 2125354293}
   sweep: {fileID: 545177319}
+  launcher: {fileID: 0}
 --- !u!1 &1954463318
 GameObject:
   m_ObjectHideFlags: 0
@@ -12986,6 +12988,10 @@ PrefabInstance:
       propertyPath: col
       value: 
       objectReference: {fileID: 156424937}
+    - target: {fileID: 6790483232774857173, guid: 88a8c94ba151b8146927c48b8498d12a, type: 3}
+      propertyPath: xOffset
+      value: -0.875
+      objectReference: {fileID: 0}
     - target: {fileID: 6790483232774857177, guid: 88a8c94ba151b8146927c48b8498d12a, type: 3}
       propertyPath: m_Name
       value: HalSweepLeft
@@ -13117,6 +13123,10 @@ PrefabInstance:
       propertyPath: sm
       value: 
       objectReference: {fileID: 2125354293}
+    - target: {fileID: 6790483232774857173, guid: 54ee92dcca7c7594293e5aa3fada43c6, type: 3}
+      propertyPath: xOffset
+      value: 0.875
+      objectReference: {fileID: 0}
     - target: {fileID: 6790483232774857177, guid: 54ee92dcca7c7594293e5aa3fada43c6, type: 3}
       propertyPath: m_Name
       value: HalSweepRight

@@ -16,7 +16,7 @@ public class SweeperSelector : MonoBehaviour
     public Sweep sweep;
     bool inturn;
     Rigidbody2D rockRB;
-
+    public Transform launcher;
     private void Update()
     {
         if (rockRB != null)
@@ -27,6 +27,16 @@ public class SweeperSelector : MonoBehaviour
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
+            Vector2 rockPos = new Vector2(rockRB.position.x, rockRB.position.y);
+            Vector2 launchPos = new Vector2(launcher.position.x, launcher.position.y);
+            Vector2 rockDirection = (Vector2)Vector3.Normalize(rockPos - launchPos);
+
+            float angle = Mathf.Atan2(rockDirection.x, rockDirection.y) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 45f));
+            //if (angle <= 45f)
+            //{
+            //    sweeperParent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+            //}
 
             if (Input.GetMouseButtonDown(0))
             {

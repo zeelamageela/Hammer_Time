@@ -11,6 +11,7 @@ public class SweepButtonsFollow : MonoBehaviour
     public Button hard;
     public Button whoa;
 
+    public float angle;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -19,9 +20,6 @@ public class SweepButtonsFollow : MonoBehaviour
         hard.transform.position = new Vector2(rockPos.x, rockPos.y - 200f);
         whoa.transform.position = new Vector2(rockPos.x, rockPos.y - 400f);
 
-        Vector2 launchPos = new Vector2(launcher.position.x, launcher.position.y);
-        Vector2 rockDirection = (Vector2)Vector3.Normalize(rockPos - launchPos);
-        float angle = Mathf.Atan2(rockDirection.y, rockDirection.x) * Mathf.Rad2Deg;
-        sweeperParent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 45f));
+        
     }
 }
