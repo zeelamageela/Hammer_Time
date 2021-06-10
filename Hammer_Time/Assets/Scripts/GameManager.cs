@@ -9,6 +9,7 @@ public enum GameState { START, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, EN
 
 public class GameManager : MonoBehaviour
 {
+    public AudioManager am;
     int endCurrent;
     public int endTotal;
     public bool redHammer;
@@ -97,6 +98,8 @@ public class GameManager : MonoBehaviour
 
     public void SetHammerRed()
     {
+        am.Play("Button");
+        am.Play("Theme");
         redHammer = true;
         gHUD.SetHammer(redHammer);
         db.SetActive(false);
@@ -109,6 +112,8 @@ public class GameManager : MonoBehaviour
 
     public void SetHammerYellow()
     {
+        am.Play("Button");
+        am.Play("Theme");
         redHammer = false;
         db.SetActive(false);
 

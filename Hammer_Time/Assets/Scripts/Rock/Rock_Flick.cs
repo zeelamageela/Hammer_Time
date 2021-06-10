@@ -15,6 +15,7 @@ public class Rock_Flick: MonoBehaviour
     GameObject launcher;
     Rigidbody2D launcher_rb;
 
+    AudioManager am;
     Vector2 startPoint;
     Vector2 endPoint;
     public Vector2 springDirection;
@@ -55,6 +56,8 @@ public class Rock_Flick: MonoBehaviour
 
         gameObject.transform.parent = null;
         gameObject.transform.position = launcher.transform.position;
+
+        am = FindObjectOfType<AudioManager>();
 
     }
 
@@ -131,6 +134,7 @@ public class Rock_Flick: MonoBehaviour
     IEnumerator Release()
     {
         springReleased = true;
+        am.Play("RockScrape");
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;

@@ -14,9 +14,12 @@ public class TurnAnim : MonoBehaviour
     Rock_Force rockForce;
     //bool isPressed = false;
 
+    AudioManager am;
     void Start()
     {
         anim = GetComponent<Animator>();
+
+        am = FindObjectOfType<AudioManager>();
     }
 
 
@@ -30,6 +33,7 @@ public class TurnAnim : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
+                am.Play("Button");
                 Vector3 mousePos = uiCam.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
