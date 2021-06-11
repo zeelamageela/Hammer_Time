@@ -8,9 +8,22 @@ public class AudioManager : MonoBehaviour
 
     public Sound[] sounds;
 
+    public static AudioManager instance;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         foreach (Sound s in sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
@@ -24,7 +37,6 @@ public class AudioManager : MonoBehaviour
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-        if (s == null) return;
 
         s.source.Play();
     }

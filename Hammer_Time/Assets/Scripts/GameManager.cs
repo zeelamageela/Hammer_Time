@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 
-public enum GameState { START, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
+public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
 
 
 public class GameManager : MonoBehaviour
 {
     public AudioManager am;
+
     int endCurrent;
     public int endTotal;
     public bool redHammer;
@@ -26,7 +27,7 @@ public class GameManager : MonoBehaviour
     public SweeperManager sm;
     public Sweeper sweeper;
     GameObject shooterGO;
-
+    public GameObject scoreboard;
     public Transform launcher;
     public Transform yellowRocksInactive;
     public Transform redRocksInactive;
@@ -69,10 +70,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         state = GameState.START;
-        redButton.gameObject.SetActive(false);
-        yellowButton.gameObject.SetActive(false);
+
         //sweepButton.gameObject.SetActive(false);
 
+        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         StartCoroutine(SetupGame());
     }
 
@@ -81,8 +82,14 @@ public class GameManager : MonoBehaviour
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
 
+
+
         endCurrent = 1;
         rockCurrent = 0;
+        redHammer = FindObjectOfType<GameSettings>().redHammer;
+        Debug.Log("redHammer is " + redHammer);
+        am.Play("Theme");
+
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
         rockTotal = rocksPerTeam * 2;
@@ -90,21 +97,27 @@ public class GameManager : MonoBehaviour
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
 
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(2f);
+        yield return new WaitForEndOfFrame();
 
-        redButton.gameObject.SetActive(true);
-        yellowButton.gameObject.SetActive(true);
+        gHUD.SetHammer(redHammer);
+
+        if (redHammer)
+        {
+            SetHammerRed();
+        }
+        else
+        {
+            SetHammerYellow();
+        }
     }
 
     public void SetHammerRed()
     {
-        am.Play("Button");
-        am.Play("Theme");
-        redHammer = true;
-        gHUD.SetHammer(redHammer);
+
         db.SetActive(false);
-        redButton.gameObject.SetActive(false);
-        yellowButton.gameObject.SetActive(false);
+
+        gHUD.Scoreboard(endCurrent, 0, 0);
 
         StartCoroutine(SetupRocks());
         OnYellowTurn();
@@ -112,15 +125,10 @@ public class GameManager : MonoBehaviour
 
     public void SetHammerYellow()
     {
-        am.Play("Button");
-        am.Play("Theme");
-        redHammer = false;
         db.SetActive(false);
 
-        gHUD.SetHammer(redHammer);
 
-        redButton.gameObject.SetActive(false);
-        yellowButton.gameObject.SetActive(false);
+        gHUD.Scoreboard(endCurrent, 0, 0);
 
         StartCoroutine(SetupRocks());
         OnRedTurn();
@@ -158,7 +166,7 @@ public class GameManager : MonoBehaviour
                 else if (k > yRocks)
                 {
                     float j = k - yRocks;
-                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x + 0.4f, yellowRock_go.transform.position.y - ((j - 1) * 0.4f));
+                    yellowRock_go.transform.position = new Vector2(yellowRock_go.transform.position.x - 0.4f, yellowRock_go.transform.position.y - ((j - 1) * 0.4f));
                 }
 
                 Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
@@ -168,7 +176,7 @@ public class GameManager : MonoBehaviour
                 yellowRock_go.GetComponent<Rock_Release>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Force>().enabled = false;
                 rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.025f);
             }
             if (i % 2 == hammer)
             {
@@ -182,7 +190,7 @@ public class GameManager : MonoBehaviour
                 else if (k > yRocks)
                 {
                     float j = k - yRocks;
-                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x - 0.4f, redRock_go.transform.position.y - ((j - 1) * 0.4f));
+                    redRock_go.transform.position = new Vector2(redRock_go.transform.position.x + 0.4f, redRock_go.transform.position.y - ((j - 1) * 0.4f));
                 }
 
 
@@ -193,12 +201,13 @@ public class GameManager : MonoBehaviour
                 redRock_go.GetComponent<Rock_Release>().enabled = false;
                 redRock_go.GetComponent<Rock_Force>().enabled = false;
                 rockList.Add(new Rock_List(redRock_go, redRock_info));
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.025f);
             }
             //rockList.Sort();
         }
 
         rockBar.ResetBar(redHammer);
+        //scoreboard.SetActive(false);
 
     }
 
@@ -285,6 +294,7 @@ public class GameManager : MonoBehaviour
         
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
+        am.Play("RockScrape");
         cm.RockFollow(redRock.transform);
         boardCollider.enabled = true;
 
@@ -296,7 +306,15 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.rest == true);
 
+        am.Stop("RockScrape");
         cm.TopViewAuto();
+
+        rm.GetComponent<Sweep>().ExitSweepZone();
+
+        Debug.Log("redRock at Rest");
+        vcam.enabled = false;
+
+        StartCoroutine(AllStopped());
 
         if (!redRock.outOfPlay)
         {
@@ -306,13 +324,6 @@ public class GameManager : MonoBehaviour
         {
             rockBar.DeadRock(rockCurrent);
         }
-
-        rm.GetComponent<Sweep>().ExitSweepZone();
-
-        Debug.Log("redRock at Rest");
-        vcam.enabled = false;
-
-        StartCoroutine(AllStopped());
 
         foreach (Rock_List rock in rockList)
         {
@@ -372,6 +383,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
+        am.Play("RockScrape");
         cm.RockFollow(yellowRock.transform);
         boardCollider.enabled = true;
 
@@ -382,18 +394,9 @@ public class GameManager : MonoBehaviour
         //rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
+        am.Stop("RockScrape");
         
         
-        if (!yellowRock.outOfPlay)
-        {
-            Debug.Log("Idle Rockbar");
-            rockBar.IdleRock();
-        }
-        else
-        {
-            Debug.Log("Dead Rockbar");
-            rockBar.DeadRock(rockCurrent);
-        }
 
         rm.GetComponent<Sweep>().ExitSweepZone();
 
@@ -413,6 +416,17 @@ public class GameManager : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
+
+        if (!yellowRock.outOfPlay)
+        {
+            Debug.Log("Idle Rockbar");
+            rockBar.IdleRock();
+        }
+        else
+        {
+            Debug.Log("Dead Rockbar");
+            rockBar.DeadRock(rockCurrent);
+        }
 
         StartCoroutine(CheckScore());
 
@@ -445,15 +459,18 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.CHECKSCORE;
 
-        Destroy(shooterGO);
 
         Debug.Log("Check Score");
 
         StartCoroutine(AllStopped());
+
+
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
         houseList.Clear();
+
+        Destroy(shooterGO);
 
         foreach (Rock_List rock in rockList)
         {

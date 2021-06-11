@@ -51,7 +51,7 @@ public class Sweep : MonoBehaviour
 
         //sweeper.gameObject.SetActive(false);
         OnWhoa();
-        sm.SetupSweepers();
+        sm.ResetSweepers();
         //sweepSel.SweepEnd();
     }
 

@@ -19,7 +19,7 @@ public class TurnAnim : MonoBehaviour
     {
         anim = GetComponent<Animator>();
 
-        am = FindObjectOfType<AudioManager>();
+        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
     }
 
 

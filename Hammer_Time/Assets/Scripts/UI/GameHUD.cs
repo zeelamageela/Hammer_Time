@@ -20,6 +20,7 @@ public class GameHUD : MonoBehaviour
     public Image redHammerPNG;
     public Image yellowHammerPNG;
 
+    public bool scoreCheck;
     private void Start()
     {
         foreach (Image scoreCard in scoreCards)
@@ -31,6 +32,14 @@ public class GameHUD : MonoBehaviour
         //{
         //    scoreCardText.enabled = false;
         //}
+    }
+
+    private void Update()
+    {
+        if (scoreCheck)
+        {
+
+        }
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
     {
@@ -57,7 +66,7 @@ public class GameHUD : MonoBehaviour
     IEnumerator ScoreboardTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        mainDisplay.enabled = false;
+        scoreboard.SetActive(true);
     }
 
     public void CheckScore(bool noRocks, string teamName, int score)

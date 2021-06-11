@@ -19,19 +19,27 @@ public class SweeperManager : MonoBehaviour
     public AudioManager am;
     public bool inturn;
 
-    //public void Update()
-    //{
-    //    if(sweeperL.sweep)
-    //    {
-    //        SweepLeft();
-    //    }
-    //    if (sweeperR.sweep)
-    //    {
-    //        SweepRight();
-    //    }
-    //}
-    // Update is called once per frame
+    private void Awake()
+    {
+        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+        if (am == null)
+        {
+            Debug.Log("Audio Manager not loaded");
+        }
+    }
     public void SetupSweepers()
+    {
+        sweepSel.gameObject.SetActive(false);
+        sweeperL.sweep = false;
+        sweeperL.hard = false;
+        sweeperL.whoa = true;
+
+        sweeperL.sweep = false;
+        sweeperL.hard = false;
+        sweeperL.whoa = true;
+    }
+
+    public void ResetSweepers()
     {
         am.Stop("Sweep");
         am.Stop("Hard");
@@ -43,8 +51,6 @@ public class SweeperManager : MonoBehaviour
         sweeperL.sweep = false;
         sweeperL.hard = false;
         sweeperL.whoa = true;
-
-        sweepButton.SetActive(true);
     }
 
     public void Release(GameObject rock)

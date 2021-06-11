@@ -21,12 +21,16 @@ public class Rock_Force : MonoBehaviour
 
     GameObject trajLineGO;
     TrajectoryLine trajLine;
+    AudioManager am;
+
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
 
         //trajLineGO = GameObject.Find("TrajectoryLine");
         //trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+
+        am = FindObjectOfType<AudioManager>();
     }
 
 
@@ -67,8 +71,10 @@ public class Rock_Force : MonoBehaviour
             if (body.velocity.y < 0.01f)
             {
                 //Debug.Log("Velocity below 0.01");
+                am.Stop("RockScrape");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
+                body.drag = 0.55f;
             }
 
             //if (debugVertex)
@@ -81,5 +87,6 @@ public class Rock_Force : MonoBehaviour
             //}
             
         }
+
     }
 }

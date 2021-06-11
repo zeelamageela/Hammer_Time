@@ -11,6 +11,7 @@ TagManager:
   - Trajectory
   - ScoreCard
   - TurnSelector
+  - AudioManager
   layers:
   - Default
   - TransparentFX

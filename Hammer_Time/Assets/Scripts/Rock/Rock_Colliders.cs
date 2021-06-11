@@ -36,7 +36,7 @@ public class Rock_Colliders : MonoBehaviour
         launchCollider = launch.GetComponent<Collider2D>();
         launchCollider.enabled = false;
 
-        am = FindObjectOfType<AudioManager>();
+        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
     }
 
 // Update is called once per frame
@@ -51,9 +51,9 @@ public class Rock_Colliders : MonoBehaviour
     IEnumerator OutOfPlay()
     {
         outOfPlay = true;
-        am.Play("OUtOfPlay");
-        body.velocity = Vector2.zero;
-        body.angularVelocity = 0f;
+        //am.Play("OutOfPlay");
+        //body.velocity = Vector2.zero;
+        //body.angularVelocity = 0f;
         GetComponent<Collider2D>().enabled = false;
 
         GetComponent<Rock_Info>().stopped = true;
@@ -101,6 +101,7 @@ public class Rock_Colliders : MonoBehaviour
             hit = true;
             Debug.Log("Hit!");
             am.Play("Hit");
+
         }
 
         if (collision.gameObject.tag == "Boards")
@@ -109,6 +110,7 @@ public class Rock_Colliders : MonoBehaviour
             inPlay = false;
             Debug.Log("collider boards");
             StartCoroutine(OutOfPlay());
+            am.Play("OutOfPlay");
         }
     }
 
@@ -120,6 +122,7 @@ public class Rock_Colliders : MonoBehaviour
             inPlay = false;
             inHouse = false;
             StartCoroutine(OutOfPlay());
+            am.Play("OutOfPlay");
         }
 
         if (collider == house_collider)

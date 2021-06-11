@@ -57,7 +57,7 @@ public class Rock_Flick: MonoBehaviour
         gameObject.transform.parent = null;
         gameObject.transform.position = launcher.transform.position;
 
-        am = FindObjectOfType<AudioManager>();
+        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
 
     }
 
@@ -134,7 +134,6 @@ public class Rock_Flick: MonoBehaviour
     IEnumerator Release()
     {
         springReleased = true;
-        am.Play("RockScrape");
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
