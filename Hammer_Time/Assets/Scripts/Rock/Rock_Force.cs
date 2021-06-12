@@ -68,7 +68,7 @@ public class Rock_Force : MonoBehaviour
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
             //Debug.Log("curl is " + curl.x);
-            if (body.velocity.y < 0.01f)
+            if (Mathf.Abs(body.velocity.y) < 0.01f && Mathf.Abs(body.velocity.x) < 0.01f)
             {
                 //Debug.Log("Velocity below 0.01");
                 am.Stop("RockScrape");

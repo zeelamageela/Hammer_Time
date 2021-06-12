@@ -163,6 +163,13 @@ public class RockBar : MonoBehaviour
                 {
                     DeadRock(gm.rockList.IndexOf(rock));
                 }
+                else
+                {
+                    if (rock.rockInfo.shotTaken)
+                    {
+                        IdleRock(gm.rockList.IndexOf(rock));
+                    }
+                }
             }
         }
     }
@@ -191,13 +198,11 @@ public class RockBar : MonoBehaviour
 
     public void DeadRock(int rockIndex)
     {
-        rockCurrent = gm.rockCurrent;
-        rockListUI[rockCurrent].GetComponent<RockBar_Dot>().DeadRockSprite();
+        rockListUI[rockIndex].GetComponent<RockBar_Dot>().DeadRockSprite();
     }
 
-    public void IdleRock()
+    public void IdleRock(int rockIndex)
     {
-        rockCurrent = gm.rockCurrent;
-        rockListUI[rockCurrent].gameObject.GetComponent<RockBar_Dot>().IdleRockSprite();
+        rockListUI[rockIndex].gameObject.GetComponent<RockBar_Dot>().IdleRockSprite();
     }
 }
