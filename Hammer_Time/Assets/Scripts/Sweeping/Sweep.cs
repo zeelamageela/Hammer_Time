@@ -132,7 +132,7 @@ public class Sweep : MonoBehaviour
         float curl = rock.GetComponent<Rock_Force>().curl.x + (5f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
-        //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
         rb.drag = (rb.drag - (sweepAmt));
 
     }
@@ -183,6 +183,7 @@ public class Sweep : MonoBehaviour
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + (8f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
+        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
     }
 
     IEnumerator SweepCurl(bool inturn)
@@ -211,6 +212,7 @@ public class Sweep : MonoBehaviour
 
         float curl = rock.GetComponent<Rock_Force>().curl.x - (4f * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
+        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
     }
 
     IEnumerator Whoa()
@@ -225,5 +227,6 @@ public class Sweep : MonoBehaviour
         
         rb.drag = 0.38f;
         rb.angularDrag = 0.24f;
+        Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
     }
 }

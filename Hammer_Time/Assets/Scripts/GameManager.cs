@@ -310,7 +310,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => redRock.rest == true);
 
         am.Stop("RockScrape");
-        cm.TopViewAuto();
+        //cm.TopViewAuto();
 
         rm.GetComponent<Sweep>().ExitSweepZone();
 
@@ -321,21 +321,26 @@ public class GameManager : MonoBehaviour
 
         if (!redRock.outOfPlay)
         {
-            rockBar.IdleRock();
+            Debug.Log("Out Of Play is " + redRock.outOfPlay);
+            Debug.Log("Rock Current is " + rockCurrent);
+            rockBar.IdleRock(rockCurrent);
         }
         else
         {
+            Debug.Log("Out Of Play is " + redRock.outOfPlay);
+            Debug.Log("Rock Current is " + rockCurrent);
             rockBar.DeadRock(rockCurrent);
+
         }
 
-        foreach (Rock_List rock in rockList)
-        {
-            bool outOfPlay;
-            int rockIndex;
-            rockIndex = rockList.IndexOf(rock);
-            outOfPlay = rock.rockInfo.outOfPlay;
-            rockBar.ShotUpdate(rockIndex, outOfPlay);
-        }
+        //foreach (Rock_List rock in rockList)
+        //{
+        //    bool outOfPlay;
+        //    int rockIndex;
+        //    rockIndex = rockList.IndexOf(rock);
+        //    outOfPlay = rock.rockInfo.outOfPlay;
+        //    rockBar.ShotUpdate(rockIndex, outOfPlay);
+        //}
 
         StartCoroutine(CheckScore());
     }
@@ -409,14 +414,14 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        foreach(Rock_List rock in rockList)
-        {
-            bool outOfPlay;
-            int rockIndex;
-            rockIndex = rockList.IndexOf(rock);
-            outOfPlay = rock.rockInfo.outOfPlay;
-            rockBar.ShotUpdate(rockIndex, outOfPlay);
-        }
+        //foreach(Rock_List rock in rockList)
+        //{
+        //    bool outOfPlay;
+        //    int rockIndex;
+        //    rockIndex = rockList.IndexOf(rock);
+        //    outOfPlay = rock.rockInfo.outOfPlay;
+        //    rockBar.ShotUpdate(rockIndex, outOfPlay);
+        //}
 
         yield return new WaitForEndOfFrame();
 
@@ -439,25 +444,33 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AllStopped()
     {
-        bool allSleeping = false;
+        //bool allSleeping = false;
 
-        while (!allSleeping)
+        //while (!allSleeping)
+        //{
+        //    allSleeping = true;
+
+        //    foreach (Rock_List rock in rockList)
+        //    {
+        //        Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
+        //        if (!rockRB.IsSleeping())
+        //        {
+        //            allSleeping = false;
+        //            yield return null;
+        //            break;
+        //        }
+        //    }
+        //}
+
+        foreach (Rock_List rock in rockList)
         {
-            allSleeping = true;
-
-            foreach (Rock_List rock in rockList)
+            if (rock.rockInfo.moving)
             {
-                Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
-                if (!rockRB.IsSleeping())
-                {
-                    allSleeping = false;
-                    yield return null;
-                    break;
-                }
+                Debug.Log(rock.rockInfo.teamName + " is moving");
+                yield return new WaitUntil(() => rock.rockInfo.moving == false);
             }
         }
-
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
     }
 
     public IEnumerator CheckScore()
