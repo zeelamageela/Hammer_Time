@@ -87,6 +87,9 @@ public class GameManager : MonoBehaviour
         endCurrent = 1;
         rockCurrent = 0;
         redHammer = FindObjectOfType<GameSettings>().redHammer;
+        endTotal = FindObjectOfType<GameSettings>().ends;
+        rocksPerTeam = FindObjectOfType<GameSettings>().rocks;
+
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
 
@@ -417,16 +420,18 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        if (!yellowRock.outOfPlay)
-        {
-            Debug.Log("Idle Rockbar");
-            rockBar.IdleRock();
-        }
-        else
-        {
-            Debug.Log("Dead Rockbar");
-            rockBar.DeadRock(rockCurrent);
-        }
+        //if (!yellowRock.outOfPlay)
+        //{
+        //    Debug.Log("Idle Rockbar");
+        //    rockBar.IdleRock();
+        //}
+        //else
+        //{
+        //    Debug.Log("Dead Rockbar");
+        //    rockBar.DeadRock(rockCurrent);
+        //}
+
+        rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
 
         StartCoroutine(CheckScore());
 

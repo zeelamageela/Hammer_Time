@@ -81,6 +81,26 @@ public class RockBar : MonoBehaviour
             redTurn = true;
         }
 
+        //for (int i = 0; i < rocksPerTeam; i++)
+        //{
+        //    GameObject notHammer = Instantiate(notHammerRock);
+        //    notHammer.transform.SetParent(notHammerRockPos, false);
+        //    notHammer.transform.position += new Vector3((i * -offset), 0f, 0f);
+
+        //    notHammer.name = gm.rockList[2 * i].rock.name;
+        //    rockListUI.Add(notHammer);
+
+        //    yield return new WaitForSeconds(i * 0.02f);
+
+        //    GameObject hammer = Instantiate(hammerRock);
+        //    hammer.transform.SetParent(hammerRockPos, false);
+
+        //    hammer.transform.position += new Vector3((i * offset), 0f, 0f);
+
+        //    hammer.name = gm.rockList[(2 * i) + 1].rock.name;
+        //    rockListUI.Add(hammer);
+        //}
+
         for (int i = 0; i < rocksPerTeam; i++)
         {
             GameObject notHammer = Instantiate(notHammerRock);
@@ -101,10 +121,10 @@ public class RockBar : MonoBehaviour
             rockListUI.Add(hammer);
         }
 
-        foreach (GameObject rock in rockListUI)
-        {
-            Debug.Log(rock.name);
-        }
+        //foreach (GameObject rock in rockListUI)
+        //{
+        //    Debug.Log(rock.name);
+        //}
 
         yield return new WaitForFixedUpdate();
 
