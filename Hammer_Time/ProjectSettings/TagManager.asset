@@ -12,6 +12,7 @@ TagManager:
   - ScoreCard
   - TurnSelector
   - AudioManager
+  - RockManager
   layers:
   - Default
   - TransparentFX

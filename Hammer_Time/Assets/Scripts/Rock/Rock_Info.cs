@@ -29,6 +29,7 @@ public class Rock_Info : MonoBehaviour
         hit = GetComponent<Rock_Colliders>().hit;
         inHouse = GetComponent<Rock_Colliders>().inHouse;
 
+        
         if (transform.hasChanged)
         {
             transform.hasChanged = false;
@@ -36,7 +37,7 @@ public class Rock_Info : MonoBehaviour
             moving = true;
         }
         else moving = false;
-        
+
         if (shotTaken && released)
         {
             if (moving == false)
@@ -59,7 +60,7 @@ public class Rock_Info : MonoBehaviour
         {
             if (transform.hasChanged)
             {
-                Debug.Log("Hit");
+                Debug.Log("Hit RockInfo!");
                 transform.hasChanged = false;
                 stopped = false;
                 moving = true;

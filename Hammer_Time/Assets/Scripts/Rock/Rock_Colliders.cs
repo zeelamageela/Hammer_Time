@@ -18,6 +18,7 @@ public class Rock_Colliders : MonoBehaviour
     public bool shotTaken = false;
 
     AudioManager am;
+    Sweep sweep;
 // Start is called before the first frame update
     void Awake()
     {
@@ -37,6 +38,7 @@ public class Rock_Colliders : MonoBehaviour
         launchCollider.enabled = false;
 
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+        sweep = GameObject.FindGameObjectWithTag("RockManager").GetComponent<Sweep>();
     }
 
 // Update is called once per frame
@@ -61,6 +63,7 @@ public class Rock_Colliders : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
+        body.velocity = Vector2.zero;
         gameObject.SetActive(false);
     }
 
@@ -98,10 +101,13 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collision.gameObject.tag == "Rock")
         {
+            sweep.OnWhoa();
+            collision.gameObject.GetComponent<Rock_Info>().moving = true;
+            collision.gameObject.GetComponent<Rock_Info>().stopped = false;
+            collision.gameObject.GetComponent<Rock_Info>().rest = false;
             hit = true;
             Debug.Log("Hit!");
             am.Play("Hit");
-
         }
 
         if (collision.gameObject.tag == "Boards")

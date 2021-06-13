@@ -25,9 +25,8 @@ public class GameManager : MonoBehaviour
     public GameObject shooterAnimYellow;
 
     public SweeperManager sm;
-    public Sweeper sweeper;
+
     GameObject shooterGO;
-    public GameObject scoreboard;
     public Transform launcher;
     public Transform yellowRocksInactive;
     public Transform redRocksInactive;
@@ -82,8 +81,6 @@ public class GameManager : MonoBehaviour
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
 
-
-
         endCurrent = 1;
         rockCurrent = 0;
         redHammer = FindObjectOfType<GameSettings>().redHammer;
@@ -117,10 +114,7 @@ public class GameManager : MonoBehaviour
 
     public void SetHammerRed()
     {
-
         db.SetActive(false);
-
-        gHUD.Scoreboard(endCurrent, 0, 0);
 
         StartCoroutine(SetupRocks());
         OnYellowTurn();
@@ -129,9 +123,6 @@ public class GameManager : MonoBehaviour
     public void SetHammerYellow()
     {
         db.SetActive(false);
-
-
-        gHUD.Scoreboard(endCurrent, 0, 0);
 
         StartCoroutine(SetupRocks());
         OnRedTurn();
@@ -178,6 +169,7 @@ public class GameManager : MonoBehaviour
                 yellowRock_go.GetComponent<Rock_Flick>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Release>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Force>().enabled = false;
+                yellowRock_go.GetComponent<CircleCollider2D>().enabled = false;
                 rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
                 yield return new WaitForSeconds(0.025f);
             }
@@ -200,6 +192,7 @@ public class GameManager : MonoBehaviour
                 Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
                 redRock_info.rockNumber = k;
                 redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
+                redRock_go.GetComponent<CircleCollider2D>().enabled = false;
                 redRock_go.GetComponent<Rock_Flick>().enabled = false;
                 redRock_go.GetComponent<Rock_Release>().enabled = false;
                 redRock_go.GetComponent<Rock_Force>().enabled = false;
@@ -303,6 +296,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.released == true);
 
+        redRock_1.GetComponent<Rock_Flick>().enabled = false;
         sm.Release(redRock_1);
         //sweeper.AttachToRock(redRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
@@ -404,12 +398,10 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => yellowRock.rest == true);
         am.Stop("RockScrape");
         
-        
-
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         vcam.enabled = false;
-
+        
         StartCoroutine(AllStopped());
 
         yield return new WaitForEndOfFrame();
@@ -462,11 +454,20 @@ public class GameManager : MonoBehaviour
         //    }
         //}
 
+        //foreach (Rock_List rock in rockList)
+        //{
+        //    if (rock.rockInfo.moving)
+        //    {
+        //        Debug.Log(rock.rockInfo.teamName + " is moving");
+        //        yield return new WaitUntil(() => rock.rockInfo.moving == false);
+        //    }
+        //}
+
         foreach (Rock_List rock in rockList)
         {
-            if (rock.rockInfo.moving)
+            if (rock.rockInfo.moving && rock.rockInfo.shotTaken)
             {
-                Debug.Log(rock.rockInfo.teamName + " is moving");
+                Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
                 yield return new WaitUntil(() => rock.rockInfo.moving == false);
             }
         }
@@ -703,10 +704,19 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         rockBar.EndUpdate(yellowScore, redScore);
+        yield return StartCoroutine(WaitForClick());
         state = GameState.RESET;
         StartCoroutine(ResetGame());
     }
 
+    IEnumerator WaitForClick()
+    {
+        while (!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
+        Debug.Log("Clickeddd");
+    }
     public void OnDebug()
     {
         db.SetActive(false);

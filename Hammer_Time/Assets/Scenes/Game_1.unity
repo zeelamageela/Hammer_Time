@@ -1063,8 +1063,6 @@ MonoBehaviour:
   shooterAnimRed: {fileID: 3703111443046092690, guid: 5a60354807a425347ac99707e213cc9c, type: 3}
   shooterAnimYellow: {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
   sm: {fileID: 2125354293}
-  sweeper: {fileID: 1569662328}
-  scoreboard: {fileID: 1938397114}
   launcher: {fileID: 2563391621767102984}
   yellowRocksInactive: {fileID: 832581860}
   redRocksInactive: {fileID: 1203170753}
@@ -4708,7 +4706,7 @@ GameObject:
   - component: {fileID: 545177319}
   m_Layer: 0
   m_Name: RockManager
-  m_TagString: Untagged
+  m_TagString: RockManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7636,10 +7634,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
   mainDisplay: {fileID: 1228243347}
-  redRocksLeft_Display: {fileID: 61726639}
-  yellowRocksLeft_Display: {fileID: 1247448924}
-  redRocksLeftSlide: {fileID: 935252748}
-  yellowRocksLeftSlide: {fileID: 1975354054}
   scoreboard: {fileID: 1938397114}
   scoreboardUI: {fileID: 1938397116}
   scoreCards:

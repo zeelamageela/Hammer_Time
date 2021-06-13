@@ -84,6 +84,8 @@ public class ShooterAnim : MonoBehaviour
             
         }
 
+        
+
         if (isPressed == false && springReleased == true)
         {
             throwDistance = rock.transform.position.y;
@@ -98,15 +100,18 @@ public class ShooterAnim : MonoBehaviour
                 float slidePos = rock.transform.position.y;
                 float slideSpeed = (slidePos - releasePoint) / (-16.03f - releasePoint);
                 rj.enabled = true;
+
+                //rb.transform.position = rock.transform.position;
                 anim.SetBool("extend", true);
-                anim.Play("Shooter_2_Slide", 0, slideSpeed);
+                anim.Play("Shooter_2_Slide", 0, 0f);
             }
 
-            if (isReleased)
+            if (transform.position.y >= -19f)
             {
                 extend = false;
                 anim.SetBool("isReleased", true);
                 anim.Play("Shooter_2_Release", 0, 0f);
+                rock.GetComponent<SpriteRenderer>().enabled = true;
                 rj.enabled = false;
 
                 if (slowdownTimer <= 10)
@@ -122,6 +127,7 @@ public class ShooterAnim : MonoBehaviour
     IEnumerator Slowdown()
     {
         //Debug.Log("slowdon " + slowdownTimer);
+        rb.freezeRotation = true;
         rb.drag = 0.25f * slowdownTimer;
 
         yield return new WaitForFixedUpdate();

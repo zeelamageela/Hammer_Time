@@ -37,7 +37,7 @@ public class Rock_Flick: MonoBehaviour
     void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        GetComponent<SpriteRenderer>().enabled = false;
         trajLineGO = GameObject.Find("TrajectoryLine");
         trajLine = trajLineGO.GetComponent<TrajectoryLine>();
         //trajLine.DrawTrajectory();
@@ -58,7 +58,8 @@ public class Rock_Flick: MonoBehaviour
         gameObject.transform.position = launcher.transform.position;
 
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-
+        GetComponent<CircleCollider2D>().enabled = true;
+        GetComponent<CircleCollider2D>().radius = 1.5f;
     }
 
     void Update()
@@ -90,13 +91,13 @@ public class Rock_Flick: MonoBehaviour
         GetComponent<SpringJoint2D>().frequency = 1.5f;
         isPressed = true;
         rb.isKinematic = true;
-        GetComponent<SpriteRenderer>().enabled = false;
     }
 
     void OnDrag()
     {
         startPoint = rb.position;
 
+        GetComponent<SpriteRenderer>().enabled = false;
         endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
         springDistance = Vector2.Distance(startPoint, endPoint);
 
@@ -114,6 +115,7 @@ public class Rock_Flick: MonoBehaviour
         }
         else
         {
+            GetComponent<CircleCollider2D>().radius = 0.18f;
             StartCoroutine(Release());
             Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
             trajLine.Release();
@@ -126,7 +128,6 @@ public class Rock_Flick: MonoBehaviour
     void RockReset()
     {
         transform.position = launcher_rb.position;
-        GetComponent<SpriteRenderer>().enabled = true;
         GetComponent<SpringJoint2D>().dampingRatio = 1f;
         GetComponent<SpringJoint2D>().frequency = 10000f;
     }

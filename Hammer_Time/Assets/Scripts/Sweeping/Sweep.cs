@@ -26,11 +26,6 @@ public class Sweep : MonoBehaviour
 
     void Start()
     {
-        //whoaButton.gameObject.SetActive(false);
-        //sweepButton.gameObject.SetActive(false);
-        //hardButton.gameObject.SetActive(false);
-
-        //sweeper.gameObject.SetActive(false);
         sm.SetupSweepers();
         rm = GetComponent<RockManager>();
     }
@@ -45,42 +40,22 @@ public class Sweep : MonoBehaviour
 
     public void ExitSweepZone()
     {
-        //sweepButton.gameObject.SetActive(false);
-        //whoaButton.gameObject.SetActive(false);
-        //hardButton.gameObject.SetActive(false);
-
-        //sweeper.gameObject.SetActive(false);
         OnWhoa();
         sm.ResetSweepers();
-        //sweepSel.SweepEnd();
     }
 
     public void OnSweep()
     {
-        //sweepButton.gameObject.SetActive(false);
-        //hardButton.gameObject.SetActive(true);
-        //whoaButton.gameObject.SetActive(true);
-
-        //sweeper.Sweep();
         StartCoroutine(SweepWeight());
     }
 
     public void OnHard()
     {
-        //sweepButton.gameObject.SetActive(false);
-        //hardButton.gameObject.SetActive(false);
-        //whoaButton.gameObject.SetActive(true);
-
-        //sweeper.Hard();
         StartCoroutine(SweepHard());
     }
 
     public void OnLeft()
     {
-        //sweepButton.gameObject.SetActive(true);
-        //hardButton.gameObject.SetActive(false);
-        //whoaButton.gameObject.SetActive(true);
-
         if (rm.inturn)
         {
             StartCoroutine(SweepLine(true));
@@ -94,10 +69,6 @@ public class Sweep : MonoBehaviour
 
     public void OnRight()
     {
-        //sweepButton.gameObject.SetActive(true);
-        //hardButton.gameObject.SetActive(false);
-        //whoaButton.gameObject.SetActive(true);
-
         if (rm.inturn)
         {
             StartCoroutine(SweepCurl(true));
@@ -112,11 +83,6 @@ public class Sweep : MonoBehaviour
     {
         StartCoroutine(Whoa());
 
-        //sweepButton.gameObject.SetActive(true);
-        //hardButton.gameObject.SetActive(false);
-        //whoaButton.gameObject.SetActive(false);
-        
-        //sweeper.Whoa();
     }
 
     IEnumerator SweepWeight()

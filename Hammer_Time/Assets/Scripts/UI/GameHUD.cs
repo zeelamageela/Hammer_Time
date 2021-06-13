@@ -7,11 +7,7 @@ public class GameHUD : MonoBehaviour
 {
     public GameManager gm;
     public Text mainDisplay;
-    public Text redRocksLeft_Display;
-    public Text yellowRocksLeft_Display;
 
-    public Slider redRocksLeftSlide;
-    public Slider yellowRocksLeftSlide;
 
     public GameObject scoreboard;
     public Image scoreboardUI;
@@ -38,7 +34,7 @@ public class GameHUD : MonoBehaviour
     {
         if (scoreCheck)
         {
-
+            Scoreboard(1, 0, 0);
         }
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
@@ -47,12 +43,6 @@ public class GameHUD : MonoBehaviour
         mainDisplay.enabled = true;
         mainDisplay.text = rock.teamName + " Turn";
 
-        redRocksLeft_Display.text = redRocksLeft + " Rocks Left";
-        yellowRocksLeft_Display.text = yellowRocksLeft + " Rocks Left";
-        redRocksLeftSlide.maxValue = rocksPerTeam;
-        redRocksLeftSlide.value = redRocksLeft;
-        yellowRocksLeftSlide.maxValue = rocksPerTeam;
-        yellowRocksLeftSlide.value = yellowRocksLeft;
 
         float waitTime = 2f;
         StartCoroutine(MainDisplayTimer(waitTime));
@@ -66,7 +56,7 @@ public class GameHUD : MonoBehaviour
     IEnumerator ScoreboardTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        scoreboard.SetActive(true);
+        scoreboard.SetActive(false);
     }
 
     public void CheckScore(bool noRocks, string teamName, int score)
@@ -123,14 +113,18 @@ public class GameHUD : MonoBehaviour
         {
             cardNumber = endNumber + 11;
             totalScore = redScore;
+            StartCoroutine(ScoreCards(cardNumber, totalScore));
         }
-        else
+        else if (yellowScore > 0)
         {
             cardNumber = endNumber - 1;
             totalScore = yellowScore;
+            StartCoroutine(ScoreCards(cardNumber, totalScore));
         }
-
-        StartCoroutine(ScoreCards(cardNumber, totalScore));
+        else
+        {
+            StartCoroutine(ScoreboardTimer(2.5f));
+        }
 
     }
 
@@ -153,11 +147,13 @@ public class GameHUD : MonoBehaviour
         {
             redHammerPNG.enabled = true;
             yellowHammerPNG.enabled = false;
+            Scoreboard(1, 0, 0);
         }
         else
         {
             yellowHammerPNG.enabled = true;
             redHammerPNG.enabled = false;
+            Scoreboard(1, 0, 0);
         }
     }
 }

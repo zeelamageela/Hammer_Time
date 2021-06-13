@@ -26,15 +26,14 @@ public class ShootingKnob : MonoBehaviour
         lr.enabled = false;
     }
 
-
     public void ParentToRock()
     {
         if (gm.rockList.Count != 0)
         {
             transform.parent = gm.rockList[gm.rockCurrent].rock.transform;
         }
-        lr.enabled = true;
         sr.enabled = true;
+        lr.enabled = true;
     }
 
     public void UnParentandHide()
