@@ -38,6 +38,7 @@ public class Rock_Info : MonoBehaviour
         }
         else moving = false;
 
+
         if (shotTaken && released)
         {
             if (moving == false)
