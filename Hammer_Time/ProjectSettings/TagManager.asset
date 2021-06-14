@@ -13,6 +13,7 @@ TagManager:
   - TurnSelector
   - AudioManager
   - RockManager
+  - GameSettings
   layers:
   - Default
   - TransparentFX

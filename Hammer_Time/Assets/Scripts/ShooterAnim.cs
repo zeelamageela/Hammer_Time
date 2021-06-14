@@ -103,7 +103,7 @@ public class ShooterAnim : MonoBehaviour
 
                 //rb.transform.position = rock.transform.position;
                 anim.SetBool("extend", true);
-                anim.Play("Shooter_2_Slide", 0, 0f);
+                anim.Play("Shooter_2_Slide", 0, slideSpeed);
             }
 
             if (transform.position.y >= -19f)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Cinemachine;
 
 public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
@@ -11,7 +12,7 @@ public class GameManager : MonoBehaviour
 {
     public AudioManager am;
 
-    int endCurrent;
+    public int endCurrent;
     public int endTotal;
     public bool redHammer;
     public int rocksPerTeam;
@@ -83,9 +84,9 @@ public class GameManager : MonoBehaviour
 
         endCurrent = 1;
         rockCurrent = 0;
-        redHammer = FindObjectOfType<GameSettings>().redHammer;
-        endTotal = FindObjectOfType<GameSettings>().ends;
-        rocksPerTeam = FindObjectOfType<GameSettings>().rocks;
+        redHammer = FindObjectOfType<GameSettingsPersist>().redHammer;
+        endTotal = FindObjectOfType<GameSettingsPersist>().ends;
+        rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
@@ -222,10 +223,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForFixedUpdate();
 
         rockList.Clear();
+
         endCurrent++;
-
-        yield return new WaitForSeconds(1f);
-
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
         rockCurrent = 0;
@@ -246,18 +245,11 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
-        shooterGO = Instantiate(shooterAnimRed);
-        sm.SetupSweepers();
 
         Debug.Log("Red Turn");
         state = GameState.REDTURN;
-
-        //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
-
-        //tFollowTarget = launcher.transform;
-        //vcam.LookAt = tFollowTarget;
-        //vcam.Follow = tFollowTarget;
-        //vcam.enabled = true;
+        shooterGO = Instantiate(shooterAnimRed);
+        sm.SetupSweepers();
 
         cm.ShotSetup();
 
@@ -285,7 +277,6 @@ public class GameManager : MonoBehaviour
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
-        //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, redRock);
         rockBar.ActiveRock(true);
         
         yield return new WaitUntil(() => redRock.shotTaken == true);
@@ -298,14 +289,11 @@ public class GameManager : MonoBehaviour
 
         redRock_1.GetComponent<Rock_Flick>().enabled = false;
         sm.Release(redRock_1);
-        //sweeper.AttachToRock(redRock_1);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
 
         am.Stop("RockScrape");
-        //cm.TopViewAuto();
-
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         Debug.Log("redRock at Rest");
@@ -401,19 +389,6 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         vcam.enabled = false;
-        
-        StartCoroutine(AllStopped());
-
-        yield return new WaitForEndOfFrame();
-
-        //foreach(Rock_List rock in rockList)
-        //{
-        //    bool outOfPlay;
-        //    int rockIndex;
-        //    rockIndex = rockList.IndexOf(rock);
-        //    outOfPlay = rock.rockInfo.outOfPlay;
-        //    rockBar.ShotUpdate(rockIndex, outOfPlay);
-        //}
 
         yield return new WaitForEndOfFrame();
 
@@ -436,39 +411,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AllStopped()
     {
-        //bool allSleeping = false;
-
-        //while (!allSleeping)
-        //{
-        //    allSleeping = true;
-
-        //    foreach (Rock_List rock in rockList)
-        //    {
-        //        Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
-        //        if (!rockRB.IsSleeping())
-        //        {
-        //            allSleeping = false;
-        //            yield return null;
-        //            break;
-        //        }
-        //    }
-        //}
-
-        //foreach (Rock_List rock in rockList)
-        //{
-        //    if (rock.rockInfo.moving)
-        //    {
-        //        Debug.Log(rock.rockInfo.teamName + " is moving");
-        //        yield return new WaitUntil(() => rock.rockInfo.moving == false);
-        //    }
-        //}
-
         foreach (Rock_List rock in rockList)
         {
-            if (rock.rockInfo.moving && rock.rockInfo.shotTaken)
+            Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
+            if (Mathf.Abs(rockRB.velocity.y) > 0.01f && Mathf.Abs(rockRB.velocity.x) > 0.01f)
             {
                 Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
-                yield return new WaitUntil(() => rock.rockInfo.moving == false);
+                yield return new WaitUntil(() => Mathf.Abs(rockRB.velocity.y) < 0.01f && Mathf.Abs(rockRB.velocity.x) < 0.01f);
             }
         }
         yield return new WaitForEndOfFrame();
@@ -481,7 +430,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Check Score");
 
-        StartCoroutine(AllStopped());
+        yield return StartCoroutine(AllStopped());
 
 
         Debug.Log("All Stopped");
@@ -496,19 +445,19 @@ public class GameManager : MonoBehaviour
             if (rock.rockInfo.inHouse == true)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
-                
             } 
         }
 
         yield return new WaitForFixedUpdate();
 
         houseList.Sort();
-
+        // if the we have shot all the rocks, go to the final scoring
         if (rockList.Count == rockCurrent + 1)
         {
             Debug.Log("Rock List " + rockList.Count + " equals " + "Current Rock " + (rockCurrent + 1));
             StartCoroutine(Scoring());
         }
+        // or else we will just check the score
         else
         {
             if (houseList.Count != 0)
@@ -547,18 +496,21 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 bool noRocks = false;
+
+                //send the info to the ui
                 gHUD.CheckScore(noRocks, winningTeamName, houseScore);
 
-                yield return new WaitForSeconds(1f);
             }
+            // if the house is empty move along to next turn
             else if (houseList.Count == 0)
             {
                 bool noRocks = true;
                 gHUD.CheckScore(noRocks, " ", 0);
-                yield return new WaitForSeconds(1f);
             }
 
-            yield return new WaitForFixedUpdate();
+            yield return StartCoroutine(WaitForClick());
+            gHUD.MainDisplayOff();
+            gHUD.ScoreboardOff();
 
             NextTurn();
         }
@@ -603,13 +555,13 @@ public class GameManager : MonoBehaviour
 
         if (redHammer)
         {
-            Debug.Log("red hammer");
+            //Debug.Log("red hammer");
             redRock = rockList[1].rockInfo;
             yellowRock = rockList[0].rockInfo;
         }
         else
         {
-            Debug.Log("not red hammer");
+            //Debug.Log("not red hammer");
             redRock = rockList[0].rockInfo;
             yellowRock = rockList[1].rockInfo;
         }
@@ -701,12 +653,23 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(1f);
-
         rockBar.EndUpdate(yellowScore, redScore);
+
         yield return StartCoroutine(WaitForClick());
-        state = GameState.RESET;
-        StartCoroutine(ResetGame());
+
+
+        if (endCurrent < endTotal)
+        {
+            gHUD.ScoreboardOff();
+            gHUD.MainDisplayOff();
+            state = GameState.RESET;
+            StartCoroutine(ResetGame());
+        }
+        else if (endCurrent >= endTotal)
+        {
+            state = GameState.END;
+            StartCoroutine(EndOfGame());
+        }
     }
 
     IEnumerator WaitForClick()
@@ -717,6 +680,28 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("Clickeddd");
     }
+
+    IEnumerator EndOfGame()
+    {
+        gHUD.EndOfGame(redScore, redRock.teamName, yellowScore, yellowRock.teamName);
+
+        yield return new WaitForSeconds(2f);
+        if (redScore == yellowScore)
+        {
+            Debug.Log("Game is tied");
+            yield return StartCoroutine(WaitForClick());
+            gHUD.ScoreboardOff();
+            gHUD.MainDisplayOff();
+            StartCoroutine(ResetGame());
+        }
+        else
+        {
+            Debug.Log("Game is over");
+            yield return StartCoroutine(WaitForClick());
+            SceneManager.LoadScene("SplashMenu");
+        }
+    }
+
     public void OnDebug()
     {
         db.SetActive(false);

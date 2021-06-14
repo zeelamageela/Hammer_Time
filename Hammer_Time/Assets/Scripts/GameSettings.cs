@@ -16,12 +16,16 @@ public class GameSettings : MonoBehaviour
     public int ends;
     public int rocks;
     public float volume;
+
+    public static GameSettingsPersist instance;
     // Start is called before the first frame update
 
-    private void Awake()
+    private void Start()
     {
-        DontDestroyOnLoad(gameObject);
-
+        GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        ends = gsp.ends;
+        rocks = gsp.rocks;
+        gsp.LoadSettings();
     }
     private void Update()
     {
@@ -36,11 +40,17 @@ public class GameSettings : MonoBehaviour
     {
         redHammer = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        gsp.ends = ends;
+        gsp.rocks = rocks;
     }
 
     public void SetHammerYellow()
     {
         redHammer = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        gsp.ends = ends;
+        gsp.rocks = rocks;
     }
 }

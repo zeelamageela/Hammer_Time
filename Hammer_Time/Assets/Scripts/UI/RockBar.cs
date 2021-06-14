@@ -51,8 +51,8 @@ public class RockBar : MonoBehaviour
 
     public void ResetBar(bool redHammer)
     {
-        //redRocks.anchoredPosition = new Vector2(-450f, 5f);
-        //yellowRocks.anchoredPosition = new Vector2(450f, 5f);
+        redRocks.anchoredPosition = new Vector2(-450f, 5f);
+        yellowRocks.anchoredPosition = new Vector2(450f, 5f);
 
         yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
         redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);

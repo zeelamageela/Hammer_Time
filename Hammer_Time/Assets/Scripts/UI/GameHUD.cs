@@ -7,7 +7,7 @@ public class GameHUD : MonoBehaviour
 {
     public GameManager gm;
     public Text mainDisplay;
-
+    public Text clickDisplay;
 
     public GameObject scoreboard;
     public Image scoreboardUI;
@@ -24,6 +24,7 @@ public class GameHUD : MonoBehaviour
             scoreCard.gameObject.SetActive(false);
         }
 
+        clickDisplay.enabled = false;
         //foreach (Text scoreCardText in scoreCardsText)
         //{
         //    scoreCardText.enabled = false;
@@ -35,6 +36,7 @@ public class GameHUD : MonoBehaviour
         if (scoreCheck)
         {
             Scoreboard(1, 0, 0);
+            scoreCheck = false;
         }
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
@@ -52,11 +54,34 @@ public class GameHUD : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         mainDisplay.enabled = false;
     }
+    IEnumerator ClickDisplay()
+    {
+        yield return new WaitForSeconds(1f);
+        clickDisplay.enabled = true;
+    }
 
+    public void MainDisplayOff()
+    {
+        mainDisplay.enabled = false;
+        clickDisplay.enabled = false;
+    }
     IEnumerator ScoreboardTimer(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         scoreboard.SetActive(false);
+    }
+
+    public void ScoreboardOff()
+    {
+        scoreboard.SetActive(false);
+        clickDisplay.enabled = false;
+    }
+    IEnumerator WaitForClick()
+    {
+        while (!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
     }
 
     public void CheckScore(bool noRocks, string teamName, int score)
@@ -75,7 +100,7 @@ public class GameHUD : MonoBehaviour
             waitTime = 1.5f;
         }
 
-        StartCoroutine(MainDisplayTimer(waitTime));
+        StartCoroutine(ClickDisplay());
     }
 
     public void ScoringUI(string hammerTeamName, string teamName, int score)
@@ -102,7 +127,7 @@ public class GameHUD : MonoBehaviour
             waitTime = 2f;
         }
 
-        StartCoroutine(MainDisplayTimer(waitTime));
+        StartCoroutine(ClickDisplay());
     }
     public void Scoreboard(int endNumber, int redScore, int yellowScore)
     {
@@ -123,7 +148,14 @@ public class GameHUD : MonoBehaviour
         }
         else
         {
-            StartCoroutine(ScoreboardTimer(2.5f));
+            if (scoreboard.activeSelf)
+            {
+                scoreboard.SetActive(false);
+            }
+            else
+            {
+                scoreboard.SetActive(true);
+            }
         }
 
     }
@@ -137,6 +169,7 @@ public class GameHUD : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         scoreboard.SetActive(true);
+
         float waitTime = 2.5f;
         StartCoroutine(ScoreboardTimer(waitTime));
     }
@@ -155,5 +188,31 @@ public class GameHUD : MonoBehaviour
             redHammerPNG.enabled = false;
             Scoreboard(1, 0, 0);
         }
+    }
+
+    public void EndOfGame(int redScore, string redTeamName, int yellowScore, string yellowTeamName)
+    {
+        float waitTime;
+
+        if (redScore > yellowScore)
+        {
+            mainDisplay.enabled = true;
+            mainDisplay.text = redTeamName + " Wins!";
+            waitTime = 2.5f;
+        }
+        else if (redScore < yellowScore)
+        {
+            mainDisplay.enabled = true;
+            mainDisplay.text = yellowTeamName + " Wins!";
+            waitTime = 2.5f;
+        }
+        else
+        {
+            mainDisplay.enabled = true;
+            mainDisplay.text = "Tie Game!";
+            waitTime = 2f;
+        }
+
+        StartCoroutine(ClickDisplay());
     }
 }
