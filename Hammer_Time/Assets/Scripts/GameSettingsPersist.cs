@@ -11,7 +11,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int ends;
     public int rocks;
     public float volume;
-
+    public bool tutorial;
     public static GameSettingsPersist instance;
     // Start is called before the first frame update
 
@@ -28,18 +28,42 @@ public class GameSettingsPersist : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        LoadSettings();
+    }
+
+    private void Start()
+    {
+        if (tutorial)
+        {
+            OnTutorial();
+        }
+        else LoadSettings();
     }
 
     public void LoadSettings()
     {
-        gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
+            gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
+            ends = gs.ends;
+            rocks = gs.rocks;
+            volume = gs.volume;
+            redHammer = gs.redHammer;
     }
+
     private void Update()
     {
-        ends = gs.ends;
-        rocks = gs.rocks;
-        volume = gs.volume;
-        redHammer = gs.redHammer;
+        if (tutorial)
+        {
+            OnTutorial();
+            tutorial = false;
+        }
+    }
+
+    public void OnTutorial()
+    {
+        ends = 10;
+        rocks = 8;
+
+        GameManager gm = FindObjectOfType<GameManager>();
+
+        gm.endCurrent = 10;
     }
 }

@@ -10,6 +10,7 @@ public class Rock_Flick: MonoBehaviour
     public float releaseTime = .15f;
 
     public bool isPressed = false;
+    public bool mouseUp = true;
     //public bool shotTaken = false;
 
     GameObject launcher;
@@ -57,7 +58,6 @@ public class Rock_Flick: MonoBehaviour
         gameObject.transform.parent = null;
         gameObject.transform.position = launcher.transform.position;
 
-        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         GetComponent<CircleCollider2D>().enabled = true;
         GetComponent<CircleCollider2D>().radius = 1.5f;
     }
@@ -124,6 +124,8 @@ public class Rock_Flick: MonoBehaviour
 
         //trajLineGO.SetActive(false);
     }
+
+
 
     void RockReset()
     {

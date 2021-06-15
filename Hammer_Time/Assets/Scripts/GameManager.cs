@@ -247,7 +247,6 @@ public class GameManager : MonoBehaviour
     {
 
         Debug.Log("Red Turn");
-        state = GameState.REDTURN;
         shooterGO = Instantiate(shooterAnimRed);
         sm.SetupSweepers();
 
@@ -278,7 +277,9 @@ public class GameManager : MonoBehaviour
         Debug.Log(redRock_1.name);
 
         rockBar.ActiveRock(true);
-        
+
+        state = GameState.REDTURN;
+
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         am.Play("RockScrape");
@@ -333,7 +334,6 @@ public class GameManager : MonoBehaviour
         sm.SetupSweepers();
 
         Debug.Log("Yellow Turn");
-        state = GameState.YELLOWTURN;
 
         cm.ShotSetup();
 
@@ -368,8 +368,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(yellowRock_1.name);
 
         rockBar.ActiveRock(false);
-        //gHUD.SetHUD(redRocks_left, yellowRocks_left, rocksPerTeam, rockCurrent, yellowRock);
-
+        state = GameState.YELLOWTURN;
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
