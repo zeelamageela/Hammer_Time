@@ -7,11 +7,15 @@ public class TutorialManager : MonoBehaviour
     public GameManager gm;
     public RockBar rockBar;
     public RockManager rm;
+    public TutorialHUD tHUD;
+
+    public SweeperManager sm;
 
     Rock_Info rockInfo;
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
 
+    public float tScale;
     public Vector2 centreGuard;
     public Vector2 cornerGuard;
     public Vector2 twelveFoot;
@@ -19,6 +23,7 @@ public class TutorialManager : MonoBehaviour
     public Vector2 takeOut;
 
     public string testing;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +33,8 @@ public class TutorialManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        tScale = Time.timeScale;
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             StartCoroutine(PlaceRocks());
@@ -51,6 +58,7 @@ public class TutorialManager : MonoBehaviour
             StartCoroutine(Shot(testing));
 
         }
+
 
         //if (gameState == GameState.YELLOWTURN)
         //{
@@ -78,16 +86,63 @@ public class TutorialManager : MonoBehaviour
 
     }
 
+    public void OnAIShot()
+    {
+
+        rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+        rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+        rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
+        rm.inturn = false;
+        StartCoroutine(Shot("Take Out"));
+    }
+
     IEnumerator SetupTutorial()
     {
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Set Hammer Tutorial");
         //gm.SetHammerRed();
 
+        yield return StartCoroutine(PlaceRocks());
+        //OnAIShot();
+
+        //rm.inturn = false;
+        //StartCoroutine(Shot("Take Out"));
+
+        yield return new WaitUntil(() => gm.rockList[5].rock.GetComponent<CircleCollider2D>().enabled == true);
+        yield return new WaitForSeconds(2.5f);
+        tHUD.OnRules();
+
+        yield return new WaitUntil(() => gm.rockList[5].rockInfo.released == true);
+
+        tHUD.OnSweep();
+
+        yield return new WaitUntil(() => sm.sweeperL.sweep == true);
+
+        tHUD.Resume();
+
+        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= 1f);
+
+        tHUD.OnWhoa();
+
+        yield return new WaitUntil(() => sm.sweeperL.whoa == true);
+
+        tHUD.Resume();
+
+        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= 2.75f);
+
+        tHUD.OnSweepCurl();
+
+        yield return new WaitUntil(() => sm.sweeperR.sweep == true);
+
+        tHUD.Resume();
+
+        yield return new WaitUntil(() => gm.rockList[5].rockInfo.rest == true);
+
+        tHUD.OnScoring();
     }
     IEnumerator PlaceRocks()
     {
-        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
 
         for (int i = 0; i < 4; i++)
         {
@@ -126,18 +181,25 @@ public class TutorialManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForEndOfFrame();
         gm.rockCurrent = 3;
+        //gm.NextTurn();
         //gm.OnYellowTurn();
 
         yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator Tutorial()
+    {
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.released == true);
     }
 
     IEnumerator Shot(string aiShotType)
     {
         Debug.Log("AI Shot " + aiShotType);
 
-        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);
 
         rockFlick.isPressedAI = true;
 

@@ -334,6 +334,7 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
+        cm.ShotSetup();
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
@@ -344,7 +345,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Yellow Turn");
 
-        cm.ShotSetup();
 
         //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
 
@@ -376,6 +376,7 @@ public class GameManager : MonoBehaviour
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
+        cm.ShotSetup();
         rockBar.ActiveRock(false);
         state = GameState.YELLOWTURN;
 
@@ -526,7 +527,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void NextTurn()
+    public void NextTurn()
     {
         Debug.Log("Next Turn");
 
