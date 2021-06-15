@@ -18,7 +18,7 @@ public class Rock_Colliders : MonoBehaviour
     public bool shotTaken = false;
 
     AudioManager am;
-    Sweep sweep;
+    SweeperManager sweep;
 // Start is called before the first frame update
     void Awake()
     {
@@ -38,7 +38,7 @@ public class Rock_Colliders : MonoBehaviour
         launchCollider.enabled = false;
 
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-        sweep = GameObject.FindGameObjectWithTag("RockManager").GetComponent<Sweep>();
+        sweep = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
     }
 
 // Update is called once per frame
@@ -101,7 +101,7 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collision.gameObject.tag == "Rock")
         {
-            sweep.OnWhoa();
+            sweep.SweepWhoa();
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
             collision.gameObject.GetComponent<Rock_Info>().rest = false;

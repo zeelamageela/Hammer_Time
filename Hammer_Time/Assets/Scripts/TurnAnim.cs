@@ -13,7 +13,7 @@ public class TurnAnim : MonoBehaviour
     GameObject rock;
     Rock_Force rockForce;
     //bool isPressed = false;
-
+    public bool turnAI;
     AudioManager am;
     void Start()
     {
@@ -54,6 +54,21 @@ public class TurnAnim : MonoBehaviour
 
                     Debug.Log(hit.collider.gameObject.name);
                 }
+            }
+
+            if (turnAI)
+            {
+                if (inturn)
+                {
+                    rm.inturn = false;
+                    StartCoroutine(IsPressed(inturn));
+                }
+                else
+                {
+                    rm.inturn = true;
+                    StartCoroutine(IsPressed(inturn));
+                }
+                turnAI = false;
             }
             //if (rockForce.flipAxis)
             //{

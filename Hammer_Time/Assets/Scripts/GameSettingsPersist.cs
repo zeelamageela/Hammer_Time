@@ -28,15 +28,16 @@ public class GameSettingsPersist : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-    }
 
-    private void Start()
-    {
         if (tutorial)
         {
             OnTutorial();
         }
         else LoadSettings();
+    }
+
+    private void Start()
+    {
     }
 
     public void LoadSettings()
@@ -61,9 +62,9 @@ public class GameSettingsPersist : MonoBehaviour
     {
         ends = 10;
         rocks = 8;
+        redHammer = true;
+        //GameManager gm = FindObjectOfType<GameManager>();
 
-        GameManager gm = FindObjectOfType<GameManager>();
-
-        gm.endCurrent = 10;
+        //gm.endCurrent = 10;
     }
 }

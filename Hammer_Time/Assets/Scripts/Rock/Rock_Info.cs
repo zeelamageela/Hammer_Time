@@ -72,5 +72,11 @@ public class Rock_Info : MonoBehaviour
                 hit = false;
             }
         }
+
+        if (!shotTaken)
+        {
+            stopped = false;
+            rest = false;
+        }
     }   
 }

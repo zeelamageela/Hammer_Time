@@ -245,6 +245,10 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
+        if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
+        {
+            Destroy(GameObject.FindGameObjectWithTag("Player"));
+        }
 
         Debug.Log("Red Turn");
         shooterGO = Instantiate(shooterAnimRed);
@@ -269,13 +273,13 @@ public class GameManager : MonoBehaviour
         redRocks_left--;
         rm.inturn = true;
         cm.TopViewAuto();
-        Debug.Log("rmInturn is " + rm.inturn);
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
+        Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true);
 
         state = GameState.REDTURN;
@@ -330,6 +334,11 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
+        if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
+        {
+            Destroy(GameObject.FindGameObjectWithTag("Player"));
+        }
+
         shooterGO = Instantiate(shooterAnimYellow);
         sm.SetupSweepers();
 
@@ -435,6 +444,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
+        Debug.Log("Current Rock is " + rockCurrent);
         houseList.Clear();
 
         Destroy(shooterGO);
@@ -511,6 +521,7 @@ public class GameManager : MonoBehaviour
             gHUD.MainDisplayOff();
             gHUD.ScoreboardOff();
 
+            Debug.Log("Current Rock is " + rockCurrent);
             NextTurn();
         }
     }
@@ -520,6 +531,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Next Turn");
 
         ++rockCurrent;
+        Debug.Log("Current Rock is " + rockCurrent);
 
         if (rockCurrent % 2 == 1)
         {

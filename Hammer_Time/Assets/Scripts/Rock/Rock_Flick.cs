@@ -10,8 +10,9 @@ public class Rock_Flick: MonoBehaviour
     public float releaseTime = .15f;
 
     public bool isPressed = false;
-    public bool mouseUp = true;
+    public bool mouseUp = false;
     //public bool shotTaken = false;
+    public bool isPressedAI = false;
 
     GameObject launcher;
     Rigidbody2D launcher_rb;
@@ -60,6 +61,7 @@ public class Rock_Flick: MonoBehaviour
 
         GetComponent<CircleCollider2D>().enabled = true;
         GetComponent<CircleCollider2D>().radius = 1.5f;
+        mouseUp = false;
     }
 
     void Update()
@@ -81,6 +83,23 @@ public class Rock_Flick: MonoBehaviour
             //}
 
             OnDrag();
+        }
+
+        if (isPressedAI)
+        {
+            OnDrag();
+        }
+
+        if (mouseUp)
+        {
+            isPressed = false;
+            rb.isKinematic = false;
+
+            GetComponent<CircleCollider2D>().radius = 0.18f;
+            StartCoroutine(Release());
+            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+            trajLine.Release();
+            shootKnob.UnParentandHide();
         }
     }
 
@@ -136,6 +155,7 @@ public class Rock_Flick: MonoBehaviour
 
     IEnumerator Release()
     {
+        mouseUp = false;
         springReleased = true;
         yield return new WaitForSeconds(releaseTime);
 
