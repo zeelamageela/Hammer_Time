@@ -68,6 +68,7 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Four Foot"));
                 break;
             case 4:
+                rm.inturn = false;
                 StartCoroutine(Shot("Take Out"));
                 break;
             case 6:

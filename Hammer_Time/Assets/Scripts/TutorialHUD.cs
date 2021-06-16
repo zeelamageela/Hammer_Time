@@ -89,7 +89,7 @@ public class TutorialHUD : MonoBehaviour
 
     public void OnWhoa()
     {
-        paused = true;
+        Time.timeScale = 0.04f;
         StartCoroutine(Whoa());
     }
 
@@ -116,6 +116,7 @@ public class TutorialHUD : MonoBehaviour
         scenarioText.enabled = true;
 
         yield return new WaitForFixedUpdate();
+
         yield return StartCoroutine(WaitForClick());
 
         rulesPanel.SetActive(false);
