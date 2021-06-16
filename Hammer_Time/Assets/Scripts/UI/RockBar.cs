@@ -51,49 +51,95 @@ public class RockBar : MonoBehaviour
 
     public void ResetBar(bool redHammer)
     {
+        
+
+        if (redHammer)
+        {
+            StartCoroutine(SetupBar(true));
+        }
+        else
+        {
+            StartCoroutine(SetupBar(false));
+        }
+    }
+
+    IEnumerator SetupBar(bool redHammer)
+    {
         redRocks.anchoredPosition = new Vector2(-450f, 5f);
         yellowRocks.anchoredPosition = new Vector2(450f, 5f);
 
         yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
         redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
 
-        if (redHammer)
-        {
-            StartCoroutine(SetupBar(true, redRockGO, yellowRockGO, redRocks, yellowRocks));
-        }
-        else
-        {
-            StartCoroutine(SetupBar(false, yellowRockGO, redRockGO, yellowRocks, redRocks));
-        }
-    }
-
-    IEnumerator SetupBar(bool redHammer, GameObject hammerRock, GameObject notHammerRock, RectTransform hammerRockPos, RectTransform notHammerRockPos)
-    {
+        yield return new WaitForEndOfFrame();
 
         bool redTurn;
         if (redHammer)
         {
-            offset = -offset;
             redTurn = false;
+            for (int i = 0; i < rocksPerTeam; i++)
+            {
+                GameObject yellowDot = Instantiate(yellowRockGO);
+                //yellowDot.transform.SetParent(yellowRocks, false);
+                yellowRockGO.transform.position += new Vector3(i * offset, 0f, 0f);
+                yellowDot.name = gm.rockList[2 * i].rock.name;
+                rockListUI.Add(yellowDot);
+
+                yield return new WaitForEndOfFrame();
+
+                GameObject redDot = Instantiate(redRockGO, redRocks, false);
+                redRockGO.transform.position += new Vector3((i * -offset) + redRocks.position.x, redRocks.position.y, 0f);
+                rockListUI.Add(redDot);
+                redDot.name = gm.rockList[(2 * i) + 1].rock.name;
+            }
         }
         else
         {
             redTurn = true;
+
+            for (int i = 0; i < rocksPerTeam; i++)
+            {
+                GameObject redDot = Instantiate(redRockGO, redRocks);
+                redRockGO.transform.position += new Vector3((i * -offset), 0f, 0f);
+                redDot.name = gm.rockList[2 * i].rock.name;
+                rockListUI.Add(redDot);
+
+                yield return new WaitForEndOfFrame();
+
+                GameObject yellowDot = Instantiate(yellowRockGO);
+                yellowRockGO.transform.position += new Vector3((i * offset) + yellowRocks.position.x, yellowRocks.position.y, 0f);
+                rockListUI.Add(yellowDot);
+                yellowDot.name = gm.rockList[(2 * i) + 1].rock.name;
+
+
+            }
         }
+
+
+        //bool redTurn;
+        //if (redHammer)
+        //{
+        //    offset = -offset;
+        //    redTurn = false;
+        //}
+        //else
+        //{
+        //    redTurn = true;
+        //}
 
         //for (int i = 0; i < rocksPerTeam; i++)
         //{
-        //    GameObject notHammer = Instantiate(notHammerRock);
-        //    notHammer.transform.SetParent(notHammerRockPos, false);
+        //    GameObject yellowDot = Instantiate(yellowRockGO);
+        //    notHammer.transform.SetParent(yellowRocks, false);
         //    notHammer.transform.position += new Vector3((i * -offset), 0f, 0f);
 
         //    notHammer.name = gm.rockList[2 * i].rock.name;
         //    rockListUI.Add(notHammer);
 
-        //    yield return new WaitForSeconds(i * 0.02f);
+        //    yield return new WaitForSeconds(0.02f);
 
-        //    GameObject hammer = Instantiate(hammerRock);
-        //    hammer.transform.SetParent(hammerRockPos, false);
+        //    GameObject hammer = Instantiate(redRockGO);
+        //    hammer.transform.SetParent(redRocks, false);
 
         //    hammer.transform.position += new Vector3((i * offset), 0f, 0f);
 
@@ -101,25 +147,6 @@ public class RockBar : MonoBehaviour
         //    rockListUI.Add(hammer);
         //}
 
-        for (int i = 0; i < rocksPerTeam; i++)
-        {
-            GameObject notHammer = Instantiate(notHammerRock);
-            notHammer.transform.SetParent(notHammerRockPos, false);
-            notHammer.transform.position += new Vector3((i * -offset), 0f, 0f);
-
-            notHammer.name = gm.rockList[2 * i].rock.name;
-            rockListUI.Add(notHammer);
-
-            yield return new WaitForSeconds(i * 0.02f);
-
-            GameObject hammer = Instantiate(hammerRock);
-            hammer.transform.SetParent(hammerRockPos, false);
-
-            hammer.transform.position += new Vector3((i * offset), 0f, 0f);
-
-            hammer.name = gm.rockList[(2 * i) + 1].rock.name;
-            rockListUI.Add(hammer);
-        }
 
         //foreach (GameObject rock in rockListUI)
         //{

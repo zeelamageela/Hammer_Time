@@ -69,7 +69,7 @@ public class Rock_Info : MonoBehaviour
         {
             if (transform.hasChanged)
             {
-                Debug.Log("Hit RockInfo!");
+                //Debug.Log("Hit RockInfo!");
                 transform.hasChanged = false;
                 stopped = false;
                 moving = true;
@@ -79,6 +79,19 @@ public class Rock_Info : MonoBehaviour
                 stopped = true;
                 hit = false;
             }
+
+            if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.y) > 0.01f && Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > 0.01f)
+            {
+                stopped = false;
+                moving = true;
+
+            }
+            else
+            {
+                stopped = true;
+                moving = false;
+            }
+
         }
 
         if (!shotTaken)

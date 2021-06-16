@@ -22,7 +22,7 @@ public class CameraManager : MonoBehaviour
         main.depth = 1;
         house.depth = -1;
         ui.depth = 2;
-        top.depth = -1;
+        top.depth = 2;
     }
 
     private void Update()
@@ -42,7 +42,7 @@ public class CameraManager : MonoBehaviour
         main.depth = 1;
         house.depth = -1;
         ui.depth = 2;
-        top.depth = -1;
+        top.depth = 2;
 
         vcam.m_Lens.OrthographicSize = 7.5f;
 

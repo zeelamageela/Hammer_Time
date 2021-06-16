@@ -45,7 +45,14 @@ public class GameManager : MonoBehaviour
     public GameHUD gHUD;
     public RockBar rockBar;
 
+    public bool aiTeamRed;
+    public bool aiTeamYellow;
+
     public GameObject debug;
+    public TutorialManager tm;
+    public AIManager aim;
+    public TutorialHUD tHUD;
+    public bool tutorial;
 
     public GameState state;
 
@@ -102,15 +109,22 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         gHUD.SetHammer(redHammer);
-
-        if (redHammer)
+        if (!tutorial)
         {
-            SetHammerRed();
+            if (redHammer)
+            {
+                SetHammerRed();
+            }
+            else
+            {
+                SetHammerYellow();
+            }
         }
-        else
+        else if (tutorial)
         {
-            SetHammerYellow();
+            StartCoroutine(Tutorial());
         }
+        
     }
 
     public void SetHammerRed()
@@ -247,7 +261,7 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.REDTURN;
 
-        cm.TopViewAuto();
+        cm.ShotSetup();
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
@@ -257,8 +271,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Red Turn");
         shooterGO = Instantiate(shooterAnimRed);
         sm.SetupSweepers();
-
-        cm.ShotSetup();
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
         redRock_1.GetComponent<Rock_Flick>().enabled = true;
@@ -336,13 +348,23 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
-        cm.ShotSetup();
+        state = GameState.REDTURN;
+
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
 
         shooterGO = Instantiate(shooterAnimYellow);
+
+        GameObject yellowRock_1 = rockList[rockCurrent].rock;
+        yellowRock_1.GetComponent<Rock_Flick>().enabled = true;
+        yellowRock_1.GetComponent<Rock_Release>().enabled = true;
+        yellowRock_1.GetComponent<Rock_Force>().enabled = true;
+        yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        boardCollider.enabled = false;
+        launchCollider.enabled = false;
+
         sm.SetupSweepers();
 
         Debug.Log("Yellow Turn");
@@ -355,13 +377,7 @@ public class GameManager : MonoBehaviour
         //vcam.Follow = tFollowTarget;
         //vcam.enabled = true;
 
-        GameObject yellowRock_1 = rockList[rockCurrent].rock;
-        yellowRock_1.GetComponent<Rock_Flick>().enabled = true;
-        yellowRock_1.GetComponent<Rock_Release>().enabled = true;
-        yellowRock_1.GetComponent<Rock_Force>().enabled = true;
-        yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
-        boardCollider.enabled = false;
-        launchCollider.enabled = false;
+        
 
         StartCoroutine(YellowTurn());
     }
@@ -369,18 +385,39 @@ public class GameManager : MonoBehaviour
     IEnumerator YellowTurn()
     {
         yellowRocks_left--;
-        cm.TopViewAuto();
-        rm.inturn = true;
-        Debug.Log("rmInturn is " + rm.inturn);
+
+        cm.ShotSetup();
+
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
+        //if (tutorial && !tm.rocksPlaced)
+        //{
+        //    yellowRock_1.GetComponent<Rock_Release>().enabled = false;
+        //    yellowRock_1.GetComponent<Rock_Force>().enabled = false;
+        //    yellowRock_1.GetComponent<Rock_Colliders>().enabled = false;
+        //}
+        //else
+        //{
+        //    yellowRock_1.GetComponent<Rock_Release>().enabled = true;
+        //    yellowRock_1.GetComponent<Rock_Force>().enabled = true;
+        //    yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        //}
+
+        rm.inturn = true;
+        Debug.Log("rmInturn is " + rm.inturn);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
-        cm.ShotSetup();
         rockBar.ActiveRock(false);
-        state = GameState.YELLOWTURN;
+
+        if (aiTeamYellow)
+        {
+            gHUD.mainDisplay.enabled = true;
+            gHUD.mainDisplay.text = yellowRock.teamName + " Turn";
+            yield return new WaitForSeconds(1f);
+            aim.OnShot(rockCurrent);
+        }
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
@@ -403,18 +440,6 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        //if (!yellowRock.outOfPlay)
-        //{
-        //    Debug.Log("Idle Rockbar");
-        //    rockBar.IdleRock();
-        //}
-        //else
-        //{
-        //    Debug.Log("Dead Rockbar");
-        //    rockBar.DeadRock(rockCurrent);
-        //}
-
-        rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
 
         StartCoroutine(CheckScore());
 
@@ -446,6 +471,8 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
+
+        rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
 
         Debug.Log("Current Rock is " + rockCurrent);
         houseList.Clear();
@@ -730,6 +757,24 @@ public class GameManager : MonoBehaviour
     public void OnDebugReset()
     {
         StartCoroutine(Scoring());
+    }
+
+    IEnumerator Tutorial()
+    {
+        redHammer = true;
+        endTotal = 10;
+        endCurrent = 10;
+        aiTeamYellow = true;
+
+        yield return StartCoroutine(SetupRocks());
+
+        tm.enabled = true;
+
+        yield return new WaitUntil(() => tm.rocksPlaced == true);
+
+        rockCurrent = 4;
+
+        OnYellowTurn();
     }
 
 }

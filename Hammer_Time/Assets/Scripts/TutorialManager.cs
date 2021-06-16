@@ -7,27 +7,18 @@ public class TutorialManager : MonoBehaviour
     public GameManager gm;
     public RockBar rockBar;
     public RockManager rm;
+    public AIManager aim;
     public TutorialHUD tHUD;
 
     public SweeperManager sm;
 
-    Rock_Info rockInfo;
-    Rock_Flick rockFlick;
-    Rigidbody2D rockRB;
 
     public float tScale;
-    public Vector2 centreGuard;
-    public Vector2 cornerGuard;
-    public Vector2 twelveFoot;
-    public Vector2 fourFoot;
-    public Vector2 takeOut;
-
-    public string testing;
-
+    public bool rocksPlaced;
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
-        //StartCoroutine(SetupTutorial());
+        StartCoroutine(SetupTutorial());
     }
 
     // Update is called once per frame
@@ -40,16 +31,7 @@ public class TutorialManager : MonoBehaviour
             StartCoroutine(PlaceRocks());
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
-            rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
-            rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
-
-            rm.inturn = false;
-            //StartCoroutine(Shot(testing));
-            StartCoroutine(Shot("Take Out"));
-        }
+        
 
         //if (gameState == GameState.YELLOWTURN)
         //{
@@ -79,12 +61,7 @@ public class TutorialManager : MonoBehaviour
 
     public void OnAIShot()
     {
-
-        rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
-        rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
-        rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
-        rm.inturn = false;
-        StartCoroutine(Shot("Take Out"));
+        //aim.Shot();
     }
 
     IEnumerator SetupTutorial()
@@ -174,7 +151,7 @@ public class TutorialManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        gm.rockCurrent = 4;
+        rocksPlaced = true;
         yield return new WaitForEndOfFrame();
 
         //gm.rockCurrent = 3;
@@ -182,54 +159,10 @@ public class TutorialManager : MonoBehaviour
         //gm.NextTurn();
 
         //gm.OnRedTurn();
-        gm.OnYellowTurn();
+        //gm.OnYellowTurn();
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
     }
 
-    IEnumerator Shot(string aiShotType)
-    {
-        Debug.Log("AI Shot " + aiShotType);
-
-        yield return new WaitForSeconds(0.5f);
-
-        rockFlick.isPressedAI = true;
-
-        switch (aiShotType)
-        {
-            case "Centre Guard":
-                rockRB.position = centreGuard;
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Corner Guard":
-                rockRB.position = cornerGuard;
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Twelve Foot":
-                rockRB.position = twelveFoot;
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Four Foot":
-                rockRB.position = fourFoot;
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Take Out":
-                rockRB.position = takeOut;
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            default:
-                break;
-        }
-
-    }
+    
 }
