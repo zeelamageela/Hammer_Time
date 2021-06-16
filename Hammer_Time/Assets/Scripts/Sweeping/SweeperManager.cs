@@ -27,6 +27,7 @@ public class SweeperManager : MonoBehaviour
             Debug.Log("Audio Manager not loaded");
         }
     }
+
     public void SetupSweepers()
     {
         sweepSel.gameObject.SetActive(false);

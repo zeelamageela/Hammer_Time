@@ -29,15 +29,23 @@ public class Rock_Info : MonoBehaviour
         hit = GetComponent<Rock_Colliders>().hit;
         inHouse = GetComponent<Rock_Colliders>().inHouse;
 
-        
-        if (transform.hasChanged)
+
+        //if (transform.hasChanged)
+        //{
+        //    transform.hasChanged = false;
+        //    stopped = false;
+        //    moving = true;
+        //}
+        //else moving = false;
+
+
+        if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.y) > 0.01f && Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > 0.01f)
         {
-            transform.hasChanged = false;
             stopped = false;
             moving = true;
+
         }
         else moving = false;
-
 
         if (shotTaken && released)
         {

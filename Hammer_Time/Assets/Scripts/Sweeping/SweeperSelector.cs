@@ -63,7 +63,7 @@ public class SweeperSelector : MonoBehaviour
                     Debug.Log(hit.collider.gameObject.name);
                 }
 
-                if (hit.collider == sweeperRCol)
+                else if (hit.collider == sweeperRCol)
                 {
                     if (sweeperR.sweep)
                     {

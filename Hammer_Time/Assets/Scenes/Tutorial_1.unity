@@ -6849,6 +6849,7 @@ MonoBehaviour:
   rm: {fileID: 545177317}
   tHUD: {fileID: 1771459945}
   sm: {fileID: 2125354293}
+  tScale: 0
   centreGuard: {x: -0.05, y: -26.78}
   cornerGuard: {x: 0.003, y: -26.78}
   twelveFoot: {x: -0.02, y: -26.94}
@@ -13365,7 +13366,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1771459945
 MonoBehaviour:
   m_ObjectHideFlags: 0

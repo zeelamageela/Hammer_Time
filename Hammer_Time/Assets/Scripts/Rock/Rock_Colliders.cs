@@ -99,7 +99,7 @@ public class Rock_Colliders : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Rock")
+        if (collision.gameObject.CompareTag("Rock"))
         {
             sweep.SweepWhoa();
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
@@ -110,7 +110,7 @@ public class Rock_Colliders : MonoBehaviour
             am.Play("Hit");
         }
 
-        if (collision.gameObject.tag == "Boards")
+        if (collision.gameObject.CompareTag("Boards"))
         {
             outOfPlay = true;
             inPlay = false;

@@ -27,7 +27,7 @@ public class TutorialManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SetupTutorial());
+        //StartCoroutine(SetupTutorial());
     }
 
     // Update is called once per frame
@@ -40,25 +40,16 @@ public class TutorialManager : MonoBehaviour
             StartCoroutine(PlaceRocks());
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            if (rm.inturn)
-            {
-                rm.inturn = false;
-            }
-            else rm.inturn = true;
-        }
-
         if (Input.GetKeyDown(KeyCode.D))
         {
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
             rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
             rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-            StartCoroutine(Shot(testing));
-
+            rm.inturn = false;
+            //StartCoroutine(Shot(testing));
+            StartCoroutine(Shot("Take Out"));
         }
-
 
         //if (gameState == GameState.YELLOWTURN)
         //{
@@ -98,7 +89,7 @@ public class TutorialManager : MonoBehaviour
 
     IEnumerator SetupTutorial()
     {
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
         Debug.Log("Set Hammer Tutorial");
         //gm.SetHammerRed();
 
@@ -140,12 +131,15 @@ public class TutorialManager : MonoBehaviour
 
         tHUD.OnScoring();
     }
+
     IEnumerator PlaceRocks()
     {
-        yield return new WaitForSeconds(1.5f);
+        //yield return new WaitForSeconds(3.5f);
 
         for (int i = 0; i < 4; i++)
         {
+            gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
+            gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             gm.rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
@@ -164,7 +158,6 @@ public class TutorialManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
@@ -181,18 +174,17 @@ public class TutorialManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        gm.rockCurrent = 4;
         yield return new WaitForEndOfFrame();
-        gm.rockCurrent = 3;
+
+        //gm.rockCurrent = 3;
+        //sm.SetupSweepers();
         //gm.NextTurn();
-        //gm.OnYellowTurn();
+
+        //gm.OnRedTurn();
+        gm.OnYellowTurn();
 
         yield return new WaitForEndOfFrame();
-    }
-
-    IEnumerator Tutorial()
-    {
-
-        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.released == true);
     }
 
     IEnumerator Shot(string aiShotType)

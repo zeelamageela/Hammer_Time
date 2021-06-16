@@ -245,6 +245,10 @@ public class GameManager : MonoBehaviour
 
     public void OnRedTurn()
     {
+        state = GameState.REDTURN;
+
+        cm.TopViewAuto();
+
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
@@ -272,7 +276,6 @@ public class GameManager : MonoBehaviour
 
         redRocks_left--;
         rm.inturn = true;
-        cm.TopViewAuto();
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
@@ -282,7 +285,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true);
 
-        state = GameState.REDTURN;
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
@@ -531,7 +533,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Next Turn");
 
-        ++rockCurrent;
+        rockCurrent++;
         Debug.Log("Current Rock is " + rockCurrent);
 
         if (rockCurrent % 2 == 1)
