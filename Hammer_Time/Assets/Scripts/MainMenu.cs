@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public AudioManager am;
-
+    public GameSettingsPersist gsp;
    public void PlayGame()
     {
         am = FindObjectOfType<AudioManager>();
@@ -18,5 +18,13 @@ public class MainMenu : MonoBehaviour
     {
         Debug.Log("Quit");
         Application.Quit();
+    }
+
+    public void Tutorial()
+    {
+        gsp.tutorial = true;
+        am = FindObjectOfType<AudioManager>();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
+        am.Play("Theme");
     }
 }
