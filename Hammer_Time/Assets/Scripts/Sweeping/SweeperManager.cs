@@ -28,6 +28,11 @@ public class SweeperManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+
+    }
+
     public void SetupSweepers()
     {
         sweepSel.gameObject.SetActive(false);
@@ -54,65 +59,86 @@ public class SweeperManager : MonoBehaviour
         sweeperL.whoa = true;
     }
 
-    public void Release(GameObject rock)
+    public void Release(GameObject rock, bool aiTurn)
     {
         sweepSel.gameObject.SetActive(true);
         sweepSel.AttachToRock(rock);
         inturn = rm.inturn;
         //sweep.OnWhoa();
-        sweepButton.SetActive(true);
-        hardButton.SetActive(false);
-        whoaButton.SetActive(false);
-        if (inturn)
+        if (!aiTurn)
         {
-            sweeperL.yOffset = 0.6f;
-
-            sweeperR.yOffset = 1.1f;
+            sweepButton.SetActive(true);
+            hardButton.SetActive(false);
+            whoaButton.SetActive(false);
         }
         else
+        {
+            sweepButton.SetActive(false);
+            hardButton.SetActive(false);
+            whoaButton.SetActive(false);
+        }
+
+        if (inturn)
         {
             sweeperL.yOffset = 1.1f;
 
             sweeperR.yOffset = 0.6f;
         }
+        else
+        {
+            sweeperL.yOffset = 0.6f;
+
+            sweeperR.yOffset = 1.1f;
+        }
     }
 
-    public void SweepWeight()
+    public void SweepWeight(bool aiTurn)
     {
         am.Play("Sweep");
         sweeperL.Sweep();
         sweeperR.Sweep();
         sweep.OnSweep();
-        sweepButton.SetActive(false);
-        hardButton.SetActive(true);
-        whoaButton.SetActive(true);
+        if (!aiTurn)
+        {
+            sweepButton.SetActive(false);
+            hardButton.SetActive(true);
+            whoaButton.SetActive(true);
+        }
     }
 
-    public void SweepHard()
+    public void SweepHard(bool aiTurn)
     {
         am.Stop("Sweep");
         am.Play("Hard");
         sweeperL.Hard();
         sweeperR.Hard();
         sweep.OnHard();
-        hardButton.SetActive(false);
-        sweepButton.SetActive(false);
-        whoaButton.SetActive(true);
+
+        if (!aiTurn)
+        {
+            hardButton.SetActive(false);
+            sweepButton.SetActive(false);
+            whoaButton.SetActive(true);
+        }
     }
 
-    public void SweepWhoa()
+    public void SweepWhoa(bool aiTurn)
     {
         am.Stop("Sweep");
         am.Stop("Hard");
         sweeperL.Whoa();
         sweeperR.Whoa();
         sweep.OnWhoa();
-        whoaButton.SetActive(false);
-        sweepButton.SetActive(true);
-        hardButton.SetActive(false);
+
+        if (!aiTurn)
+        {
+            whoaButton.SetActive(false);
+            sweepButton.SetActive(true);
+            hardButton.SetActive(false);
+        }
     }
 
-    public void SweepLeft()
+    public void SweepLeft(bool aiTurn)
     {
         am.Play("Sweep");
         sweep.OnLeft();
@@ -122,12 +148,15 @@ public class SweeperManager : MonoBehaviour
         sweeperR.yOffset = 1.1f;
         sweeperR.Whoa();
 
-        sweepButton.SetActive(true);
-        hardButton.SetActive(false);
-        whoaButton.SetActive(true);
+        if (!aiTurn)
+        {
+            sweepButton.SetActive(true);
+            hardButton.SetActive(false);
+            whoaButton.SetActive(true);
+        }
     }
 
-    public void SweepRight()
+    public void SweepRight(bool aiTurn)
     {
         am.Play("Sweep");
         sweep.OnRight();
@@ -137,8 +166,11 @@ public class SweeperManager : MonoBehaviour
         sweeperR.yOffset = 0.6f;
         sweeperR.Sweep();
 
-        sweepButton.SetActive(true);
-        hardButton.SetActive(false);
-        whoaButton.SetActive(true);
+        if (!aiTurn)
+        {
+            sweepButton.SetActive(true);
+            hardButton.SetActive(false);
+            whoaButton.SetActive(true);
+        }
     }
 }

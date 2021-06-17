@@ -18,7 +18,7 @@ public class TutorialManager : MonoBehaviour
     // Start is called before the first frame update
     void OnEnable()
     {
-        StartCoroutine(SetupTutorial());
+        StartCoroutine(RunTutorial());
     }
 
     // Update is called once per frame
@@ -64,7 +64,7 @@ public class TutorialManager : MonoBehaviour
         //aim.Shot();
     }
 
-    IEnumerator SetupTutorial()
+    IEnumerator RunTutorial()
     {
         //yield return new WaitForSeconds(0.5f);
         Debug.Log("Set Hammer Tutorial");
@@ -76,83 +76,117 @@ public class TutorialManager : MonoBehaviour
         //rm.inturn = false;
         //StartCoroutine(Shot("Take Out"));
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.GetComponent<CircleCollider2D>().enabled == true);
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitUntil(() => gm.rockList[13].rock.GetComponent<CircleCollider2D>().enabled == true);
+        yield return new WaitForSeconds(0.25f);
 
         tHUD.OnRules();
-
-        yield return new WaitUntil(() => gm.rockList[5].rockInfo.released == true);
-
+        //tHUD.OnTurnTwo();
+        yield return new WaitUntil(() => gm.rockList[13].rockInfo.released == true);
+        tHUD.aimCircle1.SetActive(false);
         tHUD.OnSweep();
+        //tHUD.OnSweepLine();
 
         yield return new WaitUntil(() => sm.sweeperL.sweep == true);
 
         tHUD.Resume();
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= 1f);
+        yield return new WaitUntil(() => gm.rockList[13].rock.transform.position.y >= 1f);
 
         tHUD.OnWhoa();
 
-        yield return new WaitUntil(() => sm.sweeperL.whoa == true);
+        yield return new WaitUntil(() => gm.rockList[13].rock.transform.position.y >= 2.75f);
 
         tHUD.Resume();
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= 2.75f);
+        yield return new WaitUntil(() => gm.rockList[13].rockInfo.rest == true);
+        yield return new WaitUntil(() => gm.state == GameState.CHECKSCORE);
+        tHUD.OnScoring();
+
+        yield return new WaitUntil(() => gm.rockList[15].rock.GetComponent<CircleCollider2D>().enabled == true);
+
+        yield return new WaitForSeconds(2f);
+
+        tHUD.OnTurnTwo();
+
+        yield return new WaitUntil(() => gm.rockList[15].rockInfo.released == true);
+        tHUD.aimCircle1.SetActive(false);
+
+        tHUD.OnSweepLine();
+
+        yield return new WaitUntil(() => gm.rockList[15].rock.transform.position.y >= -1.5f);
+
+        tHUD.OnWhoa();
+
+        yield return new WaitUntil(() => gm.rockList[15].rock.transform.position.y >= 2.5f);
 
         tHUD.OnSweepCurl();
 
-        yield return new WaitUntil(() => sm.sweeperR.sweep == true);
+        yield return new WaitUntil(() => gm.rockList[15].rockInfo.rest == true);
+        yield return new WaitUntil(() => gm.state == GameState.END);
+        tHUD.OnFinalScoring();
+        //tHUD.OnSweepCurl();
 
-        tHUD.Resume();
-
-        yield return new WaitUntil(() => gm.rockList[5].rockInfo.rest == true);
-
-        tHUD.OnScoring();
+        //yield return new WaitUntil(() => sm.sweeperR.sweep == true);
     }
 
     IEnumerator PlaceRocks()
     {
         //yield return new WaitForSeconds(3.5f);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 12; i++)
+        {
+            gm.rockList[i].rockInfo.placed = true;
+        }
+
+        yield return new WaitForEndOfFrame();
+
+        for (int i = 0; i < 12; i++)
         {
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
             gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             gm.rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
-            gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
             gm.rockList[i].rock.transform.parent = null;
             yield return new WaitForEndOfFrame();
         }
 
         yield return new WaitForEndOfFrame();
 
-        gm.rockList[0].rock.GetComponent<Rigidbody2D>().position = new Vector2(0.02f, 2.33f);
-        gm.rockList[1].rock.GetComponent<Rigidbody2D>().position = new Vector2(-0.97f, 3.26f);
-        gm.rockList[2].rock.GetComponent<Rigidbody2D>().position = new Vector2(0.0854f, 6.999f);
-        gm.rockList[3].rock.GetComponent<Rigidbody2D>().position = new Vector2(-0.851f, 5.873f);
+        for (int i = 0; i < 8; i++)
+        {
+            gm.rockList[i].rock.SetActive(false);
+        }
+
+        gm.rockList[8].rock.GetComponent<Rigidbody2D>().position = new Vector2(0.957f, 6.266f);
+        gm.rockList[8].rockInfo.inHouse = true;
+        gm.rockList[9].rock.GetComponent<Rigidbody2D>().position = new Vector2(1.65f, 3.32f);
+        gm.rockList[10].rock.GetComponent<Rigidbody2D>().position = new Vector2(-1.018f, 2.34f);
+        gm.rockList[11].rock.SetActive(false);
+        //gm.rockList[6].rock.GetComponent<Rigidbody2D>().position = new Vector2(1.5f, 8.8f);
 
         yield return new WaitForEndOfFrame();
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 8; i < 11; i++)
         {
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
-            gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
             gm.rockList[i].rockInfo.moving = false;
             gm.rockList[i].rockInfo.shotTaken = true;
             gm.rockList[i].rockInfo.released = true;
             gm.rockList[i].rockInfo.stopped = true;
             gm.rockList[i].rockInfo.rest = true;
+            gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
             rockBar.IdleRock(i);
             Debug.Log("i is equal to " + i);
+
             //rockBar.ShotUpdate(i, gm.rockList[i].rockInfo.outOfPlay);
 
             yield return new WaitForEndOfFrame();
         }
 
         rocksPlaced = true;
+
         yield return new WaitForEndOfFrame();
 
         //gm.rockCurrent = 3;

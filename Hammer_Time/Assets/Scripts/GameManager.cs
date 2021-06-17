@@ -287,7 +287,7 @@ public class GameManager : MonoBehaviour
     {
 
         redRocks_left--;
-        rm.inturn = true;
+        rm.inturn = false;
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
@@ -304,10 +304,12 @@ public class GameManager : MonoBehaviour
         cm.RockFollow(redRock.transform);
         boardCollider.enabled = true;
 
+        rockBar.ActiveRock(true);
+
         yield return new WaitUntil(() => redRock.released == true);
 
         redRock_1.GetComponent<Rock_Flick>().enabled = false;
-        sm.Release(redRock_1);
+        sm.Release(redRock_1, aiTeamRed);
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
@@ -403,7 +405,7 @@ public class GameManager : MonoBehaviour
         //    yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
         //}
 
-        rm.inturn = true;
+        rm.inturn = false;
         Debug.Log("rmInturn is " + rm.inturn);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
@@ -417,17 +419,19 @@ public class GameManager : MonoBehaviour
             gHUD.mainDisplay.text = yellowRock.teamName + " Turn";
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
+
         }
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
+        rockBar.ActiveRock(false);
         am.Play("RockScrape");
         cm.RockFollow(yellowRock.transform);
         boardCollider.enabled = true;
 
         yield return new WaitUntil(() => yellowRock.released == true);
 
-        sm.Release(yellowRock_1);
+        sm.Release(yellowRock_1, aiTeamYellow);
         //sweeper.AttachToRock(yellowRock_1);
         //rm.GetComponent<Sweep>().EnterSweepZone();
 
@@ -765,23 +769,27 @@ public class GameManager : MonoBehaviour
         endTotal = 10;
         endCurrent = 10;
         aiTeamYellow = true;
-        gHUD.Scoreboard(1, 2, 0);
-        gHUD.Scoreboard(3, 0, 2);
-        gHUD.Scoreboard(4, 3, 0);
-        gHUD.Scoreboard(6, 4, 0);
-        gHUD.Scoreboard(7, 0, 5);
-        gHUD.Scoreboard(9, 5, 0);
+        gHUD.Scoreboard(2, 3, 0);
+        gHUD.Scoreboard(4, 0, 1);
+        gHUD.Scoreboard(5, 2, 0);
+        gHUD.Scoreboard(6, 0, 3);
+        gHUD.Scoreboard(7, 0, 1);
+        gHUD.Scoreboard(8, 1, 0);
+        gHUD.Scoreboard(9, 0, 1);
 
-        rockBar.EndUpdate(5, 5);
+        rockBar.EndUpdate(6, 6);
+        redScore = 6;
+        yellowScore = 6;
+
         yield return StartCoroutine(SetupRocks());
 
         tm.enabled = true;
 
         yield return new WaitUntil(() => tm.rocksPlaced == true);
 
-        rockCurrent = 4;
+        rockCurrent = 11;
 
-        OnYellowTurn();
+        yield return StartCoroutine(CheckScore());
     }
 
 }

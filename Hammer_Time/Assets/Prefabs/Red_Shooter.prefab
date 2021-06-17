@@ -175,6 +175,8 @@ MonoBehaviour:
   rb: {fileID: 0}
   releaseTime: 0.15
   isPressed: 0
+  mouseUp: 0
+  isPressedAI: 0
   springDirection: {x: 0, y: 0}
   springDistance: 0
   springReleased: 0
@@ -219,6 +221,7 @@ MonoBehaviour:
   hit: 0
   moving: 0
   shotTaken: 0
+  placed: 0
   velocity: 0
   distance: 0
 --- !u!114 &-290574429449357231

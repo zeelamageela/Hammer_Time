@@ -47,38 +47,38 @@ public class SweeperSelector : MonoBehaviour
                     if (sweeperL.sweep)
                     {
                         Debug.Log("Hard!");
-                        sm.SweepLeft();
+                        sm.SweepLeft(false);
                     }
                     else if (sweeperL.hard)
                     {
                         Debug.Log("Whoa!");
-                        sm.SweepWhoa();
+                        sm.SweepWhoa(false);
                     }
                     else if (sweeperL.whoa)
                     {
                         Debug.Log("Sweep!");
-                        sm.SweepLeft();
+                        sm.SweepLeft(false);
                     }
 
                     Debug.Log(hit.collider.gameObject.name);
                 }
 
-                else if (hit.collider == sweeperRCol)
+                if (hit.collider == sweeperRCol)
                 {
                     if (sweeperR.sweep)
                     {
                         Debug.Log("Hard!");
-                        sm.SweepRight();
+                        sm.SweepRight(false);
                     }
                     else if (sweeperR.hard)
                     {
                         Debug.Log("Whoa!");
-                        sm.SweepWhoa();
+                        sm.SweepWhoa(false);
                     }
                     else if (sweeperR.whoa)
                     {
                         Debug.Log("Sweep!");
-                        sm.SweepRight();
+                        sm.SweepRight(false);
                     }
 
                     Debug.Log(hit.collider.gameObject.name);

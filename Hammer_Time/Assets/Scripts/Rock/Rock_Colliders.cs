@@ -101,7 +101,7 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Rock"))
         {
-            sweep.SweepWhoa();
+            sweep.SweepWhoa(false);
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
             collision.gameObject.GetComponent<Rock_Info>().rest = false;

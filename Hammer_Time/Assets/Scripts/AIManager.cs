@@ -68,7 +68,7 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Four Foot"));
                 break;
             case 4:
-                rm.inturn = false;
+                rm.inturn = true;
                 StartCoroutine(Shot("Take Out"));
                 break;
             case 6:
@@ -81,10 +81,21 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Four Foot"));
                 break;
             case 12:
-                StartCoroutine(Shot("Twelve Foot"));
+                rm.inturn = true;
+                StartCoroutine(Shot("Corner Guard"));
                 break;
             case 14:
-                StartCoroutine(Shot("Raise"));
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Twelve Foot"));
+                }
+                else if (gm.houseList[0].rockInfo.teamName == gm.rockList[rockCurrent].rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Centre Guard"));
+                }
+                else StartCoroutine(Shot("Four Foot"));
+
                 break;
             default:
                 break;
@@ -104,7 +115,6 @@ public class AIManager : MonoBehaviour
         {
             case "Centre Guard":
                 rockRB.position = centreGuard;
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -131,6 +141,7 @@ public class AIManager : MonoBehaviour
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
+
             case "Raise":
                 rockRB.position = raise;
                 yield return new WaitForFixedUpdate();

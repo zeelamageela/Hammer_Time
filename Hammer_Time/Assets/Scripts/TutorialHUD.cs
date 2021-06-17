@@ -23,11 +23,27 @@ public class TutorialHUD : MonoBehaviour
     public Text sweepButtonText;
     public Text whoaButtonText;
     public Text direcSweepText;
-    public Text sweepCurlText;
-    public Button contButton;
+
+    public GameObject direcSweepPanel;
+    public Text sweepLineText1;
+    public Text sweepLineText2;
+    public Text sweepCurlText1;
+    public Text sweepCurlText2;
+
     public GameObject scoringPanel;
     public Text scoringText;
+    public Text failedText;
 
+    public GameObject turnTwoPanel;
+    public Text turnTwoText;
+    public Text turnSelectText;
+
+    public GameObject finalScoringPanel;
+    public Text finalScoringText;
+    public Text finalFailedText;
+
+    public GameObject aimCircle1;
+    public GameObject aimCircle2;
     public bool paused;
     // Start is called before the first frame update
     void Start()
@@ -70,6 +86,11 @@ public class TutorialHUD : MonoBehaviour
     {
         StartCoroutine(Rules());
     }
+
+    public void OnTurnTwo()
+    {
+        StartCoroutine(TurnTwo());
+    }
     public void OnShoot()
     {
         paused = true;
@@ -93,6 +114,11 @@ public class TutorialHUD : MonoBehaviour
         StartCoroutine(Whoa());
     }
 
+    public void OnSweepLine()
+    {
+        paused = true;
+        StartCoroutine(SweepLine());
+    }
     public void OnSweepCurl()
     {
         paused = true;
@@ -105,7 +131,13 @@ public class TutorialHUD : MonoBehaviour
         StartCoroutine(Scoring());
     }
 
-    IEnumerator Rules()
+    public void OnFinalScoring()
+    {
+        paused = true;
+        StartCoroutine(FinalScoring());
+    }
+
+IEnumerator Rules()
     {
         rulesPanel.SetActive(true);
         rulesText.enabled = true;
@@ -125,7 +157,7 @@ public class TutorialHUD : MonoBehaviour
         rulesText.enabled = false;
         paused = false;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.25f);
 
         OnShoot();
     }
@@ -140,12 +172,13 @@ public class TutorialHUD : MonoBehaviour
         paused = false;
         pullText.enabled = false;
         releaseText.enabled = true;
+        aimCircle1.SetActive(true);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         StartCoroutine(Aim());
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.GetComponent<Rock_Flick>().isPressed == false);
+        yield return new WaitUntil(() => gm.rockList[13].rock.GetComponent<Rock_Flick>().isPressed == false);
 
         shootPanel.SetActive(false);
         releaseText.enabled = false;
@@ -161,7 +194,7 @@ public class TutorialHUD : MonoBehaviour
         aimText.enabled = false;
         guideText.enabled = true;
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.GetComponent<Rock_Flick>().isPressed == false);
+        yield return new WaitUntil(() => gm.rockList[13].rock.GetComponent<Rock_Flick>().isPressed == false);
 
         aimPanel.SetActive(false);
         guideText.enabled = false;
@@ -176,7 +209,7 @@ public class TutorialHUD : MonoBehaviour
         yield return StartCoroutine(WaitForClick());
         paused = false;
 
-        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= -5f);
+        yield return new WaitUntil(() => gm.rockList[13].rock.transform.position.y >= -5f);
 
         sweepIntroText.enabled = false;
         sweepButtonText.enabled = true;
@@ -203,35 +236,125 @@ public class TutorialHUD : MonoBehaviour
         //Time.timeScale = 0.2f;
     }
 
-    IEnumerator SweepCurl()
+    
+    IEnumerator FinalScoring()
     {
-        sweepPanel.SetActive(true);
+        finalScoringPanel.SetActive(true);
+
+        if (gm.houseList.Count == 0)
+        {
+            finalScoringText.enabled = true;
+
+            yield return StartCoroutine(WaitForClick());
+        }
+        else if (gm.houseList[0].rockInfo.teamName == gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        {
+            finalScoringText.enabled = true;
+            yield return StartCoroutine(WaitForClick());
+        }
+        else if (gm.houseList[0].rockInfo.teamName != gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        {
+            finalFailedText.enabled = true;
+            yield return StartCoroutine(WaitForClick());
+        }
+
+        paused = false;
+        finalScoringPanel.SetActive(false);
+        finalScoringText.enabled = false;
+
+    }
+    IEnumerator Scoring()
+    {
+        scoringPanel.SetActive(true);
+
+        if (gm.houseList.Count == 0)
+        {
+            scoringText.enabled = true;
+
+            yield return StartCoroutine(WaitForClick());
+        }
+        else if (gm.houseList[0].rockInfo.teamName == gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        {
+            scoringText.enabled = true;
+            yield return StartCoroutine(WaitForClick());
+        }
+        else if (gm.houseList[0].rockInfo.teamName != gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        {
+            failedText.enabled = true;
+            yield return StartCoroutine(WaitForClick());
+        }
+
+        paused = false;
+        scoringPanel.SetActive(false);
+        scoringText.enabled = false;
+
+    }
+
+    IEnumerator TurnTwo()
+    {
+        turnTwoPanel.SetActive(true);
+        turnTwoText.enabled = true;
+        paused = true;
+
+        yield return StartCoroutine(WaitForClick());
+
+        paused = false; 
+        turnTwoText.enabled = false;
+        turnSelectText.enabled = true;
+        aimCircle2.SetActive(true);
+
+        yield return new WaitForSeconds(1.5f);
+
+        yield return StartCoroutine(WaitForClick());
+
+        turnSelectText.enabled = false;
+        turnTwoPanel.SetActive(false);
+    }
+
+    IEnumerator SweepLine()
+    {
+        direcSweepPanel.SetActive(true);
         direcSweepText.enabled = true;
 
         yield return StartCoroutine(WaitForClick());
 
         paused = false;
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -1.75f);
+
         direcSweepText.enabled = false;
-        sweepCurlText.enabled = true;
-
-        yield return new WaitUntil(() => gm.sm.sweeperR.sweep == true);
-
-        sweepPanel.SetActive(false);
-        sweepCurlText.enabled = false;
-
-        //Time.timeScale = 0.2f;
-    }
-
-    IEnumerator Scoring()
-    {
-        scoringPanel.SetActive(true);
-        scoringText.enabled = true;
+        sweepLineText1.enabled = true;
+        paused = true;
 
         yield return StartCoroutine(WaitForClick());
 
-        scoringPanel.SetActive(false);
-        scoringText.enabled = false;
+        paused = false;
+        sweepLineText1.enabled = false;
+        sweepLineText2.enabled = true;
+        paused = true;
+
+        yield return new WaitUntil(() => gm.sm.sweeperR.sweep == true);
+        paused = false;
+        direcSweepPanel.SetActive(false);
+        sweepLineText2.enabled = false;
+    }
+
+    IEnumerator SweepCurl()
+    {
+        direcSweepPanel.SetActive(true);
+        sweepCurlText1.enabled = true;
+
+        yield return StartCoroutine(WaitForClick());
 
         paused = false;
+        sweepCurlText1.enabled = false;
+        sweepCurlText2.enabled = true;
+        paused = true;
+
+        yield return new WaitUntil(() => gm.sm.sweeperL.sweep == true);
+
+        paused = false;
+        direcSweepPanel.SetActive(false);
+        sweepCurlText2.enabled = false;
     }
 }
