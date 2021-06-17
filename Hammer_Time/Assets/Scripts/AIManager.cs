@@ -72,7 +72,7 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Take Out"));
                 break;
             case 6:
-                StartCoroutine(Shot("Corner Guard"));
+                StartCoroutine(Shot("Twelve Foot"));
                 break;
             case 8:
                 StartCoroutine(Shot("Take Out"));
@@ -84,7 +84,7 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Twelve Foot"));
                 break;
             case 14:
-                StartCoroutine(Shot("Take Out"));
+                StartCoroutine(Shot("Raise"));
                 break;
             default:
                 break;

@@ -39,13 +39,18 @@ public class Rock_Info : MonoBehaviour
         //else moving = false;
 
 
-        if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.y) > 0.01f && Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > 0.01f)
+        if (transform.hasChanged)
         {
+            //Debug.Log("Hit RockInfo!");
+            transform.hasChanged = false;
             stopped = false;
             moving = true;
-
         }
-        else moving = false;
+        else
+        {
+            moving = false;
+            stopped = true;
+        }
 
         if (shotTaken && released)
         {

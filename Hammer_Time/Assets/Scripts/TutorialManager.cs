@@ -78,6 +78,7 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitUntil(() => gm.rockList[5].rock.GetComponent<CircleCollider2D>().enabled == true);
         yield return new WaitForSeconds(2.5f);
+
         tHUD.OnRules();
 
         yield return new WaitUntil(() => gm.rockList[5].rockInfo.released == true);

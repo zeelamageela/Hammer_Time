@@ -765,7 +765,14 @@ public class GameManager : MonoBehaviour
         endTotal = 10;
         endCurrent = 10;
         aiTeamYellow = true;
+        gHUD.Scoreboard(1, 2, 0);
+        gHUD.Scoreboard(3, 0, 2);
+        gHUD.Scoreboard(4, 3, 0);
+        gHUD.Scoreboard(6, 4, 0);
+        gHUD.Scoreboard(7, 0, 5);
+        gHUD.Scoreboard(9, 5, 0);
 
+        rockBar.EndUpdate(5, 5);
         yield return StartCoroutine(SetupRocks());
 
         tm.enabled = true;

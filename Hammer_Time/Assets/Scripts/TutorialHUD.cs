@@ -24,7 +24,7 @@ public class TutorialHUD : MonoBehaviour
     public Text whoaButtonText;
     public Text direcSweepText;
     public Text sweepCurlText;
-
+    public Button contButton;
     public GameObject scoringPanel;
     public Text scoringText;
 
@@ -83,13 +83,13 @@ public class TutorialHUD : MonoBehaviour
 
     public void OnSweep()
     {
-        Time.timeScale = 0.04f;
+        paused = true;
         StartCoroutine(Sweep());
     }
 
     public void OnWhoa()
     {
-        Time.timeScale = 0.04f;
+        paused = true;
         StartCoroutine(Whoa());
     }
 
@@ -114,11 +114,13 @@ public class TutorialHUD : MonoBehaviour
 
         rulesText.enabled = false;
         scenarioText.enabled = true;
+        
+        gm.gHUD.Scoreboard(10, 0, 0);
 
         yield return new WaitForFixedUpdate();
 
         yield return StartCoroutine(WaitForClick());
-
+        gm.gHUD.ScoreboardOff();
         rulesPanel.SetActive(false);
         rulesText.enabled = false;
         paused = false;
@@ -172,16 +174,20 @@ public class TutorialHUD : MonoBehaviour
         sweepIntroText.enabled = true;
 
         yield return StartCoroutine(WaitForClick());
+        paused = false;
+
+        yield return new WaitUntil(() => gm.rockList[5].rock.transform.position.y >= -5f);
 
         sweepIntroText.enabled = false;
         sweepButtonText.enabled = true;
+        paused = true;
 
-        yield return StartCoroutine(WaitForClick());
+        yield return new WaitUntil(() => gm.sm.sweepButton.activeSelf == false);
 
+        paused = false;
         sweepPanel.SetActive(false);
         sweepButtonText.enabled = false;
 
-        Time.timeScale = 0.2f;
     }
 
     IEnumerator Whoa()
@@ -189,12 +195,12 @@ public class TutorialHUD : MonoBehaviour
         sweepPanel.SetActive(true);
         whoaButtonText.enabled = true;
 
-        yield return StartCoroutine(WaitForClick());
-
+        yield return new WaitUntil(() => gm.sm.whoaButton.activeSelf == false);
+        paused = false;
         sweepPanel.SetActive(false);
         whoaButtonText.enabled = false;
 
-        Time.timeScale = 0.2f;
+        //Time.timeScale = 0.2f;
     }
 
     IEnumerator SweepCurl()
@@ -204,15 +210,16 @@ public class TutorialHUD : MonoBehaviour
 
         yield return StartCoroutine(WaitForClick());
 
+        paused = false;
         direcSweepText.enabled = false;
         sweepCurlText.enabled = true;
 
-        yield return StartCoroutine(WaitForClick());
+        yield return new WaitUntil(() => gm.sm.sweeperR.sweep == true);
 
         sweepPanel.SetActive(false);
         sweepCurlText.enabled = false;
 
-        Time.timeScale = 0.2f;
+        //Time.timeScale = 0.2f;
     }
 
     IEnumerator Scoring()
