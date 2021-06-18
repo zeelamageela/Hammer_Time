@@ -5345,9 +5345,9 @@ MonoBehaviour:
   redRockDead: {fileID: 21300000, guid: 0b2d782fdaa708f45b9d3aa3969f74e0, type: 3}
   redRocks: {fileID: 968619572}
   yellowTurnSelect: {fileID: 272161325}
-  yellowTurnAnim: {fileID: 0}
+  yellowTurnAnim: {fileID: 272161329}
   redTurnSelect: {fileID: 919697563}
-  redTurnAnim: {fileID: 0}
+  redTurnAnim: {fileID: 919697565}
   yellowScoreDisplay: {fileID: 1053675047}
   redScoreDisplay: {fileID: 1440687553}
   rockListUI: []

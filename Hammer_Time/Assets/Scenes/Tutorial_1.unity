@@ -628,6 +628,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1632634963991230445, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
   m_PrefabInstance: {fileID: 1450439332}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &98520586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98520583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 888b2911cb6c945698f1a465325124a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimCircle: {fileID: 0}
+  distance: 0
+  sr: {fileID: 0}
 --- !u!1 &101526199
 GameObject:
   m_ObjectHideFlags: 0
@@ -2444,8 +2459,8 @@ MonoBehaviour:
   gm: {fileID: 197219300}
   tm: {fileID: 819206748}
   rm: {fileID: 545177317}
-  centreGuard: {x: -0.05, y: -26.65}
-  cornerGuard: {x: 0.011, y: -26.89}
+  centreGuard: {x: -0.05, y: -26.76}
+  cornerGuard: {x: 0.011, y: -26.96}
   twelveFoot: {x: -0.06, y: -26.92}
   fourFoot: {x: -0.055, y: -27}
   takeOut: {x: 0.0997, y: -27.38}
@@ -12121,7 +12136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1662551831004909518, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.411
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 1662551831004909518, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12173,7 +12188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3365584554625398261, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_SortingOrder
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
@@ -12417,7 +12432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3365584554625398261, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_SortingOrder
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
@@ -16241,8 +16256,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Now let's try to tuck the rock back towards the middle by sweeping with
-    the curl
+  m_Text: Now let's brign the rock back to the middle by sweeping with the curl
 --- !u!1 &1994488550 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1677671175170670042, guid: 533885a650cafc848b7e8add0d5382b2, type: 3}

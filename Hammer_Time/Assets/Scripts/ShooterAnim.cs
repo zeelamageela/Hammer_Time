@@ -106,7 +106,7 @@ public class ShooterAnim : MonoBehaviour
                 anim.Play("Shooter_2_Slide", 0, slideSpeed);
             }
 
-            if (transform.position.y >= -19.25f)
+            if (transform.position.y >= -19.75f)
             {
                 extend = false;
                 anim.SetBool("isReleased", true);

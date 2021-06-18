@@ -104,7 +104,7 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitUntil(() => gm.rockList[15].rock.GetComponent<CircleCollider2D>().enabled == true);
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.25f);
 
         tHUD.OnTurnTwo();
 
@@ -113,7 +113,7 @@ public class TutorialManager : MonoBehaviour
 
         tHUD.OnSweepLine();
 
-        yield return new WaitUntil(() => gm.rockList[15].rock.transform.position.y >= -1.5f);
+        yield return new WaitUntil(() => gm.rockList[15].rock.transform.position.y >= 1.5f);
 
         tHUD.OnWhoa();
 
