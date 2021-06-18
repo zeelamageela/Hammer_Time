@@ -56,7 +56,7 @@ public class Sweep : MonoBehaviour
 
     public void OnLeft()
     {
-        if (rm.inturn)
+        if (!rm.inturn)
         {
             StartCoroutine(SweepLine(true));
         }
@@ -69,7 +69,7 @@ public class Sweep : MonoBehaviour
 
     public void OnRight()
     {
-        if (rm.inturn)
+        if (!rm.inturn)
         {
             StartCoroutine(SweepCurl(true));
         }

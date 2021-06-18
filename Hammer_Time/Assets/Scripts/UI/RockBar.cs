@@ -23,7 +23,9 @@ public class RockBar : MonoBehaviour
     public RectTransform redRocks;
 
     public GameObject yellowTurnSelect;
+    public TurnAnim yellowTurnAnim;
     public GameObject redTurnSelect;
+    public TurnAnim redTurnAnim;
     public Text yellowScoreDisplay;
     public Text redScoreDisplay;
     
@@ -65,11 +67,11 @@ public class RockBar : MonoBehaviour
 
     IEnumerator SetupBar(bool redHammer)
     {
-        redRocks.anchoredPosition = new Vector2(-450f, 5f);
-        yellowRocks.anchoredPosition = new Vector2(450f, 5f);
+        //redRocks.anchoredPosition = new Vector2(-450f, 5f);
+        //yellowRocks.anchoredPosition = new Vector2(450f, 5f);
 
-        yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
-        redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
+        //yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
+        //redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
 
         yield return new WaitForEndOfFrame();
 
@@ -177,6 +179,7 @@ public class RockBar : MonoBehaviour
 
     public void ShotUpdate(int rockIndex, bool outOfPlay)
     {
+
         if (outOfPlay)
         {
             DeadRock(rockIndex);
@@ -214,11 +217,15 @@ public class RockBar : MonoBehaviour
             {
                 redTurnSelect.SetActive(true);
                 yellowTurnSelect.SetActive(false);
+
+                redTurnAnim.SetTurn(rm.inturn);
             }
             else
             {
                 yellowTurnSelect.SetActive(true);
                 redTurnSelect.SetActive(false);
+
+                yellowTurnAnim.SetTurn(rm.inturn);
             }
         }
     }

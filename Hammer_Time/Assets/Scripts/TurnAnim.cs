@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TurnAnim : MonoBehaviour
 {
-    private Animator anim;
+    public Animator anim;
     public GameManager gm;
     public RockManager rm;
 
@@ -15,14 +15,20 @@ public class TurnAnim : MonoBehaviour
     //bool isPressed = false;
     public bool turnAI;
     AudioManager am;
+
     void Start()
     {
-        anim = GetComponent<Animator>();
+        //anim = GetComponent<Animator>();
 
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+
     }
 
-
+    private void OnEnable()
+    {
+        SetTurn(rm.inturn);
+        Debug.Log("rm.inturn");
+    }
 
     void Update()
     {
@@ -33,7 +39,6 @@ public class TurnAnim : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                am.Play("Button");
                 Vector3 mousePos = uiCam.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
@@ -41,6 +46,8 @@ public class TurnAnim : MonoBehaviour
 
                 if (hit.collider == col)
                 {
+                    am.Play("Button");
+
                     if (inturn)
                     {
                         rm.inturn = false;
@@ -61,12 +68,12 @@ public class TurnAnim : MonoBehaviour
                 if (inturn)
                 {
                     rm.inturn = false;
-                    StartCoroutine(IsPressed(inturn));
+                    StartCoroutine(IsPressed(false));
                 }
                 else
                 {
                     rm.inturn = true;
-                    StartCoroutine(IsPressed(inturn));
+                    StartCoroutine(IsPressed(true));
                 }
                 turnAI = false;
             }
@@ -100,5 +107,15 @@ public class TurnAnim : MonoBehaviour
         col.enabled = true;
     }
 
-    
+    public void SetTurn(bool inturn)
+    {
+        if (inturn)
+        {
+            anim.SetBool("inturn", true);
+        }
+        else
+        {
+            anim.SetBool("inturn", false);
+        }
+    }
 }

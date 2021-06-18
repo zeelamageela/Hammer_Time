@@ -17,8 +17,8 @@ public class RockManager : MonoBehaviour
 
     void OnEnable()
     {
-        
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -27,7 +27,7 @@ public class RockManager : MonoBehaviour
             rock = gm.rockList[gm.rockCurrent].rock;
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
 
-            if (!inturn)
+            if (inturn)
             {
                 rock.GetComponent<Rock_Force>().flipAxis = true;
             }

@@ -16,18 +16,22 @@ public class Rock_Info : MonoBehaviour
     public bool hit = false;
     public bool moving = false;
     public bool shotTaken = false;
+    public bool placed = false;
     public float velocity;
 
     public float distance;
 
     void FixedUpdate()
     {
-        distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
-        shotTaken = GetComponent<Rock_Colliders>().shotTaken;
-        inPlay = GetComponent<Rock_Colliders>().inPlay;
-        outOfPlay = GetComponent<Rock_Colliders>().outOfPlay;
-        hit = GetComponent<Rock_Colliders>().hit;
-        inHouse = GetComponent<Rock_Colliders>().inHouse;
+        if (!placed)
+        {
+            distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
+            shotTaken = GetComponent<Rock_Colliders>().shotTaken;
+            inPlay = GetComponent<Rock_Colliders>().inPlay;
+            outOfPlay = GetComponent<Rock_Colliders>().outOfPlay;
+            hit = GetComponent<Rock_Colliders>().hit;
+            inHouse = GetComponent<Rock_Colliders>().inHouse;
+        }
 
 
         //if (transform.hasChanged)
