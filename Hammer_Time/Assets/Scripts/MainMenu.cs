@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
     {
         gsp.tutorial = true;
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
+        SceneManager.LoadScene("Tutorial_1");
         am.Play("Theme");
     }
 }
