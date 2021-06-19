@@ -2478,7 +2478,7 @@ MonoBehaviour:
   leftFourFoot: {x: -0.025, y: -27.227}
   rightFourFoot: {x: -0.085, y: -27.227}
   button: {x: -0.056, y: -27.227}
-  takeOut: {x: 0, y: -27.5}
+  takeOut: {x: 0, y: -27.8}
   raise: {x: 0, y: -27.1}
   testing: High Centre Guard
   guardAccu: {x: 0.02, y: 0.005}
