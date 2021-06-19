@@ -51,6 +51,24 @@ public class RockBar : MonoBehaviour
         Debug.Log("yellow rocks position is " + yellowRocks.anchoredPosition.x + ", " + yellowRocks.anchoredPosition.y);
     }
 
+    private void Update()
+    {
+        //for (int i = 0; i <= rockListUI.Count; i++)
+        //{
+        //        if (gm.rockList != null)
+        //        {
+        //            if (gm.rockList[i].rock != null)
+        //            {
+        //            if (gm.rockList[i].rockInfo.outOfPlay)
+        //            {
+        //                DeadRock(i);
+        //            }
+        //            else IdleRock(i);
+        //            }
+        //        }
+        //}
+    }
+
     public void ResetBar(bool redHammer)
     {
         
@@ -81,16 +99,15 @@ public class RockBar : MonoBehaviour
             redTurn = false;
             for (int i = 0; i < rocksPerTeam; i++)
             {
-                GameObject yellowDot = Instantiate(yellowRockGO);
-                //yellowDot.transform.SetParent(yellowRocks, false);
-                yellowRockGO.transform.position += new Vector3(i * offset, 0f, 0f);
+                GameObject yellowDot = Instantiate(yellowRockGO, yellowRocks, false);
+                yellowDot.transform.position += new Vector3(i * -offset, 0f, 0f);
                 yellowDot.name = gm.rockList[2 * i].rock.name;
                 rockListUI.Add(yellowDot);
 
                 yield return new WaitForEndOfFrame();
 
                 GameObject redDot = Instantiate(redRockGO, redRocks, false);
-                redRockGO.transform.position += new Vector3((i * -offset) + redRocks.position.x, redRocks.position.y, 0f);
+                redDot.transform.position += new Vector3((i * offset), 0f, 0f);
                 rockListUI.Add(redDot);
                 redDot.name = gm.rockList[(2 * i) + 1].rock.name;
             }
@@ -101,17 +118,17 @@ public class RockBar : MonoBehaviour
 
             for (int i = 0; i < rocksPerTeam; i++)
             {
-                GameObject redDot = Instantiate(redRockGO, redRocks);
-                redRockGO.transform.position += new Vector3((i * -offset), 0f, 0f);
-                redDot.name = gm.rockList[2 * i].rock.name;
+                GameObject redDot = Instantiate(redRockGO, redRocks, false);
+                redDot.transform.position += new Vector3((i * offset), 0f, 0f);
                 rockListUI.Add(redDot);
+                redDot.name = gm.rockList[(2 * i) + 1].rock.name;
 
                 yield return new WaitForEndOfFrame();
 
-                GameObject yellowDot = Instantiate(yellowRockGO);
-                yellowRockGO.transform.position += new Vector3((i * offset) + yellowRocks.position.x, yellowRocks.position.y, 0f);
+                GameObject yellowDot = Instantiate(yellowRockGO, yellowRocks, false);
+                yellowDot.transform.position += new Vector3(i * -offset, 0f, 0f);
+                yellowDot.name = gm.rockList[2 * i].rock.name;
                 rockListUI.Add(yellowDot);
-                yellowDot.name = gm.rockList[(2 * i) + 1].rock.name;
 
 
             }
@@ -238,5 +255,20 @@ public class RockBar : MonoBehaviour
     public void IdleRock(int rockIndex)
     {
         rockListUI[rockIndex].gameObject.GetComponent<RockBar_Dot>().IdleRockSprite();
+    }
+
+    public void Tutorial(int rockIndex)
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            if (gm.rockList[i].rockInfo.outOfPlay)
+            {
+                DeadRock(i);
+            }
+            else if (gm.rockList[i].rockInfo.inPlay)
+            {
+                IdleRock(i);
+            }
+        }
     }
 }

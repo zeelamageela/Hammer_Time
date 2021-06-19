@@ -32,6 +32,7 @@ public class TutorialHUD : MonoBehaviour
 
     public GameObject scoringPanel;
     public Text scoringText;
+    public Text yellow1Text;
     public Text failedText;
 
     public GameObject turnTwoPanel;
@@ -273,12 +274,12 @@ IEnumerator Rules()
 
             yield return StartCoroutine(WaitForClick());
         }
-        else if (gm.houseList[0].rockInfo.teamName == gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        else if (gm.houseList[0].rockInfo.teamName == gm.rockList[1].rockInfo.teamName)
         {
-            scoringText.enabled = true;
+            yellow1Text.enabled = true;
             yield return StartCoroutine(WaitForClick());
         }
-        else if (gm.houseList[0].rockInfo.teamName != gm.rockList[gm.rockCurrent].rockInfo.teamName)
+        else if (gm.houseList[0].rockInfo.teamName != gm.rockList[0].rockInfo.teamName)
         {
             failedText.enabled = true;
             yield return StartCoroutine(WaitForClick());

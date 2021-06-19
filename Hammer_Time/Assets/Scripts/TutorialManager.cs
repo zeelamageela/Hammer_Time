@@ -147,6 +147,7 @@ public class TutorialManager : MonoBehaviour
             gm.rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             gm.rockList[i].rock.transform.parent = null;
+            rockBar.DeadRock(i);
             yield return new WaitForEndOfFrame();
         }
 
@@ -155,29 +156,36 @@ public class TutorialManager : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             gm.rockList[i].rock.SetActive(false);
+            gm.rockList[i].rockInfo.inPlay = true;
+            gm.rockList[i].rockInfo.outOfPlay = true;
         }
 
         gm.rockList[8].rock.GetComponent<Rigidbody2D>().position = new Vector2(0.957f, 6.266f);
         gm.rockList[8].rockInfo.inHouse = true;
+        rockBar.IdleRock(8);
+        //rockBar.ShotUpdate(8, false);
         gm.rockList[9].rock.GetComponent<Rigidbody2D>().position = new Vector2(1.65f, 3.32f);
+        //rockBar.IdleRock(9);
+        //rockBar.ShotUpdate(9, false);
         gm.rockList[10].rock.GetComponent<Rigidbody2D>().position = new Vector2(-1.018f, 2.34f);
-        gm.rockList[11].rock.SetActive(false);
-        //gm.rockList[6].rock.GetComponent<Rigidbody2D>().position = new Vector2(1.5f, 8.8f);
+        //rockBar.IdleRock(10);
+        //rockBar.ShotUpdate(10, false);
 
         yield return new WaitForEndOfFrame();
 
-        for (int i = 8; i < 11; i++)
+        for (int i = 8; i < 12; i++)
         {
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
+            gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
+            gm.rockList[i].rockInfo.inPlay = true;
+            gm.rockList[i].rockInfo.outOfPlay = false;
             gm.rockList[i].rockInfo.moving = false;
             gm.rockList[i].rockInfo.shotTaken = true;
             gm.rockList[i].rockInfo.released = true;
             gm.rockList[i].rockInfo.stopped = true;
             gm.rockList[i].rockInfo.rest = true;
-            gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
-            rockBar.IdleRock(i);
             Debug.Log("i is equal to " + i);
 
             //rockBar.ShotUpdate(i, gm.rockList[i].rockInfo.outOfPlay);
@@ -185,6 +193,10 @@ public class TutorialManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        gm.rockList[11].rock.SetActive(false);
+        //rockBar.DeadRock(11);
+        //rockBar.ShotUpdate(11, true);
+        //rockBar.ShotUpdate(11, gm.rockList[11].rockInfo.outOfPlay);
         rocksPlaced = true;
 
         yield return new WaitForEndOfFrame();

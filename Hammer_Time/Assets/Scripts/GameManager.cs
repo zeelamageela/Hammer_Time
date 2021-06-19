@@ -73,7 +73,9 @@ public class GameManager : MonoBehaviour
     public ShootingKnob knob;
     public List<Rock_List> rockList;
     public List<House_List> houseList;
+    public List<FreeGuard_List> fgList;
 
+    public Transform[] fgPosList;
     void Start()
     {
         state = GameState.START;
@@ -104,6 +106,7 @@ public class GameManager : MonoBehaviour
 
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
+        fgList = new List<FreeGuard_List>();
 
         //yield return new WaitForSeconds(2f);
         yield return new WaitForEndOfFrame();
@@ -268,6 +271,17 @@ public class GameManager : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
 
+        if (rockCurrent < 6)
+        {
+            foreach (Rock_List rock in rockList)
+            {
+                if (rockList.IndexOf(rock) < 6)
+                {
+                    fgList.Add(new FreeGuard_List(rockList.IndexOf(rock), rock.rockInfo.freeGuard, rock.rock.transform));
+                }
+            }
+        }
+
         Debug.Log("Red Turn");
         shooterGO = Instantiate(shooterAnimRed);
         sm.SetupSweepers();
@@ -297,7 +311,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true);
 
-
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         am.Play("RockScrape");
@@ -324,6 +337,14 @@ public class GameManager : MonoBehaviour
 
         if (!redRock.outOfPlay)
         {
+            if (redRock.inPlay && !redRock.inHouse)
+            {
+                if (redRock_1.transform.position.y >= 1.5f)
+                {
+                    redRock.freeGuard = true;
+                }
+            }
+
             Debug.Log("Out Of Play is " + redRock.outOfPlay);
             Debug.Log("Rock Current is " + rockCurrent);
             rockBar.IdleRock(rockCurrent);
@@ -355,6 +376,17 @@ public class GameManager : MonoBehaviour
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
+        }
+
+        if (rockCurrent < 6)
+        {
+            foreach (Rock_List rock in rockList)
+            {
+                if (rockList.IndexOf(rock) < 6)
+                {
+                    fgList.Add(new FreeGuard_List(rockList.IndexOf(rock), rock.rockInfo.freeGuard, rock.rock.transform));
+                }
+            }
         }
 
         shooterGO = Instantiate(shooterAnimYellow);
@@ -444,6 +476,16 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
+        if (rockCurrent < 6)
+        {
+            if (yellowRock.inPlay && !yellowRock.inHouse)
+            {
+                if (yellowRock_1.transform.position.y >= 1.5f)
+                {
+                    yellowRock.freeGuard = true;
+                }
+            }
+        }
 
         StartCoroutine(CheckScore());
 
@@ -788,6 +830,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => tm.rocksPlaced == true);
 
         rockCurrent = 11;
+
+        rockBar.ShotUpdate(rockCurrent, true);
 
         yield return StartCoroutine(CheckScore());
     }

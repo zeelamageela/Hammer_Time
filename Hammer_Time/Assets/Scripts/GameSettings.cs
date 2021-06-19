@@ -39,18 +39,19 @@ public class GameSettings : MonoBehaviour
     public void SetHammerRed()
     {
         redHammer = true;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.ends = ends;
         gsp.rocks = rocks;
+        gsp.redHammer = redHammer;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void SetHammerYellow()
     {
         redHammer = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.ends = ends;
         gsp.rocks = rocks;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
