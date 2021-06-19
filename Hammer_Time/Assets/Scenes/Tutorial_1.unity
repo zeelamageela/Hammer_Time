@@ -1497,6 +1497,7 @@ MonoBehaviour:
   vcam_go: {fileID: 1171837316}
   vcam: {fileID: 1171837317}
   knob: {fileID: 571456437}
+  fgPosList: []
 --- !u!4 &197219301
 Transform:
   m_ObjectHideFlags: 0
@@ -2459,10 +2460,21 @@ MonoBehaviour:
   gm: {fileID: 197219300}
   tm: {fileID: 819206748}
   rm: {fileID: 545177317}
-  centreGuard: {x: -0.05, y: -26.76}
-  cornerGuard: {x: 0.011, y: -26.76}
-  twelveFoot: {x: -0.06, y: -26.92}
-  fourFoot: {x: -0.055, y: -27}
+  centreGuard: {x: -0.043, y: -26.86}
+  tightCentreGuard: {x: 0, y: 0}
+  highCentreGuard: {x: 0, y: 0}
+  highCornerGuard: {x: 0, y: 0}
+  tightCornerGuard: {x: 0, y: 0}
+  cornerGuard: {x: 0.011, y: -26.96}
+  topTwelveFoot: {x: 0, y: 0}
+  backTwelveFoot: {x: -0.045, y: -27.35}
+  leftTwelveFoot: {x: 0.029, y: -27.25}
+  rightTwelveFoot: {x: 0, y: 0}
+  backFourFoot: {x: 0, y: 0}
+  topFourFoot: {x: 0, y: 0}
+  leftFourFoot: {x: 0, y: 0}
+  rightFourFoot: {x: 0, y: 0}
+  button: {x: -0.048, y: -27}
   takeOut: {x: 0.0997, y: -27.38}
   raise: {x: 0.0997, y: -27.38}
   testing: 

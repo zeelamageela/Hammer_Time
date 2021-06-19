@@ -80,7 +80,7 @@ public class AIManager : MonoBehaviour
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-        //Aggressive(rockCurrent);
+        Aggressive(rockCurrent);
     }
 
     IEnumerator TakeOutTarget(int rockCurrent, GameObject closestRock, Rock_Info closestRockInfo)
@@ -268,6 +268,7 @@ public class AIManager : MonoBehaviour
         }
         
     }
+
     public void Conservative(int rockCurrent)
     {
 
@@ -334,13 +335,13 @@ public class AIManager : MonoBehaviour
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("High Centre Guard"));
+                    StartCoroutine(Shot("Centre Guard"));
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     StartCoroutine(Shot("Back Twelve Foot"));
                 }
-                else StartCoroutine(Shot("Four Foot"));
+                else StartCoroutine(Shot("Button"));
 
                 break;
             case 15:
@@ -503,6 +504,7 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Take Out":
+
                 yield return StartCoroutine(TakeOutTarget(gm.rockCurrent, closestRock, closestRockInfo));
 
                 if (takeOutX != 0f)
