@@ -16,9 +16,12 @@ public class AIManager : MonoBehaviour
     public Vector2 tightCentreGuard;
     public Vector2 highCentreGuard;
 
-    public Vector2 highCornerGuard;
-    public Vector2 tightCornerGuard;
-    public Vector2 cornerGuard;
+    public Vector2 leftHighCornerGuard;
+    public Vector2 leftTightCornerGuard;
+    public Vector2 leftCornerGuard;
+    public Vector2 rightHighCornerGuard;
+    public Vector2 rightTightCornerGuard;
+    public Vector2 rightCornerGuard;
 
     public Vector2 topTwelveFoot;
     public Vector2 backTwelveFoot;
@@ -80,14 +83,20 @@ public class AIManager : MonoBehaviour
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
+        if (gm.houseList.Count != 0)
+        {
+            closestRock = gm.houseList[0].rock;
+            closestRockInfo = gm.houseList[0].rockInfo;
+        }
+
         Aggressive(rockCurrent);
     }
 
-    IEnumerator TakeOutTarget(int rockCurrent, GameObject closestRock, Rock_Info closestRockInfo)
+    IEnumerator TakeOutTarget(int rockCurrent)
     {
         takeOut.y = -27.5f;
 
-        if (gm.houseList != null)
+        if (gm.houseList.Count != 0)
         {//if an enemy rock is the closest rock
             if (closestRockInfo.teamName != rockInfo.teamName)
             {
@@ -97,7 +106,7 @@ public class AIManager : MonoBehaviour
                     if (gm.rockList[i].rockInfo.shotTaken && gm.rockList[i].rockInfo.inPlay)
                     {
                         //if the rock is in line with the closest rock
-                        if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) <= 0.15f)
+                        if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
                         {
                             // if the rock is in the guard zone
                             if (gm.rockList[i].rock.transform.position.y >= 1.6f)
@@ -110,26 +119,31 @@ public class AIManager : MonoBehaviour
                             else if (gm.rockList[i].rock.transform.position.y >= closestRock.transform.position.y)
                             {
                                 //if it's close enough to possibly knock the other rock
-                                if (Vector2.Distance(gm.rockList[i].rock.transform.position, closestRock.transform.position) <= 0.25f)
+                                if (Vector2.Distance(gm.rockList[i].rock.transform.position, closestRock.transform.position) <= 0.35f)
                                 {
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
                                 //if it's in line with the closest rock
-                                else if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) <= 0.25f)
+                                else if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
                                 {
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
                             }
                         }
                         else
+                        {
                             // or else the closest is exposed and we will take it out
                             targetX = closestRock.transform.position.x;
-                        takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                        yield break;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
+                            yield break;
+                        }
                     }
                 }
             }
@@ -214,6 +228,7 @@ public class AIManager : MonoBehaviour
                                     //then we will take it out
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
                                 else
@@ -222,6 +237,7 @@ public class AIManager : MonoBehaviour
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
                                     takeOut.y = raise.y;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
                             }
@@ -247,6 +263,7 @@ public class AIManager : MonoBehaviour
                                     //then we will take it out
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
                                 else
@@ -254,6 +271,7 @@ public class AIManager : MonoBehaviour
                                     //then we will raise it
                                     targetX = gm.rockList[i].rock.transform.position.x;
                                     takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                    Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     takeOut.y = raise.y;
                                     yield break;
                                 }
@@ -276,8 +294,6 @@ public class AIManager : MonoBehaviour
 
     public void Aggressive(int rockCurrent)
     {
-        GameObject closestRock = gm.houseList[0].rock;
-        Rock_Info closestRockInfo = gm.houseList[0].rockInfo;
         GameObject rock = gm.rockList[rockCurrent].rock;
         Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;
 
@@ -287,51 +303,13 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Tight Centre Guard"));
                 break;
             case 1:
-                StartCoroutine(Shot("Tight Corner Guard"));
+                StartCoroutine(Shot("Right Tight Corner Guard"));
                 break;
             case 2:
-                StartCoroutine(Shot("Button"));
-                break;
-            case 3:
-                StartCoroutine(Shot("Right Twelve Foot"));
-                break;
-            case 4:
-                rm.inturn = true;
-                StartCoroutine(Shot("Take Out"));
-                break;
-            case 5:
-                StartCoroutine(Shot("Top Four Foot"));
-                break;
-            case 6:
-                StartCoroutine(Shot("Right Twelve Foot"));
-                break;
-            case 7:
-                StartCoroutine(Shot("Centre Guard"));
-                break;
-            case 8:
-                StartCoroutine(Shot("Take Out"));
-                break;
-            case 9:
-                StartCoroutine(Shot("Take Out"));
-                break;
-            case 10:
-                StartCoroutine(Shot("Button"));
-                break;
-            case 11:
-                StartCoroutine(Shot("Four Foot"));
-                break;
-            case 12:
-                rm.inturn = true;
-                StartCoroutine(Shot("Corner Guard"));
-                break;
-            case 13:
-                StartCoroutine(Shot("Four Foot"));
-                break;
-            case 14:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(Shot("Left Twelve Foot"));
+                    StartCoroutine(Shot("Top Four Foot"));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
@@ -339,13 +317,173 @@ public class AIManager : MonoBehaviour
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Back Twelve Foot"));
+                    StartCoroutine(Shot("Left Four Foot"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 3:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Left Twelve Foot"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Right Tight Corner Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 4:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Back Four Foot"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Tight Centre Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 5:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Left Tight Corner Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Back Four Foot"));
+                break;
+
+            case 6:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Tight Centre Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 7:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Centre Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 8:
+                StartCoroutine(Shot("Take Out"));
+                break;
+            case 9:
+                StartCoroutine(Shot("Take Out"));
+                break;
+            case 10:
+                StartCoroutine(Shot("Take Out"));
+                break;
+            case 11:
+                StartCoroutine(Shot("Take Out"));
+                break;
+            case 12:
+                rm.inturn = true;
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Right Four Foot"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Right Tight Corner Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+
+            case 13:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Top Four Foot"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Tight Centre Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
+                break;
+            case 14:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Button"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Centre Guard"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
                 }
                 else StartCoroutine(Shot("Button"));
 
                 break;
             case 15:
-                StartCoroutine(Shot("Button"));
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(Shot("Button"));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Back Four Foot"));
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(Shot("Take Out"));
+                }
+                else StartCoroutine(Shot("Button"));
                 break;
             default:
                 break;
@@ -374,40 +512,64 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Tight Centre Guard":
-                shotX = Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
-                shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
+                shotX = Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
+                shotY = Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
             case "High Centre Guard":
-                shotX = Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
-                shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
+                shotX = Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
+                shotY = Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
-            case "Corner Guard":
-                 shotX = Random.Range(cornerGuard.x + guardAccu.x, cornerGuard.x - guardAccu.x);
-                 shotY = Random.Range(cornerGuard.y + guardAccu.y, cornerGuard.y - guardAccu.y);
+            case "Left Corner Guard":
+                shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
-            case "Tight Corner Guard":
-                shotX = Random.Range(cornerGuard.x + guardAccu.x, cornerGuard.x - guardAccu.x);
-                shotY = Random.Range(cornerGuard.y + guardAccu.y, cornerGuard.y - guardAccu.y);
+            case "Left Tight Corner Guard":
+                shotX = Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
-            case "High Corner Guard":
-                shotX = Random.Range(cornerGuard.x + guardAccu.x, cornerGuard.x - guardAccu.x);
-                shotY = Random.Range(cornerGuard.y + guardAccu.y, cornerGuard.y - guardAccu.y);
+            case "Left High Corner Guard":
+                shotX = Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y);
+                rockRB.position = new Vector2(shotX, shotY);
+                yield return new WaitForFixedUpdate();
+                rockFlick.mouseUp = true;
+                break;
+
+            case "Right Corner Guard":
+                 shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
+                 shotY = Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y);
+                rockRB.position = new Vector2(shotX, shotY);
+                yield return new WaitForFixedUpdate();
+                rockFlick.mouseUp = true;
+                break;
+
+            case "Right Tight Corner Guard":
+                shotX = Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
+                rockRB.position = new Vector2(shotX, shotY);
+                yield return new WaitForFixedUpdate();
+                rockFlick.mouseUp = true;
+                break;
+
+            case "Right High Corner Guard":
+                shotX = Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -505,7 +667,7 @@ public class AIManager : MonoBehaviour
 
             case "Take Out":
 
-                yield return StartCoroutine(TakeOutTarget(gm.rockCurrent, closestRock, closestRockInfo));
+                yield return StartCoroutine(TakeOutTarget(gm.rockCurrent));
 
                 if (takeOutX != 0f)
                 {
@@ -518,6 +680,9 @@ public class AIManager : MonoBehaviour
                     shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 }
 
+                rockRB.position = new Vector2(shotX, shotY);
+
+                Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
                 yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
