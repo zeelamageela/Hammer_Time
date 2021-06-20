@@ -287,6 +287,10 @@ public class AIManager : MonoBehaviour
         
     }
 
+    IEnumerator TurnSelect(int rockCurrent, Vector2 shotType)
+    {
+        if ()
+    }
     public void Conservative(int rockCurrent)
     {
 
@@ -307,17 +311,70 @@ public class AIManager : MonoBehaviour
                 break;
             case 2:
 
+                //if no one is in the house
                 if (gm.houseList.Count == 0)
                 {
                     StartCoroutine(Shot("Top Four Foot"));
                 }
-                else if (closestRockInfo.teamName == rockInfo.teamName)
+                //if someone is in the house
+                else if (gm.houseList.Count > 0)
                 {
-                    StartCoroutine(Shot("Centre Guard"));
-                }
-                else if (closestRockInfo.teamName != rockInfo.teamName)
-                {
-                    StartCoroutine(Shot("Left Four Foot"));
+                    //and it's my team
+                    if (closestRockInfo.teamName == rockInfo.teamName)
+                    {
+                        if (Mathf.Abs(closestRock.transform.position.x) >= 0.35f)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        else if (closestRock.transform.position.x > 0)
+                        {
+                            StartCoroutine(Shot("Right Corner Guard"));
+                        }
+                        else if (closestRock.transform.position.x < 0)
+                        {
+                            StartCoroutine(Shot("Left Corner Guard"));
+                        }
+                    }
+                    //and it's the other team
+                    else if (closestRockInfo.teamName != rockInfo.teamName)
+                    {
+                        //and the closest rock is in the centre
+                        if (Mathf.Abs(closestRock.transform.position.x) >= 0.35f)
+                        {
+                            StartCoroutine(Shot("Left Four Foot"));
+                        }
+                        //and the closest rock is on the right
+                        else if (closestRock.transform.position.x > 0)
+                        {
+                            //and the closest rock is guarded
+                            for (int i = 0; i < 2; i++)
+                            {
+                                if (gm.rockList[i].rockInfo != closestRockInfo)
+                                {
+                                    if (gm.rockList[i].rock.transform.position.y >= 1.6f)
+                                    {
+                                        if (closestRock.transform.position.x - Mathf.Abs(gm.rockList[i].rock.transform.position.x) <= 0.35f)
+                                        {
+                                            StartCoroutine(Shot("Left Tight Corner Guard"));
+                                        }
+                                        else
+                                        {
+                                            if (gm.rockList[i].rock.transform.position.x > 0f)
+                                            {
+                                                StartCoroutine(Shot("Right Twelve Foot"));
+                                            }
+                                            else
+                                    }
+                                    } 
+                                }
+                            }
+                            StartCoroutine(Shot("Right Corner Guard"));
+                        }
+                        else if (closestRock.transform.position.x < 0)
+                        {
+                            StartCoroutine(Shot("Left Corner Guard"));
+                        }
+                    }
                 }
                 else StartCoroutine(Shot("Button"));
                 break;
@@ -347,6 +404,7 @@ public class AIManager : MonoBehaviour
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
+                    if ()
                     StartCoroutine(Shot("Tight Centre Guard"));
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
