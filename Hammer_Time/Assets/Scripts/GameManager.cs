@@ -314,7 +314,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         am.Play("RockScrape");
-        cm.RockFollow(redRock.transform);
+        cm.RockFollow(redRock_1.transform);
         boardCollider.enabled = true;
 
         rockBar.ActiveRock(true);
@@ -438,7 +438,7 @@ public class GameManager : MonoBehaviour
         //}
 
         rm.inturn = false;
-        Debug.Log("rmInturn is " + rm.inturn);
+        //Debug.Log("rmInturn is " + rm.inturn);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
@@ -456,10 +456,10 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
-        rockBar.ActiveRock(false);
-        am.Play("RockScrape");
-        cm.RockFollow(yellowRock.transform);
+        cm.RockFollow(yellowRock_1.transform);
+        //am.Play("RockScrape")
         boardCollider.enabled = true;
+        rockBar.ActiveRock(false);
 
         yield return new WaitUntil(() => yellowRock.released == true);
 

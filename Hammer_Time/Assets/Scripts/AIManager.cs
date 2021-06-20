@@ -420,7 +420,7 @@ public class AIManager : MonoBehaviour
                 StartCoroutine(Shot("Take Out"));
                 break;
             case 12:
-                rm.inturn = true;
+                //rm.inturn = true;
 
                 if (gm.houseList.Count == 0)
                 {
@@ -580,8 +580,6 @@ public class AIManager : MonoBehaviour
                  shotY = Random.Range(topTwelveFoot.y + drawAccu.y, topTwelveFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -589,8 +587,6 @@ public class AIManager : MonoBehaviour
                 shotX = Random.Range(leftTwelveFoot.x + drawAccu.x, leftTwelveFoot.x - drawAccu.x);
                 shotY = Random.Range(leftTwelveFoot.y + drawAccu.y, leftTwelveFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
@@ -600,8 +596,6 @@ public class AIManager : MonoBehaviour
                 shotY = Random.Range(backTwelveFoot.y + drawAccu.y, backTwelveFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -609,8 +603,6 @@ public class AIManager : MonoBehaviour
                 shotX = Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
                 shotY = Random.Range(rightTwelveFoot.y + drawAccu.y, rightTwelveFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
@@ -620,8 +612,6 @@ public class AIManager : MonoBehaviour
                  shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -629,8 +619,6 @@ public class AIManager : MonoBehaviour
                 shotX = Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
                 shotY = Random.Range(leftFourFoot.y + drawAccu.y, leftFourFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
@@ -640,8 +628,6 @@ public class AIManager : MonoBehaviour
                 shotY = Random.Range(rightFourFoot.y + drawAccu.y, rightFourFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -650,8 +636,6 @@ public class AIManager : MonoBehaviour
                 shotY = Random.Range(topFourFoot.y + drawAccu.y, topFourFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
@@ -659,8 +643,6 @@ public class AIManager : MonoBehaviour
                 shotX = Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
                 shotY = Random.Range(backFourFoot.y + drawAccu.y, backFourFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
@@ -683,8 +665,6 @@ public class AIManager : MonoBehaviour
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                yield return new WaitForFixedUpdate();
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;

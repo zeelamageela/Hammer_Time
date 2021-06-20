@@ -75,17 +75,6 @@ public class CameraManager : MonoBehaviour
         vcam.enabled = true;
     }
 
-    //public void InPlayZoom(float yPos)
-    //{
-    //    if (yPos >= -4f)
-    //    {
-    //        if (yPos <= 5f)
-    //        {
-    //            vcam.m_Lens.OrthographicSize = ((7.5f - 5f) * ((yPos - 5f) / -9f)) + 5f;
-    //        }
-    //    }
-    //}
-
     public void InPlayZoom(float dist)
     {
         vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;

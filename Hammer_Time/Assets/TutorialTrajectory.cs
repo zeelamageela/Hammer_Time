@@ -22,7 +22,7 @@ public class TutorialTrajectory : MonoBehaviour
 
         if (distColor <= 0.5f)
         {
-            sr.color = Color.Lerp(Color.red, Color.green, distColor);
+            sr.color = Color.Lerp(Color.green, Color.red, distColor);
         }
     }
 }

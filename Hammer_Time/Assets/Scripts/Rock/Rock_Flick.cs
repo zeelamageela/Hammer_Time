@@ -157,6 +157,8 @@ public class Rock_Flick: MonoBehaviour
     {
         mouseUp = false;
         springReleased = true;
+
+        launcher.GetComponent<Collider2D>().enabled = true;
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
@@ -169,7 +171,6 @@ public class Rock_Flick: MonoBehaviour
         //vcam.Follow = tFollowTarget;
         //vcam.enabled = true;
 
-        launcher.GetComponent<Collider2D>().enabled = true;
 
         //yield return new WaitUntil(() => rb.position == launcher_rb.position);
 

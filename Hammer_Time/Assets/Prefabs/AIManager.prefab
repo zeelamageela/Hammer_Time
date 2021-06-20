@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &693088042146815444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 693088042146815442}
+  - component: {fileID: 693088042146815443}
+  m_Layer: 0
+  m_Name: AIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &693088042146815442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.65183765, y: 6.1717434, z: -0.041128635}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &693088042146815443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6699a0e84454ba294b9d6c15221a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  tm: {fileID: 0}
+  rm: {fileID: 0}
+  centreGuard: {x: -0.051, y: -26.775}
+  tightCentreGuard: {x: -0.052, y: -26.875}
+  highCentreGuard: {x: -0.051, y: -26.675}
+  leftHighCornerGuard: {x: 0.01, y: -26.775}
+  leftTightCornerGuard: {x: 0.015, y: -26.875}
+  leftCornerGuard: {x: 0.017, y: -26.775}
+  rightHighCornerGuard: {x: -0.1, y: -26.675}
+  rightTightCornerGuard: {x: -0.105, y: -26.875}
+  rightCornerGuard: {x: -0.11, y: -26.775}
+  topTwelveFoot: {x: -0.055, y: -27.14}
+  backTwelveFoot: {x: -0.055, y: -27.32}
+  leftTwelveFoot: {x: 0.038, y: -27.227}
+  rightTwelveFoot: {x: -0.148, y: -27.227}
+  backFourFoot: {x: -0.055, y: -27.26}
+  topFourFoot: {x: -0.055, y: -27.2}
+  leftFourFoot: {x: -0.025, y: -27.227}
+  rightFourFoot: {x: -0.085, y: -27.227}
+  button: {x: -0.056, y: -27.227}
+  takeOut: {x: 0, y: -27.8}
+  raise: {x: 0, y: -27.1}
+  testing: High Centre Guard
+  guardAccu: {x: 0, y: 0}
+  drawAccu: {x: 0, y: 0}
+  toAccu: {x: 0, y: 0}
