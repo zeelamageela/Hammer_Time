@@ -227,8 +227,8 @@ public class RockBar : MonoBehaviour
         {
             rockCurrent = gm.rockCurrent;
             rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
-            Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
-            Debug.Log("RedTurn is " + redTurn);
+            //Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
+            //Debug.Log("RedTurn is " + redTurn);
 
             if (redTurn)
             {

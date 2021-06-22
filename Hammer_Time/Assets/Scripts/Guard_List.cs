@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class FreeGuard_List : IComparable<FreeGuard_List>
+public class Guard_List : IComparable<Guard_List>
 {
     public int rockIndex;
     public bool freeGuard;
     public Transform lastTransform;
 
-    public FreeGuard_List(int newRockIndex, bool newFreeGuard, Transform newLastTransform)
+    public Guard_List(int newRockIndex, bool newFreeGuard, Transform newLastTransform)
     {
         rockIndex = newRockIndex;
         freeGuard = newFreeGuard;
         lastTransform = newLastTransform;
     }
 
-    public int CompareTo(FreeGuard_List other)
+    public int CompareTo(Guard_List other)
     {
         if(other == null)
         {

@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
     public ShootingKnob knob;
     public List<Rock_List> rockList;
     public List<House_List> houseList;
-    public List<FreeGuard_List> fgList;
+    public List<Guard_List> gList;
 
     public Transform[] fgPosList;
     void Start()
@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
 
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
-        fgList = new List<FreeGuard_List>();
+        gList = new List<Guard_List>();
 
         //yield return new WaitForSeconds(2f);
         yield return new WaitForEndOfFrame();
@@ -227,6 +227,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ResetGame()
     {
+        gList.Clear();
         houseList.Clear();
 
         if (rockList.Count != 0)
@@ -250,12 +251,12 @@ public class GameManager : MonoBehaviour
 
         if (redHammer)
         {
-            StartCoroutine(SetupRocks());
+            yield return StartCoroutine(SetupRocks());
             OnYellowTurn();
         }
         else
         {
-            StartCoroutine(SetupRocks());
+            yield return StartCoroutine(SetupRocks());
             OnRedTurn();
         }
     }
@@ -263,6 +264,7 @@ public class GameManager : MonoBehaviour
     public void OnRedTurn()
     {
         state = GameState.REDTURN;
+        //Debug.Log("Red Turn");
 
         cm.ShotSetup();
 
@@ -271,18 +273,6 @@ public class GameManager : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
 
-        if (rockCurrent < 6)
-        {
-            foreach (Rock_List rock in rockList)
-            {
-                if (rockList.IndexOf(rock) < 6)
-                {
-                    fgList.Add(new FreeGuard_List(rockList.IndexOf(rock), rock.rockInfo.freeGuard, rock.rock.transform));
-                }
-            }
-        }
-
-        Debug.Log("Red Turn");
         shooterGO = Instantiate(shooterAnimRed);
         sm.SetupSweepers();
 
@@ -339,9 +329,11 @@ public class GameManager : MonoBehaviour
         {
             if (redRock.inPlay && !redRock.inHouse)
             {
-                if (redRock_1.transform.position.y >= 1.5f)
+                if (redRock_1.transform.position.y <= 6.5f)
                 {
                     redRock.freeGuard = true;
+
+                    gList.Add(new Guard_List(rockCurrent, redRock.freeGuard, redRock_1.transform));
                 }
             }
 
@@ -354,39 +346,21 @@ public class GameManager : MonoBehaviour
             Debug.Log("Out Of Play is " + redRock.outOfPlay);
             Debug.Log("Rock Current is " + rockCurrent);
             rockBar.DeadRock(rockCurrent);
-
         }
-
-        //foreach (Rock_List rock in rockList)
-        //{
-        //    bool outOfPlay;
-        //    int rockIndex;
-        //    rockIndex = rockList.IndexOf(rock);
-        //    outOfPlay = rock.rockInfo.outOfPlay;
-        //    rockBar.ShotUpdate(rockIndex, outOfPlay);
-        //}
 
         StartCoroutine(CheckScore());
     }
 
     public void OnYellowTurn()
     {
-        state = GameState.REDTURN;
+        state = GameState.YELLOWTURN;
+        Debug.Log("Yellow Turn");
+
+        cm.ShotSetup();
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
-        }
-
-        if (rockCurrent < 6)
-        {
-            foreach (Rock_List rock in rockList)
-            {
-                if (rockList.IndexOf(rock) < 6)
-                {
-                    fgList.Add(new FreeGuard_List(rockList.IndexOf(rock), rock.rockInfo.freeGuard, rock.rock.transform));
-                }
-            }
         }
 
         shooterGO = Instantiate(shooterAnimYellow);
@@ -400,8 +374,6 @@ public class GameManager : MonoBehaviour
         launchCollider.enabled = false;
 
         sm.SetupSweepers();
-
-        Debug.Log("Yellow Turn");
 
 
         //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
@@ -420,22 +392,7 @@ public class GameManager : MonoBehaviour
     {
         yellowRocks_left--;
 
-        cm.ShotSetup();
-
-
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
-        //if (tutorial && !tm.rocksPlaced)
-        //{
-        //    yellowRock_1.GetComponent<Rock_Release>().enabled = false;
-        //    yellowRock_1.GetComponent<Rock_Force>().enabled = false;
-        //    yellowRock_1.GetComponent<Rock_Colliders>().enabled = false;
-        //}
-        //else
-        //{
-        //    yellowRock_1.GetComponent<Rock_Release>().enabled = true;
-        //    yellowRock_1.GetComponent<Rock_Force>().enabled = true;
-        //    yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
-        //}
 
         rm.inturn = false;
         //Debug.Log("rmInturn is " + rm.inturn);
@@ -451,21 +408,18 @@ public class GameManager : MonoBehaviour
             gHUD.mainDisplay.text = yellowRock.teamName + " Turn";
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
-
         }
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
         cm.RockFollow(yellowRock_1.transform);
-        //am.Play("RockScrape")
+        am.Play("RockScrape");
         boardCollider.enabled = true;
         rockBar.ActiveRock(false);
 
         yield return new WaitUntil(() => yellowRock.released == true);
 
         sm.Release(yellowRock_1, aiTeamYellow);
-        //sweeper.AttachToRock(yellowRock_1);
-        //rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => yellowRock.rest == true);
         am.Stop("RockScrape");
@@ -476,15 +430,30 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        if (rockCurrent < 6)
+        if (!yellowRock.outOfPlay)
         {
             if (yellowRock.inPlay && !yellowRock.inHouse)
             {
-                if (yellowRock_1.transform.position.y >= 1.5f)
+                if (yellowRock_1.transform.position.y <= 6.5f)
                 {
-                    yellowRock.freeGuard = true;
+                    if (rockCurrent < 6)
+                    {
+                        yellowRock.freeGuard = true;
+                    }
+
+                    gList.Add(new Guard_List(rockCurrent, yellowRock.freeGuard, yellowRock_1.transform));
                 }
             }
+
+            Debug.Log("Out Of Play is " + yellowRock.outOfPlay);
+            Debug.Log("Rock Current is " + rockCurrent);
+            rockBar.IdleRock(rockCurrent);
+        }
+        else
+        {
+            Debug.Log("Out Of Play is " + yellowRock.outOfPlay);
+            Debug.Log("Rock Current is " + rockCurrent);
+            rockBar.DeadRock(rockCurrent);
         }
 
         StartCoroutine(CheckScore());
@@ -539,19 +508,19 @@ public class GameManager : MonoBehaviour
         // if the we have shot all the rocks, go to the final scoring
         if (rockList.Count == rockCurrent + 1)
         {
-            Debug.Log("Rock List " + rockList.Count + " equals " + "Current Rock " + (rockCurrent + 1));
+            //Debug.Log("Rock List " + rockList.Count + " equals " + "Current Rock " + (rockCurrent + 1));
             StartCoroutine(Scoring());
         }
         // or else we will just check the score
         else
         {
-            if (houseList.Count != 0)
-            {
-                foreach (House_List rock in houseList)
-                {
-                    Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
-                }
-            }
+            //if (houseList.Count != 0)
+            //{
+            //    foreach (House_List rock in houseList)
+            //    {
+            //        Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            //    }
+            //}
 
             yield return new WaitForFixedUpdate();
 
@@ -597,7 +566,7 @@ public class GameManager : MonoBehaviour
             gHUD.MainDisplayOff();
             gHUD.ScoreboardOff();
 
-            Debug.Log("Current Rock is " + rockCurrent);
+            //Debug.Log("Current Rock is " + rockCurrent);
             NextTurn();
         }
     }

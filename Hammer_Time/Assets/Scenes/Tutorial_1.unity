@@ -2072,6 +2072,14 @@ PrefabInstance:
       propertyPath: tm
       value: 
       objectReference: {fileID: 819206748}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: guardAccu.x
+      value: 0.005
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightTightCornerGuard.y
+      value: -26.95
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
 --- !u!1 &261837089

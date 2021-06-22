@@ -27,7 +27,7 @@ public class TurnAnim : MonoBehaviour
     private void OnEnable()
     {
         SetTurn(rm.inturn);
-        Debug.Log("rm.inturn");
+        //Debug.Log("rm.inturn");
     }
 
     void Update()
