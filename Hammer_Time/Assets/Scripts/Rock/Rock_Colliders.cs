@@ -48,6 +48,11 @@ public class Rock_Colliders : MonoBehaviour
         {
             StartCoroutine(OutOfPlay());
         }
+
+        //if (gameObject.transform.position.y >= -3f)
+        //{
+        //    Debug.Log("-3 velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
+        //}
     }
 
     IEnumerator OutOfPlay()
@@ -75,12 +80,14 @@ public class Rock_Colliders : MonoBehaviour
             Debug.Log("Shot is taken");
             shotTaken = true;
             launchCollider.enabled = false;
-            Debug.Log(GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
+            Debug.Log("Hogline velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         }
         if (collider == InPlay_Collider)
         {
             Debug.Log("rock is in play");
             inPlay = true;
+
+            Debug.Log("Far Hogline velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         }
 
         if (collider == boards_collider)
@@ -94,6 +101,7 @@ public class Rock_Colliders : MonoBehaviour
         {
             inHouse = true;
             Debug.Log("In House");
+            Debug.Log("House velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         }
     }
 

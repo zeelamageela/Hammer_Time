@@ -49,6 +49,11 @@ public class AIManager : MonoBehaviour
     public bool lCornGuard = false;
     public bool rCornGuard = false;
 
+    public float takeOutOffset;
+    public float peelOffset;
+    public float raiseOffset;
+    public float tickOffset;
+
     bool inturn;
     float targetX;
     float takeOutX;
@@ -78,7 +83,8 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            StartCoroutine(Shot(testing));
+            //StartCoroutine(Shot(testing));
+            StartCoroutine(TakeOutTarget(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
     }
@@ -100,51 +106,52 @@ public class AIManager : MonoBehaviour
 
     IEnumerator GuardReading(int rockCurrent)
     {
-        cenGuard = false;
-        lCornGuard = false;
-        rCornGuard = false;
-
         if (gm.gList.Count != 0)
         {
             for (int i = 0; i <= gm.gList.Count; i++)
             {
                 float posX;
-                float posY;
 
                 posX = gm.gList[i].lastTransform.position.x;
-                posY = gm.gList[i].lastTransform.position.y;
 
                 if (Mathf.Abs(posX) >= 0.35f)
                 {
                     cenGuard = true;
                 }
-                else if (posX < 0)
+                else if (posX < -0.4f)
                 {
-                    if (posX < -0.4f)
+                    if (posX > -1.25f)
                     {
-                        if (posX > -1.25f)
-                        {
-                            lCornGuard = true;
-                        }
+                        lCornGuard = true;
                     }
                 }
-                else if (posX > 0)
+                else if (posX > 0.4f)
                 {
-                    if (posX > 0.4f)
+                    if (posX < 1.25f)
                     {
-                        if (posX < 1.25f)
-                        {
-                            rCornGuard = true;
-                        }
+                        rCornGuard = true;
                     }
                 }
+
+                Debug.Log("posX is " + gm.gList[i].lastTransform.position.x);
             }
         }
+        else
+        {
+            cenGuard = false;
+            lCornGuard = false;
+            rCornGuard = false;
+        }
+
         yield return new WaitForEndOfFrame();
     }
 
     IEnumerator TakeOutTarget(int rockCurrent)
     {
+
+        targetX = 0f;
+        takeOutX = 0f;
+
         if (gm.houseList.Count != 0)
         {//if an enemy rock is the closest rock
             if (closestRockInfo.teamName != rockInfo.teamName)
@@ -199,15 +206,16 @@ public class AIManager : MonoBehaviour
                             yield break;
                         }
                     }
+                    else yield break;
                     
                 }
             }
             //if the closest rock is the same team
             else if (closestRockInfo.teamName == rockInfo.teamName)
             {
-                for (int i = 1; i <= gm.houseList.Count; i++)
+                if (gm.houseList.Count >= 2f)
                 {
-                    if (gm.houseList[i].rockInfo.teamName != closestRockInfo.teamName)
+                    for (int i = 1; i <= gm.houseList.Count; i++)
                     {
                         if (Vector2.Distance(gm.houseList[i].rock.transform.position, closestRock.transform.position) >= 0.2f)
                         {
@@ -224,18 +232,30 @@ public class AIManager : MonoBehaviour
                         }
                     }
                 }
+                
                 for (int i = 0; i < rockCurrent; i++)
                 {
                     //if a rock is in play
                     if (gm.rockList[i].rockInfo.inPlay)
                     {
-                        if (gm.rockList[i].rockInfo.inPlay)
+                        //if the rock is not in line with the closest rock
+                        if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) >= 0.15f)
                         {
-                            //if the rock is not in line with the closest rock
-                            if (gm.rockList[i].rock.transform.position.x - Mathf.Abs(closestRock.transform.position.x) >= 0.15f)
+                            //if the rock is in the guard zone
+                            if (gm.rockList[i].rock.transform.position.y <= 4.9f)
                             {
-                                //if the rock is in the guard zone
-                                if (gm.rockList[i].rock.transform.position.y <= 4.9f)
+                                //then we will take it out
+                                targetX = gm.rockList[i].rock.transform.position.x;
+                                takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                                StartCoroutine(Shot("Take Out"));
+                                Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
+                                yield break;
+                            }
+                            //or if the rock is in front of our closest rock
+                            else if (gm.rockList[i].rock.transform.position.y >= closestRock.transform.position.y)
+                            {
+                                //it's not in line with our closest rock
+                                if (Vector2.Distance(gm.rockList[i].rock.transform.position, closestRock.transform.position) >= 0.25f)
                                 {
                                     //then we will take it out
                                     targetX = gm.rockList[i].rock.transform.position.x;
@@ -244,23 +264,8 @@ public class AIManager : MonoBehaviour
                                     Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
                                     yield break;
                                 }
-                                //or if the rock is in front of our closest rock
-                                else if (gm.rockList[i].rock.transform.position.y >= closestRock.transform.position.y)
-                                {
-                                    //it's not in line with our closest rock
-                                    if (Vector2.Distance(gm.rockList[i].rock.transform.position, closestRock.transform.position) >= 0.25f)
-                                    {
-                                        //then we will take it out
-                                        targetX = gm.rockList[i].rock.transform.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(gm.rockList[i].rockInfo.teamName + " " + gm.rockList[i].rockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                }
                             }
                         }
-                        
                     }
                 }
             }
@@ -403,76 +408,82 @@ public class AIManager : MonoBehaviour
 
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        if (cenGuard && !lCornGuard && !rCornGuard)
+        if (gm.gList.Count != 0)
         {
-            for (int i = 0; i <= gm.gList.Count; i++)
+            if (cenGuard && !lCornGuard && !rCornGuard)
             {
-                float posX = gm.gList[i].lastTransform.position.x;
-                float posY = gm.gList[i].lastTransform.position.y;
+                for (int i = 0; i <= gm.gList.Count; i++)
+                {
+                    float posX = gm.gList[i].lastTransform.position.x;
 
-                if (posX > 0f)
-                {
-                    rm.inturn = true;
-                    StartCoroutine(Shot("Top Twelve Foot"));
+                    if (posX > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                    }
+                    else if (posX < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                    }
                 }
-                else if (posX > 0f)
-                {
-                    rm.inturn = false;
-                    StartCoroutine(Shot("Top Twelve Foot"));
-                }
+                yield break;
             }
-            yield break;
-        }
-        else if (cenGuard && rCornGuard && lCornGuard)
-        {
-            StartCoroutine(TakeOutTarget(rockCurrent));
-            yield break;
-        }
-        else if (cenGuard && lCornGuard && !rCornGuard)
-        {
-            for (int i = 0; i <= gm.gList.Count; i++)
+            else if (cenGuard && rCornGuard && lCornGuard)
             {
-                float posX = gm.gList[i].lastTransform.position.x;
-                float posY = gm.gList[i].lastTransform.position.y;
-
-                if (posX > 0f)
-                {
-                    rm.inturn = true;
-                    StartCoroutine(Shot("Right Twelve Foot"));
-                }
-                else if (posX > 0f)
-                {
-                    rm.inturn = false;
-                    StartCoroutine(Shot("Right Twelve Foot"));
-                }
+                StartCoroutine(TakeOutTarget(rockCurrent));
+                yield break;
             }
-            yield break;
-        }
-        else if (cenGuard && rCornGuard && !lCornGuard)
-        {
-            for (int i = 0; i <= gm.gList.Count; i++)
+            else if (cenGuard && lCornGuard && !rCornGuard)
             {
-                float posX = gm.gList[i].lastTransform.position.x;
-                float posY = gm.gList[i].lastTransform.position.y;
+                for (int i = 0; i <= gm.gList.Count; i++)
+                {
+                    float posX = gm.gList[i].lastTransform.position.x;
 
-                if (posX > 0f)
-                {
-                    rm.inturn = true;
-                    StartCoroutine(Shot("Left Twelve Foot"));
+                    if (posX > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Right Twelve Foot"));
+                    }
+                    else if (posX < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Right Twelve Foot"));
+                    }
                 }
-                else if (posX > 0f)
-                {
-                    rm.inturn = false;
-                    StartCoroutine(Shot("Left Twelve Foot"));
-                }
+                yield break;
             }
-            yield break;
+            else if (cenGuard && rCornGuard && !lCornGuard)
+            {
+                for (int i = 0; i <= gm.gList.Count; i++)
+                {
+                    float posX = gm.gList[i].lastTransform.position.x;
+
+                    if (posX > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Left Twelve Foot"));
+                    }
+                    else if (posX < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Left Twelve Foot"));
+                    }
+                }
+                yield break;
+            }
+            else if (rCornGuard && lCornGuard && !cenGuard)
+            {
+                StartCoroutine(Shot("Top Four Foot"));
+                yield break;
+            }
         }
-        else if (rCornGuard && lCornGuard && !cenGuard)
+        else
         {
-            StartCoroutine(Shot("Top Four Foot"));
+            StartCoroutine(Shot("Top Twelve Foot"));
             yield break;
         }
+        
 
     }
 
@@ -483,19 +494,20 @@ public class AIManager : MonoBehaviour
         //if there are guards
         if (gm.gList.Count != 0)
         {
+            //if there's only a centre guard
             if (cenGuard && !lCornGuard && !rCornGuard)
             {
                 for (int i = 0; i <= gm.gList.Count; i++)
                 {
                     float posX = gm.gList[i].lastTransform.position.x;
-                    float posY = gm.gList[i].lastTransform.position.y;
 
+                    //if the guard is to the left
                     if (posX > 0f)
                     {
                         rm.inturn = true;
                         StartCoroutine(Shot("Button"));
                     }
-                    else if (posX > 0f)
+                    else if (posX < 0f)
                     {
                         rm.inturn = false;
                         StartCoroutine(Shot("Button"));
@@ -513,7 +525,6 @@ public class AIManager : MonoBehaviour
                 for (int i = 0; i <= gm.gList.Count; i++)
                 {
                     float posX = gm.gList[i].lastTransform.position.x;
-                    float posY = gm.gList[i].lastTransform.position.y;
 
                     if (posX > 0f)
                     {
@@ -533,7 +544,6 @@ public class AIManager : MonoBehaviour
                 for (int i = 0; i <= gm.gList.Count; i++)
                 {
                     float posX = gm.gList[i].lastTransform.position.x;
-                    float posY = gm.gList[i].lastTransform.position.y;
 
                     if (posX > 0f)
                     {
@@ -581,7 +591,7 @@ public class AIManager : MonoBehaviour
                 }
                 else
                 {
-                    StartCoroutine(DrawFourFoot(rockCurrent));
+                    StartCoroutine(DrawTwelveFoot(rockCurrent));
                 }
                 break;
 
@@ -603,54 +613,72 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 2:
-                //if no one is in the house
-                if (gm.houseList.Count == 0)
-                {
-                    StartCoroutine(DrawFourFoot(rockCurrent));
-                    break;
-                }
-                //if someone is in the house
-                else
-                {
-                    //and it's my team
-                    if (closestRockInfo.teamName == rockInfo.teamName)
-                    {
-                        //Draw to the four foot
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                        break;
-                    }
-                    //and it's the other team
-                    else if (closestRockInfo.teamName != rockInfo.teamName)
-                    {
-                        //and the enemy closest rock is in the centre
-                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
-                        {
-                            StartCoroutine(DrawFourFoot(rockCurrent));
-                            break;
-                        }
-                        else
-                        {
-                            DrawTwelveFoot(rockCurrent);
-                            break;
-                        }
-                    }
-                }
-                break;
-            case 3:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Right Tight Corner Guard"));
+                    StartCoroutine(Shot("Tight Centre Guard"));
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     StartCoroutine(TakeOutTarget(rockCurrent));
                 }
                 else StartCoroutine(DrawFourFoot(rockCurrent));
+                break;
+
+            case 3:
+                //if no one is in the house
+                if (gm.houseList.Count == 0)
+                {
+                    //check out the guards
+                    GuardReading(rockCurrent);
+
+                    if (cenGuard && lCornGuard)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (cenGuard && rCornGuard)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (cenGuard)
+                    {
+                        StartCoroutine(TickShot(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                    else if (closestRock.transform.position.x < 0f)
+                    {
+                        StartCoroutine(Shot("Left Tight Corner Guard"));
+                    }
+                    else if (closestRock.transform.position.x > 0f)
+                    {
+                        StartCoroutine(Shot("Right Tight Corner Guard"));
+                    }
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                }
                 break;
 
             case 4:
@@ -674,85 +702,281 @@ public class AIManager : MonoBehaviour
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Left Tight Corner Guard"));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                        {
+                            if (Random.value > 0.5f)
+                            {
+                                StartCoroutine(DrawTwelveFoot(rockCurrent));
+                            }
+                            else
+                            {
+                                StartCoroutine(DrawFourFoot(rockCurrent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 6:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Tight Centre Guard"));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                        {
+                            if (Random.value > 0.5f)
+                            {
+                                StartCoroutine(DrawTwelveFoot(rockCurrent));
+                            }
+                            else
+                            {
+                                StartCoroutine(DrawFourFoot(rockCurrent));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 7:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        if (Random.value > 0.5f)
+                        {
+                            StartCoroutine(Shot("Left Tight Corner Guard"));
+                        }
+                        else
+                        {
+                            StartCoroutine(Shot("Right Tight Corner Guard"));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 8:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(Shot("Centre Guard"));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
+                break;
+
+            case 9:
+
+                if (gm.houseList.Count == 0)
+                {
+                    StartCoroutine(DrawFourFoot(rockCurrent));
+                }
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(Shot("Centre Guard"));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
+                }
                 break;
 
             case 10:
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else if (gm.houseList.Count >= 2)
+                    {
+                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 11:
@@ -904,6 +1128,14 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Left Corner Guard":
+                if (rm.inturn)
+                {
+                    shotX = -1f * Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
+                }
+                else
+                {
+                    shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
+                }
                 shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
@@ -1018,16 +1250,23 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Button":
+                //if (rm.inturn)
+                //{
+                //    shotX = -1f * Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
+                //}
+                //else
+                //{
+                //    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
+                //}
                 if (rm.inturn)
                 {
-                    shotX = -1f * Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
+                    shotX = -1f * (button.x);
                 }
                 else
                 {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
+                    shotX = (button.x);
                 }
-                 shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-                yield return new WaitForFixedUpdate();
+                shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -1098,7 +1337,7 @@ public class AIManager : MonoBehaviour
 
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) - 0.005f;
+                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + peelOffset;
                     shotY = Random.Range(peel.y + toAccu.y, peel.y - toAccu.y);
                 }
                 else
@@ -1118,7 +1357,7 @@ public class AIManager : MonoBehaviour
 
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) - 0.01f;
+                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + takeOutOffset;
                     shotY = Random.Range(takeOut.y + toAccu.y, takeOut.y - toAccu.y);
                 }
                 else
@@ -1138,7 +1377,7 @@ public class AIManager : MonoBehaviour
 
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) - 0.02f;
+                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + tickOffset;
                     shotY = Random.Range(backFourFoot.y + toAccu.y, backFourFoot.y - toAccu.y);
                 }
                 else
@@ -1158,7 +1397,7 @@ public class AIManager : MonoBehaviour
 
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) - 0.02f;
+                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + raiseOffset;
                     shotY = Random.Range(raise.y + toAccu.y, raise.y - toAccu.y);
                 }
                 else

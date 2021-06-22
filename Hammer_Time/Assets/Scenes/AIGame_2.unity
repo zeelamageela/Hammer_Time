@@ -16773,7 +16773,107 @@ PrefabInstance:
       objectReference: {fileID: 819206748}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: peel.y
-      value: -28.2
+      value: -27.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testing
+      value: Right High Corner Guard
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: button.y
+      value: -27.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: takeOut.y
+      value: -27.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: drawAccu.x
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: drawAccu.y
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: guardAccu.x
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: guardAccu.y
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: centreGuard.y
+      value: -26.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: takeOutOffset
+      value: 0.025
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: topFourFoot.y
+      value: -27.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: backFourFoot.y
+      value: -27.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftFourFoot.y
+      value: -27.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightFourFoot.y
+      value: -27.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: topTwelveFoot.y
+      value: -27
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: backTwelveFoot.y
+      value: -27.167
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftTwelveFoot.y
+      value: -27.083
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: highCentreGuard.y
+      value: -26.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftCornerGuard.y
+      value: -26.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightTwelveFoot.y
+      value: -27.083
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightCornerGuard.y
+      value: -26.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: tightCentreGuard.y
+      value: -26.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftHighCornerGuard.y
+      value: -26.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftTightCornerGuard.y
+      value: -26.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightHighCornerGuard.y
+      value: -26.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightTightCornerGuard.y
+      value: -26.95
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name
