@@ -19,6 +19,8 @@ public class Rock_Colliders : MonoBehaviour
 
     AudioManager am;
     SweeperManager sm;
+    GameManager gm;
+
 // Start is called before the first frame update
     void Awake()
     {
@@ -39,6 +41,7 @@ public class Rock_Colliders : MonoBehaviour
 
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         sm = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
+        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -116,6 +119,53 @@ public class Rock_Colliders : MonoBehaviour
             hit = true;
             Debug.Log("Hit!");
             am.Play("Hit");
+
+            if (gm.redHammer)
+            {
+                //if the rock is red
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+                {
+                    //if the ai team is not red
+                    if (!gm.aiTeamRed)
+                    {
+                        sm.SweepWhoa(false);
+                    }
+                    else sm.SweepWhoa(true);
+                }
+                //if the rock is yellow
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+                {
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamYellow)
+                    {
+                        sm.SweepWhoa(false);
+                    }
+                    else sm.SweepWhoa(true);
+                }
+            }
+            else if (!gm.redHammer)
+            {
+                //if the rock is yellow
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+                {
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamRed)
+                    {
+                        sm.SweepWhoa(false);
+                    }
+                    else sm.SweepWhoa(true);
+                }
+                //if the rock is red
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+                {
+                    //if the ai team is not red
+                    if (!gm.aiTeamYellow)
+                    {
+                        sm.SweepWhoa(false);
+                    }
+                    else sm.SweepWhoa(true);
+                }
+            }
         }
 
         if (collision.gameObject.CompareTag("Boards"))

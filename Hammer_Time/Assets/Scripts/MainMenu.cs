@@ -31,7 +31,7 @@ public class MainMenu : MonoBehaviour
     public void AIGame()
     {
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene("AIGame_2");
+        SceneManager.LoadScene("AIGame_1");
         am.Play("Theme");
     }
 }

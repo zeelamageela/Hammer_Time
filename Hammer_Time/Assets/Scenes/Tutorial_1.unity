@@ -1502,7 +1502,6 @@ MonoBehaviour:
   vcam_go: {fileID: 1171837316}
   vcam: {fileID: 1171837317}
   knob: {fileID: 571456437}
-  fgPosList: []
 --- !u!4 &197219301
 Transform:
   m_ObjectHideFlags: 0
@@ -3038,7 +3037,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Use the small sheet of ice on the left to aim your shot.
+  m_Text: Use the small sheet of ice on the left to aim your shot
 --- !u!1 &438049447
 GameObject:
   m_ObjectHideFlags: 0
@@ -10872,7 +10871,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Try to centre the target on the guide circle to take out the yellow stones
+  m_Text: Try to hit one or both of the yellow stones
 --- !u!222 &1209146071
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12867,7 +12866,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sweeping makes your shot go straighter and further down the sheet.
+  m_Text: Sweeping makes your shot go straighter and further down the sheet
 --- !u!1 &1577133514
 GameObject:
   m_ObjectHideFlags: 0
@@ -13268,7 +13267,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Click the rock and pull back.
+  m_Text: Click the rock and pull back
 --- !u!1 &1628085957
 GameObject:
   m_ObjectHideFlags: 0
@@ -13920,7 +13919,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Let go to release the rock.
+  m_Text: Let go to release the rock
 --- !u!222 &1685398387
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16354,7 +16353,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Now let's brign the rock back to the middle by sweeping with the curl
+  m_Text: Now let's bring the rock back to the middle by sweeping with the curl
 --- !u!1 &1994488550 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1677671175170670042, guid: 533885a650cafc848b7e8add0d5382b2, type: 3}

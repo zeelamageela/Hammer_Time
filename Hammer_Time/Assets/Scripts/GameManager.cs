@@ -75,7 +75,6 @@ public class GameManager : MonoBehaviour
     public List<House_List> houseList;
     public List<Guard_List> gList;
 
-    public Transform[] fgPosList;
     void Start()
     {
         state = GameState.START;
@@ -382,8 +381,6 @@ public class GameManager : MonoBehaviour
         //vcam.LookAt = tFollowTarget;
         //vcam.Follow = tFollowTarget;
         //vcam.enabled = true;
-
-        
 
         StartCoroutine(YellowTurn());
     }
