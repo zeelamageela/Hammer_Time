@@ -64,9 +64,21 @@ MonoBehaviour:
   leftFourFoot: {x: -0.025, y: -27.227}
   rightFourFoot: {x: -0.085, y: -27.227}
   button: {x: -0.056, y: -27.227}
-  takeOut: {x: 0, y: -27.8}
+  peel: {x: 0, y: -27.8}
+  takeOut: {x: 0, y: -27.35}
   raise: {x: 0, y: -27.1}
+  tick: {x: 0, y: -27}
   testing: High Centre Guard
-  guardAccu: {x: 0, y: 0}
-  drawAccu: {x: 0, y: 0}
+  guardAccu: {x: 0.005, y: 0.002}
+  drawAccu: {x: 0.0025, y: 0.002}
   toAccu: {x: 0, y: 0}
+  tickAccu: {x: 0, y: 0}
+  aggressive: 0
+  cenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  takeOutOffset: -0.025
+  peelOffset: 0
+  raiseOffset: -0.025
+  tickOffset: -0.018
+  takeOutX: 0

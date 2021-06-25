@@ -75,7 +75,7 @@ public class TrajectoryLine : MonoBehaviour
             }
             dots.Clear();
         }
-        
+
         hogLinePoint = new Vector3(hogLinePointGO.transform.position.x, -15.75f, 0f);
         curlPoint = curlPointGO.transform.position;
         targetPoint = targetPointGO.transform.position;
@@ -145,6 +145,15 @@ public class TrajectoryLine : MonoBehaviour
         lr.enabled = false;
         lr.startWidth = 0.1f;
         lr.endWidth = 0.1f;
+
+        if (dots.Count != 0)
+        {
+            foreach (GameObject dot in dots)
+            {
+                Destroy(dot);
+            }
+            dots.Clear();
+        }
     }
 
 

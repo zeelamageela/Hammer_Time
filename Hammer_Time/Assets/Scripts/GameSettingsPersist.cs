@@ -12,6 +12,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int rocks;
     public float volume;
     public bool tutorial;
+    public bool ai;
     public static GameSettingsPersist instance;
     // Start is called before the first frame update
 
@@ -42,11 +43,12 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadSettings()
     {
-            gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
-            ends = gs.ends;
-            rocks = gs.rocks;
-            volume = gs.volume;
-            redHammer = gs.redHammer;
+        gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
+        ends = gs.ends;
+        rocks = gs.rocks;
+        volume = gs.volume;
+        redHammer = gs.redHammer;
+        ai = gs.ai;
     }
 
     private void Update()

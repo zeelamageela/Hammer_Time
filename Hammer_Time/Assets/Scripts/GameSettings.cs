@@ -12,10 +12,12 @@ public class GameSettings : MonoBehaviour
     public Text endText;
     public Text rockText;
     public OptionsMenu om;
+    public Toggle aiTog;
 
     public int ends;
     public int rocks;
     public float volume;
+    public bool ai;
 
     public static GameSettingsPersist instance;
     // Start is called before the first frame update
@@ -32,6 +34,12 @@ public class GameSettings : MonoBehaviour
         ends = (int)endSlider.value;
         rocks = (int)rockSlider.value;
 
+        if (aiTog.isOn == false)
+        {
+            ai = false;
+        }
+        else ai = true;
+
         endText.text = ends.ToString();
         rockText.text = rocks.ToString();
         volume = om.volume;
@@ -42,8 +50,14 @@ public class GameSettings : MonoBehaviour
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.ends = ends;
         gsp.rocks = rocks;
+        gsp.ai = ai;
         gsp.redHammer = redHammer;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
+        if (ai)
+        {
+            SceneManager.LoadScene("AIGame_1");
+        }
+        else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void SetHammerYellow()
@@ -52,6 +66,13 @@ public class GameSettings : MonoBehaviour
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.ends = ends;
         gsp.rocks = rocks;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        gsp.ai = ai;
+        gsp.redHammer = redHammer;
+
+        if (ai)
+        {
+            SceneManager.LoadScene("AIGame_1");
+        }
+        else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

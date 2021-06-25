@@ -3501,7 +3501,7 @@ MonoBehaviour:
   ends: 10
   rocks: 8
   volume: 0.45
-  tutorial: 1
+  tutorial: 0
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0

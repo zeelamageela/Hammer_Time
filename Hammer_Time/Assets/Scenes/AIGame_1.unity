@@ -3502,6 +3502,7 @@ MonoBehaviour:
   rocks: 8
   volume: 0.45
   tutorial: 1
+  ai: 1
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -16869,46 +16870,6 @@ PrefabInstance:
       propertyPath: tm
       value: 
       objectReference: {fileID: 819206748}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: peel.y
-      value: -27.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: tick.y
-      value: -27
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: takeOut.y
-      value: -27.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: drawAccu.x
-      value: 0.0025
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: drawAccu.y
-      value: 0.002
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: tickOffset
-      value: -0.018
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: guardAccu.x
-      value: 0.005
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: guardAccu.y
-      value: 0.002
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: raiseOffset
-      value: -0.025
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: takeOutOffset
-      value: -0.025
-      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name
       value: AIManager

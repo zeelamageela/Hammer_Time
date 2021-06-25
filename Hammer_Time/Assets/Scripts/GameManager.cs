@@ -95,6 +95,7 @@ public class GameManager : MonoBehaviour
         redHammer = FindObjectOfType<GameSettingsPersist>().redHammer;
         endTotal = FindObjectOfType<GameSettingsPersist>().ends;
         rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
+        aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
@@ -402,7 +403,7 @@ public class GameManager : MonoBehaviour
         if (aiTeamYellow)
         {
             gHUD.mainDisplay.enabled = true;
-            gHUD.mainDisplay.text = yellowRock.teamName + " Turn";
+            gHUD.mainDisplay.text = "AI Turn";
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
         }
@@ -511,13 +512,13 @@ public class GameManager : MonoBehaviour
         // or else we will just check the score
         else
         {
-            //if (houseList.Count != 0)
-            //{
-            //    foreach (House_List rock in houseList)
-            //    {
-            //        Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
-            //    }
-            //}
+            if (houseList.Count != 0)
+            {
+                foreach (House_List rock in houseList)
+                {
+                    Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                }
+            }
 
             yield return new WaitForFixedUpdate();
 

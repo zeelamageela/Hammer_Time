@@ -38,6 +38,11 @@ public class GameHUD : MonoBehaviour
             Scoreboard(1, 0, 0);
             scoreCheck = false;
         }
+
+        if (!mainDisplay.enabled)
+        {
+            clickDisplay.enabled = false;
+        }
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
     {
@@ -56,7 +61,7 @@ public class GameHUD : MonoBehaviour
     }
     IEnumerator ClickDisplay()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.25f);
         clickDisplay.enabled = true;
     }
 

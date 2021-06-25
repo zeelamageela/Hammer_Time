@@ -127,34 +127,34 @@ public class AIManager : MonoBehaviour
             aggressive = true;
         }
 
-        //if (gm.houseList.Count != 0)
-        //{
-        //    closestRock = gm.houseList[0].rock;
-        //    closestRockInfo = gm.houseList[0].rockInfo;
-            
-        //    if (gm.houseList.Count > 1)
-        //    {
-        //        if (closestRockInfo.teamName == rockInfo.teamName)
-        //        {
-        //            if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
-        //            {
-        //                aggressive = false;
-        //            }
-        //            else
-        //            {
-        //                aggressive = true;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            aggressive = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        aggressive = true;
-        //    }
-        //}
+        if (gm.houseList.Count != 0)
+        {
+            closestRock = gm.houseList[0].rock;
+            closestRockInfo = gm.houseList[0].rockInfo;
+
+            //if (gm.houseList.Count > 1)
+            //{
+            //    if (closestRockInfo.teamName == rockInfo.teamName)
+            //    {
+            //        if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+            //        {
+            //            aggressive = false;
+            //        }
+            //        else
+            //        {
+            //            aggressive = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        aggressive = true;
+            //    }
+            //}
+            //else
+            //{
+            //    aggressive = true;
+            //}
+        }
 
 
         if (aggressive)
@@ -216,6 +216,7 @@ public class AIManager : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
         yield return new WaitForEndOfFrame();
+        //if the house has rocks in it
         if (gm.houseList.Count != 0)
         {
 
@@ -855,7 +856,7 @@ public class AIManager : MonoBehaviour
             {
                 float posX = cenGuard.position.x;
 
-                //if the guard is to the left
+                //if the guard is to the right
                 if (posX > 0f)
                 {
                     rm.inturn = true;
@@ -873,7 +874,7 @@ public class AIManager : MonoBehaviour
             {
                 float posX = cenGuard.position.x;
 
-                //if the guard is to the left
+                //if the guard is to the right
                 if (posX > 0f)
                 {
                     rm.inturn = true;
@@ -1196,15 +1197,36 @@ public class AIManager : MonoBehaviour
 
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(DrawFourFoot(rockCurrent));
+                    if (gm.gList.Count != 0)
+                    {
+                        StartCoroutine(TakeOutTarget(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(DrawFourFoot(rockCurrent));
+                    if (gm.gList.Count != 0)
+                    {
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    StartCoroutine(TakeOutTarget(rockCurrent));
+                    if (gm.gList.Count != 0)
+                    {
+                        StartCoroutine(TakeOutTarget(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
@@ -1235,7 +1257,7 @@ public class AIManager : MonoBehaviour
                             }
                         }
                     }
-                    else
+                    else if (gm.gList.Count != 0)
                     {
                         StartCoroutine(DrawFourFoot(rockCurrent));
                     }
@@ -1244,7 +1266,7 @@ public class AIManager : MonoBehaviour
                 {
                     if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
                     {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                        StartCoroutine(TakeOutTarget(rockCurrent));
                     }
                     else if (gm.houseList.Count >= 2)
                     {
@@ -1281,11 +1303,11 @@ public class AIManager : MonoBehaviour
                 {
                     if (gm.gList.Count != 0)
                     {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
+                        StartCoroutine(DrawTwelveFoot(rockCurrent));
                     }
                     else
                     {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                        StartCoroutine(Shot("Tight Centre Guard"));
                     }
                 }
                 else if (closestRockInfo.teamName != rockInfo.teamName)
