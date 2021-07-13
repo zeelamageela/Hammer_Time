@@ -48,7 +48,7 @@ public class RockBar : MonoBehaviour
         
         yellowTurnSelect.SetActive(false);
         redTurnSelect.SetActive(false);
-        Debug.Log("yellow rocks position is " + yellowRocks.anchoredPosition.x + ", " + yellowRocks.anchoredPosition.y);
+        //Debug.Log("yellow rocks position is " + yellowRocks.anchoredPosition.x + ", " + yellowRocks.anchoredPosition.y);
     }
 
     private void Update()

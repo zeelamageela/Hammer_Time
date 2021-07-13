@@ -25,8 +25,8 @@ public class Rock_Release : MonoBehaviour
         if (collider == hogline_collider)
         {
 
-            Debug.Log("Released");
-            Debug.Log("Hog Line");
+            //Debug.Log("Released");
+            //Debug.Log("Hog Line");
 
             released = true;
             GetComponent<Rock_Info>().released = true;

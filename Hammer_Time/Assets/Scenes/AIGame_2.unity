@@ -3497,11 +3497,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c58c93d6a20f394385e30a934717332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  redHammer: 0
+  redHammer: 1
   ends: 10
   rocks: 8
   volume: 0.45
   tutorial: 0
+  ai: 1
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0

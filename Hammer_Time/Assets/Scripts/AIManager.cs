@@ -770,182 +770,424 @@ public class AIManager : MonoBehaviour
 
         if (gm.gList.Count != 0)
         {
+            //only a centre guard
             if (cenGuard && !lCornGuard && !rCornGuard)
             {
-                float posX = cenGuard.position.x;
-
-                if (posX > 0f)
+                //centre guard to the right
+                if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = true;
                     StartCoroutine(Shot("Top Twelve Foot"));
+                    yield break;
                 }
-                else if (posX < 0f)
+                //centre guard to the left
+                else if (cenGuard.position.x < 0f)
                 {
                     rm.inturn = false;
                     StartCoroutine(Shot("Top Twelve Foot"));
+                    yield break;
                 }
-                yield break;
             }
+
+            //centre guard and a right guard and a left guard
             else if (cenGuard && rCornGuard && lCornGuard)
             {
-                StartCoroutine(TakeOutTarget(rockCurrent));
-                yield break;
+                //high centre guard
+                if (cenGuard.position.y < 2.0f)
+                {
+                    //centre guard to the right
+                    if (cenGuard.position.x > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                    //centre guard to the left
+                    else if (cenGuard.position.x < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                }
+                //centre guard is medium height
+                else if (cenGuard.position.y < 3.0f)
+                {
+                    //corner guards are high
+                    if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
+                    {
+                        //centre guard to the right
+                        if (cenGuard.position.x > 0f)
+                        {
+                            rm.inturn = true;
+                            StartCoroutine(Shot("Top Twelve Foot"));
+                            yield break;
+                        }
+                        //centre guard to the left
+                        else if (cenGuard.position.x < 0f)
+                        {
+                            rm.inturn = false;
+                            StartCoroutine(Shot("Top Twelve Foot"));
+                            yield break;
+                        }
+                    }
+                    //left corner guard is high
+                    else if (lCornGuard.position.y < 2.0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                    //right corner guard is high
+                    else if (rCornGuard.position.y < 2.0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                }
+                //low centre guard
+                else if (cenGuard.position.y < 4.8f)
+                {
+                    //both corner guards are higher
+                    if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
+                    {
+                        //centre guard to the right
+                        if (cenGuard.position.x > 0f)
+                        {
+                            rm.inturn = true;
+                            StartCoroutine(Shot("Top Twelve Foot"));
+                            yield break;
+                        }
+                        //centre guard to the left
+                        else if (cenGuard.position.x < 0f)
+                        {
+                            rm.inturn = false;
+                            StartCoroutine(Shot("Top Twelve Foot"));
+                            yield break;
+                        }
+                    }
+                    //left corner guard is higher
+                    else if (lCornGuard.position.y < cenGuard.position.y)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                    //right corner guard is higher
+                    else if (rCornGuard.position.y < cenGuard.position.y)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                }
+                //any other situation
+                else
+                {
+                    //centre guard to the right
+                    if (cenGuard.position.x > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                    //centre guard to the left
+                    else if (cenGuard.position.x < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Twelve Foot"));
+                        yield break;
+                    }
+                }
             }
+
+            //centre guard and a left guard
             else if (cenGuard && lCornGuard && !rCornGuard)
             {
-                for (int i = 0; i <= gm.gList.Count; i++)
+                if (cenGuard.position.x > 0f)
                 {
-                    float posX = gm.gList[i].lastTransform.position.x;
-
-                    if (posX > 0f)
-                    {
-                        rm.inturn = true;
-                        StartCoroutine(Shot("Right Twelve Foot"));
-                    }
-                    else if (posX < 0f)
-                    {
-                        rm.inturn = false;
-                        StartCoroutine(Shot("Right Twelve Foot"));
-                    }
+                    rm.inturn = false;
+                    StartCoroutine(Shot("Top Twelve Foot"));
+                    yield break;
                 }
-                yield break;
+                else if (cenGuard.position.x < 0f)
+                {
+                    rm.inturn = false;
+                    StartCoroutine(Shot("Left Twelve Foot"));
+                    yield break;
+                }
             }
+
+            //centre guard and a right guard
             else if (cenGuard && rCornGuard && !lCornGuard)
             {
-                for (int i = 0; i <= gm.gList.Count; i++)
+                if (cenGuard.position.x > 0f)
                 {
-                    float posX = gm.gList[i].lastTransform.position.x;
-
-                    if (posX > 0f)
-                    {
-                        rm.inturn = true;
-                        StartCoroutine(Shot("Left Twelve Foot"));
-                    }
-                    else if (posX < 0f)
-                    {
-                        rm.inturn = false;
-                        StartCoroutine(Shot("Left Twelve Foot"));
-                    }
+                    rm.inturn = true;
+                    StartCoroutine(Shot("Right Twelve Foot"));
+                    yield break;
                 }
-                yield break;
+                else if (cenGuard.position.x < 0f)
+                {
+                    rm.inturn = true;
+                    StartCoroutine(Shot("Top Twelve Foot"));
+                    yield break;
+                }
             }
+
+            //right and a left guard
             else if (rCornGuard && lCornGuard && !cenGuard)
             {
-                StartCoroutine(Shot("Top Four Foot"));
+                if (rCornGuard.position.y < lCornGuard.position.y)
+                {
+                    rm.inturn = true;
+                    StartCoroutine(Shot("Right Twelve Foot"));
+                    yield break;
+                }
+                else if (lCornGuard.position.y < rCornGuard.position.y)
+                {
+                    rm.inturn = false;
+                    StartCoroutine(Shot("Left Twelve Foot"));
+                    yield break;
+                }
+            }
+
+            //right corner guard
+            else if (rCornGuard && !lCornGuard && !cenGuard)
+            {
+                rm.inturn = true;
+                StartCoroutine(Shot("Right Twelve Foot"));
+                yield break;
+            }
+
+            //left corner guard
+            else if (lCornGuard && !rCornGuard && !cenGuard)
+            {
+                rm.inturn = false;
+                StartCoroutine(Shot("Left Twelve Foot"));
                 yield break;
             }
         }
+        //no guards
         else
         {
+            if (Random.value > 0.5f)
+            {
+                rm.inturn = true;
+            }
+            else rm.inturn = false;
+
             StartCoroutine(Shot("Top Twelve Foot"));
             yield break;
         }
         
-
     }
 
     IEnumerator DrawFourFoot(int rockCurrent)
     {
         //read where the guards are
         yield return StartCoroutine(GuardReading(rockCurrent));
+
         //if there are guards
         if (gm.gList.Count != 0)
         {
-                //if there's only a centre guard
+            //only a centre guard
             if (cenGuard && !lCornGuard && !rCornGuard)
             {
-                float posX = cenGuard.position.x;
-
-                //if the guard is to the right
-                if (posX > 0f)
+                //centre guard to the right
+                if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = true;
-                    StartCoroutine(Shot("Button"));
+                    StartCoroutine(Shot("Top Four Foot"));
+                    yield break;
                 }
-                else if (posX < 0f)
+                //centre guard to the left
+                else if (cenGuard.position.x < 0f)
                 {
                     rm.inturn = false;
-                    StartCoroutine(Shot("Button"));
+                    StartCoroutine(Shot("Top Four Foot"));
+                    yield break;
                 }
-                yield break;
             }
-            //if there's guards all across
+
+            //centre guard and a right guard and a left guard
             else if (cenGuard && rCornGuard && lCornGuard)
             {
-                float posX = cenGuard.position.x;
-
-                //if the guard is to the right
-                if (posX > 0f)
+                //high centre guard
+                if (cenGuard.position.y < 2.0f)
                 {
-                    rm.inturn = true;
-                    StartCoroutine(Shot("Button"));
+                    //centre guard to the right
+                    if (cenGuard.position.x > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                    //centre guard to the left
+                    else if (cenGuard.position.x < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
                 }
-                else if (posX < 0f)
+                //centre guard is medium height
+                else if (cenGuard.position.y < 3.0f)
                 {
-                    rm.inturn = false;
-                    StartCoroutine(Shot("Button"));
+                    //corner guards are high
+                    if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
+                    {
+                        //centre guard to the right
+                        if (cenGuard.position.x > 0f)
+                        {
+                            rm.inturn = true;
+                            StartCoroutine(Shot("Top Four Foot"));
+                            yield break;
+                        }
+                        //centre guard to the left
+                        else if (cenGuard.position.x < 0f)
+                        {
+                            rm.inturn = false;
+                            StartCoroutine(Shot("Top Four Foot"));
+                            yield break;
+                        }
+                    }
+                    //left corner guard is high
+                    else if (lCornGuard.position.y < 2.0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                    //right corner guard is high
+                    else if (rCornGuard.position.y < 2.0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
                 }
-                yield break;
+                //low centre guard
+                else if (cenGuard.position.y < 4.8f)
+                {
+                    //both corner guards are higher
+                    if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
+                    {
+                        //centre guard to the right
+                        if (cenGuard.position.x > 0f)
+                        {
+                            rm.inturn = true;
+                            StartCoroutine(Shot("Top Four Foot"));
+                            yield break;
+                        }
+                        //centre guard to the left
+                        else if (cenGuard.position.x < 0f)
+                        {
+                            rm.inturn = false;
+                            StartCoroutine(Shot("Top Four Foot"));
+                            yield break;
+                        }
+                    }
+                    //left corner guard is higher
+                    else if (lCornGuard.position.y < cenGuard.position.y)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                    //right corner guard is higher
+                    else if (rCornGuard.position.y < cenGuard.position.y)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                }
+                //any other situation
+                else
+                {
+                    //centre guard to the right
+                    if (cenGuard.position.x > 0f)
+                    {
+                        rm.inturn = true;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                    //centre guard to the left
+                    else if (cenGuard.position.x < 0f)
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
+                }
             }
-            //if there's a centre and left guard
+
+            //centre guard and a left guard
             else if (cenGuard && lCornGuard && !rCornGuard)
             {
-                float posX = cenGuard.position.x;
-
-                if (posX > 0f)
-                {
-                    rm.inturn = true;
-                    StartCoroutine(Shot("Button"));
-                }
-                else
+                if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = false;
-                    StartCoroutine(Shot("Button"));
+                    StartCoroutine(Shot("Top Four Foot"));
+                    yield break;
                 }
-                yield break;
+                else if (cenGuard.position.x < 0f)
+                {
+                    rm.inturn = false;
+                    StartCoroutine(Shot("Left Four Foot"));
+                    yield break;
+                }
             }
-            //if there's a centre and right guard
+
+            //centre guard and a right guard
             else if (cenGuard && rCornGuard && !lCornGuard)
             {
-                float posX = cenGuard.position.x;
-
-                if (posX > 0f)
+                if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = true;
-                    StartCoroutine(Shot("Button"));
+                    StartCoroutine(Shot("Right Four Foot"));
+                    yield break;
                 }
-                else
+                else if (cenGuard.position.x < 0f)
                 {
-                    rm.inturn = false;
-                    StartCoroutine(Shot("Button"));
+                    rm.inturn = true;
+                    StartCoroutine(Shot("Top Four Foot"));
+                    yield break;
                 }
-                yield break;
             }
-            //if there's a right and left guard
+
+            //right and a left guard
             else if (rCornGuard && lCornGuard && !cenGuard)
             {
-                if (Random.value > 0.5f)
+                if (rCornGuard.position.y < lCornGuard.position.y)
                 {
                     rm.inturn = true;
+                    StartCoroutine(Shot("Right Four Foot"));
+                    yield break;
                 }
-                else
+                else if (lCornGuard.position.y < rCornGuard.position.y)
                 {
                     rm.inturn = false;
+                    StartCoroutine(Shot("Left Four Foot"));
+                    yield break;
                 }
-                StartCoroutine(Shot("Top Four Foot"));
+            }
+
+            //right corner guard
+            else if (rCornGuard && !lCornGuard && !cenGuard)
+            {
+                rm.inturn = true;
+                StartCoroutine(Shot("Right Four Foot"));
                 yield break;
             }
-            else
+
+            //left corner guard
+            else if (lCornGuard && !rCornGuard && !cenGuard)
             {
-                if (Random.value > 0.5f)
-                {
-                    rm.inturn = true;
-                }
-                else
-                {
-                    rm.inturn = false;
-                }
-                StartCoroutine(Shot("Top Four Foot"));
+                rm.inturn = false;
+                StartCoroutine(Shot("Left Four Foot"));
                 yield break;
             }
         }
@@ -1075,60 +1317,72 @@ public class AIManager : MonoBehaviour
         { 
             case 0:
 
+                //randomly choose
                 if (Random.value > 0.5f)
                 {
                     StartCoroutine(DrawFourFoot(rockCurrent));
                 }
-                else
-                    StartCoroutine(Shot("Tight Centre Guard"));
+                else StartCoroutine(Shot("Tight Centre Guard"));
                 break;
 
             case 1:
 
+                //if the first rock is in the middle
                 if (Mathf.Abs(gm.rockList[0].rock.transform.position.x) <= 0.35f)
                 {
+                    //if it's a guard
                     if (gm.gList.Count != 0)
                     {
-                        if (gm.gList[0].lastTransform.position.x <= 0.35f)
-                        {
-                            StartCoroutine(TickShot(rockCurrent));
-                        }
-                        else
-                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        StartCoroutine(TickShot(rockCurrent));
                     }
-                    else
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    else StartCoroutine(DrawFourFoot(rockCurrent));
                 }
-                else
-                    StartCoroutine(DrawFourFoot(rockCurrent));
+                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 2:
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
+                    //if there are guards
                     if (gm.gList.Count != 0)
                     {
                         StartCoroutine(TakeOutTarget(rockCurrent));
                     }
+                    //if there are no guards
                     else
                     {
                         StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
+                    //if there's at least one guard
                     if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
                     {
                         StartCoroutine(DrawFourFoot(rockCurrent));
                     }
+                    else
+                    {
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        else if (closestRock.transform.position.x < 0f)
+                        {
+                            StartCoroutine(Shot("Left Corner Guard"));
+                        }
+                        else if (closestRock.transform.position.x > 0f)
+                        {
+                            StartCoroutine(Shot("Right Corner Guard"));
+                        }
+                    }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
+                    //if there's a guard
                     if (gm.gList.Count != 0)
                     {
                         StartCoroutine(TakeOutTarget(rockCurrent));

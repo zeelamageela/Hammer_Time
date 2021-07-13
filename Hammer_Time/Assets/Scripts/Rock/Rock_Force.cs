@@ -57,7 +57,7 @@ public class Rock_Force : MonoBehaviour
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
-            Debug.Log("Rotate");
+            //Debug.Log("Rotate");
             turnStart = false;
 
             //Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
