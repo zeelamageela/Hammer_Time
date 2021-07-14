@@ -13,7 +13,10 @@ public class GameSettingsPersist : MonoBehaviour
     public float volume;
     public bool tutorial;
     public bool ai;
+    public bool debug;
+
     public static GameSettingsPersist instance;
+
     // Start is called before the first frame update
 
     private void Awake()
@@ -39,11 +42,14 @@ public class GameSettingsPersist : MonoBehaviour
 
     private void Start()
     {
+
     }
 
     public void LoadSettings()
     {
         gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
+
+        debug = gs.debug;
         ends = gs.ends;
         rocks = gs.rocks;
         volume = gs.volume;

@@ -74,6 +74,39 @@ public class AIManager : MonoBehaviour
     void Update()
     {
         inturn = rm.inturn;
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+            rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
+
+            if (gm.houseList.Count != 0)
+            {
+                closestRock = gm.houseList[0].rock;
+                closestRockInfo = gm.houseList[0].rockInfo;
+            }
+
+            StartCoroutine(Shot(testing));
+            //StartCoroutine(TickShot(gm.rockCurrent));
+            //StartCoroutine(Shot("Take Out"));
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+            rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
+
+            if (gm.houseList.Count != 0)
+            {
+                closestRock = gm.houseList[0].rock;
+                closestRockInfo = gm.houseList[0].rockInfo;
+            }
+
+            //StartCoroutine(Shot(testing));
+            //StartCoroutine(TickShot(gm.rockCurrent));
+            StartCoroutine(Shot("Take Out"));
+        }
         if (Input.GetKeyDown(KeyCode.D))
         {
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
@@ -90,7 +123,7 @@ public class AIManager : MonoBehaviour
             StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
             rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
@@ -102,7 +135,23 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            StartCoroutine(Shot(testing));
+            StartCoroutine(DrawFourFoot(gm.rockCurrent));
+            //StartCoroutine(TickShot(gm.rockCurrent));
+            //StartCoroutine(Shot("Take Out"));
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+            rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
+
+            if (gm.houseList.Count != 0)
+            {
+                closestRock = gm.houseList[0].rock;
+                closestRockInfo = gm.houseList[0].rockInfo;
+            }
+
+            StartCoroutine(DrawTwelveFoot(gm.rockCurrent));
             //StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
@@ -114,18 +163,20 @@ public class AIManager : MonoBehaviour
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-        if (gm.redScore > gm.yellowScore)
-        {
-            aggressive = true;
-        }
-        else if (gm.redScore < gm.yellowScore)
-        {
-            aggressive = false;
-        }
-        else
-        {
-            aggressive = true;
-        }
+        aggressive = true;
+
+        //if (gm.redScore > gm.yellowScore)
+        //{
+        //    aggressive = true;
+        //}
+        //else if (gm.redScore < gm.yellowScore)
+        //{
+        //    aggressive = false;
+        //}
+        //else
+        //{
+        //    aggressive = true;
+        //}
 
         if (gm.houseList.Count != 0)
         {
@@ -253,7 +304,18 @@ public class AIManager : MonoBehaviour
                         {
                             //let's take it out
                             targetX = cenGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+
+                            if (targetX < 0f)
+                            {
+                                rm.inturn = false;
+                                takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            }
+                            else
+                            {
+                                rm.inturn = true;
+                                takeOutX = (0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            }
+
                             StartCoroutine(Shot("Peel"));
                             Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
                             yield break;
@@ -765,9 +827,9 @@ public class AIManager : MonoBehaviour
 
     IEnumerator DrawTwelveFoot(int rockCurrent)
     {
-
         yield return StartCoroutine(GuardReading(rockCurrent));
 
+        //if there's at least one guard
         if (gm.gList.Count != 0)
         {
             //only a centre guard
@@ -969,7 +1031,8 @@ public class AIManager : MonoBehaviour
                 yield break;
             }
         }
-        //no guards
+
+        //if there's no guards
         else
         {
             if (Random.value > 0.5f)
@@ -1191,8 +1254,16 @@ public class AIManager : MonoBehaviour
                 yield break;
             }
         }
+
+        //if there's no guards
         else
         {
+            if (Random.value > 0.5f)
+            {
+                rm.inturn = true;
+            }
+            else rm.inturn = false;
+
             if (rockCurrent < 4)
             {
                 StartCoroutine(Shot("Top Four Foot"));
@@ -1344,46 +1415,39 @@ public class AIManager : MonoBehaviour
                 //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    //if there are guards
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    //if there are no guards
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
                 //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    //if there's at least one guard
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                                StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
                     }
+                    //if it's not in the four foot
                     else
                     {
                         if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
                         {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
                             StartCoroutine(Shot("Centre Guard"));
-                        }
-                        else if (closestRock.transform.position.x < 0f)
-                        {
-                            StartCoroutine(Shot("Left Corner Guard"));
-                        }
-                        else if (closestRock.transform.position.x > 0f)
-                        {
-                            StartCoroutine(Shot("Right Corner Guard"));
-                        }
                     }
                 }
                 //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    //if there's a guard
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
                         StartCoroutine(TakeOutTarget(rockCurrent));
                     }
@@ -1392,6 +1456,7 @@ public class AIManager : MonoBehaviour
                         StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1419,6 +1484,7 @@ public class AIManager : MonoBehaviour
                         StartCoroutine(DrawTwelveFoot(rockCurrent));
                     }
                 }
+                //if I'm closest
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
                     if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
@@ -1434,6 +1500,7 @@ public class AIManager : MonoBehaviour
                         StartCoroutine(Shot("Right Tight Corner Guard"));
                     }
                 }
+                //if they're closest
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
@@ -1448,40 +1515,43 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 4:
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
-                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                                StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
                     }
+                    //if it's not in the four foot
                     else
                     {
-                        StartCoroutine(Shot("Tight Centre Guard"));
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                            StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(TakeOutTarget(rockCurrent));
                 }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1541,40 +1611,43 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 6:
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
-                        StartCoroutine(DrawTwelveFoot(rockCurrent));
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
                     }
+                    //if it's not in the four foot
                     else
                     {
-                        StartCoroutine(Shot("Tight Centre Guard"));
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                            StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(TakeOutTarget(rockCurrent));
                 }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1627,40 +1700,43 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 8:
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
                     }
+                    //if it's not in the four foot
                     else
                     {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                            StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    if (gm.gList.Count != 0)
-                    {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
-                    }
-                    else
-                    {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                    }
+                    StartCoroutine(TakeOutTarget(rockCurrent));
                 }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1706,26 +1782,43 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 10:
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
                     StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
-                }
-                else if (closestRockInfo.teamName != rockInfo.teamName)
-                {
-                    if (gm.gList.Count != 0)
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                     {
-                        StartCoroutine(TakeOutTarget(rockCurrent));
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
                     }
+                    //if it's not in the four foot
                     else
                     {
-                        StartCoroutine(DrawFourFoot(rockCurrent));
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.35f)
+                        {
+                            StartCoroutine(TakeOutTarget(rockCurrent));
+                        }
+                        else
+                            StartCoroutine(DrawFourFoot(rockCurrent));
                     }
                 }
+                //if the closest rock is not mine
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+                    StartCoroutine(TakeOutTarget(rockCurrent));
+                }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1747,21 +1840,39 @@ public class AIManager : MonoBehaviour
                 break;
 
             case 12:
-                //rm.inturn = true;
-
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Right Tight Corner Guard"));
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
+                    {
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                            StartCoroutine(Shot("Centre Guard"));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                    //if it's not in the four foot
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     StartCoroutine(TakeOutTarget(rockCurrent));
                 }
-                else StartCoroutine(Shot("Button"));
+                //default
+                else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
             case 13:
@@ -1783,18 +1894,38 @@ public class AIManager : MonoBehaviour
 
             case 14:
 
+                //if no rocks in the house
                 if (gm.houseList.Count == 0)
                 {
-                    StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    StartCoroutine(DrawFourFoot(rockCurrent));
                 }
+                //if the closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    StartCoroutine(Shot("Right Tight Corner Guard"));
+                    //if it's in the four foot
+                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
+                    {
+                        //if there's guards
+                        if (gm.gList.Count != 0)
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                        //if there's no guards
+                        else
+                            StartCoroutine(DrawTwelveFoot(rockCurrent));
+                    }
+                    //if it's not in the four foot
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
+                //if the closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     StartCoroutine(TakeOutTarget(rockCurrent));
                 }
+                //default
                 else StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
@@ -1821,7 +1952,7 @@ public class AIManager : MonoBehaviour
     IEnumerator Shot(string aiShotType)
     {
         Debug.Log("AI Shot " + aiShotType);
-
+        gm.dbText.text = aiShotType;
         rockFlick.isPressedAI = true;
 
         yield return new WaitForSeconds(0.5f);
@@ -2052,7 +2183,6 @@ public class AIManager : MonoBehaviour
                 {
                     shotX = Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
                 }
-                shotX = Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
                 shotY = Random.Range(topFourFoot.y + drawAccu.y, topFourFoot.y - drawAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();

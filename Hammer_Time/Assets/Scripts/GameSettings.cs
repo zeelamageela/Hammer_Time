@@ -13,11 +13,13 @@ public class GameSettings : MonoBehaviour
     public Text rockText;
     public OptionsMenu om;
     public Toggle aiTog;
+    public Toggle dbTog;
 
     public int ends;
     public int rocks;
     public float volume;
     public bool ai;
+    public bool debug;
 
     public static GameSettingsPersist instance;
     // Start is called before the first frame update
@@ -39,6 +41,12 @@ public class GameSettings : MonoBehaviour
             ai = false;
         }
         else ai = true;
+
+        if (dbTog.isOn == false)
+        {
+            debug = false;
+        }
+        else debug = true;
 
         endText.text = ends.ToString();
         rockText.text = rocks.ToString();

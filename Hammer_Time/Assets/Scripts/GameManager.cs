@@ -48,7 +48,8 @@ public class GameManager : MonoBehaviour
     public bool aiTeamRed;
     public bool aiTeamYellow;
 
-    public GameObject debug;
+    public bool debug;
+    public Text dbText;
     public TutorialManager tm;
     public AIManager aim;
     public TutorialHUD tHUD;
@@ -96,6 +97,7 @@ public class GameManager : MonoBehaviour
         endTotal = FindObjectOfType<GameSettingsPersist>().ends;
         rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
         aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
+        debug = FindObjectOfType<GameSettingsPersist>().debug;
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
@@ -404,6 +406,12 @@ public class GameManager : MonoBehaviour
         {
             gHUD.mainDisplay.enabled = true;
             gHUD.mainDisplay.text = "AI Turn";
+
+            if (debug)
+            {
+                dbText.enabled = true;
+            }
+
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
         }
@@ -419,9 +427,19 @@ public class GameManager : MonoBehaviour
 
         sm.Release(yellowRock_1, aiTeamYellow);
 
+        if (aiTeamYellow)
+        {
+            gHUD.mainDisplay.enabled = false;
+        }
+
         yield return new WaitUntil(() => yellowRock.rest == true);
         am.Stop("RockScrape");
-        
+
+        if (debug)
+        {
+            dbText.enabled = false;
+        }
+
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         vcam.enabled = false;
