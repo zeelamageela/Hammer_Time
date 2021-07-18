@@ -80,10 +80,10 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collider == launchCollider)
         {
-            Debug.Log("Shot is taken");
+            //Debug.Log("Shot is taken");
             shotTaken = true;
             launchCollider.enabled = false;
-            Debug.Log("Hogline velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
+            //Debug.Log("Hogline velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         }
         if (collider == InPlay_Collider)
         {

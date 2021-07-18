@@ -1542,7 +1542,7 @@ MonoBehaviour:
   gHUD: {fileID: 949738591}
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
-  aiTeamYellow: 1
+  aiTeamYellow: 0
   debug: 1
   dbText: {fileID: 1350040153}
   tm: {fileID: 819206748}
@@ -3503,7 +3503,7 @@ MonoBehaviour:
   rocks: 8
   volume: 0.45
   tutorial: 0
-  ai: 1
+  ai: 0
   debug: 0
 --- !u!4 &461766041
 Transform:
@@ -16953,8 +16953,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 819206748}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: osMult
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: peel.y
-      value: -27.65
+      value: -27.8
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: tick.y
@@ -16962,19 +16966,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: raise.y
-      value: -27.15
+      value: -27.75
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: testing
-      value: Tight Centre Guard
+      value: Right Four Foot
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: button.x
+      value: -0.051
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: button.y
-      value: -27.08
+      value: -27.012
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: takeOut.y
-      value: -27.35
+      value: -27.65
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: aggressive
@@ -16982,11 +16990,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.x
-      value: 0.001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.y
-      value: 0.002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: tickOffset
@@ -16994,11 +17002,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: guardAccu.x
-      value: 0.002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: guardAccu.y
-      value: 0.002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: raiseOffset
@@ -17006,27 +17014,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: centreGuard.y
-      value: -26.83
+      value: -26.78
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: takeOutOffset
       value: -0.025
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: topFourFoot.x
+      value: -0.051
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: topFourFoot.y
-      value: -27.02
+      value: -26.985
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: backFourFoot.x
+      value: -0.051
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: backFourFoot.y
-      value: -27.11
+      value: -27.04
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: leftFourFoot.y
-      value: -27.08
+      value: -27.012
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: rightFourFoot.y
-      value: -27.08
+      value: -27.012
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: topTwelveFoot.y
@@ -17038,7 +17054,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: leftTwelveFoot.y
-      value: -27.083
+      value: -27.012
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: highCentreGuard.y
@@ -17050,7 +17066,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: rightTwelveFoot.y
-      value: -27.083
+      value: -27.012
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: rightCornerGuard.y
@@ -17058,7 +17074,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: tightCentreGuard.y
-      value: -26.95
+      value: -26.89
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: leftHighCornerGuard.y

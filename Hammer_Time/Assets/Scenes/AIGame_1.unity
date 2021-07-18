@@ -16952,6 +16952,14 @@ PrefabInstance:
       propertyPath: tm
       value: 
       objectReference: {fileID: 819206748}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: osMult
+      value: 1.1875
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testing
+      value: Top Four Foot
+      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name
       value: AIManager

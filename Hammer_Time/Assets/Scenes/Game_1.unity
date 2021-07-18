@@ -1124,7 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8db7f2f1ce3ec44a3ee58c2cf3db2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  am: {fileID: 0}
+  am: {fileID: 5427282475961445295}
   endCurrent: 0
   endTotal: 2
   redHammer: 0
@@ -1150,9 +1150,10 @@ MonoBehaviour:
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
   aiTeamYellow: 0
-  debug: {fileID: 0}
+  debug: 0
+  dbText: {fileID: 0}
   tm: {fileID: 0}
-  aim: {fileID: 0}
+  aim: {fileID: 1068495790}
   tHUD: {fileID: 0}
   tutorial: 0
   state: 0
@@ -8821,6 +8822,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: gm
+      value: 
+      objectReference: {fileID: 197219300}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rm
+      value: 
+      objectReference: {fileID: 545177317}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: takeOutOffset
       value: -0.025
       objectReference: {fileID: 0}
@@ -8830,6 +8839,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+--- !u!114 &1068495790 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+  m_PrefabInstance: {fileID: 1068495789}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6699a0e84454ba294b9d6c15221a50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1099424819
 GameObject:
   m_ObjectHideFlags: 0
@@ -14227,6 +14247,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+--- !u!114 &5427282475961445295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5427282476303831183, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+  m_PrefabInstance: {fileID: 5427282475961445294}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3efb4baebf2094fac6ca885fc1eb04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6790483231776277677
 PrefabInstance:
   m_ObjectHideFlags: 0

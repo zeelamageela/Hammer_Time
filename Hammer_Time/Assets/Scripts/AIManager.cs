@@ -62,8 +62,14 @@ public class AIManager : MonoBehaviour
     public float takeOutX;
     float raiseY;
 
+    public float osMult;
     GameObject closestRock;
     Rock_Info closestRockInfo;
+
+    void Start()
+    {
+        ShotLength();
+    }
     // OnEnable is called when the Game Object is enabled
     void OnEnable()
     {
@@ -105,7 +111,7 @@ public class AIManager : MonoBehaviour
 
             //StartCoroutine(Shot(testing));
             //StartCoroutine(TickShot(gm.rockCurrent));
-            StartCoroutine(Shot("Take Out"));
+            StartCoroutine(TakeOutTarget(gm.rockCurrent));
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -157,6 +163,34 @@ public class AIManager : MonoBehaviour
         }
     }
 
+    public void ShotLength()
+    {
+        centreGuard.y = centreGuard.y + (osMult * 0.18f);
+        tightCentreGuard.y = tightCentreGuard.y + (osMult * 0.18f);
+        highCentreGuard.y = highCentreGuard.y + (osMult * 0.18f);
+        leftHighCornerGuard.y = leftHighCornerGuard.y + (osMult * 0.18f);
+        leftTightCornerGuard.y = leftTightCornerGuard.y + (osMult * 0.18f);
+        leftCornerGuard.y = leftCornerGuard.y + (osMult * 0.18f);
+        rightHighCornerGuard.y = rightHighCornerGuard.y + (osMult * 0.18f);
+        rightTightCornerGuard.y = rightTightCornerGuard.y + (osMult * 0.18f);
+        rightCornerGuard.y = rightCornerGuard.y + (osMult * 0.18f);
+
+        topTwelveFoot.y = topTwelveFoot.y + (osMult * 0.18f);
+        backTwelveFoot.y = backTwelveFoot.y + (osMult * 0.18f);
+        leftTwelveFoot.y = leftTwelveFoot.y + (osMult * 0.18f);
+        rightTwelveFoot.y = rightTwelveFoot.y + (osMult * 0.18f);
+
+        topFourFoot.y = topFourFoot.y + (osMult * 0.18f);
+        backFourFoot.y = backFourFoot.y + (osMult * 0.18f);
+        leftFourFoot.y = leftFourFoot.y + (osMult * 0.18f);
+        rightFourFoot.y = rightFourFoot.y + (osMult * 0.18f);
+        button.y = button.y + (osMult * 0.18f);
+
+        peel.y = peel.y + (osMult * 0.18f);
+        takeOut.y = takeOut.y + (osMult * 0.18f);
+        raise.y = raise.y + (osMult * 0.18f);
+        tick.y = tick.y + (osMult * 0.18f);
+    }
     public void OnShot(int rockCurrent)
     {
         rockInfo = gm.rockList[rockCurrent].rockInfo;
@@ -208,12 +242,12 @@ public class AIManager : MonoBehaviour
         }
 
 
-        if (aggressive)
-        {
-            Aggressive(rockCurrent);
-        }
-        else
-            Conservative(rockCurrent);
+        //if (aggressive)
+        //{
+        //    Aggressive(rockCurrent);
+        //}
+        //else
+        //    Conservative(rockCurrent);
     }
 
     IEnumerator GuardReading(int rockCurrent)
@@ -230,16 +264,19 @@ public class AIManager : MonoBehaviour
                 if (Mathf.Abs(posX) <= 0.4f)
                 {
                     cenGuard = guard.lastTransform;
+                    Debug.Log("Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
                 // left channel 
                 else if (posX < -0.4f && posX > -1.25f)
                 {
                     lCornGuard = guard.lastTransform;
+                    Debug.Log("Left Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
                 // right channel
                 else if (posX > 0.4f && posX < 1.25f)
                 {
                     rCornGuard = guard.lastTransform;
+                    Debug.Log("Right Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
 
                 else
@@ -247,9 +284,8 @@ public class AIManager : MonoBehaviour
                     cenGuard = null;
                     lCornGuard = null;
                     rCornGuard = null;
+                    Debug.Log("No Guards");
                 }
-
-                Debug.Log("posX is " + guard.lastTransform.position.x);
             }
 
         }
@@ -258,6 +294,8 @@ public class AIManager : MonoBehaviour
             cenGuard = null;
             lCornGuard = null;
             rCornGuard = null;
+
+            Debug.Log("No Guards");
         }
 
         yield return new WaitForEndOfFrame();
@@ -270,19 +308,27 @@ public class AIManager : MonoBehaviour
         //if the house has rocks in it
         if (gm.houseList.Count != 0)
         {
-
             Debug.Log("houseList is not 0");
             //if the closest rock is not my team
             if (closestRockInfo.teamName != rockInfo.teamName)
             {
                 //if it's in the four foot
-                if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.4f)
+                if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.6f)
                 {
                     //if there's no centre guard
                     if (!cenGuard)
                     {
                         targetX = closestRock.transform.position.x;
-                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        if (targetX > 0f)
+                        {
+                            rm.inturn = false;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        else
+                        {
+                            rm.inturn = true;
+                            takeOutX = (-0.1f * ((targetX + 1.65f) / -1.65f)) + 0.01f;
+                        }
                         StartCoroutine(Shot("Take Out"));
                         Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
                         yield break;
@@ -294,9 +340,18 @@ public class AIManager : MonoBehaviour
                         {
                             //let's run it back
                             targetX = cenGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            if (targetX > 0f)
+                            {
+                                rm.inturn = false;
+                                takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            }
+                            else
+                            {
+                                rm.inturn = true;
+                                takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            }
                             StartCoroutine(Shot("Take Out"));
-                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
+                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                             yield break;
                         }
                         //if the centre guard is not mine
@@ -304,8 +359,7 @@ public class AIManager : MonoBehaviour
                         {
                             //let's take it out
                             targetX = cenGuard.position.x;
-
-                            if (targetX < 0f)
+                            if (targetX > 0f)
                             {
                                 rm.inturn = false;
                                 takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
@@ -315,9 +369,8 @@ public class AIManager : MonoBehaviour
                                 rm.inturn = true;
                                 takeOutX = (0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
                             }
-
                             StartCoroutine(Shot("Peel"));
-                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
+                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                             yield break;
                         }
                     }
@@ -325,234 +378,193 @@ public class AIManager : MonoBehaviour
                 //if it's not in the four foot
                 else
                 {
-                    //if there's more than one in the house
-                    if (gm.houseList.Count > 1)
+                    //if there's a centre guard and the closest rock is in the middle
+                    if (cenGuard & Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
                     {
-                        //if second shot is not mine
-                        if (gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
+                        targetX = cenGuard.position.x; 
+                        if (targetX > 0f)
                         {
-                            //if the second shot is also close to the pin
-                            if (Vector2.Distance(gm.houseList[1].rock.transform.position, new Vector2(0f, 6.5f)) <= 0.6f)
-                            {
-                                //if there's no centre guard
-                                if (!cenGuard)
-                                {
-                                    //if the rocks are close together
-                                    if (Vector2.Distance(gm.houseList[1].rock.transform.position, closestRock.transform.position) <= 0.5f)
-                                    {
-                                        targetX = gm.houseList[1].rock.transform.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                    //if the rocks are not close together
-                                    else
-                                    {
-                                        targetX = closestRock.transform.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                }
-                                //if there's a centre guard
-                                else
-                                {
-                                    if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                                    {
-                                        targetX = cenGuard.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                    else
-                                    {
-                                        targetX = cenGuard.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Peel"));
-                                        Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                }
-                            }
-                            //
-                            else
-                            {
-                                if (gm.houseList[1].rock.transform.position.x < 0f)
-                                {
-                                    if (rCornGuard)
-                                    {
-                                        if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                                        {
-                                            targetX = rCornGuard.position.x;
-                                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                            StartCoroutine(Shot("Take Out"));
-                                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                            yield break;
-                                        }
-                                        else
-                                        {
-                                            targetX = rCornGuard.position.x;
-                                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                            StartCoroutine(Shot("Peel"));
-                                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                            yield break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        targetX = gm.houseList[1].rock.transform.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                }
-                                else
-                                {
-                                    if (lCornGuard)
-                                    {
-                                        if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                                        {
-                                            targetX = lCornGuard.position.x;
-                                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                            StartCoroutine(Shot("Take Out"));
-                                            Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                                            yield break;
-                                        }
-                                        else
-                                        {
-                                            targetX = rCornGuard.position.x;
-                                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                            StartCoroutine(Shot("Peel"));
-                                            Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                                            yield break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        targetX = gm.houseList[1].rock.transform.position.x;
-                                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                        StartCoroutine(Shot("Take Out"));
-                                        Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
-                                        yield break;
-                                    }
-                                }
-                            }
+                            rm.inturn = false;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 3.3f)) + 0.1f;
                         }
                         else
                         {
-                            if (!cenGuard)
-                            {
-                                //if the rocks are close together
-                                if (Vector2.Distance(gm.houseList[1].rock.transform.position, closestRock.transform.position) <= 0.5f)
-                                {
-                                    targetX = gm.houseList[1].rock.transform.position.x;
-                                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                    StartCoroutine(Shot("Take Out"));
-                                    Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
-                                    yield break;
-                                }
-                                //if the rocks are not close together
-                                else
-                                {
-                                    targetX = closestRock.transform.position.x;
-                                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                    StartCoroutine(Shot("Take Out"));
-                                    Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                    yield break;
-                                }
-                            }
-                            //if there's a centre guard
-                            else
-                            {
-                                //if it's my centre guard
-                                if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                                {
-                                    targetX = cenGuard.position.x;
-                                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                    StartCoroutine(Shot("Take Out"));
-                                    Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                    yield break;
-                                }
-                                //if it's not my centre guard
-                                else
-                                {
-                                    targetX = cenGuard.position.x;
-                                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                                    StartCoroutine(Shot("Peel"));
-                                    Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                                    yield break;
-                                }
-                            }
+                            rm.inturn = true;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 3.3f)) + 0.1f;
                         }
+                        yield return StartCoroutine(Shot("Raise"));
+                        Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                        yield break;
                     }
-                    //if there's only one in the house
+                    //if the closest rock is to the right and there's a right guard
+                    else if (rCornGuard & closestRock.transform.position.x > 0f)
+                    {
+                        targetX = rCornGuard.position.x;
+                        if(targetX > 0f)
+                        {
+                            rm.inturn = false;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        else
+                        {
+                            rm.inturn = true;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        yield return StartCoroutine(Shot("Peel"));
+                        Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                        yield break;
+                    }
+                    //if there's a left guard and the closest rock is to the left
+                    else if (lCornGuard & closestRock.transform.position.x < 0f)
+                    {
+                        targetX = lCornGuard.position.x;
+                        if (targetX > 0f)
+                        {
+                            rm.inturn = false;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        else
+                        {
+                            rm.inturn = true;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        yield return StartCoroutine(Shot("Peel"));
+                        Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                        yield break;
+                    }
                     else
                     {
                         Debug.Log("House List Count is " + gm.houseList.Count);
                         targetX = closestRock.transform.position.x;
-                        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        if (targetX < 0f)
+                        {
+                            rm.inturn = false;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
+                        else
+                        {
+                            rm.inturn = true;
+                            takeOutX = -(-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                        }
                         StartCoroutine(Shot("Take Out"));
-                        Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
+                        Debug.Log("Target is " + closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
                         yield break;
                     }
                 }
             }
-            else
+            //if the closest rock is my team
+            else if (closestRockInfo.teamName == rockInfo.teamName)
             {
-
-                Debug.Log("My rock is in the four foot");
-                if (gm.gList.Count != 0)
+                //if there's more than one rock in the house
+                if (gm.houseList.Count >= 2)
                 {
-                    if (!cenGuard)
+                    //if the second rock is mine
+                    if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                     {
-                        StartCoroutine(Shot("Tight Centre Guard"));
-                        Debug.Log("no Target - Guard");
+                        //if the second rock is not guarded
+                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f & !cenGuard)
+                        {
+                            yield return StartCoroutine(Shot("Centre Guard"));
+                            Debug.Log("Centre Guard");
+                            yield break;
+                        }
+                        else if (gm.houseList[1].rock.transform.position.x < 0f & !lCornGuard)
+                        {
+                            yield return StartCoroutine(Shot("Left Corner Guard"));
+                            Debug.Log("Left Corner Guard");
+                            yield break;
+                        }
+                        else if (gm.houseList[1].rock.transform.position.x > 0f & !rCornGuard)
+                        {
+                            yield return StartCoroutine(Shot("Right Corner Guard"));
+                            Debug.Log("Right Corner Guard");
+                            yield break;
+                        }
+                        else
+                        {
+                            yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
+                            Debug.Log("Drawing Four Foot");
+                            yield break;
+                        }
+                    }
+                    //if the second rock is not mine
+                    else
+                    {
+                        //if the second rock is guarded
+                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f & !cenGuard)
+                        {
+                            targetX = cenGuard.position.x;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                            yield return StartCoroutine(Shot("Peel"));
+                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                            yield break;
+                        }
+                        else if (gm.houseList[1].rock.transform.position.x < 0f & !lCornGuard)
+                        {
+                            targetX = lCornGuard.position.x;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                            yield return StartCoroutine(Shot("Peel"));
+                            Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                            yield break;
+                        }
+                        else if (gm.houseList[1].rock.transform.position.x > 0f & !rCornGuard)
+                        {
+                            targetX = rCornGuard.position.x;
+                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                            yield return StartCoroutine(Shot("Peel"));
+                            Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+                            yield break;
+                        }
+                        //if the second rock is not guarded
+                        else
+                        {
+                            targetX = gm.houseList[1].rock.transform.position.x;
+                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
+                            yield return StartCoroutine(Shot("Take Out"));
+                            Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
+                            yield break;
+                        }
+                    }
+                }
+                //if there's not more that one rock in the house
+                else
+                {
+                    //if the rock is not guarded
+                    if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f & !cenGuard)
+                    {
+                        yield return StartCoroutine(Shot("Centre Guard"));
+                        Debug.Log("Centre Guard");
+                        yield break;
+                    }
+                    else if (closestRock.transform.position.x < 0f & !lCornGuard)
+                    {
+                        yield return StartCoroutine(Shot("Left Corner Guard"));
+                        Debug.Log("Left Corner Guard");
+                        yield break;
+                    }
+                    else if (closestRock.transform.position.x > 0f & !rCornGuard)
+                    {
+                        yield return StartCoroutine(Shot("Right Corner Guard"));
+                        Debug.Log("Right Corner Guard");
                         yield break;
                     }
                     else
                     {
-                        //if the centre guard is mine
-                        if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                        {
-                            //let's run it back
-                            targetX = cenGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                            StartCoroutine(Shot("Take Out"));
-                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                            yield break;
-                        }
-                        //if the centre guard is not mine
-                        else
-                        {
-                            //let's take it out
-                            targetX = cenGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                            StartCoroutine(Shot("Peel"));
-                            Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                            yield break;
-                        }
+                        yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
+                        Debug.Log("Drawing Four Foot");
+                        yield break;
                     }
-                    
-                }
-                else
-                {
-                    targetX = closestRock.transform.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                    StartCoroutine(Shot("Button"));
-                    Debug.Log("no Target - button");
-                    yield break;
                 }
 
             }
         }
+        //if there's guards
         else if (gm.gList.Count != 0)
         {
+            //centre, left and right guards
             if (cenGuard && rCornGuard && lCornGuard)
             {
+                //centre guard is mine
                 if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -561,6 +573,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //right corner guard is not mine
                 else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -569,6 +582,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //left corner guard is not mine
                 else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -586,8 +600,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (!cenGuard && rCornGuard && !lCornGuard)
+            //right guard only
+            else if (rCornGuard & !cenGuard & !lCornGuard)
             {
+                //guard is mine
                 if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -596,6 +612,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //guard is not mine
                 else
                 {
                     targetX = rCornGuard.position.x;
@@ -605,8 +622,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (!cenGuard && !rCornGuard && lCornGuard)
+            //left guard only
+            else if (!cenGuard & !rCornGuard & lCornGuard)
             {
+                //guard is mine
                 if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -615,6 +634,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //guard is not mine
                 else
                 {
                     targetX = lCornGuard.position.x;
@@ -624,8 +644,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (!cenGuard && rCornGuard && lCornGuard)
+            //right and left guards
+            else if (!cenGuard & rCornGuard & lCornGuard)
             {
+                //left guard is not mine
                 if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -634,6 +656,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //right guard is not mine
                 else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -642,6 +665,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //left guard is mine
                 else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -650,6 +674,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //right guard is mine
                 else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -667,8 +692,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (cenGuard && rCornGuard && !lCornGuard)
+            //centre and right guards
+            else if (cenGuard & rCornGuard & !lCornGuard)
             {
+                //centre guard is not mine
                 if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -677,6 +704,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //right guard is not mine
                 else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -685,6 +713,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //centre guard is mine
                 else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -693,6 +722,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //right guard is mine
                 else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = rCornGuard.position.x;
@@ -710,8 +740,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (cenGuard && !rCornGuard && lCornGuard)
+            //centre and left guards
+            else if (cenGuard & !rCornGuard & lCornGuard)
             {
+                //left guard is not mine
                 if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -720,6 +752,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //centre guard is not mine
                 else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -728,6 +761,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //left guard is mine
                 else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = lCornGuard.position.x;
@@ -736,6 +770,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //centre guard is mine
                 else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -751,8 +786,10 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
             }
-            else if (cenGuard && !rCornGuard && !lCornGuard)
+            //centre guard only
+            else if (cenGuard & !rCornGuard & !lCornGuard)
             {
+                //if it's mine
                 if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
                 {
                     targetX = cenGuard.position.x;
@@ -761,6 +798,7 @@ public class AIManager : MonoBehaviour
                     Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                     yield break;
                 }
+                //if it's theirs
                 else
                 {
                     targetX = cenGuard.position.x;
@@ -774,8 +812,8 @@ public class AIManager : MonoBehaviour
             {
                 targetX = 0f;
                 takeOutX = 0f;
-                yield return StartCoroutine(Shot("Peel"));
-                Debug.Log("No Targets available - Button");
+                yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
+                Debug.Log("No Targets available - Drawing Four Foot");
                 yield break;
             }
         }
@@ -2205,7 +2243,6 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Peel":
-
                 if (takeOutX != 0f)
                 {
                     shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + peelOffset;
@@ -2225,7 +2262,6 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Take Out":
-
                 if (takeOutX != 0f)
                 {
                     shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + takeOutOffset;
@@ -2246,6 +2282,17 @@ public class AIManager : MonoBehaviour
 
             case "Tick":
 
+                if (targetX < 0f)
+                {
+                    rm.inturn = false;
+                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                }
+                else
+                {
+                    rm.inturn = true;
+                    takeOutX = (0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                }
+
                 if (takeOutX != 0f)
                 {
                     shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + tickOffset;
@@ -2265,6 +2312,17 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Raise":
+
+                if (targetX < 0f)
+                {
+                    rm.inturn = false;
+                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                }
+                else
+                {
+                    rm.inturn = true;
+                    takeOutX = (0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+                }
 
                 if (takeOutX != 0f)
                 {
