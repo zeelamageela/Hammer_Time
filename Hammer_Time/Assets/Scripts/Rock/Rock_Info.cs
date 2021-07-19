@@ -17,8 +17,10 @@ public class Rock_Info : MonoBehaviour
     public bool moving = false;
     public bool shotTaken = false;
     public bool placed = false;
+    public bool guard = false;
     public bool freeGuard = false;
     public float velocity;
+
 
     public float distance;
 
@@ -38,6 +40,7 @@ public class Rock_Info : MonoBehaviour
         outOfPlay = GetComponent<Rock_Colliders>().outOfPlay;
         hit = GetComponent<Rock_Colliders>().hit;
         inHouse = GetComponent<Rock_Colliders>().inHouse;
+        guard = GetComponent<Rock_Colliders>().guard;
 
         //if (transform.hasChanged)
         //{

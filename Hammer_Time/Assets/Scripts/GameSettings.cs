@@ -63,7 +63,7 @@ public class GameSettings : MonoBehaviour
 
         if (ai)
         {
-            SceneManager.LoadScene("AIGame_1");
+            SceneManager.LoadScene("AIGame_2");
         }
         else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
@@ -79,7 +79,7 @@ public class GameSettings : MonoBehaviour
 
         if (ai)
         {
-            SceneManager.LoadScene("AIGame_1");
+            SceneManager.LoadScene("AIGame_2");
         }
         else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }

@@ -448,7 +448,7 @@ public class GameManager : MonoBehaviour
 
         if (!yellowRock.outOfPlay)
         {
-            if (yellowRock.inPlay && !yellowRock.inHouse)
+            if (yellowRock.inPlay & !yellowRock.inHouse)
             {
                 if (yellowRock_1.transform.position.y <= 6.5f)
                 {
@@ -458,6 +458,7 @@ public class GameManager : MonoBehaviour
                     }
 
                     gList.Add(new Guard_List(rockCurrent, yellowRock.freeGuard, yellowRock_1.transform));
+
                 }
             }
 
@@ -498,7 +499,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Check Score");
 
         yield return StartCoroutine(AllStopped());
-
 
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();

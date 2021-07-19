@@ -16,6 +16,7 @@ public class Rock_Colliders : MonoBehaviour
     public bool hit = false;
     public bool inHouse = false;
     public bool shotTaken = false;
+    public bool guard = false;
 
     AudioManager am;
     SweeperManager sm;
@@ -52,6 +53,11 @@ public class Rock_Colliders : MonoBehaviour
             StartCoroutine(OutOfPlay());
         }
 
+        if (inPlay & !inHouse & body.position.x <= 6.5f)
+        {
+            guard = true;
+
+        }
         //if (gameObject.transform.position.y >= -3f)
         //{
         //    Debug.Log("-3 velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
@@ -119,7 +125,7 @@ public class Rock_Colliders : MonoBehaviour
             hit = true;
             Debug.Log("Hit!");
             am.Play("Hit");
-
+            Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
             if (gm.redHammer)
             {
                 //if the rock is red
