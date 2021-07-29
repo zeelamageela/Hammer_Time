@@ -859,11 +859,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.8
+      value: 6.46
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1542,8 +1542,7 @@ MonoBehaviour:
   gHUD: {fileID: 949738591}
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
-  aiTeamYellow: 1
-  mixed: 0
+  aiTeamYellow: 0
   debug: 1
   dbText: {fileID: 1350040153}
   tm: {fileID: 819206748}
@@ -2495,7 +2494,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
   m_PrefabInstance: {fileID: 693088041857770719}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 945653342}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf6699a0e84454ba294b9d6c15221a50, type: 3}
@@ -3506,7 +3505,6 @@ MonoBehaviour:
   tutorial: 0
   ai: 0
   debug: 0
-  mixed: 0
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -9460,49 +9458,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &945653342 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-  m_PrefabInstance: {fileID: 693088041857770719}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &945653344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 945653342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 281427aa8681a40698f6446f27609ed6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 197219300}
-  cm: {fileID: 57450608}
-  vcam: {fileID: 1171837317}
-  testing: 
-  centreGuard: {x: 0, y: 3}
-  tightCentreGuard: {x: 0, y: 4.25}
-  highCentreGuard: {x: 0, y: 1.5}
-  leftHighCornerGuard: {x: -0.65, y: 1.5}
-  leftTightCornerGuard: {x: -0.75, y: 4.25}
-  leftCornerGuard: {x: -0.7, y: 3}
-  rightHighCornerGuard: {x: 0.65, y: 1.5}
-  rightTightCornerGuard: {x: 0.75, y: 4.25}
-  rightCornerGuard: {x: 0.7, y: 3}
-  topTwelveFoot: {x: 0, y: 5.2}
-  backTwelveFoot: {x: 0, y: 7.8}
-  leftTwelveFoot: {x: 1.2, y: 6.5}
-  rightTwelveFoot: {x: -1.2, y: 6.5}
-  backFourFoot: {x: 0, y: 7}
-  topFourFoot: {x: 0, y: 6}
-  leftFourFoot: {x: -0.5, y: 6.5}
-  rightFourFoot: {x: 0.5, y: 6.5}
-  button: {x: 0, y: 6.5}
-  guardAccu: {x: 0, y: 0}
-  drawAccu: {x: 0, y: 0}
-  toAccu: {x: 0, y: 0}
-  tickAccu: {x: 0, y: 0}
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0
@@ -11639,7 +11594,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 233, y: -855.1}
+  m_AnchoredPosition: {x: 233, y: -759}
   m_SizeDelta: {x: 641.1921, y: 71.4722}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1350040153
@@ -11655,7 +11610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
+  m_Color: {r: 0.99002266, g: 1, b: 0.21300006, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11675,7 +11630,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Debug Text
+  m_Text: 
 --- !u!222 &1350040154
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16999,7 +16954,7 @@ PrefabInstance:
       objectReference: {fileID: 819206748}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: osMult
-      value: -0.32
+      value: -1.125
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: peel.y
@@ -17031,7 +16986,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: aggressive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.x

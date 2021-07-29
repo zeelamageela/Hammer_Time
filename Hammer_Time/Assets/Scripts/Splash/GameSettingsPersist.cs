@@ -14,6 +14,7 @@ public class GameSettingsPersist : MonoBehaviour
     public bool tutorial;
     public bool ai;
     public bool debug;
+    public bool mixed;
 
     public static GameSettingsPersist instance;
 
@@ -55,6 +56,7 @@ public class GameSettingsPersist : MonoBehaviour
         volume = gs.volume;
         redHammer = gs.redHammer;
         ai = gs.ai;
+        mixed = gs.mixed;
     }
 
     private void Update()

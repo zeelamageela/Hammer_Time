@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
 
     public bool aiTeamRed;
     public bool aiTeamYellow;
+    public bool mixed;
 
     public bool debug;
     public Text dbText;
@@ -98,6 +99,8 @@ public class GameManager : MonoBehaviour
         rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
         aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
         debug = FindObjectOfType<GameSettingsPersist>().debug;
+        mixed = FindObjectOfType<GameSettingsPersist>().mixed;
+
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
@@ -222,6 +225,10 @@ public class GameManager : MonoBehaviour
             //rockList.Sort();
         }
 
+        if (mixed)
+        {
+
+        }
         rockBar.ResetBar(redHammer);
         //scoreboard.SetActive(false);
 
@@ -507,6 +514,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Current Rock is " + rockCurrent);
         houseList.Clear();
+        gList.Clear();
 
         Destroy(shooterGO);
 
@@ -515,7 +523,12 @@ public class GameManager : MonoBehaviour
             if (rock.rockInfo.inHouse == true)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
-            } 
+            }
+            if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
+            {
+                gList.Add(new Guard_List(rockCurrent, rock.rockInfo.freeGuard, rock.rock.transform));
+                Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+            }
         }
 
         yield return new WaitForFixedUpdate();

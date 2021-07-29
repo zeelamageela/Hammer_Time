@@ -24,24 +24,23 @@ public class Debug_Placement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J))
         {
             //Start Coroutine OnPlaceRock(position)
-            StartCoroutine(OnPlaceRock(0));
+            StartCoroutine(OnPlaceRock("Button"));
         }
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            StartCoroutine(OnPlaceRock(1));
+            StartCoroutine(OnPlaceRock("Top Four Foot"));
         }
 
         if (Input.GetKeyDown(KeyCode.L))
         {
-            StartCoroutine(OnPlaceRock(2));
+            StartCoroutine(OnPlaceRock("Back Four Foot"));
         }
     }
 
-    IEnumerator OnPlaceRock(int placeSwitch)
+    IEnumerator OnPlaceRock(string rockPlacement)
     {
-        Debug.Log("Placing a rock generic");
-        Debug.Log(placeSwitch);
+        Debug.Log("Placing a rock at " + rockPlacement);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         rockFlick = rock.GetComponent<Rock_Flick>();
@@ -53,23 +52,22 @@ public class Debug_Placement : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
 
-        switch (placeSwitch)
+        switch (rockPlacement)
         {
-            case 0:
+            case "Button":
                 //position = 0
                 rock.transform.position = buttonPosition;
 
                 break;
-            case 1:
+            case "Back Four Foot":
                 //position = 1
                 Vector2 rockPos = buttonPosition + (Random.insideUnitCircle * 1.5f);
                 rock.transform.position = rockPos;
 
                 break;
-            case 2:
+            case "Top Four Foot":
                 //position = 2
-                Vector2 rockPlace = new Vector2(Random.Range(-1.4f, 1.4f), Random.Range(0.05f, 5f));
-                rock.transform.position = rockPlace;
+                rock.transform.position = new Vector2(Random.Range(-1.4f, 1.4f), Random.Range(0.05f, 5f));
                 break;
         }
 

@@ -191,26 +191,27 @@ public class AIManager : MonoBehaviour
         raise.y = raise.y + (osMult * 0.18f);
         tick.y = tick.y + (osMult * 0.18f);
     }
+
     public void OnShot(int rockCurrent)
     {
         rockInfo = gm.rockList[rockCurrent].rockInfo;
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-        aggressive = true;
+        //aggressive = true;
 
-        //if (gm.redScore > gm.yellowScore)
-        //{
-        //    aggressive = true;
-        //}
-        //else if (gm.redScore < gm.yellowScore)
-        //{
-        //    aggressive = false;
-        //}
-        //else
-        //{
-        //    aggressive = true;
-        //}
+        if (gm.redScore > gm.yellowScore)
+        {
+            aggressive = true;
+        }
+        else if (gm.redScore < gm.yellowScore)
+        {
+            aggressive = false;
+        }
+        else
+        {
+            aggressive = true;
+        }
 
         if (gm.houseList.Count != 0)
         {
@@ -322,12 +323,12 @@ public class AIManager : MonoBehaviour
                         if (targetX > 0f)
                         {
                             rm.inturn = false;
-                            takeOutX = (-0.142f * (targetX / 1.65f)) - 0.011f;
+                            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
                         }
                         else
                         {
                             rm.inturn = true;
-                            takeOutX = (0.2f * (targetX / -1.65f)) + 0f;
+                            takeOutX = (0.15f * ((targetX - 1.35f) / -2.7f)) - 0.05f;
                         }
                         StartCoroutine(Shot("Take Out"));
                         Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
@@ -439,12 +440,12 @@ public class AIManager : MonoBehaviour
                         if (targetX > 0f)
                         {
                             rm.inturn = false;
-                            takeOutX = (-0.142f * (targetX / 1.65f)) - 0.011f;
+                            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
                         }
                         else
                         {
                             rm.inturn = true;
-                            takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
+                            takeOutX = (0.15f * ((targetX - 1.35f) / -2.7f)) - 0.05f;
                         }
                         StartCoroutine(Shot("Take Out"));
                         Debug.Log("Target is " + closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
@@ -482,6 +483,10 @@ public class AIManager : MonoBehaviour
                         }
                         else
                         {
+                            if (gm.houseList.Count >= 3 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
+                            {
+
+                            }
                             yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
                             Debug.Log("Drawing Four Foot");
                             yield break;
@@ -491,7 +496,7 @@ public class AIManager : MonoBehaviour
                     else
                     {
                         //if the second rock is guarded
-                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f & cenGuard)
+                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f && cenGuard)
                         {
                             targetX = cenGuard.position.x;
                             takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
@@ -499,7 +504,7 @@ public class AIManager : MonoBehaviour
                             Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                             yield break;
                         }
-                        else if (gm.houseList[1].rock.transform.position.x < 0f & lCornGuard)
+                        else if (gm.houseList[1].rock.transform.position.x < 0f && lCornGuard)
                         {
                             targetX = lCornGuard.position.x;
                             takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
@@ -507,7 +512,7 @@ public class AIManager : MonoBehaviour
                             Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
                             yield break;
                         }
-                        else if (gm.houseList[1].rock.transform.position.x > 0f & rCornGuard)
+                        else if (gm.houseList[1].rock.transform.position.x > 0f && rCornGuard)
                         {
                             targetX = rCornGuard.position.x;
                             takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
@@ -1104,7 +1109,7 @@ public class AIManager : MonoBehaviour
                     yield break;
                 }
                 //centre guard to the left
-                else if (cenGuard.position.x < 0f)
+                else
                 {
                     rm.inturn = false;
                     StartCoroutine(Shot("Top Four Foot"));
@@ -1126,7 +1131,7 @@ public class AIManager : MonoBehaviour
                         yield break;
                     }
                     //centre guard to the left
-                    else if (cenGuard.position.x < 0f)
+                    else
                     {
                         rm.inturn = false;
                         StartCoroutine(Shot("Top Four Foot"));
@@ -1147,7 +1152,7 @@ public class AIManager : MonoBehaviour
                             yield break;
                         }
                         //centre guard to the left
-                        else if (cenGuard.position.x < 0f)
+                        else
                         {
                             rm.inturn = false;
                             StartCoroutine(Shot("Top Four Foot"));
@@ -1162,7 +1167,7 @@ public class AIManager : MonoBehaviour
                         yield break;
                     }
                     //right corner guard is high
-                    else if (rCornGuard.position.y < 2.0f)
+                    else
                     {
                         rm.inturn = true;
                         StartCoroutine(Shot("Top Four Foot"));
@@ -1183,7 +1188,7 @@ public class AIManager : MonoBehaviour
                             yield break;
                         }
                         //centre guard to the left
-                        else if (cenGuard.position.x < 0f)
+                        else
                         {
                             rm.inturn = false;
                             StartCoroutine(Shot("Top Four Foot"));
@@ -1204,6 +1209,12 @@ public class AIManager : MonoBehaviour
                         StartCoroutine(Shot("Top Four Foot"));
                         yield break;
                     }
+                    else
+                    {
+                        rm.inturn = false;
+                        StartCoroutine(Shot("Top Four Foot"));
+                        yield break;
+                    }
                 }
                 //any other situation
                 else
@@ -1216,7 +1227,7 @@ public class AIManager : MonoBehaviour
                         yield break;
                     }
                     //centre guard to the left
-                    else if (cenGuard.position.x < 0f)
+                    else
                     {
                         rm.inturn = false;
                         StartCoroutine(Shot("Top Four Foot"));
@@ -1234,7 +1245,7 @@ public class AIManager : MonoBehaviour
                     StartCoroutine(Shot("Top Four Foot"));
                     yield break;
                 }
-                else if (cenGuard.position.x < 0f)
+                else
                 {
                     rm.inturn = false;
                     StartCoroutine(Shot("Left Four Foot"));
@@ -1251,7 +1262,7 @@ public class AIManager : MonoBehaviour
                     StartCoroutine(Shot("Right Four Foot"));
                     yield break;
                 }
-                else if (cenGuard.position.x < 0f)
+                else
                 {
                     rm.inturn = true;
                     StartCoroutine(Shot("Top Four Foot"));
@@ -1268,7 +1279,7 @@ public class AIManager : MonoBehaviour
                     StartCoroutine(Shot("Right Four Foot"));
                     yield break;
                 }
-                else if (lCornGuard.position.y < rCornGuard.position.y)
+                else
                 {
                     rm.inturn = false;
                     StartCoroutine(Shot("Left Four Foot"));
@@ -1285,7 +1296,7 @@ public class AIManager : MonoBehaviour
             }
 
             //left corner guard
-            else if (lCornGuard && !rCornGuard && !cenGuard)
+            else
             {
                 rm.inturn = false;
                 StartCoroutine(Shot("Left Four Foot"));
@@ -2262,8 +2273,14 @@ public class AIManager : MonoBehaviour
                 break;
 
             case "Take Out":
+
                 if (takeOutX != 0f)
                 {
+                    if (rm.inturn)
+                    {
+                        takeOutOffset = -takeOutOffset;
+                    }
+
                     shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + takeOutOffset;
                     shotY = Random.Range(takeOut.y + toAccu.y, takeOut.y - toAccu.y);
                 }

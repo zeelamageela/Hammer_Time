@@ -20,6 +20,7 @@ public class GameSettings : MonoBehaviour
     public float volume;
     public bool ai;
     public bool debug;
+    public bool mixed;
 
     public static GameSettingsPersist instance;
     // Start is called before the first frame update
@@ -60,6 +61,7 @@ public class GameSettings : MonoBehaviour
         gsp.rocks = rocks;
         gsp.ai = ai;
         gsp.redHammer = redHammer;
+        gsp.mixed = mixed;
 
         if (ai)
         {
