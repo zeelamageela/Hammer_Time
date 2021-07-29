@@ -863,7 +863,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.8
+      value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1521,7 +1521,7 @@ MonoBehaviour:
   endCurrent: 0
   endTotal: 2
   redHammer: 0
-  rocksPerTeam: 8
+  rocksPerTeam: 4
   rockTotal: 0
   rockCurrent: 0
   rm: {fileID: 545177317}
@@ -3501,7 +3501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   redHammer: 1
   ends: 10
-  rocks: 8
+  rocks: 4
   volume: 0.45
   tutorial: 0
   ai: 0
@@ -16999,7 +16999,7 @@ PrefabInstance:
       objectReference: {fileID: 819206748}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: osMult
-      value: -0.32
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: peel.y
@@ -17015,7 +17015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: testing
-      value: Top Four Foot
+      value: Button
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: button.x

@@ -49,6 +49,8 @@ public class AIManager : MonoBehaviour
     public bool aggressive;
 
     public Transform cenGuard;
+    public Transform tCenGuard;
+    public Transform hCenGuard;
     public Transform lCornGuard;
     public Transform rCornGuard;
 
@@ -258,14 +260,23 @@ public class AIManager : MonoBehaviour
             foreach (Guard_List guard in gm.gList)
             {
                 float posX;
+                float posY;
 
                 posX = guard.lastTransform.position.x;
-
+                posY = guard.lastTransform.position.y;
                 // center lane
                 if (Mathf.Abs(posX) <= 0.4f)
                 {
-                    cenGuard = guard.lastTransform;
-                    Debug.Log("Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                    if (posY <= 3.5f)
+                    {
+                        cenGuard = guard.lastTransform;
+                        Debug.Log("Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                    }
+                    else
+                    {
+                        tCenGuard = guard.lastTransform;
+                        Debug.Log("Tight Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                    }
                 }
                 // left channel 
                 else if (posX < -0.4f && posX > -1.25f)
@@ -1430,34 +1441,146 @@ public class AIManager : MonoBehaviour
 
     public void Aggressive(int rockCurrent)
     {
+        //Aggressive is to steal at all costs, or score two with hammer at all costs
         GameObject rock = gm.rockList[rockCurrent].rock;
         Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;
+        string phase;
 
-        switch (rockCurrent)
+        //early phase is shots 1-3 in an 8 rock game
+        if (gm.rockTotal - rockCurrent >= 11)
+        {
+            phase = "early";
+        }
+        //middle phase is shots 4 and 5 in an 8 rock game
+        else if (gm.rockTotal - rockCurrent <= 10 && gm.rockTotal - rockCurrent >= 7)
+        {
+            phase = "middle";
+        }
+        //late phase is shots 6-8 in an 8 rock game
+        else if (gm.rockTotal - rockCurrent <= 6)
+        {
+            phase = "late";
+        }
+        else
+        {
+            phase = "late";
+        }
+
+        Debug.Log("Phase is " + phase);
+
+        StartCoroutine(GuardReading(rockCurrent));
+
+        switch (phase)
         { 
-            case 0:
-
-                //randomly choose
-                if (Random.value > 0.5f)
+            case "early":
+                //if there's no guards
+                if (gm.gList.Count == 0)
                 {
-                    StartCoroutine(DrawFourFoot(rockCurrent));
+                    StartCoroutine(Shot("Tight Centre Guard"));
                 }
-                else StartCoroutine(Shot("Tight Centre Guard"));
+                //if there's guards
+                else
+                {
+                    //tight centre and no centre guard
+                    if (tCenGuard && !cenGuard)
+                    {
+                        StartCoroutine(Shot("Centre Guard"));
+                    }
+                    //centre and no tight centre guard
+                    else if (cenGuard && !tCenGuard)
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                    //centre and tight centre guards
+                    else if (cenGuard & tCenGuard)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    //any other guard combo
+                    else
+                    {
+                        //randomly choose
+                        if (Random.value > 0.5f)
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                        else StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                }
                 break;
 
-            case 1:
-
-                //if the first rock is in the middle
-                if (Mathf.Abs(gm.rockList[0].rock.transform.position.x) <= 0.35f)
+            case "middle":
+                //no one is in the house
+                if (gm.houseList.Count == 0)
                 {
-                    //if it's a guard
-                    if (gm.gList.Count != 0)
+                    //tight centre and no centre guard
+                    if (tCenGuard && !cenGuard)
                     {
-                        StartCoroutine(TickShot(rockCurrent));
+                        StartCoroutine(Shot("Centre Guard"));
                     }
-                    else StartCoroutine(DrawFourFoot(rockCurrent));
+                    //centre and no tight centre guard
+                    else if (cenGuard && !tCenGuard)
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                    //centre and tight centre guards
+                    else if (cenGuard & tCenGuard)
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
+                    else
+                    {
+                        StartCoroutine(DrawFourFoot(rockCurrent));
+                    }
                 }
-                else StartCoroutine(DrawFourFoot(rockCurrent));
+                else if (closestRockInfo.teamName == rockInfo.teamName)
+                {
+                    //tight centre and no centre guard
+                    if (tCenGuard && !cenGuard)
+                    {
+                        if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    //centre and no tight centre guard
+                    else if (cenGuard && !tCenGuard)
+                    {
+                        if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                        {
+                            StartCoroutine(Shot("High Centre Guard"));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    //centre and tight centre guards
+                    else if (cenGuard & tCenGuard)
+                    {
+                        if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                        {
+                            StartCoroutine(Shot("Tight Centre Guard"));
+                        }
+                        else
+                        {
+                            StartCoroutine(DrawFourFoot(rockCurrent));
+                        }
+                    }
+                    //any other guard combo
+                    else
+                    {
+                        StartCoroutine(Shot("Tight Centre Guard"));
+                    }
+                }
+                else if (closestRockInfo.teamName != rockInfo.teamName)
+                {
+
+                }
                 break;
 
             case 2:
@@ -1475,7 +1598,7 @@ public class AIManager : MonoBehaviour
                         //if there's guards
                         if (gm.gList.Count != 0)
                         {
-                                StartCoroutine(Shot("Centre Guard"));
+                            StartCoroutine(Shot("Centre Guard"));
                         }
                         //if there's no guards
                         else
