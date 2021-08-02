@@ -188,6 +188,7 @@ public class GameManager : MonoBehaviour
 
                 Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
                 yellowRock_info.rockNumber = k;
+                yellowRock_info.rockIndex = i - 1;
                 yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
                 yellowRock_go.GetComponent<Rock_Flick>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Release>().enabled = false;
@@ -214,6 +215,7 @@ public class GameManager : MonoBehaviour
 
                 Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
                 redRock_info.rockNumber = k;
+                redRock_info.rockIndex = i - 1;
                 redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
                 redRock_go.GetComponent<CircleCollider2D>().enabled = false;
                 redRock_go.GetComponent<Rock_Flick>().enabled = false;

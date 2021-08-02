@@ -91,6 +91,7 @@ public class Rock_Placement : MonoBehaviour
         {
             case "Button":
                 rock.transform.position = new Vector2(Random.Range(button.x + drawAccu.x, button.x - drawAccu.x), Random.Range(button.y + drawAccu.y, button.y - drawAccu.y));
+                Debug.Log(rock.transform.position.x + ", " + rock.transform.position.y);
                 break;
 
             case "Four Foot":

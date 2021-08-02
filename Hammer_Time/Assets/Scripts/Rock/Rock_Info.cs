@@ -6,6 +6,7 @@ public class Rock_Info : MonoBehaviour
 {
     public string teamName;
     public int rockNumber;
+    public int rockIndex;
 
     public bool stopped = false;
     public bool rest = false;
