@@ -9465,6 +9465,33 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
   m_PrefabInstance: {fileID: 693088041857770719}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &945653343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945653342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5738e7e6d108b4a1ead3957caae77860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 197219300}
+  tm: {fileID: 819206748}
+  rm: {fileID: 545177317}
+  aim: {fileID: 322681100}
+  aiShoot: {fileID: 945653345}
+  aiStrat: {fileID: 945653344}
+  cenGuard: {fileID: 0}
+  tCenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  takeOutOffset: 0
+  peelOffset: 0
+  raiseOffset: 0
+  tickOffset: 0
+  takeOutX: 0
 --- !u!114 &945653344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9474,35 +9501,68 @@ MonoBehaviour:
   m_GameObject: {fileID: 945653342}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 281427aa8681a40698f6446f27609ed6, type: 3}
+  m_Script: {fileID: 11500000, guid: 3bd7f7b9833b64afcb40540587c5e382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
-  cm: {fileID: 57450608}
-  vcam: {fileID: 1171837317}
+  tm: {fileID: 819206748}
+  rm: {fileID: 545177317}
+  aim: {fileID: 322681100}
+  aiShoot: {fileID: 945653345}
+  aiTarg: {fileID: 945653343}
+  cenGuard: {fileID: 0}
+  tCenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  takeOutOffset: 0
+  peelOffset: 0
+  raiseOffset: 0
+  tickOffset: 0
+  takeOutX: 0
+  osMult: 0
+--- !u!114 &945653345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 945653342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a6b63375b454d85aef11baea7700f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 197219300}
+  tm: {fileID: 819206748}
+  rm: {fileID: 545177317}
+  aim: {fileID: 322681100}
+  aiTarg: {fileID: 945653343}
+  aiStrat: {fileID: 945653344}
+  topTwelveFoot: {x: 0, y: 0}
+  backTwelveFoot: {x: 0, y: 0}
+  leftTwelveFoot: {x: 0, y: 0}
+  rightTwelveFoot: {x: 0, y: 0}
+  backFourFoot: {x: 0, y: 0}
+  topFourFoot: {x: 0, y: 0}
+  leftFourFoot: {x: 0, y: 0}
+  rightFourFoot: {x: 0, y: 0}
+  button: {x: 0, y: 0}
+  peel: {x: 0, y: 0}
+  takeOut: {x: 0, y: 0}
+  raise: {x: 0, y: 0}
+  tick: {x: 0, y: 0}
   testing: 
-  centreGuard: {x: 0, y: 3}
-  tightCentreGuard: {x: 0, y: 4.25}
-  highCentreGuard: {x: 0, y: 1.5}
-  leftHighCornerGuard: {x: -0.65, y: 1.5}
-  leftTightCornerGuard: {x: -0.75, y: 4.25}
-  leftCornerGuard: {x: -0.7, y: 3}
-  rightHighCornerGuard: {x: 0.65, y: 1.5}
-  rightTightCornerGuard: {x: 0.75, y: 4.25}
-  rightCornerGuard: {x: 0.7, y: 3}
-  topTwelveFoot: {x: 0, y: 5.2}
-  backTwelveFoot: {x: 0, y: 7.8}
-  leftTwelveFoot: {x: 1.2, y: 6.5}
-  rightTwelveFoot: {x: -1.2, y: 6.5}
-  backFourFoot: {x: 0, y: 7}
-  topFourFoot: {x: 0, y: 6}
-  leftFourFoot: {x: -0.5, y: 6.5}
-  rightFourFoot: {x: 0.5, y: 6.5}
-  button: {x: 0, y: 6.5}
-  guardAccu: {x: 0.25, y: 0.25}
-  drawAccu: {x: 0.5, y: 0.5}
+  testingRockNumber: 0
+  guardAccu: {x: 0, y: 0}
+  drawAccu: {x: 0, y: 0}
   toAccu: {x: 0, y: 0}
   tickAccu: {x: 0, y: 0}
+  takeOutOffset: 0
+  peelOffset: 0
+  raiseOffset: 0
+  tickOffset: 0
+  takeOutX: 0
+  osMult: 0
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0
@@ -17002,6 +17062,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: cm
+      value: 
+      objectReference: {fileID: 57450608}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: gm
+      value: 
+      objectReference: {fileID: 197219300}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: vcam
+      value: 
+      objectReference: {fileID: 1171837317}
     - target: {fileID: 693088042146815442, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -17059,156 +17131,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 819206748}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: osMult
-      value: -1.125
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: peel.y
-      value: -27.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: tick.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: raise.y
-      value: -27.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: testing
-      value: Button
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: button.x
-      value: -0.051
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: button.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: toAccu.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: toAccu.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: takeOut.y
-      value: -27.65
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: aggressive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.x
-      value: 0.01
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.y
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: tickOffset
-      value: -0.018
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: guardAccu.x
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: guardAccu.y
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: raiseOffset
-      value: -0.025
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: centreGuard.y
-      value: -26.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: takeOutOffset
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: topFourFoot.x
-      value: -0.051
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: topFourFoot.y
-      value: -26.985
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: backFourFoot.x
-      value: -0.051
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: backFourFoot.y
-      value: -27.04
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: leftFourFoot.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: rightFourFoot.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: topTwelveFoot.y
-      value: -26.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: backTwelveFoot.y
-      value: -27.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: leftTwelveFoot.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: highCentreGuard.x
-      value: -0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: highCentreGuard.y
-      value: -26.73
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: leftCornerGuard.y
-      value: -26.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: rightTwelveFoot.y
-      value: -27.012
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: rightCornerGuard.y
-      value: -26.78
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: tightCentreGuard.y
-      value: -26.89
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: leftHighCornerGuard.y
-      value: -26.73
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: leftTightCornerGuard.y
-      value: -26.89
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: rightHighCornerGuard.y
-      value: -26.73
-      objectReference: {fileID: 0}
-    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: rightTightCornerGuard.y
-      value: -26.89
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name

@@ -8,6 +8,10 @@ public class AIManager : MonoBehaviour
     public TutorialManager tm;
     public RockManager rm;
 
+    public AI_Target aiTarg;
+    public AI_Shooter aiShoot;
+    public AI_Strategy aiStrat;
+
     Rock_Info rockInfo;
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
@@ -51,7 +55,6 @@ public class AIManager : MonoBehaviour
 
     public Transform cenGuard;
     public Transform tCenGuard;
-    public Transform hCenGuard;
     public Transform lCornGuard;
     public Transform rCornGuard;
 
@@ -97,7 +100,8 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            StartCoroutine(Shot(testing));
+            aiShoot.OnShot(testing, gm.rockCurrent);
+            //StartCoroutine(Shot(testing));
             //StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
@@ -113,9 +117,10 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
+            aiTarg.OnTarget("Tap Back", gm.rockCurrent, testingRockNumber);
             //StartCoroutine(Shot(testing));
             //StartCoroutine(TickShot(gm.rockCurrent));
-            StartCoroutine(TakeOutTarget(gm.rockCurrent, testingRockNumber));
+            //StartCoroutine(TapTarget(gm.rockCurrent, testingRockNumber));
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -129,8 +134,9 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
+            aiTarg.OnTarget("Take Out", gm.rockCurrent, 0);
             //StartCoroutine(Shot(testing));
-            StartCoroutine(TakeOutAutoTarget(gm.rockCurrent));
+            //StartCoroutine(TakeOutAutoTarget(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
         if (Input.GetKeyDown(KeyCode.F))
@@ -145,7 +151,8 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            StartCoroutine(DrawFourFoot(gm.rockCurrent));
+            aiTarg.OnTarget("Auto Draw Four Foot", gm.rockCurrent, 0);
+            //StartCoroutine(DrawFourFoot(gm.rockCurrent));
             //StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
@@ -161,7 +168,8 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            StartCoroutine(DrawTwelveFoot(gm.rockCurrent));
+            aiTarg.OnTarget("Auto Draw Twelve Foot", gm.rockCurrent, 0);
+            //StartCoroutine(DrawTwelveFoot(gm.rockCurrent));
             //StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));
         }
@@ -202,20 +210,20 @@ public class AIManager : MonoBehaviour
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-        //aggressive = true;
+        aggressive = true;
 
-        if (gm.redScore > gm.yellowScore)
-        {
-            aggressive = true;
-        }
-        else if (gm.redScore < gm.yellowScore)
-        {
-            aggressive = false;
-        }
-        else
-        {
-            aggressive = true;
-        }
+        //if (gm.redScore > gm.yellowScore)
+        //{
+        //    aggressive = true;
+        //}
+        //else if (gm.redScore < gm.yellowScore)
+        //{
+        //    aggressive = false;
+        //}
+        //else
+        //{
+        //    aggressive = true;
+        //}
 
         if (gm.houseList.Count != 0)
         {
@@ -249,10 +257,17 @@ public class AIManager : MonoBehaviour
 
         if (aggressive)
         {
-            Aggressive(rockCurrent);
+            aiStrat.Aggressive(rockCurrent);
         }
         else
-            Conservative(rockCurrent);
+            aiStrat.Conservative(rockCurrent);
+
+        if (aggressive)
+        {
+            aiStrat.Aggressive(rockCurrent);
+        }
+        else
+            aiStrat.Conservative(rockCurrent);
     }
 
     IEnumerator GuardReading(int rockCurrent)
@@ -295,6 +310,7 @@ public class AIManager : MonoBehaviour
 
                 else
                 {
+                    tCenGuard = null;
                     cenGuard = null;
                     lCornGuard = null;
                     rCornGuard = null;
@@ -857,8 +873,8 @@ public class AIManager : MonoBehaviour
         //rm.inturn = false;
         //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
 
-        rm.inturn = true;
-        takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+        //rm.inturn = true;
+        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
 
         if (targetX > 0f)
         {
@@ -1899,7 +1915,7 @@ public class AIManager : MonoBehaviour
                     {
                         if (Mathf.Abs(closestRock.transform.position.x - lCornGuard.position.x) >= 0.1f)
                         {
-                            StartCoroutine(Shot("High Left Corner Guard"));
+                            StartCoroutine(Shot("Left High Corner Guard"));
                         }
                         else
                         {
@@ -1913,7 +1929,7 @@ public class AIManager : MonoBehaviour
                         //the rock is not guarded
                         if (Mathf.Abs(closestRock.transform.position.x - rCornGuard.position.x) >= 0.1f)
                         {
-                            StartCoroutine(Shot("High Right Corner Guard"));
+                            StartCoroutine(Shot("Right High Corner Guard"));
                         }
                         else
                         {
@@ -1927,12 +1943,12 @@ public class AIManager : MonoBehaviour
                         //the rock is not guarded on the left
                         if (Mathf.Abs(closestRock.transform.position.x - lCornGuard.position.x) >= 0.1f)
                         {
-                            StartCoroutine(Shot("High Right Corner Guard"));
+                            StartCoroutine(Shot("Right High Corner Guard"));
                         }
                         //the rock is not guarded on the right
                         else if(Mathf.Abs(closestRock.transform.position.x - rCornGuard.position.x) >= 0.1f)
                         {
-                            StartCoroutine(Shot("High Left Corner Guard"));
+                            StartCoroutine(Shot("Left High Corner Guard"));
                         }
                         else
                         {
@@ -2362,7 +2378,7 @@ public class AIManager : MonoBehaviour
                         {
                             if (Mathf.Abs(closestRock.transform.position.x - lCornGuard.position.x) >= 0.1f)
                             {
-                                StartCoroutine(Shot("High Left Corner Guard"));
+                                StartCoroutine(Shot("Left High Corner Guard"));
                             }
                             else
                             {
@@ -2376,7 +2392,7 @@ public class AIManager : MonoBehaviour
                             //the rock is not guarded
                             if (Mathf.Abs(closestRock.transform.position.x - rCornGuard.position.x) >= 0.1f)
                             {
-                                StartCoroutine(Shot("High Right Corner Guard"));
+                                StartCoroutine(Shot("Right High Corner Guard"));
                             }
                             else
                             {
@@ -2390,7 +2406,7 @@ public class AIManager : MonoBehaviour
                             //the rock is not guarded on the left
                             if (Mathf.Abs(closestRock.transform.position.x - lCornGuard.position.x) >= 0.1f)
                             {
-                                StartCoroutine(Shot("High Right Corner Guard"));
+                                StartCoroutine(Shot("Right High Corner Guard"));
                             }
                             //the rock is not guarded on the right
                             else if (Mathf.Abs(closestRock.transform.position.x - rCornGuard.position.x) >= 0.1f)
