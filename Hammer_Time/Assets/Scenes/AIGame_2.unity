@@ -1537,7 +1537,7 @@ MonoBehaviour:
   redSpin: {fileID: 919697563}
   redScore: 0
   yellowScore: 0
-  lg: {fileID: 0}
+  lg: {fileID: 197219302}
   gHUD: {fileID: 949738591}
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
@@ -9537,7 +9537,7 @@ MonoBehaviour:
   raiseOffset: 0
   tickOffset: 0
   takeOutX: 0
-  osMult: -0.32
+  osMult: 0
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0

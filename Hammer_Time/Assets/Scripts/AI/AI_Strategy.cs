@@ -324,32 +324,30 @@ public class AI_Strategy : MonoBehaviour
                 break;
 
             case "early hammer":
-                //if there's guards
-                if (gm.gList.Count != 0)
-                {
+
                     //left corner guard
-                    if (lCornGuard)
-                    {
-                        aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                    }
-                    //right corner guard
-                    else if (rCornGuard)
-                    {
-                        aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                    }
-                    //left and right corner guard
-                    else if (rCornGuard & lCornGuard)
-                    {
-                        aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
-                    }
-                    else
-                    {
-                        if (Random.value > 0.5f)
-                            aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                        else
-                            aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                    }
+                if (lCornGuard)
+                {
+                    aiShoot.OnShot("Right Corner Guard", rockCurrent);
                 }
+                //right corner guard
+                else if (rCornGuard)
+                {
+                    aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                }
+                //left and right corner guard
+                else if (rCornGuard & lCornGuard)
+                {
+                    aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
+                }
+                else
+                {
+                    if (Random.value > 0.5f)
+                        aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                    else
+                        aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                }
+
                 break;
 
 
