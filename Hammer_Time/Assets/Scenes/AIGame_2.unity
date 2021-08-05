@@ -1495,9 +1495,7 @@ GameObject:
   m_Component:
   - component: {fileID: 197219301}
   - component: {fileID: 197219300}
-  - component: {fileID: 197219303}
   - component: {fileID: 197219302}
-  - component: {fileID: 197219304}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameController
@@ -1539,6 +1537,7 @@ MonoBehaviour:
   redSpin: {fileID: 919697563}
   redScore: 0
   yellowScore: 0
+  lg: {fileID: 0}
   gHUD: {fileID: 949738591}
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
@@ -1581,49 +1580,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197219299}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b619446d73c04453ba9292d798d94f59, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 197219300}
-  buttonForce: {x: 2.125, y: 86.8}
-  houseForce: {x: 2.1, y: 83}
-  guardForce: {x: 2.0625, y: 75}
-  takeoutForce: {x: 2.45, y: 100}
-  customForce: {x: 0, y: 86.8}
-  vcam: {fileID: 1171837317}
---- !u!114 &197219303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 197219299}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7cb437ead011248d9902abb92573d624, type: 3}
+  m_Script: {fileID: 11500000, guid: ad5f61f9546e94967975c8559c26a3fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
-  rockTotal: 0
-  rocksPerTeam: 0
-  redHammer: 0
---- !u!114 &197219304
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 197219299}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e08657d83bf89d419b2437e42648304, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 197219300}
-  buttonPosition: {x: 0, y: 6.5}
-  vcam: {fileID: 1171837317}
+  rockBar: {fileID: 558889064}
+  rm: {fileID: 545177317}
+  rocksPlaced: 0
 --- !u!1 &198912320
 GameObject:
   m_ObjectHideFlags: 0
@@ -3504,6 +3469,7 @@ MonoBehaviour:
   rocks: 4
   volume: 0.45
   tutorial: 0
+  loadGame: 0
   ai: 0
   debug: 0
   mixed: 0
@@ -9538,20 +9504,29 @@ MonoBehaviour:
   aim: {fileID: 322681100}
   aiTarg: {fileID: 945653343}
   aiStrat: {fileID: 945653344}
-  topTwelveFoot: {x: 0, y: 0}
-  backTwelveFoot: {x: 0, y: 0}
-  leftTwelveFoot: {x: 0, y: 0}
-  rightTwelveFoot: {x: 0, y: 0}
-  backFourFoot: {x: 0, y: 0}
-  topFourFoot: {x: 0, y: 0}
-  leftFourFoot: {x: 0, y: 0}
-  rightFourFoot: {x: 0, y: 0}
-  button: {x: 0, y: 0}
-  peel: {x: 0, y: 0}
-  takeOut: {x: 0, y: 0}
-  raise: {x: 0, y: 0}
-  tick: {x: 0, y: 0}
-  testing: 
+  centreGuard: {x: -0.051, y: -26.78}
+  tightCentreGuard: {x: -0.052, y: -26.89}
+  highCentreGuard: {x: -0.05, y: -26.73}
+  leftHighCornerGuard: {x: 0.01, y: -26.73}
+  leftTightCornerGuard: {x: 0.015, y: -26.89}
+  leftCornerGuard: {x: 0.017, y: -26.78}
+  rightHighCornerGuard: {x: -0.1, y: -26.73}
+  rightTightCornerGuard: {x: -0.105, y: -26.89}
+  rightCornerGuard: {x: -0.11, y: -26.78}
+  topTwelveFoot: {x: -0.055, y: -26.95}
+  backTwelveFoot: {x: -0.055, y: -27.12}
+  leftTwelveFoot: {x: 0.038, y: -27.012}
+  rightTwelveFoot: {x: -0.148, y: -27.012}
+  backFourFoot: {x: -0.051, y: -27.04}
+  topFourFoot: {x: -0.051, y: -26.985}
+  leftFourFoot: {x: -0.025, y: -27.012}
+  rightFourFoot: {x: -0.085, y: -27.012}
+  button: {x: -0.051, y: -27.012}
+  peel: {x: 0, y: -27.8}
+  takeOut: {x: 0, y: -27.65}
+  raise: {x: 0, y: -27.2}
+  tick: {x: 0, y: -27.012}
+  testing: Button
   testingRockNumber: 0
   guardAccu: {x: 0, y: 0}
   drawAccu: {x: 0, y: 0}
@@ -9562,7 +9537,7 @@ MonoBehaviour:
   raiseOffset: 0
   tickOffset: 0
   takeOutX: 0
-  osMult: 0
+  osMult: -0.32
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0
@@ -17074,6 +17049,10 @@ PrefabInstance:
       propertyPath: vcam
       value: 
       objectReference: {fileID: 1171837317}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testing
+      value: Left Twelve Foot
+      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815442, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -17130,6 +17109,18 @@ PrefabInstance:
       propertyPath: tm
       value: 
       objectReference: {fileID: 819206748}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: aiTarg
+      value: 
+      objectReference: {fileID: 945653343}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: aiShoot
+      value: 
+      objectReference: {fileID: 945653345}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: aiStrat
+      value: 
+      objectReference: {fileID: 945653344}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.x
       value: 0

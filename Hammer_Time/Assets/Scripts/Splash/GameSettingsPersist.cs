@@ -12,6 +12,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int rocks;
     public float volume;
     public bool tutorial;
+    public bool loadGame;
     public bool ai;
     public bool debug;
     public bool mixed;
@@ -34,6 +35,16 @@ public class GameSettingsPersist : MonoBehaviour
             return;
         }
 
+        if (loadGame)
+        {
+            GameData data = SaveSystem.LoadPlayer();
+
+            redHammer = data.redHammer;
+            ends = data.endTotal;
+            ai = data.aiYellow;
+        }
+        else LoadSettings();
+
         if (tutorial)
         {
             OnTutorial();
@@ -48,15 +59,18 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadSettings()
     {
-        gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
+        if (gs)
+        {
+            gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
 
-        debug = gs.debug;
-        ends = gs.ends;
-        rocks = gs.rocks;
-        volume = gs.volume;
-        redHammer = gs.redHammer;
-        ai = gs.ai;
-        mixed = gs.mixed;
+            debug = gs.debug;
+            ends = gs.ends;
+            rocks = gs.rocks;
+            volume = gs.volume;
+            redHammer = gs.redHammer;
+            ai = gs.ai;
+            mixed = gs.mixed;
+        }
     }
 
     private void Update()

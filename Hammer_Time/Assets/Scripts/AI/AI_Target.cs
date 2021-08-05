@@ -709,8 +709,8 @@ public class AI_Target : MonoBehaviour
         //rm.inturn = false;
         //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
 
-        rm.inturn = true;
-        takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+        //rm.inturn = true;
+        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
 
         if (targetX > 0f)
         {
@@ -732,31 +732,11 @@ public class AI_Target : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        if (cenGuard)
-        {
-            if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-            {
-                targetX = cenGuard.position.x;
-                takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                aiShoot.OnShot("Tick", rockCurrent);
-                Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                yield break;
-            }
-            else
-            {
-                targetX = cenGuard.position.x;
-                takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                aiShoot.OnShot("Tick", rockCurrent);
-                Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                yield break;
-            }
-        }
-        else
-        {
-            aiShoot.OnShot("Centre Guard", rockCurrent);
-            Debug.Log("No Target - Centre Guard");
-            yield break;
-        }
+        targetX = gm.rockList[rockTarget].rock.transform.position.x;
+        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
+        aiShoot.OnShot("Tick", rockCurrent);
+        Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
+        yield break;
 
     }
 

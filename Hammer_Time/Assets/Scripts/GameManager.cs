@@ -42,6 +42,11 @@ public class GameManager : MonoBehaviour
     public int redScore;
     public int yellowScore;
 
+    int[] endScoreRed;
+    int[] endScoreYellow;
+
+    public LoadGame lg;
+
     public GameHUD gHUD;
     public RockBar rockBar;
 
@@ -92,21 +97,29 @@ public class GameManager : MonoBehaviour
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
 
-        endCurrent = 1;
-        rockCurrent = 0;
-        redHammer = FindObjectOfType<GameSettingsPersist>().redHammer;
-        endTotal = FindObjectOfType<GameSettingsPersist>().ends;
-        rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
-        aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
-        debug = FindObjectOfType<GameSettingsPersist>().debug;
-        mixed = FindObjectOfType<GameSettingsPersist>().mixed;
+        if (FindObjectOfType<GameSettingsPersist>().loadGame)
+        {
+            StartCoroutine(LoadGame());
+        }
+        else
+        {
+            endCurrent = 1;
+            rockCurrent = 0;
+            redHammer = FindObjectOfType<GameSettingsPersist>().redHammer;
+            endTotal = FindObjectOfType<GameSettingsPersist>().ends;
+            rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
+            aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
+            mixed = FindObjectOfType<GameSettingsPersist>().mixed;
+        }
 
+
+        debug = FindObjectOfType<GameSettingsPersist>().debug;
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
 
-        redRocks_left = rocksPerTeam;
-        yellowRocks_left = rocksPerTeam;
+        //redRocks_left = rocksPerTeam;
+        //yellowRocks_left = rocksPerTeam;
         rockTotal = rocksPerTeam * 2;
 
         rockList = new List<Rock_List>();
@@ -117,6 +130,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         gHUD.SetHammer(redHammer);
+
+        
+
         if (!tutorial)
         {
             if (redHammer)
@@ -132,6 +148,7 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(Tutorial());
         }
+
         
     }
 
@@ -609,6 +626,8 @@ public class GameManager : MonoBehaviour
         rockCurrent++;
         Debug.Log("Current Rock is " + rockCurrent);
 
+        SaveSystem.SavePlayer(this);
+
         if (rockCurrent % 2 == 1)
         {
             if (redHammer)
@@ -718,6 +737,9 @@ public class GameManager : MonoBehaviour
                 gHUD.SetHammer(redHammer);
             }
 
+            endScoreRed[endCurrent - 1] = redScore;
+            endScoreYellow[endCurrent - 1] = yellowScore;
+
             yield return new WaitForSeconds(1.5f);
             
             
@@ -803,6 +825,38 @@ public class GameManager : MonoBehaviour
     public void OnDebugReset()
     {
         StartCoroutine(Scoring());
+    }
+
+    IEnumerator LoadGame()
+    {
+        GameData data = SaveSystem.LoadPlayer();
+
+        //redHammer = data.redHammer;
+        //endTotal = data.endTotal;
+        endCurrent = data.endCurrent;
+        //aiTeamRed = data.aiRed;
+        //aiTeamYellow = data.aiYellow;
+
+        for (int i = 1; i < endCurrent; i++)
+        {
+            gHUD.Scoreboard(i, endScoreRed[i], endScoreYellow[i]);
+        }
+
+        redScore = data.redScore;
+        yellowScore = data.yellowScore;
+        rockBar.EndUpdate(yellowScore, redScore);
+
+        yield return StartCoroutine(SetupRocks());
+
+        rockCurrent = data.rockCurrent;
+        lg.enabled = true;
+
+        yield return new WaitUntil(() => lg.rocksPlaced == true);
+
+
+        rockBar.ShotUpdate(rockCurrent, true);
+
+        yield return StartCoroutine(CheckScore());
     }
 
     IEnumerator Tutorial()

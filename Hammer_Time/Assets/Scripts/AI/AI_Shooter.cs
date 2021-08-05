@@ -16,6 +16,16 @@ public class AI_Shooter : MonoBehaviour
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
 
+    public Vector2 centreGuard;
+    public Vector2 tightCentreGuard;
+    public Vector2 highCentreGuard;
+
+    public Vector2 leftHighCornerGuard;
+    public Vector2 leftTightCornerGuard;
+    public Vector2 leftCornerGuard;
+    public Vector2 rightHighCornerGuard;
+    public Vector2 rightTightCornerGuard;
+    public Vector2 rightCornerGuard;
 
     public Vector2 topTwelveFoot;
     public Vector2 backTwelveFoot;

@@ -117,7 +117,7 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            aiTarg.OnTarget("Tap Back", gm.rockCurrent, testingRockNumber);
+            aiTarg.OnTarget("Take Out", gm.rockCurrent, testingRockNumber);
             //StartCoroutine(Shot(testing));
             //StartCoroutine(TickShot(gm.rockCurrent));
             //StartCoroutine(TapTarget(gm.rockCurrent, testingRockNumber));
@@ -254,13 +254,6 @@ public class AIManager : MonoBehaviour
             //}
         }
 
-
-        if (aggressive)
-        {
-            aiStrat.Aggressive(rockCurrent);
-        }
-        else
-            aiStrat.Conservative(rockCurrent);
 
         if (aggressive)
         {
