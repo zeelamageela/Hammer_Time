@@ -20,8 +20,6 @@ public class LoadGame : MonoBehaviour
     {
         //yield return new WaitForSeconds(3.5f);
 
-        GameData data = SaveSystem.LoadPlayer();
-
         for (int i = 0; i < gm.rockCurrent; i++)
         {
             gm.rockList[i].rockInfo.placed = true;
@@ -38,9 +36,9 @@ public class LoadGame : MonoBehaviour
             gm.rockList[i].rock.transform.parent = null;
             rockBar.DeadRock(i);
             yield return new WaitForEndOfFrame();
-            if (data.inPlay[i])
+            if (gm.rockList[i].rockInfo.inPlay)
             {
-                gm.rockList[i].rock.GetComponent<Rigidbody2D>().position = new Vector2(data.rockPosX[i], data.rockPosY[i]);
+                //gm.rockList[i].rock.transform;
             }
             else
             {
@@ -54,7 +52,7 @@ public class LoadGame : MonoBehaviour
 
         for (int i = 0; i < gm.rockCurrent; i++)
         {
-            if (data.inPlay[i])
+            if (gm.rockList[i].rockInfo.inPlay)
             {
                 gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
                 gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;

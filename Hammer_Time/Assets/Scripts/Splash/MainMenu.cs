@@ -2,14 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TigerForge;
 
 public class MainMenu : MonoBehaviour
 {
     public AudioManager am;
     public GameSettingsPersist gsp;
+    EasyFileSave myFile;
+    public GameObject contButton;
+
+    void Start()
+    {
+
+        myFile = new EasyFileSave("my_game_data");
+
+        if (myFile.Load())
+            contButton.SetActive(true);
+        else
+            contButton.SetActive(false);
+    }
    public void PlayGame()
     {
-        gsp.loadGame = false;
         am = FindObjectOfType<AudioManager>();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         am.Play("Theme");
@@ -31,7 +44,6 @@ public class MainMenu : MonoBehaviour
 
     public void AIGame()
     {
-        gsp.loadGame = false;
         am = FindObjectOfType<AudioManager>();
         SceneManager.LoadScene("AIGame_2");
         am.Play("Theme");
@@ -40,6 +52,7 @@ public class MainMenu : MonoBehaviour
     public void Continue()
     {
         gsp.loadGame = true;
+        Debug.Log("Load Game is " + gsp.loadGame);
         am = FindObjectOfType<AudioManager>();
         SceneManager.LoadScene("AIGame_2");
         am.Play("Theme");

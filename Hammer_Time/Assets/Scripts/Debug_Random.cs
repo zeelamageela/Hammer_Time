@@ -145,7 +145,7 @@ public class Debug_Random : MonoBehaviour
             Debug.Log(gm.rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
         }
 
-        StartCoroutine(gm.CheckScore());
+        //StartCoroutine(gm.CheckScore());
         --gm.rockCurrent;
 
         Debug.Log("Current Rock is " + gm.rockCurrent);

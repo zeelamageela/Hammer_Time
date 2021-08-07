@@ -13,9 +13,14 @@ public class GameSettingsPersist : MonoBehaviour
     public float volume;
     public bool tutorial;
     public bool loadGame;
-    public bool ai;
+    public bool aiYellow;
+    public bool aiRed;
     public bool debug;
     public bool mixed;
+    public int rockCurrent;
+    public int endCurrent;
+    public int yellowScore;
+    public int redScore;
 
     public static GameSettingsPersist instance;
 
@@ -35,15 +40,15 @@ public class GameSettingsPersist : MonoBehaviour
             return;
         }
 
-        if (loadGame)
-        {
-            GameData data = SaveSystem.LoadPlayer();
-
-            redHammer = data.redHammer;
-            ends = data.endTotal;
-            ai = data.aiYellow;
-        }
-        else LoadSettings();
+        //if (loadGame)
+        //{
+        //    redHammer = data.redHammer;
+        //    ends = data.endTotal;
+        //    aiYellow = data.aiYellow;
+        //    rockCurrent = data.rockCurrent;
+        //    endCurrent = data.endCurrent;
+        //}
+        //else LoadSettings();
 
         if (tutorial)
         {
@@ -68,11 +73,25 @@ public class GameSettingsPersist : MonoBehaviour
             rocks = gs.rocks;
             volume = gs.volume;
             redHammer = gs.redHammer;
-            ai = gs.ai;
+            aiYellow = gs.ai;
             mixed = gs.mixed;
+            loadGame = gs.loadGame;
+            
         }
     }
 
+    public void AutoSave()
+    {
+        //GameData data = SaveSystem.LoadPlayer();
+        //ends = data.endTotal;
+        //endCurrent = data.endCurrent;
+        //rocks = data.rocks;
+        //rockCurrent = data.rockCurrent;
+        //redHammer = data.redHammer;
+        //aiYellow = data.aiYellow;
+        //yellowScore = data.yellowScore;
+        //redScore = data.redScore;
+    }
     private void Update()
     {
         if (tutorial)

@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using TigerForge;
 
 public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
 
 
 public class GameManager : MonoBehaviour
 {
-    public AudioManager am;
+    AudioManager am;
 
     public int endCurrent;
     public int endTotal;
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
     public int rockTotal;
     public int rockCurrent;
 
+    public GameSettingsPersist gsp;
     public RockManager rm;
     public GameObject redShooter;
     public GameObject yellowShooter;
@@ -42,8 +44,8 @@ public class GameManager : MonoBehaviour
     public int redScore;
     public int yellowScore;
 
-    int[] endScoreRed;
-    int[] endScoreYellow;
+    //public int[] endScoreRed;
+    //public int[] endScoreYellow;
 
     public LoadGame lg;
 
@@ -82,12 +84,14 @@ public class GameManager : MonoBehaviour
     public List<House_List> houseList;
     public List<Guard_List> gList;
 
+    public EasyFileSave myFile;
     void Start()
     {
         state = GameState.START;
 
         //sweepButton.gameObject.SetActive(false);
 
+        myFile = new EasyFileSave("my_game_data");
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         StartCoroutine(SetupGame());
     }
@@ -96,36 +100,36 @@ public class GameManager : MonoBehaviour
     {
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
+        gsp = FindObjectOfType<GameSettingsPersist>();
 
-        if (FindObjectOfType<GameSettingsPersist>().loadGame)
+        endCurrent = gsp.endCurrent;
+        rockCurrent = gsp.rockCurrent;
+        rocksPerTeam = gsp.rocks;
+        redHammer = gsp.redHammer;
+        endTotal = gsp.ends;
+        rocksPerTeam = gsp.rocks;
+        aiTeamYellow = gsp.aiYellow;
+        mixed = gsp.mixed;
+
+        if (gsp.loadGame)
         {
             StartCoroutine(LoadGame());
         }
-        else
-        {
-            endCurrent = 1;
-            rockCurrent = 0;
-            redHammer = FindObjectOfType<GameSettingsPersist>().redHammer;
-            endTotal = FindObjectOfType<GameSettingsPersist>().ends;
-            rocksPerTeam = FindObjectOfType<GameSettingsPersist>().rocks;
-            aiTeamYellow = FindObjectOfType<GameSettingsPersist>().ai;
-            mixed = FindObjectOfType<GameSettingsPersist>().mixed;
-        }
 
-
-        debug = FindObjectOfType<GameSettingsPersist>().debug;
+        debug = gsp.debug;
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
 
         //redRocks_left = rocksPerTeam;
         //yellowRocks_left = rocksPerTeam;
-        rockTotal = rocksPerTeam * 2;
+        rockTotal = gsp.rocks * 2;
 
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
         gList = new List<Guard_List>();
-
+        //endScoreRed = new int[endTotal];
+        //endScoreYellow = new int[endTotal];
         //yield return new WaitForSeconds(2f);
         yield return new WaitForEndOfFrame();
 
@@ -517,7 +521,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
     }
 
-    public IEnumerator CheckScore()
+    IEnumerator CheckScore()
     {
         state = GameState.CHECKSCORE;
 
@@ -626,7 +630,8 @@ public class GameManager : MonoBehaviour
         rockCurrent++;
         Debug.Log("Current Rock is " + rockCurrent);
 
-        SaveSystem.SavePlayer(this);
+        StartCoroutine(SaveGame());
+        //gsp.AutoSave();
 
         if (rockCurrent % 2 == 1)
         {
@@ -737,8 +742,8 @@ public class GameManager : MonoBehaviour
                 gHUD.SetHammer(redHammer);
             }
 
-            endScoreRed[endCurrent - 1] = redScore;
-            endScoreYellow[endCurrent - 1] = yellowScore;
+            //endScoreRed[endCurrent] = redScore;
+            //endScoreYellow[endCurrent] = yellowScore;
 
             yield return new WaitForSeconds(1.5f);
             
@@ -827,36 +832,127 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Scoring());
     }
 
-    IEnumerator LoadGame()
+    IEnumerator SaveGame()
     {
-        GameData data = SaveSystem.LoadPlayer();
+        myFile.Add("Red Hammer", redHammer);
+        myFile.Add("End Total", endTotal);
+        myFile.Add("Current End", endCurrent);
+        myFile.Add("Rock Total", rockTotal);
+        myFile.Add("Current Rock", rockCurrent);
+        myFile.Add("Red Score", redScore);
+        myFile.Add("Yellow Score", yellowScore);
 
-        //redHammer = data.redHammer;
-        //endTotal = data.endTotal;
-        endCurrent = data.endCurrent;
-        //aiTeamRed = data.aiRed;
-        //aiTeamYellow = data.aiYellow;
-
-        for (int i = 1; i < endCurrent; i++)
+        for (int i = 0; i < rockTotal; i++)
         {
-            gHUD.Scoreboard(i, endScoreRed[i], endScoreYellow[i]);
+            myFile.Add("Rock Transform " + rockList[i].rockInfo.rockIndex, rockList[i].rock.transform);
+            myFile.Add("Rock In Play " + rockList[i].rockInfo.rockIndex, rockList[i].rockInfo.inPlay);
         }
 
-        redScore = data.redScore;
-        yellowScore = data.yellowScore;
-        rockBar.EndUpdate(yellowScore, redScore);
+        yield return new WaitForEndOfFrame();
+
+        myFile.Save();
+    }
+    IEnumerator LoadGame()
+    {
+        Debug.Log("Loading Game!!!!!!!");
+        if (myFile.Load())
+        {
+            redHammer = myFile.GetBool("Red Hammer");
+            endTotal = myFile.GetInt("End Total");
+            endCurrent = myFile.GetInt("Current End");
+            rockTotal = myFile.GetInt("Rock Total");
+            aiTeamRed = myFile.GetBool("Ai Red");
+            aiTeamYellow = myFile.GetBool("Ai Yellow");
+
+
+            //for (int i = 0; i < endCurrent; i++)
+            //{
+            //    gHUD.Scoreboard(i, data.endScoreRed[i], data.endScoreYellow[i]);
+            //}
+
+            redScore = myFile.GetInt("Red Score");
+            yellowScore = myFile.GetInt("Yellow Score");
+            rockBar.EndUpdate(yellowScore, redScore);
+        }
 
         yield return StartCoroutine(SetupRocks());
 
-        rockCurrent = data.rockCurrent;
-        lg.enabled = true;
+        if (myFile.Load())
+            rockCurrent = myFile.GetInt("Current Rock", rockCurrent);
 
-        yield return new WaitUntil(() => lg.rocksPlaced == true);
+        yield return new WaitForEndOfFrame();
 
+        //lg.enabled = true;
+
+        //yield return new WaitUntil(() => lg.rocksPlaced == true);
+
+        yield return StartCoroutine(PlaceRocks());
+
+        myFile.Dispose();
 
         rockBar.ShotUpdate(rockCurrent, true);
 
         yield return StartCoroutine(CheckScore());
+    }
+
+    IEnumerator PlaceRocks()
+    {
+        //yield return new WaitForSeconds(3.5f);
+
+        for (int i = 0; i < rockCurrent; i++)
+        {
+            rockList[i].rockInfo.placed = true;
+        }
+
+        yield return new WaitForEndOfFrame();
+
+        for (int i = 0; i < rockCurrent; i++)
+        {
+            rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
+            rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
+            rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
+            rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
+            rockList[i].rock.transform.parent = null;
+            rockBar.DeadRock(i);
+            yield return new WaitForEndOfFrame();
+            if (myFile.GetBool("Rock In Play " + i))
+            {
+                var rockTrans = myFile.GetUnityTransform("Rock " + i);
+                rockList[i].rock.transform.position = rockTrans.position;
+            }
+            else
+            {
+                rockList[i].rock.SetActive(false);
+                rockList[i].rockInfo.inPlay = true;
+                rockList[i].rockInfo.outOfPlay = true;
+            }
+        }
+
+        yield return new WaitForEndOfFrame();
+
+        for (int i = 0; i < rockCurrent; i++)
+        {
+            if (myFile.GetBool("Rock In Play " + i))
+            {
+                rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
+                rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
+                rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
+                rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
+                rockList[i].rockInfo.inPlay = true;
+                rockList[i].rockInfo.outOfPlay = false;
+                rockList[i].rockInfo.moving = false;
+                rockList[i].rockInfo.shotTaken = true;
+                rockList[i].rockInfo.released = true;
+                rockList[i].rockInfo.stopped = true;
+                rockList[i].rockInfo.rest = true;
+                Debug.Log("i is equal to " + i);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        //rocksPlaced = true;
+
+        yield return new WaitForEndOfFrame();
+
     }
 
     IEnumerator Tutorial()
