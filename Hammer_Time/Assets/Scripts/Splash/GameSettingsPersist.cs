@@ -56,13 +56,14 @@ public class GameSettingsPersist : MonoBehaviour
     private void Start()
     {
 
-        gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
+        //gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
 
         if (tutorial)
         {
             OnTutorial();
         }
-        else if (loadGame)
+        
+        if (loadGame)
         {
             LoadGame();
         }
