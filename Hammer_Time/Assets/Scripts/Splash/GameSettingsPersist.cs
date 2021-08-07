@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using TigerForge;
 
 public class GameSettingsPersist : MonoBehaviour
 {
@@ -21,6 +21,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
+    public EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
 
@@ -28,6 +29,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     private void Awake()
     {
+        myFile = new EasyFileSave("my_game_data");
         DontDestroyOnLoad(gameObject);
 
         if (instance == null)
@@ -48,38 +50,49 @@ public class GameSettingsPersist : MonoBehaviour
         //    rockCurrent = data.rockCurrent;
         //    endCurrent = data.endCurrent;
         //}
-        //else LoadSettings();
-
-        if (tutorial)
-        {
-            OnTutorial();
-        }
-        else LoadSettings();
+        //else LoadSettings();  
     }
 
     private void Start()
     {
 
+        gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
+
+        if (tutorial)
+        {
+            OnTutorial();
+        }
+        else if (loadGame)
+        {
+            LoadGame();
+        }
     }
 
     public void LoadSettings()
     {
-        if (gs)
-        {
-            gs = GameObject.FindGameObjectWithTag("GameSettings").GetComponent<GameSettings>();
-
-            debug = gs.debug;
-            ends = gs.ends;
-            rocks = gs.rocks;
-            volume = gs.volume;
-            redHammer = gs.redHammer;
-            aiYellow = gs.ai;
-            mixed = gs.mixed;
-            loadGame = gs.loadGame;
-            
-        }
+        gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
+        //load all the saved values
+        ends = gs.ends;
+        endCurrent = 0;
+        rocks = gs.rocks;
+        rockCurrent = 0;
+        redHammer = gs.redHammer;
+        aiYellow = gs.ai;
+        mixed = gs.mixed;
     }
 
+    public void LoadGame()
+    {
+
+        //load all the saved values
+        ends = myFile.GetInt("End Total");
+        endCurrent = myFile.GetInt("Current End");
+        rocks = myFile.GetInt("Rock Total");
+        rockCurrent = myFile.GetInt("Current Rock");
+        redHammer = myFile.GetBool("Red Hammer");
+        aiYellow = myFile.GetBool("Ai Yellow");
+        mixed = myFile.GetBool("Mixed");
+    }
     public void AutoSave()
     {
         //GameData data = SaveSystem.LoadPlayer();
@@ -99,6 +112,14 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
             tutorial = false;
         }
+
+        if (gs)
+        {
+            ends = gs.ends;
+            rocks = gs.rocks;
+            aiYellow = gs.ai;
+        }
+        else loadGame = true;
     }
 
     public void OnTutorial()

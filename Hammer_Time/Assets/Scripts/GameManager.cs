@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SetupGame());
     }
 
+    #region "Setup and Reset"
     IEnumerator SetupGame()
     {
         //gHUD.SetHUD(redRock);
@@ -292,7 +293,9 @@ public class GameManager : MonoBehaviour
             OnRedTurn();
         }
     }
+    #endregion
 
+    #region "Turns"
     public void OnRedTurn()
     {
         state = GameState.REDTURN;
@@ -506,7 +509,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(CheckScore());
 
     }
+    #endregion
 
+    #region "End of Turn"
     IEnumerator AllStopped()
     {
         foreach (Rock_List rock in rockList)
@@ -656,7 +661,9 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region "Scoring and End of Game"
     IEnumerator Scoring()
     {
         Debug.Log("Current rock is " + rockCurrent);
@@ -786,15 +793,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    IEnumerator WaitForClick()
-    {
-        while (!Input.GetMouseButtonDown(0))
-        {
-            yield return null;
-        }
-        Debug.Log("Clickeddd");
-    }
-
     IEnumerator EndOfGame()
     {
         gHUD.EndOfGame(redScore, redRock.teamName, yellowScore, yellowRock.teamName);
@@ -814,6 +812,17 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(WaitForClick());
             SceneManager.LoadScene("SplashMenu");
         }
+    }
+    #endregion
+
+    #region Utilities and Special Situations
+    IEnumerator WaitForClick()
+    {
+        while (!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
+        Debug.Log("Clickeddd");
     }
 
     public void OnDebug()
@@ -985,5 +994,5 @@ public class GameManager : MonoBehaviour
 
         yield return StartCoroutine(CheckScore());
     }
-
+    #endregion
 }

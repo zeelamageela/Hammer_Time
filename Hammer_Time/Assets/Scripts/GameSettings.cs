@@ -28,10 +28,10 @@ public class GameSettings : MonoBehaviour
 
     private void Start()
     {
-        gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         //ends = gsp.ends;
         //rocks = gsp.rocks;
-        
+
+        gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadSettings();
     }
     private void Update()
@@ -60,11 +60,7 @@ public class GameSettings : MonoBehaviour
     {
         redHammer = true;
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
-        gsp.ends = ends;
-        gsp.rocks = rocks;
-        gsp.aiYellow = ai;
-        gsp.redHammer = redHammer;
-        gsp.mixed = mixed;
+        gsp.LoadSettings();
 
         SceneManager.LoadScene("AIGame_2");
     }
