@@ -21,7 +21,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
-    public EasyFileSave myFile;
+    EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
 
@@ -29,7 +29,6 @@ public class GameSettingsPersist : MonoBehaviour
 
     private void Awake()
     {
-        myFile = new EasyFileSave("my_game_data");
         DontDestroyOnLoad(gameObject);
 
         if (instance == null)
@@ -55,6 +54,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     private void Start()
     {
+        //myFile = new EasyFileSave("my_game_data");
 
         //gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
 
@@ -63,10 +63,7 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
         
-        if (loadGame)
-        {
-            LoadGame();
-        }
+        
     }
 
     public void LoadSettings()
@@ -74,7 +71,7 @@ public class GameSettingsPersist : MonoBehaviour
         gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
         //load all the saved values
         ends = gs.ends;
-        endCurrent = 0;
+        endCurrent = 1;
         rocks = gs.rocks;
         rockCurrent = 0;
         redHammer = gs.redHammer;
@@ -84,15 +81,25 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadGame()
     {
-
+        loadGame = true;
+        myFile = new EasyFileSave("my_game_data");
         //load all the saved values
-        ends = myFile.GetInt("End Total");
-        endCurrent = myFile.GetInt("Current End");
-        rocks = myFile.GetInt("Rock Total");
-        rockCurrent = myFile.GetInt("Current Rock");
-        redHammer = myFile.GetBool("Red Hammer");
-        aiYellow = myFile.GetBool("Ai Yellow");
-        mixed = myFile.GetBool("Mixed");
+        if (myFile.Load())
+        {
+            Debug.Log("Loading to GSP");
+            Debug.Log("Ends is " + myFile.GetInt("End Total"));
+
+            ends = myFile.GetInt("End Total");
+            endCurrent = myFile.GetInt("Current End");
+            rocks = myFile.GetInt("Rocks Per Team");
+            rockCurrent = myFile.GetInt("Current Rock");
+            redHammer = myFile.GetBool("Red Hammer");
+            aiYellow = myFile.GetBool("Ai Yellow");
+            mixed = myFile.GetBool("Mixed");
+
+            redScore = myFile.GetInt("Red Score");
+            yellowScore = myFile.GetInt("Yellow Score");
+        }
     }
     public void AutoSave()
     {
@@ -119,8 +126,9 @@ public class GameSettingsPersist : MonoBehaviour
             ends = gs.ends;
             rocks = gs.rocks;
             aiYellow = gs.ai;
+            loadGame = false;
         }
-        else loadGame = true;
+
     }
 
     public void OnTutorial()

@@ -1515,13 +1515,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8db7f2f1ce3ec44a3ee58c2cf3db2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  am: {fileID: 0}
   endCurrent: 0
   endTotal: 2
   redHammer: 0
-  rocksPerTeam: 4
+  rocksPerTeam: 8
   rockTotal: 0
   rockCurrent: 0
+  gsp: {fileID: 0}
   rm: {fileID: 545177317}
   redShooter: {fileID: 857868563430731881, guid: b8643296f64410a4b9b8924cfe485201, type: 3}
   yellowShooter: {fileID: 5027146118104172921, guid: 74c4cf13a306ff1458ed40ed72f1409a, type: 3}
@@ -1580,7 +1580,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197219299}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad5f61f9546e94967975c8559c26a3fb, type: 3}
   m_Name: 
@@ -3466,13 +3466,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   redHammer: 1
   ends: 10
-  rocks: 4
+  rocks: 8
   volume: 0.45
   tutorial: 0
   loadGame: 0
-  ai: 0
+  aiYellow: 0
+  aiRed: 0
   debug: 0
   mixed: 0
+  rockCurrent: 0
+  endCurrent: 1
+  yellowScore: 0
+  redScore: 0
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -6245,6 +6250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
   rm: {fileID: 545177317}
+  uiCam: {fileID: 1490290958}
   yellowRock: {fileID: 21300000, guid: 4ffd16b1cdb1e984e8f33242b62df218, type: 3}
   yellowRockGO: {fileID: 6193375755376088045, guid: 209e1e9e51df33f4f9fe1a8f3c3cd859, type: 3}
   yellowRockMouseOver: {fileID: 21300000, guid: bffc0818d699eb04396ca5cc152819f6, type: 3}
@@ -6266,6 +6272,7 @@ MonoBehaviour:
   rockListUI: []
   offset: 60
   rockCurrent: 0
+  col: {fileID: 0}
 --- !u!1 &561981142
 GameObject:
   m_ObjectHideFlags: 0

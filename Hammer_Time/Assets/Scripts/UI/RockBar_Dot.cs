@@ -43,4 +43,10 @@ public class RockBar_Dot : MonoBehaviour
         col.a = 0.5f;
         GetComponent<Image>().color = col;
     }
+
+    private void Update()
+    {
+
+    }
+
 }

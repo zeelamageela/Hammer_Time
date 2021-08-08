@@ -20,7 +20,7 @@ public class LoadGame : MonoBehaviour
     {
         //yield return new WaitForSeconds(3.5f);
 
-        for (int i = 0; i < gm.rockCurrent; i++)
+        for (int i = 0; i <= gm.rockCurrent; i++)
         {
             gm.rockList[i].rockInfo.placed = true;
         }

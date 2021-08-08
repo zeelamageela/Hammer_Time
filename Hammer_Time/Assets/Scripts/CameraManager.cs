@@ -75,6 +75,15 @@ public class CameraManager : MonoBehaviour
         vcam.enabled = true;
     }
 
+    public void RockZoom(Transform tFollowTarget)
+    {
+        main.depth = 1;
+        house.depth = -1;
+        ui.depth = 2;
+        vcam.LookAt = tFollowTarget;
+        vcam.Follow = tFollowTarget;
+        vcam.enabled = true;
+    }
     public void InPlayZoom(float dist)
     {
         vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;

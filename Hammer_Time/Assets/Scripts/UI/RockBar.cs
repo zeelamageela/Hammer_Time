@@ -8,6 +8,7 @@ public class RockBar : MonoBehaviour
     public GameManager gm;
     public RockManager rm;
 
+    public Camera uiCam;
     public Sprite yellowRock;
     public GameObject yellowRockGO;
     public Sprite yellowRockMouseOver;
@@ -37,6 +38,8 @@ public class RockBar : MonoBehaviour
     Rock_Info activeRockInfo;
     public int rockCurrent;
     int rocksPerTeam;
+
+    public Collider2D col;
 
     // Update is called once per frame
     void Start()

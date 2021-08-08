@@ -27,15 +27,9 @@ public class Rock_Info : MonoBehaviour
 
     void FixedUpdate()
     {
+        distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
         if (!placed)
-        {
-            distance = Vector2.Distance(new Vector2(0.02f, 6.5f), gameObject.transform.position);
             shotTaken = GetComponent<Rock_Colliders>().shotTaken;
-        }
-        else
-        {
-
-        }
 
         inPlay = GetComponent<Rock_Colliders>().inPlay;
         outOfPlay = GetComponent<Rock_Colliders>().outOfPlay;

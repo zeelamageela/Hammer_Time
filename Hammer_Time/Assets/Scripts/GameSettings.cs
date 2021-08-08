@@ -69,10 +69,7 @@ public class GameSettings : MonoBehaviour
     {
         redHammer = false;
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
-        gsp.ends = ends;
-        gsp.rocks = rocks;
-        gsp.aiRed = ai;
-        gsp.redHammer = redHammer;
+        gsp.LoadSettings();
 
         SceneManager.LoadScene("AIGame_2");
     }
