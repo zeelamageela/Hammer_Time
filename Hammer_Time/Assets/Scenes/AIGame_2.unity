@@ -9535,16 +9535,16 @@ MonoBehaviour:
   tick: {x: 0, y: -27.012}
   testing: Button
   testingRockNumber: 0
-  guardAccu: {x: 0, y: 0}
-  drawAccu: {x: 0, y: 0}
-  toAccu: {x: 0, y: 0}
-  tickAccu: {x: 0, y: 0}
+  guardAccu: {x: 0.01, y: 0.02}
+  drawAccu: {x: 0.01, y: 0.015}
+  toAccu: {x: 0.0025, y: 0.01}
+  tickAccu: {x: 0.005, y: 0.005}
   takeOutOffset: 0
   peelOffset: 0
   raiseOffset: 0
   tickOffset: 0
   takeOutX: 0
-  osMult: 0
+  osMult: -0.32
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0

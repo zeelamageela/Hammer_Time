@@ -260,7 +260,7 @@ public class AIManager : MonoBehaviour
             aiStrat.OnShot(rockCurrent);
         }
         else
-            aiStrat.Conservative(rockCurrent);
+            aiStrat.OnShot(rockCurrent);
     }
 
 }
