@@ -120,7 +120,7 @@ public class GameSettingsPersist : MonoBehaviour
             rocks = gs.rocks;
             aiYellow = gs.ai;
         }
-        else loadGame = true;
+        //else loadGame = true;
     }
 
     public void OnTutorial()
