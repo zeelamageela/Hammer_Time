@@ -35,7 +35,67 @@ public class AI_Strategy : MonoBehaviour
 
     string phase;
 
+    public void OnShot(int rockCurrent)
+    {
+        if (gm.houseList.Count != 0)
+        {
+            closestRock = gm.houseList[0].rock;
+            closestRockInfo = gm.houseList[0].rockInfo;
+        }
 
+        //early phase is shots 1-3 in an 8 rock game
+        if (gm.rockTotal - rockCurrent >= 11)
+        {
+            if (gm.redHammer)
+            {
+                phase = "early no hammer";
+            }
+            else
+            {
+                phase = "early hammer";
+            }
+        }
+        //middle phase is shots 4 and 5 in an 8 rock game
+        else if (gm.rockTotal - rockCurrent <= 10 && gm.rockTotal - rockCurrent >= 7)
+        {
+            if (gm.redHammer)
+            {
+                phase = "middle no hammer";
+            }
+            else
+            {
+                phase = "middle hammer";
+            }
+        }
+        //late phase is shots 6-8 in an 8 rock game
+        else if (gm.rockTotal - rockCurrent <= 6)
+        {
+            if (gm.redHammer)
+            {
+                phase = "late no hammer";
+            }
+            else
+            {
+                phase = "late hammer";
+            }
+        }
+        else
+        {
+            if (gm.redHammer)
+            {
+                phase = "late no hammer";
+                Debug.Log("Default Phase - late no hammer");
+            }
+            else
+            {
+                phase = "late hammer";
+                Debug.Log("Default Phase - late hammer");
+            }
+        }
+
+        Aggressive(rockCurrent, phase);
+        Debug.Log("Phase is " + phase);
+    }
     public void Conservative(int rockCurrent)
     {
 
@@ -139,7 +199,7 @@ public class AI_Strategy : MonoBehaviour
         }
     }
 
-    public void Aggressive(int rockCurrent)
+    public void Aggressive(int rockCurrent, string phase)
     {
         //Aggressive is to steal at all costs
         GameObject rock = gm.rockList[rockCurrent].rock;
@@ -207,6 +267,7 @@ public class AI_Strategy : MonoBehaviour
 
         switch (phase)
         {
+            #region Early No Hammer
             case "early no hammer":
 
                 //no one is in the house
@@ -322,7 +383,9 @@ public class AI_Strategy : MonoBehaviour
                     }
                 }
                 break;
+            #endregion
 
+            #region Early Hammer
             case "early hammer":
 
                     //left corner guard
@@ -349,8 +412,9 @@ public class AI_Strategy : MonoBehaviour
                 }
 
                 break;
+            #endregion
 
-
+            #region Middle No Hammer
             case "middle no hammer":
                 //no one is in the house
                 if (gm.houseList.Count == 0)
@@ -503,7 +567,9 @@ public class AI_Strategy : MonoBehaviour
                     }
                 }
                 break;
+            #endregion
 
+            #region Middle Hammer
             case "middle hammer":
 
                 //no one is in the house
@@ -647,8 +713,9 @@ public class AI_Strategy : MonoBehaviour
                     }
                 }
                 break;
+            #endregion
 
-
+            #region Late No Hammer
             case "late no hammer":
 
                 //if no rocks in the house
@@ -959,8 +1026,9 @@ public class AI_Strategy : MonoBehaviour
                     Debug.Log("Default Late Phase");
                 }
                 break;
+            #endregion
 
-
+            #region Late Hammer
             case "late hammer":
 
                 //no one is in the house
@@ -1133,7 +1201,7 @@ public class AI_Strategy : MonoBehaviour
 
                 }
                 break;
-
+            #endregion
 
             default:
                 break;

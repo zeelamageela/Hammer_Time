@@ -849,6 +849,7 @@ public class GameManager : MonoBehaviour
         myFile.Add("Current Rock", rockCurrent);
         myFile.Add("Red Score", redScore);
         myFile.Add("Yellow Score", yellowScore);
+        myFile.Add("Ai Yellow", aiTeamYellow);
 
         for (int i = 0; i < rockTotal; i++)
         {

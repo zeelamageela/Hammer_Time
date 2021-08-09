@@ -12,6 +12,8 @@ public class ContinueMenu : MonoBehaviour
 
     public GameObject redSpinner;
     public GameObject yellowSpinner;
+    public GameObject yellowAISpinner;
+    public GameObject yellowScoreSpinner;
 
     EasyFileSave myFile;
     public Text scoreDisplay;
@@ -30,6 +32,16 @@ public class ContinueMenu : MonoBehaviour
             endDisplay.text = myFile.GetInt("Current End") + " / " + myFile.GetInt("End Total");
             shotDisplay.text = (myFile.GetInt("Current Rock") + 1) + " / " + (myFile.GetInt("Rocks Per Team") * 2);
 
+            if (myFile.GetBool("Ai Yellow"))
+            {
+                yellowAISpinner.SetActive(true);
+                yellowScoreSpinner.SetActive(false);
+            }
+            else
+            {
+                yellowAISpinner.SetActive(false);
+                yellowScoreSpinner.SetActive(true);
+            }
             //redSpinner.SetActive(true);
             //yellowSpinner.SetActive(false);
 
