@@ -16,7 +16,7 @@ public class AI_Target : MonoBehaviour
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
 
-    GameObject closestRock;
+    public GameObject closestRock;
     Rock_Info closestRockInfo;
 
     public Transform cenGuard;
@@ -42,6 +42,10 @@ public class AI_Target : MonoBehaviour
             closestRock = gm.houseList[0].rock;
             closestRockInfo = gm.houseList[0].rockInfo;
         }
+        rockInfo = gm.rockList[rockCurrent].rockInfo;
+        rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
+        rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
+
         switch (target)
         {
             case "Guard Reading":
@@ -56,12 +60,16 @@ public class AI_Target : MonoBehaviour
                 StartCoroutine(TakeOutTarget(rockCurrent, rockTarget));
                 break;
 
+            case "Peel":
+                StartCoroutine(PeelTarget(rockCurrent, rockTarget));
+                break;
+
             case "Tap Back":
                 StartCoroutine(TapTarget(rockCurrent, rockTarget));
                 break;
 
             case "Tick Shot":
-                StartCoroutine(TickShot(rockCurrent, rockTarget));
+                StartCoroutine(TickShotTarget(rockCurrent, rockTarget));
                 break;
 
             case "Auto Draw Twelve Foot":
@@ -141,6 +149,7 @@ public class AI_Target : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
         yield return new WaitForEndOfFrame();
+        #region House Has Rocks
         //if the house has rocks in it
         if (gm.houseList.Count != 0)
         {
@@ -398,6 +407,9 @@ public class AI_Target : MonoBehaviour
 
             }
         }
+        #endregion
+
+        #region No rocks in House, but Guards
         //if there's guards
         else if (gm.gList.Count != 0)
         {
@@ -657,6 +669,9 @@ public class AI_Target : MonoBehaviour
                 yield break;
             }
         }
+        #endregion
+
+        #region No guards or rocks in House
         else
         {
             targetX = 0f;
@@ -665,6 +680,7 @@ public class AI_Target : MonoBehaviour
             Debug.Log("No Targets available - Button");
             yield break;
         }
+        #endregion
 
     }
 
@@ -698,6 +714,36 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
+    IEnumerator PeelTarget(int rockCurrent, int rockTarget)
+    {
+        yield return StartCoroutine(GuardReading(rockCurrent));
+
+        targetX = gm.rockList[rockTarget].rock.transform.position.x;
+        targetY = gm.rockList[rockTarget].rock.transform.position.y;
+
+
+        //rm.inturn = false;
+        //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+
+        //rm.inturn = true;
+        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+
+        if (targetX > 0f)
+        {
+            rm.inturn = false;
+            takeOutX = (-0.222f * ((targetX + 1.35f) / 2.7f)) + 0.102f;
+        }
+        else
+        {
+            rm.inturn = true;
+            takeOutX = (-0.219f * ((targetX + 1.35f) / 2.7f)) + 0.122f;
+        }
+
+        aiShoot.OnShot("Peel", rockCurrent);
+        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        yield break;
+    }
+
     IEnumerator TapTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
@@ -715,12 +761,12 @@ public class AI_Target : MonoBehaviour
         if (targetX > 0f)
         {
             rm.inturn = false;
-            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+            takeOutX = (-0.178f * ((targetX + 1.35f) / 2.7f)) + 0.056f;
         }
         else
         {
             rm.inturn = true;
-            takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+            takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
         }
 
         aiShoot.OnShot("Raise", rockCurrent);
@@ -728,16 +774,34 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
-    IEnumerator TickShot(int rockCurrent, int rockTarget)
+    IEnumerator TickShotTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
         targetX = gm.rockList[rockTarget].rock.transform.position.x;
-        takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-        aiShoot.OnShot("Tick", rockCurrent);
-        Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-        yield break;
+        targetY = gm.rockList[rockTarget].rock.transform.position.y;
 
+
+        //rm.inturn = false;
+        //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+
+        //rm.inturn = true;
+        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+
+        if (targetX > 0f)
+        {
+            rm.inturn = false;
+            takeOutX = (-0.04f * ((targetX + 0.4f) / 0.8f)) - 0.005f;
+        }
+        else
+        {
+            rm.inturn = true;
+            takeOutX = (-0.039f * ((targetX + 0.4f) / 0.8f)) + 0.042f;
+        }
+
+        aiShoot.OnShot("Tick", rockCurrent);
+        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        yield break;
     }
 
     IEnumerator DrawTwelveFoot(int rockCurrent)

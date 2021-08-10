@@ -62,8 +62,39 @@ public class AI_Shooter : MonoBehaviour
     float raiseY;
 
     public float osMult;
-    GameObject closestRock;
-    Rock_Info closestRockInfo;
+
+    public void Start()
+    {
+        ShotLength();
+    }
+    public void ShotLength()
+    {
+        centreGuard.y = centreGuard.y + (osMult * 0.18f);
+        tightCentreGuard.y = tightCentreGuard.y + (osMult * 0.18f);
+        highCentreGuard.y = highCentreGuard.y + (osMult * 0.18f);
+        leftHighCornerGuard.y = leftHighCornerGuard.y + (osMult * 0.18f);
+        leftTightCornerGuard.y = leftTightCornerGuard.y + (osMult * 0.18f);
+        leftCornerGuard.y = leftCornerGuard.y + (osMult * 0.18f);
+        rightHighCornerGuard.y = rightHighCornerGuard.y + (osMult * 0.18f);
+        rightTightCornerGuard.y = rightTightCornerGuard.y + (osMult * 0.18f);
+        rightCornerGuard.y = rightCornerGuard.y + (osMult * 0.18f);
+
+        topTwelveFoot.y = topTwelveFoot.y + (osMult * 0.18f);
+        backTwelveFoot.y = backTwelveFoot.y + (osMult * 0.18f);
+        leftTwelveFoot.y = leftTwelveFoot.y + (osMult * 0.18f);
+        rightTwelveFoot.y = rightTwelveFoot.y + (osMult * 0.18f);
+
+        topFourFoot.y = topFourFoot.y + (osMult * 0.18f);
+        backFourFoot.y = backFourFoot.y + (osMult * 0.18f);
+        leftFourFoot.y = leftFourFoot.y + (osMult * 0.18f);
+        rightFourFoot.y = rightFourFoot.y + (osMult * 0.18f);
+        button.y = button.y + (osMult * 0.18f);
+
+        peel.y = peel.y + (osMult * 0.18f);
+        takeOut.y = takeOut.y + (osMult * 0.18f);
+        raise.y = raise.y + (osMult * 0.18f);
+        tick.y = tick.y + (osMult * 0.18f);
+    }
 
     public void OnShot(string aiShotType, int rockCurrent)
     {
@@ -87,17 +118,18 @@ public class AI_Shooter : MonoBehaviour
 
         switch (aiShotType)
         {
+            #region Centre Guards
             case "Centre Guard":
                 if (inturn)
                 {
-                    shotX = -1f * Random.Range(aim.centreGuard.x + guardAccu.x, aim.centreGuard.x - guardAccu.x);
+                    shotX = -1f * Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
                 }
                 else
                 {
-                    shotX = Random.Range(aim.centreGuard.x + guardAccu.x, aim.centreGuard.x - guardAccu.x);
+                    shotX = Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
                 }
 
-                shotY = Random.Range(aim.centreGuard.y + guardAccu.y, aim.centreGuard.y - guardAccu.y);
+                shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -106,13 +138,13 @@ public class AI_Shooter : MonoBehaviour
             case "Tight Centre Guard":
                 if (inturn)
                 {
-                    shotX = -1f * Random.Range(aim.tightCentreGuard.x + guardAccu.x, aim.tightCentreGuard.x - guardAccu.x);
+                    shotX = -1f * Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
                 }
                 else
                 {
-                    shotX = Random.Range(aim.tightCentreGuard.x + guardAccu.x, aim.tightCentreGuard.x - guardAccu.x);
+                    shotX = Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
                 }
-                shotY = Random.Range(aim.tightCentreGuard.y + guardAccu.y, aim.tightCentreGuard.y - guardAccu.y);
+                shotY = Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -121,36 +153,38 @@ public class AI_Shooter : MonoBehaviour
             case "High Centre Guard":
                 if (inturn)
                 {
-                    shotX = -1f * Random.Range(aim.highCentreGuard.x + guardAccu.x, aim.highCentreGuard.x - guardAccu.x);
+                    shotX = -1f * Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
                 }
                 else
                 {
-                    shotX = Random.Range(aim.highCentreGuard.x + guardAccu.x, aim.highCentreGuard.x - guardAccu.x);
+                    shotX = Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
                 }
-                shotY = Random.Range(aim.highCentreGuard.y + guardAccu.y, aim.highCentreGuard.y - guardAccu.y);
+                shotY = Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
+            #endregion
 
+            #region Corner Guards
             case "Left Corner Guard":
                 if (inturn)
                 {
-                    shotX = -1f * Random.Range(aim.rightCornerGuard.x + guardAccu.x, aim.rightCornerGuard.x - guardAccu.x);
+                    shotX = -1f * Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
                 }
                 else
                 {
-                    shotX = Random.Range(aim.leftCornerGuard.x + guardAccu.x, aim.leftCornerGuard.x - guardAccu.x);
+                    shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
                 }
-                shotY = Random.Range(aim.leftCornerGuard.y + guardAccu.y, aim.leftCornerGuard.y - guardAccu.y);
+                shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
 
             case "Left Tight Corner Guard":
-                shotX = Random.Range(aim.leftTightCornerGuard.x + guardAccu.x, aim.leftTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(aim.leftTightCornerGuard.y + guardAccu.y, aim.leftTightCornerGuard.y - guardAccu.y);
+                shotX = Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
@@ -158,8 +192,8 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Left High Corner Guard":
-                shotX = Random.Range(aim.leftHighCornerGuard.x + guardAccu.x, aim.leftHighCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(aim.leftHighCornerGuard.y + guardAccu.y, aim.leftHighCornerGuard.y - guardAccu.y);
+                shotX = Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
@@ -167,8 +201,8 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Right Corner Guard":
-                shotX = Random.Range(aim.rightCornerGuard.x + guardAccu.x, aim.rightTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(aim.rightTightCornerGuard.y + guardAccu.y, aim.rightTightCornerGuard.y - guardAccu.y);
+                shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
@@ -176,8 +210,8 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Right Tight Corner Guard":
-                shotX = Random.Range(aim.rightTightCornerGuard.x + guardAccu.x, aim.rightTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(aim.rightTightCornerGuard.y + guardAccu.y, aim.rightTightCornerGuard.y - guardAccu.y);
+                shotX = Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
@@ -185,23 +219,25 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Right High Corner Guard":
-                shotX = Random.Range(aim.rightHighCornerGuard.x + guardAccu.x, aim.rightHighCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(aim.rightHighCornerGuard.y + guardAccu.y, aim.rightHighCornerGuard.y - guardAccu.y);
+                shotX = Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y);
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
+            #endregion
 
+            #region Twelve Foot Draws
             case "Top Twelve Foot":
                 if (inturn)
                 {
-                    shotX = -1f * Random.Range(aim.topTwelveFoot.x + drawAccu.x, aim.topTwelveFoot.x - drawAccu.x);
+                    shotX = -1f * Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
                 }
                 else
                 {
-                    shotX = Random.Range(aim.topTwelveFoot.x + drawAccu.x, aim.topTwelveFoot.x - drawAccu.x);
+                    shotX = Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
                 }
-                shotY = Random.Range(aim.topTwelveFoot.y + drawAccu.y, aim.topTwelveFoot.y - drawAccu.y);
+                shotY = Random.Range(topTwelveFoot.y + drawAccu.y, topTwelveFoot.y - drawAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
@@ -253,7 +289,9 @@ public class AI_Shooter : MonoBehaviour
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
+            #endregion
 
+            #region Four Foot Draws
             case "Button":
                 if (inturn)
                 {
@@ -328,7 +366,9 @@ public class AI_Shooter : MonoBehaviour
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
+            #endregion
 
+            #region Take Outs
             case "Peel":
                 if (takeOutX != 0f)
                 {
@@ -414,7 +454,7 @@ public class AI_Shooter : MonoBehaviour
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
                 break;
-
+            #endregion
             default:
                 break;
         }

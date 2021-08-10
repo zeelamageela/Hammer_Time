@@ -859,11 +859,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.5
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9456,6 +9456,7 @@ MonoBehaviour:
   aim: {fileID: 322681100}
   aiShoot: {fileID: 945653345}
   aiStrat: {fileID: 945653344}
+  closestRock: {fileID: 0}
   cenGuard: {fileID: 0}
   tCenGuard: {fileID: 0}
   lCornGuard: {fileID: 0}
@@ -9532,19 +9533,19 @@ MonoBehaviour:
   peel: {x: 0, y: -27.8}
   takeOut: {x: 0, y: -27.65}
   raise: {x: 0, y: -27.2}
-  tick: {x: 0, y: -27.012}
+  tick: {x: 0, y: -26.98}
   testing: Button
   testingRockNumber: 0
   guardAccu: {x: 0.01, y: 0.02}
   drawAccu: {x: 0.01, y: 0.015}
-  toAccu: {x: 0.0025, y: 0.01}
+  toAccu: {x: 0.01, y: 0.01}
   tickAccu: {x: 0.005, y: 0.005}
   takeOutOffset: 0
   peelOffset: 0
   raiseOffset: 0
   tickOffset: 0
   takeOutX: 0
-  osMult: -0.32
+  osMult: -1.125
 --- !u!1 &949738586
 GameObject:
   m_ObjectHideFlags: 0
@@ -14276,11 +14277,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.21
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.81
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17060,6 +17061,34 @@ PrefabInstance:
       propertyPath: testing
       value: Left Twelve Foot
       objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: drawAccu.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: drawAccu.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: guardAccu.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: guardAccu.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: centreGuard.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: leftTwelveFoot.x
+      value: -1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653344, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: rightTwelveFoot.x
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815442, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -17129,12 +17158,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 945653344}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testing
+      value: Button
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: drawAccu.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testingTakeOut
+      value: Tick Shot
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name
