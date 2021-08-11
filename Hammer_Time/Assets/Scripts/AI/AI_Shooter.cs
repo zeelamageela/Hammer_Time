@@ -43,8 +43,6 @@ public class AI_Shooter : MonoBehaviour
     public Vector2 raise;
     public Vector2 tick;
 
-    public string testing;
-    public int testingRockNumber;
 
     public Vector2 guardAccu;
     public Vector2 drawAccu;

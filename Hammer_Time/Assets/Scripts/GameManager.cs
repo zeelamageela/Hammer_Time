@@ -878,7 +878,7 @@ public class GameManager : MonoBehaviour
 
             //for (int i = 0; i < endCurrent; i++)
             //{
-            //    gHUD.Scoreboard(i, data.endScoreRed[i], data.endScoreYellow[i]);
+            //    gHUD.Scoreboard(i, myFile.endScoreRed[i], myFile.endScoreYellow[i]);
             //}
 
             redScore = myFile.GetInt("Red Score");

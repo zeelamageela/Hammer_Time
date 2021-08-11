@@ -71,6 +71,11 @@ public class Rock_Placement : MonoBehaviour
         }
     }
 
+    public void OnPlace(string rockPlacement)
+    {
+        StartCoroutine(OnPlaceRock(rockPlacement));
+    }
+
     IEnumerator OnPlaceRock(string rockPlacement)
     {
         Debug.Log("Placing a rock on " + rockPlacement);
@@ -131,39 +136,39 @@ public class Rock_Placement : MonoBehaviour
                 break;
 
             case "Tight Centre Guard":
-                rock.transform.position = new Vector2(Random.Range(tightCentreGuard.x + drawAccu.x, tightCentreGuard.x - drawAccu.x), Random.Range(tightCentreGuard.y + drawAccu.y, tightCentreGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x), Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y));
                 break;
 
             case "Centre Guard":
-                rock.transform.position = new Vector2(Random.Range(centreGuard.x + drawAccu.x, centreGuard.x - drawAccu.x), Random.Range(centreGuard.y + drawAccu.y, centreGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x), Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y));
                 break;
 
             case "High Centre Guard":
-                rock.transform.position = new Vector2(Random.Range(highCentreGuard.x + drawAccu.x, highCentreGuard.x - drawAccu.x), Random.Range(highCentreGuard.y + drawAccu.y, highCentreGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x), Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y));
                 break;
 
             case "Right Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(rightCornerGuard.x + drawAccu.x, rightCornerGuard.x - drawAccu.x), Random.Range(rightCornerGuard.y + drawAccu.y, rightCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x), Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y));
                 break;
 
             case "Right Tight Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(rightTightCornerGuard.x + drawAccu.x, rightTightCornerGuard.x - drawAccu.x), Random.Range(rightTightCornerGuard.y + drawAccu.y, rightTightCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x), Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y));
                 break;
 
             case "Right High Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(rightHighCornerGuard.x + drawAccu.x, rightHighCornerGuard.x - drawAccu.x), Random.Range(rightHighCornerGuard.y + drawAccu.y, rightHighCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x), Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y));
                 break;
 
             case "Left Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(leftCornerGuard.x + drawAccu.x, leftCornerGuard.x - drawAccu.x), Random.Range(leftCornerGuard.y + drawAccu.y, leftCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x), Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y));
                 break;
 
             case "Left Tight Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(leftTightCornerGuard.x + drawAccu.x, leftTightCornerGuard.x - drawAccu.x), Random.Range(leftTightCornerGuard.y + drawAccu.y, leftTightCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x), Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y));
                 break;
 
             case "Left High Corner Guard":
-                rock.transform.position = new Vector2(Random.Range(leftHighCornerGuard.x + drawAccu.x, leftHighCornerGuard.x - drawAccu.x), Random.Range(leftHighCornerGuard.y + drawAccu.y, leftHighCornerGuard.y - drawAccu.y));
+                rock.transform.position = new Vector2(Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x), Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y));
                 break;
         }
 

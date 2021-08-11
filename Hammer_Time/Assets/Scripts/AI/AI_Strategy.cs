@@ -495,6 +495,14 @@ public class AI_Strategy : MonoBehaviour
                 {
                     aiShoot.OnShot("Left Corner Guard", rockCurrent);
                 }
+                else if (cenGuard)
+                {
+                    aiTarg.OnTarget("Tick Shot", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                }
+                else if (tCenGuard)
+                {
+                    aiTarg.OnTarget("Tick Shot", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                }
                 //left and right corner guard
                 else if (rCornGuard & lCornGuard)
                 {
@@ -1328,173 +1336,175 @@ public class AI_Strategy : MonoBehaviour
             #region Late No Hammer
             case "late no hammer":
 
-                //if no rocks in the house
+                #region No Rocks in House
                 if (gm.houseList.Count == 0)
                 {
                     aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                 }
-                //if the closest rock is mine
-                else if (closestRockInfo.teamName == rockInfo.teamName)
-                {
-                    //if it's in the four foot
-                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
-                    {
-                        //tight centre and no centre guard
-                        if (tCenGuard && !cenGuard)
-                        {
-                            //if the tight centre guard is not covering it
-                            if (Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
-                            {
-                                aiShoot.OnShot("Centre Guard", rockCurrent);
-                            }
-                            //if the tight centre guard is covering it
-                            else
-                            {
-                                //if second shot is mine
-                                if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+                #endregion
+                #region I have Shot Rock
+                                else if (closestRockInfo.teamName == rockInfo.teamName)
                                 {
-                                    //if third shot exists and is not mine
-                                    if (gm.houseList.Count > 2 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
+                                    //if it's in the four foot
+                                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6f)) <= 0.5f)
                                     {
-                                        if (gm.houseList[2].rock.transform.position.x < 0)
+                                        //tight centre and no centre guard
+                                        if (tCenGuard && !cenGuard)
                                         {
-                                            if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
-                                        }
-                                        else if (gm.houseList[2].rock.transform.position.x > 0)
-                                        {
-                                            if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
-                                        }
-                                    }
-                                    else if (gm.houseList[1].rock.transform.position.x < 0)
-                                    {
-                                        if (lCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                        else aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                                    }
-                                    else if (gm.houseList[1].rock.transform.position.x > 0)
-                                    {
-                                        if (rCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                        else aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                                    }
-                                }
-                                //if second shot is not mine
-                                else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
-                                {
-                                    if (gm.houseList[1].rock.transform.position.x < 0)
-                                    {
-                                        if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                    }
-                                    else if (gm.houseList[1].rock.transform.position.x > 0)
-                                    {
-                                        if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                    }
-                                    else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                }
-                                //no second shot rock
-                                else
-                                {
-                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                }
-                            }
+                                            //if the tight centre guard is not covering it
+                                            if (Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
+                                            {
+                                                aiShoot.OnShot("Centre Guard", rockCurrent);
+                                            }
+                                            //if the tight centre guard is covering it
+                                            else
+                                            {
+                                                //if second shot is mine
+                                                if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+                                                {
+                                                    //if third shot exists and is not mine
+                                                    if (gm.houseList.Count > 2 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
+                                                    {
+                                                        if (gm.houseList[2].rock.transform.position.x < 0)
+                                                        {
+                                                            if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
+                                                        }
+                                                        else if (gm.houseList[2].rock.transform.position.x > 0)
+                                                        {
+                                                            if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
+                                                        }
+                                                    }
+                                                    else if (gm.houseList[1].rock.transform.position.x < 0)
+                                                    {
+                                                        if (lCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                        else aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                                                    }
+                                                    else if (gm.houseList[1].rock.transform.position.x > 0)
+                                                    {
+                                                        if (rCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                        else aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                                                    }
+                                                }
+                                                //if second shot is not mine
+                                                else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
+                                                {
+                                                    if (gm.houseList[1].rock.transform.position.x < 0)
+                                                    {
+                                                        if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                    }
+                                                    else if (gm.houseList[1].rock.transform.position.x > 0)
+                                                    {
+                                                        if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                    }
+                                                    else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                }
+                                                //no second shot rock
+                                                else
+                                                {
+                                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                }
+                                            }
 
-                        }
-                        //centre and no tight centre guard
-                        else if (cenGuard && !tCenGuard)
-                        {
-                            //if the centre guard is not covering it
-                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
-                            {
-                                aiShoot.OnShot("Tight Centre Guard", rockCurrent);
-                            }
-                            //if the centre guard is covering shot rock
-                            else
-                            {
-                                //if second shot exists and is mine
-                                if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
-                                {
-                                    //if third shot exists and is not mine
-                                    if (gm.houseList.Count > 2 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
-                                    {
-                                        if (gm.houseList[2].rock.transform.position.x < 0)
-                                        {
-                                            if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
                                         }
-                                        else if (gm.houseList[2].rock.transform.position.x > 0)
+                                        //centre and no tight centre guard
+                                        else if (cenGuard && !tCenGuard)
                                         {
-                                            if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
+                                            //if the centre guard is not covering it
+                                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
+                                            {
+                                                aiShoot.OnShot("Tight Centre Guard", rockCurrent);
+                                            }
+                                            //if the centre guard is covering shot rock
+                                            else
+                                            {
+                                                //if second shot exists and is mine
+                                                if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+                                                {
+                                                    //if third shot exists and is not mine
+                                                    if (gm.houseList.Count > 2 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
+                                                    {
+                                                        if (gm.houseList[2].rock.transform.position.x < 0)
+                                                        {
+                                                            if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
+                                                        }
+                                                        else if (gm.houseList[2].rock.transform.position.x > 0)
+                                                        {
+                                                            if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                            else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[2].rockInfo.rockIndex);
+                                                        }
+                                                    }
+                                                    //if second shot is to the left
+                                                    else if (gm.houseList[1].rock.transform.position.x < 0)
+                                                    {
+                                                        if (lCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                        else aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                                                    }
+                                                    //if second shot is to the right
+                                                    else if (gm.houseList[1].rock.transform.position.x > 0)
+                                                    {
+                                                        if (rCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                        else aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                                                    }
+                                                }
+                                                //if second shot is not mine
+                                                else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
+                                                {
+                                                    if (gm.houseList[1].rock.transform.position.x < 0)
+                                                    {
+                                                        if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                    }
+                                                    else if (gm.houseList[1].rock.transform.position.x > 0)
+                                                    {
+                                                        if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                    }
+                                                    else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                                }
+                                                //no second shot rock
+                                                else
+                                                {
+                                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                }
+                                            }
+                                        }
+                                        //centre and tight centre guards
+                                        else if (cenGuard & tCenGuard)
+                                        {
+                                            //if the centre and tight centre guards are not covering it
+                                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f & Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
+                                            {
+                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                            }
+                                            else aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                        }
+                                        else
+                                        {
+                                            //if second shot is mine
+                                            if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+                                            {
+                                                aiTarg.OnTarget("Take Out", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                            }
+                                            //if second shot is not mine
+                                            else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
+                                            {
+                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                            }
                                         }
                                     }
-                                    //if second shot is to the left
-                                    else if (gm.houseList[1].rock.transform.position.x < 0)
+                                    //if it's not in the four foot
+                                    else
                                     {
-                                        if (lCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                        else aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                                    }
-                                    //if second shot is to the right
-                                    else if (gm.houseList[1].rock.transform.position.x > 0)
-                                    {
-                                        if (rCornGuard) aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                        else aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                                        aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                     }
                                 }
-                                //if second shot is not mine
-                                else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
-                                {
-                                    if (gm.houseList[1].rock.transform.position.x < 0)
-                                    {
-                                        if (lCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                    }
-                                    else if (gm.houseList[1].rock.transform.position.x > 0)
-                                    {
-                                        if (rCornGuard) aiTarg.OnTarget("Take Out", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                    }
-                                    else aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                }
-                                //no second shot rock
-                                else
-                                {
-                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                                }
-                            }
-                        }
-                        //centre and tight centre guards
-                        else if (cenGuard & tCenGuard)
-                        {
-                            //if the centre and tight centre guards are not covering it
-                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f & Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
-                            {
-                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                            }
-                            else aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                        }
-                        else
-                        {
-                            //if second shot is mine
-                            if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
-                            {
-                                aiTarg.OnTarget("Take Out", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                            }
-                            //if second shot is not mine
-                            else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
-                            {
-                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                            }
-                        }
-                    }
-                    //if it's not in the four foot
-                    else
-                    {
-                        aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                    }
-                }
-                //closest rock is not mine
+                #endregion
+                #region They have Shot Rock
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
                     //if it's in the four foot
@@ -1601,12 +1611,22 @@ public class AI_Strategy : MonoBehaviour
                             //if second shot is mine
                             if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                             {
-                                aiTarg.OnTarget("Take Out", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                if (Mathf.Abs(closestRock.transform.position.x - gm.houseList[1].rock.transform.position.x) >= 0.2f)
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                else if (closestRock.transform.position.x > gm.houseList[1].rockInfo.rockIndex)
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                else
+                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                             }
                             //if second shot is not mine
                             else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
                             {
-                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                if (Mathf.Abs(closestRock.transform.position.x - gm.houseList[1].rock.transform.position.x) >= 0.2f)
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                else if (closestRock.transform.position.x > gm.houseList[1].rockInfo.rockIndex)
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                else
+                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                             }
                         }
                     }
@@ -1629,6 +1649,7 @@ public class AI_Strategy : MonoBehaviour
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                     }
                 }
+                #endregion
                 //default
                 else
                 {
@@ -1636,7 +1657,7 @@ public class AI_Strategy : MonoBehaviour
                     Debug.Log("Default Late Phase");
                 }
                 break;
-            #endregion
+#endregion
 
             default:
                 break;
@@ -1662,7 +1683,7 @@ public class AI_Strategy : MonoBehaviour
 
             switch (phase)
             {
-                #region Early Not Hammer
+            #region Early Not Hammer
                 case "early no hammer":
 
                     if (gm.houseList.Count != 0)
@@ -1679,9 +1700,9 @@ public class AI_Strategy : MonoBehaviour
                     }
 
                     break;
-                #endregion
+#endregion
 
-                #region Middle Not Hammer
+            #region Middle Not Hammer
                 case "middle no hammer":
 
                     if (gm.houseList.Count != 0)
@@ -1714,9 +1735,9 @@ public class AI_Strategy : MonoBehaviour
                     }
 
                     break;
-                #endregion
+#endregion
 
-                #region Late Not Hammer
+            #region Late Not Hammer
                 case "late no hammer":
                     //there's rocks in the house
                     if (gm.houseList.Count != 0)
@@ -1814,7 +1835,7 @@ public class AI_Strategy : MonoBehaviour
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
 
                     break;
-                #endregion
+#endregion
 
                 default:
                     break;
