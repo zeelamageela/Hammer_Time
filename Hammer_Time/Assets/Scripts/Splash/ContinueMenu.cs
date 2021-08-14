@@ -90,7 +90,7 @@ public class ContinueMenu : MonoBehaviour
     {
         //Debug.Log("Load Game is " + gsp.loadGame);
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene("AIGame_2");
+        SceneManager.LoadScene("AIGame");
         am.Play("Theme");
     }
 

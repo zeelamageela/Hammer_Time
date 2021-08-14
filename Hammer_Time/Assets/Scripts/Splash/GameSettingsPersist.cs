@@ -7,6 +7,8 @@ using TigerForge;
 public class GameSettingsPersist : MonoBehaviour
 {
     GameSettings gs;
+    StoryManager sm;
+
     public bool redHammer;
     public int ends;
     public int rocks;
@@ -21,6 +23,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
+    public bool story;
     EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
@@ -40,6 +43,7 @@ public class GameSettingsPersist : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
 
         //if (loadGame)
         //{
@@ -101,6 +105,27 @@ public class GameSettingsPersist : MonoBehaviour
             yellowScore = myFile.GetInt("Yellow Score");
         }
     }
+
+    public void StoryGame()
+    {
+        story = true;
+        sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
+
+        Debug.Log("Loading to GSP");
+        Debug.Log("Ends is " + myFile.GetInt("End Total"));
+
+        ends = sm.ends;
+        endCurrent = sm.endCurrent;
+        rocks = sm.rocks;
+        rockCurrent = sm.rockCurrent;
+        redHammer = sm.redHammer;
+        aiYellow = sm.aiYellow;
+        aiRed = sm.aiRed;
+
+        redScore = myFile.GetInt("Red Score");
+        yellowScore = myFile.GetInt("Yellow Score");
+    }
+
     public void AutoSave()
     {
         //GameData data = SaveSystem.LoadPlayer();

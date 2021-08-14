@@ -137,6 +137,10 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(LoadGame());
         }
+        else if (gsp.story)
+        {
+            StartCoroutine(StoryLoad());
+        }
         else if (!tutorial)
         {
             if (redHammer)
@@ -850,6 +854,8 @@ public class GameManager : MonoBehaviour
         myFile.Add("Red Score", redScore);
         myFile.Add("Yellow Score", yellowScore);
         myFile.Add("Ai Yellow", aiTeamYellow);
+        myFile.Add("End " + endCurrent + " Red", redScore);
+        myFile.Add("End " + endCurrent + " Yellow", yellowScore);
 
         for (int i = 0; i < rockTotal; i++)
         {
@@ -876,15 +882,69 @@ public class GameManager : MonoBehaviour
             //aiTeamYellow = myFile.GetBool("Ai Yellow");
 
 
-            //for (int i = 0; i < endCurrent; i++)
-            //{
-            //    gHUD.Scoreboard(i, myFile.endScoreRed[i], myFile.endScoreYellow[i]);
-            //}
+            for (int i = 0; i < endCurrent; i++)
+            {
+                gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
+            }
 
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
             rockBar.EndUpdate(yellowScore, redScore);
         }
+
+        yield return StartCoroutine(SetupRocks());
+
+        yield return new WaitForEndOfFrame();
+
+        //yield return StartCoroutine(WaitForClick());
+        if (myFile.Load())
+            rockCurrent = myFile.GetInt("Current Rock");
+        //lg.enabled = true;
+
+        //yield return new WaitUntil(() => lg.rocksPlaced == true);
+        Debug.Log("Current Rock is " + rockCurrent);
+
+        //yield return StartCoroutine(WaitForClick());
+        if (rockCurrent > 0)
+        {
+            yield return StartCoroutine(PlaceRocks());
+
+            if (myFile.Load())
+            {
+                rockCurrent = myFile.GetInt("Current Rock") - 1;
+                if (rockCurrent < 0)
+                {
+                    rockCurrent = 0;
+                }
+            }
+        }
+            
+
+        myFile.Dispose();
+
+
+        yield return StartCoroutine(CheckScore());
+    }
+
+    IEnumerator StoryLoad()
+    {
+        Debug.Log("Loading Game!!!!!!!");
+        redHammer = myFile.GetBool("Red Hammer");
+        //endTotal = myFile.GetInt("End Total");
+        //endCurrent = myFile.GetInt("Current End");
+        //rockTotal = myFile.GetInt("Rocks Per Team") * 2;
+        //aiTeamRed = myFile.GetBool("Ai Red");
+        //aiTeamYellow = myFile.GetBool("Ai Yellow");
+
+
+        for (int i = 0; i < endCurrent; i++)
+        {
+            gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
+        }
+
+        redScore = myFile.GetInt("Red Score");
+        yellowScore = myFile.GetInt("Yellow Score");
+        rockBar.EndUpdate(yellowScore, redScore);
 
         yield return StartCoroutine(SetupRocks());
 
@@ -913,7 +973,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-            
+
 
         myFile.Dispose();
 
