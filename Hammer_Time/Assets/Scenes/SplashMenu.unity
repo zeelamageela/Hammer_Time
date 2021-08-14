@@ -6012,6 +6012,7 @@ MonoBehaviour:
   endCurrent: 0
   yellowScore: 0
   redScore: 0
+  story: 0
 --- !u!4 &1858233989
 Transform:
   m_ObjectHideFlags: 0

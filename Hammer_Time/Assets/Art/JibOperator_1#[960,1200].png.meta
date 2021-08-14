@@ -1,0 +1,1584 @@
+fileFormatVersion: 2
+guid: 20d22661b290c9a448819c5e05a11049
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -614837394075610043
+    second: JibOperator_1#[960,1200]_0
+  - first:
+      213: -4029870970835232937
+    second: JibOperator_1#[960,1200]_1
+  - first:
+      213: -2007092845719275749
+    second: JibOperator_1#[960,1200]_2
+  - first:
+      213: 417407677115617315
+    second: JibOperator_1#[960,1200]_3
+  - first:
+      213: -893238558243213643
+    second: JibOperator_1#[960,1200]_4
+  - first:
+      213: 1276660391391047857
+    second: JibOperator_1#[960,1200]_5
+  - first:
+      213: -7685504018523059423
+    second: JibOperator_1#[960,1200]_6
+  - first:
+      213: 1756738078923477558
+    second: JibOperator_1#[960,1200]_7
+  - first:
+      213: 4283376936009971128
+    second: JibOperator_1#[960,1200]_8
+  - first:
+      213: -7828405831801867573
+    second: JibOperator_1#[960,1200]_9
+  - first:
+      213: -2929721764981708782
+    second: JibOperator_1#[960,1200]_10
+  - first:
+      213: -1793708969660658999
+    second: JibOperator_1#[960,1200]_11
+  - first:
+      213: -6128761042411941754
+    second: JibOperator_1#[960,1200]_12
+  - first:
+      213: -4167932825068938717
+    second: JibOperator_1#[960,1200]_13
+  - first:
+      213: -7029237773432565530
+    second: JibOperator_1#[960,1200]_14
+  - first:
+      213: 2440996604949735174
+    second: JibOperator_1#[960,1200]_15
+  - first:
+      213: 3045120236510395319
+    second: JibOperator_1#[960,1200]_16
+  - first:
+      213: -8058114911175857432
+    second: JibOperator_1#[960,1200]_17
+  - first:
+      213: -4262034726125115627
+    second: JibOperator_1#[960,1200]_18
+  - first:
+      213: 4198166570585597292
+    second: JibOperator_1#[960,1200]_19
+  - first:
+      213: 8999619533176962724
+    second: JibOperator_1#[960,1200]_20
+  - first:
+      213: -701471434211170349
+    second: JibOperator_1#[960,1200]_21
+  - first:
+      213: -4870255634810648174
+    second: JibOperator_1#[960,1200]_22
+  - first:
+      213: -5781908652195067833
+    second: JibOperator_1#[960,1200]_23
+  - first:
+      213: -8474299663137005653
+    second: JibOperator_1#[960,1200]_24
+  - first:
+      213: 4651625071694379735
+    second: JibOperator_1#[960,1200]_25
+  - first:
+      213: 1392859341539612392
+    second: JibOperator_1#[960,1200]_26
+  - first:
+      213: -729576866633680801
+    second: JibOperator_1#[960,1200]_27
+  - first:
+      213: 4025460033327116027
+    second: JibOperator_1#[960,1200]_28
+  - first:
+      213: 7329520859301575569
+    second: JibOperator_1#[960,1200]_29
+  - first:
+      213: 3509956306299985614
+    second: JibOperator_1#[960,1200]_30
+  - first:
+      213: -7179965828227165246
+    second: JibOperator_1#[960,1200]_31
+  - first:
+      213: 3992185892643610792
+    second: JibOperator_1#[960,1200]_32
+  - first:
+      213: -8932004492407966985
+    second: JibOperator_1#[960,1200]_33
+  - first:
+      213: 4169682392129827564
+    second: JibOperator_1#[960,1200]_34
+  - first:
+      213: -2189986248807090620
+    second: JibOperator_1#[960,1200]_35
+  - first:
+      213: -2536634045946861346
+    second: JibOperator_1#[960,1200]_36
+  - first:
+      213: -6851580447244816540
+    second: JibOperator_1#[960,1200]_37
+  - first:
+      213: 568264927599662213
+    second: JibOperator_1#[960,1200]_38
+  - first:
+      213: -6469338122285634109
+    second: JibOperator_1#[960,1200]_39
+  - first:
+      213: -1597860182310106291
+    second: JibOperator_1#[960,1200]_40
+  - first:
+      213: -1098962701587893113
+    second: JibOperator_1#[960,1200]_41
+  - first:
+      213: 3823436676698769658
+    second: JibOperator_1#[960,1200]_42
+  - first:
+      213: -4112488034737539667
+    second: JibOperator_1#[960,1200]_43
+  - first:
+      213: -7462181102912630311
+    second: JibOperator_1#[960,1200]_44
+  - first:
+      213: 684943142486306185
+    second: JibOperator_1#[960,1200]_45
+  - first:
+      213: -1074492698688692194
+    second: JibOperator_1#[960,1200]_46
+  - first:
+      213: 4945519686684117758
+    second: JibOperator_1#[960,1200]_47
+  - first:
+      213: -2208540826109590145
+    second: JibOperator_1#[960,1200]_48
+  - first:
+      213: -797544035440328615
+    second: JibOperator_1#[960,1200]_49
+  - first:
+      213: -1464939719239932989
+    second: JibOperator_1#[960,1200]_50
+  - first:
+      213: 476121832253221755
+    second: JibOperator_1#[960,1200]_51
+  - first:
+      213: -172626540927200619
+    second: JibOperator_1#[960,1200]_52
+  - first:
+      213: 3083906482380694175
+    second: JibOperator_1#[960,1200]_53
+  - first:
+      213: 2567403418661937333
+    second: JibOperator_1#[960,1200]_54
+  - first:
+      213: 3274479491361353939
+    second: JibOperator_1#[960,1200]_55
+  - first:
+      213: 6771645591023107718
+    second: JibOperator_1#[960,1200]_56
+  - first:
+      213: -8492297473256964286
+    second: JibOperator_1#[960,1200]_57
+  - first:
+      213: -8784733439527244831
+    second: JibOperator_1#[960,1200]_58
+  - first:
+      213: -1054070712323990005
+    second: JibOperator_1#[960,1200]_59
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 250
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 8192
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5441f7bc5a8a777f0800000000000000
+      internalID: -614837394075610043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_1
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75715b404b50318c0800000000000000
+      internalID: -4029870970835232937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_2
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b17bcabd0bf5524e0800000000000000
+      internalID: -2007092845719275749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_3
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3205ff0221eeac500800000000000000
+      internalID: 417407677115617315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_4
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5be2b3c83449a93f0800000000000000
+      internalID: -893238558243213643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_5
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b0bca7acdb97b110800000000000000
+      internalID: 1276660391391047857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_6
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 9600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12b881090da975590800000000000000
+      internalID: -7685504018523059423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 632d2a5a9ff216810800000000000000
+      internalID: 1756738078923477558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_8
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b5b9f501ac917b30800000000000000
+      internalID: 4283376936009971128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_9
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc27ad56f5aeb5390800000000000000
+      internalID: -7828405831801867573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_10
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 218e88bb3998757d0800000000000000
+      internalID: -2929721764981708782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_11
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cac1f012377b17e0800000000000000
+      internalID: -1793708969660658999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_12
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68098c1bd4442faa0800000000000000
+      internalID: -6128761042411941754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_13
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 8400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32a5312ad278826c0800000000000000
+      internalID: -4167932825068938717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e05bc0dc71237e90800000000000000
+      internalID: -7029237773432565530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_15
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 607a6ffaa7920e120800000000000000
+      internalID: 2440996604949735174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_16
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bb3e8ba8b0724a20800000000000000
+      internalID: 3045120236510395319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_17
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8eaa5189e23db2090800000000000000
+      internalID: -8058114911175857432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_18
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 517eee07ff53ad4c0800000000000000
+      internalID: -4262034726125115627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_19
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c65acabc042e24a30800000000000000
+      internalID: 4198166570585597292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_20
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 7200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4aefdac884215ec70800000000000000
+      internalID: 8999619533176962724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d762c7727fd346f0800000000000000
+      internalID: -701471434211170349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_22
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 29944c9cd40696cb0800000000000000
+      internalID: -4870255634810648174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_23
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 748c726f6b882cfa0800000000000000
+      internalID: -5781908652195067833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_24
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: baf918aea5d356a80800000000000000
+      internalID: -8474299663137005653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_25
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7daf4aa7b54ed8040800000000000000
+      internalID: 4651625071694379735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_26
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e69d82013e645310800000000000000
+      internalID: 1392859341539612392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_27
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 6000
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f58f4fb84b500e5f0800000000000000
+      internalID: -729576866633680801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfeaeff829e4dd730800000000000000
+      internalID: 4025460033327116027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_29
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19b7c785360b7b560800000000000000
+      internalID: 7329520859301575569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_30
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ece172ef9aed5b030800000000000000
+      internalID: 3509956306299985614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_31
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c3931dce13ab5c90800000000000000
+      internalID: -7179965828227165246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_32
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a02958fae7176730800000000000000
+      internalID: 3992185892643610792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_33
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f274d9ec352b0480800000000000000
+      internalID: -8932004492407966985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_34
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 4800
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce279113b00bdd930800000000000000
+      internalID: 4169682392129827564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_35
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 446fcd81c1b9b91e0800000000000000
+      internalID: -2189986248807090620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_36
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed8ec2e56c01cccd0800000000000000
+      internalID: -2536634045946861346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_37
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46fe5fb62eb4ae0a0800000000000000
+      internalID: -6851580447244816540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_38
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58414ebd0f1e2e700800000000000000
+      internalID: 568264927599662213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_39
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cda549f04b4836a0800000000000000
+      internalID: -6469338122285634109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_40
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4b4aa841a243d9e0800000000000000
+      internalID: -1597860182310106291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_41
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 3600
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7843376de33bfb0f0800000000000000
+      internalID: -1098962701587893113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_42
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af884d766639f0530800000000000000
+      internalID: 3823436676698769658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_43
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da5bc6adbe18de6c0800000000000000
+      internalID: -4112488034737539667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_44
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d1924fb2d1017890800000000000000
+      internalID: -7462181102912630311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_45
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98d6c3bb828618900800000000000000
+      internalID: 684943142486306185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_46
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e10e8ec5592a611f0800000000000000
+      internalID: -1074492698688692194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_47
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efa028ad3f302a440800000000000000
+      internalID: 4945519686684117758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_48
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 2400
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f754acbe1dfa951e0800000000000000
+      internalID: -2208540826109590145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_49
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95009d2eced8ee4f0800000000000000
+      internalID: -797544035440328615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_50
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c3e751461d7babe0800000000000000
+      internalID: -1464939719239932989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_51
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7be249a8468b9600800000000000000
+      internalID: 476121832253221755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_52
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 592da3d5315ba9df0800000000000000
+      internalID: -172626540927200619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_53
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9263d24b9c3cca20800000000000000
+      internalID: 3083906482380694175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_54
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b0e77c7ecf31a320800000000000000
+      internalID: 2567403418661937333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_55
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 1200
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d035ea9fb9417d20800000000000000
+      internalID: 3274479491361353939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_56
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68eb5cd89c7b9fd50800000000000000
+      internalID: 6771645591023107718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_57
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24f3293317c452a80800000000000000
+      internalID: -8492297473256964286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_58
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ebab72fa7b561680800000000000000
+      internalID: -8784733439527244831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JibOperator_1#[960,1200]_59
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 960
+        height: 1200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0e19c795403f51f0800000000000000
+      internalID: -1054070712323990005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

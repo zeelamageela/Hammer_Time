@@ -21,7 +21,7 @@ public class CameraManager : MonoBehaviour
     {
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 2;
+        ui.depth = 3;
         top.depth = 2;
     }
 
@@ -41,7 +41,7 @@ public class CameraManager : MonoBehaviour
         Debug.Log("Shot Setup");
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 2;
+        ui.depth = 3;
         top.depth = 2;
 
         vcam.m_Lens.OrthographicSize = 7.5f;
@@ -56,7 +56,7 @@ public class CameraManager : MonoBehaviour
         Debug.Log("Trajectory");
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 2;
+        ui.depth = 3;
 
         vcam.LookAt = trajTarget;
         vcam.Follow = trajTarget;
@@ -69,7 +69,7 @@ public class CameraManager : MonoBehaviour
 
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 2;
+        ui.depth = 3;
         vcam.LookAt = tFollowTarget;
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
@@ -79,7 +79,7 @@ public class CameraManager : MonoBehaviour
     {
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 2;
+        ui.depth = 3;
         vcam.LookAt = tFollowTarget;
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
