@@ -32,6 +32,7 @@ public class AIManager : MonoBehaviour
     public Transform lCornGuard;
     public Transform rCornGuard;
 
+    public bool story;
     bool inturn;
     float targetX;
     float targetY;
@@ -169,9 +170,9 @@ public class AIManager : MonoBehaviour
 
         }
 
-        if (aggressive)
+        if (story)
         {
-            aiStrat.OnShot(rockCurrent);
+
         }
         else
             aiStrat.OnShot(rockCurrent);

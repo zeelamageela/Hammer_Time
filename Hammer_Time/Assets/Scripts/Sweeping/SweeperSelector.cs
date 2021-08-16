@@ -21,6 +21,11 @@ public class SweeperSelector : MonoBehaviour
     bool aiTurn;
     private void Update()
     {
+        sweeperL = sm.sweeperL;
+        sweeperLCol = sm.sweeperL.GetComponent<BoxCollider2D>();
+        sweeperR = sm.sweeperR;
+        sweeperRCol = sm.sweeperR.GetComponent<BoxCollider2D>();
+
         if (rockRB != null)
         {
             Vector3 followSpot = new Vector3((rockRB.position.x), (rockRB.position.y), 0f);

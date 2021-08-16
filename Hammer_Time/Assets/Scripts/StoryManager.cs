@@ -6,8 +6,10 @@ public class StoryManager : MonoBehaviour
 {
     public GameManager gm;
     public CameraManager cm;
+    public SweeperManager sm;
     public DialogueTrigger skipDialogue;
-
+    public AI_Target aiTarg;
+    public AI_Shooter aiShoot;
     public GameObject dialogueGO;
 
     public GameState state;
@@ -29,24 +31,51 @@ public class StoryManager : MonoBehaviour
 
     public float timeScale;
 
+    private void Start()
+    {
+        StartCoroutine(StoryFlow());
+    }
     private void Update()
     {
         state = gm.state;
         timeScale = Time.timeScale;
-        if (state == GameState.START)
-        {
-            StartCoroutine(StoryFlow());
-        }
+        //if (state == GameState.START)
+        //{
+        //    StartCoroutine(StoryFlow());
+        //}
     }
     IEnumerator StoryFlow()
     {
         yield return new WaitUntil(() => state == GameState.YELLOWTURN);
 
-        yield return new WaitUntil(() => gm.rockCurrent == 1);
+        yield return new WaitUntil(() => gm.rockCurrent == 7);
+        gm.rm.inturn = true;
+        aiTarg.OnTarget("Manual Tap Back", gm.rockCurrent, 0);
+
+        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= -11f);
+        sm.SweepWeight(true);
+
+        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= 2.5f);
+        sm.SweepWhoa(true);
+
+        yield return new WaitUntil(() => gm.rockCurrent == 8);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
         skipDialogue.TriggerDialogue();
+
+        yield return new WaitUntil(() => gm.rockCurrent == 9);
+        gm.rm.inturn = true;
+        aiShoot.OnShot("Top Four Foot", gm.rockCurrent);
+
+        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= -8f);
+        sm.SweepLeft(true);
+
+        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= 3.5f);
+        sm.SweepWhoa(true);
+
+        yield return new WaitUntil(() => gm.rockCurrent == 9);
+
     }
 
     IEnumerator WaitForClick()

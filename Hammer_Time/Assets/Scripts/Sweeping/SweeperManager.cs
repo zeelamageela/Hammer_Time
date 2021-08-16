@@ -8,6 +8,14 @@ public class SweeperManager : MonoBehaviour
     public Sweeper sweeperL;
     public Sweeper sweeperR;
 
+    public Sweeper sweeperRedL;
+    public Sweeper sweeperRedR;
+    public Sweeper sweeperYellowL;
+    public Sweeper sweeperYellowR;
+
+    public CharacterStats swprLStats;
+    public CharacterStats swprRStats;
+
     public Sweep sweep;
 
     public SweeperSelector sweepSel;
@@ -30,23 +38,59 @@ public class SweeperManager : MonoBehaviour
 
     private void Update()
     {
+        if (sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0)
+        {
+            if (rm.gm.aiTeamRed)
+                SweepWhoa(rm.gm.aiTeamRed);
+            else if (rm.gm.aiTeamYellow)
+                SweepWhoa(rm.gm.aiTeamYellow);
+            else
+                SweepWhoa(false);
+        }
 
+        
     }
 
-    public void SetupSweepers()
+    public void SetupSweepers(bool redTurn)
     {
+        sweeperRedL.gameObject.SetActive(false);
+        sweeperRedR.gameObject.SetActive(false);
+        sweeperYellowL.gameObject.SetActive(false);
+        sweeperYellowR.gameObject.SetActive(false);
+
+        if (redTurn)
+        {
+            sweeperL = sweeperRedL;
+            sweeperR = sweeperRedR;
+        }
+        else
+        {
+            sweeperL = sweeperYellowL;
+            sweeperR = sweeperYellowR;
+        }
+
+        sweeperL.gameObject.SetActive(true);
+        sweeperR.gameObject.SetActive(true);
+        swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
+        swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
+
         sweepSel.gameObject.SetActive(false);
         sweeperL.sweep = false;
         sweeperL.hard = false;
         sweeperL.whoa = true;
 
-        sweeperL.sweep = false;
-        sweeperL.hard = false;
-        sweeperL.whoa = true;
+        sweeperR.sweep = false;
+        sweeperR.hard = false;
+        sweeperR.whoa = true;
     }
 
     public void ResetSweepers()
     {
+        sweeperRedL.gameObject.SetActive(false);
+        sweeperRedR.gameObject.SetActive(false);
+        sweeperYellowL.gameObject.SetActive(false);
+        sweeperYellowR.gameObject.SetActive(false);
+
         am.Stop("Sweep");
         am.Stop("Hard");
         sweepSel.gameObject.SetActive(false);
@@ -54,9 +98,9 @@ public class SweeperManager : MonoBehaviour
         sweeperL.hard = false;
         sweeperL.whoa = true;
 
-        sweeperL.sweep = false;
-        sweeperL.hard = false;
-        sweeperL.whoa = true;
+        sweeperR.sweep = false;
+        sweeperR.hard = false;
+        sweeperR.whoa = true;
     }
 
     public void Release(GameObject rock, bool aiTurn)

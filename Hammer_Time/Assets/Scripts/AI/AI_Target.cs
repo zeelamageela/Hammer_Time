@@ -28,7 +28,7 @@ public class AI_Target : MonoBehaviour
     public float peelOffset;
     public float raiseOffset;
     public float tickOffset;
-
+    public Vector2 targetPos;
     float targetX;
     float targetY;
     public float takeOutX;
@@ -56,16 +56,32 @@ public class AI_Target : MonoBehaviour
                 StartCoroutine(TakeOutAutoTarget(rockCurrent));
                 break;
 
+            case "Manual Take Out":
+                StartCoroutine(TakeOutManualTarget(rockCurrent));
+                break;
+
             case "Take Out":
                 StartCoroutine(TakeOutTarget(rockCurrent, rockTarget));
+                break;
+
+            case "Manual Peel":
+                StartCoroutine(PeelManualTarget(rockCurrent));
                 break;
 
             case "Peel":
                 StartCoroutine(PeelTarget(rockCurrent, rockTarget));
                 break;
 
+            case "Manual Tap Back":
+                StartCoroutine(TapManualTarget(rockCurrent));
+                break;
+
             case "Tap Back":
                 StartCoroutine(TapTarget(rockCurrent, rockTarget));
+                break;
+
+            case "Manual Tick Shot":
+                StartCoroutine(TickShotManualTarget(rockCurrent));
                 break;
 
             case "Tick Shot":
@@ -81,6 +97,8 @@ public class AI_Target : MonoBehaviour
                 break;
         }
     }
+
+    
 
     IEnumerator GuardReading(int rockCurrent)
     {
@@ -143,6 +161,25 @@ public class AI_Target : MonoBehaviour
         }
 
         yield return new WaitForEndOfFrame();
+    }
+
+    IEnumerator TakeOutManualTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+        if (rm.inturn == false)
+        {
+
+            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+        }
+        else
+        {
+            takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+        }
+
+        aiShoot.OnShot("Take Out", rockCurrent);
+        yield break;
     }
 
     IEnumerator TakeOutAutoTarget(int rockCurrent)
@@ -714,6 +751,31 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
+    IEnumerator PeelManualTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+
+        //rm.inturn = false;
+        //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+
+        //rm.inturn = true;
+        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+
+        if (rm.inturn == false)
+        {
+            takeOutX = (-0.222f * ((targetX + 1.35f) / 2.7f)) + 0.102f;
+        }
+        else
+        {
+            takeOutX = (-0.219f * ((targetX + 1.35f) / 2.7f)) + 0.122f;
+        }
+
+        aiShoot.OnShot("Peel", rockCurrent);
+        yield break;
+    }
+
     IEnumerator PeelTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
@@ -744,6 +806,24 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
+    IEnumerator TapManualTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+        if (rm.inturn == false)
+        {
+            takeOutX = (-0.178f * ((targetX + 1.35f) / 2.7f)) + 0.056f;
+        }
+        else
+        {
+            takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+        }
+
+        aiShoot.OnShot("Raise", rockCurrent);
+        yield break;
+    }
+
     IEnumerator TapTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
@@ -771,6 +851,25 @@ public class AI_Target : MonoBehaviour
 
         aiShoot.OnShot("Raise", rockCurrent);
         Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        yield break;
+    }
+
+
+    IEnumerator TickShotManualTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+        if (rm.inturn == false)
+        {
+            takeOutX = (-0.04f * ((targetX + 0.4f) / 0.8f)) - 0.005f;
+        }
+        else
+        {
+            takeOutX = (-0.039f * ((targetX + 0.4f) / 0.8f)) + 0.042f;
+        }
+
+        aiShoot.OnShot("Tick", rockCurrent);
         yield break;
     }
 

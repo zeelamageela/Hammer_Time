@@ -32,13 +32,15 @@ public class CameraMan : MonoBehaviour
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
             rockRB = rock.GetComponent<Rigidbody2D>();
             distance = 1f - ((-1f * ((rockRB.position.y - min) / (max - min))) + 1f);
+
+
+            if (rockInfo.shotTaken)
+                anim.SetBool("Active", true);
+            else
+                anim.SetBool("Active", false);
         }
         //distance = Mathf.Clamp(distance, 0f, 1f);
 
-        if (rockInfo.shotTaken)
-            anim.SetBool("Active", true);
-        else
-            anim.SetBool("Active", false);
 
         anim.Play(clipName, 0, distance);
     }
