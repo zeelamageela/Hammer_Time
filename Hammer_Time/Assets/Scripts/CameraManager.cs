@@ -16,9 +16,11 @@ public class CameraManager : MonoBehaviour
 
     public GameObject vcam_go;
     public CinemachineVirtualCamera vcam;
+    public CinemachineFramingTransposer vcam_ft;
 
     private void Start()
     {
+        vcam_ft = vcam.GetCinemachineComponent<CinemachineFramingTransposer>();
         main.depth = 1;
         house.depth = -1;
         ui.depth = 3;
@@ -38,14 +40,15 @@ public class CameraManager : MonoBehaviour
     }
     public void ShotSetup()
     {
+        vcam.enabled = false;
+        vcam.m_Lens.OrthographicSize = 7.5f;
         Debug.Log("Shot Setup");
         main.depth = 1;
         house.depth = -1;
         ui.depth = 3;
         top.depth = 2;
 
-        vcam.m_Lens.OrthographicSize = 7.5f;
-
+        vcam_ft.m_SoftZoneWidth = 0f;
         vcam.LookAt = launcher;
         vcam.Follow = launcher;
         vcam.enabled = true;
@@ -66,9 +69,10 @@ public class CameraManager : MonoBehaviour
     public void RockFollow(Transform tFollowTarget)
     {
         Debug.Log("Rock Follow");
-
+        vcam_ft.m_SoftZoneWidth = 2f;
         main.depth = 1;
         house.depth = -1;
+        top.depth = -1;
         ui.depth = 3;
         vcam.LookAt = tFollowTarget;
         vcam.Follow = tFollowTarget;
@@ -79,10 +83,13 @@ public class CameraManager : MonoBehaviour
     {
         main.depth = 1;
         house.depth = -1;
+        top.depth = -1;
         ui.depth = 3;
         vcam.LookAt = tFollowTarget;
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
+        vcam.m_Lens.OrthographicSize = 3f;
+        
     }
     public void InPlayZoom(float dist)
     {

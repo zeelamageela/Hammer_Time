@@ -67,31 +67,31 @@ public class AI_Shooter : MonoBehaviour
     }
     public void ShotLength()
     {
-        centreGuard.y = centreGuard.y + (osMult * 0.18f);
-        tightCentreGuard.y = tightCentreGuard.y + (osMult * 0.18f);
-        highCentreGuard.y = highCentreGuard.y + (osMult * 0.18f);
-        leftHighCornerGuard.y = leftHighCornerGuard.y + (osMult * 0.18f);
-        leftTightCornerGuard.y = leftTightCornerGuard.y + (osMult * 0.18f);
-        leftCornerGuard.y = leftCornerGuard.y + (osMult * 0.18f);
-        rightHighCornerGuard.y = rightHighCornerGuard.y + (osMult * 0.18f);
-        rightTightCornerGuard.y = rightTightCornerGuard.y + (osMult * 0.18f);
-        rightCornerGuard.y = rightCornerGuard.y + (osMult * 0.18f);
+        centreGuard.y += (osMult * 0.18f);
+        tightCentreGuard.y += (osMult * 0.18f);
+        highCentreGuard.y += (osMult * 0.18f);
+        leftHighCornerGuard.y += (osMult * 0.18f);
+        leftTightCornerGuard.y += (osMult * 0.18f);
+        leftCornerGuard.y += (osMult * 0.18f);
+        rightHighCornerGuard.y += (osMult * 0.18f);
+        rightTightCornerGuard.y += (osMult * 0.18f);
+        rightCornerGuard.y += (osMult * 0.18f);
 
-        topTwelveFoot.y = topTwelveFoot.y + (osMult * 0.18f);
-        backTwelveFoot.y = backTwelveFoot.y + (osMult * 0.18f);
-        leftTwelveFoot.y = leftTwelveFoot.y + (osMult * 0.18f);
-        rightTwelveFoot.y = rightTwelveFoot.y + (osMult * 0.18f);
+        topTwelveFoot.y += (osMult * 0.18f);
+        backTwelveFoot.y += (osMult * 0.18f);
+        leftTwelveFoot.y += (osMult * 0.18f);
+        rightTwelveFoot.y += (osMult * 0.18f);
 
-        topFourFoot.y = topFourFoot.y + (osMult * 0.18f);
-        backFourFoot.y = backFourFoot.y + (osMult * 0.18f);
-        leftFourFoot.y = leftFourFoot.y + (osMult * 0.18f);
-        rightFourFoot.y = rightFourFoot.y + (osMult * 0.18f);
-        button.y = button.y + (osMult * 0.18f);
+        topFourFoot.y += (osMult * 0.18f);
+        backFourFoot.y += (osMult * 0.18f);
+        leftFourFoot.y += (osMult * 0.18f);
+        rightFourFoot.y += (osMult * 0.18f);
+        button.y += (osMult * 0.18f);
 
-        peel.y = peel.y + (osMult * 0.18f);
-        takeOut.y = takeOut.y + (osMult * 0.18f);
-        raise.y = raise.y + (osMult * 0.18f);
-        tick.y = tick.y + (osMult * 0.18f);
+        peel.y += (osMult * 0.18f);
+        takeOut.y += (osMult * 0.18f);
+        raise.y += (osMult * 0.18f);
+        tick.y += (osMult * 0.18f);
     }
 
     public void OnShot(string aiShotType, int rockCurrent)
@@ -199,8 +199,16 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Right Corner Guard":
-                shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
+                if (inturn)
+                {
+                    shotX = -1f * Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
+                }
+                else
+                {
+                    shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
+                }
+                shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
+                shotY = Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
