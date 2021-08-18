@@ -146,7 +146,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.18
+  m_Radius: 0.14
 --- !u!114 &1495279761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,6 +182,7 @@ MonoBehaviour:
   springReleased: 0
   vcam_go: {fileID: 0}
   vcam: {fileID: 0}
+  gm: {fileID: 0}
 --- !u!114 &-5155953064966958067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,6 +213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamName: Red
   rockNumber: 1
+  rockIndex: 0
   stopped: 0
   rest: 0
   released: 0
@@ -222,6 +224,8 @@ MonoBehaviour:
   moving: 0
   shotTaken: 0
   placed: 0
+  guard: 0
+  freeGuard: 0
   velocity: 0
   distance: 0
 --- !u!114 &-290574429449357231
@@ -245,3 +249,4 @@ MonoBehaviour:
   hit: 0
   inHouse: 0
   shotTaken: 0
+  guard: 0
