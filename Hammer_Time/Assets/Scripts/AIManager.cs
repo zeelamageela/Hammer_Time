@@ -148,7 +148,6 @@ public class AIManager : MonoBehaviour
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
 
-        aggressive = true;
 
         //if (gm.redScore > gm.yellowScore)
         //{

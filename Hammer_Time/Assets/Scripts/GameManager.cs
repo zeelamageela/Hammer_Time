@@ -68,6 +68,10 @@ public class GameManager : MonoBehaviour
     Rock_Info redRock;
     Rock_Info yellowRock;
 
+    public GameObject targetAi;
+    public GameObject targetPlayer;
+    public GameObject targetStory;
+
     public Button redButton;
     public Button yellowButton;
     public Button sweepButton;
@@ -120,6 +124,9 @@ public class GameManager : MonoBehaviour
 
         //redRocks_left = rocksPerTeam;
         //yellowRocks_left = rocksPerTeam;
+        targetAi.SetActive(false);
+        targetPlayer.SetActive(false);
+        targetStory.SetActive(false);
 
         rockList = new List<Rock_List>();
         houseList = new List<House_List>();
@@ -130,8 +137,6 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         gHUD.SetHammer(redHammer);
-
-
 
         if (gsp.loadGame)
         {
@@ -156,8 +161,6 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(Tutorial());
         }
-
-
     }
 
     public void SetHammerRed()
@@ -298,7 +301,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region "Turns"
+    #region Turns
     public void OnRedTurn()
     {
         state = GameState.REDTURN;
@@ -440,6 +443,7 @@ public class GameManager : MonoBehaviour
         {
             gHUD.mainDisplay.enabled = true;
             gHUD.mainDisplay.text = "AI Turn";
+            targetAi.SetActive(true);
 
             if (debug)
             {
@@ -451,7 +455,7 @@ public class GameManager : MonoBehaviour
         }
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
-
+        
         cm.RockFollow(yellowRock_1.transform);
         am.Play("RockScrape");
         boardCollider.enabled = true;
@@ -464,6 +468,7 @@ public class GameManager : MonoBehaviour
         if (aiTeamYellow)
         {
             gHUD.mainDisplay.enabled = false;
+            targetAi.SetActive(false);
         }
 
         yield return new WaitUntil(() => yellowRock.rest == true);
@@ -512,7 +517,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region "End of Turn"
+    #region End of Turn
     IEnumerator AllStopped()
     {
         foreach (Rock_List rock in rockList)
@@ -665,7 +670,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region "Scoring and End of Game"
+    #region Scoring and End of Game
     IEnumerator Scoring()
     {
         Debug.Log("Current rock is " + rockCurrent);
@@ -962,7 +967,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < 7; i++)
         {
-            rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
+            rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
             rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
@@ -1052,7 +1057,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < rockCurrent; i++)
         {
-            rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.18f;
+            rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
             rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;

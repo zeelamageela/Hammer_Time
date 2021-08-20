@@ -43,8 +43,9 @@ public class CharacterStats : MonoBehaviour
     public void OnSweepFatigue(float fatigue)
     {
         fatigue = fatigue - (sweepEndurance.GetValue() / 10f);
-
-        sweepHealth -= (fatigue / 2f);
+        Debug.Log("Fatigue is " + fatigue);
+        sweepHealth -= fatigue / 2f;
+        Debug.Log("Sweep Health is " + fatigue);
 
         if (sweepHealth <= 0)
         {

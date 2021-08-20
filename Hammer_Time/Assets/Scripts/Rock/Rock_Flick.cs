@@ -185,6 +185,8 @@ public class Rock_Flick : MonoBehaviour
 
     public void OnMouseUp()
     {
+
+        Debug.Log("What the fuckkkk Mouse up");
         //if red has hammer
         if (gm.redHammer)
         {
@@ -228,6 +230,7 @@ public class Rock_Flick : MonoBehaviour
                     isPressed = false;
                     rb.isKinematic = false;
 
+                    Debug.Log("What the fuckkkk");
                     if (rb.position.y >= -24f)
                     {
                         RockReset();

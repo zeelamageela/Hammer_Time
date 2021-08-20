@@ -33,6 +33,9 @@ public class StoryManager : MonoBehaviour
 
     public float timeScale;
 
+    public GameObject targetStory;
+    public GameObject targetPlayer;
+    public GameObject targetAi;
     private void Start()
     {
         StartCoroutine(StoryFlow());
@@ -71,15 +74,14 @@ public class StoryManager : MonoBehaviour
 
         yield return new WaitUntil(() => state == GameState.CHECKSCORE);
 
-
-
-
         yield return new WaitUntil(() => gm.rockCurrent == 8);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
         skipDialogue.TriggerDialogue(0);
         cm.RockZoom(gm.rockList[5].rock.transform);
+        targetStory.SetActive(true);
+        targetStory.transform.position = gm.rockList[5].rock.transform.position;
 
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 

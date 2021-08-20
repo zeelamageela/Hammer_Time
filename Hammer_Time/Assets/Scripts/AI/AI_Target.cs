@@ -28,6 +28,7 @@ public class AI_Target : MonoBehaviour
     public float peelOffset;
     public float raiseOffset;
     public float tickOffset;
+    public Transform targetCircle;
     public Vector2 targetPos;
     float targetX;
     float targetY;
@@ -37,6 +38,8 @@ public class AI_Target : MonoBehaviour
 
     public void OnTarget(string target, int rockCurrent, int rockTarget)
     {
+        targetPos = new Vector2(targetCircle.position.x, targetCircle.position.y);
+
         if (gm.houseList.Count != 0)
         {
             closestRock = gm.houseList[0].rock;
