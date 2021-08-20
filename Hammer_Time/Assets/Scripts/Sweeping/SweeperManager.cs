@@ -38,7 +38,7 @@ public class SweeperManager : MonoBehaviour
 
     private void Update()
     {
-        if (sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0)
+        if (sweeperR && sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0)
         {
             if (rm.gm.aiTeamRed)
                 SweepWhoa(rm.gm.aiTeamRed);

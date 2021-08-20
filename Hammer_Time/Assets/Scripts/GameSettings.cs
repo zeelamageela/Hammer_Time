@@ -62,7 +62,7 @@ public class GameSettings : MonoBehaviour
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadSettings();
 
-        SceneManager.LoadScene("Game_1");
+        SceneManager.LoadScene("AiGame");
     }
 
     public void SetHammerYellow()
@@ -71,6 +71,6 @@ public class GameSettings : MonoBehaviour
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadSettings();
 
-        SceneManager.LoadScene("Game_1");
+        SceneManager.LoadScene("AiGame");
     }
 }

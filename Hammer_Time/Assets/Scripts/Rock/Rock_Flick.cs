@@ -101,7 +101,7 @@ public class Rock_Flick : MonoBehaviour
             isPressed = false;
             rb.isKinematic = false;
 
-            GetComponent<CircleCollider2D>().radius = 0.18f;
+            GetComponent<CircleCollider2D>().radius = 0.14f;
             StartCoroutine(Release());
             Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
             trajLine.Release();
@@ -211,7 +211,7 @@ public class Rock_Flick : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<CircleCollider2D>().radius = 0.18f;
+                        GetComponent<CircleCollider2D>().radius = 0.14f;
                         StartCoroutine(Release());
                         Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                         trajLine.Release();
@@ -242,7 +242,7 @@ public class Rock_Flick : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<CircleCollider2D>().radius = 0.18f;
+                        GetComponent<CircleCollider2D>().radius = 0.14f;
                         StartCoroutine(Release());
                         Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                         trajLine.Release();
@@ -277,7 +277,7 @@ public class Rock_Flick : MonoBehaviour
                     }
                     else
                     {
-                        GetComponent<CircleCollider2D>().radius = 0.18f;
+                        GetComponent<CircleCollider2D>().radius = 0.14f;
                         StartCoroutine(Release());
                         Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                         trajLine.Release();
@@ -307,7 +307,7 @@ public class Rock_Flick : MonoBehaviour
                         }
                         else
                         {
-                            GetComponent<CircleCollider2D>().radius = 0.18f;
+                            GetComponent<CircleCollider2D>().radius = 0.14f;
                             StartCoroutine(Release());
                             Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                             trajLine.Release();

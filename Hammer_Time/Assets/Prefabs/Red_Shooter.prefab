@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnValue: 485.91
-  curl: {x: -0.5, y: 0}
+  curl: {x: -0.35, y: 0}
   scaleFactor: 0.1
   flipAxis: 0
 --- !u!114 &2680404496690781294

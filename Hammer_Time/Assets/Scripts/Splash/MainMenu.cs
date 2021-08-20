@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
    public void PlayGame()
     {
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("AIGame");
         am.Play("Theme");
     }
 
@@ -54,7 +54,7 @@ public class MainMenu : MonoBehaviour
         gsp.loadGame = true;
         Debug.Log("Load Game is " + gsp.loadGame);
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene("AIGame_2");
+        SceneManager.LoadScene("AIGame");
         am.Play("Theme");
     }
 }

@@ -104,7 +104,7 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
-        rb.drag = (rb.drag - (sweepAmt));
+        rb.drag -= sweepAmt;
 
     }
 
@@ -179,7 +179,7 @@ public class Sweep : MonoBehaviour
         //    //sweepSel.SweepLeft();
         //}
 
-        rb.drag = (rb.drag - (sweepAmt / 2f));
+        rb.drag -= sweepAmt / 2f;
 
         float curl = rock.GetComponent<Rock_Force>().curl.x - ((statCalc / 5f) * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
