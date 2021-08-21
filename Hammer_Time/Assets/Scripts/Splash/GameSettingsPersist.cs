@@ -44,7 +44,7 @@ public class GameSettingsPersist : MonoBehaviour
             return;
         }
 
-
+        Application.targetFrameRate = 60;
         //if (loadGame)
         //{
         //    redHammer = data.redHammer;
@@ -66,8 +66,7 @@ public class GameSettingsPersist : MonoBehaviour
         {
             OnTutorial();
         }
-        
-        
+
     }
 
     public void LoadSettings()

@@ -9788,7 +9788,7 @@ MonoBehaviour:
   raiseOffset: 0
   tickOffset: 0
   takeOutX: 0
-  osMult: -1.125
+  osMult: -0.32
 --- !u!1 &946068097 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4255617394394023549, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
