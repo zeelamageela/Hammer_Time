@@ -25,6 +25,18 @@ public class TeamTarget : MonoBehaviour
 
             rb.position = mousePos;
         }
+
+        if (rb.position.y >= 5f)
+        {
+            float drawAccu = gm.shooterGO.GetComponent<CharacterStats>().drawAccuracy.GetValue();
+            transform.localScale = new Vector3(1f - ((0.5f * (drawAccu / 10f)) + 0.25f), 1f - ((0.5f * (drawAccu / 10f)) + 0.25f), 0f);
+        }
+        else
+        {
+
+            float guardAccu = gm.shooterGO.GetComponent<CharacterStats>().guardAccuracy.GetValue();
+            transform.localScale = new Vector3(1f - ((0.5f * (guardAccu / 10f)) + 0.25f), 1f - ((0.5f * (guardAccu / 10f)) + 0.25f), 0f);
+        }
         
     }
     // Update is called once per frame

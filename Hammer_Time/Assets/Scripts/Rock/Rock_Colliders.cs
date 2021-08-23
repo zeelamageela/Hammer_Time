@@ -62,6 +62,11 @@ public class Rock_Colliders : MonoBehaviour
         //{
         //    Debug.Log("-3 velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         //}
+
+        if (GetComponent<Rock_Info>().shotTaken && GetComponent<Rock_Info>().stopped && transform.position.y < 0f)
+        {
+            StartCoroutine(OutOfPlay());
+        }
     }
 
     IEnumerator OutOfPlay()

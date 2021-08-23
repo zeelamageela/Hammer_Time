@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     public SweeperManager sm;
 
-    GameObject shooterGO;
+    public GameObject shooterGO;
     public Transform launcher;
     public Transform yellowRocksInactive;
     public Transform redRocksInactive;
@@ -64,8 +64,6 @@ public class GameManager : MonoBehaviour
 
     public bool debug;
     public Text dbText;
-    public TutorialHUD tHUD;
-    public bool tutorial;
 
     public GameState state;
 
@@ -79,7 +77,6 @@ public class GameManager : MonoBehaviour
 
     public Button redButton;
     public Button yellowButton;
-    public Button sweepButton;
     public GameObject db;
     public GameObject dbrandom;
 
@@ -151,7 +148,7 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(StoryLoad());
         }
-        else if (!tutorial)
+        else
         {
             if (redHammer)
             {
@@ -161,10 +158,6 @@ public class GameManager : MonoBehaviour
             {
                 SetHammerYellow();
             }
-        }
-        else if (tutorial)
-        {
-            StartCoroutine(Tutorial());
         }
     }
 
@@ -923,6 +916,8 @@ public class GameManager : MonoBehaviour
         myFile.Add("Red Score", redScore);
         myFile.Add("Yellow Score", yellowScore);
         myFile.Add("Ai Yellow", aiTeamYellow);
+        myFile.Add("Team", target);
+        myFile.Add("Debug", debug);
         myFile.Add("End " + endCurrent + " Red", redScore);
         myFile.Add("End " + endCurrent + " Yellow", yellowScore);
 
@@ -1176,35 +1171,5 @@ public class GameManager : MonoBehaviour
 
     }
 
-    IEnumerator Tutorial()
-    {
-        redHammer = true;
-        endTotal = 10;
-        endCurrent = 10;
-        aiTeamYellow = true;
-        gHUD.Scoreboard(2, 3, 0);
-        gHUD.Scoreboard(4, 0, 1);
-        gHUD.Scoreboard(5, 2, 0);
-        gHUD.Scoreboard(6, 0, 3);
-        gHUD.Scoreboard(7, 0, 1);
-        gHUD.Scoreboard(8, 1, 0);
-        gHUD.Scoreboard(9, 0, 1);
-
-        rockBar.EndUpdate(6, 6);
-        redScore = 6;
-        yellowScore = 6;
-
-        yield return StartCoroutine(SetupRocks());
-
-        tm.enabled = true;
-
-        yield return new WaitUntil(() => tm.rocksPlaced == true);
-
-        rockCurrent = 11;
-
-        rockBar.ShotUpdate(rockCurrent, true);
-
-        yield return StartCoroutine(CheckScore());
-    }
     #endregion
 }

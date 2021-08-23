@@ -95,6 +95,8 @@ public class GameSettingsPersist : MonoBehaviour
             redHammer = myFile.GetBool("Red Hammer");
             aiYellow = myFile.GetBool("Ai Yellow");
             mixed = myFile.GetBool("Mixed");
+            skip = myFile.GetBool("Team");
+            debug = myFile.GetBool("Debug");
 
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");

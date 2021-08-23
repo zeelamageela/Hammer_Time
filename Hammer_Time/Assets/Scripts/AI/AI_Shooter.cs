@@ -130,6 +130,7 @@ public class AI_Shooter : MonoBehaviour
                 }
 
                 shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -145,6 +146,7 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
                 }
                 shotY = Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y);
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -160,6 +162,7 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
                 }
                 shotY = Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y);
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -177,6 +180,7 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
                 }
                 shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -186,6 +190,7 @@ public class AI_Shooter : MonoBehaviour
                 shotX = Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -195,6 +200,7 @@ public class AI_Shooter : MonoBehaviour
                 shotX = Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -212,6 +218,7 @@ public class AI_Shooter : MonoBehaviour
                 shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -221,6 +228,7 @@ public class AI_Shooter : MonoBehaviour
                 shotX = Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
                 yield return new WaitForFixedUpdate();
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -229,6 +237,8 @@ public class AI_Shooter : MonoBehaviour
             case "Right High Corner Guard":
                 shotX = Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
                 shotY = Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;

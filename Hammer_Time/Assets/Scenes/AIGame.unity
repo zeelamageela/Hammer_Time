@@ -1729,6 +1729,7 @@ MonoBehaviour:
   shooterAnimRedRock: {fileID: 3703111443046092690, guid: b2bf1ebea985b495c9088e6f42bacf6b, type: 3}
   shooterAnimYellowRock: {fileID: 3703111443046092690, guid: e2e090e75483a4372b76226ea84ceb25, type: 3}
   sm: {fileID: 2125354293}
+  shooterGO: {fileID: 0}
   launcher: {fileID: 2563391621767102984}
   yellowRocksInactive: {fileID: 832581860}
   redRocksInactive: {fileID: 1203170753}
@@ -1747,8 +1748,6 @@ MonoBehaviour:
   mixed: 0
   debug: 1
   dbText: {fileID: 1350040153}
-  tHUD: {fileID: 1771459945}
-  tutorial: 0
   state: 0
   targetButtons: {fileID: 345236997}
   targetAi: {fileID: 1268648309}
@@ -1756,7 +1755,6 @@ MonoBehaviour:
   targetStory: {fileID: 1938425657}
   redButton: {fileID: 1695829208}
   yellowButton: {fileID: 1867073690}
-  sweepButton: {fileID: 0}
   db: {fileID: 953321261}
   dbrandom: {fileID: 0}
   cm: {fileID: 57450608}
@@ -3690,7 +3688,7 @@ MonoBehaviour:
   volume: 0.45
   tutorial: 0
   loadGame: 0
-  aiYellow: 1
+  aiYellow: 0
   aiRed: 0
   debug: 0
   mixed: 0
@@ -3700,7 +3698,7 @@ MonoBehaviour:
   redScore: 0
   story: 0
   third: 0
-  skip: 0
+  skip: 1
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -15183,7 +15181,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1814174803
 Transform:
   m_ObjectHideFlags: 0
@@ -17583,14 +17581,6 @@ PrefabInstance:
       propertyPath: osMult
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 945653345, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: peel.y
-      value: -27.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 945653345, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
-      propertyPath: takeOut.y
-      value: -27.45
-      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815442, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -17663,6 +17653,10 @@ PrefabInstance:
       propertyPath: aiStrat
       value: 
       objectReference: {fileID: 40999125}
+    - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: testing
+      value: Top Four Foot
+      objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name
       value: AIManager
@@ -18039,6 +18033,10 @@ PrefabInstance:
     - target: {fileID: 3044133634491027214, guid: 0501ab689b2af471e9f0b6bb12301557, type: 3}
       propertyPath: m_Name
       value: TargetCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044133634491027214, guid: 0501ab689b2af471e9f0b6bb12301557, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0501ab689b2af471e9f0b6bb12301557, type: 3}
