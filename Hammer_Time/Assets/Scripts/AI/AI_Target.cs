@@ -28,17 +28,36 @@ public class AI_Target : MonoBehaviour
     public float peelOffset;
     public float raiseOffset;
     public float tickOffset;
-    public Transform targetCircle;
+    public Transform aiTarget;
+    public Transform playerTarget;
     public Vector2 targetPos;
     float targetX;
     float targetY;
     public float takeOutX;
+    public float takeOutY;
     float raiseY;
 
+    public void PlayerTarget()
+    {
+        if (playerTarget.position.y >= 5f)
+            OnTarget("Player Draw", gm.rockCurrent, 0);
+        else
+            OnTarget("Player Guard", gm.rockCurrent, 0);
+    }
+
+    public void PlayerTakeOut()
+    {
+        OnTarget("Manual Take Out", gm.rockCurrent, 0);
+    }
+
+    public void PlayerPeel()
+    {
+        OnTarget("Manual Peel", gm.rockCurrent, 0);
+    }
 
     public void OnTarget(string target, int rockCurrent, int rockTarget)
     {
-        targetPos = new Vector2(targetCircle.position.x, targetCircle.position.y);
+        targetPos = new Vector2(aiTarget.position.x, aiTarget.position.y);
 
         if (gm.houseList.Count != 0)
         {
@@ -60,14 +79,19 @@ public class AI_Target : MonoBehaviour
                 break;
 
             case "Manual Take Out":
+
+                targetPos = new Vector2(playerTarget.position.x, playerTarget.position.y);
                 StartCoroutine(TakeOutManualTarget(rockCurrent));
                 break;
 
             case "Take Out":
+
                 StartCoroutine(TakeOutTarget(rockCurrent, rockTarget));
                 break;
 
             case "Manual Peel":
+
+                targetPos = new Vector2(playerTarget.position.x, playerTarget.position.y);
                 StartCoroutine(PeelManualTarget(rockCurrent));
                 break;
 
@@ -97,6 +121,16 @@ public class AI_Target : MonoBehaviour
 
             case "Auto Draw Four Foot":
                 StartCoroutine(DrawFourFoot(rockCurrent));
+                break;
+
+            case "Player Draw":
+                targetPos = new Vector2(playerTarget.position.x, playerTarget.position.y);
+                StartCoroutine(DrawTarget(rockCurrent));
+                break;
+
+            case "Player Guard":
+                targetPos = new Vector2(playerTarget.position.x, playerTarget.position.y);
+                StartCoroutine(GuardTarget(rockCurrent));
                 break;
         }
     }
@@ -178,7 +212,7 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
+            takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
         }
 
         aiShoot.OnShot("Take Out", rockCurrent);
@@ -835,12 +869,6 @@ public class AI_Target : MonoBehaviour
         targetY = gm.rockList[rockTarget].rock.transform.position.y;
 
 
-        //rm.inturn = false;
-        //takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
-
-        //rm.inturn = true;
-        //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
-
         if (targetX > 0f)
         {
             rm.inturn = false;
@@ -856,7 +884,6 @@ public class AI_Target : MonoBehaviour
         Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
-
 
     IEnumerator TickShotManualTarget(int rockCurrent)
     {
@@ -903,6 +930,56 @@ public class AI_Target : MonoBehaviour
 
         aiShoot.OnShot("Tick", rockCurrent);
         Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        yield break;
+    }
+
+    IEnumerator DrawTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+        takeOutY = (-0.13f * ((targetY - 5f) / 3f)) - 26.97f;
+
+        if (rm.inturn == false)
+        {
+            takeOutX = (-0.165f * ((targetX + 1.35f) / 2.7f)) + 0.029f;
+        }
+        else
+        {
+
+            takeOutX = (-0.15f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+        }
+
+        float angle = Vector2.Angle(Vector2.zero, new Vector2(takeOutX, takeOutY));
+
+        float distance = Vector2.Distance(new Vector2(takeOutX, takeOutY), new Vector2(0f, -25f));
+
+        takeOutX += (distance * Mathf.Sin(angle));
+
+        aiShoot.OnShot("Draw To Target", rockCurrent);
+
+
+        yield break;
+    }
+
+    IEnumerator GuardTarget(int rockCurrent)
+    {
+        targetX = targetPos.x;
+        targetY = targetPos.y;
+
+        takeOutY = (-0.25f * (targetY / 5f)) - 26.65f;
+
+        if (rm.inturn == false)
+        {
+            takeOutX = (-0.165f * ((targetX + 1.35f) / 2.7f)) + 0.029f;
+        }
+        else
+        {
+
+            takeOutX = (-0.165f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+        }
+
+        aiShoot.OnShot("Guard To Target", rockCurrent);
         yield break;
     }
 

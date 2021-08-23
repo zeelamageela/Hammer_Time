@@ -12,6 +12,9 @@ public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SC
 public class GameManager : MonoBehaviour
 {
     AudioManager am;
+    public TutorialManager tm;
+    public TeamManager teamM;
+    public AIManager aim;
 
     public int endCurrent;
     public int endTotal;
@@ -26,6 +29,8 @@ public class GameManager : MonoBehaviour
     public GameObject yellowShooter;
     public GameObject shooterAnimRed;
     public GameObject shooterAnimYellow;
+    public GameObject shooterAnimRedRock;
+    public GameObject shooterAnimYellowRock;
 
     public SweeperManager sm;
 
@@ -54,12 +59,11 @@ public class GameManager : MonoBehaviour
 
     public bool aiTeamRed;
     public bool aiTeamYellow;
+    public bool target;
     public bool mixed;
 
     public bool debug;
     public Text dbText;
-    public TutorialManager tm;
-    public AIManager aim;
     public TutorialHUD tHUD;
     public bool tutorial;
 
@@ -68,6 +72,7 @@ public class GameManager : MonoBehaviour
     Rock_Info redRock;
     Rock_Info yellowRock;
 
+    public GameObject targetButtons;
     public GameObject targetAi;
     public GameObject targetPlayer;
     public GameObject targetStory;
@@ -304,18 +309,22 @@ public class GameManager : MonoBehaviour
     #region Turns
     public void OnRedTurn()
     {
+            cm.ShotSetup();
+
         state = GameState.REDTURN;
         //Debug.Log("Red Turn");
-
-        cm.ShotSetup();
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
 
+        teamM.SetCharacter(rockCurrent, true);
+
         shooterGO = Instantiate(shooterAnimRed);
+        Instantiate(shooterAnimRedRock, shooterGO.transform);
         sm.SetupSweepers(true);
+
 
         GameObject redRock_1 = rockList[rockCurrent].rock;
         redRock_1.GetComponent<Rock_Flick>().enabled = true;
@@ -333,7 +342,7 @@ public class GameManager : MonoBehaviour
 
         redRocks_left--;
         rm.inturn = false;
-
+        
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
         redRock = redRock_1.GetComponent<Rock_Info>();
@@ -341,8 +350,40 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true);
+
+        if (debug)
+        {
+            dbText.enabled = true;
+        }
+
+        if (aiTeamRed)
+        {
+            gHUD.mainDisplay.enabled = true;
+            gHUD.mainDisplay.text = "AI Turn";
+            targetAi.SetActive(true);
+
+            yield return new WaitForSeconds(1f);
+            aim.OnShot(rockCurrent);
+        }
+        else if (target)
+        {
+            cm.HouseView();
+            targetPlayer.SetActive(true);
+            targetButtons.SetActive(true);
+            if (debug)
+            {
+                dbText.enabled = true;
+            }
+        }
+
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
+        if (target)
+        {
+            targetButtons.SetActive(false);
+            targetPlayer.SetActive(false);
+        }
+        
         am.Play("RockScrape");
         cm.RockFollow(redRock_1.transform);
         boardCollider.enabled = true;
@@ -356,7 +397,10 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().EnterSweepZone();
 
         yield return new WaitUntil(() => redRock.rest == true);
-
+        if (debug)
+        {
+            dbText.enabled = false;
+        }
         am.Stop("RockScrape");
         rm.GetComponent<Sweep>().ExitSweepZone();
 
@@ -376,15 +420,10 @@ public class GameManager : MonoBehaviour
                     gList.Add(new Guard_List(rockCurrent, redRock.freeGuard, redRock_1.transform));
                 }
             }
-
-            Debug.Log("Out Of Play is " + redRock.outOfPlay);
-            Debug.Log("Rock Current is " + rockCurrent);
             rockBar.IdleRock(rockCurrent);
         }
         else
         {
-            Debug.Log("Out Of Play is " + redRock.outOfPlay);
-            Debug.Log("Rock Current is " + rockCurrent);
             rockBar.DeadRock(rockCurrent);
         }
 
@@ -403,7 +442,10 @@ public class GameManager : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
 
+        teamM.SetCharacter(rockCurrent, false);
         shooterGO = Instantiate(shooterAnimYellow);
+
+        Instantiate(shooterAnimYellowRock, shooterGO.transform);
 
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
         yellowRock_1.GetComponent<Rock_Flick>().enabled = true;
@@ -438,7 +480,10 @@ public class GameManager : MonoBehaviour
         Debug.Log(yellowRock_1.name);
 
         rockBar.ActiveRock(false);
-
+        if (debug)
+        {
+            dbText.enabled = true;
+        }
         if (aiTeamYellow)
         {
             gHUD.mainDisplay.enabled = true;
@@ -453,8 +498,20 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
         }
+        else if (target)
+        {
+            cm.HouseView();
+            targetPlayer.SetActive(true);
+            targetButtons.SetActive(true);
+        }
 
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
+
+        if (target)
+        {
+            targetButtons.SetActive(false);
+            targetPlayer.SetActive(false);
+        }
         
         cm.RockFollow(yellowRock_1.transform);
         am.Play("RockScrape");
@@ -472,6 +529,11 @@ public class GameManager : MonoBehaviour
         }
 
         yield return new WaitUntil(() => yellowRock.rest == true);
+
+        if (debug)
+        {
+            dbText.enabled = false;
+        }
         am.Stop("RockScrape");
 
         if (debug)
@@ -578,6 +640,7 @@ public class GameManager : MonoBehaviour
         // or else we will just check the score
         else
         {
+
             if (houseList.Count != 0)
             {
                 foreach (House_List rock in houseList)
@@ -644,6 +707,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Current Rock is " + rockCurrent);
 
         //gsp.AutoSave();
+
+        
 
         if (rockCurrent % 2 == 1)
         {

@@ -24,11 +24,13 @@ public class GameSettingsPersist : MonoBehaviour
     public int yellowScore;
     public int redScore;
     public bool story;
+    public bool third;
+    public bool skip;
+
     EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
 
-    // Start is called before the first frame update
 
     private void Awake()
     {
@@ -44,16 +46,8 @@ public class GameSettingsPersist : MonoBehaviour
             return;
         }
 
-        Application.targetFrameRate = 60;
-        //if (loadGame)
-        //{
-        //    redHammer = data.redHammer;
-        //    ends = data.endTotal;
-        //    aiYellow = data.aiYellow;
-        //    rockCurrent = data.rockCurrent;
-        //    endCurrent = data.endCurrent;
-        //}
-        //else LoadSettings();  
+        Application.targetFrameRate = 30;
+
     }
 
     private void Start()
@@ -80,6 +74,8 @@ public class GameSettingsPersist : MonoBehaviour
         redHammer = gs.redHammer;
         aiYellow = gs.ai;
         mixed = gs.mixed;
+        skip = gs.team;
+        debug = gs.debug;
     }
 
     public void LoadGame()
@@ -120,6 +116,8 @@ public class GameSettingsPersist : MonoBehaviour
         redHammer = sm.redHammer;
         aiYellow = sm.aiYellow;
         aiRed = sm.aiRed;
+        third = sm.third;
+        skip = sm.skip;
 
         redScore = myFile.GetInt("Red Score");
         yellowScore = myFile.GetInt("Yellow Score");
@@ -137,6 +135,7 @@ public class GameSettingsPersist : MonoBehaviour
         //yellowScore = data.yellowScore;
         //redScore = data.redScore;
     }
+
     private void Update()
     {
         if (tutorial)

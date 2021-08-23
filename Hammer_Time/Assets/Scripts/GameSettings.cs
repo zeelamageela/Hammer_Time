@@ -13,12 +13,14 @@ public class GameSettings : MonoBehaviour
     public Text rockText;
     public OptionsMenu om;
     public Toggle aiTog;
+    public Toggle teamTog;
     public Toggle dbTog;
 
     public int ends;
     public int rocks;
     public float volume;
     public bool ai;
+    public bool team;
     public bool debug;
     public bool mixed;
     public bool loadGame;
@@ -50,6 +52,11 @@ public class GameSettings : MonoBehaviour
             debug = false;
         }
         else debug = true;
+
+        if (teamTog.isOn == false)
+            team = false;
+        else
+            team = true;
 
         endText.text = ends.ToString();
         rockText.text = rocks.ToString();

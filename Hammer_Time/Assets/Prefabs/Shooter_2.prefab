@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3203999086678792337}
   - component: {fileID: 3981483129774230190}
   - component: {fileID: 103284631}
+  - component: {fileID: 1515328884540143136}
   m_Layer: 0
   m_Name: Shooter_2
   m_TagString: Player
@@ -157,8 +158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6831aa6a9ed72c4419fc35b9325920b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gm: {fileID: 0}
-  gmGO: {fileID: 0}
   isPressed: 0
   springReleased: 0
   isReleased: 0
@@ -170,3 +169,30 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+--- !u!114 &1515328884540143136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3703111443046092690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a1b2cc121f34cb49c3531d79115ae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charName: Shooter
+  drawAccuracy:
+    baseValue: 6
+  takeOutAccuracy:
+    baseValue: 7
+  guardAccuracy:
+    baseValue: 9
+  sweepStrength:
+    baseValue: 2
+  sweepEndurance:
+    baseValue: 0
+  sweepHealth: 0
+  sweeping: 0
+  sweepingHard: 0
+  shooting: 0

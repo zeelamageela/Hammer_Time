@@ -57,6 +57,7 @@ public class AI_Shooter : MonoBehaviour
     float targetX;
     float targetY;
     public float takeOutX;
+    public float takeOutY;
     float raiseY;
 
     public float osMult;
@@ -109,6 +110,7 @@ public class AI_Shooter : MonoBehaviour
         gm.dbText.text = aiShotType;
         rockFlick.isPressedAI = true;
         takeOutX = aiTarg.takeOutX;
+        takeOutY = aiTarg.takeOutY;
         yield return new WaitForSeconds(0.5f);
 
         float shotX;
@@ -244,7 +246,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(topTwelveFoot.y + drawAccu.y, topTwelveFoot.y - drawAccu.y);
-                yield return new WaitForFixedUpdate();
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -261,6 +264,8 @@ public class AI_Shooter : MonoBehaviour
                 }
 
                 shotY = Random.Range(leftTwelveFoot.y + drawAccu.y, leftTwelveFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -276,6 +281,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(backTwelveFoot.x + drawAccu.x, backTwelveFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(backTwelveFoot.y + drawAccu.y, backTwelveFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -291,6 +298,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(rightTwelveFoot.y + drawAccu.y, rightTwelveFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -308,6 +317,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
                 }
                 shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -323,6 +334,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(leftFourFoot.y + drawAccu.y, leftFourFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -338,6 +351,7 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(rightFourFoot.x + drawAccu.x, rightFourFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(rightFourFoot.y + drawAccu.y, rightFourFoot.y - drawAccu.y);
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -353,6 +367,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(topFourFoot.y + drawAccu.y, topFourFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -368,6 +384,8 @@ public class AI_Shooter : MonoBehaviour
                     shotX = Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
                 }
                 shotY = Random.Range(backFourFoot.y + drawAccu.y, backFourFoot.y - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
                 yield return new WaitForFixedUpdate();
                 rockFlick.mouseUp = true;
@@ -387,6 +405,7 @@ public class AI_Shooter : MonoBehaviour
                     shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 }
 
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Peel Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
@@ -412,6 +431,7 @@ public class AI_Shooter : MonoBehaviour
                     shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 }
 
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
@@ -433,6 +453,7 @@ public class AI_Shooter : MonoBehaviour
                     shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 }
 
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Tick Shot Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
@@ -454,6 +475,7 @@ public class AI_Shooter : MonoBehaviour
                     shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
                 }
 
+                rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Raise Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
@@ -461,6 +483,33 @@ public class AI_Shooter : MonoBehaviour
                 rockFlick.mouseUp = true;
                 break;
             #endregion
+
+            case "Draw To Target":
+
+                shotX = takeOutX;
+                shotY = takeOutY;
+
+                shotX = Random.Range(takeOutX + drawAccu.x, takeOutX - drawAccu.x);
+                shotY = Random.Range(takeOutY + drawAccu.y, takeOutY - drawAccu.y);
+
+                rockFlick.rb.isKinematic = true;
+                rockRB.position = new Vector2(shotX, shotY);
+                rockFlick.mouseUp = true;
+                break;
+
+            case "Guard To Target":
+
+                shotX = takeOutX;
+                shotY = takeOutY;
+
+                shotX = Random.Range(takeOutX + guardAccu.x, takeOutX - guardAccu.x);
+                shotY = Random.Range(takeOutY + guardAccu.y, takeOutY - guardAccu.y);
+
+                rockFlick.rb.isKinematic = true;
+                rockRB.position = new Vector2(shotX, shotY);
+                rockFlick.mouseUp = true;
+                break;
+
             default:
                 break;
         }

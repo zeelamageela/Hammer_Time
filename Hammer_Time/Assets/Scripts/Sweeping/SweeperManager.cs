@@ -38,24 +38,28 @@ public class SweeperManager : MonoBehaviour
 
     private void Update()
     {
-        if (sweeperR && sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
+        if (sweeperR & sweeperL)
         {
-            if (rm.gm.aiTeamRed)
-                SweepWhoa(rm.gm.aiTeamRed);
-            else if (rm.gm.aiTeamYellow)
-                SweepWhoa(rm.gm.aiTeamYellow);
-            else
-                SweepWhoa(false);
+            if (sweeperR && sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
+            {
+                if (rm.gm.aiTeamRed)
+                    SweepWhoa(rm.gm.aiTeamRed);
+                else if (rm.gm.aiTeamYellow)
+                    SweepWhoa(rm.gm.aiTeamYellow);
+                else
+                    SweepWhoa(false);
+            }
+            if (sweeperL && sweeperL.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
+            {
+                if (rm.gm.aiTeamRed)
+                    SweepWhoa(rm.gm.aiTeamRed);
+                else if (rm.gm.aiTeamYellow)
+                    SweepWhoa(rm.gm.aiTeamYellow);
+                else
+                    SweepWhoa(false);
+            }
         }
-        if (sweeperL && sweeperL.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
-        {
-            if (rm.gm.aiTeamRed)
-                SweepWhoa(rm.gm.aiTeamRed);
-            else if (rm.gm.aiTeamYellow)
-                SweepWhoa(rm.gm.aiTeamYellow);
-            else
-                SweepWhoa(false);
-        }
+        
         
     }
 

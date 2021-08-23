@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Sweeper : MonoBehaviour
 {
-    public SweeperManager sm;
     public Animator anim;
     //public RelativeJoint2D rj;
     Rigidbody2D rockRB;

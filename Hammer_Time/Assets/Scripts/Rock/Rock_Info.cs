@@ -46,7 +46,7 @@ public class Rock_Info : MonoBehaviour
         //else moving = false;
 
 
-        if (transform.hasChanged)
+        if (transform.hasChanged && rockIndex == FindObjectOfType<GameManager>().rockCurrent)
         {
             //Debug.Log("Hit RockInfo!");
             transform.hasChanged = false;

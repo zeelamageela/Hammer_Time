@@ -100,7 +100,7 @@ public class Rock_Flick : MonoBehaviour
         {
             isPressed = false;
             rb.isKinematic = false;
-
+            Debug.Log("Release Pullback is " + rb.position.x + ", " + rb.position.y);
             GetComponent<CircleCollider2D>().radius = 0.14f;
             StartCoroutine(Release());
             Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
@@ -139,12 +139,12 @@ public class Rock_Flick : MonoBehaviour
                 }
             }
         }
-        else if (!gm.redHammer)
+        else
         {
-            //if the rock is yellow
+            //if the rock is red
             if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
             {
-                //if the ai team is not yellow
+                //if the ai team is not red
                 if (!gm.aiTeamRed)
                 {
                     GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
@@ -153,10 +153,10 @@ public class Rock_Flick : MonoBehaviour
                     rb.isKinematic = true;
                 }
             }
-            //if the rock is red
+            //if the rock is yellow
             else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
             {
-                //if the ai team is not red
+                //if the ai team is not yellow
                 if (!gm.aiTeamYellow)
                 {
                     GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
@@ -166,16 +166,10 @@ public class Rock_Flick : MonoBehaviour
                 }
             }
         }
-        //GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
-        //GetComponent<SpringJoint2D>().frequency = 1.5f;
-        //isPressed = true;
-        //rb.isKinematic = true;
     }
-
     void OnDrag()
     {
         startPoint = rb.position;
-
         GetComponent<SpriteRenderer>().enabled = false;
         endPoint = GetComponent<SpringJoint2D>().connectedBody.transform.position;
         springDistance = Vector2.Distance(startPoint, endPoint);
@@ -287,35 +281,35 @@ public class Rock_Flick : MonoBehaviour
                         shootKnob.UnParentandHide();
                     }
                 }
-                //if the rock is red
-                else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+            }
+            //if the rock is red
+            else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+            {
+                //if the ai team is not red
+                if (!gm.aiTeamYellow)
                 {
-                    //if the ai team is not red
-                    if (!gm.aiTeamYellow)
-                    {
-                        isPressed = false;
-                        rb.isKinematic = false;
+                    isPressed = false;
+                    rb.isKinematic = false;
 
-                        if (rb.position.y >= -24f)
-                        {
-                            RockReset();
-                        }
-                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
-                        {
-                            RockReset();
-                        }
-                        else if (springDistance <= 1.5f)
-                        {
-                            RockReset();
-                        }
-                        else
-                        {
-                            GetComponent<CircleCollider2D>().radius = 0.14f;
-                            StartCoroutine(Release());
-                            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-                            trajLine.Release();
-                            shootKnob.UnParentandHide();
-                        }
+                    if (rb.position.y >= -24f)
+                    {
+                        RockReset();
+                    }
+                    else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                    {
+                        RockReset();
+                    }
+                    else if (springDistance <= 1.5f)
+                    {
+                        RockReset();
+                    }
+                    else
+                    {
+                        GetComponent<CircleCollider2D>().radius = 0.14f;
+                        StartCoroutine(Release());
+                        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                        trajLine.Release();
+                        shootKnob.UnParentandHide();
                     }
                 }
             }
@@ -351,10 +345,13 @@ public class Rock_Flick : MonoBehaviour
         mouseUp = false;
         springReleased = true;
 
+        //GetComponent<SpringJoint2D>().enabled = true;
+        Debug.Log("Waht is happening in here. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         launcher.GetComponent<Collider2D>().enabled = true;
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
+        Debug.Log("Waht is happening in HERE. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         this.enabled = false;
 
         yield return new WaitForFixedUpdate();

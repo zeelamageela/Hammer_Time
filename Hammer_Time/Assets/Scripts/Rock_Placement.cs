@@ -88,7 +88,7 @@ public class Rock_Placement : MonoBehaviour
         rock.GetComponent<SpringJoint2D>().enabled = false;
         rockFlick.enabled = false;
 
-        rock.GetComponent<CircleCollider2D>().radius = 0.18f;
+        rock.GetComponent<CircleCollider2D>().radius = 0.14f;
 
         yield return new WaitForFixedUpdate();
 

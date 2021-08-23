@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 693088042146815442}
   - component: {fileID: 693088042146815443}
   - component: {fileID: 945653344}
+  - component: {fileID: 945653343}
+  - component: {fileID: 8901575970831046904}
+  - component: {fileID: 945653345}
   m_Layer: 0
   m_Name: AIManager
   m_TagString: Untagged
@@ -47,6 +50,139 @@ MonoBehaviour:
   gm: {fileID: 0}
   tm: {fileID: 0}
   rm: {fileID: 0}
+  aiTarg: {fileID: 0}
+  aiShoot: {fileID: 0}
+  aiStrat: {fileID: 0}
+  testing: Button
+  testingTakeOut: Take Out Manual Target
+  testingRockNumber: 0
+  guardAccu: {x: 0.01, y: 0.01}
+  drawAccu: {x: 0, y: 0}
+  toAccu: {x: 0, y: 0}
+  tickAccu: {x: 0, y: 0}
+  aggressive: 1
+  cenGuard: {fileID: 0}
+  tCenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  story: 1
+  takeOutX: -0.025
+--- !u!114 &945653344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 281427aa8681a40698f6446f27609ed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  cm: {fileID: 0}
+  vcam: {fileID: 0}
+  testing: Left Twelve Foot
+  centreGuard: {x: 0, y: 3}
+  tightCentreGuard: {x: 0, y: 4.25}
+  highCentreGuard: {x: 0, y: 1.5}
+  leftHighCornerGuard: {x: -0.65, y: 1.5}
+  leftTightCornerGuard: {x: -0.75, y: 4.25}
+  leftCornerGuard: {x: -0.7, y: 3}
+  rightHighCornerGuard: {x: 0.65, y: 1.5}
+  rightTightCornerGuard: {x: 0.75, y: 4.25}
+  rightCornerGuard: {x: 0.7, y: 3}
+  topTwelveFoot: {x: 0, y: 5.2}
+  backTwelveFoot: {x: 0, y: 7.8}
+  leftTwelveFoot: {x: -1.25, y: 6.5}
+  rightTwelveFoot: {x: 1.25, y: 6.5}
+  backFourFoot: {x: 0, y: 7}
+  topFourFoot: {x: 0, y: 6}
+  leftFourFoot: {x: -0.5, y: 6.5}
+  rightFourFoot: {x: 0.5, y: 6.5}
+  button: {x: 0, y: 6.5}
+  guardAccu: {x: 0.4, y: 0}
+  drawAccu: {x: 0, y: 0}
+  toAccu: {x: 0, y: 0}
+  tickAccu: {x: 0, y: 0}
+--- !u!114 &945653343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5738e7e6d108b4a1ead3957caae77860, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  tm: {fileID: 0}
+  rm: {fileID: 0}
+  aim: {fileID: 693088042146815443}
+  aiShoot: {fileID: 945653345}
+  aiStrat: {fileID: 8901575970831046904}
+  closestRock: {fileID: 0}
+  cenGuard: {fileID: 0}
+  tCenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  takeOutOffset: 0
+  peelOffset: 0
+  raiseOffset: 0
+  tickOffset: 0
+  aiTarget: {fileID: 0}
+  playerTarget: {fileID: 0}
+  targetPos: {x: 0, y: 0}
+  takeOutX: 0
+  takeOutY: 0
+--- !u!114 &8901575970831046904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bd7f7b9833b64afcb40540587c5e382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  tm: {fileID: 0}
+  rm: {fileID: 0}
+  aim: {fileID: 693088042146815443}
+  aiShoot: {fileID: 945653345}
+  aiTarg: {fileID: 945653343}
+  cenGuard: {fileID: 0}
+  tCenGuard: {fileID: 0}
+  lCornGuard: {fileID: 0}
+  rCornGuard: {fileID: 0}
+  takeOutOffset: 0
+  peelOffset: 0
+  raiseOffset: 0
+  tickOffset: 0
+  takeOutX: 0
+  osMult: 0
+--- !u!114 &945653345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a6b63375b454d85aef11baea7700f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 0}
+  tm: {fileID: 0}
+  rm: {fileID: 0}
+  aim: {fileID: 693088042146815443}
+  aiTarg: {fileID: 945653343}
+  aiStrat: {fileID: 8901575970831046904}
   centreGuard: {x: -0.051, y: -26.78}
   tightCentreGuard: {x: -0.052, y: -26.89}
   highCentreGuard: {x: -0.05, y: -26.73}
@@ -68,59 +204,15 @@ MonoBehaviour:
   peel: {x: 0, y: -27.8}
   takeOut: {x: 0, y: -27.65}
   raise: {x: 0, y: -27.2}
-  tick: {x: 0, y: -27.012}
-  testing: Button
-  testingRockNumber: 0
-  guardAccu: {x: 0.01, y: 0.01}
-  drawAccu: {x: 0.01, y: 0.005}
-  toAccu: {x: 0, y: 0}
-  tickAccu: {x: 0, y: 0}
-  aggressive: 1
-  cenGuard: {fileID: 0}
-  tCenGuard: {fileID: 0}
-  lCornGuard: {fileID: 0}
-  rCornGuard: {fileID: 0}
+  tick: {x: 0, y: -26.98}
+  guardAccu: {x: 0.01, y: 0.011}
+  drawAccu: {x: 0.01, y: 0.015}
+  toAccu: {x: 0.01, y: 0.01}
+  tickAccu: {x: 0.005, y: 0.005}
   takeOutOffset: 0
   peelOffset: 0
   raiseOffset: 0
-  tickOffset: -0.018
-  takeOutX: -0.025
+  tickOffset: 0
+  takeOutX: 0
+  takeOutY: 0
   osMult: -0.32
---- !u!114 &945653344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693088042146815444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 281427aa8681a40698f6446f27609ed6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gm: {fileID: 0}
-  cm: {fileID: 0}
-  vcam: {fileID: 0}
-  testing: 
-  centreGuard: {x: 0, y: 3}
-  tightCentreGuard: {x: 0, y: 4.25}
-  highCentreGuard: {x: 0, y: 1.5}
-  leftHighCornerGuard: {x: -0.65, y: 1.5}
-  leftTightCornerGuard: {x: -0.75, y: 4.25}
-  leftCornerGuard: {x: -0.7, y: 3}
-  rightHighCornerGuard: {x: 0.65, y: 1.5}
-  rightTightCornerGuard: {x: 0.75, y: 4.25}
-  rightCornerGuard: {x: 0.7, y: 3}
-  topTwelveFoot: {x: 0, y: 5.2}
-  backTwelveFoot: {x: 0, y: 7.8}
-  leftTwelveFoot: {x: 1.2, y: 6.5}
-  rightTwelveFoot: {x: -1.2, y: 6.5}
-  backFourFoot: {x: 0, y: 7}
-  topFourFoot: {x: 0, y: 6}
-  leftFourFoot: {x: -0.5, y: 6.5}
-  rightFourFoot: {x: 0.5, y: 6.5}
-  button: {x: 0, y: 6.5}
-  guardAccu: {x: 0.25, y: 0.25}
-  drawAccu: {x: 0.5, y: 0.5}
-  toAccu: {x: 0, y: 0}
-  tickAccu: {x: 0, y: 0}

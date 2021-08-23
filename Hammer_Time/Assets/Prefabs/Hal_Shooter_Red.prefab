@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3203999086678792337}
   - component: {fileID: 3981483129774230190}
   - component: {fileID: 103284631}
+  - component: {fileID: 4529862153218495727}
   m_Layer: 9
   m_Name: Hal_Shooter_Red
   m_TagString: Player
@@ -143,7 +144,7 @@ RelativeJoint2D:
   m_MaxTorque: 10000
   m_CorrectionScale: 0.3
   m_AutoConfigureOffset: 1
-  m_LinearOffset: {x: 0.074, y: 25.86}
+  m_LinearOffset: {x: 0.074, y: 25.6}
   m_AngularOffset: 0
 --- !u!114 &103284631
 MonoBehaviour:
@@ -168,3 +169,30 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+--- !u!114 &4529862153218495727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3703111443046092690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a1b2cc121f34cb49c3531d79115ae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charName: Hal_Red
+  drawAccuracy:
+    baseValue: 5
+  takeOutAccuracy:
+    baseValue: 6
+  guardAccuracy:
+    baseValue: 9
+  sweepStrength:
+    baseValue: 10
+  sweepEndurance:
+    baseValue: 10
+  sweepHealth: 100
+  sweeping: 0
+  sweepingHard: 0
+  shooting: 0

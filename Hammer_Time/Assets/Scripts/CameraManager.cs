@@ -102,14 +102,16 @@ public class CameraManager : MonoBehaviour
 
         if (house.depth == 5)
         {
+            ui.depth = 3;
             house.depth = -1;
         }
         else if (house.depth == -1)
         {
+            ui.depth = 6;
             house.depth = 5;
         }
     }
-    
+
     public void TopViewAuto()
     {
         Debug.Log("Top View Auto");

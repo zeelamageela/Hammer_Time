@@ -45,9 +45,13 @@ public class AIManager : MonoBehaviour
     // OnEnable is called when the Game Object is enabled
     void OnEnable()
     {
-        
+
     }
 
+    private void Start()
+    {
+        story = gm.gsp.story;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -169,12 +173,10 @@ public class AIManager : MonoBehaviour
 
         }
 
-        if (story)
+        if (!story)
         {
-
-        }
-        else
             aiStrat.OnShot(rockCurrent);
+        }
     }
 
 }
