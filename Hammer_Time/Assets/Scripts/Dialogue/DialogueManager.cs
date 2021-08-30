@@ -10,7 +10,8 @@ public class DialogueManager : MonoBehaviour
     public Text dialogueText;
     public Text nameText;
 
-    public Text contButton;
+    public Text contButtonText;
+    public GameObject contButton;
 
     public GameObject skipHead;
     public GameObject announcerHead;
@@ -55,10 +56,12 @@ public class DialogueManager : MonoBehaviour
         string sentence = sentences.Dequeue();
         Debug.Log(sentence);
         dialogueText.text = sentence;
+
     }
 
     void EndDialogue()
     {
+
         dialogueCanvas.SetActive(false);
         skipHead.SetActive(false);
         announcerHead.SetActive(false);

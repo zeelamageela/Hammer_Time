@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GameHUD : MonoBehaviour
 {
     public GameManager gm;
+    public StoryManager sm;
+
     public Text mainDisplay;
     public Text clickDisplay;
 
@@ -41,6 +43,12 @@ public class GameHUD : MonoBehaviour
 
         if (!mainDisplay.enabled)
         {
+            clickDisplay.enabled = false;
+        }
+
+        if (sm.dialogueGO.activeSelf)
+        {
+            mainDisplay.enabled = false;
             clickDisplay.enabled = false;
         }
     }

@@ -38,6 +38,9 @@ public class Rock_Flick : MonoBehaviour
     Vector3 lastMouseCoordinate = Vector3.zero;
 
     Vector2 posScale = new Vector2(1f / 3f, 1f);
+
+    public bool story;
+
     void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -107,6 +110,11 @@ public class Rock_Flick : MonoBehaviour
             trajLine.Release();
             shootKnob.UnParentandHide();
         }
+
+        if (springReleased)
+        {
+            isPressed = false;
+        }
     }
 
     void OnMouseDown()
@@ -167,6 +175,7 @@ public class Rock_Flick : MonoBehaviour
             }
         }
     }
+
     void OnDrag()
     {
         startPoint = rb.position;
@@ -179,10 +188,8 @@ public class Rock_Flick : MonoBehaviour
 
     public void OnMouseUp()
     {
-
-        Debug.Log("What the fuckkkk Mouse up");
         //if red has hammer
-        if (gm.redHammer)
+        if (!story && gm.redHammer)
         {
             //if the rock is red
             if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
@@ -249,7 +256,7 @@ public class Rock_Flick : MonoBehaviour
             }
         }
         //if yellow has the hammer
-        else if (!gm.redHammer)
+        else if (!story && !gm.redHammer)
         {
             //if the rock is yellow
             if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
@@ -314,30 +321,29 @@ public class Rock_Flick : MonoBehaviour
                 }
             }
         }
-        //isPressed = false;
-        //rb.isKinematic = false;
-
-        //if (springDistance <= 1.5f)
-        //{
-        //    RockReset();
-        //}
-        //else
-        //{
-        //    GetComponent<CircleCollider2D>().radius = 0.18f;
-        //    StartCoroutine(Release());
-        //    Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-        //    trajLine.Release();
-        //    shootKnob.UnParentandHide();
-        //}
-
-        //trajLineGO.SetActive(false);
+        else
+        {
+            StartCoroutine(RockResetStory());
+        }
     }
 
-    void RockReset()
+    public void RockReset()
     {
         transform.position = launcher_rb.position;
         GetComponent<SpringJoint2D>().dampingRatio = 1f;
         GetComponent<SpringJoint2D>().frequency = 10000f;
+    }
+
+    IEnumerator RockResetStory()
+    {
+        GetComponent<SpringJoint2D>().dampingRatio = 1f;
+        GetComponent<SpringJoint2D>().frequency = 10000f;
+        transform.position = launcher_rb.position;
+
+        isPressed = false;
+        yield return new WaitForEndOfFrame();
+        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+        GetComponent<SpringJoint2D>().frequency = 1.5f;
     }
 
     IEnumerator Release()

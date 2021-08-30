@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public TutorialManager tm;
     public TeamManager teamM;
     public AIManager aim;
+    public StoryManager storyM;
 
     public int endCurrent;
     public int endTotal;
@@ -1002,8 +1003,8 @@ public class GameManager : MonoBehaviour
 
         gHUD.Scoreboard(3, 3, 0);
         gHUD.Scoreboard(4, 0, 2);
-        gHUD.Scoreboard(6, 2, 0);
-        gHUD.Scoreboard(8, 1, 0);
+        gHUD.Scoreboard(6, 5, 0);
+        gHUD.Scoreboard(8, 6, 0);
 
         redScore = 6;
         yellowScore = 2;
@@ -1048,25 +1049,29 @@ public class GameManager : MonoBehaviour
             {
                 if (i == 2)
                 {
-                    Vector2 rockTrans = new Vector2(0.41f, 3.31f);
+                    //Vector2 rockTrans = new Vector2(0.41f, 3.31f);
+                    Vector2 rockTrans = storyM.rockPos[2];
                     Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
                     rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
                 }
                 if (i == 4)
                 {
-                    Vector2 rockTrans = new Vector2(-0.16f, 6.09f);
+                    //Vector2 rockTrans = new Vector2(-0.16f, 6.09f);
+                    Vector2 rockTrans = storyM.rockPos[4];
                     Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
                     rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
                 }
                 if (i == 5)
                 {
-                    Vector2 rockTrans = new Vector2(0.76f, 5.47f);
+                    //Vector2 rockTrans = new Vector2(0.76f, 5.47f);
+                    Vector2 rockTrans = storyM.rockPos[5];
                     Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
                     rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
                 }
                 if (i == 6)
                 {
-                    Vector2 rockTrans = new Vector2(-0.55f, 5.56f);
+                    //Vector2 rockTrans = new Vector2(-0.55f, 5.56f);
+                    Vector2 rockTrans = storyM.rockPos[6];
                     Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
                     rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
                 }

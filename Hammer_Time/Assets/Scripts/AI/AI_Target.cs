@@ -123,6 +123,14 @@ public class AI_Target : MonoBehaviour
                 StartCoroutine(DrawFourFoot(rockCurrent));
                 break;
 
+            case "Manual Draw":
+                StartCoroutine(DrawTarget(rockCurrent));
+                break;
+
+            case "Manual Guard":
+                StartCoroutine(GuardTarget(rockCurrent));
+                break;
+
             case "Player Draw":
                 targetPos = new Vector2(playerTarget.position.x, playerTarget.position.y);
                 StartCoroutine(DrawTarget(rockCurrent));
@@ -176,7 +184,6 @@ public class AI_Target : MonoBehaviour
                     rCornGuard = guard.lastTransform;
                     Debug.Log("Right Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
-
                 else
                 {
                     tCenGuard = null;

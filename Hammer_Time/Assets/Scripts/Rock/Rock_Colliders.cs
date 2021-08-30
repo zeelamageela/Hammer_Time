@@ -130,7 +130,7 @@ public class Rock_Colliders : MonoBehaviour
             hit = true;
             Debug.Log("Hit!");
             am.Play("Hit");
-            Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
+            //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
             if (gm.redHammer)
             {
                 //if the rock is red

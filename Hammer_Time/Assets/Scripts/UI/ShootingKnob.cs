@@ -11,7 +11,9 @@ public class ShootingKnob : MonoBehaviour
     public GameObject hogLinePoint;
     public float distance;
     public TrajectoryLine trajLine;
-
+    public GameObject aimCircle;
+    public GameObject target;
+    float distColor;
     
     Gradient gradient;
     GradientColorKey[] colorKey;
@@ -51,6 +53,10 @@ public class ShootingKnob : MonoBehaviour
         {
             Vector2 startPoint = launcher.transform.position;
             Vector2 endPoint = transform.position;
+            Vector2 colourStartPoint = aimCircle.transform.position;
+            Vector2 colourEndPoint = target.transform.position;
+
+            distColor = Vector2.Distance(colourStartPoint, colourEndPoint);
 
             distance = Vector2.Distance(startPoint, endPoint);
 
@@ -63,34 +69,34 @@ public class ShootingKnob : MonoBehaviour
             lr.startWidth = Mathf.Lerp(0f, 0.3f, distance / 3.25f);
             lr.endWidth = Mathf.Lerp(0f, 0.1f, distance / 3.25f);
 
-            if (distance > 2.1f)
+            Color redTrans = new Color(1f, 0f, 0f, 0.2f);
+            Color red = new Color(1f, 0f, 0f, 1f);
+            Color yellow = new Color(1f, 1f, 0f, 1f);
+            Color green = new Color(0.2f, 0.8f, 0.2f, 1f);
+            Color brightGreen = new Color(0.6f, 1f, 0.6f, 1f);
+
+            if (distColor > 10f)
             {
-                float distColor = (distance - 2.1f) / 0.75f;
-                sr.color = Color.Lerp(Color.yellow, Color.red, distColor);
+                distColor = (distColor - 10f) / 7.5f;
+                sr.color = Color.Lerp(red, redTrans, distColor);
                 //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
             }
-            else if (distance > 1.9f)
+            else if (distColor > 5f)
             {
-                if (distance < 2.1f)
-                {
-                    float distColor = (distance - 1.9f) / 0.25f;
-                    sr.color = Color.Lerp(Color.green, Color.yellow, distColor);
-                    //spriteRenderer.color = new Color(0f, 1f, 0f, 1f);
-                }
+                distColor = (distColor - 5f) / 5f;
+                sr.color = Color.Lerp(yellow, red, distColor);
+                //spriteRenderer.color = new Color(0f, 1f, 0f, 1f);
             }
-            else if (distance > 1.6f)
+            else if (distColor > 1f)
             {
-                if (distance < 1.9f)
-                {
-                    float distColor = (distance - 1.6f) / 0.25f;
-                    sr.color = Color.Lerp(Color.red, Color.yellow, distColor);
-                    //spriteRenderer.color = new Color(1f, 0.92f, 0.016f, 1f);
-                }
+                distColor = (distColor - 1f) / 4f;
+                sr.color = Color.Lerp(green, yellow, distColor);
+                //spriteRenderer.color = new Color(1f, 0.92f, 0.016f, 1f);
             }
-            else if (distance <= 1.6f)
+            else if (distColor <= 1f)
             {
-                float distColor = (distance - 0.5f) / 0.5f;
-                sr.color = Color.Lerp(Color.red, Color.red, distColor);
+                //distColor = (distColor - 1f) / 0.45f;
+                sr.color = Color.Lerp(brightGreen, green, distColor);
 
                 //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
             }

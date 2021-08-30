@@ -183,11 +183,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Hal
   drawAccuracy:
-    baseValue: 9
+    baseValue: 10
   takeOutAccuracy:
-    baseValue: 7
+    baseValue: 10
   guardAccuracy:
-    baseValue: 8
+    baseValue: 10
   sweepStrength:
     baseValue: 10
   sweepEndurance:
