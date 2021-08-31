@@ -850,7 +850,10 @@ public class GameManager : MonoBehaviour
             gHUD.ScoreboardOff();
             gHUD.MainDisplayOff();
             state = GameState.RESET;
-            StartCoroutine(ResetGame());
+            if (gsp.story)
+                SceneManager.LoadScene("Story_EndMenu");
+            else
+                StartCoroutine(ResetGame());
         }
         else if (endCurrent >= endTotal)
         {

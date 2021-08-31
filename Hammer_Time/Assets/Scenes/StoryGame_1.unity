@@ -3142,13 +3142,15 @@ MonoBehaviour:
   targetStoryPos:
   - {x: 0.58, y: 7.74}
   targetAiPos:
-  - {x: -0.267, y: 8}
-  - {x: 0.05, y: 6.08}
-  - {x: 0.45, y: 5.379}
+  - {x: -0.27, y: 7.4}
+  - {x: -0.15, y: 6.05}
+  - {x: -0.1, y: 5.7}
+  - {x: 0.1, y: 6.07}
   - {x: 0.1, y: 6.07}
   targetPullbackPos:
-  - {x: 0.638, y: 9.25}
-  - {x: 0.5, y: 10}
+  - {x: 0.845, y: 9.25}
+  - {x: 0.275, y: 10}
+  - {x: 0.1, y: 10}
   - {x: 0.45, y: 10}
 --- !u!4 &417605018
 Transform:
@@ -15875,7 +15877,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1632634963991230445, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1662551831004909518, guid: 676d95b1e2498924bac0868e6717540a, type: 3}
       propertyPath: m_RootOrder

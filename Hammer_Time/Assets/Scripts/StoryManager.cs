@@ -47,6 +47,8 @@ public class StoryManager : MonoBehaviour
     public Vector2[] targetPullbackPos;
 
     Rock_Flick rockFlick;
+    Rigidbody2D rockRB;
+
     private void Start()
     {
         StartCoroutine(StoryFlow());
@@ -70,9 +72,9 @@ public class StoryManager : MonoBehaviour
         yield return new WaitUntil(() => state == GameState.YELLOWTURN);
         gm.gHUD.mainDisplay.enabled = false;
 
-        #region Shot 8
+        #region Shot 8 AI
         yield return new WaitUntil(() => gm.rockCurrent == 7);
-
+        rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
         annDialogue.TriggerDialogue(0);
@@ -83,13 +85,20 @@ public class StoryManager : MonoBehaviour
         gm.rm.inturn = true;
         aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
 
-        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= -7f);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -7f);
         sm.SweepWeight(true);
 
-        yield return new WaitUntil(() => gm.rockList[7].rock.transform.position.y >= 1.5f);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 0f);
+        if (rockRB.velocity.y >= 3)
+            sm.SweepWhoa(true);
+
+        //if (rockRB.velocity.x <= -0.025)
+        //    sm.SweepRight(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1.5f);
         sm.SweepWhoa(true);
 
-        yield return new WaitUntil(() => gm.rockList[7].rockInfo.rest == true);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest == true);
 
         yield return new WaitUntil(() => state == GameState.CHECKSCORE);
 
@@ -117,39 +126,40 @@ public class StoryManager : MonoBehaviour
         cm.ShotSetup();
 
         yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
-        
-            dialogueGO.SetActive(true);
-            skipDialogue.gameObject.SetActive(true);
-            skipDialogue.TriggerDialogue(1);
-            dm.contButton.SetActive(false);
+
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(1);
+        dm.contButton.SetActive(false);
 
         rockFlick.story = true;
         yield return new WaitUntil(() => rockFlick.isPressed == true);
 
         yield return new WaitUntil(() => rockFlick.GetComponent<SpringJoint2D>().dampingRatio == 1f);
-        //rockFlick.enabled = false;
-        //yield return new WaitForSeconds(0.1f);
-        //rockFlick.enabled = true;
 
         rockFlick.story = false;
-        //yield return new WaitForSeconds(0.5f);
         targetAi.transform.position = targetPullbackPos[0];
-        aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
+        aiTarg.OnTarget("Manual Tap Back", gm.rockCurrent, 0);
         yield return new WaitUntil(() => gm.rockList[8].rockInfo.shotTaken == true);
-
-        //yield return new WaitUntil(() => gm.rockList[8].rock.GetComponent<Rock_Flick>().isPressed = true);
-        //Debug.Log("mouse pressed baybay");
-
-        //yield return new WaitUntil(() => gm.rockList[8].rock.GetComponent<Rock_Flick>().isPressed = false);
-
-
-        //gm.rockList[8].rock.GetComponent<Rock_Flick>().enabled = false;
 
         dm.DisplayNextSentence();
         dm.contButton.SetActive(true);
         dialogueGO.SetActive(false);
         targetStory.SetActive(false);
         targetPullback.SetActive(false);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -3f);
+        sm.SweepWeight(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 0f);
+        if (rockRB.velocity.y >= 3.2f)
+            sm.SweepRight(true);
+
+        //if (rockRB.velocity.x <= -0.025)
+        //    sm.SweepRight(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 3f);
+        sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[8].rockInfo.rest);
         dialogueGO.SetActive(true);
@@ -158,7 +168,7 @@ public class StoryManager : MonoBehaviour
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         #endregion
 
-        #region Shot 10
+        #region Shot 10 AI
         yield return new WaitUntil(() => gm.rockCurrent == 9);
 
         targetAi.transform.position = targetAiPos[1];
@@ -166,13 +176,16 @@ public class StoryManager : MonoBehaviour
         //aiShoot.OnShot("Top Four Foot", gm.rockCurrent);
         aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
 
-        yield return new WaitUntil(() => gm.rockList[9].rock.transform.position.y >= -8f);
-        sm.SweepRight(true);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -7f);
+        sm.SweepWeight(true);
 
-        yield return new WaitUntil(() => gm.rockList[9].rock.transform.position.y >= 3.5f);
+        //yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -3f);
+        //sm.SweepHard(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -1f);
         sm.SweepWhoa(true);
 
-        yield return new WaitUntil(() => gm.rockList[9].rockInfo.rest);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
         annDialogue.TriggerDialogue(2);
@@ -181,18 +194,56 @@ public class StoryManager : MonoBehaviour
 
         #region Shot 11
         yield return new WaitUntil(() => gm.rockCurrent == 10);
+        rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.RockZoom(gm.rockList[8].rock.transform);
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(2);
+        targetStory.SetActive(true);
+        targetStory.transform.position = gm.rockList[8].rock.transform.position;
+        targetPullback.transform.position = new Vector2(targetPullbackPos[1].x + gm.rockList[8].rock.transform.position.x, targetPullbackPos[1].y);
+        targetPullback.SetActive(true);
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.ShotSetup();
+
+        yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(3);
-        //cm.RockZoom(gm.rockList[5].rock.transform);
-        targetStory.SetActive(true);
-        targetStory.transform.position = gm.rockList[5].rock.transform.position;
-        targetPullback.transform.position = targetPullbackPos[1];
-        targetPullback.SetActive(true);
+        skipDialogue.TriggerDialogue(1);
+        dm.contButton.SetActive(false);
+
+        rockFlick.story = true;
+        yield return new WaitUntil(() => rockFlick.isPressed == true);
+
+        yield return new WaitUntil(() => rockFlick.GetComponent<SpringJoint2D>().dampingRatio == 1f);
+
+        rockFlick.story = false;
+        targetPlayer.transform.position = targetPullback.transform.position;
+        aiTarg.OnTarget("Manual Take Out", gm.rockCurrent, 0);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.shotTaken == true);
+
+        dm.DisplayNextSentence();
+        dm.contButton.SetActive(true);
+        dialogueGO.SetActive(false);
+        targetStory.SetActive(false);
+        targetPullback.SetActive(false);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         #endregion
 
-        #region Shot 12
+        #region Shot 12 AI
         yield return new WaitUntil(() => gm.rockCurrent == 11);
 
         targetAi.transform.position = targetAiPos[2];
@@ -200,13 +251,163 @@ public class StoryManager : MonoBehaviour
         //aiShoot.OnShot("Top Four Foot", gm.rockCurrent);
         aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
 
-        yield return new WaitUntil(() => gm.rockList[11].rock.transform.position.y >= 1.5f);
-        sm.SweepLeft(true);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -7f);
+        sm.SweepWeight(true);
 
-        yield return new WaitUntil(() => gm.rockList[11].rock.transform.position.y >= 3.5f);
+        //yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -3f);
+        //sm.SweepHard(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 0f);
         sm.SweepWhoa(true);
 
-        yield return new WaitUntil(() => gm.rockList[11].rockInfo.rest);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1f);
+        sm.SweepLeft(true);
+
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        #endregion
+
+        #region Shot 13
+        yield return new WaitUntil(() => gm.rockCurrent == 12);
+        rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.RockZoom(gm.rockList[2].rock.transform);
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(2);
+        targetStory.SetActive(true);
+        targetStory.transform.position = gm.rockList[2].rock.transform.position;
+        targetPullback.transform.position = new Vector2(targetPullbackPos[2].x + gm.rockList[2].rock.transform.position.x, targetPullbackPos[2].y);
+        targetPullback.SetActive(true);
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.ShotSetup();
+
+        yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
+
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(1);
+        dm.contButton.SetActive(false);
+
+        rockFlick.story = true;
+        yield return new WaitUntil(() => rockFlick.isPressed == true);
+
+        yield return new WaitUntil(() => rockFlick.GetComponent<SpringJoint2D>().dampingRatio == 1f);
+        rockFlick.story = false;
+        targetPlayer.transform.position = targetPullback.transform.position;
+        aiTarg.OnTarget("Manual Take Out", gm.rockCurrent, 0);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.shotTaken == true);
+
+        dm.DisplayNextSentence();
+        dm.contButton.SetActive(true);
+        dialogueGO.SetActive(false);
+        targetStory.SetActive(false);
+        targetPullback.SetActive(false);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+
+        #endregion
+
+        #region Shot 14 AI
+        yield return new WaitUntil(() => gm.rockCurrent == 13);
+
+        targetAi.transform.position = targetAiPos[3];
+        gm.rm.inturn = true;
+        aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1.5f);
+        sm.SweepLeft(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 3.5f);
+        sm.SweepWhoa(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+
+        #endregion
+
+        #region Shot 15
+        yield return new WaitUntil(() => gm.rockCurrent == 14);
+        rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
+
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.RockZoom(gm.rockList[13].rock.transform);
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(2);
+        targetStory.SetActive(true);
+        targetStory.transform.position = gm.rockList[13].rock.transform.position;
+        targetPullback.transform.position = targetPullbackPos[3];
+        targetPullback.SetActive(true);
+
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+        cm.ShotSetup();
+
+        yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
+
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(1);
+        dm.contButton.SetActive(false);
+
+        rockFlick.story = true;
+        yield return new WaitUntil(() => rockFlick.isPressed == true);
+
+        yield return new WaitUntil(() => rockFlick.GetComponent<SpringJoint2D>().dampingRatio == 1f);
+        
+        rockFlick.story = false;
+        targetAi.transform.position = targetPullbackPos[3];
+        aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.shotTaken == true);
+
+        dm.DisplayNextSentence();
+        dm.contButton.SetActive(true);
+        dialogueGO.SetActive(false);
+        targetStory.SetActive(false);
+        targetPullback.SetActive(false);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
+        dialogueGO.SetActive(true);
+        annDialogue.gameObject.SetActive(true);
+        annDialogue.TriggerDialogue(2);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+
+        #endregion
+
+        #region Shot 16 AI
+        yield return new WaitUntil(() => gm.rockCurrent == 15);
+
+        targetAi.transform.position = targetAiPos[4];
+        gm.rm.inturn = true;
+        aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1.5f);
+        sm.SweepLeft(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 3.5f);
+        sm.SweepWhoa(true);
+
+        yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
         annDialogue.TriggerDialogue(2);
