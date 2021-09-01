@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class EndMenu : MonoBehaviour
 {
@@ -35,5 +36,21 @@ public class EndMenu : MonoBehaviour
             }
         }
         
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("SplashMenu");
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Quit");
+        Application.Quit();
+    }
+
+    public void Continue()
+    {
+        SceneManager.LoadScene("StoryGame_1");
     }
 }

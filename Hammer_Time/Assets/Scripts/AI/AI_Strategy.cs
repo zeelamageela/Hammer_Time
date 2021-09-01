@@ -1761,7 +1761,7 @@ public class AI_Strategy : MonoBehaviour
                             //there's a tight centre guard
                             else if (tCenGuard)
                             {
-                                if (Mathf.Abs(cenGuard.position.x - closestRock.transform.position.x) > 0.1f)
+                                if (Mathf.Abs(tCenGuard.position.x - closestRock.transform.position.x) > 0.1f)
                                     aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
                                 else
                                     aiTarg.OnTarget("Peel", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);

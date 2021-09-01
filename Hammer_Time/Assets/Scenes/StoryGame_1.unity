@@ -3081,8 +3081,9 @@ GameObject:
   - component: {fileID: 417605018}
   - component: {fileID: 417605017}
   - component: {fileID: 417605019}
+  - component: {fileID: 417605020}
   m_Layer: 0
-  m_Name: Story_1
+  m_Name: StoryManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3101,36 +3102,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
-  cm: {fileID: 57450608}
-  sm: {fileID: 2125354293}
-  dm: {fileID: 417605019}
-  skipDialogue: {fileID: 1471475510}
-  annDialogue: {fileID: 2122467733}
-  aiTarg: {fileID: 945653348}
-  aiShoot: {fileID: 945653346}
-  dialogueGO: {fileID: 938339098}
   state: 0
   redHammer: 0
   ends: 0
   rocks: 0
-  volume: 0
-  tutorial: 0
-  loadGame: 0
   aiYellow: 0
   aiRed: 0
-  debug: 0
-  mixed: 0
   rockCurrent: 0
   endCurrent: 0
   yellowScore: 0
   redScore: 0
   third: 0
   skip: 0
-  timeScale: 0
-  targetStory: {fileID: 709522118}
-  targetPullback: {fileID: 98520583}
-  targetPlayer: {fileID: 1286972384}
-  targetAi: {fileID: 1632634964308876673}
   rockPos:
   - {x: 0, y: 9}
   - {x: 0, y: 9}
@@ -3138,20 +3121,21 @@ MonoBehaviour:
   - {x: 0, y: 9}
   - {x: -0.16, y: 6.09}
   - {x: 0.85, y: 5.29}
-  - {x: -0.55, y: 5.56}
+  - {x: -0.35, y: 5.56}
   targetStoryPos:
   - {x: 0.58, y: 7.74}
   targetAiPos:
-  - {x: -0.27, y: 7.4}
+  - {x: -0.225, y: 7.4}
   - {x: -0.15, y: 6.05}
   - {x: -0.1, y: 5.7}
   - {x: 0.1, y: 6.07}
   - {x: 0.1, y: 6.07}
   targetPullbackPos:
-  - {x: 0.845, y: 9.25}
+  - {x: 0.84, y: 9.25}
   - {x: 0.275, y: 10}
   - {x: 0.1, y: 10}
   - {x: 0.45, y: 10}
+  timeScale: 0
 --- !u!4 &417605018
 Transform:
   m_ObjectHideFlags: 0
@@ -3186,6 +3170,55 @@ MonoBehaviour:
   announcerHead: {fileID: 1355406176}
   dialogueCanvas: {fileID: 938339098}
   sentenceCount: 0
+--- !u!114 &417605020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 417605016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd29e7f0109a54277bba349938f1bb17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 197219300}
+  cm: {fileID: 57450608}
+  sm: {fileID: 2125354293}
+  dm: {fileID: 417605019}
+  storyM: {fileID: 417605017}
+  gHUD: {fileID: 949738591}
+  skipDialogue: {fileID: 1471475510}
+  annDialogue: {fileID: 2122467733}
+  aiTarg: {fileID: 945653348}
+  aiShoot: {fileID: 945653346}
+  dialogueGO: {fileID: 938339098}
+  timeScale: 0
+  targetStory: {fileID: 709522118}
+  targetPullback: {fileID: 98520583}
+  targetPlayer: {fileID: 1286972384}
+  targetAi: {fileID: 1632634964308876673}
+  rockPos:
+  - {x: 0, y: 9}
+  - {x: 0, y: 9}
+  - {x: 0.41, y: 3.31}
+  - {x: 0, y: 9}
+  - {x: -0.16, y: 6.09}
+  - {x: 0.85, y: 5.29}
+  - {x: -0.35, y: 5.56}
+  targetStoryPos:
+  - {x: 0.58, y: 7.74}
+  targetAiPos:
+  - {x: 0.02, y: 7.4}
+  - {x: -0.11, y: 6.05}
+  - {x: -0.1, y: 5.7}
+  - {x: 0.25, y: 5.95}
+  - {x: 0.01, y: 7.95}
+  targetPullbackPos:
+  - {x: 0.84, y: 9.25}
+  - {x: 0.3, y: 10}
+  - {x: 0.195, y: 10}
+  - {x: 0, y: 10}
 --- !u!1 &430674844
 GameObject:
   m_ObjectHideFlags: 0
@@ -15989,12 +16022,12 @@ MonoBehaviour:
     - Now let 'er rip!
   - name: Gene Green
     sentences:
-    - EMPTY TEXT
-    - EMPTY TEXT
+    - EMPTY TEXT 2a
+    - EMPTY TEXT 2b
   - name: Gene Green
     sentences:
-    - EMPTY TEXT
-    - EMPTY TEXT
+    - EMPTY TEXT 3a
+    - EMPTY TEXT 3b
   talkingHead: {fileID: 1392088979}
 --- !u!4 &1471475511
 Transform:
@@ -20693,8 +20726,8 @@ MonoBehaviour:
     - Let's see if they can keep that streak alive...
   - name: Don Livewell
     sentences:
-    - Gene Green's team has been shooting well so far...
-    - '...but they are '
+    - EMPTY TEXT 2a
+    - EMPTY TEXT 2b
   talkingHead: {fileID: 1355406176}
 --- !u!4 &2122467734
 Transform:

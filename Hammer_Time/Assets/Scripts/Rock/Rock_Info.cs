@@ -65,10 +65,7 @@ public class Rock_Info : MonoBehaviour
             {
                 stopped = true;
 
-                if (!inPlay)
-                {
-                    outOfPlay = true;
-                }
+                
             }
         }
 
@@ -76,7 +73,10 @@ public class Rock_Info : MonoBehaviour
         {
             rest = true;
 
-            
+            if (!inPlay & shotTaken)
+            {
+                outOfPlay = true;
+            }
         }
 
         if (hit == true)

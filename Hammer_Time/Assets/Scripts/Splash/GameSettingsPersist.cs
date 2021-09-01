@@ -109,20 +109,22 @@ public class GameSettingsPersist : MonoBehaviour
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
 
         Debug.Log("Loading to GSP");
-        Debug.Log("Ends is " + myFile.GetInt("End Total"));
+        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
 
         ends = sm.ends;
         endCurrent = sm.endCurrent;
         rocks = sm.rocks;
         rockCurrent = sm.rockCurrent;
+        redScore = sm.redScore;
+        yellowScore = sm.yellowScore;
         redHammer = sm.redHammer;
         aiYellow = sm.aiYellow;
         aiRed = sm.aiRed;
         third = sm.third;
         skip = sm.skip;
 
-        redScore = myFile.GetInt("Red Score");
-        yellowScore = myFile.GetInt("Yellow Score");
+        //redScore = myFile.GetInt("Red Score");
+        //yellowScore = myFile.GetInt("Yellow Score");
     }
 
     public void AutoSave()

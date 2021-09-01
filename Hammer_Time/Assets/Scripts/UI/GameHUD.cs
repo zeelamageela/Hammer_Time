@@ -46,11 +46,11 @@ public class GameHUD : MonoBehaviour
             clickDisplay.enabled = false;
         }
 
-        if (sm.dialogueGO.activeSelf)
-        {
-            mainDisplay.enabled = false;
-            clickDisplay.enabled = false;
-        }
+        //if (sm.dialogueGO.activeSelf)
+        //{
+        //    mainDisplay.enabled = false;
+        //    clickDisplay.enabled = false;
+        //}
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
     {
