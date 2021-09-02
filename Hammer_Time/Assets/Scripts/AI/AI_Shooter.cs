@@ -499,8 +499,8 @@ public class AI_Shooter : MonoBehaviour
                 shotX = takeOutX;
                 shotY = takeOutY;
 
-                shotX = Random.Range(takeOutX + drawAccu.x, takeOutX - drawAccu.x);
-                shotY = Random.Range(takeOutY + drawAccu.y, takeOutY - drawAccu.y);
+                //shotX = Random.Range(takeOutX + drawAccu.x, takeOutX - drawAccu.x);
+                //shotY = Random.Range(takeOutY + drawAccu.y, takeOutY - drawAccu.y);
 
                 rockFlick.rb.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);

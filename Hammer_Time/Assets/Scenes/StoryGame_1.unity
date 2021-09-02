@@ -1344,7 +1344,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 426, y: -505}
+  m_AnchoredPosition: {x: 426, y: -1114}
   m_SizeDelta: {x: 456, y: 229}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &180461352
@@ -2340,7 +2340,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272161325}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 200, y: -423, z: 0}
+  m_LocalPosition: {x: 200, y: -1020, z: 0}
   m_LocalScale: {x: 125, y: 125, z: 1}
   m_Children: []
   m_Father: {fileID: 558889063}
@@ -3112,7 +3112,7 @@ MonoBehaviour:
   endCurrent: 0
   yellowScore: 0
   redScore: 0
-  third: 0
+  third: 1
   skip: 0
   rockPos:
   - {x: 0, y: 9}
@@ -3486,7 +3486,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -558}
+  m_AnchoredPosition: {x: 0, y: -1158.5}
   m_SizeDelta: {x: 1007, y: 119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &448352098
@@ -3712,7 +3712,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -426, y: -505}
+  m_AnchoredPosition: {x: -426, y: -1114}
   m_SizeDelta: {x: 456, y: 229}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &471552794
@@ -9678,7 +9678,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &558889062
 Canvas:
   m_ObjectHideFlags: 0
@@ -9688,7 +9688,7 @@ Canvas:
   m_GameObject: {fileID: 558889059}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 2
+  m_RenderMode: 1
   m_Camera: {fileID: 1490290958}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
@@ -9709,7 +9709,7 @@ RectTransform:
   m_GameObject: {fileID: 558889059}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 272161328}
   - {fileID: 919697564}
@@ -9724,8 +9724,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1106.0001, y: 1229}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &558889064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12571,7 +12571,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919697563}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -200, y: -423, z: 0}
+  m_LocalPosition: {x: -200, y: -1020, z: 0}
   m_LocalScale: {x: 125, y: 125, z: 1}
   m_Children: []
   m_Father: {fileID: 558889063}
@@ -16014,16 +16014,28 @@ MonoBehaviour:
   dialogue:
   - name: Gene Green
     sentences:
+    - We need to clear some YELLOW stones out of here
     - Alright bud, throw an OUTURN shot at this YELLOW rock.
-    - We need to prevent Stan's team from scoring here.
-    - Line up your trajectory with my shot
+  - name: Gene Green
+    sentences:
+    - Line your trajectory up with my target
   - name: Gene Green
     sentences:
     - Now let 'er rip!
   - name: Gene Green
     sentences:
-    - EMPTY TEXT 2a
-    - EMPTY TEXT 2b
+    - Nice Shot!
+  - name: Gene Green
+    sentences:
+    - Let's hit this rock back
+    - With some luck we can clear the house and get out of this end
+  - name: Gene Green
+    sentences:
+    - That's the spot
+  - name: Gene Green
+    sentences:
+    - EMPTY TEXT 3a
+    - EMPTY TEXT 3b
   - name: Gene Green
     sentences:
     - EMPTY TEXT 3a

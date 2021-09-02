@@ -125,8 +125,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
 
-        //redRocks_left = rocksPerTeam;
-        //yellowRocks_left = rocksPerTeam;
         targetAi.SetActive(false);
         targetPlayer.SetActive(false);
         targetStory.SetActive(false);

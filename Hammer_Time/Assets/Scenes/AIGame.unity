@@ -1745,7 +1745,7 @@ MonoBehaviour:
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
   aiTeamYellow: 0
-  target: 0
+  target: 1
   mixed: 0
   debug: 1
   dbText: {fileID: 1350040153}
@@ -3736,8 +3736,8 @@ MonoBehaviour:
   yellowScore: 0
   redScore: 0
   story: 0
-  third: 0
-  skip: 1
+  third: 1
+  skip: 0
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -9409,11 +9409,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.25
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.25
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17759,6 +17759,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 197219300}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 676031301}
+    - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: launcher
       value: 
       objectReference: {fileID: 448747563}
@@ -17766,6 +17770,10 @@ PrefabInstance:
       propertyPath: trajLine
       value: 
       objectReference: {fileID: 1246941259}
+    - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
+      propertyPath: aimCircle
+      value: 
+      objectReference: {fileID: 377377834}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: hogLinePoint
       value: 

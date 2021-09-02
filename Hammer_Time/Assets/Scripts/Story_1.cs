@@ -158,12 +158,16 @@ public class Story_1 : MonoBehaviour
 
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         cm.ShotSetup();
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(1);
+        dm.contButton.SetActive(false);
 
         yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(1);
+        skipDialogue.TriggerDialogue(2);
         dm.contButton.SetActive(false);
 
         rockFlick.story = true;
@@ -199,6 +203,12 @@ public class Story_1 : MonoBehaviour
         sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[8].rockInfo.rest);
+
+        dialogueGO.SetActive(true);
+        skipDialogue.gameObject.SetActive(true);
+        skipDialogue.TriggerDialogue(3);
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
         annDialogue.TriggerDialogue(2);

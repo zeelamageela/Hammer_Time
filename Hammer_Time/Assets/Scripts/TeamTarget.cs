@@ -29,13 +29,13 @@ public class TeamTarget : MonoBehaviour
         if (rb.position.y >= 5f)
         {
             float drawAccu = gm.shooterGO.GetComponent<CharacterStats>().drawAccuracy.GetValue();
-            transform.localScale = new Vector3(1f - ((0.5f * (drawAccu / 10f)) + 0.25f), 1f - ((0.5f * (drawAccu / 10f)) + 0.25f), 0f);
+            transform.localScale = new Vector3(1.25f - ((0.5f * (drawAccu / 10f)) + 0.25f), 1.25f - ((0.5f * (drawAccu / 10f)) + 0.25f), 0f);
         }
         else
         {
 
             float guardAccu = gm.shooterGO.GetComponent<CharacterStats>().guardAccuracy.GetValue();
-            transform.localScale = new Vector3(1f - ((0.5f * (guardAccu / 10f)) + 0.25f), 1f - ((0.5f * (guardAccu / 10f)) + 0.25f), 0f);
+            transform.localScale = new Vector3(1.25f - ((0.5f * (guardAccu / 10f)) + 0.25f), 1.25f - ((0.5f * (guardAccu / 10f)) + 0.25f), 0f);
         }
         
     }
