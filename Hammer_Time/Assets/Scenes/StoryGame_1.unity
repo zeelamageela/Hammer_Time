@@ -1563,6 +1563,7 @@ MonoBehaviour:
   aiTeamYellow: 1
   target: 0
   mixed: 0
+  multiplayer: 0
   debug: 0
   dbText: {fileID: 1350040153}
   state: 0

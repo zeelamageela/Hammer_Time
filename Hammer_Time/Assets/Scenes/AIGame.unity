@@ -1745,8 +1745,9 @@ MonoBehaviour:
   rockBar: {fileID: 558889064}
   aiTeamRed: 0
   aiTeamYellow: 0
-  target: 1
+  target: 0
   mixed: 0
+  multiplayer: 0
   debug: 1
   dbText: {fileID: 1350040153}
   state: 0
@@ -3736,7 +3737,7 @@ MonoBehaviour:
   yellowScore: 0
   redScore: 0
   story: 0
-  third: 1
+  third: 0
   skip: 0
 --- !u!4 &461766041
 Transform:

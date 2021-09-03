@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Cinemachine;
 using TigerForge;
+using Photon.Pun;
 
 public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
 
@@ -62,7 +63,7 @@ public class GameManager : MonoBehaviour
     public bool aiTeamYellow;
     public bool target;
     public bool mixed;
-
+    public bool multiplayer;
     public bool debug;
     public Text dbText;
 
@@ -138,7 +139,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         gHUD.SetHammer(redHammer);
-
+        
         if (gsp.loadGame)
         {
             StartCoroutine(LoadGame());
@@ -196,7 +197,16 @@ public class GameManager : MonoBehaviour
         {
             if (i % 2 == notHammer)
             {
-                GameObject yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
+                GameObject yellowRock_go;
+                if (multiplayer)
+                {
+                    yellowRock_go = PhotonNetwork.Instantiate(yellowShooter.gameObject.name, yellowRocksInactive.transform.position, Quaternion.identity, 0);
+                    yellowRock_go.transform.parent = yellowRocksInactive;
+                }
+                else
+                {
+                    yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
+                }
 
                 float yRocks = rocksPerTeam * 0.5f;
                 int k = (i / 2) + notHammer;
@@ -224,7 +234,16 @@ public class GameManager : MonoBehaviour
             }
             if (i % 2 == hammer)
             {
-                GameObject redRock_go = Instantiate(redShooter, redRocksInactive);
+                GameObject redRock_go;
+                if (multiplayer)
+                {
+                    redRock_go = PhotonNetwork.Instantiate(redShooter.gameObject.name, redRocksInactive.transform.position, Quaternion.identity, 0);
+                    redRock_go.transform.parent = redRocksInactive;
+                }
+                else
+                {
+                    redRock_go = Instantiate(redShooter, redRocksInactive);
+                }
                 float yRocks = rocksPerTeam / 2f;
                 int k = (i / 2) + hammer;
                 if (k <= yRocks)
