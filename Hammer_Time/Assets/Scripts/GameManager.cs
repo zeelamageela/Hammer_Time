@@ -468,13 +468,6 @@ public class GameManager : MonoBehaviour
 
         sm.SetupSweepers(false);
 
-        //vcam = vcam_go.GetComponent<CinemachineVirtualCamera>();
-
-        //tFollowTarget = launcher.transform;
-        //vcam.LookAt = tFollowTarget;
-        //vcam.Follow = tFollowTarget;
-        //vcam.enabled = true;
-        //StartCoroutine(SaveGame());
         StartCoroutine(YellowTurn());
     }
 
@@ -482,6 +475,7 @@ public class GameManager : MonoBehaviour
     {
         yellowRocks_left--;
 
+        StartCoroutine(SaveGame());
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
         rm.inturn = false;
@@ -651,7 +645,6 @@ public class GameManager : MonoBehaviour
         // or else we will just check the score
         else
         {
-
             if (houseList.Count != 0)
             {
                 foreach (House_List rock in houseList)
@@ -718,8 +711,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Current Rock is " + rockCurrent);
 
         //gsp.AutoSave();
-
-        
 
         if (rockCurrent % 2 == 1)
         {
@@ -836,8 +827,7 @@ public class GameManager : MonoBehaviour
             //endScoreYellow[endCurrent] = yellowScore;
 
             yield return new WaitForSeconds(1.5f);
-            
-            
+
         }
         else if (houseList.Count == 0)
         {
@@ -869,7 +859,10 @@ public class GameManager : MonoBehaviour
             state = GameState.RESET;
             if (gsp.story)
             {
+                storyM.SyncToGm();
+                yield return new WaitForEndOfFrame();
                 gsp.StoryGame();
+                yield return new WaitForEndOfFrame();
                 SceneManager.LoadScene("Story_EndMenu");
             }
             else
@@ -1017,89 +1010,62 @@ public class GameManager : MonoBehaviour
     IEnumerator StoryLoad()
     {
         Debug.Log("Story Game!!!!!!!");
-        redHammer = false;
-        endTotal = 10;
-        endCurrent = 9;
-        rockTotal = 8 * 2;
-        aiTeamRed = false;
-        aiTeamYellow = true;
+        redHammer = storyM.redHammer;
+        endTotal = storyM.ends;
+        endCurrent = storyM.endCurrent;
+        rockTotal = storyM.rocks * 2;
+        aiTeamRed = storyM.aiRed;
+        aiTeamYellow = storyM.aiYellow;
 
         gHUD.Scoreboard(3, 3, 0);
         gHUD.Scoreboard(4, 0, 2);
         gHUD.Scoreboard(6, 5, 0);
         gHUD.Scoreboard(8, 6, 0);
 
-        redScore = 6;
-        yellowScore = 2;
+        redScore = storyM.redScore;
+        yellowScore = storyM.yellowScore;
         rockBar.EndUpdate(yellowScore, redScore);
 
         yield return StartCoroutine(SetupRocks());
 
 
         yield return new WaitForEndOfFrame();
-            rockCurrent = 6;
-        //lg.enabled = true;
+            rockCurrent = storyM.rockCurrent - 1;
 
-        //yield return new WaitUntil(() => lg.rocksPlaced == true);
         Debug.Log("Current Rock is " + rockCurrent);
-        for (int i = 0; i < rockCurrent; i++)
+        for (int i = 0; i <= rockCurrent; i++)
         {
             rockList[i].rockInfo.placed = true;
         }
 
         yield return new WaitForEndOfFrame();
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i <= rockCurrent; i++)
         {
             rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
             rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             rockList[i].rock.transform.parent = null;
-            rockBar.DeadRock(i);
+            //rockBar.DeadRock(i);
             yield return new WaitForEndOfFrame();
         }
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i <= rockCurrent; i++)
         {
-            if (i == 0 | i == 1 | i == 3 )
+            Vector2 rockTrans = storyM.rockPos[i];
+            Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
+            rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
+
+            if (storyM.rockPos[i].y >= 8f)
             {
                 rockList[i].rock.SetActive(false);
                 rockList[i].rockInfo.inPlay = false;
                 rockList[i].rockInfo.outOfPlay = true;
+                rockBar.DeadRock(i);
             }
             else
             {
-                if (i == 2)
-                {
-                    //Vector2 rockTrans = new Vector2(0.41f, 3.31f);
-                    Vector2 rockTrans = storyM.rockPos[2];
-                    Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
-                    rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
-                }
-                if (i == 4)
-                {
-                    //Vector2 rockTrans = new Vector2(-0.16f, 6.09f);
-                    Vector2 rockTrans = storyM.rockPos[4];
-                    Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
-                    rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
-                }
-                if (i == 5)
-                {
-                    //Vector2 rockTrans = new Vector2(0.76f, 5.47f);
-                    Vector2 rockTrans = storyM.rockPos[5];
-                    Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
-                    rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
-                }
-                if (i == 6)
-                {
-                    //Vector2 rockTrans = new Vector2(-0.55f, 5.56f);
-                    Vector2 rockTrans = storyM.rockPos[6];
-                    Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
-                    rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
-                }
-
-
                 rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
                 rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
                 rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
@@ -1113,7 +1079,6 @@ public class GameManager : MonoBehaviour
                 rockList[i].rockInfo.rest = true;
                 Debug.Log("i is equal to " + i);
 
-                //rockBar.ShotUpdate(rockCurrent, rockList[i].rockInfo.outOfPlay);
                 yield return new WaitForEndOfFrame();
             }
             

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 945653343}
   - component: {fileID: 8901575970831046904}
   - component: {fileID: 945653345}
+  - component: {fileID: 3956428150274880480}
   m_Layer: 0
   m_Name: AIManager
   m_TagString: Untagged
@@ -50,9 +51,9 @@ MonoBehaviour:
   gm: {fileID: 0}
   tm: {fileID: 0}
   rm: {fileID: 0}
-  aiTarg: {fileID: 0}
-  aiShoot: {fileID: 0}
-  aiStrat: {fileID: 0}
+  aiTarg: {fileID: 945653343}
+  aiShoot: {fileID: 945653345}
+  aiStrat: {fileID: 8901575970831046904}
   testing: Button
   testingTakeOut: Take Out Manual Target
   testingRockNumber: 0
@@ -183,6 +184,7 @@ MonoBehaviour:
   aim: {fileID: 693088042146815443}
   aiTarg: {fileID: 945653343}
   aiStrat: {fileID: 8901575970831046904}
+  aiSweep: {fileID: 3956428150274880480}
   centreGuard: {x: -0.051, y: -26.8}
   tightCentreGuard: {x: -0.052, y: -26.89}
   highCentreGuard: {x: -0.05, y: -26.73}
@@ -216,3 +218,18 @@ MonoBehaviour:
   takeOutX: 0
   takeOutY: 0
   osMult: -0.32
+--- !u!114 &3956428150274880480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693088042146815444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa2b130296f604c3b8886214b6ebae19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aim: {fileID: 693088042146815443}
+  gm: {fileID: 0}
+  sm: {fileID: 0}

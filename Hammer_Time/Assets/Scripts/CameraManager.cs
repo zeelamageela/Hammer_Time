@@ -9,6 +9,7 @@ public class CameraManager : MonoBehaviour
     public Camera house;
     public Camera ui;
     public Camera top;
+    public Camera persp;
 
     public Transform trajTarget;
     public Transform launcher;

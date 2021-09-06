@@ -32,7 +32,7 @@ public class RockBar : MonoBehaviour
     
     public List<GameObject> rockListUI;
 
-    public float offset = 60f;
+    public float offset = 57f;
 
     GameObject activeRock;
     Rock_Info activeRockInfo;
@@ -136,44 +136,6 @@ public class RockBar : MonoBehaviour
 
             }
         }
-
-
-        //bool redTurn;
-        //if (redHammer)
-        //{
-        //    offset = -offset;
-        //    redTurn = false;
-        //}
-        //else
-        //{
-        //    redTurn = true;
-        //}
-
-        //for (int i = 0; i < rocksPerTeam; i++)
-        //{
-        //    GameObject yellowDot = Instantiate(yellowRockGO);
-        //    notHammer.transform.SetParent(yellowRocks, false);
-        //    notHammer.transform.position += new Vector3((i * -offset), 0f, 0f);
-
-        //    notHammer.name = gm.rockList[2 * i].rock.name;
-        //    rockListUI.Add(notHammer);
-
-        //    yield return new WaitForSeconds(0.02f);
-
-        //    GameObject hammer = Instantiate(redRockGO);
-        //    hammer.transform.SetParent(redRocks, false);
-
-        //    hammer.transform.position += new Vector3((i * offset), 0f, 0f);
-
-        //    hammer.name = gm.rockList[(2 * i) + 1].rock.name;
-        //    rockListUI.Add(hammer);
-        //}
-
-
-        //foreach (GameObject rock in rockListUI)
-        //{
-        //    Debug.Log(rock.name);
-        //}
 
         yield return new WaitForFixedUpdate();
 

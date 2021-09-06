@@ -886,7 +886,7 @@ public class AI_Target : MonoBehaviour
             rm.inturn = true;
             takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
         }
-
+        
         aiShoot.OnShot("Raise", rockCurrent);
         Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
