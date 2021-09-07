@@ -80,6 +80,16 @@ public class Rock_Colliders : MonoBehaviour
         GetComponent<Rock_Info>().stopped = true;
         GetComponent<Rock_Info>().rest = true;
 
+        if (gm.rockCurrent == GetComponent<Rock_Info>().rockIndex)
+        {
+            for (int i = 0; i < gm.rockCurrent; i++)
+            {
+                if (gm.rockList[i].rockInfo.moving)
+                {
+                    gm.cm.InPlayZoom(10);
+                }
+            }
+        }
         yield return new WaitForSeconds(0.5f);
 
         body.velocity = Vector2.zero;

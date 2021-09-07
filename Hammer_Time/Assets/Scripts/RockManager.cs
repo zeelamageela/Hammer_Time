@@ -6,6 +6,7 @@ public class RockManager : MonoBehaviour
 {
     public GameManager gm;
     public CameraManager cm;
+    public RandomRockPlacerment rrp;
     public RockBar rb;
     public GameObject rock;
     public Rock_Info rockInfo;
@@ -22,7 +23,7 @@ public class RockManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gm.rockList.Count != 0)
+        if (gm.rockList.Count != 0 && gm.rockList.Count == 16)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;

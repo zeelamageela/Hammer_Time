@@ -90,6 +90,7 @@ public class CameraManager : MonoBehaviour
         vcam.Follow = tFollowTarget;
         vcam.enabled = true;
         vcam.m_Lens.OrthographicSize = 3f;
+
         
     }
     public void InPlayZoom(float dist)

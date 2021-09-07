@@ -103,7 +103,7 @@ public class AIManager : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            aiTarg.OnTarget("Auto Take Out", gm.rockCurrent, 0);
+            aiTarg.OnTarget("Player Draw", gm.rockCurrent, 0);
             //StartCoroutine(Shot(testing));
             //StartCoroutine(TakeOutAutoTarget(gm.rockCurrent));
             //StartCoroutine(Shot("Take Out"));

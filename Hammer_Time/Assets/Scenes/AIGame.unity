@@ -964,7 +964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3818944192650543933, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_RootOrder
@@ -3702,7 +3702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   redHammer: 0
   ends: 10
-  rocks: 8
+  rocks: 1
   volume: 0.45
   tutorial: 0
   loadGame: 0
@@ -6229,6 +6229,7 @@ GameObject:
   - component: {fileID: 545177318}
   - component: {fileID: 545177317}
   - component: {fileID: 545177319}
+  - component: {fileID: 545177320}
   m_Layer: 0
   m_Name: RockManager
   m_TagString: RockManager
@@ -6250,6 +6251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
   cm: {fileID: 57450608}
+  rrp: {fileID: 545177320}
   rb: {fileID: 558889064}
   rock: {fileID: 0}
   rockInfo: {fileID: 0}
@@ -6293,6 +6295,34 @@ MonoBehaviour:
   rightButton: {fileID: 0}
   sweepTime: 0
   sweepAmt: 0.05
+--- !u!114 &545177320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545177316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b310409ddff94bbdb52c4f1b520296e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 197219300}
+  rm: {fileID: 545177317}
+  placed: 0
+  placePos:
+  - {x: -0.84, y: 4.34}
+  - {x: -0.75, y: 2.88}
+  - {x: -0.68, y: 1.42}
+  - {x: 0.84, y: 4.34}
+  - {x: 0.75, y: 2.88}
+  - {x: 0.68, y: 1.42}
+  - {x: 0, y: 4.21}
+  - {x: 0, y: 2.82}
+  - {x: 0, y: 1.37}
+  - {x: 0, y: 6.5}
+  - {x: 0, y: 9}
+  rockPos: []
 --- !u!1 &555117925
 GameObject:
   m_ObjectHideFlags: 0
@@ -9396,11 +9426,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14638,7 +14668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.371
+      value: -0.54
       objectReference: {fileID: 0}
     - target: {fileID: 3483226697388279762, guid: 9b000d0a2689f0042bf3978f50428877, type: 3}
       propertyPath: m_LocalPosition.y
@@ -17669,6 +17699,14 @@ PrefabInstance:
       value: -27.015
       objectReference: {fileID: 0}
     - target: {fileID: 945653345, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: topTwelveFoot.x
+      value: -0.055
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653345, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: topTwelveFoot.y
+      value: -26.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 945653345, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: backTwelveFoot.x
       value: -0.065
       objectReference: {fileID: 0}
@@ -17774,11 +17812,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: testing
-      value: Right Tight Corner Guard
+      value: Top Twelve Foot
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815443, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: testingTakeOut
-      value: Peel
+      value: Manual Take Out
       objectReference: {fileID: 0}
     - target: {fileID: 693088042146815444, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: m_Name

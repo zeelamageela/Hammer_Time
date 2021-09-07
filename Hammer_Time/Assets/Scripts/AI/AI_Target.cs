@@ -945,11 +945,11 @@ public class AI_Target : MonoBehaviour
         targetX = targetPos.x;
         targetY = targetPos.y;
 
-        takeOutY = (-0.13f * ((targetY - 5f) / 3f)) - 26.97f;
+        takeOutY = (-0.21f * ((targetY - 5.225f) / 2.55f)) - 26.9f;
 
         if (rm.inturn == false)
         {
-            takeOutX = (-0.165f * ((targetX + 1.35f) / 2.7f)) + 0.029f;
+            takeOutX = (-0.169f * ((targetX + 1.35f) / 2.7f)) + 0.021f;
         }
         else
         {

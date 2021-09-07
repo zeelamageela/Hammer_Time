@@ -38,9 +38,12 @@ public class SweeperManager : MonoBehaviour
 
     private void Update()
     {
-        if (sweeperR.gameObject.activeSelf & sweeperL.gameObject.activeSelf)
+        if (swprLStats & swprRStats)
         {
-            if (sweeperR.gameObject.activeSelf && sweeperR.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
+            swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
+            swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
+
+            if (swprRStats.sweepHealth <= 0f)
             {
                 if (rm.gm.aiTeamRed)
                     SweepWhoa(rm.gm.aiTeamRed);
@@ -49,12 +52,10 @@ public class SweeperManager : MonoBehaviour
                 else
                     SweepWhoa(false);
             }
-            if (sweeperL.gameObject.activeSelf && sweeperL.gameObject.GetComponent<CharacterStats>().sweepHealth <= 0f)
+            if (swprLStats.sweepHealth <= 0f)
             {
-                if (rm.gm.aiTeamRed)
-                    SweepWhoa(rm.gm.aiTeamRed);
-                else if (rm.gm.aiTeamYellow)
-                    SweepWhoa(rm.gm.aiTeamYellow);
+                if (rm.gm.aiTeamRed | rm.gm.aiTeamYellow)
+                    SweepWhoa(true);
                 else
                     SweepWhoa(false);
             }

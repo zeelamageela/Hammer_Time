@@ -6450,6 +6450,7 @@ GameObject:
   - component: {fileID: 545177318}
   - component: {fileID: 545177317}
   - component: {fileID: 545177319}
+  - component: {fileID: 545177320}
   m_Layer: 0
   m_Name: RockManager
   m_TagString: RockManager
@@ -6471,6 +6472,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
   cm: {fileID: 57450608}
+  rrp: {fileID: 0}
   rb: {fileID: 558889064}
   rock: {fileID: 0}
   rockInfo: {fileID: 0}
@@ -6514,6 +6516,31 @@ MonoBehaviour:
   rightButton: {fileID: 0}
   sweepTime: 0
   sweepAmt: 0.05
+--- !u!114 &545177320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 545177316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b310409ddff94bbdb52c4f1b520296e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gm: {fileID: 197219300}
+  rm: {fileID: 545177317}
+  placed: 0
+  guardTargets:
+  - {x: -0.84, y: 4.34}
+  - {x: -0.75, y: 2.88}
+  - {x: -0.68, y: 1.42}
+  - {x: 0.84, y: 4.34}
+  - {x: 0.75, y: 2.88}
+  - {x: -0.68, y: 1.42}
+  - {x: 0, y: 4.21}
+  - {x: 0, y: 2.82}
+  - {x: 0, y: 1.37}
 --- !u!1 &548742769
 GameObject:
   m_ObjectHideFlags: 0

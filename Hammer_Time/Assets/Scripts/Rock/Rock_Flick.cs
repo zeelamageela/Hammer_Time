@@ -119,61 +119,64 @@ public class Rock_Flick : MonoBehaviour
 
     void OnMouseDown()
     {
-        //if red has hammer
-        if (gm.redHammer)
-        {
-            //if the rock is red
-            if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+        if (!GetComponent<Rock_Info>().shotTaken)
+        {//if red has hammer
+            if (gm.redHammer)
             {
-                //if the ai team is not red
-                if (!gm.aiTeamRed)
+                //if the rock is red
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
-                    GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
-                    GetComponent<SpringJoint2D>().frequency = 1.5f;
-                    isPressed = true;
-                    rb.isKinematic = true;
+                    //if the ai team is not red
+                    if (!gm.aiTeamRed)
+                    {
+                        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+                        GetComponent<SpringJoint2D>().frequency = 1.5f;
+                        isPressed = true;
+                        rb.isKinematic = true;
+                    }
+                }
+                //if the rock is yellow
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+                {
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamYellow)
+                    {
+                        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+                        GetComponent<SpringJoint2D>().frequency = 1.5f;
+                        isPressed = true;
+                        rb.isKinematic = true;
+                    }
                 }
             }
-            //if the rock is yellow
-            else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+            else
             {
-                //if the ai team is not yellow
-                if (!gm.aiTeamYellow)
+                //if the rock is red
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
-                    GetComponent<SpringJoint2D>().frequency = 1.5f;
-                    isPressed = true;
-                    rb.isKinematic = true;
+                    //if the ai team is not red
+                    if (!gm.aiTeamRed)
+                    {
+                        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+                        GetComponent<SpringJoint2D>().frequency = 1.5f;
+                        isPressed = true;
+                        rb.isKinematic = true;
+                    }
+                }
+                //if the rock is yellow
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+                {
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamYellow)
+                    {
+                        GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
+                        GetComponent<SpringJoint2D>().frequency = 1.5f;
+                        isPressed = true;
+                        rb.isKinematic = true;
+                    }
                 }
             }
         }
-        else
-        {
-            //if the rock is red
-            if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
-            {
-                //if the ai team is not red
-                if (!gm.aiTeamRed)
-                {
-                    GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
-                    GetComponent<SpringJoint2D>().frequency = 1.5f;
-                    isPressed = true;
-                    rb.isKinematic = true;
-                }
-            }
-            //if the rock is yellow
-            else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
-            {
-                //if the ai team is not yellow
-                if (!gm.aiTeamYellow)
-                {
-                    GetComponent<SpringJoint2D>().dampingRatio = 0.2f;
-                    GetComponent<SpringJoint2D>().frequency = 1.5f;
-                    isPressed = true;
-                    rb.isKinematic = true;
-                }
-            }
-        }
+        
     }
 
     void OnDrag()

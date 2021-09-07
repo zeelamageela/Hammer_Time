@@ -65,35 +65,7 @@ public class AI_Shooter : MonoBehaviour
 
     public void Start()
     {
-        ShotLength();
-    }
-    public void ShotLength()
-    {
-        centreGuard.y += (osMult * 0.18f);
-        tightCentreGuard.y += (osMult * 0.18f);
-        highCentreGuard.y += (osMult * 0.18f);
-        leftHighCornerGuard.y += (osMult * 0.18f);
-        leftTightCornerGuard.y += (osMult * 0.18f);
-        leftCornerGuard.y += (osMult * 0.18f);
-        rightHighCornerGuard.y += (osMult * 0.18f);
-        rightTightCornerGuard.y += (osMult * 0.18f);
-        rightCornerGuard.y += (osMult * 0.18f);
 
-        topTwelveFoot.y += (osMult * 0.18f);
-        backTwelveFoot.y += (osMult * 0.18f);
-        leftTwelveFoot.y += (osMult * 0.18f);
-        rightTwelveFoot.y += (osMult * 0.18f);
-
-        topFourFoot.y += (osMult * 0.18f);
-        backFourFoot.y += (osMult * 0.18f);
-        leftFourFoot.y += (osMult * 0.18f);
-        rightFourFoot.y += (osMult * 0.18f);
-        button.y += (osMult * 0.18f);
-
-        peel.y += (osMult * 0.18f);
-        takeOut.y += (osMult * 0.18f);
-        raise.y += (osMult * 0.18f);
-        tick.y += (osMult * 0.18f);
     }
 
     public void OnShot(string aiShotType, int rockCurrent)
@@ -113,7 +85,7 @@ public class AI_Shooter : MonoBehaviour
         takeOutX = aiTarg.takeOutX;
         takeOutY = aiTarg.takeOutY;
 
-        aiSweep.OnSweep(aiShotType, new Vector2(takeOutX, takeOutY), inturn);
+        aiSweep.OnSweep(aiShotType, aiTarg.targetPos, inturn);
 
         yield return new WaitForSeconds(0.5f);
 

@@ -116,10 +116,10 @@ public class GameManager : MonoBehaviour
         rocksPerTeam = gsp.rocks;
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
-        rockTotal = gsp.rocks * 2;
+        rockTotal = 16;
         aiTeamYellow = gsp.aiYellow;
         mixed = gsp.mixed;
-
+        rockCurrent = 2 * (8 - gsp.rocks);
 
         debug = gsp.debug;
 
@@ -150,32 +150,30 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (redHammer)
+            yield return StartCoroutine(SetupRocks());
+
+            if (rockCurrent > 0)
             {
-                SetHammerRed();
+                rm.rrp.OnRockPlace(rockCurrent);
+                yield return new WaitUntil(() => rm.rrp.placed);
+                rockBar.ResetBar(redHammer);
+                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                //if (redHammer)
+                //    OnYellowTurn();
+                //else
+                //    OnRedTurn();
+                StartCoroutine(CheckScore());
             }
             else
             {
-                SetHammerYellow();
+                if (redHammer)
+                    OnYellowTurn();
+                else
+                    OnRedTurn();
             }
         }
     }
 
-    public void SetHammerRed()
-    {
-        db.SetActive(false);
-
-        StartCoroutine(SetupRocks());
-        OnYellowTurn();
-    }
-
-    public void SetHammerYellow()
-    {
-        db.SetActive(false);
-
-        StartCoroutine(SetupRocks());
-        OnRedTurn();
-    }
 
     IEnumerator SetupRocks()
     {
@@ -193,7 +191,7 @@ public class GameManager : MonoBehaviour
             notHammer = 0;
         }
 
-        for (int i = 1; i <= rockTotal; i++)
+        for (int i = 1; i <= 16; i++)
         {
             if (i % 2 == notHammer)
             {
@@ -208,7 +206,7 @@ public class GameManager : MonoBehaviour
                     yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
                 }
 
-                float yRocks = rocksPerTeam * 0.5f;
+                int yRocks = 4;
                 int k = (i / 2) + notHammer;
 
                 if (k <= yRocks)
@@ -244,7 +242,7 @@ public class GameManager : MonoBehaviour
                 {
                     redRock_go = Instantiate(redShooter, redRocksInactive);
                 }
-                float yRocks = rocksPerTeam / 2f;
+                int yRocks = 4;
                 int k = (i / 2) + hammer;
                 if (k <= yRocks)
                 {
@@ -275,11 +273,11 @@ public class GameManager : MonoBehaviour
         {
 
         }
-        rockBar.ResetBar(redHammer);
+        
+
         //scoreboard.SetActive(false);
 
     }
-
     IEnumerator ResetGame()
     {
         gList.Clear();
@@ -300,20 +298,37 @@ public class GameManager : MonoBehaviour
         endCurrent++;
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
-        rockCurrent = 0;
-        StartCoroutine(SaveGame());
+        rockCurrent = 2 * (8 - gsp.rocks);
         gHUD.SetHammer(redHammer);
 
-        if (redHammer)
+        yield return StartCoroutine(SetupRocks());
+        yield return new WaitUntil(() => rockList.Count == 16);
+
+        if (rockCurrent > 0)
         {
-            yield return StartCoroutine(SetupRocks());
-            OnYellowTurn();
+            rm.rrp.OnRockPlace(rockCurrent);
+            yield return new WaitUntil(() => rm.rrp.placed);
+            rockBar.ResetBar(redHammer);
+            yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+            //if (redHammer)
+            //    OnYellowTurn();
+            //else
+            //    OnRedTurn();
+            StartCoroutine(SaveGame());
+            StartCoroutine(CheckScore());
         }
         else
         {
-            yield return StartCoroutine(SetupRocks());
-            OnRedTurn();
+            if (redHammer)
+            {
+                OnYellowTurn();
+            }
+            else
+            {
+                OnRedTurn();
+            }
         }
+        
     }
     #endregion
 
@@ -475,7 +490,6 @@ public class GameManager : MonoBehaviour
     {
         yellowRocks_left--;
 
-        StartCoroutine(SaveGame());
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
         rm.inturn = false;
@@ -604,6 +618,7 @@ public class GameManager : MonoBehaviour
         state = GameState.CHECKSCORE;
 
 
+        StartCoroutine(SaveGame());
         Debug.Log("Check Score");
 
         yield return StartCoroutine(AllStopped());
@@ -707,7 +722,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Next Turn");
 
         rockCurrent++;
-        StartCoroutine(SaveGame());
         Debug.Log("Current Rock is " + rockCurrent);
 
         //gsp.AutoSave();
@@ -928,7 +942,7 @@ public class GameManager : MonoBehaviour
         myFile.Add("Red Hammer", redHammer);
         myFile.Add("End Total", endTotal);
         myFile.Add("Current End", endCurrent);
-        myFile.Add("Rocks Per Team", rocksPerTeam);
+        myFile.Add("Rocks Per Team", gsp.rocks);
         myFile.Add("Current Rock", rockCurrent);
         myFile.Add("Red Score", redScore);
         myFile.Add("Yellow Score", yellowScore);
@@ -963,7 +977,7 @@ public class GameManager : MonoBehaviour
             //aiTeamYellow = myFile.GetBool("Ai Yellow");
 
 
-            for (int i = 0; i < endCurrent; i++)
+            for (int i = 1; i < endCurrent; i++)
             {
                 gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
             }

@@ -55,7 +55,7 @@ public class TrajectoryLine : MonoBehaviour
 
     private void Update()
     {
-        if (gm.rockList.Count != 0)
+        if (gm.rockList.Count != 0 && gm.rockList.Count == 16)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
         }

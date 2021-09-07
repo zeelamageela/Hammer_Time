@@ -94,13 +94,13 @@ public class RockBar : MonoBehaviour
         //yellowRocks.anchoredPosition = yellowRocks.anchoredPosition + new Vector2(-offset * (rocksPerTeam - 1f), 0f);
         //redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
 
-        yield return new WaitForEndOfFrame();
-
+        yield return new WaitUntil(() => gm.rockList.Count == 16);
+        Debug.Log("Rock List Rock Bar is " + gm.rockList.Count);
         bool redTurn;
         if (redHammer)
         {
             redTurn = false;
-            for (int i = 0; i < rocksPerTeam; i++)
+            for (int i = 0; i < 8; i++)
             {
                 GameObject yellowDot = Instantiate(yellowRockGO, yellowRocks, false);
                 yellowDot.transform.position += new Vector3(i * -offset, 0f, 0f);
@@ -119,7 +119,7 @@ public class RockBar : MonoBehaviour
         {
             redTurn = true;
 
-            for (int i = 0; i < rocksPerTeam; i++)
+            for (int i = 0; i < 8; i++)
             {
                 GameObject redDot = Instantiate(redRockGO, redRocks, false);
                 redDot.transform.position += new Vector3((i * offset), 0f, 0f);
@@ -161,7 +161,7 @@ public class RockBar : MonoBehaviour
 
     public void ShotUpdate(int rockIndex, bool outOfPlay)
     {
-
+        Debug.Log("Rock Bar Shot Update RockListUI Count is " + rockListUI.Count);
         if (outOfPlay)
         {
             DeadRock(rockIndex);

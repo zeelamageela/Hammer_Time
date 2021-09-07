@@ -8,13 +8,13 @@ public class AI_Sweeper : MonoBehaviour
     public GameManager gm;
     public SweeperManager sm;
 
-    Transform target;
+    //Transform target;
 
     public void OnSweep(string aiShotType, Vector2 target, bool inturn)
     {
-        StartCoroutine(TargetShot(aiShotType, inturn));
+        StartCoroutine(TargetShot(aiShotType, target, inturn));
     }
-    IEnumerator TargetShot(string aiShotType, bool inturn)
+    IEnumerator TargetShot(string aiShotType, Vector2 target, bool inturn)
     {
         Rigidbody2D rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
         GameObject rock = gm.rockList[gm.rockCurrent].rock;
@@ -240,7 +240,7 @@ public class AI_Sweeper : MonoBehaviour
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.velocity.y <= 3.1f)
+                if (rockRB.velocity.y <= 3.04f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
@@ -279,6 +279,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
 
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                sm.SweepWhoa(true);
                 break;
 
             case "Left Twelve Foot":
@@ -502,8 +504,8 @@ public class AI_Sweeper : MonoBehaviour
                     sm.SweepRight(true);
                 else
                     sm.SweepWhoa(true);
-                //yield return new WaitUntil(() => Mathf.Abs(rock.transform.position.x) >= 0.05f);
-                //sm.SweepWhoa(true);
+                yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
+                sm.SweepWhoa(true);
 
                 break;
 
@@ -844,6 +846,63 @@ public class AI_Sweeper : MonoBehaviour
             #endregion
 
             case "Draw To Target":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
+                Debug.Log("y = -7 velLimit is " + velLimit);
+                if (rockRB.velocity.y <= velLimit)
+                    sm.SweepWeight(true);
+
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
+                if (rockRB.velocity.y <= velLimit)
+                    sm.SweepWeight(true);
+                else
+                    sm.SweepWhoa(true);
+
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
+                if (rockRB.velocity.y <= velLimit)
+                    sm.SweepWeight(true);
+                else if (inturn && rock.transform.position.x <= target.x - 0.65f)
+                    sm.SweepLeft(true);
+                else if (!inturn && rock.transform.position.x >= target.x + 0.65f)
+                    sm.SweepRight(true);
+                else
+                    sm.SweepWhoa(true);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
+                if (rockRB.velocity.y <= velLimit)
+                    sm.SweepWeight(true);
+                else if (inturn && rock.transform.position.x <= target.x - 0.55f)
+                    sm.SweepLeft(true);
+                else if (!inturn && rock.transform.position.x >= target.x + 0.55f)
+                    sm.SweepRight(true);
+                else
+                    sm.SweepWhoa(true);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
+                if (rockRB.velocity.y <= velLimit)
+                    sm.SweepWeight(true);
+                else if (inturn && rock.transform.position.x <= target.x - 0.4f)
+                    sm.SweepLeft(true);
+                else if (!inturn && rock.transform.position.x >= target.x + 0.4f)
+                    sm.SweepRight(true);
+                else
+                    sm.SweepWhoa(true);
+                yield return new WaitUntil(() => rock.transform.position.y >= target.x);
+                velLimit = 0.5f * ((target.y - 5.225f) / 2.55f);
+                if (rockRB.velocity.y >= velLimit)
+                    sm.SweepWhoa(true);
 
                 break;
 

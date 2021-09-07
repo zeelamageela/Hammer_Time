@@ -103,19 +103,54 @@ public class AI_Strategy : MonoBehaviour
 
         if (gm.redHammer)
         {
-            if (gm.redScore <= gm.yellowScore)
-                ConservativeStealOrBlank(rockCurrent, phase);
-            else if (gm.redScore - gm.yellowScore >= 2)
-                AggressiveNotHammer(rockCurrent, phase);
+            if (gm.endTotal - gm.endCurrent >= 2)
+            {
+                if (gm.redScore - gm.yellowScore >= 2)
+                    AggressiveNotHammer(rockCurrent, phase);
+                if (gm.redScore <= gm.yellowScore)
+                    ConservativeStealOrBlank(rockCurrent, phase);
+                else
+                    ConservativeSteal(rockCurrent, phase);
+            }
+            else if (gm.endTotal - gm.endCurrent == 1)
+            {
+                if (gm.redScore - gm.yellowScore <= 1)
+                    ConservativeStealOrBlank(rockCurrent, phase);
+                else
+                    AggressiveNotHammer(rockCurrent, phase);
+            }
             else
-                ConservativeSteal(rockCurrent, phase);
+                if (gm.redScore < gm.yellowScore)
+                ConservativeStealOrBlank(rockCurrent, phase);
+            else
+                AggressiveNotHammer(rockCurrent, phase);
         }
         else
         {
-            if (gm.redScore <= gm.yellowScore)
-                ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
+            if (gm.endTotal - gm.endCurrent >= 2)
+            {
+                if (gm.redScore - gm.yellowScore >= 2)
+                    AggressiveHammer(rockCurrent, phase);
+                if (gm.redScore <= gm.yellowScore)
+                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
+                else
+                    ConservativeSteal(rockCurrent, phase);
+            }
+            else if (gm.endTotal - gm.endCurrent == 1)
+            {
+                if (gm.redScore - gm.yellowScore <= 1)
+                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
+                else
+                    AggressiveHammer(rockCurrent, phase);
+            }
             else
-                AggressiveHammer(rockCurrent, phase);
+            {
+                if (gm.redScore < gm.yellowScore)
+                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
+                else
+                    AggressiveHammer(rockCurrent, phase);
+            }
+                
         }
         Debug.Log("Phase is " + phase);
     }
@@ -759,7 +794,7 @@ public class AI_Strategy : MonoBehaviour
                             }
                         }
                         //any other guard combo
-                        else aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
+                        else aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, rockCurrent);
                     }
                     else
                     {
@@ -774,7 +809,7 @@ public class AI_Strategy : MonoBehaviour
                             }
                             else
                             {
-                                aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                             }
                         }
                         else
@@ -795,7 +830,7 @@ public class AI_Strategy : MonoBehaviour
                             //if the tight centre guard is not covering it
                             if (Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
                             {
-                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                                aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
                             }
                             else
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
@@ -806,14 +841,14 @@ public class AI_Strategy : MonoBehaviour
                             //if the tight centre guard is not covering it
                             if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
                             {
-                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                                aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
                             }
                             else
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                         }
                         else
                         {
-                            aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                            aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
                         }
                     }
                     //if it's not in the four foot and there's more than one rock in the house
@@ -827,7 +862,7 @@ public class AI_Strategy : MonoBehaviour
                         }
                         else
                         {
-                            aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                            aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                         }
                     }
                     //not in the four foot and the only rock
