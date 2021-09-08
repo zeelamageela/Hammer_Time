@@ -17,7 +17,7 @@ public class GameHUD : MonoBehaviour
     public Text[] scoreCardsText;
     public Image redHammerPNG;
     public Image yellowHammerPNG;
-
+    public GameObject panel;
     public bool scoreCheck;
     private void Start()
     {
@@ -44,8 +44,11 @@ public class GameHUD : MonoBehaviour
         if (!mainDisplay.enabled)
         {
             clickDisplay.enabled = false;
+            panel.SetActive(false);
         }
 
+        if (mainDisplay.enabled)
+            panel.SetActive(true);
         //if (sm.dialogueGO.activeSelf)
         //{
         //    mainDisplay.enabled = false;

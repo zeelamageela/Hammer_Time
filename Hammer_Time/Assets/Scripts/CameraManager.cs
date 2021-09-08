@@ -19,6 +19,8 @@ public class CameraManager : MonoBehaviour
     public CinemachineVirtualCamera vcam;
     public CinemachineFramingTransposer vcam_ft;
 
+    public HouseClick houseClick;
+
     private void Start()
     {
         vcam_ft = vcam.GetCinemachineComponent<CinemachineFramingTransposer>();
@@ -67,6 +69,18 @@ public class CameraManager : MonoBehaviour
         vcam.enabled = true;
     }
 
+    public void Perspective()
+    {
+        if (persp.depth == 5)
+        {
+            persp.depth = -1;
+        }
+        else if (persp.depth == -1)
+        {
+            persp.depth = 5;
+        }
+    }
+
     public void RockFollow(Transform tFollowTarget)
     {
         Debug.Log("Rock Follow");
@@ -92,6 +106,10 @@ public class CameraManager : MonoBehaviour
         vcam.m_Lens.OrthographicSize = 3f;
 
         
+    }
+    public void ZoomOutTrack(float dist)
+    {
+        vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
     }
     public void InPlayZoom(float dist)
     {

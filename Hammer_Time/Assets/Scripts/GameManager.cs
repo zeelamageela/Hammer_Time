@@ -709,6 +709,7 @@ public class GameManager : MonoBehaviour
             }
 
             yield return StartCoroutine(WaitForClick());
+            gHUD.clickDisplay.enabled = false;
             gHUD.MainDisplayOff();
             gHUD.ScoreboardOff();
 
