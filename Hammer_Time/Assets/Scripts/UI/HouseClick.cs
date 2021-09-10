@@ -29,11 +29,12 @@ public class HouseClick : MonoBehaviour
 
             if (hit.collider == col)
             {
-
                 StartCoroutine(IsPressed());
                 Debug.Log(hit.collider.gameObject.name);
             }
         }
+
+        
     }
 
     IEnumerator IsPressed()
@@ -68,11 +69,11 @@ public class HouseClick : MonoBehaviour
             bool noRocks = false;
 
             //send the info to the ui
-            gm.gHUD.CheckScore(noRocks, winningTeamName, houseScore);
+            gm.gHUD.CheckScore(noRocks, winningTeamName, houseScore, true);
             
         }
         else
-            gm.gHUD.CheckScore(true, null, 0);
+            gm.gHUD.CheckScore(true, " ", 0, true);
 
         gm.gHUD.clickDisplay.enabled = false;
         col.enabled = true;

@@ -27,7 +27,6 @@ public class RockManager : MonoBehaviour
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
-
             if (inturn)
             {
                 rock.GetComponent<Rock_Force>().flipAxis = true;
@@ -49,7 +48,7 @@ public class RockManager : MonoBehaviour
                 float dist = Vector2.Distance(rock.transform.position, house.position);
                 cm.top.depth = -1;
                 cm.InPlayZoom(dist);
-            }
+            } 
         }
     }
 }

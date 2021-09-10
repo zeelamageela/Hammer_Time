@@ -60,13 +60,13 @@ public class AI_Shooter : MonoBehaviour
     public float takeOutX;
     public float takeOutY;
     float raiseY;
-
-    public float osMult;
+    GameSettingsPersist gsp;
 
     public void Start()
     {
-
+        gsp = FindObjectOfType<GameSettingsPersist>();
     }
+
 
     public void OnShot(string aiShotType, int rockCurrent)
     {
@@ -85,7 +85,8 @@ public class AI_Shooter : MonoBehaviour
         takeOutX = aiTarg.takeOutX;
         takeOutY = aiTarg.takeOutY;
 
-        aiSweep.OnSweep(aiShotType, aiTarg.targetPos, inturn);
+        if (!gsp.story)
+            aiSweep.OnSweep(aiShotType, aiTarg.targetPos, inturn);
 
         yield return new WaitForSeconds(0.5f);
 

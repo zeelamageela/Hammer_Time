@@ -126,7 +126,6 @@ public class RockBar : MonoBehaviour
                 rockListUI.Add(redDot);
                 redDot.name = gm.rockList[(2 * i) + 1].rock.name;
 
-                yield return new WaitForEndOfFrame();
 
                 GameObject yellowDot = Instantiate(yellowRockGO, yellowRocks, false);
                 yellowDot.transform.position += new Vector3(i * -offset, 0f, 0f);
@@ -137,7 +136,7 @@ public class RockBar : MonoBehaviour
             }
         }
 
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
 
         ActiveRock(redTurn);
 

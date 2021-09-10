@@ -1876,7 +1876,7 @@ MonoBehaviour:
   endTotal: 2
   redHammer: 0
   rocksPerTeam: 8
-  rockTotal: 0
+  rockTotal: 16
   rockCurrent: 0
   gsp: {fileID: 0}
   rm: {fileID: 545177317}

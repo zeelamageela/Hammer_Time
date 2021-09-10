@@ -72,8 +72,9 @@ public class GameHUD : MonoBehaviour
     }
     IEnumerator ClickDisplay()
     {
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.05f);
         clickDisplay.enabled = true;
+        //yield return StartCoroutine(WaitForClick());
     }
 
     public void MainDisplayOff()
@@ -100,7 +101,7 @@ public class GameHUD : MonoBehaviour
         }
     }
 
-    public void CheckScore(bool noRocks, string teamName, int score)
+    public void CheckScore(bool noRocks, string teamName, int score, bool houseClick)
     {
         mainDisplay.enabled = true;
         float waitTime;
@@ -112,11 +113,14 @@ public class GameHUD : MonoBehaviour
         }
         else
         {
-            mainDisplay.text = teamName + " is sitting " + score;
+            mainDisplay.text = teamName + " is Sitting " + score;
             waitTime = 1.5f;
         }
 
-        StartCoroutine(ClickDisplay());
+        if (!houseClick)
+            StartCoroutine(ClickDisplay());
+        else
+            StartCoroutine(MainDisplayTimer(waitTime));
     }
 
     public void ScoringUI(string hammerTeamName, string teamName, int score)
@@ -126,18 +130,18 @@ public class GameHUD : MonoBehaviour
 
         if (score == 0)
         {
-            mainDisplay.text = hammerTeamName + " keeps hammer";
+            mainDisplay.text = hammerTeamName + " Keeps Hammer";
             waitTime = 1f;
         }
         else
         {
             if (hammerTeamName == teamName)
             {
-                mainDisplay.text = teamName + " scored " + score;
+                mainDisplay.text = teamName + " Scored " + score;
             }
             else
             {
-                mainDisplay.text = teamName + " stole " + score;
+                mainDisplay.text = teamName + " Stole " + score;
             }
 
             waitTime = 2f;

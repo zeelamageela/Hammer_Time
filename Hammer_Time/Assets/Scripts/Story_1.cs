@@ -15,6 +15,7 @@ public class Story_1 : MonoBehaviour
     public DialogueTrigger annDialogue;
     public AI_Target aiTarg;
     public AI_Shooter aiShoot;
+    public AI_Sweeper aiSweep;
     public GameObject dialogueGO;
 
     public float timeScale;
@@ -46,6 +47,7 @@ public class Story_1 : MonoBehaviour
     }
     IEnumerator StoryFlow()
     {
+        aiSweep.enabled = false;
         yield return new WaitUntil(() => gm.rockCurrent == 7);
 
         storyM.SyncToGm();

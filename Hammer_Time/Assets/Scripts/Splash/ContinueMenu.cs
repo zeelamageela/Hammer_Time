@@ -30,7 +30,7 @@ public class ContinueMenu : MonoBehaviour
         {
             scoreDisplay.text = myFile.GetInt("Red Score") + " - " + myFile.GetInt("Yellow Score");
             endDisplay.text = myFile.GetInt("Current End") + " / " + myFile.GetInt("End Total");
-            shotDisplay.text = (myFile.GetInt("Current Rock") + 1) + " / " + (myFile.GetInt("Rocks Per Team") * 2);
+            shotDisplay.text = (myFile.GetInt("Current Rock") + 2) + " / " + myFile.GetInt("Rock Total");
 
             if (myFile.GetBool("Ai Yellow"))
             {
