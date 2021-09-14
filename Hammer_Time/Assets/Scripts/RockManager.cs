@@ -25,6 +25,7 @@ public class RockManager : MonoBehaviour
     {
         if (gm.rockList.Count != 0 && gm.rockList.Count == 16)
         {
+
             rock = gm.rockList[gm.rockCurrent].rock;
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
             if (inturn)

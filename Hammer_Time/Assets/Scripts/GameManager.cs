@@ -298,7 +298,7 @@ public class GameManager : MonoBehaviour
         endCurrent++;
         redRocks_left = rocksPerTeam;
         yellowRocks_left = rocksPerTeam;
-        rockCurrent = 2 * (8 - gsp.rocks);
+        rockCurrent = 2 * (8 - rocksPerTeam);
         gHUD.SetHammer(redHammer);
 
         yield return StartCoroutine(SetupRocks());
@@ -972,14 +972,15 @@ public class GameManager : MonoBehaviour
 
             Debug.Log("Loading Game!!!!!!!");
             redHammer = myFile.GetBool("Red Hammer");
-            //endTotal = myFile.GetInt("End Total");
-            //endCurrent = myFile.GetInt("Current End");
+            endTotal = myFile.GetInt("End Total");
+            endCurrent = myFile.GetInt("Current End");
             //rockTotal = myFile.GetInt("Rocks Per Team") * 2;
-            //aiTeamRed = myFile.GetBool("Ai Red");
-            //aiTeamYellow = myFile.GetBool("Ai Yellow");
+            aiTeamRed = myFile.GetBool("Ai Red");
+            aiTeamYellow = myFile.GetBool("Ai Yellow");
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
             rocksPerTeam = myFile.GetInt("Rocks");
+
             for (int i = 1; i < endCurrent; i++)
             {
                 gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
@@ -994,6 +995,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         rockBar.ResetBar(redHammer);
+        rockBar.EndUpdate(yellowScore, redScore);
         //rockBar.EndUpdate(yellowScore, redScore);
         //yield return StartCoroutine(WaitForClick());
         if (myFile.Load())
