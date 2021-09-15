@@ -32,7 +32,7 @@ public class TurnAnim : MonoBehaviour
 
     void Update()
     {
-        if (gm.rockList.Count != 0)
+        if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             bool inturn = rm.inturn;

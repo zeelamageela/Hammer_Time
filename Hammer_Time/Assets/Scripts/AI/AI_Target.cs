@@ -888,7 +888,7 @@ public class AI_Target : MonoBehaviour
         }
         
         aiShoot.OnShot("Raise", rockCurrent);
-        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        Debug.Log("TapBack - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
 
@@ -936,7 +936,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Tick", rockCurrent);
-        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        Debug.Log("Tick - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
 
@@ -964,7 +964,6 @@ public class AI_Target : MonoBehaviour
         takeOutX += (distance * Mathf.Sin(angle));
 
         aiShoot.OnShot("Draw To Target", rockCurrent);
-
 
         yield break;
     }

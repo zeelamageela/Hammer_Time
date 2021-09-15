@@ -71,6 +71,8 @@ public class GameSettingsPersist : MonoBehaviour
         endCurrent = 1;
         rocks = gs.rocks;
         rockCurrent = 0;
+        redScore = 0;
+        yellowScore = 0;
         redHammer = gs.redHammer;
         aiYellow = gs.ai;
         mixed = gs.mixed;
@@ -101,6 +103,29 @@ public class GameSettingsPersist : MonoBehaviour
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
         }
+    }
+
+    public void LoadFromGM()
+    {
+        GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        Debug.Log("Loading to GSP");
+        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
+
+        ends = gm.endTotal;
+        endCurrent = gm.endCurrent;
+        rocks = gm.rocksPerTeam;
+        rockCurrent = gm.rockCurrent;
+        redScore = gm.redScore;
+        yellowScore = gm.yellowScore;
+        redHammer = gm.redHammer;
+        aiYellow = gm.aiTeamYellow;
+        aiRed = gm.aiTeamRed;
+        third = gm.target;
+        skip = gm.target;
+
+        //redScore = myFile.GetInt("Red Score");
+        //yellowScore = myFile.GetInt("Yellow Score");
     }
 
     public void StoryGame()
@@ -142,12 +167,6 @@ public class GameSettingsPersist : MonoBehaviour
 
     private void Update()
     {
-        if (tutorial)
-        {
-            OnTutorial();
-            tutorial = false;
-        }
-
         if (gs)
         {
             ends = gs.ends;

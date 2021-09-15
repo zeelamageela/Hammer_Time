@@ -121,6 +121,13 @@ public class GameManager : MonoBehaviour
         mixed = gsp.mixed;
         rockCurrent = 2 * (8 - gsp.rocks);
 
+        if (gsp.redScore > 0 | gsp.yellowScore > 0)
+        {
+            redScore = gsp.redScore;
+            yellowScore = gsp.yellowScore;
+
+        }
+
         debug = gsp.debug;
 
         Debug.Log("redHammer is " + redHammer);
@@ -157,6 +164,7 @@ public class GameManager : MonoBehaviour
                 rm.rrp.OnRockPlace(rockCurrent);
                 yield return new WaitUntil(() => rm.rrp.placed);
                 rockBar.ResetBar(redHammer);
+                rockBar.EndUpdate(yellowScore, redScore);
                 yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
                 //if (redHammer)
                 //    OnYellowTurn();
@@ -315,6 +323,7 @@ public class GameManager : MonoBehaviour
             //else
             //    OnRedTurn();
             //StartCoroutine(SaveGame());
+            yield return new WaitUntil(() => rm.rrp.placed);
             StartCoroutine(CheckScore());
         }
         else
@@ -627,18 +636,19 @@ public class GameManager : MonoBehaviour
 
         rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
 
-        Debug.Log("Current Rock is " + rockCurrent);
         houseList.Clear();
         gList.Clear();
 
         Destroy(shooterGO);
         cm.HouseView();
 
+        Debug.Log("Rock List is " + rockList.Count);
         foreach (Rock_List rock in rockList)
         {
             if (rock.rockInfo.inHouse == true)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
+                Debug.Log("Adding House " + rock.rockInfo.teamName + rock.rockInfo.rockNumber + " - " + rock.rockInfo.rockIndex);
             }
             if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
             {
@@ -881,7 +891,16 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadScene("Story_EndMenu");
             }
             else
-                StartCoroutine(ResetGame());
+            {
+                endCurrent++;
+                rockCurrent = gsp.rockCurrent;
+                yield return StartCoroutine(SaveGame());
+                gsp.LoadFromGM();
+                yield return StartCoroutine(SaveGame());
+                yield return new WaitForEndOfFrame();
+                SceneManager.LoadScene("End_Menu_1");
+            }
+                //StartCoroutine(ResetGame());
         }
         else if (endCurrent >= endTotal)
         {
@@ -969,7 +988,6 @@ public class GameManager : MonoBehaviour
     {
         if (myFile.Load())
         {
-
             Debug.Log("Loading Game!!!!!!!");
             redHammer = myFile.GetBool("Red Hammer");
             endTotal = myFile.GetInt("End Total");
@@ -986,8 +1004,6 @@ public class GameManager : MonoBehaviour
                 gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
                 Debug.Log("End " + i + " Red is " + myFile.GetInt("End " + i + " Red"));
             }
-
-            
         }
 
         yield return StartCoroutine(SetupRocks());
@@ -1008,18 +1024,19 @@ public class GameManager : MonoBehaviour
         //yield return StartCoroutine(WaitForClick());
         gsp.loadGame = false;
         yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+
         if (rockCurrent > 0)
         {
             yield return StartCoroutine(PlaceRocks());
 
-            if (myFile.Load())
-            {
-                rockCurrent = myFile.GetInt("Current Rock");
-                if (rockCurrent < 0)
-                {
-                    rockCurrent = 0;
-                }
-            }
+            //if (myFile.Load())
+            //{
+                //rockCurrent = myFile.GetInt("Current Rock");
+                //if (rockCurrent < 0)
+                //{
+                //    rockCurrent = 0;
+                //}
+            //}
         }
             
 

@@ -355,12 +355,12 @@ public class Rock_Flick : MonoBehaviour
         springReleased = true;
 
         //GetComponent<SpringJoint2D>().enabled = true;
-        Debug.Log("Waht is happening in here. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
+        //Debug.Log("Waht is happening in here. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         launcher.GetComponent<Collider2D>().enabled = true;
         yield return new WaitForSeconds(releaseTime);
 
         GetComponent<SpringJoint2D>().enabled = false;
-        Debug.Log("Waht is happening in HERE. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
+        //Debug.Log("Waht is happening in HERE. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         this.enabled = false;
 
         yield return new WaitForFixedUpdate();

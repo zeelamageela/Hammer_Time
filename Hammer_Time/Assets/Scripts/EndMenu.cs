@@ -12,6 +12,9 @@ public class EndMenu : MonoBehaviour
     public Text yellowScore;
     public GameObject yellowSpinner;
     public GameObject yellowSpinnerAI;
+    public GameObject redHammerPNG;
+    public GameObject yellowHammerPNG;
+    public string contScene;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +37,12 @@ public class EndMenu : MonoBehaviour
                 yellowSpinner.SetActive(true);
                 yellowSpinnerAI.SetActive(false);
             }
+
+            if (gsp.redHammer)
+                redHammerPNG.SetActive(true);
+            else
+                yellowHammerPNG.SetActive(true);
+
         }
         
     }
@@ -51,6 +60,6 @@ public class EndMenu : MonoBehaviour
 
     public void Continue()
     {
-        SceneManager.LoadScene("StoryGame_1");
+        SceneManager.LoadScene(contScene);
     }
 }

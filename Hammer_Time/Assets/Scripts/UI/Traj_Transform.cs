@@ -20,7 +20,7 @@ public class Traj_Transform : MonoBehaviour
     void Update()
     {
         //if the rock list has rocks in it
-        if (gm.rockList.Count != 0 && gm.rockList.Count == 16)
+        if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
         {
 
             //fetch the current rock from gm

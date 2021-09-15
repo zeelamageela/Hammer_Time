@@ -9,7 +9,7 @@ public class AI_Sweeper : MonoBehaviour
     public SweeperManager sm;
 
     //Transform target;
-
+    
     public void OnSweep(string aiShotType, Vector2 target, bool inturn)
     {
         StartCoroutine(TargetShot(aiShotType, target, inturn));

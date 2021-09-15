@@ -88,6 +88,15 @@ public class RockBar : MonoBehaviour
 
     IEnumerator SetupBar(bool redHammer)
     {
+        if (rockListUI.Count != 0)
+        {
+            foreach (GameObject rock in rockListUI)
+            {
+                Destroy(rock);
+            }
+
+            rockListUI.Clear();
+        }
         //redRocks.anchoredPosition = new Vector2(-450f, 5f);
         //yellowRocks.anchoredPosition = new Vector2(450f, 5f);
 
@@ -95,7 +104,7 @@ public class RockBar : MonoBehaviour
         //redRocks.anchoredPosition = redRocks.anchoredPosition + new Vector2(offset * (rocksPerTeam - 1f), 0f);
 
         yield return new WaitUntil(() => gm.rockList.Count == 16);
-        Debug.Log("Rock List Rock Bar is " + gm.rockList.Count);
+        //Debug.Log("Rock List Rock Bar is " + gm.rockList.Count);
         bool redTurn;
         if (redHammer)
         {
@@ -147,20 +156,11 @@ public class RockBar : MonoBehaviour
         yellowScoreDisplay.text = yellowScore.ToString();
         redScoreDisplay.text = redScore.ToString();
 
-        if (rockListUI.Count != 0)
-        {
-            foreach (GameObject rock in rockListUI)
-            {
-                Destroy(rock);
-            }
-
-            rockListUI.Clear();
-        }
     }
 
     public void ShotUpdate(int rockIndex, bool outOfPlay)
     {
-        Debug.Log("Rock Bar Shot Update RockListUI Count is " + rockListUI.Count);
+        //Debug.Log("Rock Bar Shot Update RockListUI Count is " + rockListUI.Count);
         if (outOfPlay)
         {
             DeadRock(rockIndex);
@@ -187,7 +187,7 @@ public class RockBar : MonoBehaviour
 
     public void ActiveRock(bool redTurn)
     {
-        if (rockListUI.Count != 0)
+        if (rockListUI.Count != 0 && gm.rockCurrent < rockListUI.Count)
         {
             rockCurrent = gm.rockCurrent;
             rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
