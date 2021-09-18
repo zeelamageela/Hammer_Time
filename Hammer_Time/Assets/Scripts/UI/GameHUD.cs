@@ -101,6 +101,13 @@ public class GameHUD : MonoBehaviour
         }
     }
 
+    IEnumerator RefreshPanel()
+    {
+        panel.GetComponent<ContentSizeFitter>().enabled = false;
+
+        yield return new WaitForEndOfFrame();
+        panel.GetComponent<ContentSizeFitter>().enabled = true;
+    }
     public void CheckScore(bool noRocks, string teamName, int score, bool houseClick)
     {
         mainDisplay.enabled = true;
@@ -116,6 +123,32 @@ public class GameHUD : MonoBehaviour
             mainDisplay.text = teamName + " is Sitting " + score;
             waitTime = 1.5f;
         }
+
+        StartCoroutine(RefreshPanel());
+
+        if (!houseClick)
+            StartCoroutine(ClickDisplay());
+        else
+            StartCoroutine(MainDisplayTimer(waitTime));
+    }
+
+    public void Message(bool noRocks, string teamName, int score, bool houseClick)
+    {
+        mainDisplay.enabled = true;
+        float waitTime;
+
+        if (noRocks)
+        {
+            mainDisplay.text = "No Rocks in House";
+            waitTime = 1f;
+        }
+        else
+        {
+            mainDisplay.text = teamName + " is Sitting " + score;
+            waitTime = 1.5f;
+        }
+
+        StartCoroutine(RefreshPanel());
 
         if (!houseClick)
             StartCoroutine(ClickDisplay());
