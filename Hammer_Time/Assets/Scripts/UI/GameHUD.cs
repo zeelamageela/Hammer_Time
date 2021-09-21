@@ -132,28 +132,11 @@ public class GameHUD : MonoBehaviour
             StartCoroutine(MainDisplayTimer(waitTime));
     }
 
-    public void Message(bool noRocks, string teamName, int score, bool houseClick)
+    public void Message(string message)
     {
         mainDisplay.enabled = true;
-        float waitTime;
-
-        if (noRocks)
-        {
-            mainDisplay.text = "No Rocks in House";
-            waitTime = 1f;
-        }
-        else
-        {
-            mainDisplay.text = teamName + " is Sitting " + score;
-            waitTime = 1.5f;
-        }
-
+        mainDisplay.text = message;
         StartCoroutine(RefreshPanel());
-
-        if (!houseClick)
-            StartCoroutine(ClickDisplay());
-        else
-            StartCoroutine(MainDisplayTimer(waitTime));
     }
 
     public void ScoringUI(string hammerTeamName, string teamName, int score)

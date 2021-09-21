@@ -23,9 +23,21 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
-            endNumber.text = gsp.endCurrent.ToString();
-            redScore.text = gsp.redScore.ToString();
-            yellowScore.text = gsp.yellowScore.ToString();
+            if (gsp.endCurrent >= gsp.ends && gsp.redScore != gsp.yellowScore)
+            {
+                endNumber.text = "Game Over!";
+            }
+            else
+            {
+                endNumber.text = gsp.endCurrent.ToString();
+                redScore.text = gsp.redScore.ToString();
+                yellowScore.text = gsp.yellowScore.ToString();
+
+                if (gsp.redHammer)
+                    redHammerPNG.SetActive(true);
+                else
+                    yellowHammerPNG.SetActive(true);
+            }
 
             if (gsp.aiYellow)
             {
@@ -38,10 +50,6 @@ public class EndMenu : MonoBehaviour
                 yellowSpinnerAI.SetActive(false);
             }
 
-            if (gsp.redHammer)
-                redHammerPNG.SetActive(true);
-            else
-                yellowHammerPNG.SetActive(true);
 
         }
         

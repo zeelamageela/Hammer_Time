@@ -12,14 +12,17 @@ public class GameSettings : MonoBehaviour
     public Text endText;
     public Text rockText;
     public OptionsMenu om;
-    public Toggle aiTog;
-    public Toggle teamTog;
+    public Toggle aiRedTog;
+    public Toggle aiYellowTog;
+    public Toggle redHammerTog;
+    public Toggle yellowHammerTog;
     public Toggle dbTog;
 
     public int ends;
     public int rocks;
     public float volume;
-    public bool ai;
+    public bool aiRed;
+    public bool aiYellow;
     public bool team;
     public bool debug;
     public bool mixed;
@@ -41,11 +44,25 @@ public class GameSettings : MonoBehaviour
         ends = (int)endSlider.value;
         rocks = (int)rockSlider.value;
 
-        if (aiTog.isOn == false)
+        if (redHammerTog.isOn == true)
+            redHammer = true;
+        else
+            redHammer = false;
+        if (aiRedTog.isOn == false)
         {
-            ai = false;
+            aiRed = false;
         }
-        else ai = true;
+        else aiRed = true;
+
+
+        if (aiYellowTog.isOn == false)
+            aiYellow = false;
+        else
+            aiYellow = true;
+
+        endText.text = ends.ToString();
+        rockText.text = rocks.ToString();
+        volume = om.volume;
 
         if (dbTog.isOn == false)
         {
@@ -53,28 +70,11 @@ public class GameSettings : MonoBehaviour
         }
         else debug = true;
 
-        if (teamTog.isOn == false)
-            team = false;
-        else
-            team = true;
-
-        endText.text = ends.ToString();
-        rockText.text = rocks.ToString();
-        volume = om.volume;
+        
     }
 
-    public void SetHammerRed()
+    public void PlayGame()
     {
-        redHammer = true;
-        GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
-        gsp.LoadSettings();
-
-        SceneManager.LoadScene("AiGame");
-    }
-
-    public void SetHammerYellow()
-    {
-        redHammer = false;
         GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadSettings();
 

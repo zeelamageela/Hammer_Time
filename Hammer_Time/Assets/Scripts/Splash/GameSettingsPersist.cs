@@ -74,7 +74,8 @@ public class GameSettingsPersist : MonoBehaviour
         redScore = 0;
         yellowScore = 0;
         redHammer = gs.redHammer;
-        aiYellow = gs.ai;
+        aiYellow = gs.aiYellow;
+        aiRed = gs.aiRed;
         mixed = gs.mixed;
         skip = gs.team;
         debug = gs.debug;
@@ -95,6 +96,7 @@ public class GameSettingsPersist : MonoBehaviour
             rocks = myFile.GetInt("Rocks Per Team");
             rockCurrent = myFile.GetInt("Current Rock");
             redHammer = myFile.GetBool("Red Hammer");
+            aiRed = myFile.GetBool("Ai Red");
             aiYellow = myFile.GetBool("Ai Yellow");
             mixed = myFile.GetBool("Mixed");
             skip = myFile.GetBool("Team");
@@ -171,7 +173,8 @@ public class GameSettingsPersist : MonoBehaviour
         {
             ends = gs.ends;
             rocks = gs.rocks;
-            aiYellow = gs.ai;
+            aiYellow = gs.aiYellow;
+            aiRed = gs.aiRed;
             loadGame = false;
         }
 

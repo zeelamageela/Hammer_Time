@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
         endTotal = gsp.ends;
         //rockTotal = 16;
         aiTeamYellow = gsp.aiYellow;
+        aiTeamRed = gsp.aiRed;
         mixed = gsp.mixed;
         rockCurrent = 2 * (8 - gsp.rocks);
 
@@ -397,9 +398,7 @@ public class GameManager : MonoBehaviour
 
         if (aiTeamRed)
         {
-            gHUD.mainDisplay.enabled = true;
-            gHUD.mainDisplay.text = "AI Turn";
-            targetAi.SetActive(true);
+            gHUD.Message("AI Turn");
 
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
@@ -431,6 +430,11 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitUntil(() => redRock.released == true);
 
+        if (aiTeamRed)
+        {
+            gHUD.mainDisplay.enabled = false;
+            targetAi.SetActive(false);
+        }
         redRock_1.GetComponent<Rock_Flick>().enabled = false;
         sm.Release(redRock_1, aiTeamRed);
         rm.GetComponent<Sweep>().EnterSweepZone();
@@ -518,9 +522,7 @@ public class GameManager : MonoBehaviour
         }
         if (aiTeamYellow)
         {
-            gHUD.mainDisplay.enabled = true;
-            gHUD.mainDisplay.text = "AI Turn";
-            targetAi.SetActive(true);
+            gHUD.Message("AI Turn");
 
             if (debug)
             {
@@ -898,9 +900,9 @@ public class GameManager : MonoBehaviour
             {
                 endCurrent++;
                 rockCurrent = gsp.rockCurrent;
-                yield return StartCoroutine(SaveGame());
                 gsp.LoadFromGM();
                 yield return StartCoroutine(SaveGame());
+                //yield return StartCoroutine(SaveGame());
                 yield return new WaitForEndOfFrame();
                 SceneManager.LoadScene("End_Menu_1");
             }
@@ -916,22 +918,24 @@ public class GameManager : MonoBehaviour
     IEnumerator EndOfGame()
     {
         gHUD.EndOfGame(redScore, redRock.teamName, yellowScore, yellowRock.teamName);
-
+        
         yield return new WaitForSeconds(2f);
-        if (redScore == yellowScore)
-        {
-            Debug.Log("Game is tied");
-            yield return StartCoroutine(WaitForClick());
-            gHUD.ScoreboardOff();
-            gHUD.MainDisplayOff();
-            StartCoroutine(ResetGame());
-        }
-        else
-        {
-            Debug.Log("Game is over");
-            yield return StartCoroutine(WaitForClick());
-            SceneManager.LoadScene("SplashMenu");
-        }
+
+        SceneManager.LoadScene("End_Menu_1");
+        //if (redScore == yellowScore)
+        //{
+        //    Debug.Log("Game is tied");
+        //    yield return StartCoroutine(WaitForClick());
+        //    gHUD.ScoreboardOff();
+        //    gHUD.MainDisplayOff();
+        //    StartCoroutine(ResetGame());
+        //}
+        //else
+        //{
+        //    Debug.Log("Game is over");
+        //    yield return StartCoroutine(WaitForClick());
+        //    SceneManager.LoadScene("SplashMenu");
+        //}
     }
     #endregion
 
