@@ -174,6 +174,10 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                rockBar.ResetBar(redHammer);
+                rockBar.EndUpdate(yellowScore, redScore);
+                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+
                 if (redHammer)
                     OnYellowTurn();
                 else
