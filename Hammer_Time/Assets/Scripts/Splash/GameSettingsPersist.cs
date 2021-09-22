@@ -63,7 +63,7 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
 
-        score = new Vector2Int[endCurrent];
+        score = new Vector2Int[12];
     }
 
     public void LoadSettings()
@@ -138,7 +138,7 @@ public class GameSettingsPersist : MonoBehaviour
         third = gm.target;
         skip = gm.target;
 
-        score[endCurrent - 1] = new Vector2Int(redScore, yellowScore);
+        score[endCurrent - 2] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }

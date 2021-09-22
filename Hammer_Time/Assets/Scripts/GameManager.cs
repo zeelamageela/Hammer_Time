@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         {
             redScore = gsp.redScore;
             yellowScore = gsp.yellowScore;
-
+            cm.ui.enabled = false;
         }
 
         debug = gsp.debug;
@@ -148,7 +148,15 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         gHUD.SetHammer(redHammer);
-        
+
+        if (endCurrent > 1)
+        {
+            for (int i = 1; i < endCurrent; i++)
+            {
+                gHUD.Scoreboard(i, gsp.score[i - 1].x, gsp.score[i - 1].y);
+            }
+        }
+        cm.ui.enabled = true;
         if (gsp.loadGame)
         {
             StartCoroutine(LoadGame());

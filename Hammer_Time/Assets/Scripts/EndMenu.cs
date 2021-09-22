@@ -14,6 +14,8 @@ public class EndMenu : MonoBehaviour
     public GameObject yellowSpinnerAI;
     public GameObject redHammerPNG;
     public GameObject yellowHammerPNG;
+    public GameObject sbRedHammerPNG;
+    public GameObject sbYellowHammerPNG;
     public string contScene;
     public GameObject scoreboard;
     public Image[] scoreCards;
@@ -22,10 +24,16 @@ public class EndMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //for (int i = 0; i < 24; i++)
+        //{
+        //    scoreCardsText[i] = scoreCards[i].gameObject.GetComponent<Text>();
+        //}
+
         foreach (Image scoreCard in scoreCards)
         {
             scoreCard.gameObject.SetActive(false);
         }
+        
 
         gsp = FindObjectOfType<GameSettingsPersist>();
 
@@ -42,9 +50,15 @@ public class EndMenu : MonoBehaviour
                 yellowScore.text = gsp.yellowScore.ToString();
 
                 if (gsp.redHammer)
+                {
                     redHammerPNG.SetActive(true);
+                    sbRedHammerPNG.SetActive(true);
+                }
                 else
+                {
                     yellowHammerPNG.SetActive(true);
+                    sbYellowHammerPNG.SetActive(true);
+                }
             }
 
             if (gsp.aiYellow)
@@ -58,13 +72,24 @@ public class EndMenu : MonoBehaviour
                 yellowSpinnerAI.SetActive(false);
             }
 
-
+            for (int i = 0; i < gsp.endCurrent; i++)
+            {
+                if (i > 0 && gsp.score[i].x - gsp.score[i - 1].x > 0)
+                {
+                    Scoreboard(i + 1, gsp.score[i].x, 0);
+                }
+                else if (i > 0 && gsp.score[i].y - gsp.score[i - 1].y > 0)
+                {
+                    Scoreboard(i + 1, 0, gsp.score[i].y);
+                }
+                else if (i == 0)
+                    Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
+                else
+                    Scoreboard(i + 1, 0, 0);
+            }
         }
 
-        for (int i = 1; i < gsp.endCurrent; i++)
-        {
-            Scoreboard(i, gsp.score[i - 1].x, gsp.score[i - 1].y);
-        }
+        
         
     }
 
@@ -87,14 +112,14 @@ public class EndMenu : MonoBehaviour
         }
         else
         {
-            if (scoreboard.activeSelf)
-            {
-                scoreboard.SetActive(false);
-            }
-            else
-            {
-                scoreboard.SetActive(true);
-            }
+            //if (scoreboard.activeSelf)
+            //{
+            //    scoreboard.SetActive(false);
+            //}
+            //else
+            //{
+            //    scoreboard.SetActive(true);
+            //}
         }
 
     }
@@ -103,11 +128,12 @@ public class EndMenu : MonoBehaviour
     {
         scoreboard.SetActive(true);
         scoreCards[cardNumber].gameObject.SetActive(true);
-        scoreCardsText[cardNumber].text = totalScore.ToString();
+        //scoreCards[cardNumber].gameObject.transform.GetChild(0).GetComponent<Text>().text = "12";
+        scoreCards[cardNumber].gameObject.transform.GetChild(0).GetComponent<Text>().text = totalScore.ToString();
 
         yield return new WaitForSeconds(2f);
 
-        scoreboard.SetActive(true);
+        //scoreboard.SetActive(true);
 
     }
 
