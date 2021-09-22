@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
     public int redScore;
     public int yellowScore;
 
+    public Vector3[] score;
     //public int[] endScoreRed;
     //public int[] endScoreYellow;
 
@@ -879,6 +880,7 @@ public class GameManager : MonoBehaviour
         }
 
         rockBar.EndUpdate(yellowScore, redScore);
+        StartCoroutine(SaveGame());
 
         yield return StartCoroutine(WaitForClick());
 
@@ -978,8 +980,7 @@ public class GameManager : MonoBehaviour
         myFile.Add("Ai Yellow", aiTeamYellow);
         myFile.Add("Team", target);
         myFile.Add("Debug", debug);
-        myFile.Add("End " + endCurrent + " Red", redScore);
-        myFile.Add("End " + endCurrent + " Yellow", yellowScore);
+        myFile.Add("End " + endCurrent + " Score", new Vector2Int(redScore, yellowScore));
 
         for (int i = 1; i < rockTotal; i++)
         {

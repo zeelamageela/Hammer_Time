@@ -27,6 +27,8 @@ public class GameSettingsPersist : MonoBehaviour
     public bool third;
     public bool skip;
 
+    public Vector2Int[] score;
+
     EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
@@ -61,6 +63,7 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
 
+        score = new Vector2Int[endCurrent];
     }
 
     public void LoadSettings()
@@ -104,6 +107,15 @@ public class GameSettingsPersist : MonoBehaviour
 
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
+
+            score = new Vector2Int[endCurrent];
+
+            for (int i = 1; i < endCurrent; i++)
+            {
+                Vector2 tempScore = myFile.GetUnityVector2("End " + i + " Score");
+                score[i - 1] = Vector2Int.RoundToInt(tempScore);
+                Debug.Log("Score " + i + " - " + score[i].x + ", " + score[i].y);
+            }
         }
     }
 
@@ -126,6 +138,7 @@ public class GameSettingsPersist : MonoBehaviour
         third = gm.target;
         skip = gm.target;
 
+        score[endCurrent - 1] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }
