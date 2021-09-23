@@ -34,5 +34,7 @@ public class TournySettings : MonoBehaviour
     {
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadTournySettings();
+
+        SceneManager.LoadScene("Tourny_Home_1");
     }
 }
