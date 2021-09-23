@@ -26,6 +26,7 @@ public class GameSettingsPersist : MonoBehaviour
     public bool story;
     public bool third;
     public bool skip;
+    public string teamName;
 
     public Vector2Int[] score;
 
@@ -139,6 +140,21 @@ public class GameSettingsPersist : MonoBehaviour
         skip = gm.target;
 
         score[endCurrent - 2] = new Vector2Int(redScore, yellowScore);
+        //redScore = myFile.GetInt("Red Score");
+        //yellowScore = myFile.GetInt("Yellow Score");
+    }
+
+    public void LoadTournySettings()
+    {
+        TournySettings ts = GameObject.Find("TournySettings").GetComponent<TournySettings>();
+
+        Debug.Log("Loading Tourny Settings to GSP");
+        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
+
+        teamName = ts.teamName;
+        ends = ts.ends;
+        endCurrent = 0;
+        rocks = ts.rocks;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }
