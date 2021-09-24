@@ -19,6 +19,7 @@ public class GameHUD : MonoBehaviour
     public Image yellowHammerPNG;
     public GameObject panel;
     public bool scoreCheck;
+
     private void Start()
     {
         foreach (Image scoreCard in scoreCards)
