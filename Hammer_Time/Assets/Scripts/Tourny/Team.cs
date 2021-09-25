@@ -9,7 +9,7 @@ public class Team
 
     public int wins;
     public int loss;
-
+    public int rank;
     public string nextOpp;
 
     public int strength;

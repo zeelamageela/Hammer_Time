@@ -275,7 +275,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5992737, y: 2.0687256}
+  m_AnchoredPosition: {x: 1.46, y: 2.0687256}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &47171927
@@ -483,7 +483,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82332714}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1477,7 +1477,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 304490233}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -3135,7 +3135,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 929893588}
+      - m_Target: {fileID: 629813631}
         m_TargetAssemblyTypeName: TournyManager, Assembly-CSharp
         m_MethodName: Menu
         m_Mode: 1
@@ -3185,6 +3185,182 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 609418973}
   m_CullTransparentMesh: 1
+--- !u!1 &629813630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 629813632}
+  - component: {fileID: 629813631}
+  m_Layer: 0
+  m_Name: TournyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &629813631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629813630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bddc5f3afb3045009940fe7bb3916cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  standDisplay:
+  - name: {fileID: 507374685}
+    wins: {fileID: 120373259}
+    loss: {fileID: 1723614524}
+    nextOpp: {fileID: 1325196376}
+  - name: {fileID: 113953696}
+    wins: {fileID: 1029350152}
+    loss: {fileID: 440738577}
+    nextOpp: {fileID: 1099590841}
+  - name: {fileID: 1747463044}
+    wins: {fileID: 1116033226}
+    loss: {fileID: 2131184319}
+    nextOpp: {fileID: 1339763885}
+  - name: {fileID: 385411023}
+    wins: {fileID: 1048189061}
+    loss: {fileID: 500369306}
+    nextOpp: {fileID: 1686753073}
+  - name: {fileID: 1406476338}
+    wins: {fileID: 900702845}
+    loss: {fileID: 598172289}
+    nextOpp: {fileID: 1802718199}
+  - name: {fileID: 2031012669}
+    wins: {fileID: 532877483}
+    loss: {fileID: 704289718}
+    nextOpp: {fileID: 436491861}
+  brackDisplay:
+  - name: {fileID: 1579127897}
+    rank: {fileID: 1767853438}
+  - name: {fileID: 1430091665}
+    rank: {fileID: 1590931030}
+  - name: {fileID: 529436706}
+    rank: {fileID: 1879388477}
+  - name: {fileID: 154482633}
+    rank: {fileID: 1078781143}
+  - name: {fileID: 1275043289}
+    rank: {fileID: 1744863752}
+  - name: {fileID: 1168280171}
+    rank: {fileID: 435188851}
+  - name: {fileID: 1615113857}
+    rank: {fileID: 1221629500}
+  teams:
+  - name: Smith
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: Goodelhopper
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: Spaghetti
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: Bingko
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: Trubbz
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: Groob
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  drawFormat:
+  - game1: {x: 4, y: 2}
+    game2: {x: 0, y: 5}
+    game3: {x: 1, y: 3}
+  - game1: {x: 3, y: 0}
+    game2: {x: 1, y: 4}
+    game3: {x: 5, y: 2}
+  - game1: {x: 1, y: 5}
+    game2: {x: 2, y: 0}
+    game3: {x: 3, y: 4}
+  - game1: {x: 0, y: 4}
+    game2: {x: 5, y: 3}
+    game3: {x: 2, y: 1}
+  - game1: {x: 2, y: 3}
+    game2: {x: 0, y: 1}
+    game3: {x: 4, y: 5}
+  playoffTeams:
+  - name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  - name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+  standings: {fileID: 929893583}
+  playoffs: {fileID: 2126085867}
+  semi: {fileID: 1083157648}
+  final: {fileID: 374259406}
+  simButton: {fileID: 1440258398}
+  contButton: {fileID: 1035049663}
+  heading: {fileID: 738081973}
+  draw: 0
+  playoffRound: 0
+--- !u!4 &629813632
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 629813630}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.074184544, y: 0.779711, z: 1097.4083}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &635683867
 GameObject:
   m_ObjectHideFlags: 0
@@ -3703,7 +3879,7 @@ GameObject:
   m_Component:
   - component: {fileID: 713932965}
   m_Layer: 5
-  m_Name: First (1)
+  m_Name: Winner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3727,7 +3903,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.6017859, y: 0.33}
+  m_AnchoredPosition: {x: 1.08, y: 0.33}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &718984133
@@ -5197,7 +5373,6 @@ GameObject:
   - component: {fileID: 929893586}
   - component: {fileID: 929893585}
   - component: {fileID: 929893584}
-  - component: {fileID: 929893588}
   m_Layer: 5
   m_Name: Standings
   m_TagString: Untagged
@@ -5289,94 +5464,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &929893588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 929893583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bddc5f3afb3045009940fe7bb3916cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standDisplay:
-  - name: {fileID: 507374685}
-    wins: {fileID: 120373259}
-    loss: {fileID: 1723614524}
-    nextOpp: {fileID: 1325196376}
-  - name: {fileID: 113953696}
-    wins: {fileID: 1029350152}
-    loss: {fileID: 440738577}
-    nextOpp: {fileID: 1099590841}
-  - name: {fileID: 1747463044}
-    wins: {fileID: 1116033226}
-    loss: {fileID: 2131184319}
-    nextOpp: {fileID: 1339763885}
-  - name: {fileID: 385411023}
-    wins: {fileID: 1048189061}
-    loss: {fileID: 500369306}
-    nextOpp: {fileID: 1686753073}
-  - name: {fileID: 1406476338}
-    wins: {fileID: 900702845}
-    loss: {fileID: 598172289}
-    nextOpp: {fileID: 1802718199}
-  - name: {fileID: 2031012669}
-    wins: {fileID: 532877483}
-    loss: {fileID: 704289718}
-    nextOpp: {fileID: 436491861}
-  teams:
-  - name: Smith
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  - name: Goodelhopper
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  - name: Spaghetti
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  - name: Bingko
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  - name: Trubbz
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  - name: Groob
-    wins: 0
-    loss: 0
-    nextOpp: 
-    strength: 0
-  drawFormat:
-  - game1: {x: 4, y: 2}
-    game2: {x: 0, y: 5}
-    game3: {x: 1, y: 3}
-  - game1: {x: 3, y: 0}
-    game2: {x: 1, y: 4}
-    game3: {x: 5, y: 2}
-  - game1: {x: 1, y: 5}
-    game2: {x: 2, y: 0}
-    game3: {x: 3, y: 4}
-  - game1: {x: 0, y: 4}
-    game2: {x: 5, y: 3}
-    game3: {x: 2, y: 1}
-  - game1: {x: 2, y: 3}
-    game2: {x: 0, y: 1}
-    game3: {x: 4, y: 5}
-  simButton: {fileID: 1440258398}
-  contButton: {fileID: 1035049663}
-  heading: {fileID: 738081973}
-  draw: 0
 --- !u!1 &943531293
 GameObject:
   m_ObjectHideFlags: 0
@@ -6062,9 +6149,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 929893588}
+      - m_Target: {fileID: 629813631}
         m_TargetAssemblyTypeName: TournyManager, Assembly-CSharp
-        m_MethodName: SimDraw
+        m_MethodName: SetPlayoffs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6372,7 +6459,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1058023046}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -6531,7 +6618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1069689490}
   m_Layer: 5
-  m_Name: Second (1)
+  m_Name: FirstPlace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6555,7 +6642,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.0601861, y: 1.06}
+  m_AnchoredPosition: {x: -1.13, y: 1.06}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1078781140
@@ -6866,7 +6953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1095846292}
   m_Layer: 5
-  m_Name: Third (1)
+  m_Name: SemiWinner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6890,7 +6977,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.0601861, y: -0.34}
+  m_AnchoredPosition: {x: -1.13, y: -0.34}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1099590840
@@ -7445,7 +7532,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.0626984, y: -1.3308258}
+  m_AnchoredPosition: {x: -1.2, y: -1.3308258}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1190304161
@@ -7482,7 +7569,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.0626984, y: 0.04626465}
+  m_AnchoredPosition: {x: -1.2, y: 0.04626465}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1221629497
@@ -8066,7 +8153,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1363411432}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -8407,9 +8494,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 929893588}
+      - m_Target: {fileID: 629813631}
         m_TargetAssemblyTypeName: TournyManager, Assembly-CSharp
-        m_MethodName: SimDraw
+        m_MethodName: OnSim
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10718,6 +10805,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5992737, y: 0.6224365}
+  m_AnchoredPosition: {x: 1.46, y: 0.6224365}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
