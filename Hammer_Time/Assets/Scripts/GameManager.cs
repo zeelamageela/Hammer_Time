@@ -46,8 +46,6 @@ public class GameManager : MonoBehaviour
     public GameObject yellowSpin;
     public GameObject redSpin;
 
-    int redRocks_left;
-    int yellowRocks_left;
     public int redScore;
     public int yellowScore;
 
@@ -149,6 +147,8 @@ public class GameManager : MonoBehaviour
 
         gHUD.SetHammer(redHammer);
 
+        cm.ui.enabled = true;
+
         if (endCurrent > 1)
         {
             for (int i = 1; i < endCurrent; i++)
@@ -156,7 +156,6 @@ public class GameManager : MonoBehaviour
                 gHUD.Scoreboard(i, gsp.score[i - 1].x, gsp.score[i - 1].y);
             }
         }
-        cm.ui.enabled = true;
         if (gsp.loadGame)
         {
             StartCoroutine(LoadGame());
@@ -318,8 +317,6 @@ public class GameManager : MonoBehaviour
         rockList.Clear();
 
         endCurrent++;
-        redRocks_left = rocksPerTeam;
-        yellowRocks_left = rocksPerTeam;
         rockCurrent = 2 * (8 - rocksPerTeam);
         gHUD.SetHammer(redHammer);
 
@@ -389,7 +386,6 @@ public class GameManager : MonoBehaviour
     IEnumerator RedTurn()
     {
 
-        redRocks_left--;
         rm.inturn = false;
         
         GameObject redRock_1 = rockList[rockCurrent].rock;
@@ -514,8 +510,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator YellowTurn()
     {
-        yellowRocks_left--;
-
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
 
         rm.inturn = false;

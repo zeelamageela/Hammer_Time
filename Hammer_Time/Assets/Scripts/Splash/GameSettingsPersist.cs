@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TigerForge;
+using System;
+using Random = UnityEngine.Random;
 
 public class GameSettingsPersist : MonoBehaviour
 {
     GameSettings gs;
     StoryManager sm;
+    TournyManager tm;
 
     public bool redHammer;
     public int ends;
@@ -27,7 +30,9 @@ public class GameSettingsPersist : MonoBehaviour
     public bool third;
     public bool skip;
     public string teamName;
-
+    public int draw;
+    public int playoffRound;
+    public List<Team_List> teamList;
     public Vector2Int[] score;
 
     EasyFileSave myFile;
@@ -157,6 +162,30 @@ public class GameSettingsPersist : MonoBehaviour
         rocks = ts.rocks;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
+    }
+
+    public void TournySetup()
+    {
+
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            aiYellow = true;
+            aiRed = false;
+        }
+        else
+        {
+            aiRed = true;
+            aiYellow = false;
+        }
+
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            redHammer = true;
+        }
+        else
+        {
+            redHammer = false;
+        }
     }
 
     public void StoryGame()

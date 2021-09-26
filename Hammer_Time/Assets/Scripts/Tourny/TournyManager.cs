@@ -35,6 +35,8 @@ public class TournyManager : MonoBehaviour
     {
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 
+		draw = gsp.draw;
+		playoffRound = gsp.playoffRound;
 		teamList = new List<Team_List>();
 
 		Shuffle(teams);
@@ -42,11 +44,19 @@ public class TournyManager : MonoBehaviour
 		playerTeam = Random.Range(0, 6);
 		teams[playerTeam].name = gsp.teamName;
 
-		for (int i = 0; i < teams.Length; i++)
+		if (draw > 0)
 		{
-			teamList.Add(new Team_List(teams[i]));
-			teams[i].strength = Random.Range(0, 10);
-        }
+			teamList = gsp.teamList;
+		}
+		else
+        {
+			for (int i = 0; i < teams.Length; i++)
+			{
+				teamList.Add(new Team_List(teams[i]));
+				teams[i].strength = Random.Range(0, 10);
+			}
+		}
+		
 
 		SetDraw();
 		//PrintRows(teams);
@@ -160,6 +170,13 @@ public class TournyManager : MonoBehaviour
 			teams[drawFormat[draw].game3.x].nextOpp = teams[drawFormat[draw].game3.y].name;
 			teams[drawFormat[draw].game3.y].nextOpp = teams[drawFormat[draw].game3.x].name;
 		}
+		else if (draw == drawFormat.Length)
+        {
+			for (int i = 0; i < teamList.Count; i++)
+            {
+				teamList[i].team.nextOpp = "-----";
+            }
+        }
 
 		PrintRows();
     }
@@ -305,26 +322,7 @@ public class TournyManager : MonoBehaviour
 			game3Y.wins++;
 		}
 
-		if (draw < drawFormat.Length - 1)
-		{
-			Debug.Log("Draw number " + draw);
-			yield return new WaitForSeconds(0.1f);
-			heading.text = "After Draw " + (draw + 1);
-			SetDraw();
-			draw++;
-		}
-		else if (draw == drawFormat.Length - 1)
-		{
-			//Debug.Log("Final End");
-			heading.text = "End of Draw";
-			SetDraw();
-			simButton.gameObject.SetActive(false);
-			contButton.gameObject.SetActive(true);
-
-		}
-		else
-			heading.text = "End of Round Robin";
-
+		yield return StartCoroutine(Scoring());
 	}
 
 	IEnumerator SimPlayoff()
@@ -376,6 +374,35 @@ public class TournyManager : MonoBehaviour
 		//SetPlayoffs();
 	}
 
+	IEnumerator Scoring()
+    {
+
+		if (draw < drawFormat.Length - 1)
+		{
+			draw++;
+			Debug.Log("Draw number " + draw);
+			yield return new WaitForSeconds(0.1f);
+			heading.text = "Draw " + (draw + 1);
+			SetDraw();
+		}
+		else if (draw == drawFormat.Length - 1)
+		{
+			draw++;
+			//Debug.Log("Final End");
+			heading.text = "End of Draw";
+			SetDraw();
+			simButton.gameObject.SetActive(false);
+			contButton.gameObject.SetActive(true);
+
+		}
+		else
+			heading.text = "End of Round Robin";
+	}
+	public void PlayDraw()
+    {
+		gsp.TournySetup();
+		SceneManager.LoadScene("TournyGame");
+    }
 	public void Menu()
     {
 		SceneManager.LoadScene("SplashMenu");
