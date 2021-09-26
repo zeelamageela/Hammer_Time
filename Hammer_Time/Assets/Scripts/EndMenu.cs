@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class EndMenu : MonoBehaviour
 {
     GameSettingsPersist gsp;
+    public Text endText;
     public Text endNumber;
     public Text redScore;
     public Text yellowScore;
@@ -39,16 +40,16 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
-            if (gsp.endCurrent >= gsp.ends && gsp.redScore != gsp.yellowScore)
+            if (gsp.endCurrent >= gsp.ends)
             {
-                endNumber.text = "Game Over!";
+                if (gsp.redScore != gsp.yellowScore)
+                    endText.text = "Game Over!";
+
+                else
+                    endText.text = "Extra End";
             }
             else
             {
-                endNumber.text = gsp.endCurrent.ToString();
-                redScore.text = gsp.redScore.ToString();
-                yellowScore.text = gsp.yellowScore.ToString();
-
                 if (gsp.redHammer)
                 {
                     redHammerPNG.SetActive(true);
@@ -60,6 +61,10 @@ public class EndMenu : MonoBehaviour
                     sbYellowHammerPNG.SetActive(true);
                 }
             }
+
+            endNumber.text = gsp.endCurrent.ToString();
+            redScore.text = gsp.redScore.ToString();
+            yellowScore.text = gsp.yellowScore.ToString();
 
             if (gsp.aiYellow)
             {
@@ -147,6 +152,7 @@ public class EndMenu : MonoBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
+
 
     public void Continue()
     {

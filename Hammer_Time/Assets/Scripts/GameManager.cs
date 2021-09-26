@@ -46,7 +46,9 @@ public class GameManager : MonoBehaviour
     public GameObject yellowSpin;
     public GameObject redSpin;
 
+    public string redTeamName;
     public int redScore;
+    public string yellowTeamName;
     public int yellowScore;
 
     public Vector3[] score;
@@ -127,6 +129,9 @@ public class GameManager : MonoBehaviour
             yellowScore = gsp.yellowScore;
             cm.ui.enabled = false;
         }
+
+        redTeamName = gsp.redTeamName;
+        yellowTeamName = gsp.yellowTeamName;
 
         debug = gsp.debug;
 
@@ -243,7 +248,8 @@ public class GameManager : MonoBehaviour
                 Rock_Info yellowRock_info = yellowRock_go.GetComponent<Rock_Info>();
                 yellowRock_info.rockNumber = k;
                 yellowRock_info.rockIndex = i - 1;
-                yellowRock_go.name = yellowRock_info.teamName + " " + yellowRock_info.rockNumber;
+                yellowRock_info.teamName = yellowTeamName;
+                yellowRock_go.name = yellowTeamName + " " + yellowRock_info.rockNumber;
                 yellowRock_go.GetComponent<Rock_Flick>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Release>().enabled = false;
                 yellowRock_go.GetComponent<Rock_Force>().enabled = false;
@@ -279,7 +285,9 @@ public class GameManager : MonoBehaviour
                 Rock_Info redRock_info = redRock_go.GetComponent<Rock_Info>();
                 redRock_info.rockNumber = k;
                 redRock_info.rockIndex = i - 1;
-                redRock_go.name = redRock_info.teamName + " " + redRock_info.rockNumber;
+                redRock_info.teamName = redTeamName;
+                redRock_go.name = redTeamName + " " + redRock_info.rockNumber;
+
                 redRock_go.GetComponent<CircleCollider2D>().enabled = false;
                 redRock_go.GetComponent<Rock_Flick>().enabled = false;
                 redRock_go.GetComponent<Rock_Release>().enabled = false;
@@ -290,11 +298,6 @@ public class GameManager : MonoBehaviour
             //rockList.Sort();
         }
 
-        if (mixed)
-        {
-
-        }
-        
 
         //scoreboard.SetActive(false);
 
@@ -403,7 +406,7 @@ public class GameManager : MonoBehaviour
 
         if (aiTeamRed)
         {
-            gHUD.Message("AI Turn");
+            gHUD.Message(redTeamName + " Turn");
 
             yield return new WaitForSeconds(1f);
             aim.OnShot(rockCurrent);
@@ -525,7 +528,7 @@ public class GameManager : MonoBehaviour
         }
         if (aiTeamYellow)
         {
-            gHUD.Message("AI Turn");
+            gHUD.Message(yellowTeamName + " Turn");
 
             if (debug)
             {
@@ -835,21 +838,21 @@ public class GameManager : MonoBehaviour
 
             if (redHammer)
             {
-                gHUD.ScoringUI(redRock.teamName, winningTeamName, houseScore);
+                gHUD.ScoringUI(redTeamName, winningTeamName, houseScore);
             }
             else
             {
-                gHUD.ScoringUI(yellowRock.teamName, winningTeamName, houseScore);
+                gHUD.ScoringUI(yellowTeamName, winningTeamName, houseScore);
             }
 
-            if (winningTeamName == redRock.teamName)
+            if (winningTeamName == redTeamName)
             {
                 redScore = redScore + houseScore;
                 gHUD.Scoreboard(endCurrent, redScore, 0);
                 redHammer = false;
                 gHUD.SetHammer(redHammer);
             }
-            else if (winningTeamName == yellowRock.teamName)
+            else if (winningTeamName == yellowTeamName)
             {
                 yellowScore = yellowScore + houseScore;
                 gHUD.Scoreboard(endCurrent, 0, yellowScore);
@@ -869,14 +872,14 @@ public class GameManager : MonoBehaviour
             {
                 redHammer = true;
                 gHUD.Scoreboard(endCurrent, 0, 0);
-                gHUD.ScoringUI(redRock.teamName, " ", 0);
+                gHUD.ScoringUI(redTeamName, " ", 0);
                 gHUD.SetHammer(redHammer);
             }
             else
             {
                 redHammer = false;
                 gHUD.Scoreboard(endCurrent, 0, 0);
-                gHUD.ScoringUI(yellowRock.teamName, " ", 0);
+                gHUD.ScoringUI(yellowTeamName, " ", 0);
                 gHUD.SetHammer(redHammer);
             }
         }
@@ -908,7 +911,10 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(SaveGame());
                 //yield return StartCoroutine(SaveGame());
                 yield return new WaitForEndOfFrame();
-                SceneManager.LoadScene("End_Menu_1");
+                if (gsp.tourny)
+                    SceneManager.LoadScene("End_menu_Tourny_1");
+                else
+                    SceneManager.LoadScene("End_Menu_1");
             }
                 //StartCoroutine(ResetGame());
         }
@@ -921,7 +927,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator EndOfGame()
     {
-        gHUD.EndOfGame(redScore, redRock.teamName, yellowScore, yellowRock.teamName);
+        gHUD.EndOfGame(redScore, redTeamName, yellowScore, yellowTeamName);
         
         yield return new WaitForSeconds(2f);
 

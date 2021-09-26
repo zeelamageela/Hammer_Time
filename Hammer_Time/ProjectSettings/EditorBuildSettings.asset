@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TournyGame.unity
     guid: d9c4cbea4613b2844845d49a2f133d7e
+  - enabled: 1
+    path: Assets/Scenes/End_Menu_Tourny_1.unity
+    guid: 53a9cd16a0d4caa4dab3e4fb02241e93
   m_configObjects: {}

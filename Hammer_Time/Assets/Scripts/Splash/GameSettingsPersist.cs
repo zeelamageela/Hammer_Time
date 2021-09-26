@@ -26,15 +26,19 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
+    public bool tourny;
     public bool story;
     public bool third;
     public bool skip;
     public string teamName;
+    public string redTeamName;
+    public string yellowTeamName;
     public int draw;
     public int playoffRound;
     public List<Team_List> teamList;
     public Vector2Int[] score;
 
+    public Team playerTeam;
     EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
@@ -88,6 +92,8 @@ public class GameSettingsPersist : MonoBehaviour
         mixed = gs.mixed;
         skip = gs.team;
         debug = gs.debug;
+        yellowTeamName = gs.yellowTeamName;
+        redTeamName = gs.redTeamName;
     }
 
     public void LoadGame()
@@ -166,16 +172,26 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournySetup()
     {
-
+        TournyManager tm = GameObject.Find("TournyManager").GetComponent<TournyManager>();
+        tourny = true;
+        draw = tm.draw;
+        playoffRound = tm.playoffRound;
+        playerTeam = tm.teams[tm.playerTeam];
+        teamList = tm.teamList;
+        endCurrent = 1;
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;
             aiRed = false;
+            yellowTeamName = playerTeam.nextOpp;
+            redTeamName = playerTeam.name;
         }
         else
         {
             aiRed = true;
             aiYellow = false;
+            yellowTeamName = playerTeam.name;
+            redTeamName = playerTeam.nextOpp;
         }
 
         if (Random.Range(0f, 1f) < 0.5f)

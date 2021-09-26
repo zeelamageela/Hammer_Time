@@ -11,6 +11,8 @@ public class GameSettings : MonoBehaviour
     public Slider rockSlider;
     public Text endText;
     public Text rockText;
+    public InputField redInput;
+    public InputField yellowInput;
     public OptionsMenu om;
     public Toggle aiRedTog;
     public Toggle aiYellowTog;
@@ -18,6 +20,8 @@ public class GameSettings : MonoBehaviour
     public Toggle yellowHammerTog;
     public Toggle dbTog;
 
+    public string redTeamName;
+    public string yellowTeamName;
     public int ends;
     public int rocks;
     public float volume;
@@ -56,9 +60,16 @@ public class GameSettings : MonoBehaviour
 
 
         if (aiYellowTog.isOn == false)
+        {
             aiYellow = false;
+            yellowInput.interactable = true;
+        }
         else
+        {
             aiYellow = true;
+            yellowInput.text = "AI";
+            yellowInput.interactable = false;
+        }
 
         endText.text = ends.ToString();
         rockText.text = rocks.ToString();
@@ -70,7 +81,8 @@ public class GameSettings : MonoBehaviour
         }
         else debug = true;
 
-        
+        redTeamName = redInput.text;
+        yellowTeamName = yellowInput.text;
     }
 
     public void PlayGame()

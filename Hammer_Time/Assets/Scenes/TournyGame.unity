@@ -1554,7 +1554,9 @@ MonoBehaviour:
   launchCollider: {fileID: 448747566}
   yellowSpin: {fileID: 272161325}
   redSpin: {fileID: 919697563}
+  redTeamName: 
   redScore: 0
+  yellowTeamName: 
   yellowScore: 0
   score: []
   lg: {fileID: 197219302}
@@ -3214,10 +3216,23 @@ MonoBehaviour:
   endCurrent: 1
   yellowScore: 0
   redScore: 0
+  tourny: 0
   story: 0
   third: 0
   skip: 0
+  teamName: 
+  redTeamName: 
+  yellowTeamName: 
+  draw: 0
+  playoffRound: 0
   score: []
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
 --- !u!4 &461766041
 Transform:
   m_ObjectHideFlags: 0
@@ -9946,7 +9961,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228243345}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 

@@ -3075,9 +3075,18 @@ MonoBehaviour:
   third: 0
   skip: 0
   teamName: BingBangBoomBaby
+  redTeamName: 
+  yellowTeamName: 
   draw: 0
   playoffRound: 0
   score: []
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
 --- !u!4 &450587699
 Transform:
   m_ObjectHideFlags: 0
@@ -4441,6 +4450,7 @@ MonoBehaviour:
   vs: {fileID: 386829495}
   simButton: {fileID: 1440258398}
   contButton: {fileID: 1035049663}
+  playButton: {fileID: 1932200739}
   heading: {fileID: 698594197}
   scrollBar: {fileID: 1861217573}
   draw: 0

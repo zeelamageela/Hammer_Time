@@ -23,6 +23,7 @@ public class TournyManager : MonoBehaviour
 	public GameObject vs;
 	public Button simButton;
 	public Button contButton;
+	public Button playButton;
 	public Text heading;
 	public Scrollbar scrollBar;
 	GameSettingsPersist gsp;
@@ -35,28 +36,28 @@ public class TournyManager : MonoBehaviour
     {
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 
-		draw = gsp.draw;
-		playoffRound = gsp.playoffRound;
 		teamList = new List<Team_List>();
 
-		Shuffle(teams);
 
-		playerTeam = Random.Range(0, 6);
-		teams[playerTeam].name = gsp.teamName;
-
-		if (draw > 0)
+		if (gsp.draw > 0)
 		{
+			draw = gsp.draw;
+			playoffRound = gsp.playoffRound;
 			teamList = gsp.teamList;
 		}
 		else
-        {
+		{
+			Shuffle(teams);
+
+			playerTeam = Random.Range(0, 6);
+			teams[playerTeam].name = gsp.teamName;
+
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teamList.Add(new Team_List(teams[i]));
 				teams[i].strength = Random.Range(0, 10);
 			}
 		}
-		
 
 		SetDraw();
 		//PrintRows(teams);
@@ -209,6 +210,7 @@ public class TournyManager : MonoBehaviour
 						break;
 					default:
 						vs.SetActive(false);
+						playButton.gameObject.SetActive(false);
 						break;
                 }
 
@@ -241,7 +243,10 @@ public class TournyManager : MonoBehaviour
 					vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
 				}
 				else
+				{
 					vs.SetActive(false);
+					playButton.gameObject.SetActive(false);
+				}
 
 				StartCoroutine(RefreshPlayoffPanel());
 
@@ -274,7 +279,6 @@ public class TournyManager : MonoBehaviour
         {
 			StartCoroutine(SimDraw());
         }
-		
 	}
 
 	IEnumerator SimDraw()
@@ -289,6 +293,7 @@ public class TournyManager : MonoBehaviour
 		Team game3X = teams[drawFormat[draw].game3.x];
 		Team game3Y = teams[drawFormat[draw].game3.y];
 
+		
 		if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
 		{
 			game1Y.loss++;
@@ -342,6 +347,7 @@ public class TournyManager : MonoBehaviour
 					playoffTeams[3] = semiY;
 				}
 
+				semiWinner.SetActive(true);
 				brackDisplay[3].rank.text = playoffTeams[3].rank.ToString();
 				brackDisplay[3].name.text = playoffTeams[3].name;
 				StartCoroutine(RefreshPlayoffPanel());
@@ -369,7 +375,7 @@ public class TournyManager : MonoBehaviour
 				break;
 
 		}
-
+		SetPlayoffs();
 		yield break;
 		//SetPlayoffs();
 	}
@@ -401,7 +407,7 @@ public class TournyManager : MonoBehaviour
 	public void PlayDraw()
     {
 		gsp.TournySetup();
-		SceneManager.LoadScene("TournyGame");
+		SceneManager.LoadScene("End_Menu_Tourny_1");
     }
 	public void Menu()
     {
