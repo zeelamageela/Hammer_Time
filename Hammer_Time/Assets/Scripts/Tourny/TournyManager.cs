@@ -10,6 +10,7 @@ public class TournyManager : MonoBehaviour
 {
 	public StandingDisplay[] standDisplay;
 	public BracketDisplay[] brackDisplay;
+	public VSDisplay[] vsDisplay;
 	public Team[] teams;
 	public DrawFormat[] drawFormat;
 	public Team[] playoffTeams;
@@ -17,16 +18,18 @@ public class TournyManager : MonoBehaviour
 
 	public GameObject standings;
 	public GameObject playoffs;
-	public GameObject semi;
-	public GameObject final;
-
+	public GameObject semiWinner;
+	public GameObject finalWinner;
+	public GameObject vs;
 	public Button simButton;
 	public Button contButton;
 	public Text heading;
+	public Scrollbar scrollBar;
 	GameSettingsPersist gsp;
 
 	public int draw;
 	public int playoffRound;
+	public int playerTeam;
 	// Start is called before the first frame update
 	void Start()
     {
@@ -36,7 +39,7 @@ public class TournyManager : MonoBehaviour
 
 		Shuffle(teams);
 
-		int playerTeam = Random.Range(0, 6);
+		playerTeam = Random.Range(0, 6);
 		teams[playerTeam].name = gsp.teamName;
 
 		for (int i = 0; i < teams.Length; i++)
@@ -60,11 +63,15 @@ public class TournyManager : MonoBehaviour
 			standDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
 			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
 		}
-		//panel.GetComponent<ContentSizeFitter>().enabled = false;
 
-		//yield return new WaitForEndOfFrame();
-		//panel.GetComponent<ContentSizeFitter>().enabled = true;
-	}
+		for (int i = 0; i < vsDisplay.Length; i++)
+		{
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+    }
 
 	IEnumerator RefreshPlayoffPanel()
 	{
@@ -75,10 +82,14 @@ public class TournyManager : MonoBehaviour
 			yield return new WaitForEndOfFrame();
 			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
 		}
-		//panel.GetComponent<ContentSizeFitter>().enabled = false;
 
-		//yield return new WaitForEndOfFrame();
-		//panel.GetComponent<ContentSizeFitter>().enabled = true;
+		for (int i = 0; i < vsDisplay.Length; i++)
+		{
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		}
 	}
 
 	void Shuffle(Team[] a)
@@ -107,6 +118,7 @@ public class TournyManager : MonoBehaviour
 
 	void PrintRows()
 	{
+		int tempRank;
 		teamList.Sort();
 
 		for (int i = 0; i < teamList.Count; i++)
@@ -118,6 +130,18 @@ public class TournyManager : MonoBehaviour
 			teamList[i].team.rank = i + 1;
 		}
 
+		vsDisplay[0].name.text = teams[playerTeam].name;
+		vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
+
+		for (int i = 0; i < teamList.Count; i++)
+        {
+			if (teams[playerTeam].nextOpp == teamList[i].team.name)
+            {
+				tempRank = i + 1;
+				vsDisplay[1].name.text = teamList[i].team.name;
+				vsDisplay[1].rank.text = tempRank.ToString();
+            }
+        }
 		StartCoroutine(RefreshPanel());
     }
 
@@ -152,11 +176,28 @@ public class TournyManager : MonoBehaviour
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 				}
+				switch (teams[playerTeam].rank)
+                {
+					case 1:
+						vsDisplay[1].name.text = "BYE TO FINALS";
+						vsDisplay[1].rank.text = "-";
+						break;
+					case 2:
+						vsDisplay[1].name.text = playoffTeams[2].name;
+						vsDisplay[1].rank.text = playoffTeams[2].rank.ToString();
+						break;
+					case 3:
+						vsDisplay[1].name.text = playoffTeams[1].name;
+						vsDisplay[1].rank.text = playoffTeams[1].rank.ToString();
+						break;
+					default:
+						vs.SetActive(false);
+						break;
+                }
 
+				scrollBar.value = 0;
 				StartCoroutine(RefreshPlayoffPanel());
 
-				semi.SetActive(true);
-				final.SetActive(false);
 				standings.SetActive(false);
 				playoffs.SetActive(true);
 				playoffRound++;
@@ -167,16 +208,25 @@ public class TournyManager : MonoBehaviour
 
 			case 2:
 				heading.text = "Finals";
-				brackDisplay[4].name.text = playoffTeams[0].name;
-				brackDisplay[4].rank.text = playoffTeams[0].rank.ToString();
+				semiWinner.SetActive(true);
+				scrollBar.value = 0.5f;
+				brackDisplay[3].name.text = playoffTeams[3].name;
+				brackDisplay[3].rank.text = playoffTeams[3].rank.ToString();
 
-				brackDisplay[5].name.text = playoffTeams[3].name;
-				brackDisplay[5].rank.text = playoffTeams[3].rank.ToString();
+				if (playoffTeams[0].name == teams[playerTeam].name)
+				{
+					vsDisplay[1].name.text = playoffTeams[3].name;
+					vsDisplay[1].rank.text = playoffTeams[3].rank.ToString();
+				}
+				else if (playoffTeams[3].name == teams[playerTeam].name)
+				{
+					vsDisplay[1].name.text = playoffTeams[0].name;
+					vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
+				}
+				else
+					vs.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				semi.SetActive(false);
-				final.SetActive(true);
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
@@ -184,8 +234,10 @@ public class TournyManager : MonoBehaviour
 
 			case 3:
 				heading.text = "Winner";
-				brackDisplay[6].name.text = playoffTeams[4].name;
-				brackDisplay[6].rank.text = playoffTeams[4].rank.ToString();
+				scrollBar.value = 1;
+				finalWinner.SetActive(true);
+				brackDisplay[4].name.text = playoffTeams[4].name;
+				brackDisplay[4].rank.text = playoffTeams[4].rank.ToString();
 
 				StartCoroutine(RefreshPlayoffPanel());
 
@@ -197,14 +249,15 @@ public class TournyManager : MonoBehaviour
 
 	public void OnSim()
     {
-		if (draw < drawFormat.Length)
+		if (playoffRound > 0)
+		{
+			StartCoroutine(SimPlayoff());
+		}
+		else if (draw < drawFormat.Length)
         {
 			StartCoroutine(SimDraw());
         }
-		if (playoffRound > 0)
-        {
-			StartCoroutine(SimPlayoff());
-        }
+		
 	}
 
 	IEnumerator SimDraw()
