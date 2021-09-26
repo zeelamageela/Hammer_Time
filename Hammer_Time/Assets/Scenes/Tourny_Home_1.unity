@@ -3058,8 +3058,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   redHammer: 0
-  ends: 0
-  rocks: 0
+  ends: 2
+  rocks: 1
   volume: 0
   tutorial: 0
   loadGame: 0
@@ -3075,7 +3075,7 @@ MonoBehaviour:
   third: 0
   skip: 0
   teamName: BingBangBoomBaby
-  draw: 2
+  draw: 0
   playoffRound: 0
   score: []
 --- !u!4 &450587699

@@ -166,6 +166,7 @@ public class GameHUD : MonoBehaviour
 
         StartCoroutine(ClickDisplay());
     }
+
     public void Scoreboard(int endNumber, int redScore, int yellowScore)
     {
         int cardNumber;
