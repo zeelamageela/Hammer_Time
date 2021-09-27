@@ -31,6 +31,7 @@ public class TournyManager : MonoBehaviour
 	public int draw;
 	public int playoffRound;
 	public int playerTeam;
+	public int oppTeam;
 	// Start is called before the first frame update
 	void Start()
     {
@@ -38,25 +39,64 @@ public class TournyManager : MonoBehaviour
 
 		teamList = new List<Team_List>();
 
-
 		if (gsp.draw > 0)
 		{
 			draw = gsp.draw;
 			playoffRound = gsp.playoffRound;
 			teamList = gsp.teamList;
+			teams = gsp.teams;
+
+			for (int i = 0; i < teams.Length; i++)
+			{
+				if (teams[i].name == gsp.playerTeam.nextOpp)
+					oppTeam = i;
+				if (teams[i].name == gsp.playerTeam.name)
+					playerTeam = i;
+			}
+
+			Debug.Log("OppTeam is " + oppTeam);
+			if (gsp.playerTeam.name == gsp.redTeamName)
+			{
+				if (gsp.redScore > gsp.yellowScore)
+				{
+					teams[oppTeam].loss++;
+					teams[playerTeam].wins++;
+				}
+				else
+				{
+					teams[oppTeam].wins++;
+					teams[playerTeam].loss++;
+				}
+			}
+			else
+			{
+				if (gsp.redScore < gsp.yellowScore)
+				{
+					teams[oppTeam].loss++;
+					teams[playerTeam].wins++;
+				}
+				else
+				{
+					teams[oppTeam].wins++;
+					teams[playerTeam].loss++;
+				}
+			}
+
+			StartCoroutine(SimRestDraw());
 		}
 		else
 		{
 			Shuffle(teams);
-
-			playerTeam = Random.Range(0, 6);
-			teams[playerTeam].name = gsp.teamName;
 
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teamList.Add(new Team_List(teams[i]));
 				teams[i].strength = Random.Range(0, 10);
 			}
+
+			playerTeam = Random.Range(0, 6);
+			teamList[playerTeam].team.name = gsp.teamName;
+
 		}
 
 		SetDraw();
@@ -179,6 +219,12 @@ public class TournyManager : MonoBehaviour
             }
         }
 
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (teams[i].name == teams[playerTeam].nextOpp)
+				oppTeam = i;
+		}
+
 		PrintRows();
     }
 
@@ -283,50 +329,121 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator SimDraw()
     {
+		Team[] games = new Team[6];
 		//SetDraw();
-		Team game1X = teams[drawFormat[draw].game1.x];
-		Team game1Y = teams[drawFormat[draw].game1.y];
+		games[0] = teams[drawFormat[draw].game1.x];
 
-		Team game2X = teams[drawFormat[draw].game2.x];
-		Team game2Y = teams[drawFormat[draw].game2.y];
+		games[1] = teams[drawFormat[draw].game1.y];
 
-		Team game3X = teams[drawFormat[draw].game3.x];
-		Team game3Y = teams[drawFormat[draw].game3.y];
+		games[2] = teams[drawFormat[draw].game2.x];
+		games[3] = teams[drawFormat[draw].game2.y];
 
+		games[4] = teams[drawFormat[draw].game3.x];
+		games[5] = teams[drawFormat[draw].game3.y];
+
+		for (int i = 0; i < games.Length; i++)
+		{
+			if (i % 2 == 0)
+			{
+				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
+				{
+					//if (i + 1 != playerTeam & i + 1 != oppTeam)
+						games[i + 1].loss++;
+					//if (i != playerTeam & i != oppTeam)
+						games[i].wins++;
+				}
+				else
+				{
+					//if (i != playerTeam & i != oppTeam)
+						games[i].loss++;
+					//if (i + 1 != playerTeam & i + 1 != oppTeam)
+						games[i + 1].wins++;
+				}
+			}
+		}
+		//SetDraw();
+		//Team game1X = teams[drawFormat[draw].game1.x];
+		//Team game1Y = teams[drawFormat[draw].game1.y];
+
+		//Team game2X = teams[drawFormat[draw].game2.x];
+		//Team game2Y = teams[drawFormat[draw].game2.y];
+
+		//Team game3X = teams[drawFormat[draw].game3.x];
+		//Team game3Y = teams[drawFormat[draw].game3.y];
+
+
+		//if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
+		//{
+		//	game1Y.loss++;
+		//	game1X.wins++;
+		//}
+		//else
+		//{
+		//	game1X.loss++;
+		//	game1Y.wins++;
+		//}
+
+		//if (Random.Range(0, game2X.strength) > Random.Range(0, game2Y.strength))
+		//{
+		//	game2Y.loss++;
+		//	game2X.wins++;
+		//}
+		//else
+		//{
+		//	game2X.loss++;
+		//	game2Y.wins++;
+		//}
+
+		//if (Random.Range(0, game3X.strength) > Random.Range(0, game3Y.strength))
+		//{
+		//	game3Y.loss++;
+		//	game3X.wins++;
+		//}
+		//else
+		//{
+		//	game3X.loss++;
+		//	game3Y.wins++;
+		//}
+
+		draw++;
+		yield return StartCoroutine(Scoring());
+	}
+
+	IEnumerator SimRestDraw()
+	{
+		Team[] games = new Team[6];
+		//SetDraw();
+		games[0] = teams[drawFormat[draw].game1.x];
+
+		games[1] = teams[drawFormat[draw].game1.y];
+
+		games[2] = teams[drawFormat[draw].game2.x];
+		games[3] = teams[drawFormat[draw].game2.y];
+
+		games[4] = teams[drawFormat[draw].game3.x];
+		games[5] = teams[drawFormat[draw].game3.y];
+
+		for (int i = 0; i < games.Length; i++)
+        {
+			if (i % 2 == 0)
+			{
+				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
+				{
+					if (i + 1 != playerTeam & i + 1 != oppTeam)
+						games[i + 1].loss++;
+					if (i != playerTeam & i != oppTeam)
+						games[i].wins++;
+				}
+				else
+				{
+					if (i != playerTeam & i != oppTeam)
+						games[i].loss++;
+					if (i + 1 != playerTeam & i + 1 != oppTeam)
+						games[i + 1].wins++;
+				}
+			}
+        }
 		
-		if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
-		{
-			game1Y.loss++;
-			game1X.wins++;
-		}
-		else
-		{
-			game1X.loss++;
-			game1Y.wins++;
-		}
-
-		if (Random.Range(0, game2X.strength) > Random.Range(0, game2Y.strength))
-		{
-			game2Y.loss++;
-			game2X.wins++;
-		}
-		else
-		{
-			game2X.loss++;
-			game2Y.wins++;
-		}
-
-		if (Random.Range(0, game3X.strength) > Random.Range(0, game3Y.strength))
-		{
-			game3Y.loss++;
-			game3X.wins++;
-		}
-		else
-		{
-			game3X.loss++;
-			game3Y.wins++;
-		}
-
 		yield return StartCoroutine(Scoring());
 	}
 
@@ -383,17 +500,15 @@ public class TournyManager : MonoBehaviour
 	IEnumerator Scoring()
     {
 
-		if (draw < drawFormat.Length - 1)
+		if (draw < drawFormat.Length)
 		{
-			draw++;
 			Debug.Log("Draw number " + draw);
 			yield return new WaitForSeconds(0.1f);
 			heading.text = "Draw " + (draw + 1);
 			SetDraw();
 		}
-		else if (draw == drawFormat.Length - 1)
+		else if (draw == drawFormat.Length)
 		{
-			draw++;
 			//Debug.Log("Final End");
 			heading.text = "End of Draw";
 			SetDraw();

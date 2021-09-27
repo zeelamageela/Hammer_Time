@@ -426,7 +426,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 366774561}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 359, y: 153, z: -21924}
+  m_LocalPosition: {x: 359, y: -237, z: -21924}
   m_LocalScale: {x: 150, y: 150, z: 150}
   m_Children: []
   m_Father: {fileID: 929893587}
@@ -820,7 +820,7 @@ MonoBehaviour:
   yellowHammerPNG: {fileID: 366774561}
   sbRedHammerPNG: {fileID: 539008060}
   sbYellowHammerPNG: {fileID: 1095584682}
-  contScene: TournyGame
+  contScene: Tourny_Home_1
   scoreboard: {fileID: 1493899385}
   scoreCards:
   - {fileID: 935361529}
@@ -1172,7 +1172,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1177915368
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1234,6 +1234,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1177915367}
   m_CullTransparentMesh: 1
+--- !u!1 &1193469359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1193469361}
+  - component: {fileID: 1193469360}
+  m_Layer: 0
+  m_Name: GameSettingsPersist
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1193469360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193469359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c58c93d6a20f394385e30a934717332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  redHammer: 0
+  ends: 2
+  rocks: 8
+  volume: 0
+  tutorial: 0
+  loadGame: 0
+  aiYellow: 0
+  aiRed: 0
+  debug: 0
+  mixed: 0
+  rockCurrent: 0
+  endCurrent: 3
+  yellowScore: 4
+  redScore: 2
+  tourny: 0
+  story: 0
+  third: 0
+  skip: 0
+  teamName: 
+  redTeamName: 
+  yellowTeamName: 
+  draw: 0
+  playoffRound: 0
+  teams: []
+  playerTeamIndex: 0
+  score: []
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+--- !u!4 &1193469361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193469359}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1262756014
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1473,7 +1549,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1413880964}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -359, y: 153, z: -21924}
+  m_LocalPosition: {x: -359, y: -236.99997, z: -21924}
   m_LocalScale: {x: 150, y: 150, z: 150}
   m_Children: []
   m_Father: {fileID: 929893587}
@@ -2352,7 +2428,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: END
+  m_Text: Game Over
 --- !u!222 &2083261970
 CanvasRenderer:
   m_ObjectHideFlags: 0

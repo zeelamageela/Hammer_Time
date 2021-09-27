@@ -931,7 +931,15 @@ public class GameManager : MonoBehaviour
         
         yield return new WaitForSeconds(2f);
 
-        SceneManager.LoadScene("End_Menu_1");
+        if (gsp.tourny)
+        {
+            endCurrent++;
+
+            gsp.LoadFromGM();
+            SceneManager.LoadScene("End_Menu_Tourny_FinalScore");
+        }
+        else
+            SceneManager.LoadScene("End_Menu_1");
         //if (redScore == yellowScore)
         //{
         //    Debug.Log("Game is tied");

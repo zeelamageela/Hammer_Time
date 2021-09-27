@@ -40,7 +40,7 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
-            if (gsp.endCurrent >= gsp.ends)
+            if (gsp.endCurrent > gsp.ends)
             {
                 if (gsp.redScore != gsp.yellowScore)
                     endText.text = "Game Over!";
@@ -156,6 +156,10 @@ public class EndMenu : MonoBehaviour
 
     public void Continue()
     {
+        if (gsp.tourny && gsp.endCurrent > gsp.ends)
+        {
+            gsp.draw++;
+        }
         SceneManager.LoadScene(contScene);
     }
 }

@@ -35,7 +35,10 @@ public class GameSettingsPersist : MonoBehaviour
     public string yellowTeamName;
     public int draw;
     public int playoffRound;
+
     public List<Team_List> teamList;
+    public Team[] teams;
+    public int playerTeamIndex;
     public Vector2Int[] score;
 
     public Team playerTeam;
@@ -176,9 +179,12 @@ public class GameSettingsPersist : MonoBehaviour
         tourny = true;
         draw = tm.draw;
         playoffRound = tm.playoffRound;
-        playerTeam = tm.teams[tm.playerTeam];
+        playerTeamIndex = tm.playerTeam;
         teamList = tm.teamList;
+        teams = tm.teams;
+        playerTeam = teams[playerTeamIndex];
         endCurrent = 1;
+
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;

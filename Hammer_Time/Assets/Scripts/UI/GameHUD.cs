@@ -109,6 +109,7 @@ public class GameHUD : MonoBehaviour
         yield return new WaitForEndOfFrame();
         panel.GetComponent<ContentSizeFitter>().enabled = true;
     }
+
     public void CheckScore(bool noRocks, string teamName, int score, bool houseClick)
     {
         mainDisplay.enabled = true;

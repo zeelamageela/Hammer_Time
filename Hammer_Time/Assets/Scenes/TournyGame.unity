@@ -3221,8 +3221,8 @@ MonoBehaviour:
   third: 0
   skip: 0
   teamName: 
-  redTeamName: 
-  yellowTeamName: 
+  redTeamName: REDDD
+  yellowTeamName: Ribdibdib
   draw: 0
   playoffRound: 0
   score: []
@@ -9928,6 +9928,7 @@ GameObject:
   - component: {fileID: 1228243348}
   - component: {fileID: 1228243347}
   - component: {fileID: 1228243349}
+  - component: {fileID: 1228243350}
   m_Layer: 5
   m_Name: MainDisplay
   m_TagString: Untagged
@@ -10010,6 +10011,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &1228243350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228243345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charLimit: 35
+  lengthLimit: 20
+  fontSizeMin: 40
+  fontSizeMax: 75
 --- !u!1 &1246941258
 GameObject:
   m_ObjectHideFlags: 0
