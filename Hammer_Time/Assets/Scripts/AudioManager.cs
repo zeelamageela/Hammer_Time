@@ -10,6 +10,8 @@ public class AudioManager : MonoBehaviour
 
     public static AudioManager instance;
 
+    bool scrape;
+    bool hit;
     // Start is called before the first frame update
     void Awake()
     {
@@ -34,6 +36,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        
+    }
+
     public void Play(string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
@@ -53,5 +60,20 @@ public class AudioManager : MonoBehaviour
         Sound s = Array.Find(sounds, sound => sound.name == name);
 
         s.source.volume = volume;
+    }
+
+    public void PlayHit(string name, float velocity)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        s.source.volume = (velocity) / (4f);
+        s.source.Play();
+    }
+
+    public void PlayScrape(string name, float volume, GameObject rock)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        s.source.Play();
     }
 }
