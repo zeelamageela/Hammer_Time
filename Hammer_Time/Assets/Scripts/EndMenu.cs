@@ -11,6 +11,7 @@ public class EndMenu : MonoBehaviour
     public Text endNumber;
     public Text redScore;
     public Text yellowScore;
+    public Button contButton;
     public GameObject yellowSpinner;
     public GameObject yellowSpinnerAI;
     public GameObject redHammerPNG;
@@ -43,7 +44,12 @@ public class EndMenu : MonoBehaviour
             if (gsp.endCurrent > gsp.ends)
             {
                 if (gsp.redScore != gsp.yellowScore)
+                {
                     endText.text = "Game Over!";
+                    endNumber.enabled = false;
+                    if (!gsp.tourny)
+                        contButton.gameObject.SetActive(false);
+                }
 
                 else
                     endText.text = "Extra End";
@@ -158,7 +164,10 @@ public class EndMenu : MonoBehaviour
     {
         if (gsp.tourny && gsp.endCurrent > gsp.ends)
         {
-            gsp.draw++;
+            if (gsp.playoffRound > 0)
+                gsp.playoffRound++;
+            else
+                gsp.draw++;
         }
         SceneManager.LoadScene(contScene);
     }

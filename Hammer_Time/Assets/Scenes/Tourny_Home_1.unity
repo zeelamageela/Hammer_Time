@@ -3081,6 +3081,7 @@ MonoBehaviour:
   draw: 0
   playoffRound: 0
   teams: []
+  playoffTeams: []
   playerTeamIndex: 0
   score: []
   playerTeam:

@@ -1523,12 +1523,12 @@ public class AI_Strategy : MonoBehaviour
                                             //if second shot is mine
                                             if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                                             {
-                                                aiTarg.OnTarget("Take Out", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                             }
                                             //if second shot is not mine
                                             else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
                                             {
-                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                                aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                                             }
                                         }
                                     }

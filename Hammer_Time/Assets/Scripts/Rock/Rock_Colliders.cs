@@ -138,7 +138,7 @@ public class Rock_Colliders : MonoBehaviour
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
             collision.gameObject.GetComponent<Rock_Info>().rest = false;
             hit = true;
-            Debug.Log("Hit!");
+            //Debug.Log("Hit!");
             am.Play("Hit");
             //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
             if (gm.redHammer)

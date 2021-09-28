@@ -41,48 +41,119 @@ public class TournyManager : MonoBehaviour
 
 		if (gsp.draw > 0)
 		{
-			draw = gsp.draw;
 			playoffRound = gsp.playoffRound;
 			teamList = gsp.teamList;
 			teams = gsp.teams;
+			draw = gsp.draw;
 
-			for (int i = 0; i < teams.Length; i++)
-			{
-				if (teams[i].name == gsp.playerTeam.nextOpp)
-					oppTeam = i;
-				if (teams[i].name == gsp.playerTeam.name)
-					playerTeam = i;
-			}
+			if (draw >= drawFormat.Length)
+            {
+				playoffTeams = gsp.playoffTeams;
 
-			Debug.Log("OppTeam is " + oppTeam);
-			if (gsp.playerTeam.name == gsp.redTeamName)
-			{
-				if (gsp.redScore > gsp.yellowScore)
+				for (int i = 0; i < teams.Length; i++)
 				{
-					teams[oppTeam].loss++;
-					teams[playerTeam].wins++;
+					if (teams[i].name == gsp.playerTeam.name)
+						playerTeam = i;
+					if (teams[i].name == gsp.playerTeam.nextOpp)
+						oppTeam = i;
 				}
-				else
-				{
-					teams[oppTeam].wins++;
-					teams[playerTeam].loss++;
+
+				Debug.Log("OppTeam is " + oppTeam);
+
+				if (playoffRound == 2)
+                {
+					if (gsp.playerTeam.name == gsp.redTeamName)
+					{
+						if (gsp.redScore > gsp.yellowScore)
+						{
+							playoffTeams[3] = teams[playerTeam];
+						}
+						else
+						{
+							playoffTeams[3] = teams[oppTeam];
+						}
+					}
+					else
+					{
+						if (gsp.redScore < gsp.yellowScore)
+						{
+							playoffTeams[3] = teams[playerTeam];
+						}
+						else
+						{
+							playoffTeams[3] = teams[oppTeam];
+						}
+					}
+                }
+				else if (playoffRound == 3)
+                {
+					if (gsp.playerTeam.name == gsp.redTeamName)
+					{
+						if (gsp.redScore > gsp.yellowScore)
+						{
+							playoffTeams[4] = teams[playerTeam];
+						}
+						else
+						{
+							playoffTeams[4] = teams[oppTeam];
+						}
+					}
+					else
+					{
+						if (gsp.redScore < gsp.yellowScore)
+						{
+							playoffTeams[4] = teams[playerTeam];
+						}
+						else
+						{
+							playoffTeams[4] = teams[oppTeam];
+						}
+					}
 				}
-			}
+				
+				SetPlayoffs();
+            }
 			else
-			{
-				if (gsp.redScore < gsp.yellowScore)
+            {
+				for (int i = 0; i < teams.Length; i++)
 				{
-					teams[oppTeam].loss++;
-					teams[playerTeam].wins++;
+					if (teams[i].name == gsp.playerTeam.nextOpp)
+						oppTeam = i;
+					if (teams[i].name == gsp.playerTeam.name)
+						playerTeam = i;
+				}
+
+				Debug.Log("OppTeam is " + oppTeam);
+
+				if (gsp.playerTeam.name == gsp.redTeamName)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						teams[oppTeam].loss++;
+						teams[playerTeam].wins++;
+					}
+					else
+					{
+						teams[oppTeam].wins++;
+						teams[playerTeam].loss++;
+					}
 				}
 				else
 				{
-					teams[oppTeam].wins++;
-					teams[playerTeam].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						teams[oppTeam].loss++;
+						teams[playerTeam].wins++;
+					}
+					else
+					{
+						playoffTeams[4] = teams[oppTeam];
+					}
 				}
+				Debug.Log(teams[oppTeam].name + " " + teams[oppTeam].wins + " Wins");
+				StartCoroutine(SimRestDraw());
 			}
 
-			StartCoroutine(SimRestDraw());
 		}
 		else
 		{
@@ -97,9 +168,9 @@ public class TournyManager : MonoBehaviour
 			playerTeam = Random.Range(0, 6);
 			teamList[playerTeam].team.name = gsp.teamName;
 
+			SetDraw();
 		}
 
-		SetDraw();
 		//PrintRows(teams);
 	}
 
@@ -243,24 +314,30 @@ public class TournyManager : MonoBehaviour
 				switch (teams[playerTeam].rank)
                 {
 					case 1:
+						playButton.gameObject.SetActive(false);
+						teams[playerTeam].nextOpp = "-----";
 						vsDisplay[1].name.text = "BYE TO FINALS";
 						vsDisplay[1].rank.text = "-";
 						break;
 					case 2:
+						playButton.gameObject.SetActive(true);
+						teams[playerTeam].nextOpp = playoffTeams[2].name;
 						vsDisplay[1].name.text = playoffTeams[2].name;
 						vsDisplay[1].rank.text = playoffTeams[2].rank.ToString();
 						break;
 					case 3:
+						playButton.gameObject.SetActive(true);
+						teams[playerTeam].nextOpp = playoffTeams[1].name;
 						vsDisplay[1].name.text = playoffTeams[1].name;
 						vsDisplay[1].rank.text = playoffTeams[1].rank.ToString();
 						break;
 					default:
+						playButton.gameObject.SetActive(false);
 						vs.SetActive(false);
 						playButton.gameObject.SetActive(false);
 						break;
                 }
 
-				scrollBar.value = 0;
 				StartCoroutine(RefreshPlayoffPanel());
 
 				standings.SetActive(false);
@@ -269,22 +346,38 @@ public class TournyManager : MonoBehaviour
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
+				scrollBar.value = 0;
 				break;
 
 			case 2:
-				heading.text = "Finals";
+				heading.text = "Finals"; 
+				
+				for (int i = 0; i < 4; i++)
+				{
+					brackDisplay[i].name.text = playoffTeams[i].name;
+					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				}
+
 				semiWinner.SetActive(true);
-				scrollBar.value = 0.5f;
 				brackDisplay[3].name.text = playoffTeams[3].name;
 				brackDisplay[3].rank.text = playoffTeams[3].rank.ToString();
 
 				if (playoffTeams[0].name == teams[playerTeam].name)
 				{
+					playButton.gameObject.SetActive(true);
+
+					vsDisplay[0].name.text = playoffTeams[0].name;
+					vsDisplay[0].rank.text = playoffTeams[0].rank.ToString();
+					teams[playerTeam].nextOpp = playoffTeams[3].name;
 					vsDisplay[1].name.text = playoffTeams[3].name;
 					vsDisplay[1].rank.text = playoffTeams[3].rank.ToString();
 				}
 				else if (playoffTeams[3].name == teams[playerTeam].name)
 				{
+					playButton.gameObject.SetActive(true);
+					vsDisplay[0].name.text = playoffTeams[3].name;
+					vsDisplay[0].rank.text = playoffTeams[3].rank.ToString();
+					teams[playerTeam].nextOpp = playoffTeams[0].name;
 					vsDisplay[1].name.text = playoffTeams[0].name;
 					vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
 				}
@@ -294,23 +387,43 @@ public class TournyManager : MonoBehaviour
 					playButton.gameObject.SetActive(false);
 				}
 
+				standings.SetActive(false);
+				playoffs.SetActive(true);
 				StartCoroutine(RefreshPlayoffPanel());
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
+				scrollBar.value = 0.5f;
 				break;
 
 			case 3:
 				heading.text = "Winner";
-				scrollBar.value = 1;
+
+				for (int i = 0; i < 5; i++)
+				{
+					brackDisplay[i].name.text = playoffTeams[i].name;
+					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				}
+
+				semiWinner.SetActive(true);
 				finalWinner.SetActive(true);
 				brackDisplay[4].name.text = playoffTeams[4].name;
 				brackDisplay[4].rank.text = playoffTeams[4].rank.ToString();
 
+				standings.SetActive(false);
+				playoffs.SetActive(true);
 				StartCoroutine(RefreshPlayoffPanel());
 
+				if (teams[playerTeam].name == playoffTeams[4].name)
+					heading.text = "You Win!";
+				else
+					heading.text = "So Close!";
+
+				vs.SetActive(false);
+				playButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
+				scrollBar.value = 1;
 				break;
 		}
 	}
@@ -347,103 +460,61 @@ public class TournyManager : MonoBehaviour
 			{
 				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
 				{
-					//if (i + 1 != playerTeam & i + 1 != oppTeam)
 						games[i + 1].loss++;
-					//if (i != playerTeam & i != oppTeam)
 						games[i].wins++;
 				}
 				else
 				{
-					//if (i != playerTeam & i != oppTeam)
 						games[i].loss++;
-					//if (i + 1 != playerTeam & i + 1 != oppTeam)
 						games[i + 1].wins++;
 				}
 			}
 		}
-		//SetDraw();
-		//Team game1X = teams[drawFormat[draw].game1.x];
-		//Team game1Y = teams[drawFormat[draw].game1.y];
-
-		//Team game2X = teams[drawFormat[draw].game2.x];
-		//Team game2Y = teams[drawFormat[draw].game2.y];
-
-		//Team game3X = teams[drawFormat[draw].game3.x];
-		//Team game3Y = teams[drawFormat[draw].game3.y];
-
-
-		//if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
-		//{
-		//	game1Y.loss++;
-		//	game1X.wins++;
-		//}
-		//else
-		//{
-		//	game1X.loss++;
-		//	game1Y.wins++;
-		//}
-
-		//if (Random.Range(0, game2X.strength) > Random.Range(0, game2Y.strength))
-		//{
-		//	game2Y.loss++;
-		//	game2X.wins++;
-		//}
-		//else
-		//{
-		//	game2X.loss++;
-		//	game2Y.wins++;
-		//}
-
-		//if (Random.Range(0, game3X.strength) > Random.Range(0, game3Y.strength))
-		//{
-		//	game3Y.loss++;
-		//	game3X.wins++;
-		//}
-		//else
-		//{
-		//	game3X.loss++;
-		//	game3Y.wins++;
-		//}
-
+		
 		draw++;
 		yield return StartCoroutine(Scoring());
 	}
 
 	IEnumerator SimRestDraw()
 	{
+		int tempDraw = draw - 1;
 		Team[] games = new Team[6];
 		//SetDraw();
-		games[0] = teams[drawFormat[draw].game1.x];
+		games[0] = teams[drawFormat[tempDraw].game1.x];
 
-		games[1] = teams[drawFormat[draw].game1.y];
+		games[1] = teams[drawFormat[tempDraw].game1.y];
 
-		games[2] = teams[drawFormat[draw].game2.x];
-		games[3] = teams[drawFormat[draw].game2.y];
+		games[2] = teams[drawFormat[tempDraw].game2.x];
+		games[3] = teams[drawFormat[tempDraw].game2.y];
 
-		games[4] = teams[drawFormat[draw].game3.x];
-		games[5] = teams[drawFormat[draw].game3.y];
+		games[4] = teams[drawFormat[tempDraw].game3.x];
+		games[5] = teams[drawFormat[tempDraw].game3.y];
 
 		for (int i = 0; i < games.Length; i++)
         {
 			if (i % 2 == 0)
 			{
-				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
+				Debug.Log("Settling Game - " + games[i].name);
+				if (games[i].name == teams[playerTeam].name || games[i].name == teams[oppTeam].name)
+                {
+					Debug.Log("Player Game skip sim - " + games[i].name);
+				}
+				else if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
 				{
-					if (i + 1 != playerTeam & i + 1 != oppTeam)
+					//if (i + 1 != playerTeam & i + 1 != oppTeam)
 						games[i + 1].loss++;
-					if (i != playerTeam & i != oppTeam)
+					//if (i != playerTeam & i != oppTeam)
 						games[i].wins++;
 				}
 				else
 				{
-					if (i != playerTeam & i != oppTeam)
+					//if (i != playerTeam & i != oppTeam)
 						games[i].loss++;
-					if (i + 1 != playerTeam & i + 1 != oppTeam)
+					//if (i + 1 != playerTeam & i + 1 != oppTeam)
 						games[i + 1].wins++;
 				}
 			}
         }
-		
 		yield return StartCoroutine(Scoring());
 	}
 
@@ -512,6 +583,7 @@ public class TournyManager : MonoBehaviour
 			//Debug.Log("Final End");
 			heading.text = "End of Draw";
 			SetDraw();
+			playButton.gameObject.SetActive(false);
 			simButton.gameObject.SetActive(false);
 			contButton.gameObject.SetActive(true);
 
@@ -519,6 +591,7 @@ public class TournyManager : MonoBehaviour
 		else
 			heading.text = "End of Round Robin";
 	}
+
 	public void PlayDraw()
     {
 		gsp.TournySetup();

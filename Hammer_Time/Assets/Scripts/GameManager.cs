@@ -939,7 +939,11 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("End_Menu_Tourny_FinalScore");
         }
         else
+        {
+            endCurrent++;
+            gsp.LoadFromGM();
             SceneManager.LoadScene("End_Menu_1");
+        }
         //if (redScore == yellowScore)
         //{
         //    Debug.Log("Game is tied");

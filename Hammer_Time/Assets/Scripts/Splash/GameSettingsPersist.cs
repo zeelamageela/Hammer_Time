@@ -38,6 +38,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public List<Team_List> teamList;
     public Team[] teams;
+    public Team[] playoffTeams;
     public int playerTeamIndex;
     public Vector2Int[] score;
 
@@ -184,7 +185,13 @@ public class GameSettingsPersist : MonoBehaviour
         teams = tm.teams;
         playerTeam = teams[playerTeamIndex];
         endCurrent = 1;
+        redScore = 0;
+        yellowScore = 0;
 
+        if (draw >= tm.drawFormat.Length)
+        {
+            playoffTeams = tm.playoffTeams;
+        }
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;

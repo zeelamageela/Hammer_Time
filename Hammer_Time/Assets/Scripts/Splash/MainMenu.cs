@@ -34,6 +34,10 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
+    public void Tournament()
+    {
+        SceneManager.LoadScene("Tourny_Menu_1");
+    }
     public void Tutorial()
     {
         gsp.tutorial = true;

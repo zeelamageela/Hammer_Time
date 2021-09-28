@@ -37,4 +37,9 @@ public class TournySettings : MonoBehaviour
 
         SceneManager.LoadScene("Tourny_Home_1");
     }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("SplashMenu");
+    }
 }
