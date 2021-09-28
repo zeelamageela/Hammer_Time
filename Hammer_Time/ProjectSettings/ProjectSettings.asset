@@ -127,7 +127,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.1.2
+  bundleVersion: 0.2.0
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -257,7 +257,14 @@ PlayerSettings:
   AndroidMinifyDebug: 0
   AndroidValidateAppBundleSize: 1
   AndroidAppBundleSizeToValidate: 150
-  m_BuildTargetIcons: []
+  m_BuildTargetIcons:
+  - m_BuildTarget: 
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 05ea3b1660e5b4faf89debbbf0e88590, type: 3}
+      m_Width: 128
+      m_Height: 128
+      m_Kind: 0
   m_BuildTargetPlatformIcons:
   - m_BuildTarget: Android
     m_Icons:
@@ -351,6 +358,121 @@ PlayerSettings:
       m_Height: 36
       m_Kind: 1
       m_SubKind: 
+  - m_BuildTarget: iPhone
+    m_Icons:
+    - m_Textures:
+      - {fileID: 2800000, guid: e3f50f704ef6b45d58ebcc1900a5af01, type: 3}
+      m_Width: 180
+      m_Height: 180
+      m_Kind: 0
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: ce2dea87ffe654791a15b5f9fd3c2bc0, type: 3}
+      m_Width: 120
+      m_Height: 120
+      m_Kind: 0
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: f9fa06306ed2a4566adc5bc799aa9f74, type: 3}
+      m_Width: 167
+      m_Height: 167
+      m_Kind: 0
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: e81db6724eb9148a68b4a18dc3653ab4, type: 3}
+      m_Width: 152
+      m_Height: 152
+      m_Kind: 0
+      m_SubKind: iPad
+    - m_Textures: []
+      m_Width: 76
+      m_Height: 76
+      m_Kind: 0
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: ce2dea87ffe654791a15b5f9fd3c2bc0, type: 3}
+      m_Width: 120
+      m_Height: 120
+      m_Kind: 3
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: 8f92eeef9d07b4dd1a8700c12464d4db, type: 3}
+      m_Width: 80
+      m_Height: 80
+      m_Kind: 3
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: 8f92eeef9d07b4dd1a8700c12464d4db, type: 3}
+      m_Width: 80
+      m_Height: 80
+      m_Kind: 3
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: f4e07549ac2824693a0e37e2648c4acb, type: 3}
+      m_Width: 40
+      m_Height: 40
+      m_Kind: 3
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: f23a845a2e8b04ed9acf70bb8c8e4757, type: 3}
+      m_Width: 87
+      m_Height: 87
+      m_Kind: 1
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: a35d7ed11438947168db51ba02676e87, type: 3}
+      m_Width: 58
+      m_Height: 58
+      m_Kind: 1
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: e92807b5423d84e8db26f55d6aa5b239, type: 3}
+      m_Width: 29
+      m_Height: 29
+      m_Kind: 1
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: a35d7ed11438947168db51ba02676e87, type: 3}
+      m_Width: 58
+      m_Height: 58
+      m_Kind: 1
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: e92807b5423d84e8db26f55d6aa5b239, type: 3}
+      m_Width: 29
+      m_Height: 29
+      m_Kind: 1
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: 2cc55f48c7f6c47e58b0bd6e89288c2e, type: 3}
+      m_Width: 60
+      m_Height: 60
+      m_Kind: 2
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: f4e07549ac2824693a0e37e2648c4acb, type: 3}
+      m_Width: 40
+      m_Height: 40
+      m_Kind: 2
+      m_SubKind: iPhone
+    - m_Textures:
+      - {fileID: 2800000, guid: f4e07549ac2824693a0e37e2648c4acb, type: 3}
+      m_Width: 40
+      m_Height: 40
+      m_Kind: 2
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: 923c0d63cd3ec424c8da02c28600935f, type: 3}
+      m_Width: 20
+      m_Height: 20
+      m_Kind: 2
+      m_SubKind: iPad
+    - m_Textures:
+      - {fileID: 2800000, guid: 05ea3b1660e5b4faf89debbbf0e88590, type: 3}
+      m_Width: 1024
+      m_Height: 1024
+      m_Kind: 4
+      m_SubKind: App Store
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsJobs:
   - m_BuildTarget: MacStandaloneSupport

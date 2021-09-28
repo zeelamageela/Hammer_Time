@@ -46,7 +46,7 @@ public class TournyManager : MonoBehaviour
 			teams = gsp.teams;
 			draw = gsp.draw;
 
-			if (draw >= drawFormat.Length)
+			if (playoffRound > 0)
             {
 				playoffTeams = gsp.playoffTeams;
 
@@ -84,7 +84,8 @@ public class TournyManager : MonoBehaviour
 							playoffTeams[3] = teams[oppTeam];
 						}
 					}
-                }
+					SetPlayoffs();
+				}
 				else if (playoffRound == 3)
                 {
 					if (gsp.playerTeam.name == gsp.redTeamName)
@@ -109,9 +110,9 @@ public class TournyManager : MonoBehaviour
 							playoffTeams[4] = teams[oppTeam];
 						}
 					}
+					SetPlayoffs();
 				}
 				
-				SetPlayoffs();
             }
 			else
             {
@@ -258,11 +259,11 @@ public class TournyManager : MonoBehaviour
 		for (int i = 0; i < teamList.Count; i++)
         {
 			if (teams[playerTeam].nextOpp == teamList[i].team.name)
-            {
+			{
 				tempRank = i + 1;
 				vsDisplay[1].name.text = teamList[i].team.name;
 				vsDisplay[1].rank.text = tempRank.ToString();
-            }
+			}
         }
 		StartCoroutine(RefreshPanel());
     }
@@ -581,7 +582,7 @@ public class TournyManager : MonoBehaviour
 		else if (draw == drawFormat.Length)
 		{
 			//Debug.Log("Final End");
-			heading.text = "End of Draw";
+			heading.text = "End of Draws";
 			SetDraw();
 			playButton.gameObject.SetActive(false);
 			simButton.gameObject.SetActive(false);

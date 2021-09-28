@@ -170,6 +170,8 @@ public class GameSettingsPersist : MonoBehaviour
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
+        draw = 0;
+        playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }

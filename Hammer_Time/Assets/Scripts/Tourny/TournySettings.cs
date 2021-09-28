@@ -18,6 +18,10 @@ public class TournySettings : MonoBehaviour
 
     GameSettingsPersist gsp;
 
+    private void Start()
+    {
+        
+    }
     // Update is called once per frame
     void Update()
     {
