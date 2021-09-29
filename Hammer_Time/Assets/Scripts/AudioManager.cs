@@ -12,6 +12,9 @@ public class AudioManager : MonoBehaviour
 
     bool scrape;
     bool hit;
+    GameObject rockGO;
+    Rigidbody2D rb;
+    float vel;
     // Start is called before the first frame update
     void Awake()
     {
@@ -38,7 +41,12 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
-        
+        if (scrape)
+        {
+            float vel = rb.velocity.x;
+            //Sound Array.Find(sounds, sound => sound.name == "RockScrape");
+
+        }
     }
 
     public void Play(string name)
@@ -70,10 +78,11 @@ public class AudioManager : MonoBehaviour
         s.source.Play();
     }
 
-    public void PlayScrape(string name, float volume, GameObject rock)
+    public void PlayScrape(string name, GameObject rock)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
-
+        rb = rock.GetComponent<Rigidbody2D>();
+        scrape = true;
         s.source.Play();
     }
 }
