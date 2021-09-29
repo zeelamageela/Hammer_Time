@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("redHammer is " + redHammer);
         am.Play("Theme");
-
+        am.Play("Ambience");
         targetAi.SetActive(false);
         targetPlayer.SetActive(false);
         targetStory.SetActive(false);
@@ -396,7 +396,7 @@ public class GameManager : MonoBehaviour
         redRock = redRock_1.GetComponent<Rock_Info>();
         Debug.Log(redRock_1.name);
 
-        Debug.Log("Current Rock is " + rockCurrent);
+        //Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true);
 
         if (debug)
@@ -430,7 +430,7 @@ public class GameManager : MonoBehaviour
             targetPlayer.SetActive(false);
         }
         
-        am.Play("RockScrape");
+        //am.Play("RockScrape");
         cm.RockFollow(redRock_1.transform);
         boardCollider.enabled = true;
 
@@ -452,7 +452,7 @@ public class GameManager : MonoBehaviour
         {
             dbText.enabled = false;
         }
-        am.Stop("RockScrape");
+        //am.Stop("RockScrape");
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         Debug.Log("redRock at Rest");
@@ -554,7 +554,7 @@ public class GameManager : MonoBehaviour
         }
         
         cm.RockFollow(yellowRock_1.transform);
-        am.Play("RockScrape");
+        //am.Play("RockScrape");
         boardCollider.enabled = true;
         rockBar.ActiveRock(false);
 
@@ -574,7 +574,7 @@ public class GameManager : MonoBehaviour
         {
             dbText.enabled = false;
         }
-        am.Stop("RockScrape");
+        //am.Stop("RockScrape");
 
         if (debug)
         {
@@ -627,7 +627,7 @@ public class GameManager : MonoBehaviour
             Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
             if (Mathf.Abs(rockRB.velocity.y) > 0.01f && Mathf.Abs(rockRB.velocity.x) > 0.01f)
             {
-                Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
+                //Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
                 yield return new WaitUntil(() => Mathf.Abs(rockRB.velocity.y) < 0.01f && Mathf.Abs(rockRB.velocity.x) < 0.01f);
             }
         }
@@ -639,7 +639,7 @@ public class GameManager : MonoBehaviour
         state = GameState.CHECKSCORE;
 
 
-        Debug.Log("Check Score");
+        //Debug.Log("Check Score");
 
         yield return StartCoroutine(AllStopped());
 
@@ -660,12 +660,12 @@ public class GameManager : MonoBehaviour
             if (rock.rockInfo.inHouse == true)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
-                Debug.Log("Adding House " + rock.rockInfo.teamName + rock.rockInfo.rockNumber + " - " + rock.rockInfo.rockIndex);
+                //Debug.Log("Adding House " + rock.rockInfo.teamName + rock.rockInfo.rockNumber + " - " + rock.rockInfo.rockIndex);
             }
             if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
             {
                 gList.Add(new Guard_List(rockCurrent, rock.rockInfo.freeGuard, rock.rock.transform));
-                Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                //Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
             }
         }
 
@@ -685,7 +685,7 @@ public class GameManager : MonoBehaviour
             {
                 foreach (House_List rock in houseList)
                 {
-                    Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                    //Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
                 }
             }
 
@@ -745,7 +745,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Next Turn");
 
         rockCurrent++;
-        Debug.Log("Current Rock is " + rockCurrent);
+        //Debug.Log("Current Rock is " + rockCurrent);
 
         //gsp.AutoSave();
 
@@ -968,7 +968,7 @@ public class GameManager : MonoBehaviour
         {
             yield return null;
         }
-        Debug.Log("Clickeddd");
+        //Debug.Log("Clickeddd");
     }
 
     public void OnDebug()

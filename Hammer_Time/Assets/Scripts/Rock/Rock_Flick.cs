@@ -40,6 +40,7 @@ public class Rock_Flick : MonoBehaviour
     Vector2 posScale = new Vector2(1f / 3f, 1f);
 
     public bool story;
+    AudioSource[] rockSounds;
 
     void OnEnable()
     {
@@ -71,6 +72,9 @@ public class Rock_Flick : MonoBehaviour
         GetComponent<CircleCollider2D>().enabled = true;
         GetComponent<CircleCollider2D>().radius = 1.5f;
         mouseUp = false;
+
+        rockSounds = GetComponents<AudioSource>();
+        //Debug.Log(rockSounds[0].clip.name + " - " + rockSounds[1].clip.name);
     }
 
     void Update()
@@ -286,7 +290,7 @@ public class Rock_Flick : MonoBehaviour
                     {
                         GetComponent<CircleCollider2D>().radius = 0.14f;
                         StartCoroutine(Release());
-                        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                        //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                         trajLine.Release();
                         shootKnob.UnParentandHide();
                     }
@@ -317,7 +321,7 @@ public class Rock_Flick : MonoBehaviour
                     {
                         GetComponent<CircleCollider2D>().radius = 0.14f;
                         StartCoroutine(Release());
-                        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                        //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
                         trajLine.Release();
                         shootKnob.UnParentandHide();
                     }
@@ -358,7 +362,7 @@ public class Rock_Flick : MonoBehaviour
         //Debug.Log("Waht is happening in here. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         launcher.GetComponent<Collider2D>().enabled = true;
         yield return new WaitForSeconds(releaseTime);
-
+        rockSounds[1].enabled = true;
         GetComponent<SpringJoint2D>().enabled = false;
         //Debug.Log("Waht is happening in HERE. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         this.enabled = false;

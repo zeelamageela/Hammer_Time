@@ -130,6 +130,7 @@ public class Sweep : MonoBehaviour
 
     IEnumerator SweepLine(bool inturn)
     {
+        sm.CallOut("Line");
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
@@ -159,6 +160,7 @@ public class Sweep : MonoBehaviour
 
     IEnumerator SweepCurl(bool inturn)
     {
+        sm.CallOut("Curl");
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;

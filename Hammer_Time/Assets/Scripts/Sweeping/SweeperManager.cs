@@ -27,6 +27,11 @@ public class SweeperManager : MonoBehaviour
     public AudioManager am;
     public bool inturn;
 
+    AudioSource[] rockSounds;
+    AudioSource[] skipSounds;
+    public GameObject audioShoot;
+    public GameObject audioHouse;
+
     private void Awake()
     {
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
@@ -34,6 +39,8 @@ public class SweeperManager : MonoBehaviour
         {
             Debug.Log("Audio Manager not loaded");
         }
+
+        rockSounds = sweepSel.GetComponents<AudioSource>();
     }
 
     private void Update()
@@ -104,8 +111,10 @@ public class SweeperManager : MonoBehaviour
         sweeperYellowL.gameObject.SetActive(false);
         sweeperYellowR.gameObject.SetActive(false);
 
-        am.Stop("Sweep");
-        am.Stop("Hard");
+        rockSounds[0].enabled = false;
+        rockSounds[1].enabled = false;
+        //am.Stop("Sweep");
+        //am.Stop("Hard");
         sweepSel.gameObject.SetActive(false);
         sweeperL.sweep = false;
         sweeperL.hard = false;
@@ -151,7 +160,12 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepWeight(bool aiTurn)
     {
-        am.Play("Sweep");
+        CallOut("Sweep");
+
+        rockSounds[0].enabled = true;
+        rockSounds[1].enabled = true;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
         sweeperL.Sweep();
         sweeperR.Sweep();
         sweep.OnSweep();
@@ -166,8 +180,12 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepHard(bool aiTurn)
     {
-        am.Stop("Sweep");
-        am.Play("Hard");
+        CallOut("Hard");
+
+        rockSounds[0].enabled = true;
+        rockSounds[1].enabled = true;
+        rockSounds[0].pitch = 1.4f;
+        rockSounds[1].pitch = 1.4f;
         sweeperL.Hard();
         sweeperR.Hard();
         sweep.OnHard();
@@ -180,10 +198,34 @@ public class SweeperManager : MonoBehaviour
         }
     }
 
+    public void SweepHit(bool aiTurn)
+    {
+        rockSounds[0].enabled = false;
+        rockSounds[1].enabled = false;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
+
+        sweeperL.Whoa();
+        sweeperR.Whoa();
+        sweep.OnWhoa();
+
+        if (!aiTurn)
+        {
+            whoaButton.SetActive(false);
+            sweepButton.SetActive(true);
+            hardButton.SetActive(false);
+        }
+    }
     public void SweepWhoa(bool aiTurn)
     {
-        am.Stop("Sweep");
-        am.Stop("Hard");
+        //am.Stop("Sweep");
+        //am.Stop("Hard");
+        rockSounds[0].enabled = false;
+        rockSounds[1].enabled = false;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
+
+        CallOut("Whoa");
         sweeperL.Whoa();
         sweeperR.Whoa();
         sweep.OnWhoa();
@@ -198,7 +240,11 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft(bool aiTurn)
     {
-        am.Play("Sweep");
+        //am.Play("Sweep");
+        rockSounds[0].enabled = true;
+        rockSounds[1].enabled = false;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
         sweep.OnLeft();
         sweeperL.yOffset = 0.6f;
         sweeperL.Sweep();
@@ -216,7 +262,12 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepRight(bool aiTurn)
     {
-        am.Play("Sweep");
+        //am.Play("Sweep");
+        rockSounds[0].enabled = false;
+        rockSounds[1].enabled = true;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
+
         sweep.OnRight();
         sweeperL.yOffset = 1.1f;
         sweeperL.Whoa();
@@ -230,5 +281,19 @@ public class SweeperManager : MonoBehaviour
             hardButton.SetActive(false);
             whoaButton.SetActive(true);
         }
+    }
+
+    public void CallOut(string call)
+    {
+        Debug.Log("Sweeping " + call);
+        if (Random.Range(0f, 1f) < 0.5f)
+            skipSounds = audioHouse.transform.Find("Audio" + call).GetComponents<AudioSource>();
+        else
+            skipSounds = audioShoot.transform.Find("Audio" + call).GetComponents<AudioSource>();
+
+        for (int i = 0; i < skipSounds.Length; i++)
+            skipSounds[i].enabled = false;
+
+        skipSounds[Random.Range(0, skipSounds.Length)].enabled = true;
     }
 }

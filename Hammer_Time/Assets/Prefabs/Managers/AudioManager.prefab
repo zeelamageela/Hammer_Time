@@ -44,35 +44,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: Sweep
-    clip: {fileID: 8300000, guid: 44906481a81622343888f3b43278fbf3, type: 3}
-    volume: 0.5
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Hard
-    clip: {fileID: 8300000, guid: 44906481a81622343888f3b43278fbf3, type: 3}
-    volume: 0.5
-    pitch: 1.5
-    loop: 1
-    source: {fileID: 0}
   - name: Theme
     clip: {fileID: 8300000, guid: c761e3ddcef3eda41b9dadf9c2713ade, type: 3}
     volume: 1
     pitch: 1
     loop: 1
-    source: {fileID: 0}
-  - name: Hit
-    clip: {fileID: 8300000, guid: 062dada04fc75f240824f1e11a5536b7, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: OutOfPlay
-    clip: {fileID: 8300000, guid: a958c41f82c1cc14bacf6d8222ce5b65, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 0
     source: {fileID: 0}
   - name: Button
     clip: {fileID: 8300000, guid: 2450302eabedcfd4b8bd5c1591838db9, type: 3}
@@ -80,9 +56,9 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: RockScrape
-    clip: {fileID: 8300000, guid: 9216b01f28c73d146b04d4da3f1e7b81, type: 3}
-    volume: 1
+  - name: Ambience
+    clip: {fileID: 8300000, guid: c1429be30488c7d4989ecfee3d00892c, type: 3}
+    volume: 0.5
     pitch: 1
     loop: 1
     source: {fileID: 0}

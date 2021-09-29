@@ -22,7 +22,7 @@ public class Rock_Force : MonoBehaviour
     GameObject trajLineGO;
     TrajectoryLine trajLine;
     AudioManager am;
-
+    AudioSource[] rockSounds;
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -31,6 +31,7 @@ public class Rock_Force : MonoBehaviour
         //trajLine = trajLineGO.GetComponent<TrajectoryLine>();
 
         am = FindObjectOfType<AudioManager>();
+        rockSounds = GetComponents<AudioSource>();
     }
 
 
@@ -53,7 +54,10 @@ public class Rock_Force : MonoBehaviour
         velX = body.angularVelocity;
 
         Vector2 vel = new Vector2(velX * scaleFactor, velY);
-        
+
+        float audVel = body.velocity.y / 4f;
+        rockSounds[1].volume = audVel;
+
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
@@ -71,7 +75,7 @@ public class Rock_Force : MonoBehaviour
             if (Mathf.Abs(body.velocity.y) < 0.01f && Mathf.Abs(body.velocity.x) < 0.01f)
             {
                 //Debug.Log("Velocity below 0.01");
-                am.Stop("RockScrape");
+                //am.Stop("RockScrape");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
                 body.drag = 0.55f;

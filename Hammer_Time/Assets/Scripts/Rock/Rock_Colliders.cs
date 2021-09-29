@@ -21,6 +21,7 @@ public class Rock_Colliders : MonoBehaviour
     AudioManager am;
     SweeperManager sm;
     GameManager gm;
+    AudioSource[] rockSounds;
 
 // Start is called before the first frame update
     void Awake()
@@ -40,6 +41,7 @@ public class Rock_Colliders : MonoBehaviour
         launchCollider = launch.GetComponent<Collider2D>();
         launchCollider.enabled = false;
 
+        rockSounds = GetComponents<AudioSource>();
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         sm = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
@@ -133,15 +135,16 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Rock"))
         {
-            sm.SweepWhoa(false);
+            //sm.SweepHit(false);
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
             collision.gameObject.GetComponent<Rock_Info>().rest = false;
             hit = true;
             //Debug.Log("Hit!");
             //am.Play("Hit");
-            am.PlayHit("Hit", collision.relativeVelocity.magnitude);
-            Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
+            rockSounds[0].volume = collision.relativeVelocity.magnitude;
+            rockSounds[0].enabled = true;
+            //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
             if (gm.redHammer)
             {
                 //if the rock is red
@@ -150,9 +153,9 @@ public class Rock_Colliders : MonoBehaviour
                     //if the ai team is not red
                     if (!gm.aiTeamRed)
                     {
-                        sm.SweepWhoa(false);
+                        sm.SweepHit(false);
                     }
-                    else sm.SweepWhoa(true);
+                    else sm.SweepHit(true);
                 }
                 //if the rock is yellow
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
@@ -160,9 +163,9 @@ public class Rock_Colliders : MonoBehaviour
                     //if the ai team is not yellow
                     if (!gm.aiTeamYellow)
                     {
-                        sm.SweepWhoa(false);
+                        sm.SweepHit(false);
                     }
-                    else sm.SweepWhoa(true);
+                    else sm.SweepHit(true);
                 }
             }
             else if (!gm.redHammer)
@@ -173,9 +176,9 @@ public class Rock_Colliders : MonoBehaviour
                     //if the ai team is not yellow
                     if (!gm.aiTeamRed)
                     {
-                        sm.SweepWhoa(false);
+                        sm.SweepHit(false);
                     }
-                    else sm.SweepWhoa(true);
+                    else sm.SweepHit(true);
                 }
                 //if the rock is red
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
@@ -183,9 +186,9 @@ public class Rock_Colliders : MonoBehaviour
                     //if the ai team is not red
                     if (!gm.aiTeamYellow)
                     {
-                        sm.SweepWhoa(false);
+                        sm.SweepHit(false);
                     }
-                    else sm.SweepWhoa(true);
+                    else sm.SweepHit(true);
                 }
             }
         }
@@ -196,7 +199,7 @@ public class Rock_Colliders : MonoBehaviour
             inPlay = false;
             Debug.Log("collider boards");
             StartCoroutine(OutOfPlay());
-            am.Play("OutOfPlay");
+            rockSounds[2].enabled = true;
         }
     }
 
@@ -208,7 +211,7 @@ public class Rock_Colliders : MonoBehaviour
             inPlay = false;
             inHouse = false;
             StartCoroutine(OutOfPlay());
-            am.Play("OutOfPlay");
+            rockSounds[2].enabled = true;
         }
 
         if (collider == house_collider)
