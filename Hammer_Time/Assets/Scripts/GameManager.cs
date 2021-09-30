@@ -936,7 +936,11 @@ public class GameManager : MonoBehaviour
             endCurrent++;
 
             gsp.LoadFromGM();
-            SceneManager.LoadScene("End_Menu_Tourny_FinalScore");
+
+            if (redScore == yellowScore)
+                SceneManager.LoadScene("End_Menu_Tourny_1");
+            else
+                SceneManager.LoadScene("End_Menu_Tourny_FinalScore");
         }
         else
         {
@@ -944,20 +948,6 @@ public class GameManager : MonoBehaviour
             gsp.LoadFromGM();
             SceneManager.LoadScene("End_Menu_1");
         }
-        //if (redScore == yellowScore)
-        //{
-        //    Debug.Log("Game is tied");
-        //    yield return StartCoroutine(WaitForClick());
-        //    gHUD.ScoreboardOff();
-        //    gHUD.MainDisplayOff();
-        //    StartCoroutine(ResetGame());
-        //}
-        //else
-        //{
-        //    Debug.Log("Game is over");
-        //    yield return StartCoroutine(WaitForClick());
-        //    SceneManager.LoadScene("SplashMenu");
-        //}
     }
     #endregion
 

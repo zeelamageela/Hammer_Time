@@ -40,7 +40,7 @@ public class HouseClick : MonoBehaviour
     IEnumerator IsPressed()
     {
         col.enabled = false;
-
+        //am.Play("Click");
         cm.HouseView();
         button.SetActive(true);
         yield return new WaitForSeconds(0.25f);

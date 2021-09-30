@@ -814,6 +814,8 @@ MonoBehaviour:
   endNumber: {fileID: 1177915369}
   redScore: {fileID: 1022974378}
   yellowScore: {fileID: 1461463678}
+  contButton: {fileID: 1440567477}
+  menuButton: {fileID: 0}
   yellowSpinner: {fileID: 1852023648}
   yellowSpinnerAI: {fileID: 1500632131}
   redHammerPNG: {fileID: 1413880964}
@@ -1275,9 +1277,9 @@ MonoBehaviour:
   mixed: 0
   rockCurrent: 0
   endCurrent: 3
-  yellowScore: 4
+  yellowScore: 3
   redScore: 2
-  tourny: 0
+  tourny: 1
   story: 0
   third: 0
   skip: 0
@@ -1287,6 +1289,7 @@ MonoBehaviour:
   draw: 0
   playoffRound: 0
   teams: []
+  playoffTeams: []
   playerTeamIndex: 0
   score: []
   playerTeam:
@@ -1591,7 +1594,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -450}
+  m_AnchoredPosition: {x: 0, y: -875}
   m_SizeDelta: {x: 600, y: 225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1440567477
@@ -1887,7 +1890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1584891376
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2031,7 +2034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1684189221
 RectTransform:
   m_ObjectHideFlags: 0

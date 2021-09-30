@@ -39,6 +39,7 @@ public class TournyManager : MonoBehaviour
 
 		teamList = new List<Team_List>();
 
+		Debug.Log("Draw at top of start - " + gsp.draw);
 		if (gsp.draw > 0)
 		{
 			playoffRound = gsp.playoffRound;
@@ -148,7 +149,8 @@ public class TournyManager : MonoBehaviour
 					}
 					else
 					{
-						playoffTeams[4] = teams[oppTeam];
+						teams[oppTeam].wins++;
+						teams[playerTeam].loss++;
 					}
 				}
 				Debug.Log(teams[oppTeam].name + " " + teams[oppTeam].wins + " Wins");
@@ -479,6 +481,7 @@ public class TournyManager : MonoBehaviour
 	IEnumerator SimRestDraw()
 	{
 		int tempDraw = draw - 1;
+		Debug.Log("Temp Draw " + tempDraw);
 		Team[] games = new Team[6];
 		//SetDraw();
 		games[0] = teams[drawFormat[tempDraw].game1.x];

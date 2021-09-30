@@ -12,6 +12,7 @@ public class EndMenu : MonoBehaviour
     public Text redScore;
     public Text yellowScore;
     public Button contButton;
+    public Button menuButton;
     public GameObject yellowSpinner;
     public GameObject yellowSpinnerAI;
     public GameObject redHammerPNG;
@@ -45,8 +46,14 @@ public class EndMenu : MonoBehaviour
             {
                 if (gsp.redScore != gsp.yellowScore)
                 {
-                    endText.text = "Game Over!";
+                    if (gsp.redScore > gsp.yellowScore)
+                        endText.text = gsp.redTeamName + " Wins!";
+                    else
+                        endText.text = gsp.yellowTeamName + " Wins!";
+
+                    contButton.transform.GetComponentInChildren<Text>().text = "Continue>";
                     endNumber.enabled = false;
+                    
                     if (!gsp.tourny)
                         contButton.gameObject.SetActive(false);
                 }
@@ -56,6 +63,7 @@ public class EndMenu : MonoBehaviour
             }
             else
             {
+                contButton.transform.GetComponentInChildren<Text>().text = "Next End>";
                 if (gsp.redHammer)
                 {
                     redHammerPNG.SetActive(true);
@@ -85,18 +93,17 @@ public class EndMenu : MonoBehaviour
 
             for (int i = 0; i < gsp.endCurrent; i++)
             {
-                if (i > 0 && gsp.score[i].x - gsp.score[i - 1].x > 0)
-                {
-                    Scoreboard(i + 1, gsp.score[i].x, 0);
-                }
-                else if (i > 0 && gsp.score[i].y - gsp.score[i - 1].y > 0)
-                {
-                    Scoreboard(i + 1, 0, gsp.score[i].y);
-                }
-                else if (i == 0)
-                    Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
-                else
-                    Scoreboard(i + 1, 0, 0);
+                Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
+                //if (i > 0 && gsp.score[i].x - gsp.score[i - 1].x > 0)
+                //{
+                //    Scoreboard(i + 1, gsp.score[i].x, 0);
+                //}
+                //else if (i > 0 && gsp.score[i].y - gsp.score[i - 1].y > 0)
+                //    Scoreboard(i + 1, 0, gsp.score[i].y);
+                //else if (i == 0)
+                //    Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
+                //else
+                //    Scoreboard(i + 1, 0, 0);
             }
         }
 
@@ -162,7 +169,7 @@ public class EndMenu : MonoBehaviour
 
     public void Continue()
     {
-        if (gsp.tourny && gsp.endCurrent > gsp.ends)
+        if (gsp && gsp.tourny && gsp.endCurrent > gsp.ends && gsp.redScore != gsp.yellowScore)
         {
             if (gsp.playoffRound > 0)
                 gsp.playoffRound++;
