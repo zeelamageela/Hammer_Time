@@ -15,6 +15,7 @@ public class HouseClick : MonoBehaviour
     void Start()
     {
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+        button.SetActive(false);
     }
 
     // Update is called once per frame
