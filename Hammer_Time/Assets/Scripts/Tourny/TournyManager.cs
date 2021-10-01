@@ -15,8 +15,11 @@ public class TournyManager : MonoBehaviour
 	public DrawFormat[] drawFormat;
 	public Team[] playoffTeams;
 	public List<Team_List> teamList;
+	public DrawFormatList dfList;
 
+	public GameObject[] standDisplayTest;
 	public GameObject standings;
+	public GameObject standTextRow;
 	public GameObject playoffs;
 	public GameObject semiWinner;
 	public GameObject finalWinner;
@@ -38,8 +41,14 @@ public class TournyManager : MonoBehaviour
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 
 		teamList = new List<Team_List>();
+		dfList.DrawSelector(teams.Length);
+		drawFormat = dfList.currentFormat;
 
-		Debug.Log("Draw at top of start - " + gsp.draw);
+		standDisplay = new StandingDisplay[teams.Length];
+
+		StartCoroutine(SetupStandings());
+
+        Debug.Log("Draw at top of start - " + gsp.draw);
 		if (gsp.draw > 0)
 		{
 			playoffRound = gsp.playoffRound;
@@ -217,6 +226,30 @@ public class TournyManager : MonoBehaviour
 		}
 	}
 
+	IEnumerator SetupStandings()
+    {
+		for (int i = 0; i < teams.Length; i++)
+		{
+			Transform panel = standings.transform.Find("Panel");
+			GameObject row = Instantiate(standTextRow, panel.Find("StandingsGroup").transform);
+			row.name = "Row " + (i + 1);
+			row.GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
+			//Text[] tList = row.transform.GetComponentsInChildren<Text>();
+
+			yield return new WaitForEndOfFrame();
+
+			standDisplayTest[i] = row;
+			//standDisplay[i].name = tList[0];
+			//standDisplay[i].wins = tList[1];
+			//standDisplay[i].loss = tList[2];
+			//standDisplay[i].nextOpp = tList[3];
+
+			Debug.Log("Wins are " + row.GetComponentInChildren<Text>());
+
+		}
+        yield return new WaitUntil( () => standDisplay.Length == teams.Length);
+	}
+
 	void Shuffle(Team[] a)
 	{
 		// Loops through array
@@ -270,20 +303,26 @@ public class TournyManager : MonoBehaviour
 		StartCoroutine(RefreshPanel());
     }
 
-	void SetDraw()
+    #region Set
+    void SetDraw()
     {
 		if (draw < drawFormat.Length)
 		{
-			teams[drawFormat[draw].game1.x].nextOpp = teams[drawFormat[draw].game1.y].name;
-			teams[drawFormat[draw].game1.y].nextOpp = teams[drawFormat[draw].game1.x].name;
+			for (int i = 0; i < drawFormat[draw].game.Length; i++)
+			{
+				teams[drawFormat[draw].game[i].x].nextOpp = teams[drawFormat[draw].game[i].y].name;
+				teams[drawFormat[draw].game[i].y].nextOpp = teams[drawFormat[draw].game[i].x].name;
+			}
+			//teams[drawFormat[draw].game[0].x].nextOpp = teams[drawFormat[draw].game[0].y].name;
+			//teams[drawFormat[draw].game[0].y].nextOpp = teams[drawFormat[draw].game[0].x].name;
 
 
-			teams[drawFormat[draw].game2.x].nextOpp = teams[drawFormat[draw].game2.y].name;
-			teams[drawFormat[draw].game2.y].nextOpp = teams[drawFormat[draw].game2.x].name;
+			//teams[drawFormat[draw].game[1].x].nextOpp = teams[drawFormat[draw].game[1].y].name;
+			//teams[drawFormat[draw].game[1].y].nextOpp = teams[drawFormat[draw].game[1].x].name;
 
 
-			teams[drawFormat[draw].game3.x].nextOpp = teams[drawFormat[draw].game3.y].name;
-			teams[drawFormat[draw].game3.y].nextOpp = teams[drawFormat[draw].game3.x].name;
+			//teams[drawFormat[draw].game[2].x].nextOpp = teams[drawFormat[draw].game[2].y].name;
+			//teams[drawFormat[draw].game[2].y].nextOpp = teams[drawFormat[draw].game[2].x].name;
 		}
 		else if (draw == drawFormat.Length)
         {
@@ -427,35 +466,42 @@ public class TournyManager : MonoBehaviour
 				contButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
 				scrollBar.value = 1;
+
+				for (int i = 0; i < playoffTeams.Length; i++)
+                {
+					if (playoffTeams[i].name == teams[playerTeam].name)
+                    {
+
+                    }
+				}
 				break;
 		}
 	}
+    #endregion
 
-	public void OnSim()
-    {
-		if (playoffRound > 0)
-		{
-			StartCoroutine(SimPlayoff());
-		}
-		else if (draw < drawFormat.Length)
-        {
-			StartCoroutine(SimDraw());
-        }
-	}
-
-	IEnumerator SimDraw()
+    #region Sim
+    IEnumerator SimDraw()
     {
 		Team[] games = new Team[6];
+
 		//SetDraw();
-		games[0] = teams[drawFormat[draw].game1.x];
+		for (int i = 0; i < teams.Length; i++)
+        {
+			if (i % 2 == 0)
+				games[i] = teams[drawFormat[i].game[i / 2].x];
+			else
+				games[i] = teams[drawFormat[i].game[i / 2].y];
+        }
 
-		games[1] = teams[drawFormat[draw].game1.y];
+		//games[0] = teams[drawFormat[draw].game[0].x];
 
-		games[2] = teams[drawFormat[draw].game2.x];
-		games[3] = teams[drawFormat[draw].game2.y];
+		//games[1] = teams[drawFormat[draw].game[0].y];
 
-		games[4] = teams[drawFormat[draw].game3.x];
-		games[5] = teams[drawFormat[draw].game3.y];
+		//games[2] = teams[drawFormat[draw].game[1].x];
+		//games[3] = teams[drawFormat[draw].game[1].y];
+
+		//games[4] = teams[drawFormat[draw].game[2].x];
+		//games[5] = teams[drawFormat[draw].game[2].y];
 
 		for (int i = 0; i < games.Length; i++)
 		{
@@ -484,15 +530,15 @@ public class TournyManager : MonoBehaviour
 		Debug.Log("Temp Draw " + tempDraw);
 		Team[] games = new Team[6];
 		//SetDraw();
-		games[0] = teams[drawFormat[tempDraw].game1.x];
+		games[0] = teams[drawFormat[tempDraw].game[0].x];
 
-		games[1] = teams[drawFormat[tempDraw].game1.y];
+		games[1] = teams[drawFormat[tempDraw].game[0].y];
 
-		games[2] = teams[drawFormat[tempDraw].game2.x];
-		games[3] = teams[drawFormat[tempDraw].game2.y];
+		games[2] = teams[drawFormat[tempDraw].game[1].x];
+		games[3] = teams[drawFormat[tempDraw].game[1].y];
 
-		games[4] = teams[drawFormat[tempDraw].game3.x];
-		games[5] = teams[drawFormat[tempDraw].game3.y];
+		games[4] = teams[drawFormat[tempDraw].game[2].x];
+		games[5] = teams[drawFormat[tempDraw].game[2].y];
 
 		for (int i = 0; i < games.Length; i++)
         {
@@ -594,6 +640,19 @@ public class TournyManager : MonoBehaviour
 		}
 		else
 			heading.text = "End of Round Robin";
+	}
+	#endregion
+
+	public void OnSim()
+	{
+		if (playoffRound > 0)
+		{
+			StartCoroutine(SimPlayoff());
+		}
+		else if (draw < drawFormat.Length)
+		{
+			StartCoroutine(SimDraw());
+		}
 	}
 
 	public void PlayDraw()
