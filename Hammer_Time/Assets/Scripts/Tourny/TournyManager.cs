@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 
 public class TournyManager : MonoBehaviour
 {
+	public PlayoffManager pm;
 	public StandingDisplay[] standDisplay;
 	public BracketDisplay[] brackDisplay;
 	public VSDisplay[] vsDisplay;
@@ -268,7 +269,7 @@ public class TournyManager : MonoBehaviour
 			}
 		}
 
-		SetPlayoffs();
+		pm.SetPlayoffs(playoffRound);
 	}
 
 	void Shuffle(Team[] a)
