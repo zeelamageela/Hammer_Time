@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TigerForge;
 using System;
 using Random = UnityEngine.Random;
 
@@ -11,6 +12,7 @@ public class TournyManager : MonoBehaviour
 	public StandingDisplay[] standDisplay;
 	public BracketDisplay[] brackDisplay;
 	public VSDisplay[] vsDisplay;
+	public TournyTeamList tTeamList;
 	public Team[] teams;
 	public DrawFormat[] drawFormat;
 	public Team[] playoffTeams;
@@ -19,6 +21,9 @@ public class TournyManager : MonoBehaviour
 
 	public GameObject[] standDisplayTest;
 	public GameObject standings;
+	//public Transform panel;
+	public Transform standTextParent;
+	GameObject[] row;
 	public GameObject standTextRow;
 	public GameObject playoffs;
 	public GameObject semiWinner;
@@ -29,26 +34,100 @@ public class TournyManager : MonoBehaviour
 	public Button playButton;
 	public Text heading;
 	public Scrollbar scrollBar;
-	GameSettingsPersist gsp;
+	public Scrollbar standScrollBar;
 
+	GameSettingsPersist gsp;
+	EasyFileSave myFile;
+	public int numberOfTeams;
 	public int draw;
 	public int playoffRound;
 	public int playerTeam;
 	public int oppTeam;
+
+	int careerWins;
+	float careerPoints;
+	string teamName;
+
 	// Start is called before the first frame update
 	void Start()
-    {
+	{
+		myFile = new EasyFileSave("my_tourny_data");
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 
 		teamList = new List<Team_List>();
-		dfList.DrawSelector(teams.Length);
-		drawFormat = dfList.currentFormat;
 
 		standDisplay = new StandingDisplay[teams.Length];
 
 		StartCoroutine(SetupStandings());
 
         Debug.Log("Draw at top of start - " + gsp.draw);
+		
+		//PrintRows(teams);
+	}
+
+	IEnumerator RefreshPanel()
+	{
+		for (int i = 0; i < standDisplay.Length; i++)
+        {
+			standDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
+			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			standDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
+			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+
+		for (int i = 0; i < vsDisplay.Length; i++)
+		{
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+    }
+
+	IEnumerator RefreshPlayoffPanel()
+	{
+		for (int i = 0; i < brackDisplay.Length; i++)
+		{
+			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+
+		for (int i = 0; i < vsDisplay.Length; i++)
+		{
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+	}
+
+	IEnumerator SetupStandings()
+    {
+		row = new GameObject[teams.Length];
+		Debug.Log("Team Length is " + teams.Length);
+		dfList.DrawSelector(teams.Length);
+
+		yield return new WaitForEndOfFrame();
+
+		drawFormat = dfList.currentFormat;
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			row[i] = Instantiate(standTextRow, standTextParent);
+			row[i].name = "Row " + (i + 1);
+			row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
+			//Text[] tList = row.transform.GetComponentsInChildren<Text>();
+
+			RowVariables rv = row[i].GetComponent<RowVariables>();
+			yield return new WaitForEndOfFrame();
+
+			standDisplay[i] = rv.standDisplay;
+		}
+
 		if (gsp.draw > 0)
 		{
 			playoffRound = gsp.playoffRound;
@@ -57,75 +136,11 @@ public class TournyManager : MonoBehaviour
 			draw = gsp.draw;
 
 			if (playoffRound > 0)
-            {
-				playoffTeams = gsp.playoffTeams;
-
-				for (int i = 0; i < teams.Length; i++)
-				{
-					if (teams[i].name == gsp.playerTeam.name)
-						playerTeam = i;
-					if (teams[i].name == gsp.playerTeam.nextOpp)
-						oppTeam = i;
-				}
-
-				Debug.Log("OppTeam is " + oppTeam);
-
-				if (playoffRound == 2)
-                {
-					if (gsp.playerTeam.name == gsp.redTeamName)
-					{
-						if (gsp.redScore > gsp.yellowScore)
-						{
-							playoffTeams[3] = teams[playerTeam];
-						}
-						else
-						{
-							playoffTeams[3] = teams[oppTeam];
-						}
-					}
-					else
-					{
-						if (gsp.redScore < gsp.yellowScore)
-						{
-							playoffTeams[3] = teams[playerTeam];
-						}
-						else
-						{
-							playoffTeams[3] = teams[oppTeam];
-						}
-					}
-					SetPlayoffs();
-				}
-				else if (playoffRound == 3)
-                {
-					if (gsp.playerTeam.name == gsp.redTeamName)
-					{
-						if (gsp.redScore > gsp.yellowScore)
-						{
-							playoffTeams[4] = teams[playerTeam];
-						}
-						else
-						{
-							playoffTeams[4] = teams[oppTeam];
-						}
-					}
-					else
-					{
-						if (gsp.redScore < gsp.yellowScore)
-						{
-							playoffTeams[4] = teams[playerTeam];
-						}
-						else
-						{
-							playoffTeams[4] = teams[oppTeam];
-						}
-					}
-					SetPlayoffs();
-				}
-				
-            }
+			{
+				SetupPlayoffs();
+			}
 			else
-            {
+			{
 				for (int i = 0; i < teams.Length; i++)
 				{
 					if (teams[i].name == gsp.playerTeam.nextOpp)
@@ -177,77 +192,83 @@ public class TournyManager : MonoBehaviour
 				teams[i].strength = Random.Range(0, 10);
 			}
 
-			playerTeam = Random.Range(0, 6);
+			playerTeam = Random.Range(0, teams.Length);
 			teamList[playerTeam].team.name = gsp.teamName;
 
+			yield return new WaitForEndOfFrame();
 			SetDraw();
 		}
 
-		//PrintRows(teams);
+		//yield return new WaitUntil( () => standDisplay.Length == teams.Length);
+		yield return new WaitForEndOfFrame();
 	}
 
-	IEnumerator RefreshPanel()
-	{
-		for (int i = 0; i < standDisplay.Length; i++)
-        {
-			standDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
-			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			standDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
-			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-
-		for (int i = 0; i < vsDisplay.Length; i++)
-		{
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-    }
-
-	IEnumerator RefreshPlayoffPanel()
-	{
-		for (int i = 0; i < brackDisplay.Length; i++)
-		{
-			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-
-		for (int i = 0; i < vsDisplay.Length; i++)
-		{
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-	}
-
-	IEnumerator SetupStandings()
+	void SetupPlayoffs()
     {
+		playoffTeams = gsp.playoffTeams;
+
 		for (int i = 0; i < teams.Length; i++)
 		{
-			Transform panel = standings.transform.Find("Panel");
-			GameObject row = Instantiate(standTextRow, panel.Find("StandingsGroup").transform);
-			row.name = "Row " + (i + 1);
-			row.GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-			//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-			yield return new WaitForEndOfFrame();
-
-			standDisplayTest[i] = row;
-			//standDisplay[i].name = tList[0];
-			//standDisplay[i].wins = tList[1];
-			//standDisplay[i].loss = tList[2];
-			//standDisplay[i].nextOpp = tList[3];
-
-			Debug.Log("Wins are " + row.GetComponentInChildren<Text>());
-
+			if (teams[i].name == gsp.playerTeam.name)
+				playerTeam = i;
+			if (teams[i].name == gsp.playerTeam.nextOpp)
+				oppTeam = i;
 		}
-        yield return new WaitUntil( () => standDisplay.Length == teams.Length);
+
+		Debug.Log("OppTeam is " + oppTeam);
+
+		if (playoffRound == 2)
+		{
+			if (gsp.playerTeam.name == gsp.redTeamName)
+			{
+				if (gsp.redScore > gsp.yellowScore)
+				{
+					playoffTeams[3] = teams[playerTeam];
+				}
+				else
+				{
+					playoffTeams[3] = teams[oppTeam];
+				}
+			}
+			else
+			{
+				if (gsp.redScore < gsp.yellowScore)
+				{
+					playoffTeams[3] = teams[playerTeam];
+				}
+				else
+				{
+					playoffTeams[3] = teams[oppTeam];
+				}
+			}
+		}
+		else if (playoffRound == 3)
+		{
+			if (gsp.playerTeam.name == gsp.redTeamName)
+			{
+				if (gsp.redScore > gsp.yellowScore)
+				{
+					playoffTeams[4] = teams[playerTeam];
+				}
+				else
+				{
+					playoffTeams[4] = teams[oppTeam];
+				}
+			}
+			else
+			{
+				if (gsp.redScore < gsp.yellowScore)
+				{
+					playoffTeams[4] = teams[playerTeam];
+				}
+				else
+				{
+					playoffTeams[4] = teams[oppTeam];
+				}
+			}
+		}
+
+		SetPlayoffs();
 	}
 
 	void Shuffle(Team[] a)
@@ -282,11 +303,11 @@ public class TournyManager : MonoBehaviour
 		for (int i = 0; i < teamList.Count; i++)
         {
 			standDisplay[i].name.text = teamList[i].team.name;
-			standDisplay[i].wins.text = teamList[i].team.wins.ToString();
-			standDisplay[i].loss.text = teamList[i].team.loss.ToString();
-			standDisplay[i].nextOpp.text = teamList[i].team.nextOpp;
-			teamList[i].team.rank = i + 1;
-		}
+            standDisplay[i].wins.text = teamList[i].team.wins.ToString();
+            standDisplay[i].loss.text = teamList[i].team.loss.ToString();
+            standDisplay[i].nextOpp.text = teamList[i].team.nextOpp;
+            teamList[i].team.rank = i + 1;
+        }
 
 		vsDisplay[0].name.text = teams[playerTeam].name;
 		vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
@@ -313,16 +334,6 @@ public class TournyManager : MonoBehaviour
 				teams[drawFormat[draw].game[i].x].nextOpp = teams[drawFormat[draw].game[i].y].name;
 				teams[drawFormat[draw].game[i].y].nextOpp = teams[drawFormat[draw].game[i].x].name;
 			}
-			//teams[drawFormat[draw].game[0].x].nextOpp = teams[drawFormat[draw].game[0].y].name;
-			//teams[drawFormat[draw].game[0].y].nextOpp = teams[drawFormat[draw].game[0].x].name;
-
-
-			//teams[drawFormat[draw].game[1].x].nextOpp = teams[drawFormat[draw].game[1].y].name;
-			//teams[drawFormat[draw].game[1].y].nextOpp = teams[drawFormat[draw].game[1].x].name;
-
-
-			//teams[drawFormat[draw].game[2].x].nextOpp = teams[drawFormat[draw].game[2].y].name;
-			//teams[drawFormat[draw].game[2].y].nextOpp = teams[drawFormat[draw].game[2].x].name;
 		}
 		else if (draw == drawFormat.Length)
         {
@@ -338,6 +349,9 @@ public class TournyManager : MonoBehaviour
 				oppTeam = i;
 		}
 
+		//yield return new WaitUntil(() => standDisplay.Length >= row.Length);
+
+		//yield return new WaitUntil(() => standDisplay.Length );
 		PrintRows();
     }
 
@@ -482,15 +496,15 @@ public class TournyManager : MonoBehaviour
     #region Sim
     IEnumerator SimDraw()
     {
-		Team[] games = new Team[6];
+		Team[] games = new Team[teams.Length];
 
 		//SetDraw();
 		for (int i = 0; i < teams.Length; i++)
         {
 			if (i % 2 == 0)
-				games[i] = teams[drawFormat[i].game[i / 2].x];
+				games[i] = teams[drawFormat[draw].game[i / 2].x];
 			else
-				games[i] = teams[drawFormat[i].game[i / 2].y];
+				games[i] = teams[drawFormat[draw].game[i / 2].y];
         }
 
 		//games[0] = teams[drawFormat[draw].game[0].x];
@@ -521,33 +535,31 @@ public class TournyManager : MonoBehaviour
 		}
 		
 		draw++;
-		yield return StartCoroutine(Scoring());
+		yield return StartCoroutine(DrawScoring());
 	}
 
 	IEnumerator SimRestDraw()
 	{
 		int tempDraw = draw - 1;
 		Debug.Log("Temp Draw " + tempDraw);
-		Team[] games = new Team[6];
+		Team[] games = new Team[teams.Length];
 		//SetDraw();
-		games[0] = teams[drawFormat[tempDraw].game[0].x];
-
-		games[1] = teams[drawFormat[tempDraw].game[0].y];
-
-		games[2] = teams[drawFormat[tempDraw].game[1].x];
-		games[3] = teams[drawFormat[tempDraw].game[1].y];
-
-		games[4] = teams[drawFormat[tempDraw].game[2].x];
-		games[5] = teams[drawFormat[tempDraw].game[2].y];
-
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (i % 2 == 0)
+				games[i] = teams[drawFormat[draw].game[i / 2].x];
+			else
+				games[i] = teams[drawFormat[draw].game[(i - 1) / 2].y];
+		}
+		yield return new WaitForEndOfFrame();
 		for (int i = 0; i < games.Length; i++)
         {
 			if (i % 2 == 0)
 			{
-				Debug.Log("Settling Game - " + games[i].name);
+				//Debug.Log("Settling Game - " + games[i].name);
 				if (games[i].name == teams[playerTeam].name || games[i].name == teams[oppTeam].name)
                 {
-					Debug.Log("Player Game skip sim - " + games[i].name);
+					Debug.Log("Player Game skip sim - " + i + " - " + games[i].name);
 				}
 				else if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
 				{
@@ -565,7 +577,7 @@ public class TournyManager : MonoBehaviour
 				}
 			}
         }
-		yield return StartCoroutine(Scoring());
+		yield return StartCoroutine(DrawScoring());
 	}
 
 	IEnumerator SimPlayoff()
@@ -618,7 +630,7 @@ public class TournyManager : MonoBehaviour
 		//SetPlayoffs();
 	}
 
-	IEnumerator Scoring()
+	IEnumerator DrawScoring()
     {
 
 		if (draw < drawFormat.Length)
@@ -640,9 +652,14 @@ public class TournyManager : MonoBehaviour
 		}
 		else
 			heading.text = "End of Round Robin";
+
+		
+
+		
 	}
 	#endregion
 
+	
 	public void OnSim()
 	{
 		if (playoffRound > 0)

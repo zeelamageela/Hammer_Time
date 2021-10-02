@@ -24,8 +24,9 @@ public class DrawFormatList : MonoBehaviour
 
     public DrawFormat[] currentFormat;
 
-    public void DrawSelector(float numberOfTeams)
+    public void DrawSelector(int numberOfTeams)
     {
+        Debug.Log("Number of Teams is " + numberOfTeams);
         switch (numberOfTeams)
         {
             case 5:
@@ -33,47 +34,47 @@ public class DrawFormatList : MonoBehaviour
                 break;
 
             case 6:
-                currentFormat = team5;
+                currentFormat = team6;
                 break;
 
             case 7:
-                currentFormat = team5;
+                currentFormat = team7;
                 break;
 
             case 8:
-                currentFormat = team5;
+                currentFormat = team8;
                 break;
 
             case 9:
-                currentFormat = team5;
+                currentFormat = team9;
                 break;
 
             case 10:
-                currentFormat = team5;
+                currentFormat = team10;
                 break;
 
             case 11:
-                currentFormat = team5;
+                currentFormat = team11;
                 break;
 
             case 12:
-                currentFormat = team5;
+                currentFormat = team12;
                 break;
 
             case 13:
-                currentFormat = team5;
+                currentFormat = team13;
                 break;
 
             case 14:
-                currentFormat = team5;
+                currentFormat = team14;
                 break;
 
             case 15:
-                currentFormat = team5;
+                currentFormat = team15;
                 break;
 
             case 16:
-                currentFormat = team5;
+                currentFormat = team16;
                 break;
 
             default:
