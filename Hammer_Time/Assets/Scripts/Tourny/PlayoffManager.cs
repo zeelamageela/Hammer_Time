@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TigerForge;
 
 public class PlayoffManager : MonoBehaviour
 {
@@ -16,18 +17,25 @@ public class PlayoffManager : MonoBehaviour
 	public Button playButton;
 	public Text heading;
 	public Scrollbar scrollBar;
+	public Text careerEarningsText;
 
 	GameSettingsPersist gsp;
 
+	EasyFileSave myFile;
 	int pTeams;
 	public int playerTeam;
 	public int oppTeam;
 	public int playoffRound;
 
+	public float careerEarnings;
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
 
+		myFile = new EasyFileSave("my_tourny_data");
+
+		StartCoroutine(LoadCareer());
+		Debug.Log("Career Earnings before playoffs - $ " + careerEarnings.ToString());
 		playoffs.SetActive(true);
 
 		playerTeam = tm.playerTeam;
@@ -223,6 +231,7 @@ public class PlayoffManager : MonoBehaviour
 	}
 	public void SetPlayoffs(int playoffRound)
 	{
+		Debug.Log("Set Playoffs - Round " + playoffRound);
 		switch (playoffRound)
         {
 			case 1:
@@ -231,23 +240,23 @@ public class PlayoffManager : MonoBehaviour
                 {
                     case 1:
                         playButton.gameObject.SetActive(true);
-                        tm.vsDisplay[1].name.text = playoffTeams[0].name;
-                        tm.vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
-                        break;
-                    case 2:
-                        playButton.gameObject.SetActive(true);
                         tm.vsDisplay[1].name.text = playoffTeams[1].name;
                         tm.vsDisplay[1].rank.text = playoffTeams[1].rank.ToString();
                         break;
+                    case 2:
+                        playButton.gameObject.SetActive(true);
+                        tm.vsDisplay[1].name.text = playoffTeams[0].name;
+                        tm.vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
+                        break;
                     case 3:
                         playButton.gameObject.SetActive(true);
-                        tm.vsDisplay[1].name.text = playoffTeams[2].name;
-                        tm.vsDisplay[1].rank.text = playoffTeams[2].rank.ToString();
+                        tm.vsDisplay[1].name.text = playoffTeams[3].name;
+                        tm.vsDisplay[1].rank.text = playoffTeams[3].rank.ToString();
                         break;
 					case 4:
 						playButton.gameObject.SetActive(true);
-						tm.vsDisplay[1].name.text = playoffTeams[3].name;
-						tm.vsDisplay[1].rank.text = playoffTeams[3].rank.ToString();
+						tm.vsDisplay[1].name.text = playoffTeams[2].name;
+						tm.vsDisplay[1].rank.text = playoffTeams[2].rank.ToString();
 						break;
 					default:
                         playButton.gameObject.SetActive(false);
@@ -374,39 +383,68 @@ public class PlayoffManager : MonoBehaviour
                 StartCoroutine(RefreshPlayoffPanel());
 
 				if (tm.teams[tm.playerTeam].name == playoffTeams[8].name)
+				{
 					heading.text = "You Win!";
+
+					careerEarnings += 70000f;
+				}
 				else if (tm.teams[tm.playerTeam].name == playoffTeams[4].name | tm.teams[tm.playerTeam].name == playoffTeams[7].name)
+				{
 					heading.text = "Runner-up";
+					careerEarnings += 35000f;
+				}
 				else if (tm.teams[tm.playerTeam].name == playoffTeams[5].name | tm.teams[tm.playerTeam].name == playoffTeams[6].name)
+				{
 					heading.text = "3rd Place";
+					careerEarnings += 20000f;
+				}
 				else if (tm.teams[tm.playerTeam].name == playoffTeams[2].name | tm.teams[tm.playerTeam].name == playoffTeams[3].name)
+				{
 					heading.text = "4th Place";
-				else
+					careerEarnings += 10000f;
+				}
+                else
                 {
-					for (int i = 0; i < tm.teamList.Count; i++)
-                    {
+                    for (int i = 4; i < tm.teamList.Count; i++)
+					{
+						float p = 1.4f;
+						float totalTeams = tm.teamList.Count - 4;
+						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * 15000f * (p - 1);
+
+						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 						if (tm.teams[tm.playerTeam].name == tm.teamList[i].team.name)
-                        {
-							heading.text = i + "th Place";
-                        }
-                    }
+						{
+							if (i > 3)
+								heading.text = (i + 1) + "th Place";
+
+							//float prizePayout = (totalTeams - i) / (totalTeams);
+							//float prizePayout = ((1 - p) / Mathf.Pow(1 - p, totalTeams) * Mathf.Pow(p, (i - 1))) * 10000f;
+							//float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * 10000f * (p - 1);
+
+							Debug.Log("Prize Payout multiplier is " + prizePayout);
+							prizePayout = Mathf.RoundToInt(prizePayout);
+							careerEarnings += prizePayout;
+						}
+					}
                 }
-					//heading.text = "So Close!";
+                Debug.Log("Career Earnings after calculation - " + careerEarnings.ToString());
+				careerEarningsText.text = "$ " + careerEarnings.ToString();
 
-                tm.vs.SetActive(false);
-                playButton.gameObject.SetActive(false);
-                contButton.gameObject.SetActive(false);
-                simButton.gameObject.SetActive(false);
-                scrollBar.value = 1;
+				StartCoroutine(SaveCareer());
+				//heading.text = "So Close!";
+				tm.vs.SetActive(false);
+				playButton.gameObject.SetActive(false);
+				contButton.gameObject.SetActive(false);
+				simButton.gameObject.SetActive(false);
+				scrollBar.value = 1;
 
-                break;
+				break;
 
         }
 	}
 
 	public void OnSim(int playoffRound)
     {
-
 		StartCoroutine(SimPlayoff(playoffRound, false, false));
     }
 
@@ -525,9 +563,29 @@ public class PlayoffManager : MonoBehaviour
 				break;
 
 		}
-		SetPlayoffs(tm.playoffRound);
+		//SetPlayoffs(tm.playoffRound);
 		yield break;
 		//SetPlayoffs();
 	}
 
+	IEnumerator LoadCareer()
+    {
+		if (myFile.Load())
+		{
+			careerEarnings = myFile.GetFloat("Career Earnings", 0f);
+			Debug.Log("Loading Career Earnings - $ " + careerEarnings);
+			myFile.Dispose();
+		}
+
+		yield return new WaitForEndOfFrame();
+
+		careerEarningsText.text = "$ " + careerEarnings.ToString();
+	}
+
+	IEnumerator SaveCareer()
+    {
+		myFile = new EasyFileSave("my_tourny_data");
+		myFile.Add("Career Earnings", careerEarnings);
+		yield return myFile.Save();
+	}
 }

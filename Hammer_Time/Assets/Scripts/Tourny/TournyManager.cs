@@ -34,6 +34,7 @@ public class TournyManager : MonoBehaviour
 	public Button contButton;
 	public Button playButton;
 	public Text heading;
+	public Text careerEarningsText;
 	public Scrollbar scrollBar;
 	public Scrollbar standScrollBar;
 
@@ -46,14 +47,24 @@ public class TournyManager : MonoBehaviour
 	public int oppTeam;
 
 	int careerWins;
-	float careerPoints;
+	float careerEarnings;
 	string teamName;
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		myFile = new EasyFileSave("my_tourny_data");
+
+		if (myFile.Load())
+        {
+			careerEarnings = myFile.GetFloat("Career Earnings");
+
+			myFile.Dispose();
+        }
+
+		careerEarningsText.text = "$ " + careerEarnings.ToString();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+		teams = new Team[numberOfTeams];
 
 		teamList = new List<Team_List>();
 
@@ -64,6 +75,20 @@ public class TournyManager : MonoBehaviour
         Debug.Log("Draw at top of start - " + gsp.draw);
 		
 		//PrintRows(teams);
+	}
+
+	public void ClearMoney()
+    {
+		if (myFile.Load())
+		{
+
+			myFile.Dispose();
+		}
+		careerEarnings = 0;
+		myFile.Add("Career Earnings", careerEarnings);
+		myFile.Save();
+		careerEarningsText.text = "$ " + careerEarnings.ToString();
+
 	}
 
 	IEnumerator RefreshPanel()
@@ -186,6 +211,11 @@ public class TournyManager : MonoBehaviour
 		}
 		else
 		{
+			for (int i = 0; i < teams.Length; i++)
+            {
+				teams[i] = tTeamList.teams[i];
+            }
+
 			Shuffle(teams);
 
 			for (int i = 0; i < teams.Length; i++)
