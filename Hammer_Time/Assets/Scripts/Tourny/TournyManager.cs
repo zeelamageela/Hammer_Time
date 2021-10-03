@@ -138,7 +138,8 @@ public class TournyManager : MonoBehaviour
 
 			if (playoffRound > 0)
 			{
-				SetupPlayoffs();
+				pm.enabled = true;
+				standings.SetActive(false);
 			}
 			else
 			{
@@ -558,7 +559,7 @@ public class TournyManager : MonoBehaviour
 			if (i % 2 == 0)
 			{
 				//Debug.Log("Settling Game - " + games[i].name);
-				if (games[i].name == teams[playerTeam].name || games[i].name == teams[oppTeam].name)
+				if (games[i].name == teams[playerTeam].name | games[i].name == teams[oppTeam].name)
                 {
 					Debug.Log("Player Game skip sim - " + i + " - " + games[i].name);
 				}
@@ -665,7 +666,7 @@ public class TournyManager : MonoBehaviour
 	{
 		if (playoffRound > 0)
 		{
-			StartCoroutine(SimPlayoff());
+			pm.OnSim(playoffRound);
 		}
 		else if (draw < drawFormat.Length)
 		{

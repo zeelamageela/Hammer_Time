@@ -6,14 +6,11 @@ using UnityEngine.UI;
 public class PlayoffManager : MonoBehaviour
 {
 	public TournyManager tm;
-
-	public List<PlayoffTeam_List> pOffList;
 	public Team[] playoffTeams;
 
 	public BracketDisplay[] brackDisplay;
-	GameObject[] row;
+	public GameObject[] row;
 	public GameObject playoffs;
-	public GameObject vs;
 	public Button simButton;
 	public Button contButton;
 	public Button playButton;
@@ -25,27 +22,38 @@ public class PlayoffManager : MonoBehaviour
 	int pTeams;
 	public int playerTeam;
 	public int oppTeam;
+	public int playoffRound;
 
 	private void Start()
 	{
-		SetSeeding(tm.teams.Length);
+		gsp = FindObjectOfType<GameSettingsPersist>();
+
+		playoffs.SetActive(true);
+
+		playerTeam = tm.playerTeam;
+		playoffRound = gsp.playoffRound;
+		if (gsp.playoffRound > 0)
+			LoadPlayoffs(playoffRound);
+		else
+			SetSeeding(tm.teams.Length);
 	}
 
 	public void SetSeeding(int numberOfTeams)
     {
 
-		pOffList = new List<PlayoffTeam_List>();
 		pTeams = 4;
 		playoffTeams = new Team[9];
 		heading.text = "Page Playoff";
+
 		for (int i = 0; i < pTeams; i++)
 		{
-			pOffList.Add(new PlayoffTeam_List(tm.teamList[i].team));
-			brackDisplay[i].name.text = pOffList[i].team.name;
-			brackDisplay[i].rank.text = pOffList[i].team.rank.ToString();
+			playoffTeams[i] = tm.teamList[i].team;
+			brackDisplay[i].name.text = playoffTeams[i].name;
+			brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 		}
-
-		SetPlayoffs(tm.playoffRound);
+		tm.playoffRound++;
+		playoffRound++;
+		SetPlayoffs(playoffRound);
 	}
 
 	IEnumerator RefreshPlayoffPanel()
@@ -66,6 +74,7 @@ public class PlayoffManager : MonoBehaviour
 			tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
 		}
 	}
+
 	void LoadPlayoffs(int playoffRound)
 	{
 		playoffTeams = gsp.playoffTeams;
@@ -85,14 +94,10 @@ public class PlayoffManager : MonoBehaviour
 				bool game1 = false;
 				bool game2 = false;
 
-				int playerPlayoffPos = 10;
-
 				for (int i = 0; i < 4; i++)
 				{
 					if (tm.teams[playerTeam] == playoffTeams[i])
 					{
-						playerPlayoffPos = i;
-
 						if (i < 2)
 							game1 = true;
 						else
@@ -222,7 +227,7 @@ public class PlayoffManager : MonoBehaviour
         {
 			case 1:
 
-                switch (tm.teams[playerTeam].rank)
+                switch (tm.teams[tm.playerTeam].rank)
                 {
                     case 1:
                         playButton.gameObject.SetActive(true);
@@ -246,7 +251,7 @@ public class PlayoffManager : MonoBehaviour
 						break;
 					default:
                         playButton.gameObject.SetActive(false);
-                        vs.SetActive(false);
+                        tm.vs.SetActive(false);
                         playButton.gameObject.SetActive(false);
                         break;
                 }
@@ -268,13 +273,14 @@ public class PlayoffManager : MonoBehaviour
                     brackDisplay[i].name.text = playoffTeams[i].name;
                     brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 
                 //brackDisplay[4].name.text = playoffTeams[4].name;
                 //brackDisplay[4].rank.text = playoffTeams[4].rank.ToString();
 
 
-				if (playoffTeams[4].name == tm.teams[playerTeam].name)
+				if (playoffTeams[4].name == tm.teams[tm.playerTeam].name)
                 {
                     playButton.gameObject.SetActive(false);
 
@@ -283,7 +289,7 @@ public class PlayoffManager : MonoBehaviour
                     tm.vsDisplay[1].name.text = "BYE TO FINALS";
                     tm.vsDisplay[1].rank.text = "-";
                 }
-                else if (playoffTeams[5].name == tm.teams[playerTeam].name)
+                else if (playoffTeams[5].name == tm.teams[tm.playerTeam].name)
                 {
                     playButton.gameObject.SetActive(true);
                     tm.vsDisplay[0].name.text = playoffTeams[5].name;
@@ -291,7 +297,7 @@ public class PlayoffManager : MonoBehaviour
                     tm.vsDisplay[1].name.text = playoffTeams[6].name;
                     tm.vsDisplay[1].rank.text = playoffTeams[6].rank.ToString();
                 }
-				else if (playoffTeams[6].name == tm.teams[playerTeam].name)
+				else if (playoffTeams[6].name == tm.teams[tm.playerTeam].name)
                 {
 					playButton.gameObject.SetActive(true);
 					tm.vsDisplay[0].name.text = playoffTeams[6].name;
@@ -301,7 +307,7 @@ public class PlayoffManager : MonoBehaviour
 				}
                 else
                 {
-                    vs.SetActive(false);
+                    tm.vs.SetActive(false);
                     playButton.gameObject.SetActive(false);
                 }
 
@@ -321,9 +327,10 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 
-				if (playoffTeams[4].name == tm.teams[playerTeam].name)
+				if (playoffTeams[4].name == tm.teams[tm.playerTeam].name)
 				{
 					playButton.gameObject.SetActive(false);
 
@@ -332,7 +339,7 @@ public class PlayoffManager : MonoBehaviour
 					tm.vsDisplay[1].name.text = playoffTeams[7].name;
 					tm.vsDisplay[1].rank.text = playoffTeams[7].rank.ToString();
 				}
-				else if (playoffTeams[7].name == tm.teams[playerTeam].name)
+				else if (playoffTeams[7].name == tm.teams[tm.playerTeam].name)
 				{
 					playButton.gameObject.SetActive(true);
 					tm.vsDisplay[0].name.text = playoffTeams[7].name;
@@ -342,7 +349,7 @@ public class PlayoffManager : MonoBehaviour
 				}
 				else
 				{
-					vs.SetActive(false);
+					tm.vs.SetActive(false);
 					playButton.gameObject.SetActive(false);
 				}
 
@@ -359,33 +366,34 @@ public class PlayoffManager : MonoBehaviour
 				{
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
-					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					//brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
 
-				if (tm.teams[playerTeam].name == playoffTeams[8].name)
+				if (tm.teams[tm.playerTeam].name == playoffTeams[8].name)
 					heading.text = "You Win!";
-				else if (tm.teams[playerTeam].name == playoffTeams[4].name | tm.teams[playerTeam].name == playoffTeams[7].name)
+				else if (tm.teams[tm.playerTeam].name == playoffTeams[4].name | tm.teams[tm.playerTeam].name == playoffTeams[7].name)
 					heading.text = "Runner-up";
-				else if (tm.teams[playerTeam].name == playoffTeams[5].name | tm.teams[playerTeam].name == playoffTeams[6].name)
+				else if (tm.teams[tm.playerTeam].name == playoffTeams[5].name | tm.teams[tm.playerTeam].name == playoffTeams[6].name)
 					heading.text = "3rd Place";
-				else if (tm.teams[playerTeam].name == playoffTeams[2].name | tm.teams[playerTeam].name == playoffTeams[3].name)
+				else if (tm.teams[tm.playerTeam].name == playoffTeams[2].name | tm.teams[tm.playerTeam].name == playoffTeams[3].name)
 					heading.text = "4th Place";
 				else
                 {
 					for (int i = 0; i < tm.teamList.Count; i++)
                     {
-						if (tm.teams[playerTeam].name == tm.teamList[i].team.name)
+						if (tm.teams[tm.playerTeam].name == tm.teamList[i].team.name)
                         {
 							heading.text = i + "th Place";
                         }
                     }
                 }
-					heading.text = "So Close!";
+					//heading.text = "So Close!";
 
-                vs.SetActive(false);
+                tm.vs.SetActive(false);
                 playButton.gameObject.SetActive(false);
                 contButton.gameObject.SetActive(false);
                 simButton.gameObject.SetActive(false);
@@ -398,8 +406,10 @@ public class PlayoffManager : MonoBehaviour
 
 	public void OnSim(int playoffRound)
     {
+
 		StartCoroutine(SimPlayoff(playoffRound, false, false));
     }
+
     IEnumerator SimPlayoff(int playoffRound, bool game1, bool game2)
 	{
 		Team game1X;
@@ -447,12 +457,13 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffRound++;
+				tm.playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
+				SetPlayoffs(tm.playoffRound);
 				break;
 
 			case 2:
@@ -473,25 +484,26 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffRound++;
+				tm.playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
+				SetPlayoffs(tm.playoffRound);
 				break;
 
 			case 3:
-				game1X = playoffTeams[5];
-				game1Y = playoffTeams[6];
+				game1X = playoffTeams[4];
+				game1Y = playoffTeams[7];
 
 				if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
 				{
-					playoffTeams[7] = game1X;
+					playoffTeams[8] = game1X;
 				}
 				else
 				{
-					playoffTeams[7] = game1Y;
+					playoffTeams[8] = game1Y;
 				}
 
 				for (int i = 0; i < 9; i++)
@@ -499,19 +511,21 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 					brackDisplay[i].name.text = playoffTeams[i].name;
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
+					row[i].SetActive(true);
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffRound++;
+				tm.playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
+				SetPlayoffs(tm.playoffRound);
 				break;
 
 			default:
+				SetPlayoffs(tm.playoffRound);
 				break;
 
 		}
-		SetPlayoffs(playoffRound);
+		SetPlayoffs(tm.playoffRound);
 		yield break;
 		//SetPlayoffs();
 	}

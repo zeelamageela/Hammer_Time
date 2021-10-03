@@ -8,4 +8,7 @@ public class BracketDisplay
 {
     public Text name;
     public Text rank;
+
+    public GameObject panel;
+    
 }
