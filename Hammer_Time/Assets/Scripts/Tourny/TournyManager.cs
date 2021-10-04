@@ -81,7 +81,6 @@ public class TournyManager : MonoBehaviour
     {
 		if (myFile.Load())
 		{
-
 			myFile.Dispose();
 		}
 		careerEarnings = 0;
@@ -168,6 +167,7 @@ public class TournyManager : MonoBehaviour
 			}
 			else
 			{
+				draw--;
 				for (int i = 0; i < teams.Length; i++)
 				{
 					if (teams[i].name == gsp.playerTeam.nextOpp)
@@ -609,6 +609,7 @@ public class TournyManager : MonoBehaviour
 				}
 			}
         }
+		draw++;
 		yield return StartCoroutine(DrawScoring());
 	}
 
@@ -691,7 +692,6 @@ public class TournyManager : MonoBehaviour
 	}
 	#endregion
 
-	
 	public void OnSim()
 	{
 		if (playoffRound > 0)

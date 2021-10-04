@@ -2529,7 +2529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   redHammer: 0
-  ends: 2
+  ends: 1
   rocks: 1
   volume: 0
   tutorial: 0
@@ -2695,7 +2695,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1459562799}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.85840285
+  m_Size: 0.9247828
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3832,7 +3832,7 @@ MonoBehaviour:
   careerEarningsText: {fileID: 999336387}
   scrollBar: {fileID: 1861217573}
   standScrollBar: {fileID: 0}
-  numberOfTeams: 8
+  numberOfTeams: 16
   draw: 0
   playoffRound: 0
   playerTeam: 0
