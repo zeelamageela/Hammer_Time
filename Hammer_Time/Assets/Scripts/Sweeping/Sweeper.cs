@@ -24,10 +24,10 @@ public class Sweeper : MonoBehaviour
     private void Update()
     {
 
-        sweeperParent = transform.parent;
+        //sweeperParent = transform.parent;
 
-        Vector3 followSpot = new Vector3((xOffset + sweeperParent.position.x), (sweeperParent.position.y + yOffset), 0f);
-        transform.position = followSpot;
+        //Vector3 followSpot = new Vector3((xOffset + sweeperParent.position.x), (sweeperParent.position.y + yOffset), 0f);
+        //transform.position = followSpot;
 
         //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);

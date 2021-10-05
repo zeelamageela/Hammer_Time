@@ -6,8 +6,8 @@ public class SweeperSelector : MonoBehaviour
 {
     public GameObject halL;
     public GameObject halR;
-    public Sweeper sweeperL;
-    public Sweeper sweeperR;
+    public SweeperParent sweeperL;
+    public SweeperParent sweeperR;
     public Collider2D sweeperLCol;
     public Collider2D sweeperRCol;
 
@@ -45,227 +45,55 @@ public class SweeperSelector : MonoBehaviour
             //    sweeperParent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
             //}
 
-            //if red has hammer
-            if (rm.gm.redHammer)
+            if (Input.GetMouseButtonDown(0))
             {
-                //if the rock is red
-                if (rm.gm.rockList[rm.gm.rockCurrent].rockInfo.teamName == rm.gm.rockList[1].rockInfo.teamName)
+                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+                if (hit.collider == sweeperLCol)
                 {
-                    //if the ai team is not red
-                    if (!rm.gm.aiTeamRed)
+                    if (sweeperL.sweep)
                     {
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-                            if (hit.collider == sweeperLCol)
-                            {
-                                if (sweeperL.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepLeft(false);
-                                }
-                                else if (sweeperL.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperL.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepLeft(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-
-                            if (hit.collider == sweeperRCol)
-                            {
-                                if (sweeperR.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepRight(false);
-                                }
-                                else if (sweeperR.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperR.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepRight(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-                        }
+                        Debug.Log("Hard!");
+                        sm.SweepLeft(false);
                     }
+                    else if (sweeperL.hard)
+                    {
+                        Debug.Log("Whoa!");
+                        sm.SweepWhoa(false);
+                    }
+                    else if (sweeperL.whoa)
+                    {
+                        Debug.Log("Sweep!");
+                        sm.SweepLeft(false);
+                    }
+
+                    Debug.Log(hit.collider.gameObject.name);
                 }
-                //if the rock is yellow
-                else if (rm.gm.rockList[rm.gm.rockCurrent].rockInfo.teamName == rm.gm.rockList[0].rockInfo.teamName)
+
+                if (hit.collider == sweeperRCol)
                 {
-                    //if the ai team is not yellow
-                    if (!rm.gm.aiTeamYellow)
+                    if (sweeperR.sweep)
                     {
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-                            if (hit.collider == sweeperLCol)
-                            {
-                                if (sweeperL.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepLeft(false);
-                                }
-                                else if (sweeperL.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperL.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepLeft(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-
-                            if (hit.collider == sweeperRCol)
-                            {
-                                if (sweeperR.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepRight(false);
-                                }
-                                else if (sweeperR.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperR.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepRight(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-                        }
+                        Debug.Log("Hard!");
+                        sm.SweepRight(false);
                     }
-                }
-            }
-            else if (!rm.gm.redHammer)
-            {
-                //if the rock is yellow
-                if (rm.gm.rockList[rm.gm.rockCurrent].rockInfo.teamName == rm.gm.rockList[0].rockInfo.teamName)
-                {
-                    //if the ai team is not yellow
-                    if (!rm.gm.aiTeamRed)
+                    else if (sweeperR.hard)
                     {
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-                            if (hit.collider == sweeperLCol)
-                            {
-                                if (sweeperL.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepLeft(false);
-                                }
-                                else if (sweeperL.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperL.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepLeft(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-
-                            if (hit.collider == sweeperRCol)
-                            {
-                                if (sweeperR.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepRight(false);
-                                }
-                                else if (sweeperR.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperR.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepRight(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-                        }
+                        Debug.Log("Whoa!");
+                        sm.SweepWhoa(false);
                     }
-                }
-                //if the rock is red
-                else if (rm.gm.rockList[rm.gm.rockCurrent].rockInfo.teamName == rm.gm.rockList[1].rockInfo.teamName)
-                {
-                    //if the ai team is not red
-                    if (!rm.gm.aiTeamYellow)
+                    else if (sweeperR.whoa)
                     {
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-                            if (hit.collider == sweeperLCol)
-                            {
-                                if (sweeperL.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepLeft(false);
-                                }
-                                else if (sweeperL.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperL.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepLeft(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-
-                            if (hit.collider == sweeperRCol)
-                            {
-                                if (sweeperR.sweep)
-                                {
-                                    Debug.Log("Hard!");
-                                    sm.SweepRight(false);
-                                }
-                                else if (sweeperR.hard)
-                                {
-                                    Debug.Log("Whoa!");
-                                    sm.SweepWhoa(false);
-                                }
-                                else if (sweeperR.whoa)
-                                {
-                                    Debug.Log("Sweep!");
-                                    sm.SweepRight(false);
-                                }
-
-                                Debug.Log(hit.collider.gameObject.name);
-                            }
-                        }
+                        Debug.Log("Sweep!");
+                        sm.SweepRight(false);
                     }
+                    else
+                    {
+                        Debug.Log("Default Sweep!");
+                        sm.SweepRight(false);
+                    }
+
+                    Debug.Log(hit.collider.gameObject.name);
                 }
             }
         }

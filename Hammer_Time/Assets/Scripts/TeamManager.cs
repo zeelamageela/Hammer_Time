@@ -6,9 +6,10 @@ public class TeamManager : MonoBehaviour
 {
     public GameManager gm;
     public SweeperManager sm;
-    public GameObject[] teamRed;
-    public GameObject[] teamYellow;
+    public TeamMember[] teamRed;
+    public TeamMember[] teamYellow;
 
+    
     public GameObject[] leadGO;
     public GameObject[] secondGO;
     public GameObject[] thirdGO;

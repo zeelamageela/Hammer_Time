@@ -5,13 +5,13 @@ using UnityEngine;
 public class SweeperManager : MonoBehaviour
 {
 
-    public Sweeper sweeperL;
-    public Sweeper sweeperR;
+    public SweeperParent sweeperL;
+    public SweeperParent sweeperR;
 
-    public Sweeper sweeperRedL;
-    public Sweeper sweeperRedR;
-    public Sweeper sweeperYellowL;
-    public Sweeper sweeperYellowR;
+    public SweeperParent sweeperRedL;
+    public SweeperParent sweeperRedR;
+    public SweeperParent sweeperYellowL;
+    public SweeperParent sweeperYellowR;
 
     public CharacterStats swprLStats;
     public CharacterStats swprRStats;
@@ -32,13 +32,14 @@ public class SweeperManager : MonoBehaviour
     public GameObject audioShoot;
     public GameObject audioHouse;
 
-    private void Awake()
+
+    void Awake()
     {
-        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-        if (am == null)
-        {
-            Debug.Log("Audio Manager not loaded");
-        }
+        //am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+        //if (am == null)
+        //{
+        //    Debug.Log("Audio Manager not loaded");
+        //}
 
         rockSounds = sweepSel.GetComponents<AudioSource>();
     }
@@ -67,8 +68,6 @@ public class SweeperManager : MonoBehaviour
                     SweepWhoa(false);
             }
         }
-        
-        
     }
 
     public void SetupSweepers(bool redTurn)

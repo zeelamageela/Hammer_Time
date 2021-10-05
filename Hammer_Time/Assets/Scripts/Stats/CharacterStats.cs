@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
-    Sweeper sweeper;
+    SweeperParent sweeper;
 
     AIManager aim;
 
@@ -24,12 +24,12 @@ public class CharacterStats : MonoBehaviour
     private void Start()
     {
 
-        sweeper = GetComponent<Sweeper>();
+        sweeper = GetComponent<SweeperParent>();
     }
     private void OnEnable()
     {
         sweepHealth = 100;
-        if (!GetComponent<Sweeper>())
+        if (!GetComponent<SweeperParent>())
         {
             OnShoot();
         }
@@ -37,7 +37,7 @@ public class CharacterStats : MonoBehaviour
 
     private void Update()
     {
-        if (GetComponent<Sweeper>())
+        if (GetComponent<SweeperParent>())
         {
             if (sweeper.sweep)
             {
