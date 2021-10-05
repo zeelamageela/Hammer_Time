@@ -840,7 +840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418176, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418177, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_RootOrder
@@ -1535,7 +1535,7 @@ MonoBehaviour:
   rm: {fileID: 545177317}
   redShooter: {fileID: 857868563430731881, guid: b8643296f64410a4b9b8924cfe485201, type: 3}
   yellowShooter: {fileID: 5027146118104172921, guid: 74c4cf13a306ff1458ed40ed72f1409a, type: 3}
-  shooterAnimRed: {fileID: 3703111443046092690, guid: 945016fefc5b842bda246437e9741c9f, type: 3}
+  shooterAnimRed: {fileID: 8703072043521731236, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
   shooterAnimYellow: {fileID: 3703111443046092690, guid: 834b7eba63c1d4a2d88ddb179ec86da4, type: 3}
   shooterAnimRedRock: {fileID: 3703111443046092690, guid: b2bf1ebea985b495c9088e6f42bacf6b, type: 3}
   shooterAnimYellowRock: {fileID: 3703111443046092690, guid: e2e090e75483a4372b76226ea84ceb25, type: 3}
@@ -15153,7 +15153,7 @@ PrefabInstance:
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: skipGO.Array.data[1]
       value: 
-      objectReference: {fileID: 3703111443046092690, guid: 945016fefc5b842bda246437e9741c9f, type: 3}
+      objectReference: {fileID: 8703072043521731236, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: thirdGO.Array.data[0]
       value: 
