@@ -686,6 +686,7 @@ GameObject:
   - component: {fileID: 889100766325987374}
   - component: {fileID: 7872151543816972997}
   - component: {fileID: 4634410378134452611}
+  - component: {fileID: 5852178542911332486}
   m_Layer: 0
   m_Name: NC_Hal_Left
   m_TagString: Untagged
@@ -731,6 +732,11 @@ MonoBehaviour:
   - {fileID: 5008335685131169393}
   - {fileID: 2502887226154979186}
   - {fileID: 366932119968737120}
+  sweep: 0
+  hard: 0
+  whoa: 0
+  xOffset: 0
+  yOffset: 0
 --- !u!114 &7872151543816972997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -784,6 +790,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.2555962, y: 4.176862}
   m_EdgeRadius: 0
+--- !u!114 &5852178542911332486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8529532044621270274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colour1: {r: 0, g: 0, b: 0, a: 0}
+  colour2: {r: 0, g: 0, b: 0, a: 0}
+  colour1GO:
+  - {fileID: 5747524078968881577}
+  - {fileID: 4696653329011721917}
+  colour2GO: []
 --- !u!1 &8665848849704908387
 GameObject:
   m_ObjectHideFlags: 0

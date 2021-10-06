@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_Sprite: {fileID: 3908842066040364065, guid: f99f86b1ea136364e80703b3bb13de72, type: 3}
-  m_Color: {r: 0.23529413, g: 0.3137255, b: 0.5058824, a: 1}
+  m_Color: {r: 0.27450982, g: 0.4901961, b: 0.44705886, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0, g: 0, b: 0, a: 0}
+  colour1: {r: 0.27450982, g: 0.4901961, b: 0.44705886, a: 1}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -460,9 +460,9 @@ MonoBehaviour:
   drawAccuracy:
     baseValue: 10
   takeOutAccuracy:
-    baseValue: 10
+    baseValue: 9
   guardAccuracy:
-    baseValue: 10
+    baseValue: 8
   sweepStrength:
     baseValue: 10
   sweepEndurance:

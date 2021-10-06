@@ -11,6 +11,7 @@ public class GameSettingsPersist : MonoBehaviour
     GameSettings gs;
     StoryManager sm;
     TournyManager tm;
+    TeamManager teamM;
 
     public bool redHammer;
     public int ends;
@@ -32,7 +33,9 @@ public class GameSettingsPersist : MonoBehaviour
     public bool skip;
     public string teamName;
     public string redTeamName;
+    public Color redTeamColour;
     public string yellowTeamName;
+    public Color yellowTeamColour;
     public int draw;
     public int playoffRound;
 
@@ -43,6 +46,8 @@ public class GameSettingsPersist : MonoBehaviour
     public Vector2Int[] score;
 
     public Team playerTeam;
+    public Color teamColour;
+    public TeamMember[] playerGO;
     EasyFileSave myFile;
 
     public static GameSettingsPersist instance;
@@ -77,7 +82,6 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
 
-        score = new Vector2Int[12];
     }
 
     public void LoadSettings()
@@ -98,6 +102,14 @@ public class GameSettingsPersist : MonoBehaviour
         debug = gs.debug;
         yellowTeamName = gs.yellowTeamName;
         redTeamName = gs.redTeamName;
+        redTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
+        yellowTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
     }
 
     public void LoadGame()
@@ -154,6 +166,7 @@ public class GameSettingsPersist : MonoBehaviour
         third = gm.target;
         skip = gm.target;
 
+        score = new Vector2Int[12];
         score[endCurrent - 2] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
@@ -167,6 +180,8 @@ public class GameSettingsPersist : MonoBehaviour
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
 
         teamName = ts.teamName;
+        teamColour = ts.teamColour;
+        
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
@@ -190,6 +205,7 @@ public class GameSettingsPersist : MonoBehaviour
         redScore = 0;
         yellowScore = 0;
 
+        //playerGO = tm.playerGO;
         if (draw >= tm.drawFormat.Length)
         {
             playoffTeams = tm.playoffTeams;
@@ -200,6 +216,11 @@ public class GameSettingsPersist : MonoBehaviour
             aiRed = false;
             yellowTeamName = playerTeam.nextOpp;
             redTeamName = playerTeam.name;
+            redTeamColour = teamColour;
+            yellowTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
         }
         else
         {
@@ -207,6 +228,11 @@ public class GameSettingsPersist : MonoBehaviour
             aiYellow = false;
             yellowTeamName = playerTeam.name;
             redTeamName = playerTeam.nextOpp;
+            yellowTeamColour = teamColour;
+            redTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
         }
 
         if (Random.Range(0f, 1f) < 0.5f)

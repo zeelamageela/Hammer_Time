@@ -5,8 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class TeamMember
 {
-    public Stat charStats;
-    public SweeperParent[] sweepers;
-    public GameObject[] shooters;
+    public CharacterStats charStats;
+    public SweeperParent sweeperL;
+    public SweeperParent sweeperR;
+    public GameObject shooter;
     
 }

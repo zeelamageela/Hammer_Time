@@ -28,11 +28,12 @@ public class PlayoffManager : MonoBehaviour
 	public int playoffRound;
 
 	public float careerEarnings;
+	public Vector2Int careerRecord;
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
 
-		myFile = new EasyFileSave("my_tourny_data");
+		myFile = new EasyFileSave("my_player_data");
 
 		StartCoroutine(LoadCareer());
 		Debug.Log("Career Earnings before playoffs - $ " + careerEarnings.ToString());
@@ -429,6 +430,8 @@ public class PlayoffManager : MonoBehaviour
                 }
                 Debug.Log("Career Earnings after calculation - " + careerEarnings.ToString());
 				careerEarningsText.text = "$ " + careerEarnings.ToString();
+				
+				careerRecord = new Vector2Int(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
 
 				StartCoroutine(SaveCareer());
 				//heading.text = "So Close!";
@@ -573,6 +576,8 @@ public class PlayoffManager : MonoBehaviour
 		if (myFile.Load())
 		{
 			careerEarnings = myFile.GetFloat("Career Earnings", 0f);
+			Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
+			careerRecord = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 			Debug.Log("Loading Career Earnings - $ " + careerEarnings);
 			myFile.Dispose();
 		}
@@ -584,8 +589,10 @@ public class PlayoffManager : MonoBehaviour
 
 	IEnumerator SaveCareer()
     {
-		myFile = new EasyFileSave("my_tourny_data");
-		myFile.Add("Career Earnings", careerEarnings);
+		//myFile = new EasyFileSave("my_player_data");
+		myFile.Add("Career Record", careerRecord);
+		Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		myFile.Add("Career Earnings", tempRecord);
 		yield return myFile.Save();
 	}
 }

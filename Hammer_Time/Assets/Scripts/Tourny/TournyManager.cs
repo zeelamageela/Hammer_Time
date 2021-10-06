@@ -53,7 +53,7 @@ public class TournyManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		myFile = new EasyFileSave("my_tourny_data");
+		myFile = new EasyFileSave("my_player_data");
 
 		if (myFile.Load())
         {
