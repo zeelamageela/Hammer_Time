@@ -53,14 +53,14 @@ public class TournyManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		myFile = new EasyFileSave("my_player_data");
+		//myFile = new EasyFileSave("my_player_data");
 
-		if (myFile.Load())
-        {
-			careerEarnings = myFile.GetFloat("Career Earnings");
+		//if (myFile.Load())
+  //      {
+		//	careerEarnings = myFile.GetFloat("Career Earnings");
 
-			myFile.Dispose();
-        }
+		//	myFile.Dispose();
+  //      }
 
 		careerEarningsText.text = "$ " + careerEarnings.ToString();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();

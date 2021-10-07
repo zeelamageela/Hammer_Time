@@ -30,7 +30,7 @@ public class TournySettings : MonoBehaviour
 
     public Text earningsLoad;
     public Text recordLoad;
-    public Vector2Int record;
+    public Vector2 record;
     GameSettingsPersist gsp;
     Gradient gradient;
 
@@ -41,33 +41,7 @@ public class TournySettings : MonoBehaviour
 
     void Start()
     {
-        myFile = new EasyFileSave("my_player_data");
-
-        if (myFile.Load())
-        {
-            playerName = myFile.GetString("Player Name");
-            teamName = myFile.GetString("Team Name");
-            teamColour = myFile.GetUnityColor("Team Colour");
-            earnings = myFile.GetFloat("Career Earnings");
-            //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
-            //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
-
-            myFile.Dispose();
-
-            load.SetActive(true);
-            player.SetActive(false);
-            nameLoad.text = playerName + " " + teamName;
-            colourLoad.color = teamColour;
-            earningsLoad.text = earnings.ToString();
-            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
-        }
-        else
-        {
-            player.SetActive(true);
-            load.SetActive(false);
-        }
-
-
+        StartCoroutine(LoadFromFile());
         gradient = new Gradient();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
@@ -123,26 +97,57 @@ public class TournySettings : MonoBehaviour
         teamColour = gradient.Evaluate(teamColourSlider.value);
     }
 
+    IEnumerator LoadFromFile()
+    {
+        myFile = new EasyFileSave("my_player_data");
+
+        if (myFile.Load())
+        {
+            playerName = myFile.GetString("Player Name");
+            teamName = myFile.GetString("Team Name");
+            teamColour = myFile.GetUnityColor("Team Colour");
+            earnings = myFile.GetFloat("Career Earnings");
+            record = myFile.GetUnityVector2("Career Record");
+            //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
+            //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
+
+            myFile.Dispose();
+            yield return new WaitForEndOfFrame();
+
+            load.SetActive(true);
+            player.SetActive(false);
+            nameLoad.text = playerName + " " + teamName;
+            colourLoad.color = teamColour;
+            earningsLoad.text = "$" + earnings.ToString();
+            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
+        }
+        else
+        {
+            player.SetActive(true);
+            load.SetActive(false);
+        }
+
+
+    }
     public void LoadToGSP()
     {
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         gsp.LoadTournySettings();
 
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
 
-        myFile.Add("Player Name", playerName);
-        myFile.Add("Team Name", teamName);
-        myFile.Add("Team Colour", teamColour);
-        myFile.Add("Career Earnings", 0f);
-        myFile.Add("Career Record", new Vector2Int(0, 0));
+        //myFile.Add("Player Name", playerName);
+        //myFile.Add("Team Name", teamName);
+        //myFile.Add("Team Colour", teamColour);
+        //myFile.Add("Career Earnings", career);
+        //myFile.Add("Career Record", new Vector2(0, 0));
 
-        myFile.Save();
+        //myFile.Save();
         SceneManager.LoadScene("Tourny_Home_1");
     }
 
     public void Player()
     {
-        myFile = new EasyFileSave("my_player_data");
         if (myFile.Load())
         {
             player.SetActive(false);
@@ -164,6 +169,14 @@ public class TournySettings : MonoBehaviour
         player.SetActive(false);
     }
 
+    public void New()
+    {
+        ClearPlayer();
+
+        load.SetActive(false);
+        settings.SetActive(false);
+        player.SetActive(true);
+    }
     public void MainMenu()
     {
         SceneManager.LoadScene("SplashMenu");
@@ -171,8 +184,6 @@ public class TournySettings : MonoBehaviour
 
     public void ClearPlayer()
     {
-        myFile = new EasyFileSave("my_player_data");
-
         myFile.Delete();
     }
 }

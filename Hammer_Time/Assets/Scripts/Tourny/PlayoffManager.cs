@@ -28,7 +28,8 @@ public class PlayoffManager : MonoBehaviour
 	public int playoffRound;
 
 	public float careerEarnings;
-	public Vector2Int careerRecord;
+	public Vector2 careerRecord;
+
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
@@ -230,6 +231,7 @@ public class PlayoffManager : MonoBehaviour
 
 		SetPlayoffs(playoffRound);
 	}
+
 	public void SetPlayoffs(int playoffRound)
 	{
 		Debug.Log("Set Playoffs - Round " + playoffRound);
@@ -431,7 +433,7 @@ public class PlayoffManager : MonoBehaviour
                 Debug.Log("Career Earnings after calculation - " + careerEarnings.ToString());
 				careerEarningsText.text = "$ " + careerEarnings.ToString();
 				
-				careerRecord = new Vector2Int(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
+				careerRecord = new Vector2(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
 
 				StartCoroutine(SaveCareer());
 				//heading.text = "So Close!";
@@ -572,27 +574,32 @@ public class PlayoffManager : MonoBehaviour
 	}
 
 	IEnumerator LoadCareer()
-    {
+	{
+		//myFile = new EasyFileSave("my_player_data");
 		if (myFile.Load())
 		{
-			careerEarnings = myFile.GetFloat("Career Earnings", 0f);
-			Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
-			careerRecord = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
+			gsp.teamName = myFile.GetString("Team Name");
+			gsp.teamColour = myFile.GetUnityColor("Team Colour");
+			careerEarnings = myFile.GetFloat("Career Earnings");
+			careerRecord = myFile.GetUnityVector2("Career Record");
 			Debug.Log("Loading Career Earnings - $ " + careerEarnings);
+
+			yield return new WaitForEndOfFrame();
 			myFile.Dispose();
 		}
 
-		yield return new WaitForEndOfFrame();
 
 		careerEarningsText.text = "$ " + careerEarnings.ToString();
 	}
 
 	IEnumerator SaveCareer()
     {
-		//myFile = new EasyFileSave("my_player_data");
+		myFile = new EasyFileSave("my_player_data");
 		myFile.Add("Career Record", careerRecord);
-		Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
-		myFile.Add("Career Earnings", tempRecord);
+		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		myFile.Add("Team Name", gsp.teamName);
+		myFile.Add("Team Colour", gsp.teamColour);
+		myFile.Add("Career Earnings", careerEarnings);
 		yield return myFile.Save();
 	}
 }

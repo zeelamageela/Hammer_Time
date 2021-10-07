@@ -32,10 +32,14 @@ public class GameSettingsPersist : MonoBehaviour
     public bool third;
     public bool skip;
     public string teamName;
+
     public string redTeamName;
     public Color redTeamColour;
+    public TeamMember[] redTeam;
     public string yellowTeamName;
     public Color yellowTeamColour;
+    public TeamMember[] yellowTeam;
+
     public int draw;
     public int playoffRound;
 
@@ -82,6 +86,7 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
 
+        teamM = FindObjectOfType<TeamManager>();
     }
 
     public void LoadSettings()
@@ -214,6 +219,7 @@ public class GameSettingsPersist : MonoBehaviour
         {
             aiYellow = true;
             aiRed = false;
+
             yellowTeamName = playerTeam.nextOpp;
             redTeamName = playerTeam.name;
             redTeamColour = teamColour;

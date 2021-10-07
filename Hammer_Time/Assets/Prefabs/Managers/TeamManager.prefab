@@ -24,7 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2966168892021168933}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.5856472, y: -14.746717, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -44,15 +44,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 0}
+  sm: {fileID: 0}
+  gsp: {fileID: 0}
+  teamRedColour: {r: 0.27450982, g: 0.4901961, b: 0.44705886, a: 1}
+  teamRed:
+  - charStats: {fileID: 3696769566690430156, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
+  teamYellowColour: {r: 0.7137255, g: 0.4039216, b: 0.09411766, a: 1}
+  teamYellow:
+  - charStats: {fileID: 3696769566690430156, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+  - charStats: {fileID: 3696769566690430156, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
+    sweeperL: {fileID: 0}
+    sweeperR: {fileID: 0}
+    shooter: {fileID: 8703072043521731236, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
   leadGO:
-  - {fileID: 3703111443046092690, guid: d1ea23ce272f65c41a01e02e23628462, type: 3}
-  - {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
+  - {fileID: 3703111443046092690, guid: 834b7eba63c1d4a2d88ddb179ec86da4, type: 3}
+  - {fileID: 3703111443046092690, guid: 945016fefc5b842bda246437e9741c9f, type: 3}
   secondGO:
-  - {fileID: 3703111443046092690, guid: d1ea23ce272f65c41a01e02e23628462, type: 3}
-  - {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
+  - {fileID: 3703111443046092690, guid: 834b7eba63c1d4a2d88ddb179ec86da4, type: 3}
+  - {fileID: 3703111443046092690, guid: 945016fefc5b842bda246437e9741c9f, type: 3}
   thirdGO:
-  - {fileID: 3703111443046092690, guid: d1ea23ce272f65c41a01e02e23628462, type: 3}
-  - {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
+  - {fileID: 3703111443046092690, guid: 834b7eba63c1d4a2d88ddb179ec86da4, type: 3}
+  - {fileID: 3703111443046092690, guid: 945016fefc5b842bda246437e9741c9f, type: 3}
   skipGO:
-  - {fileID: 3703111443046092690, guid: 5a60354807a425347ac99707e213cc9c, type: 3}
-  - {fileID: 3703111443046092690, guid: 86c31610f19a1924f8c42ac0d88717cb, type: 3}
+  - {fileID: 3703111443046092690, guid: 834b7eba63c1d4a2d88ddb179ec86da4, type: 3}
+  - {fileID: 8703072043521731236, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
