@@ -21,10 +21,6 @@ public class SweeperSelector : MonoBehaviour
     bool aiTurn;
     private void Update()
     {
-        sweeperL = sm.sweeperL;
-        sweeperLCol = sm.sweeperL.GetComponent<BoxCollider2D>();
-        sweeperR = sm.sweeperR;
-        sweeperRCol = sm.sweeperR.GetComponent<BoxCollider2D>();
 
         if (rockRB != null)
         {
@@ -106,8 +102,11 @@ public class SweeperSelector : MonoBehaviour
         //rj.connectedBody = rockRB;
     }
 
-    public void AssignSweepers()
+    public void SetColliders()
     {
-
+        sweeperL = sm.sweeperL;
+        sweeperLCol = sweeperL.GetComponent<BoxCollider2D>();
+        sweeperR = sm.sweeperR;
+        sweeperRCol = sweeperR.GetComponent<BoxCollider2D>();
     }
 }

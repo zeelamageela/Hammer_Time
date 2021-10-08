@@ -1285,7 +1285,11 @@ MonoBehaviour:
   skip: 0
   teamName: 
   redTeamName: 
+  redTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  redTeam: []
   yellowTeamName: 
+  yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  yellowTeam: []
   draw: 0
   playoffRound: 0
   teams: []
@@ -1299,6 +1303,8 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
+  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  playerGO: []
 --- !u!4 &1193469361
 Transform:
   m_ObjectHideFlags: 0
@@ -2372,6 +2378,7 @@ GameObject:
   - component: {fileID: 2083261968}
   - component: {fileID: 2083261970}
   - component: {fileID: 2083261969}
+  - component: {fileID: 2083261971}
   m_Layer: 5
   m_Name: End
   m_TagString: Untagged
@@ -2431,7 +2438,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Game Over
+  m_Text: Game Over Game Over
 --- !u!222 &2083261970
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2440,6 +2447,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2083261967}
   m_CullTransparentMesh: 1
+--- !u!114 &2083261971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083261967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charLimit: 9
+  lengthLimit: 25
+  fontSizeMin: 100
+  fontSizeMax: 250
 --- !u!114 &2136102443 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4243983617097706134, guid: 97d6670e53e5f45079701bd725da8821, type: 3}

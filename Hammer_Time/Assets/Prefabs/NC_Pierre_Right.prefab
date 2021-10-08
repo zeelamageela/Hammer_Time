@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8375972156128223390}
   - component: {fileID: 9112988878715505748}
   - component: {fileID: 2502887226154979186}
-  - component: {fileID: 1971270510466182598}
   m_Layer: 9
   m_Name: NC_Legs
   m_TagString: Untagged
@@ -122,32 +121,6 @@ MonoBehaviour:
   sweep: 0
   hard: 0
   whoa: 0
---- !u!61 &1971270510466182598
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3632858394393371343}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 5.401319}
-    newSize: {x: 5.4, y: 5.401319}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
-  m_EdgeRadius: 0
 --- !u!1 &4617956621356730476
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,7 +133,6 @@ GameObject:
   - component: {fileID: 8214751956462878117}
   - component: {fileID: 1330347286257837345}
   - component: {fileID: 500270953819620262}
-  - component: {fileID: 987882559005094350}
   m_Layer: 9
   m_Name: NC_Broom
   m_TagString: Untagged
@@ -270,32 +242,6 @@ MonoBehaviour:
   sweep: 0
   hard: 0
   whoa: 0
---- !u!61 &987882559005094350
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4617956621356730476}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 5.401319}
-    newSize: {x: 5.4, y: 5.401319}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
-  m_EdgeRadius: 0
 --- !u!1 &5268649657780782121
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4743148934496201913}
   - component: {fileID: 7876759020582879084}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BarBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,7 +336,6 @@ GameObject:
   - component: {fileID: 4696653329011721917}
   - component: {fileID: 2236617113605180810}
   - component: {fileID: 366932119968737120}
-  - component: {fileID: 7229645435820117605}
   m_Layer: 9
   m_Name: NC_Shirt
   m_TagString: Untagged
@@ -500,32 +445,6 @@ MonoBehaviour:
   sweep: 0
   hard: 0
   whoa: 0
---- !u!61 &7229645435820117605
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5334827244965389644}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 5.401319}
-    newSize: {x: 5.4, y: 5.401319}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
-  m_EdgeRadius: 0
 --- !u!1 &5747524078968881579
 GameObject:
   m_ObjectHideFlags: 0
@@ -538,7 +457,6 @@ GameObject:
   - component: {fileID: 5747524078968881577}
   - component: {fileID: 5747524078968881578}
   - component: {fileID: 5747524078968881575}
-  - component: {fileID: 1297012740383327499}
   m_Layer: 9
   m_Name: NC_Arm
   m_TagString: Untagged
@@ -648,32 +566,6 @@ MonoBehaviour:
   sweep: 0
   hard: 0
   whoa: 0
---- !u!61 &1297012740383327499
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5747524078968881579}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 5.401319}
-    newSize: {x: 5.4, y: 5.401319}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
-  m_EdgeRadius: 0
 --- !u!1 &8529532044621270274
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,7 +580,7 @@ GameObject:
   - component: {fileID: 4634410378134452611}
   - component: {fileID: 8416835987951627418}
   - component: {fileID: 3151425715983468641}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: NC_Pierre_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -778,7 +670,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
+  m_Offset: {x: -0.047183752, y: -0.111290455}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -789,7 +681,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
+  m_Size: {x: 1.1105943, y: 2.1969624}
   m_EdgeRadius: 0
 --- !u!114 &8416835987951627418
 MonoBehaviour:
@@ -803,7 +695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a593c53c97e449769aee5decd217d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bar: {fileID: 4017110201420263423}
+  bar: {fileID: 3435434686855241371}
   stats: {fileID: 7872151543816972997}
 --- !u!114 &3151425715983468641
 MonoBehaviour:
@@ -835,7 +727,6 @@ GameObject:
   - component: {fileID: 8061431157028275995}
   - component: {fileID: 5268294300028489753}
   - component: {fileID: 5008335685131169393}
-  - component: {fileID: 1763624931700721030}
   m_Layer: 9
   m_Name: NC_Head
   m_TagString: Untagged
@@ -945,32 +836,6 @@ MonoBehaviour:
   sweep: 0
   hard: 0
   whoa: 0
---- !u!61 &1763624931700721030
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8665848849704908387}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.084014416, y: -0.6122289}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.4, y: 5.401319}
-    newSize: {x: 5.4, y: 5.401319}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 2.2555962, y: 4.176862}
-  m_EdgeRadius: 0
 --- !u!1 &8803759398894524995
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,7 +845,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4017110201420263423}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HealthBar1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1012,7 +877,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3435434686855241371}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1044,7 +909,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4701563065273220080}
   - component: {fileID: 8882315885949580252}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BarSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

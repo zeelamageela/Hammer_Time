@@ -198,10 +198,12 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournySetup()
     {
-        TournyManager tm = GameObject.Find("TournyManager").GetComponent<TournyManager>();
+        TournyManager tm = FindObjectOfType<TournyManager>();
+        PlayoffManager pm = FindObjectOfType<PlayoffManager>();
+
         tourny = true;
         draw = tm.draw;
-        playoffRound = tm.playoffRound;
+        playoffRound = pm.playoffRound;
         playerTeamIndex = tm.playerTeam;
         teamList = tm.teamList;
         teams = tm.teams;
@@ -213,7 +215,12 @@ public class GameSettingsPersist : MonoBehaviour
         //playerGO = tm.playerGO;
         if (draw >= tm.drawFormat.Length)
         {
-            playoffTeams = tm.playoffTeams;
+            playoffTeams = new Team[9];
+            for (int i = 0; i < playoffTeams.Length; i++)
+            {
+                playoffTeams[i] = pm.playoffTeams[i];
+            }
+            //playoffTeams = pm.playoffTeams;
         }
         if (Random.Range(0f, 1f) < 0.5f)
         {

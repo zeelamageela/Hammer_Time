@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class TextResize : MonoBehaviour
 {
-    Text text;
+    Text textField;
 
     public float charLimit;
     public float lengthLimit;
@@ -14,17 +14,18 @@ public class TextResize : MonoBehaviour
 
     private void Start()
     {
-       text = GetComponent<Text>();
+       textField = GetComponent<Text>();
     }
     // Update is called once per frame
     void Update()
     {
-        if (text.text.Length >= lengthLimit)
+        if (textField.text.Length >= lengthLimit)
         {
-            //Debug.Log("Text " + gameObject.transform.parent.transform.parent.name + " - " + text.text.Length.ToString());
-            text.fontSize = Mathf.RoundToInt( ((fontSizeMin - fontSizeMax) * ((text.text.Length - lengthLimit) / (charLimit - lengthLimit))) + fontSizeMax);
+            //Debug.Log("Text " + gameObject.transform.parent.transform.parent.name + " - " + textField.text.Length.ToString());
+            //Debug.Log("Text Char Length is " + textField.text.Length);
+            textField.fontSize = Mathf.RoundToInt( ((fontSizeMin - fontSizeMax) * ((textField.text.Length - lengthLimit) / (charLimit - lengthLimit))) + fontSizeMax);
         }
         else
-            text.fontSize = (int) fontSizeMax;
+            textField.fontSize = (int) fontSizeMax;
     }
 }

@@ -32,6 +32,7 @@ public class SweeperManager : MonoBehaviour
     public GameObject audioShoot;
     public GameObject audioHouse;
 
+    GameSettingsPersist gsp;
 
     void Awake()
     {
@@ -40,13 +41,14 @@ public class SweeperManager : MonoBehaviour
         //{
         //    Debug.Log("Audio Manager not loaded");
         //}
-
+        gsp = FindObjectOfType<GameSettingsPersist>();
         rockSounds = sweepSel.GetComponents<AudioSource>();
+        
     }
 
     private void Update()
     {
-        if (swprLStats & swprRStats)
+        if (sweeperL & sweeperR & swprLStats & swprRStats)
         {
             swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
             swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
@@ -72,20 +74,24 @@ public class SweeperManager : MonoBehaviour
 
     public void SetupSweepers(bool redTurn)
     {
-        sweeperRedL.gameObject.SetActive(false);
-        sweeperRedR.gameObject.SetActive(false);
-        sweeperYellowL.gameObject.SetActive(false);
-        sweeperYellowR.gameObject.SetActive(false);
+        //sweeperRedL.gameObject.SetActive(false);
+        //sweeperRedR.gameObject.SetActive(false);
+        //sweeperYellowL.gameObject.SetActive(false);
+        //sweeperYellowR.gameObject.SetActive(false);
 
         if (redTurn)
         {
-            sweeperL = sweeperRedL;
-            sweeperR = sweeperRedR;
+            sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
+            sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
+            sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
+            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour); ;
         }
         else
         {
-            sweeperL = sweeperYellowL;
-            sweeperR = sweeperYellowR;
+            sweeperL = Instantiate(sweeperYellowL, sweepSel.gameObject.transform);
+            sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
+            sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
+            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
         }
 
         sweeperL.gameObject.SetActive(true);
@@ -93,6 +99,7 @@ public class SweeperManager : MonoBehaviour
         swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
         swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
 
+        sweepSel.SetColliders();
         sweepSel.gameObject.SetActive(false);
         sweeperL.sweep = false;
         sweeperL.hard = false;
@@ -105,10 +112,14 @@ public class SweeperManager : MonoBehaviour
 
     public void ResetSweepers()
     {
-        sweeperRedL.gameObject.SetActive(false);
-        sweeperRedR.gameObject.SetActive(false);
-        sweeperYellowL.gameObject.SetActive(false);
-        sweeperYellowR.gameObject.SetActive(false);
+
+        //sweeperRedL.gameObject.SetActive(false);
+        //sweeperRedR.gameObject.SetActive(false);
+        //sweeperYellowL.gameObject.SetActive(false);
+        //sweeperYellowR.gameObject.SetActive(false);
+
+        Destroy(sweeperL.gameObject);
+        Destroy(sweeperR.gameObject);
 
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = false;
@@ -128,6 +139,7 @@ public class SweeperManager : MonoBehaviour
     {
         sweepSel.gameObject.SetActive(true);
         sweepSel.AttachToRock(rock);
+        
         inturn = rm.inturn;
         //sweep.OnWhoa();
         if (!aiTurn)

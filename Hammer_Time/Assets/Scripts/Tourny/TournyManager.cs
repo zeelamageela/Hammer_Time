@@ -300,7 +300,7 @@ public class TournyManager : MonoBehaviour
 			}
 		}
 
-		pm.SetPlayoffs(playoffRound);
+		pm.SetPlayoffs();
 	}
 
 	void Shuffle(Team[] a)
@@ -387,142 +387,6 @@ public class TournyManager : MonoBehaviour
 		PrintRows();
     }
 
-	public void SetPlayoffs()
-	{
-		switch (playoffRound)
-        {
-			case 0:
-				heading.text = "Semifinals";
-				for (int i = 0; i < 3; i++)
-				{
-					playoffTeams[i] = teamList[i].team;
-					brackDisplay[i].name.text = playoffTeams[i].name;
-					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
-				}
-				switch (teams[playerTeam].rank)
-                {
-					case 1:
-						playButton.gameObject.SetActive(false);
-						teams[playerTeam].nextOpp = "-----";
-						vsDisplay[1].name.text = "BYE TO FINALS";
-						vsDisplay[1].rank.text = "-";
-						break;
-					case 2:
-						playButton.gameObject.SetActive(true);
-						teams[playerTeam].nextOpp = playoffTeams[2].name;
-						vsDisplay[1].name.text = playoffTeams[2].name;
-						vsDisplay[1].rank.text = playoffTeams[2].rank.ToString();
-						break;
-					case 3:
-						playButton.gameObject.SetActive(true);
-						teams[playerTeam].nextOpp = playoffTeams[1].name;
-						vsDisplay[1].name.text = playoffTeams[1].name;
-						vsDisplay[1].rank.text = playoffTeams[1].rank.ToString();
-						break;
-					default:
-						playButton.gameObject.SetActive(false);
-						vs.SetActive(false);
-						playButton.gameObject.SetActive(false);
-						break;
-                }
-
-				StartCoroutine(RefreshPlayoffPanel());
-
-				standings.SetActive(false);
-				playoffs.SetActive(true);
-				playoffRound++;
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				scrollBar.value = 0;
-				break;
-
-			case 2:
-				heading.text = "Finals"; 
-				
-				for (int i = 0; i < 4; i++)
-				{
-					brackDisplay[i].name.text = playoffTeams[i].name;
-					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
-				}
-
-				semiWinner.SetActive(true);
-				brackDisplay[3].name.text = playoffTeams[3].name;
-				brackDisplay[3].rank.text = playoffTeams[3].rank.ToString();
-
-				if (playoffTeams[0].name == teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(true);
-
-					vsDisplay[0].name.text = playoffTeams[0].name;
-					vsDisplay[0].rank.text = playoffTeams[0].rank.ToString();
-					teams[playerTeam].nextOpp = playoffTeams[3].name;
-					vsDisplay[1].name.text = playoffTeams[3].name;
-					vsDisplay[1].rank.text = playoffTeams[3].rank.ToString();
-				}
-				else if (playoffTeams[3].name == teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(true);
-					vsDisplay[0].name.text = playoffTeams[3].name;
-					vsDisplay[0].rank.text = playoffTeams[3].rank.ToString();
-					teams[playerTeam].nextOpp = playoffTeams[0].name;
-					vsDisplay[1].name.text = playoffTeams[0].name;
-					vsDisplay[1].rank.text = playoffTeams[0].rank.ToString();
-				}
-				else
-				{
-					vs.SetActive(false);
-					playButton.gameObject.SetActive(false);
-				}
-
-				standings.SetActive(false);
-				playoffs.SetActive(true);
-				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				scrollBar.value = 0.5f;
-				break;
-
-			case 3:
-				heading.text = "Winner";
-
-				for (int i = 0; i < 5; i++)
-				{
-					brackDisplay[i].name.text = playoffTeams[i].name;
-					brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
-				}
-
-				semiWinner.SetActive(true);
-				finalWinner.SetActive(true);
-				brackDisplay[4].name.text = playoffTeams[4].name;
-				brackDisplay[4].rank.text = playoffTeams[4].rank.ToString();
-
-				standings.SetActive(false);
-				playoffs.SetActive(true);
-				StartCoroutine(RefreshPlayoffPanel());
-
-				if (teams[playerTeam].name == playoffTeams[4].name)
-					heading.text = "You Win!";
-				else
-					heading.text = "So Close!";
-
-				vs.SetActive(false);
-				playButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(false);
-				simButton.gameObject.SetActive(false);
-				scrollBar.value = 1;
-
-				for (int i = 0; i < playoffTeams.Length; i++)
-                {
-					if (playoffTeams[i].name == teams[playerTeam].name)
-                    {
-
-                    }
-				}
-				break;
-		}
-	}
     #endregion
 
     #region Sim
@@ -613,56 +477,6 @@ public class TournyManager : MonoBehaviour
 		yield return StartCoroutine(DrawScoring());
 	}
 
-	IEnumerator SimPlayoff()
-	{
-		switch (playoffRound)
-        {
-			case 1:
-				Team semiX = playoffTeams[1];
-				Team semiY = playoffTeams[2];
-
-				if (Random.Range(0, semiX.strength) > Random.Range(0, semiY.strength))
-				{
-					playoffTeams[3] = semiX;
-				}
-				else
-				{
-					playoffTeams[3] = semiY;
-				}
-
-				semiWinner.SetActive(true);
-				brackDisplay[3].rank.text = playoffTeams[3].rank.ToString();
-				brackDisplay[3].name.text = playoffTeams[3].name;
-				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				break;
-
-			case 2:
-				if (Random.Range(0, playoffTeams[0].strength) > Random.Range(0, playoffTeams[3].strength))
-                {
-					playoffTeams[4] = playoffTeams[0];
-                }
-				else
-                {
-					playoffTeams[4] = playoffTeams[3];
-				}
-				playoffRound++;
-				SetPlayoffs();
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				break;
-
-			default:
-				break;
-
-		}
-		SetPlayoffs();
-		yield break;
-		//SetPlayoffs();
-	}
-
 	IEnumerator DrawScoring()
     {
 
@@ -681,6 +495,10 @@ public class TournyManager : MonoBehaviour
 			playButton.gameObject.SetActive(false);
 			simButton.gameObject.SetActive(false);
 			contButton.gameObject.SetActive(true);
+			for (int i = 0; i < teams.Length; i++)
+            {
+				teams[i].nextOpp = "-----";
+            }
 
 		}
 		else
@@ -694,9 +512,10 @@ public class TournyManager : MonoBehaviour
 
 	public void OnSim()
 	{
+		//playoffRound = pm.playoffRound;
 		if (playoffRound > 0)
 		{
-			pm.OnSim(playoffRound);
+			pm.OnSim();
 		}
 		else if (draw < drawFormat.Length)
 		{

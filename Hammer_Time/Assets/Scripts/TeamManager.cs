@@ -14,10 +14,10 @@ public class TeamManager : MonoBehaviour
     public TeamMember[] teamYellow;
 
 
-    public GameObject[] leadGO;
-    public GameObject[] secondGO;
-    public GameObject[] thirdGO;
-    public GameObject[] skipGO;
+    //public GameObject[] leadGO;
+    //public GameObject[] secondGO;
+    //public GameObject[] thirdGO;
+    //public GameObject[] skipGO;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +30,9 @@ public class TeamManager : MonoBehaviour
         }
         else
         {
+            teamRedColour = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+            teamYellowColour = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+
             Shuffle(teamRed);
             Shuffle(teamYellow);
         }
@@ -253,8 +256,8 @@ public class TeamManager : MonoBehaviour
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
 
-                teamRed[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
-                teamRed[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
+                //teamRed[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
+                //teamRed[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
             }
         }
         else
@@ -263,8 +266,8 @@ public class TeamManager : MonoBehaviour
             {
                 teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
 
-                teamYellow[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
-                teamYellow[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
+                //teamYellow[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
+                //teamYellow[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
             }
         }
         if (rockCurrent < 4)
