@@ -84,7 +84,7 @@ public class SweeperManager : MonoBehaviour
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
             sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
-            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour); ;
+            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
         }
         else
         {
@@ -157,15 +157,15 @@ public class SweeperManager : MonoBehaviour
 
         if (inturn)
         {
-            sweeperL.yOffset = 1.1f;
+            sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 1.1f, 0f);
 
-            sweeperR.yOffset = 0.6f;
+            sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 0.6f, 0f);
         }
         else
         {
-            sweeperL.yOffset = 0.6f;
+            sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 0.6f, 0f);
 
-            sweeperR.yOffset = 1.1f;
+            sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 1.1f, 0f);
         }
     }
 
@@ -257,10 +257,10 @@ public class SweeperManager : MonoBehaviour
         rockSounds[0].pitch = 1f;
         rockSounds[1].pitch = 1f;
         sweep.OnLeft();
-        sweeperL.yOffset = 0.6f;
+        sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 0.6f, 0f);
         sweeperL.Sweep();
 
-        sweeperR.yOffset = 1.1f;
+        sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 1.1f, 0f);
         sweeperR.Whoa();
 
         if (!aiTurn)
@@ -280,10 +280,10 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].pitch = 1f;
 
         sweep.OnRight();
-        sweeperL.yOffset = 1.1f;
+        sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 1.1f, 0f);
         sweeperL.Whoa();
 
-        sweeperR.yOffset = 0.6f;
+        sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 0.6f, 0f);
         sweeperR.Sweep();
 
         if (!aiTurn)

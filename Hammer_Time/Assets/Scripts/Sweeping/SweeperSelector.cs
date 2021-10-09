@@ -41,6 +41,13 @@ public class SweeperSelector : MonoBehaviour
             //    sweeperParent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
             //}
 
+            Vector2 moveDirection = rockRB.velocity;
+            if (moveDirection != Vector2.zero)
+            {
+                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis((angle - 90f) / 6f, Vector3.forward);
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);

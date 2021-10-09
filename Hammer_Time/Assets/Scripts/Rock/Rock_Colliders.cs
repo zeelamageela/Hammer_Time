@@ -17,6 +17,7 @@ public class Rock_Colliders : MonoBehaviour
     public bool inHouse = false;
     public bool shotTaken = false;
     public bool guard = false;
+    private float fixedDeltaTime;
 
     AudioManager am;
     SweeperManager sm;
@@ -45,6 +46,7 @@ public class Rock_Colliders : MonoBehaviour
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         sm = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        fixedDeltaTime = Time.fixedDeltaTime;
     }
 
     // Update is called once per frame
@@ -140,11 +142,20 @@ public class Rock_Colliders : MonoBehaviour
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
             collision.gameObject.GetComponent<Rock_Info>().rest = false;
             hit = true;
+
+
             //Debug.Log("Hit!");
             //am.Play("Hit");
             rockSounds[0].volume = collision.relativeVelocity.magnitude;
             rockSounds[0].enabled = true;
             //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
+
+            Time.timeScale = 0.1f;
+            Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
+
+            Debug.Log("Time scale is " + Time.timeScale);
+
+            //GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             if (gm.redHammer)
             {
                 //if the rock is red

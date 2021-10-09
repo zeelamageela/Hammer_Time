@@ -24,8 +24,8 @@ public class SweeperParent : MonoBehaviour
     {
         //sweeperParent = transform.parent;
 
-        Vector3 followSpot = new Vector3((xOffset + transform.parent.position.x), (transform.parent.position.y + yOffset), 0f);
-        transform.position = followSpot;
+        //Vector3 followSpot = new Vector3((xOffset + transform.parent.position.x), (transform.parent.position.y + yOffset), 0f);
+        //transform.position = followSpot;
     }
 
     public void Sweep()

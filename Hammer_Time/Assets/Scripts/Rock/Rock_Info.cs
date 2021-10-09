@@ -89,6 +89,7 @@ public class Rock_Info : MonoBehaviour
             }
             else
             {
+                //Debug.Log("Hit RockInfo! - stopped");
                 stopped = true;
                 hit = false;
             }
