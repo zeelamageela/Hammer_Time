@@ -650,9 +650,9 @@ MonoBehaviour:
   guardAccuracy:
     baseValue: 0
   sweepStrength:
-    baseValue: 0
+    baseValue: 10
   sweepEndurance:
-    baseValue: 0
+    baseValue: 10
   sweepHealth: 100
   sweeping: 0
   sweepingHard: 0
