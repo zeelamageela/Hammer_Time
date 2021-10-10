@@ -13,4 +13,5 @@ public class Team
     public string nextOpp;
 
     public int strength;
+    public int id;
 }

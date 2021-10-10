@@ -39,7 +39,10 @@ public class PlayoffManager : MonoBehaviour
 		StartCoroutine(LoadCareer());
 		Debug.Log("Career Earnings before playoffs - $ " + careerEarnings.ToString());
 		playoffs.SetActive(true);
-
+		if (gsp.careerLoad)
+        {
+			gsp.LoadTourny();
+        }
 		playerTeam = tm.playerTeam;
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
@@ -285,6 +288,7 @@ public class PlayoffManager : MonoBehaviour
                 simButton.gameObject.SetActive(true);
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0;
+				StartCoroutine(SaveCareer(true));
                 break;
 
             case 2:
@@ -342,7 +346,8 @@ public class PlayoffManager : MonoBehaviour
                 simButton.gameObject.SetActive(true);
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0.5f;
-                break;
+				StartCoroutine(SaveCareer(true));
+				break;
 
 			case 3:
 				heading.text = "Finals";
@@ -385,6 +390,7 @@ public class PlayoffManager : MonoBehaviour
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				scrollBar.value = 1f;
+				StartCoroutine(SaveCareer(true));
 				break;
 
 			case 4:
@@ -488,7 +494,7 @@ public class PlayoffManager : MonoBehaviour
 				
 				careerRecord = new Vector2(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
 
-				StartCoroutine(SaveCareer());
+				StartCoroutine(SaveCareer(false));
 				//heading.text = "So Close!";
 				
 
@@ -648,14 +654,60 @@ public class PlayoffManager : MonoBehaviour
 		careerEarningsText.text = "$ " + careerEarnings.ToString();
 	}
 
-	IEnumerator SaveCareer()
+	IEnumerator SaveCareer(bool inProgress)
     {
 		myFile = new EasyFileSave("my_player_data");
+
 		myFile.Add("Career Record", careerRecord);
 		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", careerEarnings);
+		myFile.Add("Career Earnings", careerEarnings); 
+		
+
+		myFile.Add("In Progress", inProgress);
+		myFile.Add("Draw", gsp.draw);
+		myFile.Add("Number Of Teams", gsp.numberOfTeams);
+		myFile.Add("Player Team", playerTeam);
+		myFile.Add("OppTeam", oppTeam);
+		myFile.Add("Playoff Round", playoffRound);
+
+		string[] nameList = new string[tm.teams.Length];
+		int[] winsList = new int[tm.teams.Length];
+		int[] lossList = new int[tm.teams.Length];
+		int[] rankList = new int[tm.teams.Length];
+		string[] nextOppList = new string[tm.teams.Length];
+		int[] strengthList = new int[tm.teams.Length];
+		int[] idList = new int[tm.teams.Length];
+
+		for (int i = 0; i < tm.teams.Length; i++)
+		{
+			nameList[i] = tm.teams[i].name;
+			winsList[i] = tm.teams[i].wins;
+			lossList[i] = tm.teams[i].loss;
+			rankList[i] = tm.teams[i].rank;
+			nextOppList[i] = tm.teams[i].nextOpp;
+			strengthList[i] = tm.teams[i].strength;
+			idList[i] = tm.teams[i].id;
+		}
+
+		myFile.Add("Teams Name", nameList);
+		myFile.Add("Teams Wins", winsList);
+		myFile.Add("Teams Loss", lossList);
+		myFile.Add("Teams Rank", rankList);
+		myFile.Add("Teams NextOpp", nextOppList);
+		myFile.Add("Teams Strength", strengthList);
+		myFile.Add("Teams ID", idList);
+
+		int[] playoffIDList = new int[playoffTeams.Length];
+
+		for (int i = 0; i < playoffTeams.Length; i++)
+		{
+			playoffIDList[i] = playoffTeams[i].id;
+		}
+
+		myFile.Add("Playoff ID List", playoffIDList);
+
 		yield return myFile.Save();
 	}
 }

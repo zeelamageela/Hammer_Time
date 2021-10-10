@@ -99,6 +99,7 @@ public class TournySettings : MonoBehaviour
 
     IEnumerator LoadFromFile()
     {
+        gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
 
         if (myFile.Load())
@@ -113,7 +114,7 @@ public class TournySettings : MonoBehaviour
 
             myFile.Dispose();
             yield return new WaitForEndOfFrame();
-
+            gsp.careerLoad = true;
             load.SetActive(true);
             player.SetActive(false);
             nameLoad.text = playerName + " " + teamName;
@@ -172,7 +173,7 @@ public class TournySettings : MonoBehaviour
     public void New()
     {
         ClearPlayer();
-
+        gsp.careerLoad = false;
         load.SetActive(false);
         settings.SetActive(false);
         player.SetActive(true);

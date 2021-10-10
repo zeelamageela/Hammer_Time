@@ -45,25 +45,42 @@ public class TournyManager : MonoBehaviour
 	public int playoffRound;
 	public int playerTeam;
 	public int oppTeam;
-
-	int careerWins;
-	float careerEarnings;
+	public bool inProgress;
+	
+	public Vector2 careerRecord;
+	public float careerEarnings;
 	string teamName;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		//myFile = new EasyFileSave("my_player_data");
-
-		//if (myFile.Load())
-  //      {
-		//	careerEarnings = myFile.GetFloat("Career Earnings");
-
-		//	myFile.Dispose();
-  //      }
-
-		careerEarningsText.text = "$ " + careerEarnings.ToString();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+		myFile = new EasyFileSave("my_player_data");
+
+        if (myFile.Load())
+        {
+            careerEarnings = myFile.GetFloat("Career Earnings");
+			careerRecord = myFile.GetUnityVector2("Career Record");
+
+			bool inProgress = myFile.GetBool("In Progress");
+
+			myFile.Dispose();
+			if (inProgress)
+            {
+				Debug.Log("In Progress is True");
+				if (gsp.careerLoad)
+					gsp.LoadTourny();
+            }
+			else
+			{
+				gsp.draw = 0;
+				gsp.playoffRound = 0;
+			}
+
+        }
+
+		numberOfTeams = gsp.numberOfTeams;
+		careerEarningsText.text = "$ " + careerEarnings.ToString();
 		teams = new Team[numberOfTeams];
 
 		teamList = new List<Team_List>();
@@ -111,27 +128,9 @@ public class TournyManager : MonoBehaviour
 		}
     }
 
-	IEnumerator RefreshPlayoffPanel()
-	{
-		for (int i = 0; i < brackDisplay.Length; i++)
-		{
-			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			brackDisplay[i].name.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-
-		for (int i = 0; i < vsDisplay.Length; i++)
-		{
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
-
-			yield return new WaitForEndOfFrame();
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
-	}
-
 	IEnumerator SetupStandings()
     {
+		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
 		Debug.Log("Team Length is " + teams.Length);
 		dfList.DrawSelector(teams.Length);
@@ -165,6 +164,18 @@ public class TournyManager : MonoBehaviour
 				pm.enabled = true;
 				standings.SetActive(false);
 			}
+			else if (inProgress)
+            {
+				for (int i = 0; i < teams.Length; i++)
+				{
+					if (teams[i].name == gsp.playerTeam.nextOpp)
+						oppTeam = i;
+					if (teams[i].name == gsp.playerTeam.name)
+						playerTeam = i;
+				}
+
+				SetDraw();
+            }
 			else
 			{
 				draw--;
@@ -209,8 +220,11 @@ public class TournyManager : MonoBehaviour
 			}
 
 		}
+
 		else
 		{
+			Shuffle(tTeamList.teams);
+
 			for (int i = 0; i < teams.Length; i++)
             {
 				teams[i] = tTeamList.teams[i];
@@ -233,74 +247,6 @@ public class TournyManager : MonoBehaviour
 
 		//yield return new WaitUntil( () => standDisplay.Length == teams.Length);
 		yield return new WaitForEndOfFrame();
-	}
-
-	void SetupPlayoffs()
-    {
-		playoffTeams = gsp.playoffTeams;
-
-		for (int i = 0; i < teams.Length; i++)
-		{
-			if (teams[i].name == gsp.playerTeam.name)
-				playerTeam = i;
-			if (teams[i].name == gsp.playerTeam.nextOpp)
-				oppTeam = i;
-		}
-
-		Debug.Log("OppTeam is " + oppTeam);
-
-		if (playoffRound == 2)
-		{
-			if (gsp.playerTeam.name == gsp.redTeamName)
-			{
-				if (gsp.redScore > gsp.yellowScore)
-				{
-					playoffTeams[3] = teams[playerTeam];
-				}
-				else
-				{
-					playoffTeams[3] = teams[oppTeam];
-				}
-			}
-			else
-			{
-				if (gsp.redScore < gsp.yellowScore)
-				{
-					playoffTeams[3] = teams[playerTeam];
-				}
-				else
-				{
-					playoffTeams[3] = teams[oppTeam];
-				}
-			}
-		}
-		else if (playoffRound == 3)
-		{
-			if (gsp.playerTeam.name == gsp.redTeamName)
-			{
-				if (gsp.redScore > gsp.yellowScore)
-				{
-					playoffTeams[4] = teams[playerTeam];
-				}
-				else
-				{
-					playoffTeams[4] = teams[oppTeam];
-				}
-			}
-			else
-			{
-				if (gsp.redScore < gsp.yellowScore)
-				{
-					playoffTeams[4] = teams[playerTeam];
-				}
-				else
-				{
-					playoffTeams[4] = teams[oppTeam];
-				}
-			}
-		}
-
-		pm.SetPlayoffs();
 	}
 
 	void Shuffle(Team[] a)
@@ -354,6 +300,8 @@ public class TournyManager : MonoBehaviour
 			}
         }
 		StartCoroutine(RefreshPanel());
+
+		StartCoroutine(SaveCareer());
     }
 
     #region Set
@@ -532,6 +480,63 @@ public class TournyManager : MonoBehaviour
     }
 	public void Menu()
     {
+		StartCoroutine(SaveCareer());
+
 		SceneManager.LoadScene("SplashMenu");
+    }
+
+	IEnumerator SaveCareer()
+	{
+		myFile = new EasyFileSave("my_player_data");
+
+		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		myFile.Add("First Name", gsp.firstName);
+		myFile.Add("Team Name", gsp.teamName);
+		myFile.Add("Team Colour", gsp.teamColour);
+		myFile.Add("Career Earnings", careerEarnings);
+		myFile.Add("Career Record", careerRecord);
+		myFile.Add("In Progress", true);
+		myFile.Add("Draw", draw);
+		myFile.Add("Number Of Teams", numberOfTeams);
+		myFile.Add("Player Team", playerTeam);
+		myFile.Add("OppTeam", oppTeam);
+		myFile.Add("Playoff Round", playoffRound);
+
+		string[] nameList = new string[teams.Length];
+        int[] winsList = new int[teams.Length];
+        int[] lossList = new int[teams.Length];
+        int[] rankList = new int[teams.Length];
+        string[] nextOppList = new string[teams.Length];
+        int[] strengthList = new int[teams.Length];
+        int[] idList = new int[teams.Length];
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+			nameList[i] = teams[i].name;
+            winsList[i] = teams[i].wins;
+            lossList[i] = teams[i].loss;
+            rankList[i] = teams[i].rank;
+            nextOppList[i] = teams[i].nextOpp;
+            strengthList[i] = teams[i].strength;
+            idList[i] = teams[i].id;
+        }
+		myFile.Add("Teams Name", nameList);
+        myFile.Add("Teams Wins", winsList);
+        myFile.Add("Teams Loss", lossList);
+        myFile.Add("Teams Rank", rankList);
+        myFile.Add("Teams NextOpp", nextOppList);
+        myFile.Add("Teams Strength", strengthList);
+        myFile.Add("Teams ID", idList);
+
+		int[] playoffIDList = new int[playoffTeams.Length];
+
+		for (int i = 0; i < playoffTeams.Length; i++)
+        {
+			playoffIDList[i] = playoffTeams[i].id;
+        }
+
+		myFile.Add("Playoff ID List", playoffIDList);
+        //yield return myFile.TestDataSaveLoad();
+        yield return myFile.Save();
     }
 }

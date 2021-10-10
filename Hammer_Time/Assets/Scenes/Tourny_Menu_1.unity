@@ -1019,6 +1019,7 @@ MonoBehaviour:
   story: 0
   third: 0
   skip: 0
+  firstName: 
   teamName: 
   redTeamName: 
   redTeamColour: {r: 0.8962264, g: 0.26633143, b: 0.26633143, a: 1}
@@ -1028,6 +1029,8 @@ MonoBehaviour:
   yellowTeam: []
   draw: 0
   playoffRound: 0
+  numberOfTeams: 16
+  careerLoad: 1
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -1041,6 +1044,7 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   teamColour: {r: 0, g: 0, b: 0, a: 1}
   playerGO:
   - charStats: {fileID: 0}
