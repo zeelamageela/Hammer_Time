@@ -123,7 +123,7 @@ public class Rock_Flick : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!GetComponent<Rock_Info>().shotTaken)
+        if (!GetComponent<Rock_Info>().released)
         {//if red has hammer
             if (gm.redHammer)
             {
@@ -196,7 +196,7 @@ public class Rock_Flick : MonoBehaviour
     public void OnMouseUp()
     {
         //if red has hammer
-        if (!story && gm.redHammer)
+        if (!story && gm.redHammer && !GetComponent<Rock_Info>().released)
         {
             //if the rock is red
             if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
@@ -263,7 +263,7 @@ public class Rock_Flick : MonoBehaviour
             }
         }
         //if yellow has the hammer
-        else if (!story && !gm.redHammer)
+        else if (!story && !gm.redHammer && !GetComponent<Rock_Info>().released)
         {
             //if the rock is yellow
             if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)

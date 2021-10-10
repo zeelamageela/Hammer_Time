@@ -157,15 +157,19 @@ public class SweeperManager : MonoBehaviour
 
         if (inturn)
         {
-            sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 1.1f, 0f);
+            sweeperL.yOffset = 1.2f;
+            sweeperR.yOffset = 0.6f;
+            //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
 
-            sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 0.6f, 0f);
+            //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
         }
         else
         {
-            sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 0.6f, 0f);
+            sweeperL.yOffset = 0.6f;
+            sweeperR.yOffset = 1.2f;
+            //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
 
-            sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 1.1f, 0f);
+            //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         }
     }
 
@@ -257,12 +261,14 @@ public class SweeperManager : MonoBehaviour
         rockSounds[0].pitch = 1f;
         rockSounds[1].pitch = 1f;
         sweep.OnLeft();
-        sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 0.6f, 0f);
+        //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
         sweeperL.Sweep();
 
-        sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 1.1f, 0f);
+        //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         sweeperR.Whoa();
 
+        sweeperL.yOffset = 0.6f;
+        sweeperR.yOffset = 1.2f;
         if (!aiTurn)
         {
             sweepButton.SetActive(true);
@@ -280,12 +286,14 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].pitch = 1f;
 
         sweep.OnRight();
-        sweeperL.gameObject.transform.localPosition = new Vector3(-0.875f, 1.1f, 0f);
+        //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         sweeperL.Whoa();
 
-        sweeperR.gameObject.transform.localPosition = new Vector3(0.875f, 0.6f, 0f);
+        //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
         sweeperR.Sweep();
 
+        sweeperL.yOffset = 1.2f;
+        sweeperR.yOffset = 0.6f;
         if (!aiTurn)
         {
             sweepButton.SetActive(true);

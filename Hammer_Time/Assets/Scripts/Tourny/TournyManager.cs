@@ -366,6 +366,7 @@ public class TournyManager : MonoBehaviour
 				teams[drawFormat[draw].game[i].x].nextOpp = teams[drawFormat[draw].game[i].y].name;
 				teams[drawFormat[draw].game[i].y].nextOpp = teams[drawFormat[draw].game[i].x].name;
 			}
+
 		}
 		else if (draw == drawFormat.Length)
         {
@@ -381,6 +382,7 @@ public class TournyManager : MonoBehaviour
 				oppTeam = i;
 		}
 
+		scrollBar.value = (teams[playerTeam].rank - 16f) / 15f;
 		//yield return new WaitUntil(() => standDisplay.Length >= row.Length);
 
 		//yield return new WaitUntil(() => standDisplay.Length );

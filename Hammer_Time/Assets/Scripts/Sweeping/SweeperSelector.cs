@@ -11,6 +11,7 @@ public class SweeperSelector : MonoBehaviour
     public Collider2D sweeperLCol;
     public Collider2D sweeperRCol;
 
+    public GameObject panel;
     public RockManager rm;
     public SweeperManager sm;
     public Sweep sweep;
@@ -41,11 +42,29 @@ public class SweeperSelector : MonoBehaviour
             //    sweeperParent.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
             //}
 
+            
             Vector2 moveDirection = rockRB.velocity;
+
             if (moveDirection != Vector2.zero)
             {
-                float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis((angle - 90f) / 6f, Vector3.forward);
+                if (Mathf.Abs(moveDirection.x) > 0.02f | Mathf.Abs(moveDirection.y) > 0.02f)
+                {
+                    float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+                    transform.rotation = Quaternion.AngleAxis((angle - 90f), Vector3.forward);
+
+                    if (transform.rotation.z > 30f)
+                    {
+                        sweeperL.yOffset = 1.2f;
+                        sweeperR.yOffset = 0.6f;
+                    }
+                    else if (transform.rotation.z < -30f)
+                    {
+                        sweeperL.yOffset = 0.6f;
+                        sweeperR.yOffset = 1.2f;
+                    }
+                }
+
+                
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -102,6 +121,23 @@ public class SweeperSelector : MonoBehaviour
         }
     }
 
+    public void PostHitSelect()
+    {
+        sweeperL.gameObject.SetActive(false);
+        sweeperR.gameObject.SetActive(false);
+        panel.SetActive(true);
+
+        GameManager gm = FindObjectOfType<GameManager>();
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            if (gm.rockList[i].rockInfo.moving)
+            {
+                Debug.Log(gm.rockList[i].rockInfo.name + " is moving sweepSel");
+            }
+            else
+                gm.rockList[i].rock.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.3f);
+        }
+    }
 
     public void AttachToRock(GameObject rock)
     {

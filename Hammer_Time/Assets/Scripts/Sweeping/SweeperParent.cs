@@ -13,6 +13,12 @@ public class SweeperParent : MonoBehaviour
     public float xOffset;
     public float yOffset;
 
+    Vector3 currentEulerAngles;
+    Quaternion currentRotation;
+
+    float x;
+    float y;
+    float z;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +32,20 @@ public class SweeperParent : MonoBehaviour
 
         //Vector3 followSpot = new Vector3((xOffset + transform.parent.position.x), (transform.parent.position.y + yOffset), 0f);
         //transform.position = followSpot;
+
+        float angle = 2 * transform.parent.rotation.z * Mathf.Rad2Deg;
+        transform.localRotation = Quaternion.AngleAxis(-angle, Vector3.forward);
+
+        float absAngle = Mathf.Abs(angle);
+        //Debug.Log("Parent Rotation is " + transform.parent.rotation.z);
+
+        if (absAngle > 0f)
+            transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
+        else if (absAngle < 0f)
+            transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
+        else
+            transform.localPosition = new Vector3(0f, yOffset, 0f);
+
     }
 
     public void Sweep()

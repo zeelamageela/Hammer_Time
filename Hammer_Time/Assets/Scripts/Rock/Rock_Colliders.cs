@@ -150,8 +150,13 @@ public class Rock_Colliders : MonoBehaviour
             rockSounds[0].enabled = true;
             //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
 
-            Time.timeScale = 0.1f;
-            Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
+            //Time.timeScale = 0f;
+            //Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
+            //SweeperSelector sweepSel = FindObjectOfType<SweeperSelector>();
+            //sweepSel.PostHitSelect();
+            //SlowMotion slowMo = new SlowMotion();
+
+            //slowMo.SlowdownTime(true);
 
             Debug.Log("Time scale is " + Time.timeScale);
 
