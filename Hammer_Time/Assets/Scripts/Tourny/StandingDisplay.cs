@@ -10,4 +10,5 @@ public class StandingDisplay
     public Text wins;
     public Text loss;
     public Text nextOpp;
+    public Image panel;
 }

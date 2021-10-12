@@ -33,6 +33,9 @@ public class TournySettings : MonoBehaviour
     public Vector2 record;
     GameSettingsPersist gsp;
     Gradient gradient;
+    public GameObject tournyInProg;
+    public Text drawLoad;
+    public Text rankLoad;
 
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
@@ -109,6 +112,22 @@ public class TournySettings : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
+
+            if (myFile.GetBool("In Progress") == true)
+            {
+                tournyInProg.SetActive(true);
+
+                drawLoad.text = myFile.GetInt("Draw").ToString();
+
+                int[] rankList = myFile.GetArray<int>("Teams Rank");
+                int playerTeam = myFile.GetInt("Player Team");
+                rankLoad.text = rankList[playerTeam].ToString();
+            }
+            else
+            {
+                tournyInProg.SetActive(false);
+
+            }
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 

@@ -660,11 +660,18 @@ public class PlayoffManager : MonoBehaviour
 
 		myFile.Add("Career Record", careerRecord);
 		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		myFile.Add("Player Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
 		myFile.Add("Career Earnings", careerEarnings); 
 		
+		if (!inProgress)
+        {
+			tm.draw = 0;
+			playoffRound = 0;
+			tm.playoffRound = 0;
 
+        }
 		myFile.Add("In Progress", inProgress);
 		myFile.Add("Draw", gsp.draw);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);

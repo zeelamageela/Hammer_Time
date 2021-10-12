@@ -62,7 +62,7 @@ public class TournyManager : MonoBehaviour
             careerEarnings = myFile.GetFloat("Career Earnings");
 			careerRecord = myFile.GetUnityVector2("Career Record");
 
-			bool inProgress = myFile.GetBool("In Progress");
+			inProgress = myFile.GetBool("In Progress");
 
 			myFile.Dispose();
 			if (inProgress)
@@ -195,11 +195,13 @@ public class TournyManager : MonoBehaviour
 					{
 						teams[oppTeam].loss++;
 						teams[playerTeam].wins++;
+						careerRecord.x++;
 					}
 					else
 					{
 						teams[oppTeam].wins++;
 						teams[playerTeam].loss++;
+						careerRecord.y++;
 					}
 				}
 				else
@@ -208,11 +210,13 @@ public class TournyManager : MonoBehaviour
 					{
 						teams[oppTeam].loss++;
 						teams[playerTeam].wins++;
+						careerRecord.x++;
 					}
 					else
 					{
 						teams[oppTeam].wins++;
 						teams[playerTeam].loss++;
+						careerRecord.y++;
 					}
 				}
 				Debug.Log(teams[oppTeam].name + " " + teams[oppTeam].wins + " Wins");
@@ -292,15 +296,22 @@ public class TournyManager : MonoBehaviour
 
 		for (int i = 0; i < teamList.Count; i++)
         {
+			if (teams[playerTeam].name == teamList[i].team.name)
+				standDisplay[i].panel.enabled = true;
+			else
+				standDisplay[i].panel.enabled = false;
+
 			if (teams[playerTeam].nextOpp == teamList[i].team.name)
 			{
 				tempRank = i + 1;
 				vsDisplay[1].name.text = teamList[i].team.name;
-				vsDisplay[1].rank.text = tempRank.ToString();
+				vsDisplay[1].rank.text = teamList[i].team.rank.ToString();
 			}
-        }
-		StartCoroutine(RefreshPanel());
+		}
 
+		standScrollBar.value = (teams[playerTeam].rank - 16f) / -15f;
+		StartCoroutine(RefreshPanel());
+		
 		StartCoroutine(SaveCareer());
     }
 
@@ -330,7 +341,6 @@ public class TournyManager : MonoBehaviour
 				oppTeam = i;
 		}
 
-		scrollBar.value = (teams[playerTeam].rank - 16f) / 15f;
 		//yield return new WaitUntil(() => standDisplay.Length >= row.Length);
 
 		//yield return new WaitUntil(() => standDisplay.Length );
@@ -369,17 +379,28 @@ public class TournyManager : MonoBehaviour
 			{
 				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
 				{
-						games[i + 1].loss++;
-						games[i].wins++;
+					games[i + 1].loss++;
+					games[i].wins++;
+
+					if (i == playerTeam)
+						careerRecord.x++;
+					else if (i + 1 == playerTeam)
+						careerRecord.y++;
 				}
 				else
 				{
-						games[i].loss++;
-						games[i + 1].wins++;
+					games[i].loss++;
+					games[i + 1].wins++;
+
+					if (i == playerTeam)
+						careerRecord.y++;
+					else if (i + 1 == playerTeam)
+						careerRecord.x++;
 				}
 			}
 		}
-		
+
+		Debug.Log("Career Record is " + careerRecord.x + " - " + careerRecord.y);
 		draw++;
 		yield return StartCoroutine(DrawScoring());
 	}
