@@ -7,4 +7,6 @@ public class TournyTeamList : MonoBehaviour
 
     public Team[] teams;
 
+    public Team nullTeam;
+
 }

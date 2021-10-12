@@ -44,7 +44,9 @@ public class GameSettingsPersist : MonoBehaviour
     public int draw;
     public int playoffRound;
     public int numberOfTeams;
+    public int prize;
     public bool careerLoad;
+    public bool inProgress;
 
     public List<Team_List> teamList;
     public Team[] teams;
@@ -184,6 +186,7 @@ public class GameSettingsPersist : MonoBehaviour
     {
         TournySettings ts = GameObject.Find("TournySettings").GetComponent<TournySettings>();
 
+        
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         firstName = ts.playerName;
@@ -193,6 +196,8 @@ public class GameSettingsPersist : MonoBehaviour
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
+        numberOfTeams = ts.teams;
+        prize = ts.prize;
         draw = 0;
         playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
@@ -266,7 +271,7 @@ public class GameSettingsPersist : MonoBehaviour
         }
     }
 
-    public void LoadTourny()
+    public void LoadCareer()
     {
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
@@ -280,6 +285,23 @@ public class GameSettingsPersist : MonoBehaviour
 
             tm.careerEarnings = myFile.GetFloat("Career Earnings");
             tm.careerRecord = myFile.GetUnityVector2("Career Record");
+            inProgress = myFile.GetBool("In Progress");
+            draw = myFile.GetInt("Draw");
+            numberOfTeams = myFile.GetInt("Number Of Teams");
+
+            myFile.Dispose();
+        }
+    }
+
+    public void LoadTourny()
+    {
+        TournyManager tm = FindObjectOfType<TournyManager>();
+        teamList = new List<Team_List>();
+        myFile = new EasyFileSave("my_player_data");
+
+        if (myFile.Load())
+        {
+            inProgress = myFile.GetBool("In Progress");
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
@@ -302,7 +324,7 @@ public class GameSettingsPersist : MonoBehaviour
             nextOppList = myFile.GetArray<string>("Teams NextOpp");
             strengthList = myFile.GetArray<int>("Teams Strength");
             idList = myFile.GetArray<int>("Teams ID");
-            StartCoroutine(Wait());
+            //StartCoroutine(Wait());
             Debug.Log("nameList Count is " + nameList.Length);
 
             teams = new Team[nameList.Length];
@@ -323,7 +345,7 @@ public class GameSettingsPersist : MonoBehaviour
                     teams[i].name = teamName;
                 }
             }
-            StartCoroutine(Wait());
+            //StartCoroutine(Wait());
             playerTeam = teams[playerTeamIndex];
             for (int i = 0; i < numberOfTeams; i++)
             {
@@ -335,12 +357,16 @@ public class GameSettingsPersist : MonoBehaviour
 
             for (int i = 0; i < playoffTeams.Length; i++)
             {
-                playoffTeams[i] = tm.tTeamList.teams[playoffIDList[i]];
+                if (playoffIDList[i] < 99)
+                    playoffTeams[i] = tm.tTeamList.teams[playoffIDList[i]];
+                else
+                    playoffTeams[i] = tm.tTeamList.nullTeam;
             }
             Debug.Log("teamList Count is " + teamList.Count);
             myFile.Dispose();
         }
     }
+
     public void StoryGame()
     {
         story = true;

@@ -11,7 +11,10 @@ public class TournySettings : MonoBehaviour
     public string teamName;
     public int rocks;
     public int ends;
+    public int teams;
+    public int prize;
     public float earnings;
+    public float entryFee;
 
     public GameObject settings;
     public GameObject player;
@@ -20,10 +23,15 @@ public class TournySettings : MonoBehaviour
     public InputField teamNameInput;
     public Text nameLoad;
     public Image colourLoad;
+    public Slider teamsSlider;
+    public Text teamsText;
+    public Slider prizeSlider;
+    public Text prizeText;
     public Slider rockSlider;
     public Text rockText;
     public Slider endSlider;
     public Text endText;
+    public Text entryFeeText;
     public Slider teamColourSlider;
     public Image teamHandleSlider;
     public Color teamColour;
@@ -69,8 +77,8 @@ public class TournySettings : MonoBehaviour
 
         gradient.SetKeys(colorKey, alphaKey);
 
-        // What's the color at the relative time 0.25 (25 %) ?
-        //Debug.Log(gradient.Evaluate(0.25f));
+        teamsSlider.value = 2 * (Random.Range(3, 9));
+        prizeSlider.value = 2 * (Random.Range(1, 16));
     }
     // Update is called once per frame
     void Update()
@@ -79,10 +87,26 @@ public class TournySettings : MonoBehaviour
         {
             ends = (int)endSlider.value;
             rocks = (int)rockSlider.value;
+            teams = (int)teamsSlider.value * 2;
+            prize = (int)prizeSlider.value * 10000;
 
             endText.text = ends.ToString();
             rockText.text = rocks.ToString();
+            teamsText.text = teams.ToString();
+            prizeText.text = "$" + prize.ToString();
 
+            if (!gsp.inProgress)
+            {
+                entryFee = Mathf.RoundToInt((prize)/ (10f * teams));
+                entryFeeText.fontSize = 100;
+                entryFeeText.text = "Entry Fee - $" + entryFee.ToString();
+            }
+            else
+            {
+                entryFeeText.fontSize = 200;
+
+                entryFeeText.text = "Load Tourny";
+            }
         }
 
         if (player.activeSelf)
@@ -112,20 +136,49 @@ public class TournySettings : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
-
+            gsp.inProgress = myFile.GetBool("In Progress");
             if (myFile.GetBool("In Progress") == true)
             {
                 tournyInProg.SetActive(true);
+                if (myFile.GetInt("Playoff Round") > 0)
+                {
+                    drawLoad.text = "Playoffs";
+                }
+                else
+                    drawLoad.text = "Draw " + myFile.GetInt("Draw").ToString();
 
-                drawLoad.text = myFile.GetInt("Draw").ToString();
+                prizeSlider.value = myFile.GetInt("Prize");
+                teamsSlider.value = myFile.GetInt("Number Of Teams");
+                endSlider.value = myFile.GetInt("Ends");
+                rockSlider.value = myFile.GetInt("Rocks");
 
+                rockSlider.interactable = false;
+                
+                teamsSlider.interactable = false;
+                endSlider.interactable = false;
+                prizeSlider.interactable = false;
                 int[] rankList = myFile.GetArray<int>("Teams Rank");
                 int playerTeam = myFile.GetInt("Player Team");
-                rankLoad.text = rankList[playerTeam].ToString();
+                if (rankList[playerTeam] == 1)
+                    rankLoad.text = "1st Place";
+                else if (rankList[playerTeam] == 2)
+                    rankLoad.text = "2nd Place";
+                else if (rankList[playerTeam] == 3)
+                    rankLoad.text = "3rd Place";
+                else
+                    rankLoad.text = rankList[playerTeam] + "th Place";
+
+                
+
             }
             else
             {
                 tournyInProg.SetActive(false);
+                rockSlider.interactable = true;
+
+                teamsSlider.interactable = true;
+                endSlider.interactable = true;
+                prizeSlider.interactable = true;
 
             }
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
@@ -152,6 +205,10 @@ public class TournySettings : MonoBehaviour
     public void LoadToGSP()
     {
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        if (!gsp.inProgress)
+            earnings -= entryFee;
+
+        Debug.Log("Career Earnings after Fee - $" + earnings);
         gsp.LoadTournySettings();
 
         //myFile = new EasyFileSave("my_player_data");

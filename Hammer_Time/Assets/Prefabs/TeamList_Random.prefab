@@ -50,93 +50,117 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Goodelhopper
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Throbb
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Lockhart
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Tubbz
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Groob
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Berg
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Crocker
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Yamaguchi
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Reid
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Saint-Pierre
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: O'Leary
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Hansen
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Tortellini
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Dupuis
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
   - name: Lacroix
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
+  nullTeam:
+    name: -BLANK-
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: -BLANK-
+    strength: 0
+    id: 99

@@ -41,11 +41,11 @@ public class TournyManager : MonoBehaviour
 	GameSettingsPersist gsp;
 	EasyFileSave myFile;
 	public int numberOfTeams;
+	public int prize;
 	public int draw;
 	public int playoffRound;
 	public int playerTeam;
 	public int oppTeam;
-	public bool inProgress;
 	
 	public Vector2 careerRecord;
 	public float careerEarnings;
@@ -55,31 +55,29 @@ public class TournyManager : MonoBehaviour
 	void Start()
 	{
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+
 		myFile = new EasyFileSave("my_player_data");
 
-        if (myFile.Load())
+		if (gsp.careerLoad)
         {
-            careerEarnings = myFile.GetFloat("Career Earnings");
-			careerRecord = myFile.GetUnityVector2("Career Record");
+			gsp.LoadCareer();
 
-			inProgress = myFile.GetBool("In Progress");
-
-			myFile.Dispose();
-			if (inProgress)
-            {
+			if (gsp.inProgress)
+			{
 				Debug.Log("In Progress is True");
-				if (gsp.careerLoad)
-					gsp.LoadTourny();
-            }
+				gsp.LoadTourny();
+			}
 			else
 			{
-				gsp.draw = 0;
+				Debug.Log("In Progress is False");
+				gsp.draw = draw;
 				gsp.playoffRound = 0;
 			}
-
-        }
+		}
+		
 
 		numberOfTeams = gsp.numberOfTeams;
+		prize = gsp.prize;
 		careerEarningsText.text = "$ " + careerEarnings.ToString();
 		teams = new Team[numberOfTeams];
 
@@ -104,7 +102,6 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("Career Earnings", careerEarnings);
 		myFile.Save();
 		careerEarningsText.text = "$ " + careerEarnings.ToString();
-
 	}
 
 	IEnumerator RefreshPanel()
@@ -164,7 +161,7 @@ public class TournyManager : MonoBehaviour
 				pm.enabled = true;
 				standings.SetActive(false);
 			}
-			else if (inProgress)
+			else if (gsp.inProgress)
             {
 				for (int i = 0; i < teams.Length; i++)
 				{
@@ -173,8 +170,9 @@ public class TournyManager : MonoBehaviour
 					if (teams[i].name == gsp.playerTeam.name)
 						playerTeam = i;
 				}
-
-				SetDraw();
+				gsp.inProgress = false;
+				
+				DrawScoring();
             }
 			else
 			{
@@ -382,9 +380,9 @@ public class TournyManager : MonoBehaviour
 					games[i + 1].loss++;
 					games[i].wins++;
 
-					if (i == playerTeam)
+					if (games[i].name == teams[playerTeam].name)
 						careerRecord.x++;
-					else if (i + 1 == playerTeam)
+					if (games[i + 1].name == teams[playerTeam].name)
 						careerRecord.y++;
 				}
 				else
@@ -392,9 +390,9 @@ public class TournyManager : MonoBehaviour
 					games[i].loss++;
 					games[i + 1].wins++;
 
-					if (i == playerTeam)
+					if (games[i].name == teams[playerTeam].name)
 						careerRecord.y++;
-					else if (i + 1 == playerTeam)
+					if (games[i + 1].name == teams[playerTeam].name)
 						careerRecord.x++;
 				}
 			}
@@ -501,16 +499,18 @@ public class TournyManager : MonoBehaviour
     }
 	public void Menu()
     {
-		StartCoroutine(SaveCareer());
+		//StartCoroutine(SaveCareer());
 
 		SceneManager.LoadScene("SplashMenu");
     }
 
 	IEnumerator SaveCareer()
 	{
+		Debug.Log("Saving in TournyManager");
 		myFile = new EasyFileSave("my_player_data");
 
 		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		//inProgress = true;
 		myFile.Add("First Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
@@ -519,6 +519,9 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("In Progress", true);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);
+		myFile.Add("Prize", prize);
+		myFile.Add("Rocks", gsp.rocks);
+		myFile.Add("Ends", gsp.ends);
 		myFile.Add("Player Team", playerTeam);
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
@@ -549,14 +552,6 @@ public class TournyManager : MonoBehaviour
         myFile.Add("Teams Strength", strengthList);
         myFile.Add("Teams ID", idList);
 
-		int[] playoffIDList = new int[playoffTeams.Length];
-
-		for (int i = 0; i < playoffTeams.Length; i++)
-        {
-			playoffIDList[i] = playoffTeams[i].id;
-        }
-
-		myFile.Add("Playoff ID List", playoffIDList);
         //yield return myFile.TestDataSaveLoad();
         yield return myFile.Save();
     }

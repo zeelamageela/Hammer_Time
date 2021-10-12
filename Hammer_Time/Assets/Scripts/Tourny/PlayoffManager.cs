@@ -59,14 +59,21 @@ public class PlayoffManager : MonoBehaviour
 		playoffTeams = new Team[9];
 		heading.text = "Page Playoff";
 
-		for (int i = 0; i < pTeams; i++)
+		for (int i = 0; i < playoffTeams.Length; i++)
 		{
-			playoffTeams[i] = tm.teamList[i].team;
-			brackDisplay[i].name.text = playoffTeams[i].name;
-			brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+			if (i < 4)
+            {
+				playoffTeams[i] = tm.teamList[i].team;
+				brackDisplay[i].name.text = playoffTeams[i].name;
+				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+			}
+			else
+            {
+				playoffTeams[i] = tm.tTeamList.nullTeam;
+            }
 		}
-		tm.playoffRound++;
 		playoffRound++;
+		tm.playoffRound = playoffRound;
 		SetPlayoffs();
 	}
 
@@ -409,7 +416,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "You Win!";
 
-					careerEarnings += 70000f;
+					careerEarnings += tm.prize * 0.5f;
 					tm.teams[playerTeam].rank = 1;
 					tm.vs.SetActive(true);
 
@@ -421,7 +428,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[4].name | tm.teams[playerTeam].name == playoffTeams[7].name)
 				{
 					heading.text = "Runner-up";
-					careerEarnings += 35000f;
+					careerEarnings += tm.prize * 0.25f;
 					tm.teams[playerTeam].rank = 2;
 					tm.vs.SetActive(true);
 
@@ -433,7 +440,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[5].name | tm.teams[playerTeam].name == playoffTeams[6].name)
 				{
 					heading.text = "3rd Place";
-					careerEarnings += 20000f;
+					careerEarnings += tm.prize * 0.15f;
 					tm.teams[playerTeam].rank = 3;
 					tm.vs.SetActive(true);
 
@@ -445,7 +452,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[2].name | tm.teams[playerTeam].name == playoffTeams[3].name)
 				{
 					heading.text = "4th Place";
-					careerEarnings += 10000f;
+					careerEarnings += tm.prize * 0.075f;
 					tm.teams[playerTeam].rank = 4;
 
 					tm.vs.SetActive(true);
@@ -461,7 +468,7 @@ public class PlayoffManager : MonoBehaviour
 					{
 						float p = 1.4f;
 						float totalTeams = tm.teamList.Count - 4;
-						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * 15000f * (p - 1);
+						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (tm.prize * 0.15f) * (p - 1);
 
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 						if (tm.teams[playerTeam].name == tm.teamList[i].team.name)
@@ -492,7 +499,7 @@ public class PlayoffManager : MonoBehaviour
                 Debug.Log("Career Earnings after calculation - " + careerEarnings.ToString());
 				careerEarningsText.text = "$ " + careerEarnings.ToString();
 				
-				careerRecord = new Vector2(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
+				//careerRecord = new Vector2(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
 
 				StartCoroutine(SaveCareer(false));
 				//heading.text = "So Close!";
@@ -655,7 +662,9 @@ public class PlayoffManager : MonoBehaviour
 	}
 
 	IEnumerator SaveCareer(bool inProgress)
-    {
+	{
+		Debug.Log("Saving in PlayoffManager, inProgress is " + inProgress);
+
 		myFile = new EasyFileSave("my_player_data");
 
 		myFile.Add("Career Record", careerRecord);
@@ -663,15 +672,15 @@ public class PlayoffManager : MonoBehaviour
 		myFile.Add("Player Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", careerEarnings); 
-		
-		if (!inProgress)
-        {
-			tm.draw = 0;
-			playoffRound = 0;
-			tm.playoffRound = 0;
+		myFile.Add("Career Earnings", careerEarnings);
 
-        }
+		//if (!inProgress)
+		//      {
+		//	tm.draw = 0;
+		//	playoffRound = 0;
+		//	tm.playoffRound = 0;
+
+		//      }
 		myFile.Add("In Progress", inProgress);
 		myFile.Add("Draw", gsp.draw);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
@@ -710,11 +719,12 @@ public class PlayoffManager : MonoBehaviour
 
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
+			Debug.Log("playoffID i is " + i);
 			playoffIDList[i] = playoffTeams[i].id;
 		}
 
 		myFile.Add("Playoff ID List", playoffIDList);
-
+		yield return myFile.TestDataSaveLoad();
 		yield return myFile.Save();
 	}
 }
