@@ -7,6 +7,9 @@ using TigerForge;
 
 public class TournySettings : MonoBehaviour
 {
+    GameSettingsPersist gsp;
+    CareerManager cm;
+
     public string playerName;
     public string teamName;
     public int rocks;
@@ -39,7 +42,6 @@ public class TournySettings : MonoBehaviour
     public Text earningsLoad;
     public Text recordLoad;
     public Vector2 record;
-    GameSettingsPersist gsp;
     Gradient gradient;
     public GameObject tournyInProg;
     public Text drawLoad;
@@ -52,7 +54,17 @@ public class TournySettings : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(LoadFromFile());
+        cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+
+        if (cm && cm.inProgress)
+        {
+            StartCoroutine(LoadCareer());
+            Settings();
+        }
+        else
+            StartCoroutine(LoadFromFile());
+
         gradient = new Gradient();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
@@ -77,8 +89,6 @@ public class TournySettings : MonoBehaviour
 
         gradient.SetKeys(colorKey, alphaKey);
 
-        teamsSlider.value = 2 * (Random.Range(3, 9));
-        prizeSlider.value = 2 * (Random.Range(1, 16));
     }
     // Update is called once per frame
     void Update()
@@ -97,7 +107,7 @@ public class TournySettings : MonoBehaviour
 
             if (!gsp.inProgress)
             {
-                entryFee = Mathf.RoundToInt((prize)/ (10f * teams));
+                //entryFee = Mathf.RoundToInt((prize)/ (10f * teams));
                 entryFeeText.fontSize = 100;
                 entryFeeText.text = "Entry Fee - $" + entryFee.ToString();
             }
@@ -123,6 +133,30 @@ public class TournySettings : MonoBehaviour
     {
         teamColour = gradient.Evaluate(teamColourSlider.value);
     }
+    IEnumerator LoadCareer()
+    {
+        playerName = cm.playerName;
+        teamName = cm.teamName;
+        teamColour = cm.teamColour;
+        record = cm.record;
+        earnings = cm.earnings;
+        teams = cm.currentTournyTeams.Length;
+        entryFee = cm.currentTourny.entryFee;
+        prize = cm.currentTourny.prizeMoney;
+
+        if (gsp.inProgress)
+        {
+            StartCoroutine(LoadFromFile());
+        }
+        else
+        {
+            load.SetActive(false);
+            player.SetActive(false);
+            settings.SetActive(true);
+            
+        }
+        yield break;
+    }
 
     IEnumerator LoadFromFile()
     {
@@ -136,8 +170,9 @@ public class TournySettings : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
-            gsp.inProgress = myFile.GetBool("In Progress");
-            if (myFile.GetBool("In Progress") == true)
+            gsp.inProgress = myFile.GetBool("Tourny In Progress");
+
+            if (gsp.inProgress)
             {
                 tournyInProg.SetActive(true);
                 if (myFile.GetInt("Playoff Round") > 0)
@@ -145,18 +180,13 @@ public class TournySettings : MonoBehaviour
                     drawLoad.text = "Playoffs";
                 }
                 else
-                    drawLoad.text = "Draw " + myFile.GetInt("Draw").ToString();
+                    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
 
-                prizeSlider.value = myFile.GetInt("Prize");
-                teamsSlider.value = myFile.GetInt("Number Of Teams");
-                endSlider.value = myFile.GetInt("Ends");
-                rockSlider.value = myFile.GetInt("Rocks");
+                prize = myFile.GetInt("Prize");
+                teams = myFile.GetInt("Number Of Teams");
+                ends = myFile.GetInt("Ends");
+                rocks= myFile.GetInt("Rocks");
 
-                rockSlider.interactable = false;
-                
-                teamsSlider.interactable = false;
-                endSlider.interactable = false;
-                prizeSlider.interactable = false;
                 int[] rankList = myFile.GetArray<int>("Teams Rank");
                 int playerTeam = myFile.GetInt("Player Team");
                 if (rankList[playerTeam] == 1)
@@ -174,11 +204,6 @@ public class TournySettings : MonoBehaviour
             else
             {
                 tournyInProg.SetActive(false);
-                rockSlider.interactable = true;
-
-                teamsSlider.interactable = true;
-                endSlider.interactable = true;
-                prizeSlider.interactable = true;
 
             }
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
@@ -241,6 +266,38 @@ public class TournySettings : MonoBehaviour
 
     public void Settings()
     {
+        cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+        if (cm && cm.inProgress)
+        {
+            teamsSlider.value = cm.currentTournyTeams.Length / 2f;
+            teamsSlider.interactable = false;
+            prizeSlider.value = cm.currentTourny.prizeMoney / 10000f;
+            prizeSlider.interactable = false;
+        }
+        else if (gsp.inProgress)
+        {
+            Debug.Log("Settings In Progress teams is " + rocks);
+            rockSlider.value = rocks;
+            rockSlider.interactable = false;
+            teamsSlider.value = teams / 2f;
+            teamsSlider.interactable = false;
+            endSlider.value = ends;
+            endSlider.interactable = false;
+            prizeSlider.value = prize / 10000f;
+            prizeSlider.interactable = false;
+        }
+        else
+        {
+            teamsSlider.value = Random.Range(3, 9);
+            prizeSlider.value = Random.Range(1, 16);
+            rockSlider.interactable = true;
+            teamsSlider.interactable = true;
+            endSlider.interactable = true;
+            prizeSlider.interactable = true;
+            Debug.Log("Settings not In Progress teams is " + teamsSlider.value);
+            Debug.Log("Settings not In Progress prize is " + prizeSlider.value);
+        }
         load.SetActive(false);
         settings.SetActive(true);
         player.SetActive(false);
@@ -250,6 +307,11 @@ public class TournySettings : MonoBehaviour
     {
         ClearPlayer();
         gsp.careerLoad = false;
+        earnings = 0f;
+        record = Vector2.zero;
+        gsp.draw = 0;
+        gsp.playoffRound = 0;
+        gsp.inProgress = false;
         load.SetActive(false);
         settings.SetActive(false);
         player.SetActive(true);

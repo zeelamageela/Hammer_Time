@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class Tourny
 {
+    public int id;
     public string location;
     public string name;
 

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TigerForge;
 
 public class TournySelector : MonoBehaviour
 {
     CareerManager cm;
 
     public Text weekText;
+    public Text teamNameText;
     public Tourny[] tournies;
 
     public Tourny[] tour;
@@ -24,10 +27,17 @@ public class TournySelector : MonoBehaviour
 
     int week;
 
+    EasyFileSave myFile;
+
     // Start is called before the first frame update
     void Start()
     {
         cm = FindObjectOfType<CareerManager>();
+        teamNameText.text = cm.playerName + " " + cm.teamName;
+        if (cm.week == 0)
+            NewSeason();
+
+        SetActiveTournies();
     }
 
     // Update is called once per frame
@@ -51,57 +61,67 @@ public class TournySelector : MonoBehaviour
             a[i] = a[rnd];
             a[rnd] = temp;
         }
-
-        // Print
-        //PrintRows(a);
-        //for (int i = 0; i < a.Length; i++)
-        //{
-        //	Print;
-        //}
     }
 
     public void SetActiveTournies()
     {
-        weekText.text = "Week " + cm.week.ToString();
-        Shuffle(tournies);
-
+        if (cm.week > 0)
+            weekText.text = "Week " + cm.week.ToString();
+        else
+            weekText.text = "Welcome to Season " + cm.season.ToString();
+        
         if (Random.Range(0f, 1f) > 0.5f)
         {
-            Shuffle(provQual);
-            for (int i = 0; i < provQual.Length; i++)
+            Shuffle(tournies);
+            for (int i = 0; i < tournies.Length; i++)
             {
                 if (provQual[i].complete != true)
                 {
-                    activeTournies[0] = provQual[i];
-                    provQual[i].complete = true;
+                    activeTournies[0] = tournies[i];
+                    //provQual[i].complete = true;
                     break;
                 }
             }
         }
         else
         {
-            Shuffle(tour);
-            for (int i = 0; i < tour.Length; i++)
+            if (Random.Range(0f, 1f) > 0.5f)
             {
-                if (tour[i].complete != true)
+                Shuffle(provQual);
+                for (int i = 0; i < provQual.Length; i++)
                 {
-                    activeTournies[0] = tour[i];
-                    tour[i].complete = true;
-                    break;
+                    if (provQual[i].complete != true)
+                    {
+                        activeTournies[0] = provQual[i];
+                        //provQual[i].complete = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Shuffle(tour);
+                for (int i = 0; i < tour.Length; i++)
+                {
+                    if (tour[i].complete != true)
+                    {
+                        activeTournies[0] = tour[i];
+                        //tour[i].complete = true;
+                        break;
+                    }
                 }
             }
         }
 
-        if (activeTournies[0].tour)
+        if (activeTournies[0].tour | activeTournies[0].qualifier)
         {
-
-            Shuffle(provQual);
-            for (int i = 0; i < provQual.Length; i++)
+            Shuffle(tournies);
+            for (int i = 0; i < tournies.Length; i++)
             {
-                if (provQual[i].complete != true)
+                if (tournies[i].complete != true)
                 {
-                    activeTournies[1] = provQual[i];
-                    provQual[i].complete = true;
+                    activeTournies[1] = tournies[i];
+                    //provQual[i].complete = true;
                     break;
                 }
             }
@@ -116,7 +136,7 @@ public class TournySelector : MonoBehaviour
                     if (tour[i].complete != true)
                     {
                         activeTournies[1] = tour[i];
-                        tour[i].complete = true;
+                        //tour[i].complete = true;
                         break;
                     }
                 }
@@ -129,7 +149,7 @@ public class TournySelector : MonoBehaviour
                     if (provQual[i].complete != true)
                     {
                         activeTournies[1] = provQual[i];
-                        provQual[i].complete = true;
+                        //provQual[i].complete = true;
                         break;
                     }
                 }
@@ -161,11 +181,28 @@ public class TournySelector : MonoBehaviour
 
         }
     }
+    public void NewSeason()
+    {
+        cm.NewSeason();
+    }
+
+    public void NextWeek()
+    {
+        cm.NextWeek();
+    }
+
+    public void PlayTourny()
+    {
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        gsp.LoadFromTournySelector();
+        cm.PlayTourny();
+
+        SceneManager.LoadScene("Tourny_Menu_1");
+    }
 
     public void SelectTourny(int button)
     {
         currentTourny = activeTournies[button];
-
-        
+        cm.SetupTourny();
     }
 }

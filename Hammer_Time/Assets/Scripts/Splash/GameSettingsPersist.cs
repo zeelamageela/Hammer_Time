@@ -33,6 +33,8 @@ public class GameSettingsPersist : MonoBehaviour
     public bool skip;
     public string firstName;
     public string teamName;
+    public float earnings;
+    public Vector2 record;
 
     public string redTeamName;
     public Color redTeamColour;
@@ -182,17 +184,43 @@ public class GameSettingsPersist : MonoBehaviour
         //yellowScore = myFile.GetInt("Yellow Score");
     }
 
+    public void LoadFromTournySelector()
+    {
+        TournySelector ts = FindObjectOfType<TournySelector>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
+
+
+        Debug.Log("Loading Tourny Settings to GSP");
+        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
+        firstName = cm.playerName;
+        teamName = cm.teamName;
+        teamColour = cm.teamColour;
+        earnings = cm.earnings;
+
+        endCurrent = 0;
+        numberOfTeams = ts.currentTourny.teams;
+        prize = ts.currentTourny.prizeMoney;
+        teams = cm.currentTournyTeams;
+        draw = 0;
+        playoffRound = 0;
+        careerLoad = true;
+        
+        //redScore = myFile.GetInt("Red Score");
+        //yellowScore = myFile.GetInt("Yellow Score");
+    }
     public void LoadTournySettings()
     {
         TournySettings ts = GameObject.Find("TournySettings").GetComponent<TournySettings>();
 
-        
+        CareerManager cm = FindObjectOfType<CareerManager>();
+
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         firstName = ts.playerName;
         teamName = ts.teamName;
         teamColour = ts.teamColour;
-        
+        earnings = ts.earnings;
+
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
@@ -202,6 +230,7 @@ public class GameSettingsPersist : MonoBehaviour
         playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
+        cm.LoadFromGSP();
     }
 
     public void TournySetup()
@@ -273,7 +302,6 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadCareer()
     {
-        TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
 
@@ -283,11 +311,11 @@ public class GameSettingsPersist : MonoBehaviour
             teamName = myFile.GetString("Team Name");
             teamColour = myFile.GetUnityColor("Team Colour");
 
-            tm.careerEarnings = myFile.GetFloat("Career Earnings");
-            tm.careerRecord = myFile.GetUnityVector2("Career Record");
+            //earnings = myFile.GetFloat("Career Earnings");
+            record = myFile.GetUnityVector2("Career Record");
             inProgress = myFile.GetBool("In Progress");
             draw = myFile.GetInt("Draw");
-            numberOfTeams = myFile.GetInt("Number Of Teams");
+            //numberOfTeams = myFile.GetInt("Number Of Teams");
 
             myFile.Dispose();
         }
@@ -301,7 +329,7 @@ public class GameSettingsPersist : MonoBehaviour
 
         if (myFile.Load())
         {
-            inProgress = myFile.GetBool("In Progress");
+            inProgress = myFile.GetBool("Tourny In Progress");
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");

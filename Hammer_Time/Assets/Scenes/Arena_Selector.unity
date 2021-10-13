@@ -356,7 +356,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 0.434
+  m_Value: 0.5
   m_Size: 0.33607182
   m_NumberOfSteps: 3
   m_OnValueChanged:
@@ -1078,6 +1078,127 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Provincial Championship
+--- !u!1 &515252675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 515252676}
+  - component: {fileID: 515252679}
+  - component: {fileID: 515252678}
+  - component: {fileID: 515252677}
+  m_Layer: 5
+  m_Name: ProfileButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &515252676
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515252675}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 829050903}
+  m_Father: {fileID: 1204469915}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 896}
+  m_SizeDelta: {x: 1125, y: 275}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &515252677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515252675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 2
+  m_Colors:
+    m_NormalColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+    m_HighlightedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_PressedColor: {r: 1, g: 0.57627124, b: 0, a: 1}
+    m_SelectedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_DisabledColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 21300000, guid: 11fc8614c239f7b44ab0c93d7fa4d757, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 515252678}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &515252678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515252675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 11fc8614c239f7b44ab0c93d7fa4d757, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &515252679
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515252675}
+  m_CullTransparentMesh: 1
 --- !u!1 &531243849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1254,6 +1375,7 @@ RectTransform:
   - {fileID: 1718835588}
   - {fileID: 1078135570}
   - {fileID: 1555613761}
+  - {fileID: 1767766670}
   m_Father: {fileID: 1204469915}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1604,6 +1726,102 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Round Robin
+--- !u!1 &829050902
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 829050903}
+  - component: {fileID: 829050906}
+  - component: {fileID: 829050905}
+  - component: {fileID: 829050904}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &829050903
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829050902}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 515252676}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -0.00012207031}
+  m_SizeDelta: {x: 800, y: 275}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &829050904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829050902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charLimit: 7
+  lengthLimit: 15
+  fontSizeMin: 60
+  fontSizeMax: 145
+--- !u!114 &829050905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829050902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 9397f6f129704b844a61082425426373, type: 3}
+    m_FontSize: 100
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 145
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Player Name
+--- !u!222 &829050906
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829050902}
+  m_CullTransparentMesh: 1
 --- !u!1 &897442817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1979,7 +2197,7 @@ GameObject:
   - component: {fileID: 1078135572}
   - component: {fileID: 1078135571}
   m_Layer: 5
-  m_Name: PlayButton
+  m_Name: NextWeekButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2049,9 +2267,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2111777248}
-        m_TargetAssemblyTypeName: CareerManager, Assembly-CSharp
-        m_MethodName: NextWeek
+      - m_Target: {fileID: 1497908066}
+        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
+        m_MethodName: SetActiveTournies
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2351,6 +2569,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 556640674}
+  - {fileID: 515252676}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2792,6 +3011,102 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1358300805}
   m_CullTransparentMesh: 1
+--- !u!1 &1431755389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1431755390}
+  - component: {fileID: 1431755393}
+  - component: {fileID: 1431755392}
+  - component: {fileID: 1431755391}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1431755390
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431755389}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1767766670}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1431755391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431755389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charLimit: 7
+  lengthLimit: 15
+  fontSizeMin: 100
+  fontSizeMax: 145
+--- !u!114 &1431755392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431755389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
+    m_FontSize: 145
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 145
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Play
+--- !u!222 &1431755393
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431755389}
+  m_CullTransparentMesh: 1
 --- !u!1 &1450564668
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,49 +3216,88 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weekText: {fileID: 1555613762}
+  teamNameText: {fileID: 829050905}
   tournies:
-  - location: Jasper
-    name: Provincial Qualifier
+  - id: 0
+    location: Leduc
+    name: The Leduc Fall Classic
     teams: 8
-    prizeMoney: 25000
-    entryFee: 250
+    prizeMoney: 12000
+    entryFee: 100
     format: Round Robin
     championship: 0
-    qualifier: 1
+    qualifier: 0
     tour: 0
     complete: 0
-  - location: Okotoks
-    name: Provincial Qualifier
-    teams: 8
-    prizeMoney: 25000
-    entryFee: 250
+  - id: 1
+    location: Stettler
+    name: The Jim Jumbo Memorial Spiel
+    teams: 12
+    prizeMoney: 10000
+    entryFee: 100
     format: Round Robin
     championship: 0
-    qualifier: 1
+    qualifier: 0
     tour: 0
     complete: 0
-  - location: Sherwood Park
-    name: Provincial Qualifier
-    teams: 8
-    prizeMoney: 25000
+  - id: 2
+    location: Edmonton
+    name: The AlberTel Open
+    teams: 16
+    prizeMoney: 50000
     entryFee: 250
     format: Round Robin
     championship: 0
-    qualifier: 1
+    qualifier: 0
     tour: 0
     complete: 0
-  - location: Slave Lake
-    name: Provincial Qualifier
-    teams: 8
-    prizeMoney: 25000
+  - id: 3
+    location: Canmore
+    name: Canmore Club Championship
+    teams: 16
+    prizeMoney: 12000
     entryFee: 250
     format: Round Robin
     championship: 0
-    qualifier: 1
+    qualifier: 0
+    tour: 0
+    complete: 0
+  - id: 4
+    location: Lethbridge
+    name: Big Ben's Big Cash $piel
+    teams: 8
+    prizeMoney: 80000
+    entryFee: 10000
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+  - id: 5
+    location: Lethbridge
+    name: Alberta Energy Curling Classic
+    teams: 16
+    prizeMoney: 10000
+    entryFee: 150
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+  - id: 6
+    location: Cochrane
+    name: Tony's Pizza Cup
+    teams: 12
+    prizeMoney: 6500
+    entryFee: 100
+    format: Round Robin
+    championship: 0
+    qualifier: 0
     tour: 0
     complete: 0
   tour:
-  - location: Fort McMurray
+  - id: 0
+    location: Fort McMurray
     name: Alberta Curling Tour - Fort Mac Classic
     teams: 16
     prizeMoney: 40000
@@ -2953,7 +3307,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - location: Banff
+  - id: 1
+    location: Banff
     name: Alberta Curling Tour - The Banff Open
     teams: 16
     prizeMoney: 40000
@@ -2963,7 +3318,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - location: Medicine Hat
+  - id: 2
+    location: Medicine Hat
     name: Alberta Curling Tour - The Hat Cup
     teams: 16
     prizeMoney: 40000
@@ -2973,7 +3329,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - location: Airdrie
+  - id: 3
+    location: Airdrie
     name: Alberta Curling Tour - The Airdrie Cup
     teams: 16
     prizeMoney: 40000
@@ -2983,7 +3340,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - location: Cochrane
+  - id: 4
+    location: Cochrane
     name: Alberta Curling Tour - The Tour Spiel
     teams: 16
     prizeMoney: 40000
@@ -2993,8 +3351,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - location: Lethbridge
-    name: Alberta Curling Tour - The Final Round
+  - id: 5
+    location: Lethbridge
+    name: Alberta Curling Tour - The Last Chance Cup
     teams: 16
     prizeMoney: 40000
     entryFee: 500
@@ -3004,7 +3363,8 @@ MonoBehaviour:
     tour: 1
     complete: 0
   provQual:
-  - location: Jasper
+  - id: 0
+    location: Jasper
     name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
@@ -3014,7 +3374,8 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - location: Okotoks
+  - id: 1
+    location: Okotoks
     name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
@@ -3024,7 +3385,8 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - location: Sherwood Park
+  - id: 2
+    location: Sherwood Park
     name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
@@ -3034,7 +3396,8 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - location: Slave Lake
+  - id: 3
+    location: Slave Lake
     name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
@@ -3045,6 +3408,7 @@ MonoBehaviour:
     tour: 0
     complete: 0
   tourChampionship:
+    id: 0
     location: Edmonton
     name: Alberta Curling Tour Championship
     teams: 6
@@ -3056,6 +3420,7 @@ MonoBehaviour:
     tour: 0
     complete: 0
   provChampionship:
+    id: 0
     location: Red Deer
     name: The Provincial Championship
     teams: 16
@@ -3067,7 +3432,8 @@ MonoBehaviour:
     tour: 0
     complete: 0
   activeTournies:
-  - location: 
+  - id: 0
+    location: 
     name: 
     teams: 0
     prizeMoney: 0
@@ -3077,7 +3443,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - location: 
+  - id: 0
+    location: 
     name: 
     teams: 0
     prizeMoney: 0
@@ -3087,7 +3454,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - location: 
+  - id: 0
+    location: 
     name: 
     teams: 0
     prizeMoney: 0
@@ -3098,6 +3466,7 @@ MonoBehaviour:
     tour: 0
     complete: 0
   emptyTourny:
+    id: 0
     location: 
     name: Nothing Scheduled
     teams: 0
@@ -3109,6 +3478,7 @@ MonoBehaviour:
     tour: 0
     complete: 0
   currentTourny:
+    id: 0
     location: 
     name: 
     teams: 0
@@ -3347,7 +3717,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00000047684, y: 904}
+  m_AnchoredPosition: {x: 0, y: 1097}
   m_SizeDelta: {x: 200, y: 93.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1555613762
@@ -4168,6 +4538,139 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1765904631}
   m_CullTransparentMesh: 1
+--- !u!1 &1767766669
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1767766670}
+  - component: {fileID: 1767766673}
+  - component: {fileID: 1767766672}
+  - component: {fileID: 1767766671}
+  m_Layer: 5
+  m_Name: PlayButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1767766670
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767766669}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1431755390}
+  m_Father: {fileID: 556640674}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 481.05496, y: -1538.8}
+  m_SizeDelta: {x: 600, y: 275}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1767766671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767766669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 2
+  m_Colors:
+    m_NormalColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+    m_HighlightedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_PressedColor: {r: 1, g: 0.57627124, b: 0, a: 1}
+    m_SelectedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_DisabledColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 21300000, guid: 11fc8614c239f7b44ab0c93d7fa4d757, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: bea1a0147abb7a14a85627f63a1c9541, type: 3}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1767766672}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1497908066}
+        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
+        m_MethodName: PlayTourny
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1767766672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767766669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 11fc8614c239f7b44ab0c93d7fa4d757, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1767766673
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767766669}
+  m_CullTransparentMesh: 1
 --- !u!1 &1790549617
 GameObject:
   m_ObjectHideFlags: 0
@@ -4662,7 +5165,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1858233988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4693,11 +5196,22 @@ MonoBehaviour:
   story: 0
   third: 0
   skip: 0
+  firstName: 
   teamName: 
+  earnings: 0
+  record: {x: 0, y: 0}
   redTeamName: 
+  redTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  redTeam: []
   yellowTeamName: 
+  yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  yellowTeam: []
   draw: 0
   playoffRound: 0
+  numberOfTeams: 0
+  prize: 0
+  careerLoad: 0
+  inProgress: 0
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -4709,6 +5223,9 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
+  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  playerGO: []
 --- !u!4 &1858233989
 Transform:
   m_ObjectHideFlags: 0
@@ -5252,10 +5769,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   week: 0
-  seasonLength: 0
-  teamName: 
-  money: 0
+  seasonLength: 36
+  playerName: BingBang
+  teamName: BoomBaby
+  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  playerTeamIndex: 0
+  earnings: 0
   record: {x: 0, y: 0}
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
+  inProgress: 0
+  season: 0
+  totalTeams: 32
+  tourTeams: 16
+  provTeams: 16
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+  teams: []
+  currentTournyTeams: []
+--- !u!1001 &1489897383457154493
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.008128047
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.1466746
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931138, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6603303284110931140, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}
+      propertyPath: m_Name
+      value: TeamList_Random
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 77afa906fe70a4f40896d525eabfb214, type: 3}

@@ -57,105 +57,273 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
-  - name: Throbb
+    id: 1
+  - name: Isgard
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 2
   - name: Lockhart
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
-  - name: Tubbz
+    id: 3
+  - name: Tubbler
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
-  - name: Groob
+    id: 4
+  - name: Gruber
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
-  - name: Berg
+    id: 5
+  - name: Hoppenberg
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 6
   - name: Crocker
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 7
   - name: Yamaguchi
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 8
   - name: Reid
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 9
   - name: Saint-Pierre
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 10
   - name: O'Leary
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 11
   - name: Hansen
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 12
   - name: Tortellini
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 13
   - name: Dupuis
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 14
   - name: Lacroix
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
     strength: 0
-    id: 0
+    id: 15
+  - name: Chabonel
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 16
+  - name: Tasselborg
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 17
+  - name: Nakajima
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 18
+  - name: Murphy
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 19
+  - name: Koronova
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 20
+  - name: Kim
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 21
+  - name: Kaiser
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 22
+  - name: Fulton
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 23
+  - name: Huang
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 24
+  - name: Barleywood
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 25
+  - name: van Doeffel
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 26
+  - name: Kenta
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 27
+  - name: Frunkle
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 39
+  - name: Tuttleson
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 28
+  - name: Kimbler
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 29
+  - name: Sokorov
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 30
+  - name: LaFayette
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 31
+  - name: Devon
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 32
+  - name: Gundellson
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 33
+  - name: Voisine
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 34
+  - name: Crawdad
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 35
+  - name: Russell
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 36
+  - name: Babych
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 37
+  - name: Sandoval
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 38
   nullTeam:
     name: -BLANK-
     wins: 0
@@ -164,3 +332,11 @@ MonoBehaviour:
     nextOpp: -BLANK-
     strength: 0
     id: 99
+  playerTeam:
+    name: '**PlayerName**'
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: '**BLANK**'
+    strength: 0
+    id: 100

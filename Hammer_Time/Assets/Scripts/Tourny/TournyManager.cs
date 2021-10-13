@@ -19,6 +19,7 @@ public class TournyManager : MonoBehaviour
 	public Team[] playoffTeams;
 	public List<Team_List> teamList;
 	public DrawFormatList dfList;
+	CareerManager cm;
 
 	public GameObject[] standDisplayTest;
 	public GameObject standings;
@@ -54,18 +55,21 @@ public class TournyManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+		cm = FindObjectOfType<CareerManager>();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+		Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
+		careerEarnings = gsp.earnings;
 		myFile = new EasyFileSave("my_player_data");
 
 		if (gsp.careerLoad)
         {
 			gsp.LoadCareer();
-
 			if (gsp.inProgress)
 			{
 				Debug.Log("In Progress is True");
 				gsp.LoadTourny();
+				playoffRound--;
 			}
 			else
 			{
@@ -78,7 +82,8 @@ public class TournyManager : MonoBehaviour
 
 		numberOfTeams = gsp.numberOfTeams;
 		prize = gsp.prize;
-		careerEarningsText.text = "$ " + careerEarnings.ToString();
+		careerEarningsText.text = "$ " + gsp.earnings.ToString();
+
 		teams = new Team[numberOfTeams];
 
 		teamList = new List<Team_List>();
@@ -99,9 +104,9 @@ public class TournyManager : MonoBehaviour
 			myFile.Dispose();
 		}
 		careerEarnings = 0;
-		myFile.Add("Career Earnings", careerEarnings);
+		myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Save();
-		careerEarningsText.text = "$ " + careerEarnings.ToString();
+		careerEarningsText.text = "$ " + gsp.earnings.ToString();
 	}
 
 	IEnumerator RefreshPanel()
@@ -129,7 +134,7 @@ public class TournyManager : MonoBehaviour
     {
 		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
-		Debug.Log("Team Length is " + teams.Length);
+		Debug.Log("Setup Stand Team Length is " + teams.Length);
 		dfList.DrawSelector(teams.Length);
 
 		yield return new WaitForEndOfFrame();
@@ -148,8 +153,31 @@ public class TournyManager : MonoBehaviour
 
 			standDisplay[i] = rv.standDisplay;
 		}
+		if (cm && cm.inProgress)
+        {
+			for (int i = 0; i < teams.Length; i++)
+			{
+				teams[i] = cm.currentTournyTeams[i];
+				teams[i].wins = 0;
+				teams[i].loss = 0;
+			}
 
-		if (gsp.draw > 0)
+			for (int i = 0; i < teams.Length; i++)
+			{
+				teams[i].strength = Random.Range(0, 10);
+				if (teams[i].name == gsp.teamName)
+                {
+					playerTeam = i;
+				}
+				teamList.Add(new Team_List(teams[i]));
+			}
+
+			//teamList[playerTeam].team.name = gsp.teamName;
+
+			yield return new WaitForEndOfFrame();
+			SetDraw();
+		}
+		else if (gsp.draw > 0)
 		{
 			playoffRound = gsp.playoffRound;
 			teamList = gsp.teamList;
@@ -162,17 +190,19 @@ public class TournyManager : MonoBehaviour
 				standings.SetActive(false);
 			}
 			else if (gsp.inProgress)
-            {
-				for (int i = 0; i < teams.Length; i++)
-				{
-					if (teams[i].name == gsp.playerTeam.nextOpp)
-						oppTeam = i;
-					if (teams[i].name == gsp.playerTeam.name)
-						playerTeam = i;
-				}
-				gsp.inProgress = false;
-				
-				DrawScoring();
+			{
+				Debug.Log("Setup Stand inProgress is " + true);
+				playerTeam = gsp.playerTeamIndex;
+                //for (int i = 0; i < teams.Length; i++)
+                //{
+                //    if (teams[i].name == gsp.playerTeam.nextOpp)
+                //        oppTeam = i;
+                //    if (teams[i].name == gsp.playerTeam.name)
+                //        playerTeam = i;
+                //}
+                gsp.inProgress = false;
+				yield return new WaitForEndOfFrame();
+				StartCoroutine(DrawScoring());
             }
 			else
 			{
@@ -193,13 +223,13 @@ public class TournyManager : MonoBehaviour
 					{
 						teams[oppTeam].loss++;
 						teams[playerTeam].wins++;
-						careerRecord.x++;
+						gsp.record.x++;
 					}
 					else
 					{
 						teams[oppTeam].wins++;
 						teams[playerTeam].loss++;
-						careerRecord.y++;
+						gsp.record.y++;
 					}
 				}
 				else
@@ -208,13 +238,13 @@ public class TournyManager : MonoBehaviour
 					{
 						teams[oppTeam].loss++;
 						teams[playerTeam].wins++;
-						careerRecord.x++;
+						gsp.record.x++;
 					}
 					else
 					{
 						teams[oppTeam].wins++;
 						teams[playerTeam].loss++;
-						careerRecord.y++;
+						gsp.record.y++;
 					}
 				}
 				Debug.Log(teams[oppTeam].name + " " + teams[oppTeam].wins + " Wins");
@@ -316,6 +346,7 @@ public class TournyManager : MonoBehaviour
     #region Set
     void SetDraw()
     {
+		Debug.Log("Setting Draw - " + draw);
 		if (draw < drawFormat.Length)
 		{
 			for (int i = 0; i < drawFormat[draw].game.Length; i++)
@@ -381,9 +412,9 @@ public class TournyManager : MonoBehaviour
 					games[i].wins++;
 
 					if (games[i].name == teams[playerTeam].name)
-						careerRecord.x++;
+						gsp.record.x++;
 					if (games[i + 1].name == teams[playerTeam].name)
-						careerRecord.y++;
+						gsp.record.y++;
 				}
 				else
 				{
@@ -391,14 +422,14 @@ public class TournyManager : MonoBehaviour
 					games[i + 1].wins++;
 
 					if (games[i].name == teams[playerTeam].name)
-						careerRecord.y++;
+						gsp.record.y++;
 					if (games[i + 1].name == teams[playerTeam].name)
-						careerRecord.x++;
+						gsp.record.x++;
 				}
 			}
 		}
 
-		Debug.Log("Career Record is " + careerRecord.x + " - " + careerRecord.y);
+		Debug.Log("Career Record is " + gsp.record.x + " - " + gsp.record.y);
 		draw++;
 		yield return StartCoroutine(DrawScoring());
 	}
@@ -448,7 +479,7 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator DrawScoring()
     {
-
+		Debug.Log("Draw Scoring draw is " + draw);
 		if (draw < drawFormat.Length)
 		{
 			Debug.Log("Draw number " + draw);
@@ -472,10 +503,6 @@ public class TournyManager : MonoBehaviour
 		}
 		else
 			heading.text = "End of Round Robin";
-
-		
-
-		
 	}
 	#endregion
 
@@ -504,18 +531,26 @@ public class TournyManager : MonoBehaviour
 		SceneManager.LoadScene("SplashMenu");
     }
 
+	public void TournyComplete()
+    {
+		CareerManager cm = FindObjectOfType<CareerManager>();
+
+		gsp.teams = teams;
+		cm.TournyResults();
+		SceneManager.LoadScene("Arena_Selector");
+    }
 	IEnumerator SaveCareer()
 	{
 		Debug.Log("Saving in TournyManager");
 		myFile = new EasyFileSave("my_player_data");
 
-		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		//inProgress = true;
 		myFile.Add("First Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", careerEarnings);
-		myFile.Add("Career Record", careerRecord);
+		myFile.Add("Career Earnings", gsp.earnings);
+		myFile.Add("Career Record", gsp.record);
 		myFile.Add("In Progress", true);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);

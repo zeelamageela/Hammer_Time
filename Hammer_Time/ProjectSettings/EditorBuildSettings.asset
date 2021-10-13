@@ -32,4 +32,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/End_Menu_Tourny_FinalScore.unity
     guid: 49cc1f48fccb240bb904425cfadbc339
+  - enabled: 1
+    path: Assets/Scenes/Arena_Selector.unity
+    guid: 222a9b99d58aa61408b4e0eed6e8eff0
+  - enabled: 1
+    path: Assets/Scenes/Career_Menu.unity
+    guid: ba1158bf5a6a048ef8212c3059172643
   m_configObjects: {}

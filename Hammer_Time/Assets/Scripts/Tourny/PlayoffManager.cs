@@ -12,6 +12,7 @@ public class PlayoffManager : MonoBehaviour
 	public BracketDisplay[] brackDisplay;
 	public GameObject[] row;
 	public GameObject playoffs;
+	public Button nextButton;
 	public Button simButton;
 	public Button contButton;
 	public Button playButton;
@@ -36,16 +37,36 @@ public class PlayoffManager : MonoBehaviour
 
 		myFile = new EasyFileSave("my_player_data");
 
-		StartCoroutine(LoadCareer());
-		Debug.Log("Career Earnings before playoffs - $ " + careerEarnings.ToString());
+		//StartCoroutine(LoadCareer());
+		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+
 		playoffs.SetActive(true);
 		if (gsp.careerLoad)
+		{
+			gsp.LoadCareer();
+			careerEarnings = gsp.earnings;
+			careerRecord = gsp.record;
+		}
+		else if(gsp.inProgress)
         {
+			
 			gsp.LoadTourny();
-        }
+			gsp.inProgress = false;
+			gsp.careerLoad = false;
+			gsp.playoffRound--;
+		}
+		else
+		{
+			careerEarnings = tm.careerEarnings;
+			careerRecord = tm.careerRecord;
+
+		}
 		playerTeam = tm.playerTeam;
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
+
+		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+
 		if (playoffRound > 0)
 			LoadPlayoffs();
 		else
@@ -416,51 +437,51 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "You Win!";
 
-					careerEarnings += tm.prize * 0.5f;
+					gsp.earnings += gsp.prize * 0.5f;
 					tm.teams[playerTeam].rank = 1;
 					tm.vs.SetActive(true);
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$70,000";
-					tm.vsDisplay[1].rank.text = "";
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString();
+					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[4].name | tm.teams[playerTeam].name == playoffTeams[7].name)
 				{
 					heading.text = "Runner-up";
-					careerEarnings += tm.prize * 0.25f;
+					gsp.earnings += gsp.prize * 0.25f;
 					tm.teams[playerTeam].rank = 2;
 					tm.vs.SetActive(true);
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$35,000";
-					tm.vsDisplay[1].rank.text = "";
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString();
+					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[5].name | tm.teams[playerTeam].name == playoffTeams[6].name)
 				{
 					heading.text = "3rd Place";
-					careerEarnings += tm.prize * 0.15f;
+					gsp.earnings += gsp.prize * 0.15f;
 					tm.teams[playerTeam].rank = 3;
 					tm.vs.SetActive(true);
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$20,000";
-					tm.vsDisplay[1].rank.text = "";
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.15f).ToString();
+					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[2].name | tm.teams[playerTeam].name == playoffTeams[3].name)
 				{
 					heading.text = "4th Place";
-					careerEarnings += tm.prize * 0.075f;
+					gsp.earnings += gsp.prize * 0.075f;
 					tm.teams[playerTeam].rank = 4;
 
 					tm.vs.SetActive(true);
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$10,000";
-					tm.vsDisplay[1].rank.text = "";
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.075f).ToString();
+					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
 				}
                 else
                 {
@@ -468,7 +489,7 @@ public class PlayoffManager : MonoBehaviour
 					{
 						float p = 1.4f;
 						float totalTeams = tm.teamList.Count - 4;
-						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (tm.prize * 0.15f) * (p - 1);
+						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
 
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 						if (tm.teams[playerTeam].name == tm.teamList[i].team.name)
@@ -485,7 +506,7 @@ public class PlayoffManager : MonoBehaviour
 
 							Debug.Log("Prize Payout multiplier is " + prizePayout);
 							prizePayout = Mathf.RoundToInt(prizePayout);
-							careerEarnings += prizePayout; 
+							gsp.earnings += prizePayout; 
 							
 							tm.vs.SetActive(true);
 
@@ -495,11 +516,12 @@ public class PlayoffManager : MonoBehaviour
 							tm.vsDisplay[1].rank.text = "";
 						}
 					}
-                }
-                Debug.Log("Career Earnings after calculation - " + careerEarnings.ToString());
-				careerEarningsText.text = "$ " + careerEarnings.ToString();
+					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
+				}
+                Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
+				careerEarningsText.text = "$ " + gsp.earnings.ToString();
 				
-				//careerRecord = new Vector2(careerRecord.x + tm.teams[playerTeam].wins, careerRecord.y + tm.teams[playerTeam].loss);
+				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 
 				StartCoroutine(SaveCareer(false));
 				//heading.text = "So Close!";
@@ -508,6 +530,7 @@ public class PlayoffManager : MonoBehaviour
 				playButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
+				nextButton.gameObject.SetActive(true);
 				scrollBar.value = 1;
 
 				break;
@@ -644,21 +667,21 @@ public class PlayoffManager : MonoBehaviour
 
 	IEnumerator LoadCareer()
 	{
-		//myFile = new EasyFileSave("my_player_data");
-		if (myFile.Load())
-		{
-			gsp.teamName = myFile.GetString("Team Name");
-			gsp.teamColour = myFile.GetUnityColor("Team Colour");
-			careerEarnings = myFile.GetFloat("Career Earnings");
-			careerRecord = myFile.GetUnityVector2("Career Record");
-			Debug.Log("Loading Career Earnings - $ " + careerEarnings);
+		////myFile = new EasyFileSave("my_player_data");
+		//if (myFile.Load())
+		//{
+		//	gsp.teamName = myFile.GetString("Team Name");
+		//	gsp.teamColour = myFile.GetUnityColor("Team Colour");
+		//	careerEarnings = myFile.GetFloat("Career Earnings");
+		//	gsp.record = myFile.GetUnityVector2("Career Record");
+		//	Debug.Log("Loading Career Earnings - $ " + careerEarnings);
 
-			yield return new WaitForEndOfFrame();
-			myFile.Dispose();
-		}
+		//	yield return new WaitForEndOfFrame();
+		//	myFile.Dispose();
+		//}
+		gsp.LoadCareer();
 
-
-		careerEarningsText.text = "$ " + careerEarnings.ToString();
+		yield return careerEarningsText.text = "$ " + gsp.earnings.ToString();
 	}
 
 	IEnumerator SaveCareer(bool inProgress)
@@ -667,12 +690,12 @@ public class PlayoffManager : MonoBehaviour
 
 		myFile = new EasyFileSave("my_player_data");
 
-		myFile.Add("Career Record", careerRecord);
-		//Vector2 tempRecord = new Vector2(careerRecord.x, careerRecord.y);
+		myFile.Add("Career Record", gsp.record);
+		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		myFile.Add("Player Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", careerEarnings);
+		myFile.Add("Career Earnings", gsp.earnings);
 
 		//if (!inProgress)
 		//      {
@@ -719,12 +742,12 @@ public class PlayoffManager : MonoBehaviour
 
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
-			Debug.Log("playoffID i is " + i);
+			//Debug.Log("playoffID i is " + i);
 			playoffIDList[i] = playoffTeams[i].id;
 		}
 
 		myFile.Add("Playoff ID List", playoffIDList);
-		yield return myFile.TestDataSaveLoad();
+		//yield return myFile.TestDataSaveLoad();
 		yield return myFile.Save();
 	}
 }
