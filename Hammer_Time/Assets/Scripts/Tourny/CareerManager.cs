@@ -103,6 +103,8 @@ public class CareerManager : MonoBehaviour
     public void LoadCareer()
     {
         myFile = new EasyFileSave("my_player_data");
+        tTeamList = FindObjectOfType<TournyTeamList>();
+        teams = new Team[totalTeams];
 
         if (myFile.Load())
         {
@@ -117,6 +119,44 @@ public class CareerManager : MonoBehaviour
             tourQual = myFile.GetBool("Tour Qual");
             tourRecord = myFile.GetUnityVector2("Tour Record");
 
+            int[] idList = myFile.GetArray<int>("Total ID List");
+            int[] winsList = myFile.GetArray<int>("Total Wins List");
+            int[] lossList = myFile.GetArray<int>("Total Loss List");
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                teams[i].id = idList[i];
+                for (int j = 0; j < tTeamList.teams.Length; j++)
+                {
+                    if (teams[i].id == tTeamList.teams[j].id)
+                        teams[i] = tTeamList.teams[j];
+                }
+
+                teams[i].wins = winsList[i];
+                teams[i].loss = lossList[i];
+            }
+
+            if (myFile.GetBool("Tourny In Progress"))
+            {
+                int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
+                int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
+                int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
+
+                for (int i = 0; i < currentTournyTeams.Length; i++)
+                {
+                    currentTournyTeams[i].id = tournyIDList[i];
+
+                    for (int j = 0; j < teams.Length; j++)
+                    {
+                        if (currentTournyTeams[i].id == teams[j].id)
+                            currentTournyTeams[i] = teams[j];
+                    }
+
+                    currentTournyTeams[i].wins = tournyWinsList[i];
+                    currentTournyTeams[i].loss = tournyLossList[i];
+                }
+            }
+
             myFile.Dispose();
         }
     }
@@ -124,16 +164,19 @@ public class CareerManager : MonoBehaviour
     void SaveCareer()
     {
         myFile = new EasyFileSave("my_player_data");
+        tSel = FindObjectOfType<TournySelector>();
 
         myFile.Add("Player Name", playerName);
         myFile.Add("Team Name", teamName);
         myFile.Add("Team Colour", teamColour);
+        myFile.Add("Player Team Index", playerTeamIndex);
         myFile.Add("Week", week);
         myFile.Add("Season", season);
         myFile.Add("Career Record", record);
         myFile.Add("Career Earnings", earnings);
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
+        myFile.Add("Tour Record", tourRecord);
 
         int[] idList = new int[teams.Length];
         int[] winsList = new int[teams.Length];
@@ -145,6 +188,64 @@ public class CareerManager : MonoBehaviour
             winsList[i] = teams[i].wins;
             lossList[i] = teams[i].loss;
         }
+        Debug.Log("Total Id List length is " + idList.Length);
+        myFile.Add("Total ID List", idList);
+        myFile.Add("Total Wins List", winsList);
+        myFile.Add("Total Loss List", lossList);
+
+        myFile.Add("Current Tourny ID", currentTourny.id);
+        myFile.Add("Current Tourny Tour", currentTourny.tour);
+        myFile.Add("Current Tourny Qualifier", currentTourny.qualifier);
+        myFile.Add("Current Tourny Championship", currentTourny.championship);
+
+        if (tSel)
+        {
+            int[] provIDList = new int[tSel.provQual.Length];
+            bool[] provCompleteList = new bool[tSel.provQual.Length];
+            int[] tourIDList = new int[tSel.tour.Length];
+            bool[] tourCompleteList = new bool[tSel.tour.Length];
+            int[] tourniesIDList = new int[tSel.tournies.Length];
+            bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
+
+            for (int i = 0; i < tSel.provQual.Length; i++)
+            {
+                provIDList[i] = tSel.provQual[i].id;
+                provCompleteList[i] = tSel.provQual[i].complete;
+            }
+            for (int i = 0; i < tSel.tour.Length; i++)
+            {
+                tourIDList[i] = tSel.tour[i].id;
+                tourCompleteList[i] = tSel.tour[i].complete;
+            }
+            for (int i = 0; i < tSel.tournies.Length; i++)
+            {
+                tourniesIDList[i] = tSel.tournies[i].id;
+                tourniesCompleteList[i] = tSel.tournies[i].complete;
+            }
+            myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
+            myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
+            myFile.Add("Prov ID List", provIDList);
+            myFile.Add("Prov Complete List", tourniesCompleteList);
+            myFile.Add("Tour ID List", tourniesIDList);
+            myFile.Add("Tour Complete List", tourniesCompleteList);
+            myFile.Add("Tournies ID List", tourniesIDList);
+            myFile.Add("Tournies Complete List", tourniesCompleteList);
+        }
+
+        int[] tournyTeamIDList = new int[currentTournyTeams.Length];
+        int[] tournyWinsList = new int[currentTournyTeams.Length];
+        int[] tournyLossList = new int[currentTournyTeams.Length];
+
+        for (int i = 0; i < currentTournyTeams.Length; i++)
+        {
+            currentTournyTeams[i].id = tournyTeamIDList[i];
+            currentTournyTeams[i].wins = tournyWinsList[i];
+            currentTournyTeams[i].loss = tournyLossList[i];
+        }
+
+        myFile.Add("Tourny Team ID List", tournyTeamIDList);
+        myFile.Add("Tourny Wins List", tournyWinsList);
+        myFile.Add("Tourny Loss List", tournyLossList);
 
         myFile.Save();
     }
@@ -200,8 +301,9 @@ public class CareerManager : MonoBehaviour
     public void PlayTourny()
     {
         inProgress = true;
+        
         earnings = gsp.earnings;
-        //SaveCareer();
+        SaveCareer();
     }
 
     public void NextWeek()
@@ -226,6 +328,7 @@ public class CareerManager : MonoBehaviour
         }
         teams[0].name = teamName;
         playerTeamIndex = teams[0].id;
+        week++;
         //Shuffle(teams);
 
         //for (int i = 1; i < tourTeams; i++)

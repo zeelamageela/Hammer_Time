@@ -730,13 +730,13 @@ public class PlayoffManager : MonoBehaviour
 			idList[i] = tm.teams[i].id;
 		}
 
-		myFile.Add("Teams Name", nameList);
-		myFile.Add("Teams Wins", winsList);
-		myFile.Add("Teams Loss", lossList);
-		myFile.Add("Teams Rank", rankList);
-		myFile.Add("Teams NextOpp", nextOppList);
-		myFile.Add("Teams Strength", strengthList);
-		myFile.Add("Teams ID", idList);
+		myFile.Add("Tourny Name List", nameList);
+		myFile.Add("Tourny Wins List", winsList);
+		myFile.Add("Tourny Loss List", lossList);
+		myFile.Add("Tourny Rank List", rankList);
+		myFile.Add("Tourny NextOpp List", nextOppList);
+		myFile.Add("Tourny Strength List", strengthList);
+		myFile.Add("Tourny Team ID List", idList);
 
 		int[] playoffIDList = new int[playoffTeams.Length];
 

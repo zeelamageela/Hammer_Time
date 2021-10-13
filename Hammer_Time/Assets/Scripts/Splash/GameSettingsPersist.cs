@@ -304,6 +304,7 @@ public class GameSettingsPersist : MonoBehaviour
     {
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
+        
 
         if (myFile.Load())
         {
@@ -344,14 +345,14 @@ public class GameSettingsPersist : MonoBehaviour
             int[] idList = new int[numberOfTeams];
 
             //Debug.Log("nameList Count is " + nameList.Length);
-            nameList = myFile.GetArray<string>("Teams Name");
+            nameList = myFile.GetArray<string>("Tourny Name List");
             Debug.Log("nameList Item 1 is " + nameList[0]);
-            winsList = myFile.GetArray<int>("Teams Wins");
-            lossList = myFile.GetArray<int>("Teams Loss");
-            rankList = myFile.GetArray<int>("Teams Rank");
-            nextOppList = myFile.GetArray<string>("Teams NextOpp");
-            strengthList = myFile.GetArray<int>("Teams Strength");
-            idList = myFile.GetArray<int>("Teams ID");
+            winsList = myFile.GetArray<int>("Tourny Wins List");
+            lossList = myFile.GetArray<int>("Tourny Loss List");
+            rankList = myFile.GetArray<int>("Tourny Rank List");
+            nextOppList = myFile.GetArray<string>("Tourny NextOpp List");
+            strengthList = myFile.GetArray<int>("Tourny Strength List");
+            idList = myFile.GetArray<int>("Tourny Team ID List");
             //StartCoroutine(Wait());
             Debug.Log("nameList Count is " + nameList.Length);
 

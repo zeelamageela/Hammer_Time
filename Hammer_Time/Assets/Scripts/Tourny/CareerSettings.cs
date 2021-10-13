@@ -88,8 +88,12 @@ public class CareerSettings : MonoBehaviour
 
     IEnumerator LoadFromFile()
     {
+        cm = FindObjectOfType<CareerManager>();
+
+        cm.LoadCareer();
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
+
 
         if (myFile.Load())
         {
@@ -146,8 +150,6 @@ public class CareerSettings : MonoBehaviour
             player.SetActive(true);
             load.SetActive(false);
         }
-
-
     }
 
     public void LoadToCM()

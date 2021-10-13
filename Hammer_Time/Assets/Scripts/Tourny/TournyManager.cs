@@ -549,8 +549,8 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("First Name", gsp.firstName);
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", gsp.earnings);
-		myFile.Add("Career Record", gsp.record);
+		//myFile.Add("Career Earnings", gsp.earnings);
+		//myFile.Add("Career Record", gsp.record);
 		myFile.Add("In Progress", true);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);
@@ -579,13 +579,13 @@ public class TournyManager : MonoBehaviour
             strengthList[i] = teams[i].strength;
             idList[i] = teams[i].id;
         }
-		myFile.Add("Teams Name", nameList);
-        myFile.Add("Teams Wins", winsList);
-        myFile.Add("Teams Loss", lossList);
-        myFile.Add("Teams Rank", rankList);
-        myFile.Add("Teams NextOpp", nextOppList);
-        myFile.Add("Teams Strength", strengthList);
-        myFile.Add("Teams ID", idList);
+		myFile.Add("Tourny Name List", nameList);
+        myFile.Add("Tourny Wins List", winsList);
+        myFile.Add("Tourny Loss List", lossList);
+        myFile.Add("Tourny Rank List", rankList);
+        myFile.Add("Tourny NextOpp List", nextOppList);
+        myFile.Add("Tourny Strength List", strengthList);
+        myFile.Add("Tourny Team ID List", idList);
 
         //yield return myFile.TestDataSaveLoad();
         yield return myFile.Save();

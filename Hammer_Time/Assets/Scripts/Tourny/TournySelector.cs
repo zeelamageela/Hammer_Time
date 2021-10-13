@@ -196,6 +196,37 @@ public class TournySelector : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         gsp.LoadFromTournySelector();
         cm.PlayTourny();
+        if (currentTourny.tour)
+        {
+            for (int i = 0; i < tour.Length; i++)
+            {
+                if (currentTourny.id == tour[i].id)
+                    tour[i].complete = true;
+            }
+        }
+        else if (currentTourny.qualifier)
+        {
+            for (int i = 0; i < provQual.Length; i++)
+            {
+                if (currentTourny.id == provQual[i].id)
+                    provQual[i].complete = true;
+            }
+        }
+        else if (currentTourny.championship)
+        {
+            if (currentTourny.name == tourChampionship.name)
+                tourChampionship.complete = true;
+            else if (currentTourny.name == provChampionship.name)
+                provChampionship.complete = true;
+        }
+        else
+        {
+            for (int i = 0; i < tournies.Length; i++)
+            {
+                if (currentTourny.id == tournies[i].id)
+                    tournies[i].complete = true;
+            }
+        }
 
         SceneManager.LoadScene("Tourny_Menu_1");
     }
