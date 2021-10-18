@@ -32,7 +32,10 @@ public class TournySelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         cm = FindObjectOfType<CareerManager>();
+        if (cm.inProgress)
+            cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
         if (cm.week == 0)
             NewSeason();
@@ -75,7 +78,7 @@ public class TournySelector : MonoBehaviour
             Shuffle(tournies);
             for (int i = 0; i < tournies.Length; i++)
             {
-                if (provQual[i].complete != true)
+                if (tournies[i].complete != true)
                 {
                     activeTournies[0] = tournies[i];
                     //provQual[i].complete = true;
@@ -100,7 +103,7 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                Shuffle(tour);
+                //Shuffle(tour);
                 for (int i = 0; i < tour.Length; i++)
                 {
                     if (tour[i].complete != true)
@@ -227,13 +230,20 @@ public class TournySelector : MonoBehaviour
                     tournies[i].complete = true;
             }
         }
-
+        cm.tournies = tournies;
+        cm.tour = tour;
+        cm.prov = provQual;
+        cm.champ = new Tourny[2];
+        cm.champ[0] = tourChampionship;
+        cm.champ[1] = provChampionship;
+        cm.activeTournies = activeTournies;
         SceneManager.LoadScene("Tourny_Menu_1");
     }
 
     public void SelectTourny(int button)
     {
         currentTourny = activeTournies[button];
+        Debug.Log("Button is " + button);
         cm.SetupTourny();
     }
 }

@@ -89,8 +89,7 @@ public class CareerSettings : MonoBehaviour
     IEnumerator LoadFromFile()
     {
         cm = FindObjectOfType<CareerManager>();
-
-        cm.LoadCareer();
+        cm.inProgress = true;
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
 
@@ -101,7 +100,7 @@ public class CareerSettings : MonoBehaviour
             teamName = myFile.GetString("Team Name");
             teamColour = myFile.GetUnityColor("Team Colour");
             earnings = myFile.GetFloat("Career Earnings");
-            record = myFile.GetUnityVector2("Season Record");
+            record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");

@@ -197,6 +197,12 @@ public class GameSettingsPersist : MonoBehaviour
         teamColour = cm.teamColour;
         earnings = cm.earnings;
 
+        for (int i = 0; i < cm.currentTourny.teams; i++)
+        {
+            if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+                playerTeamIndex = i;
+        }
+        Debug.Log("Player Team Index in GSP is " + playerTeamIndex);
         endCurrent = 0;
         numberOfTeams = ts.currentTourny.teams;
         prize = ts.currentTourny.prizeMoney;
@@ -354,7 +360,7 @@ public class GameSettingsPersist : MonoBehaviour
             strengthList = myFile.GetArray<int>("Tourny Strength List");
             idList = myFile.GetArray<int>("Tourny Team ID List");
             //StartCoroutine(Wait());
-            Debug.Log("nameList Count is " + nameList.Length);
+            //Debug.Log("nameList Count is " + nameList.Length);
 
             teams = new Team[nameList.Length];
 

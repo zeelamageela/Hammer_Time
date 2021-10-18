@@ -36,7 +36,7 @@ public class MainMenu : MonoBehaviour
 
     public void Tournament()
     {
-        SceneManager.LoadScene("Tourny_Menu_1");
+        SceneManager.LoadScene("Career_Menu");
     }
     public void Tutorial()
     {

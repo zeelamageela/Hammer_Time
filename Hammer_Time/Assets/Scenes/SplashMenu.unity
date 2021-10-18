@@ -3312,7 +3312,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
-    m_FontSize: 115
+    m_FontSize: 145
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -3323,7 +3323,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Tournament
+  m_Text: Career
 --- !u!222 &743446436
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7515,11 +7515,22 @@ MonoBehaviour:
   story: 0
   third: 0
   skip: 0
+  firstName: 
   teamName: 
+  earnings: 0
+  record: {x: 0, y: 0}
   redTeamName: 
+  redTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  redTeam: []
   yellowTeamName: 
+  yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
+  yellowTeam: []
   draw: 0
   playoffRound: 0
+  numberOfTeams: 0
+  prize: 0
+  careerLoad: 0
+  inProgress: 0
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -7531,6 +7542,9 @@ MonoBehaviour:
     rank: 0
     nextOpp: 
     strength: 0
+    id: 0
+  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  playerGO: []
 --- !u!4 &1858233989
 Transform:
   m_ObjectHideFlags: 0

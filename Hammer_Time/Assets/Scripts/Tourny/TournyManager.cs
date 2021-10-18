@@ -536,9 +536,14 @@ public class TournyManager : MonoBehaviour
 		CareerManager cm = FindObjectOfType<CareerManager>();
 
 		gsp.teams = teams;
+		cm.earnings = gsp.earnings;
+		cm.record = gsp.record;
+		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
+		Debug.Log("CM earnings are " + cm.record.x + " - " + cm.record.y);
 		cm.TournyResults();
 		SceneManager.LoadScene("Arena_Selector");
     }
+
 	IEnumerator SaveCareer()
 	{
 		Debug.Log("Saving in TournyManager");
@@ -550,7 +555,7 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("Team Name", gsp.teamName);
 		myFile.Add("Team Colour", gsp.teamColour);
 		//myFile.Add("Career Earnings", gsp.earnings);
-		//myFile.Add("Career Record", gsp.record);
+		myFile.Add("Career Record", gsp.record);
 		myFile.Add("In Progress", true);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);

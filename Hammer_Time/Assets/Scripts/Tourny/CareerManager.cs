@@ -40,6 +40,12 @@ public class CareerManager : MonoBehaviour
     public List<Team_List> tourRankList;
     public List<Team_List> provQualList;
 
+    public Tourny[] tournies;
+    public Tourny[] tour;
+    public Tourny[] prov;
+    public Tourny[] champ;
+    public Tourny[] activeTournies;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -118,14 +124,91 @@ public class CareerManager : MonoBehaviour
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
             tourRecord = myFile.GetUnityVector2("Tour Record");
+            if (tSel)
+            {
 
+                int[] provIDList = myFile.GetArray<int>("Prov ID List");
+                bool[] provCompleteList = myFile.GetArray<bool>("Prov Complete List");
+                int[] tourIDList = myFile.GetArray<int>("Tour ID List");
+                bool[] tourCompleteList = myFile.GetArray<bool>("Tour Complete List");
+                int[] tourniesIDList = myFile.GetArray<int>("Tournies ID List");
+                bool[] tourniesCompleteList = myFile.GetArray<bool>("Tournies Complete List");
+                int[] activeIDList = myFile.GetArray<int>("Active ID List");
+                string[] activeTypeList = myFile.GetArray<string>("Active Type List");
+
+                prov = tSel.provQual;
+                tour = tSel.tour;
+                tournies = tSel.tournies;
+                champ[0] = tSel.tourChampionship;
+                champ[1] = tSel.provChampionship;
+                champ[0].complete = myFile.GetBool("Tour Championship Complete");
+                champ[1].complete = myFile.GetBool("Prov Championship Complete");
+
+                for (int i = 0; i < prov.Length; i++)
+                {
+                    prov[i].id = provIDList[i];
+
+                    for (int j = 0; j < tSel.provQual.Length; j++)
+                    {
+                        if (prov[i].id == tSel.provQual[j].id)
+                            prov[i] = tSel.provQual[j];
+                    }
+                    prov[i].complete = provCompleteList[i];
+                }
+                for (int i = 0; i < tour.Length; i++)
+                {
+                    tour[i].id = tourIDList[i];
+
+                    for (int j = 0; j < tSel.tour.Length; j++)
+                    {
+                        if (tour[i].id == tSel.tour[j].id)
+                            tour[i] = tSel.tour[j];
+                    }
+                    tour[i].complete = tourCompleteList[i];
+                }
+                for (int i = 0; i < tournies.Length; i++)
+                {
+                    tournies[i].id = tourniesIDList[i];
+
+                    for (int j = 0; j < tSel.tournies.Length; j++)
+                    {
+                        if (tournies[i].id == tSel.tournies[j].id)
+                            tournies[i] = tSel.tournies[j];
+                    }
+                    tournies[i].complete = tourniesCompleteList[i];
+                }
+                for (int i = 0; i < activeTournies.Length; i++)
+                {
+                    activeTournies[i].id = activeIDList[i];
+
+                    for (int j = 0; j < tSel.activeTournies.Length; j++)
+                    {
+                        if (activeTournies[i].id == tSel.activeTournies[j].id)
+                            activeTournies[i] = tSel.activeTournies[j];
+                    }
+                }
+                tSel.provQual = prov;
+                tSel.tour = tour;
+                tSel.tournies = tournies;
+                tSel.tourChampionship = champ[0];
+                tSel.provChampionship = champ[1];
+
+            }
             int[] idList = myFile.GetArray<int>("Total ID List");
             int[] winsList = myFile.GetArray<int>("Total Wins List");
             int[] lossList = myFile.GetArray<int>("Total Loss List");
 
             for (int i = 0; i < teams.Length; i++)
             {
+                teams[i] = tTeamList.teams[i];
+            }
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                //Debug.Log("ID List Length is " + "i + " + idList.Length);
+                //Debug.Log("Teams List Length is " + "i + " + idList.Length);
                 teams[i].id = idList[i];
+
                 for (int j = 0; j < tTeamList.teams.Length; j++)
                 {
                     if (teams[i].id == tTeamList.teams[j].id)
@@ -161,7 +244,7 @@ public class CareerManager : MonoBehaviour
         }
     }
 
-    void SaveCareer()
+    public void SaveCareer()
     {
         myFile = new EasyFileSave("my_player_data");
         tSel = FindObjectOfType<TournySelector>();
@@ -272,27 +355,31 @@ public class CareerManager : MonoBehaviour
 
         if (!inList)
         {
+            Debug.Log("PlayerTeam not in list");
             for (int i = 0; i < teams.Length; i++)
             {
                 if (teams[i].id == playerTeamIndex)
                 {
                     currentTournyTeams[0] = teams[i];
+                    currentTournyTeams[0].name = teamName;
+                    playerTeamIndex = i;
+
                 }
             }
         }
         
-        Shuffle(currentTournyTeams);
+        //Shuffle(currentTournyTeams);
         Debug.Log("Player Team is " + playerTeamIndex);
         gsp.teams = currentTournyTeams;
     }
 
     public void TournyResults()
     {
-        TournyManager tm = FindObjectOfType<TournyManager>();
+        //TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
         earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
-        record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
+        //record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
         Debug.Log("Record is " + record.x + " - " + record.y);
         week++;
         SaveCareer();
@@ -300,6 +387,7 @@ public class CareerManager : MonoBehaviour
 
     public void PlayTourny()
     {
+        gsp = FindObjectOfType<GameSettingsPersist>();
         inProgress = true;
         
         earnings = gsp.earnings;
