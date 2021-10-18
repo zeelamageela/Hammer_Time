@@ -174,31 +174,29 @@ public class TournySettings : MonoBehaviour
 
             if (gsp.inProgress)
             {
-                tournyInProg.SetActive(true);
-                if (myFile.GetInt("Playoff Round") > 0)
-                {
-                    drawLoad.text = "Playoffs";
-                }
-                else
-                    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
+                //tournyInProg.SetActive(true);
+                //if (myFile.GetInt("Playoff Round") > 0)
+                //{
+                //    drawLoad.text = "Playoffs";
+                //}
+                //else
+                //    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
 
-                prize = myFile.GetInt("Prize");
-                teams = myFile.GetInt("Number Of Teams");
-                ends = myFile.GetInt("Ends");
-                rocks= myFile.GetInt("Rocks");
+                //prize = myFile.GetInt("Prize");
+                //teams = myFile.GetInt("Number Of Teams");
+                //ends = myFile.GetInt("Ends");
+                //rocks= myFile.GetInt("Rocks");
 
-                int[] rankList = myFile.GetArray<int>("Teams Rank");
-                int playerTeam = myFile.GetInt("Player Team");
-                if (rankList[playerTeam] == 1)
-                    rankLoad.text = "1st Place";
-                else if (rankList[playerTeam] == 2)
-                    rankLoad.text = "2nd Place";
-                else if (rankList[playerTeam] == 3)
-                    rankLoad.text = "3rd Place";
-                else
-                    rankLoad.text = rankList[playerTeam] + "th Place";
-
-                
+                //int[] rankList = myFile.GetArray<int>("Teams Rank");
+                //int playerTeam = myFile.GetInt("Player Team");
+                //if (rankList[playerTeam] == 1)
+                //    rankLoad.text = "1st Place";
+                //else if (rankList[playerTeam] == 2)
+                //    rankLoad.text = "2nd Place";
+                //else if (rankList[playerTeam] == 3)
+                //    rankLoad.text = "3rd Place";
+                //else
+                //    rankLoad.text = rankList[playerTeam] + "th Place";
 
             }
             else

@@ -124,6 +124,7 @@ public class CareerManager : MonoBehaviour
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
             tourRecord = myFile.GetUnityVector2("Tour Record");
+
             if (tSel)
             {
 
@@ -203,10 +204,11 @@ public class CareerManager : MonoBehaviour
                 teams[i] = tTeamList.teams[i];
             }
 
+            Debug.Log("ID List Length is " + "i + " + idList.Length);
+            Debug.Log("Teams List Length is " + "i + " + teams.Length);
+
             for (int i = 0; i < teams.Length; i++)
             {
-                //Debug.Log("ID List Length is " + "i + " + idList.Length);
-                //Debug.Log("Teams List Length is " + "i + " + idList.Length);
                 teams[i].id = idList[i];
 
                 for (int j = 0; j < tTeamList.teams.Length; j++)
