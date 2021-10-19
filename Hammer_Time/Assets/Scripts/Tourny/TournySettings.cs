@@ -146,7 +146,7 @@ public class TournySettings : MonoBehaviour
 
         if (gsp.inProgress)
         {
-            StartCoroutine(LoadFromFile());
+            //StartCoroutine(LoadFromFile());
         }
         else
         {
@@ -182,10 +182,10 @@ public class TournySettings : MonoBehaviour
                 //else
                 //    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
 
-                //prize = myFile.GetInt("Prize");
-                //teams = myFile.GetInt("Number Of Teams");
-                //ends = myFile.GetInt("Ends");
-                //rocks= myFile.GetInt("Rocks");
+                prize = myFile.GetInt("Prize");
+                teams = myFile.GetInt("Number Of Teams");
+                ends = myFile.GetInt("Ends");
+                rocks = myFile.GetInt("Rocks");
 
                 //int[] rankList = myFile.GetArray<int>("Teams Rank");
                 //int playerTeam = myFile.GetInt("Player Team");

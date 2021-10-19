@@ -539,7 +539,7 @@ public class TournyManager : MonoBehaviour
 		cm.earnings = gsp.earnings;
 		cm.record = gsp.record;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
-		Debug.Log("CM earnings are " + cm.record.x + " - " + cm.record.y);
+		Debug.Log("CM earnings are " + cm.earnings);
 		cm.TournyResults();
 		SceneManager.LoadScene("Arena_Selector");
     }
