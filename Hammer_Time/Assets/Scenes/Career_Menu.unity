@@ -1317,7 +1317,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 929893588}
         m_TargetAssemblyTypeName: CareerSettings, Assembly-CSharp
-        m_MethodName: Player
+        m_MethodName: New
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3102,6 +3102,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+  tournies: []
+  tour: []
+  prov: []
+  champ: []
+  activeTournies: []
 --- !u!4 &1524077173
 Transform:
   m_ObjectHideFlags: 0

@@ -35,7 +35,7 @@ public class TournySelector : MonoBehaviour
         
         cm = FindObjectOfType<CareerManager>();
         if (cm.inProgress)
-            cm.LoadCareer();
+            //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
         if (cm.week == 0)
             NewSeason();

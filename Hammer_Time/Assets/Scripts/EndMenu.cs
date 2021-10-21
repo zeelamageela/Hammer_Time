@@ -171,6 +171,7 @@ public class EndMenu : MonoBehaviour
     {
         if (gsp && gsp.tourny && gsp.endCurrent > gsp.ends && gsp.redScore != gsp.yellowScore)
         {
+            gsp.inProgress = true;
             if (gsp.playoffRound > 0)
                 //gsp.playoffRound++;
                 Debug.Log("Play off Round - " + gsp.playoffRound);

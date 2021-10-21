@@ -170,16 +170,18 @@ public class CareerSettings : MonoBehaviour
             load.SetActive(false);
             player.SetActive(true);
         }
-
     }
 
     public void New()
     {
         cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
         ClearPlayer();
         gsp.careerLoad = false;
         earnings = 0f;
         record = Vector2.zero;
+        week = 0;
+        season = 0;
         gsp.draw = 0;
         gsp.playoffRound = 0;
         gsp.inProgress = false;
@@ -194,6 +196,7 @@ public class CareerSettings : MonoBehaviour
 
     public void ClearPlayer()
     {
+        cm.inProgress = false;
         myFile = new EasyFileSave("my_player_data");
         if (myFile.Load())
             myFile.Delete();

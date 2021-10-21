@@ -339,7 +339,8 @@ public class TournyManager : MonoBehaviour
 
 		standScrollBar.value = (teams[playerTeam].rank - 16f) / -15f;
 		StartCoroutine(RefreshPanel());
-		
+
+		//cm.SaveCareer();
 		StartCoroutine(SaveCareer());
     }
 
@@ -551,9 +552,9 @@ public class TournyManager : MonoBehaviour
 
 		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		//inProgress = true;
-		myFile.Add("First Name", gsp.firstName);
-		myFile.Add("Team Name", gsp.teamName);
-		myFile.Add("Team Colour", gsp.teamColour);
+		//myFile.Add("First Name", gsp.firstName);
+		//myFile.Add("Team Name", gsp.teamName);
+		//myFile.Add("Team Colour", cm.teamColour);
 		//myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("In Progress", true);
@@ -562,7 +563,7 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("Prize", prize);
 		myFile.Add("Rocks", gsp.rocks);
 		myFile.Add("Ends", gsp.ends);
-		myFile.Add("Player Team", playerTeam);
+		//myFile.Add("Player Team", playerTeam);
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
 
@@ -583,7 +584,9 @@ public class TournyManager : MonoBehaviour
             nextOppList[i] = teams[i].nextOpp;
             strengthList[i] = teams[i].strength;
             idList[i] = teams[i].id;
+			Debug.Log("Tourny Id List - " + idList[i]);
         }
+
 		myFile.Add("Tourny Name List", nameList);
         myFile.Add("Tourny Wins List", winsList);
         myFile.Add("Tourny Loss List", lossList);
@@ -593,6 +596,9 @@ public class TournyManager : MonoBehaviour
         myFile.Add("Tourny Team ID List", idList);
 
         //yield return myFile.TestDataSaveLoad();
-        yield return myFile.Save();
-    }
+        yield return myFile.Append();
+
+
+		//cm.SaveCareer();
+	}
 }

@@ -219,8 +219,8 @@ public class CareerManager : MonoBehaviour
 
                 }
 
-                if (teams[i].id == playerTeamIndex)
-                    teams[i].name = teamName;
+                //if (teams[i].id == playerTeamIndex)
+                //    teams[i].name = teamName;
 
                 teams[i].wins = winsList[i];
                 teams[i].loss = lossList[i];
@@ -262,7 +262,7 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Player Team Index", playerTeamIndex);
         myFile.Add("Week", week);
         myFile.Add("Season", season);
-        myFile.Add("Career Record", record);
+        //myFile.Add("Career Record", record);
         myFile.Add("Career Earnings", earnings);
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
@@ -275,7 +275,7 @@ public class CareerManager : MonoBehaviour
         for (int i = 0; i < teams.Length; i++)
         {
             idList[i] = teams[i].id;
-            Debug.Log("Id List - " + idList[i]);
+            //Debug.Log("Id List - " + idList[i]);
             winsList[i] = teams[i].wins;
             lossList[i] = teams[i].loss;
         }
@@ -334,11 +334,11 @@ public class CareerManager : MonoBehaviour
             currentTournyTeams[i].loss = tournyLossList[i];
         }
 
-        myFile.Add("Tourny Team ID List", tournyTeamIDList);
-        myFile.Add("Tourny Wins List", tournyWinsList);
-        myFile.Add("Tourny Loss List", tournyLossList);
+        //myFile.Add("Tourny Team ID List", tournyTeamIDList);
+        //myFile.Add("Tourny Wins List", tournyWinsList);
+        //myFile.Add("Tourny Loss List", tournyLossList);
 
-        myFile.Save();
+        myFile.Append();
     }
 
     public void SetupTourny()
