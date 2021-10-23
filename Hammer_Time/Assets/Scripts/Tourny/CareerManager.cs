@@ -245,6 +245,8 @@ public class CareerManager : MonoBehaviour
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
                 }
+
+
             }
 
             myFile.Dispose();
@@ -255,6 +257,7 @@ public class CareerManager : MonoBehaviour
     {
         myFile = new EasyFileSave("my_player_data");
         tSel = FindObjectOfType<TournySelector>();
+        tm = FindObjectOfType<TournyManager>();
 
         myFile.Add("Player Name", playerName);
         myFile.Add("Team Name", teamName);
@@ -323,15 +326,57 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Tournies Complete List", tourniesCompleteList);
         }
 
-        int[] tournyTeamIDList = new int[currentTournyTeams.Length];
-        int[] tournyWinsList = new int[currentTournyTeams.Length];
-        int[] tournyLossList = new int[currentTournyTeams.Length];
+        //int[] tournyTeamIDList = new int[currentTournyTeams.Length];
+        //int[] tournyWinsList = new int[currentTournyTeams.Length];
+        //int[] tournyLossList = new int[currentTournyTeams.Length];
 
-        for (int i = 0; i < currentTournyTeams.Length; i++)
+        //for (int i = 0; i < currentTournyTeams.Length; i++)
+        //{
+        //    currentTournyTeams[i].id = tournyTeamIDList[i];
+        //    currentTournyTeams[i].wins = tournyWinsList[i];
+        //    currentTournyTeams[i].loss = tournyLossList[i];
+        //}
+
+        if (tm)
         {
-            currentTournyTeams[i].id = tournyTeamIDList[i];
-            currentTournyTeams[i].wins = tournyWinsList[i];
-            currentTournyTeams[i].loss = tournyLossList[i];
+            myFile.Add("Career Record", gsp.record);
+            myFile.Add("In Progress", true);
+            myFile.Add("Draw", tm.draw);
+            myFile.Add("Number Of Teams", tm.numberOfTeams);
+            myFile.Add("Prize", tm.prize);
+            myFile.Add("Rocks", gsp.rocks);
+            myFile.Add("Ends", gsp.ends);
+            //myFile.Add("Player Team", playerTeam);
+            myFile.Add("OppTeam", tm.oppTeam);
+            myFile.Add("Playoff Round", tm.playoffRound);
+
+            string[] tournyNameList = new string[teams.Length];
+            int[] tournyWinsList = new int[teams.Length];
+            int[] tournyLossList = new int[teams.Length];
+            int[] tournyRankList = new int[teams.Length];
+            string[] tournyNextOppList = new string[teams.Length];
+            int[] tournyStrengthList = new int[teams.Length];
+            int[] tournyIDList = new int[teams.Length];
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                tournyNameList[i] = teams[i].name;
+                tournyWinsList[i] = teams[i].wins;
+                tournyLossList[i] = teams[i].loss;
+                tournyRankList[i] = teams[i].rank;
+                tournyNextOppList[i] = teams[i].nextOpp;
+                tournyStrengthList[i] = teams[i].strength;
+                tournyIDList[i] = teams[i].id;
+                Debug.Log("Tourny Id List - " + idList[i]);
+            }
+
+            myFile.Add("Tourny Name List", tournyNameList);
+            myFile.Add("Tourny Wins List", tournyWinsList);
+            myFile.Add("Tourny Loss List", tournyLossList);
+            myFile.Add("Tourny Rank List", tournyRankList);
+            myFile.Add("Tourny NextOpp List", tournyNextOppList);
+            myFile.Add("Tourny Strength List", tournyStrengthList);
+            myFile.Add("Tourny Team ID List", tournyIDList);
         }
 
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
@@ -407,6 +452,28 @@ public class CareerManager : MonoBehaviour
     {
         week++;
         tSel.SetActiveTournies();
+    }
+
+    public void ContinueSeason()
+    {
+        tTeamList = FindObjectOfType<TournyTeamList>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+        season++;
+
+        Shuffle(tTeamList.teams);
+
+        teams = new Team[totalTeams];
+        //tourRankList = new List<Team_List>();
+        //provQualList = new List<Team_List>();
+
+        for (int i = 0; i < totalTeams; i++)
+        {
+            teams[i] = tTeamList.teams[i];
+        }
+        teams[0].name = teamName;
+        playerTeamIndex = teams[0].id;
+        gsp.playerTeamIndex = playerTeamIndex;
+        week++;
     }
 
     public void NewSeason()

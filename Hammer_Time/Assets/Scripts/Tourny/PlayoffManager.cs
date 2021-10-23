@@ -43,15 +43,15 @@ public class PlayoffManager : MonoBehaviour
 		playoffs.SetActive(true);
 		if (gsp.careerLoad)
 		{
-			gsp.LoadCareer();
-			careerEarnings = gsp.earnings;
+            gsp.LoadCareer();
+            careerEarnings = gsp.earnings;
 			careerRecord = gsp.record;
 		}
 		else if(gsp.inProgress)
         {
-			
-			gsp.LoadTourny();
-			gsp.inProgress = false;
+
+            gsp.LoadTourny();
+            gsp.inProgress = false;
 			gsp.careerLoad = false;
 			gsp.playoffRound--;
 		}
@@ -80,6 +80,7 @@ public class PlayoffManager : MonoBehaviour
 		playoffTeams = new Team[9];
 		heading.text = "Page Playoff";
 
+		playoffRound++;
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
 			if (i < 4)
@@ -93,7 +94,6 @@ public class PlayoffManager : MonoBehaviour
 				playoffTeams[i] = tm.tTeamList.nullTeam;
             }
 		}
-		playoffRound++;
 		tm.playoffRound = playoffRound;
 		SetPlayoffs();
 	}
@@ -660,25 +660,11 @@ public class PlayoffManager : MonoBehaviour
 				break;
 
 		}
-		//SetPlayoffs(tm.playoffRound);
 		yield break;
-		//SetPlayoffs();
 	}
 
 	IEnumerator LoadCareer()
 	{
-		////myFile = new EasyFileSave("my_player_data");
-		//if (myFile.Load())
-		//{
-		//	gsp.teamName = myFile.GetString("Team Name");
-		//	gsp.teamColour = myFile.GetUnityColor("Team Colour");
-		//	careerEarnings = myFile.GetFloat("Career Earnings");
-		//	gsp.record = myFile.GetUnityVector2("Career Record");
-		//	Debug.Log("Loading Career Earnings - $ " + careerEarnings);
-
-		//	yield return new WaitForEndOfFrame();
-		//	myFile.Dispose();
-		//}
 		gsp.LoadCareer();
 
 		yield return careerEarningsText.text = "$ " + gsp.earnings.ToString();
