@@ -90,6 +90,7 @@ public class TournySettings : MonoBehaviour
         gradient.SetKeys(colorKey, alphaKey);
 
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -133,6 +134,7 @@ public class TournySettings : MonoBehaviour
     {
         teamColour = gradient.Evaluate(teamColourSlider.value);
     }
+
     IEnumerator LoadCareer()
     {
         playerName = cm.playerName;
@@ -209,7 +211,7 @@ public class TournySettings : MonoBehaviour
 
             myFile.Dispose();
             yield return new WaitForEndOfFrame();
-            gsp.careerLoad = true;
+            //gsp.careerLoad = true;
             load.SetActive(true);
             player.SetActive(false);
             nameLoad.text = playerName + " " + teamName;
@@ -222,7 +224,7 @@ public class TournySettings : MonoBehaviour
             player.SetActive(true);
             load.SetActive(false);
         }
-
+        tournyInProg.SetActive(false);
 
     }
     public void LoadToGSP()
@@ -299,6 +301,8 @@ public class TournySettings : MonoBehaviour
         load.SetActive(false);
         settings.SetActive(true);
         player.SetActive(false);
+
+        
     }
 
     public void New()
@@ -313,6 +317,11 @@ public class TournySettings : MonoBehaviour
         load.SetActive(false);
         settings.SetActive(false);
         player.SetActive(true);
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadScene("Arena_Selector");
     }
     public void MainMenu()
     {

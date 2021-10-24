@@ -241,6 +241,7 @@ public class TournySelector : MonoBehaviour
         cm.champ[0] = tourChampionship;
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
+        cm.SaveCareer();
         SceneManager.LoadScene("Tourny_Menu_1");
     }
 

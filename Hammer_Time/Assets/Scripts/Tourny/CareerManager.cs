@@ -249,6 +249,15 @@ public class CareerManager : MonoBehaviour
 
             }
 
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].id == playerTeamIndex)
+                {
+                    teams[i].name = teamName;
+                    teams[i].wins = (int)record.x;
+                    teams[i].loss = (int)record.y;
+                }
+            }
             myFile.Dispose();
         }
     }
@@ -324,6 +333,9 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Tour Complete List", tourniesCompleteList);
             myFile.Add("Tournies ID List", tourniesIDList);
             myFile.Add("Tournies Complete List", tourniesCompleteList);
+            myFile.Add("Number Of Teams", currentTourny.teams);
+
+            Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
         }
 
         //int[] tournyTeamIDList = new int[currentTournyTeams.Length];

@@ -209,7 +209,7 @@ public class GameSettingsPersist : MonoBehaviour
         teams = cm.currentTournyTeams;
         draw = 0;
         playoffRound = 0;
-        careerLoad = true;
+        //careerLoad = true;
         
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
@@ -230,7 +230,7 @@ public class GameSettingsPersist : MonoBehaviour
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
-        numberOfTeams = ts.teams;
+        //numberOfTeams = ts.teams;
         prize = ts.prize;
         draw = 0;
         playoffRound = 0;
@@ -333,10 +333,10 @@ public class GameSettingsPersist : MonoBehaviour
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
-
+        inProgress = true;
         if (myFile.Load())
         {
-            inProgress = myFile.GetBool("Tourny In Progress");
+            //inProgress = myFile.GetBool("Tourny In Progress");
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
@@ -351,7 +351,7 @@ public class GameSettingsPersist : MonoBehaviour
             int[] idList = new int[numberOfTeams];
 
             //Debug.Log("nameList Count is " + nameList.Length);
-            nameList = myFile.GetArray<string>("Tourny Name List");
+            //nameList = myFile.GetArray<string>("Tourny Name List");
             Debug.Log("nameList Item 1 is " + nameList[0]);
             winsList = myFile.GetArray<int>("Tourny Wins List");
             lossList = myFile.GetArray<int>("Tourny Loss List");
@@ -360,9 +360,9 @@ public class GameSettingsPersist : MonoBehaviour
             strengthList = myFile.GetArray<int>("Tourny Strength List");
             idList = myFile.GetArray<int>("Tourny Team ID List");
             //StartCoroutine(Wait());
-            //Debug.Log("nameList Count is " + nameList.Length);
+            Debug.Log("nameList Count is " + nameList.Length);
 
-            teams = new Team[nameList.Length];
+            teams = new Team[idList.Length];
 
             for (int i = 0; i < numberOfTeams; i++)
             {
