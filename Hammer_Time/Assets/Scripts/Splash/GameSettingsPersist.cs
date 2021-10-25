@@ -333,7 +333,7 @@ public class GameSettingsPersist : MonoBehaviour
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
-        inProgress = true;
+        //inProgress = true;
         if (myFile.Load())
         {
             //inProgress = myFile.GetBool("Tourny In Progress");

@@ -351,6 +351,8 @@ public class CareerManager : MonoBehaviour
 
         if (tm)
         {
+            Debug.Log("Saving Career and TM active, Draw is - " + gsp.draw);
+            myFile.Add("Tourny In Progress", true);
             myFile.Add("Career Record", gsp.record);
             myFile.Add("In Progress", true);
             myFile.Add("Draw", tm.draw);
@@ -445,6 +447,17 @@ public class CareerManager : MonoBehaviour
         record = gsp.record;
         earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
+        if (currentTourny.qualifier)
+        {
+            for (int i = 0; i < currentTournyTeams.Length; i++)
+            {
+                if (playerTeamIndex == currentTournyTeams[i].id)
+                {
+                    if (currentTournyTeams[i].rank < 5)
+                        provQual = true;
+                }
+            }
+        }
         //record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
         Debug.Log("Record is " + record.x + " - " + record.y);
         week++;

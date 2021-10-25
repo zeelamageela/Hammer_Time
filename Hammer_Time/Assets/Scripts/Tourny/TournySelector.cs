@@ -25,6 +25,10 @@ public class TournySelector : MonoBehaviour
 
     public TournyPanel[] panels;
 
+    public GameObject mainMenuGO;
+    public GameObject profPanelGO;
+    public ProfilePanel profPanel;
+
     int week;
 
     EasyFileSave myFile;
@@ -250,5 +254,30 @@ public class TournySelector : MonoBehaviour
         currentTourny = activeTournies[button];
         Debug.Log("Button is " + button);
         cm.SetupTourny();
+    }
+
+    public void Profile(bool on)
+    {
+        if (on)
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(true);
+            profPanel.earnings.text = "$ " + cm.earnings.ToString();
+            profPanel.record.text = cm.record.x.ToString() + " - " + cm.record.y.ToString();
+            profPanel.provRank.text = cm.playerTeam.rank.ToString();
+
+            if (cm.provQual)
+                profPanel.provQual.text = "Yes";
+            else
+                profPanel.provQual.text = "No";
+
+            //profPanel.tourRank.text = cm.tourRankList.ToString();
+            //profPanel.tourPoints.text = cm.tourPoints.ToString();
+        }
+        else
+        {
+            mainMenuGO.SetActive(true);
+            profPanelGO.SetActive(false);
+        }
     }
 }

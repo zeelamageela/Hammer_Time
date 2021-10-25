@@ -63,25 +63,25 @@ public class TournyManager : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		Debug.Log("Gsp is " + gsp.inProgress);
-		//if (gsp.careerLoad)
-  //      {
-		//	gsp.LoadCareer();
-			if (gsp.inProgress)
-			{
-				Debug.Log("In Progress is True");
-				gsp.LoadTourny();
-				//playoffRound--;
-			}
-			else
-			{
-				Debug.Log("In Progress is False");
-				gsp.draw = draw;
-				gsp.playoffRound = 0;
-			}
-		//}
-		
+        if (gsp.careerLoad)
+        {
+            gsp.LoadCareer();
+            if (gsp.inProgress)
+            {
+                Debug.Log("In Progress is True");
+                gsp.LoadTourny();
+                playoffRound--;
+            }
+            else
+            {
+                Debug.Log("In Progress is False");
+                gsp.draw = draw;
+                gsp.playoffRound = 0;
+            }
+        }
 
-		numberOfTeams = gsp.numberOfTeams;
+
+        numberOfTeams = gsp.numberOfTeams;
 		prize = gsp.prize;
 		careerEarningsText.text = "$ " + gsp.earnings.ToString();
 
@@ -155,36 +155,39 @@ public class TournyManager : MonoBehaviour
 
 			standDisplay[i] = rv.standDisplay;
 		}
-		if (cm && cm.inProgress)
-        {
-			for (int i = 0; i < teams.Length; i++)
-			{
-				teams[i] = cm.currentTournyTeams[i];
-				teams[i].wins = 0;
-				teams[i].loss = 0;
-			}
+		//if (cm && cm.inProgress)
+  //      {
+		//	for (int i = 0; i < teams.Length; i++)
+		//	{
+		//		teams[i] = cm.currentTournyTeams[i];
+		//		teams[i].wins = 0;
+		//		teams[i].loss = 0;
+		//	}
 
-			for (int i = 0; i < teams.Length; i++)
-			{
-				teams[i].strength = Random.Range(0, 10);
-				if (teams[i].name == gsp.teamName)
-                {
-					playerTeam = i;
-				}
-				teamList.Add(new Team_List(teams[i]));
-			}
+		//	for (int i = 0; i < teams.Length; i++)
+		//	{
+		//		teams[i].strength = Random.Range(0, 10);
+		//		if (teams[i].name == gsp.teamName)
+  //              {
+		//			playerTeam = i;
+		//		}
+		//		teamList.Add(new Team_List(teams[i]));
+		//	}
 
-			//teamList[playerTeam].team.name = gsp.teamName;
+		//	//teamList[playerTeam].team.name = gsp.teamName;
 
-			yield return new WaitForEndOfFrame();
-			SetDraw();
-		}
-		else if (gsp.draw > 0)
+		//	yield return new WaitForEndOfFrame();
+		//	SetDraw();
+		//}
+
+		if (gsp.draw > 0)
 		{
 			playoffRound = gsp.playoffRound;
 			teamList = gsp.teamList;
 			teams = gsp.teams;
 			draw = gsp.draw;
+
+			Debug.Log("draw is " + draw);
 
 			if (playoffRound > 0)
 			{
@@ -202,7 +205,7 @@ public class TournyManager : MonoBehaviour
                 //    if (teams[i].name == gsp.playerTeam.name)
                 //        playerTeam = i;
                 //}
-                gsp.inProgress = false;
+                //gsp.inProgress = false;
 				yield return new WaitForEndOfFrame();
 				StartCoroutine(DrawScoring());
             }
@@ -254,30 +257,53 @@ public class TournyManager : MonoBehaviour
 			}
 
 		}
-
 		else
-		{
-			Shuffle(tTeamList.teams);
-
+        {
 			for (int i = 0; i < teams.Length; i++)
-            {
-				teams[i] = tTeamList.teams[i];
-            }
-
-			Shuffle(teams);
+			{
+				teams[i] = cm.currentTournyTeams[i];
+				teams[i].wins = 0;
+				teams[i].loss = 0;
+			}
 
 			for (int i = 0; i < teams.Length; i++)
 			{
-				teamList.Add(new Team_List(teams[i]));
 				teams[i].strength = Random.Range(0, 10);
+				if (teams[i].name == gsp.teamName)
+				{
+					playerTeam = i;
+				}
+				teamList.Add(new Team_List(teams[i]));
 			}
 
-			playerTeam = Random.Range(0, teams.Length);
-			teamList[playerTeam].team.name = gsp.teamName;
+			//teamList[playerTeam].team.name = gsp.teamName;
 
 			yield return new WaitForEndOfFrame();
 			SetDraw();
 		}
+		//else
+		//{
+		//	Shuffle(tTeamList.teams);
+
+		//	for (int i = 0; i < teams.Length; i++)
+  //          {
+		//		teams[i] = tTeamList.teams[i];
+  //          }
+
+		//	Shuffle(teams);
+
+		//	for (int i = 0; i < teams.Length; i++)
+		//	{
+		//		teamList.Add(new Team_List(teams[i]));
+		//		teams[i].strength = Random.Range(0, 10);
+		//	}
+
+		//	playerTeam = Random.Range(0, teams.Length);
+		//	teamList[playerTeam].team.name = gsp.teamName;
+
+		//	yield return new WaitForEndOfFrame();
+		//	SetDraw();
+		//}
 
 		//yield return new WaitUntil( () => standDisplay.Length == teams.Length);
 		yield return new WaitForEndOfFrame();
