@@ -105,32 +105,7 @@ public class CareerSettings : MonoBehaviour
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
             tourRecord = myFile.GetUnityVector2("Tour Record");
-            if (gsp.inProgress)
-            {
-                tournyInProg.SetActive(true);
-                if (myFile.GetInt("Playoff Round") > 0)
-                {
-                    drawLoad.text = "Playoffs";
-                }
-                else
-                    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
-                
-
-                int[] rankList = myFile.GetArray<int>("Season Rank");
-                int playerTeam = myFile.GetInt("Player Team");
-                if (rankList[playerTeam] == 1)
-                    rankLoad.text = "1st Place";
-                else if (rankList[playerTeam] == 2)
-                    rankLoad.text = "2nd Place";
-                else if (rankList[playerTeam] == 3)
-                    rankLoad.text = "3rd Place";
-                else
-                    rankLoad.text = rankList[playerTeam] + "th Place";
-            }
-            else
-            {
-                tournyInProg.SetActive(false);
-            }
+            
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 
@@ -155,7 +130,11 @@ public class CareerSettings : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         cm.LoadSettings();
-        SceneManager.LoadScene("Arena_Selector");
+
+        if (gsp.inProgress)
+            SceneManager.LoadScene("Tourny_Home_1");
+        else
+            SceneManager.LoadScene("Arena_Selector");
     }
 
     public void Player()

@@ -691,7 +691,7 @@ public class PlayoffManager : MonoBehaviour
 		//	tm.playoffRound = 0;
 
 		//      }
-		myFile.Add("In Progress", inProgress);
+		myFile.Add("Tourny In Progress", inProgress);
 		myFile.Add("Draw", gsp.draw);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
 		myFile.Add("Player Team", playerTeam);

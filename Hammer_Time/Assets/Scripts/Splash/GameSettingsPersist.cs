@@ -330,6 +330,8 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTourny()
     {
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        cm.LoadCareer();
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");

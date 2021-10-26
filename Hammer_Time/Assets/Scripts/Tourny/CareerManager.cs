@@ -108,6 +108,7 @@ public class CareerManager : MonoBehaviour
     }
     public void LoadCareer()
     {
+        gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
         tTeamList = FindObjectOfType<TournyTeamList>();
         teams = new Team[totalTeams];
@@ -195,6 +196,7 @@ public class CareerManager : MonoBehaviour
                 tSel.provChampionship = champ[1];
 
             }
+
             int[] idList = myFile.GetArray<int>("Total ID List");
             int[] winsList = myFile.GetArray<int>("Total Wins List");
             int[] lossList = myFile.GetArray<int>("Total Loss List");
@@ -226,12 +228,14 @@ public class CareerManager : MonoBehaviour
                 teams[i].loss = lossList[i];
             }
 
+            gsp.inProgress = myFile.GetBool("Tourny In Progress");
+
             if (myFile.GetBool("Tourny In Progress"))
             {
                 int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
-
+                
                 for (int i = 0; i < currentTournyTeams.Length; i++)
                 {
                     currentTournyTeams[i].id = tournyIDList[i];
@@ -443,6 +447,7 @@ public class CareerManager : MonoBehaviour
 
     public void TournyResults()
     {
+        gsp = FindObjectOfType<GameSettingsPersist>();
         //TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
         earnings = gsp.earnings;
