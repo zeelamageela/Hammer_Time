@@ -206,8 +206,8 @@ public class CareerManager : MonoBehaviour
             //    teams[i] = tTeamList.teams[i];
             //}
 
-            Debug.Log("ID List Length is " + "i + " + idList.Length);
-            Debug.Log("Teams List Length is " + "i + " + teams.Length);
+            Debug.Log("Total ID List Length is " + idList.Length);
+            Debug.Log("Total Teams List Length is " + teams.Length);
 
             for (int i = 0; i < teams.Length; i++)
             {
@@ -218,7 +218,6 @@ public class CareerManager : MonoBehaviour
                 {
                     if (idList[i] == tTeamList.teams[j].id)
                         teams[i] = tTeamList.teams[j];
-
                 }
 
                 //if (teams[i].id == playerTeamIndex)

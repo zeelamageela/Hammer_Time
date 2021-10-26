@@ -339,6 +339,7 @@ public class GameSettingsPersist : MonoBehaviour
         if (myFile.Load())
         {
             //inProgress = myFile.GetBool("Tourny In Progress");
+            prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
