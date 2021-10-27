@@ -64,8 +64,9 @@ public class TournyManager : MonoBehaviour
 
 		Debug.Log("Gsp is " + gsp.inProgress);
         if (gsp.careerLoad)
-        {
-            gsp.LoadCareer();
+		{
+			//cm.LoadCareer();
+			gsp.LoadCareer();
             if (gsp.inProgress)
             {
                 Debug.Log("In Progress is True");

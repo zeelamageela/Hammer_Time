@@ -490,7 +490,7 @@ public class PlayoffManager : MonoBehaviour
 						float p = 1.4f;
 						float totalTeams = tm.teamList.Count - 4;
 						float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
-
+						tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 						if (tm.teams[playerTeam].name == tm.teamList[i].team.name)
 						{
@@ -517,6 +517,38 @@ public class PlayoffManager : MonoBehaviour
 						}
 					}
 					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
+				}
+
+				for (int i = 0; i < tm.teamList.Count; i++)
+                {
+					float p = 1.4f;
+					float totalTeams = tm.teamList.Count - 4;
+					float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
+					tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
+					Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
+					if (tm.teams[playerTeam].name == tm.teamList[i].team.name)
+					{
+						if (i > 3)
+						{
+							heading.text = (i + 1) + "th Place";
+							tm.teams[playerTeam].rank = i + 1;
+
+						}
+						//float prizePayout = (totalTeams - i) / (totalTeams);
+						//float prizePayout = ((1 - p) / Mathf.Pow(1 - p, totalTeams) * Mathf.Pow(p, (i - 1))) * 10000f;
+						//float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * 10000f * (p - 1);
+
+						Debug.Log("Prize Payout multiplier is " + prizePayout);
+						prizePayout = Mathf.RoundToInt(prizePayout);
+						gsp.earnings += prizePayout;
+
+						tm.vs.SetActive(true);
+
+						tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
+						tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
+						tm.vsDisplay[1].name.text = "$" + prizePayout.ToString();
+						tm.vsDisplay[1].rank.text = "";
+					}
 				}
                 Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
 				careerEarningsText.text = "$ " + gsp.earnings.ToString();

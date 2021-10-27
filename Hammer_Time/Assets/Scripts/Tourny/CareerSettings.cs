@@ -114,7 +114,9 @@ public class CareerSettings : MonoBehaviour
             {
                 tournyInProg.SetActive(true);
                 tournyNameLoad.text = myFile.GetString("Current Tourny Name");
-                drawLoad.text = myFile.GetInt("Draw").ToString();
+                int draw = myFile.GetInt("Draw");
+                int playoffRound = myFile.GetInt("Playoff Round");
+                drawLoad.text = "Draw " + draw;
                 //cm.currentTourny.id = myFile.GetInt("Current Tourny ID");
                 //cm.currentTourny.tour = myFile.GetBool("Current Tourny Tour");
                 //cm.currentTourny.qualifier = myFile.GetBool("Current Tourny Qualifier");
