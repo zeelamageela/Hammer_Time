@@ -320,7 +320,7 @@ public class GameSettingsPersist : MonoBehaviour
 
             //earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
-            inProgress = myFile.GetBool("In Progress");
+            inProgress = myFile.GetBool("Tourny In Progress");
             draw = myFile.GetInt("Draw");
             //numberOfTeams = myFile.GetInt("Number Of Teams");
 

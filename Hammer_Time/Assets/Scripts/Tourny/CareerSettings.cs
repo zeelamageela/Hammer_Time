@@ -33,7 +33,7 @@ public class CareerSettings : MonoBehaviour
     Gradient gradient;
     public GameObject tournyInProg;
     public Text drawLoad;
-    public Text rankLoad;
+    public Text tournyNameLoad;
 
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
@@ -102,6 +102,7 @@ public class CareerSettings : MonoBehaviour
             earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
+            Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
             tourRecord = myFile.GetUnityVector2("Tour Record");
@@ -109,15 +110,35 @@ public class CareerSettings : MonoBehaviour
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 
+            if (gsp.inProgress)
+            {
+                tournyInProg.SetActive(true);
+                tournyNameLoad.text = myFile.GetString("Current Tourny Name");
+                drawLoad.text = myFile.GetInt("Draw").ToString();
+                //cm.currentTourny.id = myFile.GetInt("Current Tourny ID");
+                //cm.currentTourny.tour = myFile.GetBool("Current Tourny Tour");
+                //cm.currentTourny.qualifier = myFile.GetBool("Current Tourny Qualifier");
+                //cm.currentTourny.championship = myFile.GetBool("Current Tourny Championship");
+            }
+            else
+                tournyInProg.SetActive(false);
+
             myFile.Dispose();
             yield return new WaitForEndOfFrame();
+
             gsp.careerLoad = true;
+            //if (gsp.inProgress)
+            //{
+            //    drawLoad.text = gsp.draw.ToString();
+            //    tournyNameLoad.text = cm.currentTourny.name;
+            //}
+
             load.SetActive(true);
             player.SetActive(false);
             nameLoad.text = playerName + " " + teamName;
             colourLoad.color = teamColour;
             earningsLoad.text = "$" + earnings.ToString();
-            recordLoad.text = "Week " + week.ToString() + " - " + record.x.ToString() + " - " + record.y.ToString();
+            recordLoad.text = "Week " + week.ToString() + " | " + record.x.ToString() + " - " + record.y.ToString();
         }
         else
         {

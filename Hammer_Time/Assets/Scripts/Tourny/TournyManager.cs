@@ -567,6 +567,9 @@ public class TournyManager : MonoBehaviour
 		gsp.teams = teams;
 		cm.earnings = gsp.earnings;
 		cm.record = gsp.record;
+		gsp.draw = 0;
+		gsp.playoffRound = 0;
+		gsp.inProgress = false;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
 		cm.TournyResults();
@@ -585,7 +588,7 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("Team Colour", cm.teamColour);
 		//myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Add("Career Record", gsp.record);
-		myFile.Add("In Progress", true);
+		myFile.Add("Tourny In Progress", true);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);
 		myFile.Add("Prize", prize);

@@ -36,7 +36,8 @@ public class TournySelector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        //gsp.inProgress = false;
         cm = FindObjectOfType<CareerManager>();
         //if (cm.inProgress)
             //cm.LoadCareer();
@@ -46,6 +47,7 @@ public class TournySelector : MonoBehaviour
         else
         {
             cm.LoadCareer();
+
         }
 
         SetActiveTournies();

@@ -2207,8 +2207,8 @@ MonoBehaviour:
   earningsLoad: {fileID: 143280337}
   recordLoad: {fileID: 1267312183}
   tournyInProg: {fileID: 290112165}
-  drawLoad: {fileID: 547480747}
-  rankLoad: {fileID: 1295181085}
+  drawLoad: {fileID: 1295181085}
+  tournyNameLoad: {fileID: 547480747}
 --- !u!1 &965706920
 GameObject:
   m_ObjectHideFlags: 0
@@ -2639,7 +2639,7 @@ GameObject:
   - component: {fileID: 1295181086}
   - component: {fileID: 1295181085}
   m_Layer: 5
-  m_Name: RankText
+  m_Name: TournyNameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
