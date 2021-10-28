@@ -29,6 +29,7 @@ public class TournySelector : MonoBehaviour
     public GameObject profPanelGO;
     public ProfilePanel profPanel;
 
+    public ProvStandings provStandings;
     int week;
 
     EasyFileSave myFile;
@@ -85,7 +86,7 @@ public class TournySelector : MonoBehaviour
         
         if (Random.Range(0f, 1f) > 0.5f)
         {
-            Shuffle(tournies);
+            //Shuffle(tournies);
             for (int i = 0; i < tournies.Length; i++)
             {
                 if (tournies[i].complete != true)
@@ -100,7 +101,7 @@ public class TournySelector : MonoBehaviour
         {
             if (Random.Range(0f, 1f) > 0.5f)
             {
-                Shuffle(provQual);
+                //Shuffle(provQual);
                 for (int i = 0; i < provQual.Length; i++)
                 {
                     if (provQual[i].complete != true)
@@ -128,7 +129,7 @@ public class TournySelector : MonoBehaviour
 
         if (activeTournies[0].tour | activeTournies[0].qualifier)
         {
-            Shuffle(tournies);
+            //Shuffle(tournies);
             for (int i = 0; i < tournies.Length; i++)
             {
                 if (tournies[i].complete != true)
@@ -141,7 +142,7 @@ public class TournySelector : MonoBehaviour
         }
         else
         {
-            Shuffle(tour);
+            //Shuffle(tour);
             if (Random.Range(0f, 1f) > 0.5f)
             {
                 for (int i = 0; i < tour.Length; i++)
@@ -156,7 +157,7 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                Shuffle(provQual);
+                //Shuffle(provQual);
                 for (int i = 0; i < provQual.Length; i++)
                 {
                     if (provQual[i].complete != true)
@@ -280,6 +281,23 @@ public class TournySelector : MonoBehaviour
         {
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
+        }
+    }
+
+    public void Standings(bool on)
+    {
+        if (on)
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(false);
+            provStandings.gameObject.SetActive(true);
+            provStandings.PrintRows();
+        }
+        else
+        {
+            mainMenuGO.SetActive(true);
+            profPanelGO.SetActive(false);
+            provStandings.gameObject.SetActive(false);
         }
     }
 }

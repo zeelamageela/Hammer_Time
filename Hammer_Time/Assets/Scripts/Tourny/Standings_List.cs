@@ -18,15 +18,15 @@ public class Standings_List : IComparable<Standings_List>
         {
             return 1;
         }
-        else if (team.wins < other.team.wins)
+        else if (team.earnings < other.team.earnings)
         {
             return 1;
         }
-        else if (team.wins > other.team.wins)
+        else if (team.earnings > other.team.earnings)
         {
             return -1;
         }
-        else if (team.wins == other.team.wins)
+        else if (team.earnings == other.team.earnings)
         {
             return 0;
         }
