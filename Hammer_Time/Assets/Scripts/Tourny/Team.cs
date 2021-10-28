@@ -15,5 +15,5 @@ public class Team
     public int strength;
     public int id;
 
-    public int earnings;
+    public float earnings;
 }
