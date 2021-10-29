@@ -279,6 +279,7 @@ public class CareerManager : MonoBehaviour
                         teams[i].name = teamName;
                         teams[i].wins = (int)record.x;
                         teams[i].loss = (int)record.y;
+                        Debug.Log("PlayerTeam ID is " + teams[i].id);
                     }
                 }
             }
