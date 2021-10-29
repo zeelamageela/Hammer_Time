@@ -176,9 +176,10 @@ public class CareerSettings : MonoBehaviour
 
     public void New()
     {
+        ClearPlayer();
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
-        ClearPlayer();
+        
         gsp.careerLoad = false;
         earnings = 0f;
         record = Vector2.zero;
