@@ -489,8 +489,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 0.50000006
-  m_Size: 0.33607185
+  m_Value: 0.5
+  m_Size: 0.33607182
   m_NumberOfSteps: 3
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2026,12 +2026,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2242657540021654550, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -1772.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657540021654550, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540021654550, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 233
+      value: 64.5
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2043,7 +2047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0018310547
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540841667980, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2064,6 +2068,14 @@ PrefabInstance:
     - target: {fileID: 2242657541233592575, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -30.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657541354954970, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 530.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657541354954970, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -16.76
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541365257966, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2195,7 +2207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541881299846, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.99999446
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541881299846, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMin.y

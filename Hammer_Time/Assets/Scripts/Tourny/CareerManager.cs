@@ -517,8 +517,8 @@ public class CareerManager : MonoBehaviour
             {
                 if (provRankList[j].team.id == teams[i].id)
                 {
-                    provRankList[j].team.wins = teams[i].wins;
-                    provRankList[j].team.loss = teams[i].loss;
+                    provRankList[j].team.wins += teams[i].wins;
+                    provRankList[j].team.loss += teams[i].loss;
                     provRankList[j].team.earnings = teams[i].earnings;
                 }
             }
