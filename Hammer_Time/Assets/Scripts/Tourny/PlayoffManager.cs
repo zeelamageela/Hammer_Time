@@ -53,7 +53,9 @@ public class PlayoffManager : MonoBehaviour
             gsp.LoadTourny();
             gsp.inProgress = false;
 			gsp.careerLoad = false;
-			gsp.playoffRound--;
+			Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
+			//gsp.playoffRound--;
+			Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
 		}
 		else
 		{

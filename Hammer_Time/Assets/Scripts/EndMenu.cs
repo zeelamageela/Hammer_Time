@@ -170,13 +170,16 @@ public class EndMenu : MonoBehaviour
     public void Continue()
     {
         CareerManager cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
 
         if (gsp && gsp.tourny && gsp.endCurrent > gsp.ends && gsp.redScore != gsp.yellowScore)
         {
             //gsp.inProgress = true;
             if (gsp.playoffRound > 0)
-                //gsp.playoffRound++;
+            {
+                gsp.playoffRound++;
                 Debug.Log("Play off Round - " + gsp.playoffRound);
+            }
             else
                 gsp.draw++;
 
