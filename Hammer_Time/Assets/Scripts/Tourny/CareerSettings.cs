@@ -99,7 +99,7 @@ public class CareerSettings : MonoBehaviour
             playerName = myFile.GetString("Player Name");
             teamName = myFile.GetString("Team Name");
             teamColour = myFile.GetUnityColor("Team Colour");
-            earnings = myFile.GetFloat("Career Earnings");
+            cm.earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
             Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
