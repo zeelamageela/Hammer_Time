@@ -557,7 +557,6 @@ public class PlayoffManager : MonoBehaviour
 				StartCoroutine(SaveCareer(false));
 				//heading.text = "So Close!";
 				
-
 				playButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
@@ -737,6 +736,7 @@ public class PlayoffManager : MonoBehaviour
 		string[] nextOppList = new string[tm.teams.Length];
 		int[] strengthList = new int[tm.teams.Length];
 		int[] idList = new int[tm.teams.Length];
+		float[] earningsList = new float[tm.teams.Length];
 
 		for (int i = 0; i < tm.teams.Length; i++)
 		{
@@ -747,6 +747,7 @@ public class PlayoffManager : MonoBehaviour
 			nextOppList[i] = tm.teams[i].nextOpp;
 			strengthList[i] = tm.teams[i].strength;
 			idList[i] = tm.teams[i].id;
+			earningsList[i] = tm.teams[i].earnings;
 		}
 
 		myFile.Add("Tourny Name List", nameList);
@@ -756,6 +757,7 @@ public class PlayoffManager : MonoBehaviour
 		myFile.Add("Tourny NextOpp List", nextOppList);
 		myFile.Add("Tourny Strength List", strengthList);
 		myFile.Add("Tourny Team ID List", idList);
+		myFile.Add("Tourny Earnings List", earningsList);
 
 		int[] playoffIDList = new int[playoffTeams.Length];
 

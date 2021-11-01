@@ -100,6 +100,7 @@ public class CareerSettings : MonoBehaviour
             teamName = myFile.GetString("Team Name");
             teamColour = myFile.GetUnityColor("Team Colour");
             cm.earnings = myFile.GetFloat("Career Earnings");
+            earnings = cm.earnings;
             record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
             Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
@@ -139,7 +140,7 @@ public class CareerSettings : MonoBehaviour
             player.SetActive(false);
             nameLoad.text = playerName + " " + teamName;
             colourLoad.color = teamColour;
-            earningsLoad.text = "$" + earnings.ToString();
+            earningsLoad.text = "$" + cm.earnings.ToString();
             recordLoad.text = "Week " + week.ToString() + " | " + record.x.ToString() + " - " + record.y.ToString();
         }
         else

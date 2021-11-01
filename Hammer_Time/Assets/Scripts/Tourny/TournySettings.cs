@@ -230,8 +230,8 @@ public class TournySettings : MonoBehaviour
     public void LoadToGSP()
     {
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
-        if (!gsp.inProgress)
-            earnings -= entryFee;
+        //if (!gsp.inProgress)
+        //    earnings -= entryFee;
 
         Debug.Log("Career Earnings after Fee - $" + earnings);
         gsp.LoadTournySettings();

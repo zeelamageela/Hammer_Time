@@ -26,11 +26,15 @@ public class ProvStandings : MonoBehaviour
 		if (provRankList != null)
         {
 			provRankList.Clear();
+			for (int i = 0; i < row.Length; i++)
+            {
+				Destroy(row[i]);
+            }
         }
-		teams = cm.teams;
+		//teams = cm.teams;
 		provRankList = cm.provRankList;
-		row = new GameObject[teams.Length];
-		standDisplay = new StandingDisplay[teams.Length];
+		row = new GameObject[provRankList.Count];
+		standDisplay = new StandingDisplay[provRankList.Count];
 
 		for (int i = 0; i < cm.totalTeams; i++)
 		{
@@ -48,7 +52,7 @@ public class ProvStandings : MonoBehaviour
 		provRankList.Sort();
 		for (int i = 0; i < cm.totalTeams; i++)
 		{
-            Debug.Log("Counting to provRankLimit - " + i);
+            //Debug.Log("Counting to provRankLimit - " + i);
 			standDisplay[i].name.text = provRankList[i].team.name;
 			standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
 			standDisplay[i].loss.text = provRankList[i].team.loss.ToString();

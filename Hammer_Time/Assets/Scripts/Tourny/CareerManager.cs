@@ -206,6 +206,7 @@ public class CareerManager : MonoBehaviour
                 tSel.provChampionship = champ[1];
 
             }
+
             int[] idList = myFile.GetArray<int>("Total ID List");
             int[] winsList = myFile.GetArray<int>("Total Wins List");
             int[] lossList = myFile.GetArray<int>("Total Loss List");
@@ -255,6 +256,7 @@ public class CareerManager : MonoBehaviour
                 int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
+                float[] tournyEarningsList = myFile.GetArray<float>("Tourny Earnings List");
                 //currentTournyTeams = new Team[tournyIDList.Length];
 
                 for (int i = 0; i < currentTournyTeams.Length; i++)
@@ -269,6 +271,7 @@ public class CareerManager : MonoBehaviour
 
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
+                    currentTournyTeams[i].earnings = tournyEarningsList[i];
                 }
 
                 
@@ -484,6 +487,7 @@ public class CareerManager : MonoBehaviour
         record = gsp.record;
         earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
+
         if (currentTourny.qualifier)
         {
             for (int i = 0; i < currentTourny.teams; i++)
@@ -507,23 +511,40 @@ public class CareerManager : MonoBehaviour
                 //if (playerTeamIndex == currentTournyTeams[i].id)
             }
         }
+
         Debug.Log("Current Team List count is " + currentTournyTeams.Length);
 
         Debug.Log("Rank List count is " + provRankList.Count);
         Debug.Log("First Prov Team is " + provRankList[0].team.name);
 
-        for (int i = 0; i < teams.Length; i++)
-        {
-            for (int j = 0; j < provRankList.Count; j++)
-            {
-                if (provRankList[j].team.id == teams[i].id)
-                {
-                    provRankList[j].team.wins += teams[i].wins;
-                    provRankList[j].team.loss += teams[i].loss;
-                    provRankList[j].team.earnings = teams[i].earnings;
-                }
-            }
-        }
+        //for (int i = 0; i < teams.Length; i++)
+        //{
+        //    for (int j = 0; j < currentTournyTeams.Length; j++)
+        //    {
+        //        if (currentTournyTeams[j].id == teams[i].id)
+        //        {
+        //            teams[i].wins += currentTournyTeams[j].wins;
+        //            teams[i].loss += currentTournyTeams[j].loss;
+        //            teams[i].earnings += currentTournyTeams[j].earnings;
+        //        }
+        //    }
+        //}
+
+        //for (int i = 0; i < currentTournyTeams.Length; i++)
+        //{
+        //    //Debug.Log("i is " + i);
+        //    for (int j = 0; j < provRankList.Count; j++)
+        //    {
+        //        //Debug.Log("j is " + j);
+        //        if (provRankList[j].team.id == currentTournyTeams[i].id)
+        //        {
+        //            Debug.Log("Prov Rank " + provRankList[j].team.name + " has " + provRankList[j].team.earnings);
+        //            provRankList[j].team.wins += currentTournyTeams[i].wins;
+        //            provRankList[j].team.loss += currentTournyTeams[i].loss;
+        //            provRankList[j].team.earnings += currentTournyTeams[i].earnings;
+        //        }
+        //    }
+        //}
 
         Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();
