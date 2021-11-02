@@ -106,6 +106,7 @@ public class CareerManager : MonoBehaviour
         record = gsp.record;
 
     }
+
     public void LoadCareer()
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
@@ -511,7 +512,7 @@ public class CareerManager : MonoBehaviour
                 //if (playerTeamIndex == currentTournyTeams[i].id)
             }
         }
-
+        
         Debug.Log("Current Team List count is " + currentTournyTeams.Length);
 
         Debug.Log("Rank List count is " + provRankList.Count);
