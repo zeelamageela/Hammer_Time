@@ -156,30 +156,6 @@ public class TournyManager : MonoBehaviour
 
 			standDisplay[i] = rv.standDisplay;
 		}
-		//if (cm && cm.inProgress)
-  //      {
-		//	for (int i = 0; i < teams.Length; i++)
-		//	{
-		//		teams[i] = cm.currentTournyTeams[i];
-		//		teams[i].wins = 0;
-		//		teams[i].loss = 0;
-		//	}
-
-		//	for (int i = 0; i < teams.Length; i++)
-		//	{
-		//		teams[i].strength = Random.Range(0, 10);
-		//		if (teams[i].name == gsp.teamName)
-  //              {
-		//			playerTeam = i;
-		//		}
-		//		teamList.Add(new Team_List(teams[i]));
-		//	}
-
-		//	//teamList[playerTeam].team.name = gsp.teamName;
-
-		//	yield return new WaitForEndOfFrame();
-		//	SetDraw();
-		//}
 
 		if (gsp.draw > 0)
 		{
@@ -265,6 +241,7 @@ public class TournyManager : MonoBehaviour
 				teams[i] = cm.currentTournyTeams[i];
 				teams[i].wins = 0;
 				teams[i].loss = 0;
+				teams[i].earnings = 0;
 			}
 
 			for (int i = 0; i < teams.Length; i++)

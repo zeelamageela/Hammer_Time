@@ -440,6 +440,7 @@ public class PlayoffManager : MonoBehaviour
 					heading.text = "You Win!";
 
 					gsp.earnings += gsp.prize * 0.5f;
+					tm.teams[playerTeam].earnings = gsp.prize * 0.5f;
 					tm.teams[playerTeam].rank = 1;
 					tm.vs.SetActive(true);
 
@@ -452,6 +453,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "Runner-up";
 					gsp.earnings += gsp.prize * 0.25f;
+					tm.teams[playerTeam].earnings = gsp.prize * 0.25f;
 					tm.teams[playerTeam].rank = 2;
 					tm.vs.SetActive(true);
 
@@ -464,6 +466,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "3rd Place";
 					gsp.earnings += gsp.prize * 0.15f;
+					tm.teams[playerTeam].earnings = gsp.prize * 0.15f;
 					tm.teams[playerTeam].rank = 3;
 					tm.vs.SetActive(true);
 
@@ -476,6 +479,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "4th Place";
 					gsp.earnings += gsp.prize * 0.075f;
+					tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
 					tm.teams[playerTeam].rank = 4;
 
 					tm.vs.SetActive(true);
@@ -499,7 +503,7 @@ public class PlayoffManager : MonoBehaviour
 							if (i > 3)
 							{
 								heading.text = (i + 1) + "th Place";
-								tm.teams[playerTeam].rank = i + 1;
+								tm.teamList[i].team.rank = i + 1;
 								tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
 							}
 							//float prizePayout = (totalTeams - i) / (totalTeams);
