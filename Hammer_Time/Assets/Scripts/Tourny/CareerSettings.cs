@@ -183,6 +183,7 @@ public class CareerSettings : MonoBehaviour
         
         gsp.careerLoad = false;
         earnings = 0f;
+        cm.earnings = 0f;
         record = Vector2.zero;
         week = 0;
         season = 0;

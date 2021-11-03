@@ -33,7 +33,7 @@ public class CareerManager : MonoBehaviour
     public int tourTeams;
     public int provTeams;
 
-    public Vector3[] teamRecords;
+    public Vector4[] teamRecords;
     public Team playerTeam;
     public Team[] teams;
     public Team[] currentTournyTeams;
@@ -110,12 +110,14 @@ public class CareerManager : MonoBehaviour
 
     public void LoadCareer()
     {
+        Debug.Log("Loading in CM");
+
         gsp = FindObjectOfType<GameSettingsPersist>();
         tSel = FindObjectOfType<TournySelector>();
         myFile = new EasyFileSave("my_player_data");
         tTeamList = FindObjectOfType<TournyTeamList>();
         teams = new Team[totalTeams];
-        teamRecords = new Vector3[totalTeams];
+        //teamRecords = new Vector3[totalTeams];
 
         if (provRankList != null)
         {
@@ -134,7 +136,7 @@ public class CareerManager : MonoBehaviour
             earnings = myFile.GetFloat("Career Earnings");
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
-            tourRecord = myFile.GetUnityVector2("Tour Record");
+            //tourRecord = myFile.GetUnityVector2("Tour Record");
 
             if (tSel)
             {
@@ -215,12 +217,12 @@ public class CareerManager : MonoBehaviour
             int[] lossList = myFile.GetArray<int>("Total Loss List");
             float[] earningsList = myFile.GetArray<float>("Total Earnings List");
 
-            for (int i = 0; i < totalTeams; i++)
-            {
-                teamRecords[i].x = winsList[i];
-                teamRecords[i].y = lossList[i];
-                teamRecords[i].z = idList[i];
-            }
+            //for (int i = 0; i < totalTeams; i++)
+            //{
+            //    teamRecords[i].x = winsList[i];
+            //    teamRecords[i].y = lossList[i];
+            //    teamRecords[i].z = idList[i];
+            //}
             //for (int i = 0; i < teams.Length; i++)
             //{
             //    teams[i] = tTeamList.teams[i];
@@ -507,6 +509,7 @@ public class CareerManager : MonoBehaviour
 
     public void TournyResults()
     {
+        Debug.Log("Tourny Results in CM");
         gsp = FindObjectOfType<GameSettingsPersist>();
         //TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
@@ -542,18 +545,18 @@ public class CareerManager : MonoBehaviour
         Debug.Log("Rank List count is " + provRankList.Count);
         Debug.Log("First Prov Team is " + provRankList[0].team.name);
 
-        //for (int i = 0; i < teams.Length; i++)
-        //{
-        //    for (int j = 0; j < currentTournyTeams.Length; j++)
-        //    {
-        //        if (currentTournyTeams[j].id == teams[i].id)
-        //        {
-        //            teams[i].wins += currentTournyTeams[j].wins;
-        //            teams[i].loss += currentTournyTeams[j].loss;
-        //            teams[i].earnings += currentTournyTeams[j].earnings;
-        //        }
-        //    }
-        //}
+        for (int i = 0; i < teams.Length; i++)
+        {
+            for (int j = 0; j < teamRecords.Length; j++)
+            {
+                if (teams[i].id == teamRecords[j].w)
+                {
+                    teams[i].wins += (int)teamRecords[j].x;
+                    teams[i].loss += (int)teamRecords[j].y;
+                    teams[i].earnings += teamRecords[j].z;
+                }
+            }
+        }
 
         //for (int i = 0; i < currentTournyTeams.Length; i++)
         //{
@@ -586,7 +589,15 @@ public class CareerManager : MonoBehaviour
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
         inProgress = true;
-        
+        teamRecords = new Vector4[totalTeams];
+        for (int i = 0; i < totalTeams; i++)
+        {
+            teamRecords[i].x = teams[i].wins;
+            teamRecords[i].y = teams[i].loss;
+            teamRecords[i].z = teams[i].earnings;
+            teamRecords[i].w = teams[i].id;
+        }
+
         earnings = gsp.earnings;
         SaveCareer();
     }

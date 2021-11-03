@@ -399,16 +399,6 @@ public class TournyManager : MonoBehaviour
 				games[i] = teams[drawFormat[draw].game[i / 2].y];
         }
 
-		//games[0] = teams[drawFormat[draw].game[0].x];
-
-		//games[1] = teams[drawFormat[draw].game[0].y];
-
-		//games[2] = teams[drawFormat[draw].game[1].x];
-		//games[3] = teams[drawFormat[draw].game[1].y];
-
-		//games[4] = teams[drawFormat[draw].game[2].x];
-		//games[5] = teams[drawFormat[draw].game[2].y];
-
 		for (int i = 0; i < games.Length; i++)
 		{
 			if (i % 2 == 0)
@@ -416,28 +406,29 @@ public class TournyManager : MonoBehaviour
 				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
 				{
 					games[i + 1].loss++;
-					games[i].wins++;
+                    games[i].wins++;
 
-					if (games[i].name == teams[playerTeam].name)
-						gsp.record.x++;
-					if (games[i + 1].name == teams[playerTeam].name)
-						gsp.record.y++;
-				}
+                    if (games[i].name == teams[playerTeam].name)
+                        gsp.record.x++;
+                    if (games[i + 1].name == teams[playerTeam].name)
+                        gsp.record.y++;
+                }
 				else
 				{
 					games[i].loss++;
-					games[i + 1].wins++;
+                    games[i + 1].wins++;
 
-					if (games[i].name == teams[playerTeam].name)
-						gsp.record.y++;
-					if (games[i + 1].name == teams[playerTeam].name)
-						gsp.record.x++;
-				}
+                    if (games[i].name == teams[playerTeam].name)
+                        gsp.record.y++;
+                    if (games[i + 1].name == teams[playerTeam].name)
+                        gsp.record.x++;
+                }
 			}
 		}
 
 		Debug.Log("Career Record is " + gsp.record.x + " - " + gsp.record.y);
 		draw++;
+		//yield return new WaitForEndOfFrame();
 		yield return StartCoroutine(DrawScoring());
 	}
 
