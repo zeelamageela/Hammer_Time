@@ -497,7 +497,6 @@ public class CareerManager : MonoBehaviour
                     currentTournyTeams[0].name = teamName;
                     currentTournyTeams[0].id = playerTeamIndex;
                     Debug.Log("Not in List Player Team is " + playerTeamIndex);
-
                 }
             }
         }
@@ -549,30 +548,20 @@ public class CareerManager : MonoBehaviour
         {
             for (int j = 0; j < teamRecords.Length; j++)
             {
-                if (teams[i].id == teamRecords[j].w)
+                for (int k = 0; k < currentTournyTeams.Length; k++)
                 {
-                    teams[i].wins += (int)teamRecords[j].x;
-                    teams[i].loss += (int)teamRecords[j].y;
-                    teams[i].earnings += teamRecords[j].z;
+                    if (currentTournyTeams[k].id == teams[i].id)
+                    {
+                        if (teams[i].id == teamRecords[j].w)
+                        {
+                            teams[i].wins += (int)teamRecords[j].x;
+                            teams[i].loss += (int)teamRecords[j].y;
+                            teams[i].earnings += teamRecords[j].z;
+                        }
+                    }
                 }
             }
         }
-
-        //for (int i = 0; i < currentTournyTeams.Length; i++)
-        //{
-        //    //Debug.Log("i is " + i);
-        //    for (int j = 0; j < provRankList.Count; j++)
-        //    {
-        //        //Debug.Log("j is " + j);
-        //        if (provRankList[j].team.id == currentTournyTeams[i].id)
-        //        {
-        //            Debug.Log("Prov Rank " + provRankList[j].team.name + " has " + provRankList[j].team.earnings);
-        //            provRankList[j].team.wins += currentTournyTeams[i].wins;
-        //            provRankList[j].team.loss += currentTournyTeams[i].loss;
-        //            provRankList[j].team.earnings += currentTournyTeams[i].earnings;
-        //        }
-        //    }
-        //}
 
         Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();

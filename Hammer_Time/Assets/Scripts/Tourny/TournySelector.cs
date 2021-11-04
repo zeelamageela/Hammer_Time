@@ -11,12 +11,15 @@ public class TournySelector : MonoBehaviour
 
     public Text weekText;
     public Text teamNameText;
-    public Tourny[] tournies;
 
+    public Tourny[] tournies;
     public Tourny[] tour;
     public Tourny[] provQual;
     public Tourny tourChampionship;
     public Tourny provChampionship;
+
+    public Tourny[] panel1Tournies;
+    public Tourny[] panel2Tournies;
 
     public Tourny[] activeTournies;
 
@@ -79,21 +82,74 @@ public class TournySelector : MonoBehaviour
 
     public void SetActiveTournies()
     {
+        bool tourniesComplete = false;
+        bool tourComplete = false;
+        bool provQualComplete = false;
+
+        string panelSelect1;
+        string panelSelect2;
+        string panelSelect3;
+
         if (cm.week > 0)
             weekText.text = "Week " + cm.week.ToString();
         else
             weekText.text = "Welcome to Season " + cm.season.ToString();
-        
+         
         if (Random.Range(0f, 1f) > 0.5f)
         {
             //Shuffle(tournies);
             for (int i = 0; i < tournies.Length; i++)
             {
-                if (tournies[i].complete != true)
+                if (tournies[i].complete == true)
                 {
+                    tourniesComplete = true;
+                    Debug.Log(tournies[i].name + " complete");
+                }
+                else
+                {
+                    tourniesComplete = false;
                     activeTournies[0] = tournies[i];
-                    //provQual[i].complete = true;
                     break;
+                }
+            }
+
+            if (tourniesComplete)
+            {
+                for (int i = 0; i < provQual.Length; i++)
+                {
+                    if (provQual[i].complete == true)
+                    {
+                        provQualComplete = true;
+                        Debug.Log(provQual[i].name + " " + provQual[i].location + " complete");
+                    }
+                    else
+                    {
+                        provQualComplete = false;
+                        activeTournies[0] = provQual[i];
+                        break;
+                    }
+                }
+
+                if (provQualComplete)
+                {
+                    for (int i = 0; i < tour.Length; i++)
+                    {
+                        if (tour[i].complete != true)
+                        {
+                            tourComplete = true;
+                        }
+                        else
+                        {
+                            tourComplete = false;
+                            activeTournies[0] = tour[i];
+                            break;
+                        }
+                    }
+
+                    if (tourComplete)
+                    {
+                        activeTournies[0] = emptyTourny;
+                    }
                 }
             }
         }
@@ -104,11 +160,56 @@ public class TournySelector : MonoBehaviour
                 //Shuffle(provQual);
                 for (int i = 0; i < provQual.Length; i++)
                 {
-                    if (provQual[i].complete != true)
+                    if (provQual[i].complete == true)
                     {
+                        provQualComplete = true;
+                        Debug.Log(provQual[i].name + " " + provQual[i].location + " complete");
+                    }
+                    else
+                    {
+                        provQualComplete = false;
                         activeTournies[0] = provQual[i];
-                        //provQual[i].complete = true;
                         break;
+                    }
+                }
+
+                if (provQualComplete)
+                {
+                    for (int i = 0; i < tournies.Length; i++)
+                    {
+                        if (tournies[i].complete == true)
+                        {
+                            tourniesComplete = true;
+                            Debug.Log(tournies[i].name + " complete");
+                        }
+                        else
+                        {
+                            tourniesComplete = false;
+                            activeTournies[0] = tournies[i];
+                            break;
+                        }
+                    }
+
+                    if (tourniesComplete)
+                    {
+                        for (int i = 0; i < tour.Length; i++)
+                        {
+                            if (tour[i].complete != true)
+                            {
+                                tourComplete = true;
+                            }
+                            else
+                            {
+                                tourComplete = false;
+                                activeTournies[0] = tour[i];
+                                break;
+                            }
+                        }
+
+                        if (tourComplete)
+                        {
+                            activeTournies[0] = emptyTourny;
+                        }
                     }
                 }
             }
@@ -119,24 +220,122 @@ public class TournySelector : MonoBehaviour
                 {
                     if (tour[i].complete != true)
                     {
+                        tourComplete = true;
+                    }
+                    else
+                    {
+                        tourComplete = false;
                         activeTournies[0] = tour[i];
-                        //tour[i].complete = true;
                         break;
+                    }
+                }
+
+                if (tourComplete)
+                {
+                    for (int i = 0; i < tournies.Length; i++)
+                    {
+                        if (tournies[i].complete == true)
+                        {
+                            tourniesComplete = true;
+                            Debug.Log(tournies[i].name + " complete");
+                        }
+                        else
+                        {
+                            tourniesComplete = false;
+                            activeTournies[0] = tournies[i];
+                            break;
+                        }
+                    }
+
+                    if (tourniesComplete)
+                    {
+                        for (int i = 0; i < provQual.Length; i++)
+                        {
+                            if (provQual[i].complete == true)
+                            {
+                                provQualComplete = true;
+                                Debug.Log(provQual[i].name + " " + provQual[i].location + " complete");
+                            }
+                            else
+                            {
+                                provQualComplete = false;
+                                activeTournies[0] = provQual[i];
+                                break;
+                            }
+                        }
+
+                        if (provQualComplete)
+                        {
+                            activeTournies[0] = emptyTourny;
+                        }
                     }
                 }
             }
         }
-
+        //switch (panelSelect1)
+        //{
+        //    case "Tournies":
+        //        break;
+        //    case "Tour":
+        //        break;
+        //    case "Prov Qualifier":
+        //        break;
+        //}
         if (activeTournies[0].tour | activeTournies[0].qualifier)
         {
             //Shuffle(tournies);
             for (int i = 0; i < tournies.Length; i++)
             {
-                if (tournies[i].complete != true)
+                if (tournies[i].complete == true)
                 {
+                    tourniesComplete = true;
+                }
+                else
+                {
+                    tourniesComplete = false;
                     activeTournies[1] = tournies[i];
                     //provQual[i].complete = true;
                     break;
+                }
+            }
+
+            if (tourniesComplete)
+            {
+                for (int i = 0; i < tour.Length; i++)
+                {
+                    if (tour[i].complete != true)
+                    {
+                        tourComplete = true;
+                    }
+                    else
+                    {
+                        tourComplete = false;
+                        activeTournies[0] = tour[i];
+                        break;
+                    }
+                }
+
+                if (tourComplete)
+                {
+                    for (int i = 0; i < provQual.Length; i++)
+                    {
+                        if (provQual[i].complete == true)
+                        {
+                            provQualComplete = true;
+                            Debug.Log(provQual[i].name + " " + provQual[i].location + " complete");
+                        }
+                        else
+                        {
+                            provQualComplete = false;
+                            activeTournies[0] = provQual[i];
+                            break;
+                        }
+                    }
+
+                    if (provQualComplete)
+                    {
+                        activeTournies[0] = emptyTourny;
+                    }
                 }
             }
         }
@@ -154,21 +353,107 @@ public class TournySelector : MonoBehaviour
                         break;
                     }
                 }
+
+                if (tourComplete)
+                {
+                    for (int i = 0; i < tournies.Length; i++)
+                    {
+                        if (tournies[i].complete != true)
+                        {
+                            tourniesComplete = true;
+                        }
+                        else
+                        {
+                            tourniesComplete = false;
+                            activeTournies[0] = tour[i];
+                            break;
+                        }
+                    }
+
+                    if (tourniesComplete)
+                    {
+                        for (int i = 0; i < provQual.Length; i++)
+                        {
+                            if (provQual[i].complete == true)
+                            {
+                                provQualComplete = true;
+                                Debug.Log(provQual[i].name + " " + provQual[i].location + " complete");
+                            }
+                            else
+                            {
+                                provQualComplete = false;
+                                activeTournies[0] = provQual[i];
+                                break;
+                            }
+                        }
+
+                        if (provQualComplete)
+                        {
+                            activeTournies[0] = emptyTourny;
+                        }
+                    }
+                }
             }
             else
             {
                 //Shuffle(provQual);
                 for (int i = 0; i < provQual.Length; i++)
                 {
-                    if (provQual[i].complete != true)
+                    if (provQual[i].complete == true)
                     {
+                        provQualComplete = true;
+                    }
+                    else
+                    {
+                        provQualComplete = false;
                         activeTournies[1] = provQual[i];
                         //provQual[i].complete = true;
                         break;
                     }
                 }
+
+                if (provQualComplete)
+                {
+                    for (int i = 0; i < tournies.Length; i++)
+                    {
+                        if (tournies[i].complete != true)
+                        {
+                            tourniesComplete = true;
+                        }
+                        else
+                        {
+                            tourniesComplete = false;
+                            activeTournies[0] = tournies[i];
+                            break;
+                        }
+                    }
+
+                    if (tourniesComplete)
+                    {
+                        for (int i = 0; i < tour.Length; i++)
+                        {
+                            if (tour[i].complete == true)
+                            {
+                                tourComplete = true;
+                            }
+                            else
+                            {
+                                tourComplete = false;
+                                activeTournies[1] = tour[i];
+                                //tour[i].complete = true;
+                                break;
+                            }
+                        }
+
+                        if (provQualComplete)
+                        {
+                            activeTournies[0] = emptyTourny;
+                        }
+                    }
+                }
             }
         }
+
 
         if (cm.tourQual)
             activeTournies[2] = tourChampionship;
