@@ -9,6 +9,8 @@ public class ProvStandings : MonoBehaviour
 	public StandingDisplay[] standDisplay;
 	public Team[] teams;
 	public List<Standings_List> provRankList;
+	public Scrollbar scrollbar;
+
 	GameObject[] row;
 
 	public Transform standTextParent;
@@ -63,7 +65,10 @@ public class ProvStandings : MonoBehaviour
 		for (int i = 0; i < provRankList.Count; i++)
 		{
 			if (cm.playerTeamIndex == provRankList[i].team.id)
+			{
+				scrollbar.value = (provRankList[i].team.rank - provRankList.Count) / (1f - provRankList.Count);
 				standDisplay[i].panel.enabled = true;
+			}
 			else
 				standDisplay[i].panel.enabled = false;
 		}

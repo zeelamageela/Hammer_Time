@@ -253,7 +253,7 @@ public class CareerManager : MonoBehaviour
 
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
 
-            Debug.Log("ProvRankList count is " + provRankList.Count);
+            //Debug.Log("ProvRankList count is " + provRankList.Count);
             if (tm)
             {
                 for (int i = 0; i < teams.Length; i++)
@@ -373,27 +373,33 @@ public class CareerManager : MonoBehaviour
             int[] tourniesIDList = new int[tSel.tournies.Length];
             bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
 
-            for (int i = 0; i < tSel.provQual.Length; i++)
+            for (int i = 0; i < prov.Length; i++)
             {
-                provIDList[i] = tSel.provQual[i].id;
-                provCompleteList[i] = tSel.provQual[i].complete;
+                provIDList[i] = prov[i].id;
+                provCompleteList[i] = prov[i].complete;
+                Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
             }
-            for (int i = 0; i < tSel.tour.Length; i++)
+
+            for (int i = 0; i < tour.Length; i++)
             {
-                tourIDList[i] = tSel.tour[i].id;
-                tourCompleteList[i] = tSel.tour[i].complete;
+                tourIDList[i] = tour[i].id;
+                tourCompleteList[i] = tour[i].complete;
+                Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
             }
-            for (int i = 0; i < tSel.tournies.Length; i++)
+
+            for (int i = 0; i < tournies.Length; i++)
             {
-                tourniesIDList[i] = tSel.tournies[i].id;
-                tourniesCompleteList[i] = tSel.tournies[i].complete;
+                tourniesIDList[i] = tournies[i].id;
+                tourniesCompleteList[i] = tournies[i].complete;
+                Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
             }
+
             myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
             myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
             myFile.Add("Prov ID List", provIDList);
-            myFile.Add("Prov Complete List", tourniesCompleteList);
-            myFile.Add("Tour ID List", tourniesIDList);
-            myFile.Add("Tour Complete List", tourniesCompleteList);
+            myFile.Add("Prov Complete List", provCompleteList);
+            myFile.Add("Tour ID List", tourIDList);
+            myFile.Add("Tour Complete List", tourCompleteList);
             myFile.Add("Tournies ID List", tourniesIDList);
             myFile.Add("Tournies Complete List", tourniesCompleteList);
             myFile.Add("Number Of Teams", currentTourny.teams);

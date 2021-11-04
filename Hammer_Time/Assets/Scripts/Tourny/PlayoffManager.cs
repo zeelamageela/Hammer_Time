@@ -440,7 +440,7 @@ public class PlayoffManager : MonoBehaviour
 					heading.text = "You Win!";
 
 					gsp.earnings += gsp.prize * 0.5f;
-					tm.teams[playerTeam].earnings = gsp.prize * 0.5f;
+					//tm.teams[playerTeam].earnings = gsp.prize * 0.5f;
 					tm.teams[playerTeam].rank = 1;
 					tm.vs.SetActive(true);
 
@@ -453,7 +453,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "Runner-up";
 					gsp.earnings += gsp.prize * 0.25f;
-					tm.teams[playerTeam].earnings = gsp.prize * 0.25f;
+					//tm.teams[playerTeam].earnings = gsp.prize * 0.25f;
 					tm.teams[playerTeam].rank = 2;
 					tm.vs.SetActive(true);
 
@@ -466,7 +466,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "3rd Place";
 					gsp.earnings += gsp.prize * 0.15f;
-					tm.teams[playerTeam].earnings = gsp.prize * 0.15f;
+					//tm.teams[playerTeam].earnings = gsp.prize * 0.15f;
 					tm.teams[playerTeam].rank = 3;
 					tm.vs.SetActive(true);
 
@@ -479,7 +479,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "4th Place";
 					gsp.earnings += gsp.prize * 0.075f;
-					tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
+					//tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
 					tm.teams[playerTeam].rank = 4;
 
 					tm.vs.SetActive(true);
@@ -504,7 +504,7 @@ public class PlayoffManager : MonoBehaviour
 							{
 								heading.text = (i + 1) + "th Place";
 								tm.teamList[i].team.rank = i + 1;
-								tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
+								//tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
 							}
 							//float prizePayout = (totalTeams - i) / (totalTeams);
 							//float prizePayout = ((1 - p) / Mathf.Pow(1 - p, totalTeams) * Mathf.Pow(p, (i - 1))) * 10000f;
@@ -531,21 +531,18 @@ public class PlayoffManager : MonoBehaviour
 					float totalTeams = tm.teamList.Count - 4;
 					float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
 
-					if (tm.teams[playerTeam].name != tm.teamList[i].team.name)
-                    {
-						if (i == 0)
-							tm.teamList[i].team.earnings += gsp.prize * 0.5f;
-						else if (i == 1)
-							tm.teamList[i].team.earnings += gsp.prize * 0.25f;
-						else if (i == 2)
-							tm.teamList[i].team.earnings += gsp.prize * 0.15f;
-						else if (i == 3)
-							tm.teamList[i].team.earnings += gsp.prize * 0.075f;
-						else if (i > 3)
-						{
-							tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
-							Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
-						}
+					if (i == 0)
+						tm.teamList[i].team.earnings += gsp.prize * 0.5f;
+					else if (i == 1)
+						tm.teamList[i].team.earnings += gsp.prize * 0.25f;
+					else if (i == 2)
+						tm.teamList[i].team.earnings += gsp.prize * 0.15f;
+					else if (i == 3)
+						tm.teamList[i].team.earnings += gsp.prize * 0.075f;
+					else if (i > 3)
+					{
+						tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
+						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 					}
 					
 					Debug.Log("Prize Payout multiplier is " + prizePayout);

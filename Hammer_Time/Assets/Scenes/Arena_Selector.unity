@@ -2242,6 +2242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standDisplay: []
   teams: []
+  scrollbar: {fileID: 1328629577}
   standTextParent: {fileID: 568778480}
   standTextRow: {fileID: 102636496221394762, guid: a01d6f7e88e5b4ca0a06826c3b40c241, type: 3}
 --- !u!224 &568778480 stripped
@@ -4178,6 +4179,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1323944288}
   m_CullTransparentMesh: 1
+--- !u!114 &1328629577 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2242657541965669832, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+  m_PrefabInstance: {fileID: 568778477}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4db7a114972834c8e4117be1d82ba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1358300805
 GameObject:
   m_ObjectHideFlags: 0
@@ -4835,6 +4847,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+  panel1Tournies: []
+  panel2Tournies: []
   activeTournies:
   - id: 0
     location: 
@@ -7798,6 +7812,7 @@ MonoBehaviour:
   totalTeams: 32
   tourTeams: 16
   provTeams: 16
+  teamRecords: []
   playerTeam:
     name: 
     wins: 0
