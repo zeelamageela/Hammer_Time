@@ -614,6 +614,49 @@ public class TournySelector : MonoBehaviour
         {
             activeTournies[0] = emptyTourny;
         }
+
+        if (cm.provQual)
+        {
+            provQualComplete = true;
+        }
+        else
+        {
+            for (int i = 0; i < provQual.Length; i++)
+            {
+                if (provQual[i].complete)
+                {
+                    provQualComplete = true;
+                }
+                else
+                {
+                    provQualComplete = false;
+                }
+            }
+        }
+
+        for (int i = 0; i < tour.Length; i++)
+        {
+            if (tour[i].complete)
+                tourComplete = true;
+            else
+                tourComplete = false;
+        }
+
+        if (tourComplete)
+        {
+            for (int i = 0; i < tour.Length; i++)
+            {
+                if (cm.playerTeamIndex == tour[i].id)
+                {
+                    Debug.Log("Tour rank is" + (i + 1));
+                    if (i < 6)
+                    {
+                        cm.tourQual = true;
+                    }
+                }
+            }
+        }
+        Debug.Log("Prov Qual Complete is " + provQualComplete);
         if (cm.provQual && provQualComplete && !provChampionship.complete)
         {
             activeTournies[2] = provChampionship;

@@ -510,7 +510,7 @@ public class PlayoffManager : MonoBehaviour
 							//float prizePayout = ((1 - p) / Mathf.Pow(1 - p, totalTeams) * Mathf.Pow(p, (i - 1))) * 10000f;
 							//float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * 10000f * (p - 1);
 
-							Debug.Log("Prize Payout multiplier is " + prizePayout);
+							Debug.Log("Prize Payout is " + prizePayout);
 							prizePayout = Mathf.RoundToInt(prizePayout);
 							gsp.earnings += prizePayout; 
 							
@@ -526,20 +526,32 @@ public class PlayoffManager : MonoBehaviour
 				}
 
 				for (int i = 0; i < tm.teamList.Count; i++)
-                {
+				{
 					float p = 1.4f;
 					float totalTeams = tm.teamList.Count - 4;
 					float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
 
-					if (i == 0)
+					if (tm.teamList[i].team.id == playoffTeams[8].id)
+					{
 						tm.teamList[i].team.earnings += gsp.prize * 0.5f;
-					else if (i == 1)
+						tm.teamList[i].team.rank = 1;
+					}
+					else if (tm.teamList[i].team.id == playoffTeams[4].id | tm.teamList[i].team.id == playoffTeams[7].id)
+					{
 						tm.teamList[i].team.earnings += gsp.prize * 0.25f;
-					else if (i == 2)
+						tm.teamList[i].team.rank = 2;
+					}
+					else if (tm.teamList[i].team.id == playoffTeams[5].id | tm.teamList[i].team.id == playoffTeams[6].id)
+					{
 						tm.teamList[i].team.earnings += gsp.prize * 0.15f;
-					else if (i == 3)
+						tm.teamList[i].team.rank = 3;
+					}
+					else if (tm.teamList[i].team.id == playoffTeams[2].id | tm.teamList[i].team.id == playoffTeams[3].id)
+					{
 						tm.teamList[i].team.earnings += gsp.prize * 0.075f;
-					else if (i > 3)
+						tm.teamList[i].team.rank = 4;
+					}
+					else
 					{
 						tm.teamList[i].team.earnings += Mathf.RoundToInt(prizePayout);
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);

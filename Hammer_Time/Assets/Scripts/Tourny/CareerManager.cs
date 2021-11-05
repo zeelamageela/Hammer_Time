@@ -254,7 +254,7 @@ public class CareerManager : MonoBehaviour
             for (int i = 0; i < tourTeams.Length; i++)
             {
                 //tourTeams[i].id = tourTeamsIDList[i];
-                Debug.Log("Tour Teams ID is " + tourTeamsIDList[i]);
+                //Debug.Log("Tour Teams ID is " + tourTeamsIDList[i]);
                 for (int j = 0; j < teams.Length; j++)
                 {
                     if (tourTeamsIDList[i] == teams[j].id)
@@ -645,9 +645,9 @@ public class CareerManager : MonoBehaviour
                 {
                     if (currentTournyTeams[i].id == tourRankList[j].team.id)
                     {
-                        tourRankList[j].team.tourRecord.x += currentTournyTeams[i].wins;
-                        tourRankList[j].team.tourRecord.y += currentTournyTeams[i].loss;
-                        tourRankList[j].team.tourPoints += currentTournyTeams[i].tourPoints;
+                        tourRankList[j].team.tourRecord.x = currentTournyTeams[i].wins;
+                        tourRankList[j].team.tourRecord.y = currentTournyTeams[i].loss;
+                        tourRankList[j].team.tourPoints = currentTournyTeams[i].tourPoints;
                     }
                 }
             }
@@ -735,6 +735,7 @@ public class CareerManager : MonoBehaviour
                 tourRecords[i].w = tourTeams[i].id;
             }
         }
+
         for (int i = 0; i < totalTeams; i++)
         {
             teamRecords[i].x = teams[i].wins;
@@ -803,10 +804,34 @@ public class CareerManager : MonoBehaviour
         gsp.playerTeamIndex = playerTeamIndex;
 
         Shuffle(teams);
-
+        bool inList = true;
         for (int i = 0; i < totalTourTeams; i++)
         {
             tourTeams[i] = teams[i];
+        }
+
+        for (int i = 0; i < totalTourTeams; i++)
+        {
+            if (tourTeams[i].id != playerTeamIndex)
+            {
+                inList = false;
+            }
+            else
+            {
+                inList = true;
+                break;
+            }
+        }
+        if (!inList)
+        {
+            Debug.Log("inList is " + inList);
+            for (int i = 0; i < totalTeams; i++)
+            {
+                if (teams[i].id == playerTeamIndex)
+                {
+                    tourTeams[0] = teams[i];
+                }
+            }
         }
 
         week++;

@@ -242,6 +242,8 @@ public class TournyManager : MonoBehaviour
 				teams[i].wins = 0;
 				teams[i].loss = 0;
 				teams[i].earnings = 0;
+				teams[i].tourPoints = 0;
+				teams[i].tourRecord = Vector2.zero;
 			}
 
 			for (int i = 0; i < teams.Length; i++)
