@@ -16,4 +16,7 @@ public class Team
     public int id;
 
     public float earnings;
+
+    public Vector2 tourRecord;
+    public float tourPoints;
 }

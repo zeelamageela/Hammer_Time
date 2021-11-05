@@ -33,6 +33,7 @@ public class TournySelector : MonoBehaviour
     public ProfilePanel profPanel;
 
     public ProvStandings provStandings;
+    public TourStandings tourStandings;
     int week;
 
     EasyFileSave myFile;
@@ -46,12 +47,15 @@ public class TournySelector : MonoBehaviour
         //if (cm.inProgress)
             //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
+
+        provStandings.PrintRows();
+        tourStandings.PrintRows();
+
         if (cm.week == 0)
             NewSeason();
         else
         {
             cm.LoadCareer();
-
         }
 
         SetActiveTournies();
@@ -705,7 +709,7 @@ public class TournySelector : MonoBehaviour
 
     public void Profile(bool on)
     {
-        int tempRank;
+
 
         for (int i = 0; i < cm.teams.Length; i++)
         {
@@ -733,14 +737,44 @@ public class TournySelector : MonoBehaviour
                 profPanel.provQual.text = "Yes";
             else
                 profPanel.provQual.text = "No";
+            for (int i = 0; i < cm.teams.Length; i++)
+            {
+                if (cm.playerTeamIndex == cm.teams[i].id)
+                {
+                    if (cm.teams[i].rank == 1)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
+                    else if (cm.teams[i].rank == 2)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "nd";
+                    else if (cm.teams[i].rank == 3)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
+                    else if (cm.teams[i].rank > 3)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
 
-            //profPanel.tourRank.text = cm.tourRankList.ToString();
-            //profPanel.tourPoints.text = cm.tourPoints.ToString();
+                }
+            }
+            for (int i = 0; i < cm.tourRankList.Count; i++)
+            {
+                if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
+                {
+                    if (i == 0)
+                        profPanel.tourRank.text = (i + 1).ToString() + "st";
+                    else if (i == 1)
+                        profPanel.tourRank.text = (i + 1).ToString() + "nd";
+                    else if (i == 2)
+                        profPanel.tourRank.text = (i + 1).ToString() + "rd";
+                    else if (i > 2)
+                        profPanel.tourRank.text = (i + 1).ToString() + "th";
+
+                    profPanel.tourPoints.text = cm.tourRankList[i].team.tourPoints.ToString() + " points";
+                }
+            }
         }
         else
         {
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
+            provStandings.gameObject.SetActive(false);
         }
     }
 
@@ -751,13 +785,30 @@ public class TournySelector : MonoBehaviour
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(true);
-            provStandings.PrintRows();
+            tourStandings.gameObject.SetActive(false);
         }
         else
         {
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
+        }
+    }
+
+    public void TourStandings(bool on)
+    {
+        if (on)
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(false);
+            provStandings.gameObject.SetActive(false);
+            tourStandings.gameObject.SetActive(true);
+        }
+        else
+        {
+            mainMenuGO.SetActive(true);
+            profPanelGO.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
         }
     }
 }
