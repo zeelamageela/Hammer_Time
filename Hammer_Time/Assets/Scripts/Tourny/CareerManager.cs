@@ -592,6 +592,7 @@ public class CareerManager : MonoBehaviour
         earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
 
+
         if (currentTourny.qualifier)
         {
             for (int i = 0; i < currentTourny.teams; i++)
