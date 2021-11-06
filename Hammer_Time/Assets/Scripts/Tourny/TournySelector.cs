@@ -756,7 +756,7 @@ public class TournySelector : MonoBehaviour
 
         for (int i = 0; i < cm.teams.Length; i++)
         {
-            if (cm.playerTeamIndex == cm.teams[i].id)
+            if (cm.playerTeamIndex == cm.provRankList[i].team.id)
             {
                 if (cm.teams[i].rank == 1)
                     profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
@@ -780,6 +780,8 @@ public class TournySelector : MonoBehaviour
                 profPanel.provQual.text = "Yes";
             else
                 profPanel.provQual.text = "No";
+
+
             for (int i = 0; i < cm.teams.Length; i++)
             {
                 if (cm.playerTeamIndex == cm.teams[i].id)

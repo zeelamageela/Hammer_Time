@@ -307,12 +307,17 @@ public class TournySettings : MonoBehaviour
 
     public void New()
     {
+        cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+
         ClearPlayer();
         gsp.careerLoad = false;
         earnings = 0f;
+        
         record = Vector2.zero;
         gsp.draw = 0;
         gsp.playoffRound = 0;
+        gsp.careerLoad = false;
         gsp.inProgress = false;
         load.SetActive(false);
         settings.SetActive(false);
