@@ -393,10 +393,18 @@ public class GameSettingsPersist : MonoBehaviour
             int[] playoffIDList = myFile.GetArray<int>("Playoff ID List");
             playoffTeams = new Team[playoffIDList.Length];
 
-            for (int i = 0; i < playoffTeams.Length; i++)
+            for (int i = 0; i < playoffIDList.Length; i++)
             {
                 if (playoffIDList[i] < 99)
-                    playoffTeams[i] = tm.tTeamList.teams[playoffIDList[i]];
+                {
+                    for (int j = 0; j < teams.Length; j++)
+                    {
+                        if (playoffIDList[i] == teams[j].id)
+                        {
+                            playoffTeams[i] = teams[j];
+                        }
+                    }
+                }
                 else
                     playoffTeams[i] = tm.tTeamList.nullTeam;
             }

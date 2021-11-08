@@ -752,7 +752,7 @@ public class TournySelector : MonoBehaviour
 
     public void Profile(bool on)
     {
-
+        cm = FindObjectOfType<CareerManager>();
 
         for (int i = 0; i < cm.teams.Length; i++)
         {
@@ -769,6 +769,7 @@ public class TournySelector : MonoBehaviour
 
             }
         }
+
         if (on)
         {
             mainMenuGO.SetActive(false);
@@ -782,21 +783,24 @@ public class TournySelector : MonoBehaviour
                 profPanel.provQual.text = "No";
 
 
-            for (int i = 0; i < cm.teams.Length; i++)
+            cm.provRankList.Sort();
+            for (int i = 0; i < cm.provRankList.Count; i++)
             {
-                if (cm.playerTeamIndex == cm.teams[i].id)
+                if (cm.playerTeamIndex == cm.provRankList[i].team.id)
                 {
-                    if (cm.teams[i].rank == 1)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
-                    else if (cm.teams[i].rank == 2)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "nd";
-                    else if (cm.teams[i].rank == 3)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
-                    else if (cm.teams[i].rank > 3)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
+                    if (i == 0)
+                        profPanel.provRank.text = (i + 1).ToString() + "st";
+                    else if (i == 1)
+                        profPanel.provRank.text = (i + 1).ToString() + "nd";
+                    else if (i == 2)
+                        profPanel.provRank.text = (i + 1).ToString() + "rd";
+                    else if (i > 2)
+                        profPanel.provRank.text = (i + 1).ToString() + "th";
 
                 }
             }
+            cm.tourRankList.Sort();
+
             for (int i = 0; i < cm.tourRankList.Count; i++)
             {
                 if (cm.playerTeamIndex == cm.tourRankList[i].team.id)

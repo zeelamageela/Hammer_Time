@@ -130,7 +130,7 @@ public class PlayoffManager : MonoBehaviour
 
 		for (int i = 0; i < tm.teams.Length; i++)
 		{
-			if (tm.teams[i].name == gsp.playerTeam.name)
+			if (tm.teams[i].id == gsp.playerTeam.id)
 				playerTeam = i;
 			if (tm.teams[i].name == gsp.playerTeam.nextOpp)
 				oppTeam = i;

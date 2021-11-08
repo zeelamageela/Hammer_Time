@@ -251,22 +251,31 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Tour Record List Length is " + tourWinsList.Length + " " + tourLossList.Length);
             Debug.Log("Total Teams List Length is " + tourTeams.Length);
 
-            for (int i = 0; i < tourTeams.Length; i++)
+            for (int i = 0; i < teams.Length; i++)
             {
                 //tourTeams[i].id = tourTeamsIDList[i];
                 //Debug.Log("Tour Teams ID is " + tourTeamsIDList[i]);
+
+
+                //if (teams[i].id == playerTeamIndex)
+                //    teams[i].name = teamName;
+                for (int j = 0; j < tourPointsList.Length; j++)
+                {
+                    if (tourTeamsIDList[j] == teams[i].id)
+                    {
+                        teams[i].tourRecord.x = tourWinsList[j];
+                        teams[i].tourRecord.y = tourLossList[j];
+                        teams[i].tourPoints = tourPointsList[j];
+                    }
+                }
+            }
+            for (int i = 0; i < tourTeams.Length; i++)
+            {
                 for (int j = 0; j < teams.Length; j++)
                 {
                     if (tourTeamsIDList[i] == teams[j].id)
                         tourTeams[i] = teams[j];
                 }
-
-                if (tourTeams[i].id == playerTeamIndex)
-                    tourTeams[i].name = teamName;
-
-                tourTeams[i].tourRecord.x = tourWinsList[i];
-                tourTeams[i].tourRecord.y = tourLossList[i];
-                tourTeams[i].tourPoints = tourPointsList[i];
             }
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
 
@@ -642,13 +651,12 @@ public class CareerManager : MonoBehaviour
                         break;
                 }
 
-                for (int j = 0; j < tourRankList.Count; j++)
+                for (int j = 0; j < tourTeams.Length; j++)
                 {
-                    if (currentTournyTeams[i].id == tourRankList[j].team.id)
+                    if (currentTournyTeams[i].id == tourTeams[j].id)
                     {
-                        tourRankList[j].team.tourRecord.x = currentTournyTeams[i].wins;
-                        tourRankList[j].team.tourRecord.y = currentTournyTeams[i].loss;
-                        tourRankList[j].team.tourPoints = currentTournyTeams[i].tourPoints;
+                        tourTeams[j].tourRecord.x = currentTournyTeams[i].wins;
+                        tourTeams[j].tourRecord.y = currentTournyTeams[i].loss;
                     }
                 }
             }
@@ -661,6 +669,25 @@ public class CareerManager : MonoBehaviour
                     tourRecord.y += currentTournyTeams[i].loss;
                 }
                 //if (playerTeamIndex == currentTournyTeams[i].id)
+            }
+
+            for (int i = 0; i < tourTeams.Length; i++)
+            {
+                for (int j = 0; j < tourRecords.Length; j++)
+                {
+                    for (int k = 0; k < currentTournyTeams.Length; k++)
+                    {
+                        if (currentTournyTeams[k].id == tourTeams[i].id)
+                        {
+                            if (tourTeams[i].id == tourRecords[j].w)
+                            {
+                                tourTeams[i].tourRecord.x += tourRecords[j].x;
+                                tourTeams[i].tourRecord.y += tourRecords[j].y;
+                                tourTeams[i].tourPoints += tourRecords[j].z;
+                            }
+                        }
+                    }
+                }
             }
         }
         
@@ -688,24 +715,7 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < tourTeams.Length; i++)
-        {
-            for (int j = 0; j < tourRecords.Length; j++)
-            {
-                for (int k = 0; k < currentTournyTeams.Length; k++)
-                {
-                    if (currentTournyTeams[k].id == tourTeams[i].id)
-                    {
-                        if (tourTeams[i].id == tourRecords[j].w)
-                        {
-                            tourTeams[i].tourRecord.x += tourRecords[j].x;
-                            tourTeams[i].tourRecord.y += tourRecords[j].y;
-                            tourTeams[i].tourPoints += tourRecords[j].z;
-                        }
-                    }
-                }
-            }
-        }
+        
 
         Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();
@@ -724,10 +734,10 @@ public class CareerManager : MonoBehaviour
         inProgress = true;
 
         teamRecords = new Vector4[totalTeams];
-        tourRecords = new Vector4[totalTourTeams];
 
         if (currentTourny.tour)
         {
+            tourRecords = new Vector4[totalTourTeams];
             for (int i = 0; i < totalTourTeams; i++)
             {
                 tourRecords[i].x = tourTeams[i].tourRecord.x;

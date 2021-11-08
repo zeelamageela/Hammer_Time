@@ -758,6 +758,8 @@ MonoBehaviour:
     strength: 0
     id: 0
     earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   teamColour: {r: 0, g: 0, b: 0, a: 1}
   playerGO:
   - charStats: {fileID: 0}
@@ -3079,9 +3081,10 @@ MonoBehaviour:
   inProgress: 0
   season: 0
   totalTeams: 32
-  tourTeams: 16
-  provTeams: 16
+  totalTourTeams: 16
+  provTeams: 32
   teamRecords: []
+  tourRecords: []
   playerTeam:
     name: 
     wins: 0
@@ -3091,7 +3094,10 @@ MonoBehaviour:
     strength: 0
     id: 0
     earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   teams: []
+  tourTeams: []
   currentTournyTeams: []
   currentTourny:
     id: 0

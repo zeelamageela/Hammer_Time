@@ -38,6 +38,7 @@ public class TourStandings : MonoBehaviour
 		row = new GameObject[tourRankList.Count];
 		standDisplay = new StandingDisplay[tourRankList.Count];
 
+		tourRankList.Sort();
 		for (int i = 0; i < tourRankList.Count; i++)
 		{
 			row[i] = Instantiate(standTextRow, standTextParent);
@@ -51,7 +52,6 @@ public class TourStandings : MonoBehaviour
 			standDisplay[i] = rv.standDisplay;
 		}
 
-		tourRankList.Sort();
 		for (int i = 0; i < tourRankList.Count; i++)
 		{
 			//Debug.Log("Counting to tourRankLimit - " + i);
@@ -66,7 +66,7 @@ public class TourStandings : MonoBehaviour
 		{
 			if (cm.playerTeamIndex == tourRankList[i].team.id)
 			{
-				scrollbar.value = (tourRankList[i].team.rank - tourRankList.Count) / (1f - tourRankList.Count);
+				scrollbar.value = (i - tourRankList.Count) / (1f - tourRankList.Count);
 				standDisplay[i].panel.enabled = true;
 			}
 			else

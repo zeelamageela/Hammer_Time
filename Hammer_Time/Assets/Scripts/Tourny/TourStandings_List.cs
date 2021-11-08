@@ -28,7 +28,10 @@ public class TourStandings_List : IComparable<TourStandings_List>
         }
         else if (team.tourPoints == other.team.tourPoints)
         {
-            return 0;
+            if (team.tourRecord.x > other.team.tourRecord.x)
+                return -1;
+            else
+                return 0;
         }
         else return 0;
     }
