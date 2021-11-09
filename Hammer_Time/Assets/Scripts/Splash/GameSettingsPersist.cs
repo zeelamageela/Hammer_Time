@@ -370,7 +370,13 @@ public class GameSettingsPersist : MonoBehaviour
             for (int i = 0; i < numberOfTeams; i++)
             {
                 //Debug.Log("Name List is " + nameList[i]);
-                teams[i] = tm.tTeamList.teams[idList[i]];
+                for (int j = 0; j < tm.tTeamList.teams.Length; j++)
+                {
+                    if (idList[i] == tm.tTeamList.teams[j].id)
+                    {
+                        teams[i] = tm.tTeamList.teams[j];
+                    }
+                }
                 teams[i].wins = winsList[i];
                 //Debug.Log("Wins List is " + winsList[i]);
                 teams[i].loss = lossList[i];

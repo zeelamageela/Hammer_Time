@@ -156,15 +156,18 @@ public class PlayoffManager : MonoBehaviour
 
 				if (game1)
                 {
+					Debug.Log("Game 1 - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
 					if (gsp.playerTeam.name == gsp.redTeamName)
 					{
 						if (gsp.redScore > gsp.yellowScore)
                         {
+							Debug.Log("Red beat Yellow");
 							playoffTeams[4] = tm.teams[playerTeam];
 							playoffTeams[5] = tm.teams[oppTeam];
 						}
 						else
 						{
+							Debug.Log("Yellow beat Red");
 							playoffTeams[5] = tm.teams[playerTeam];
 							playoffTeams[4] = tm.teams[oppTeam];
 						}
@@ -173,11 +176,13 @@ public class PlayoffManager : MonoBehaviour
 					{
 						if (gsp.redScore < gsp.yellowScore)
 						{
+							Debug.Log("Yellow beat Red");
 							playoffTeams[4] = tm.teams[playerTeam];
 							playoffTeams[5] = tm.teams[oppTeam];
 						}
 						else
 						{
+							Debug.Log("Red beat Yellow");
 							playoffTeams[5] = tm.teams[playerTeam];
 							playoffTeams[4] = tm.teams[oppTeam];
 						}
@@ -778,6 +783,7 @@ public class PlayoffManager : MonoBehaviour
 		{
 			//Debug.Log("playoffID i is " + i);
 			playoffIDList[i] = playoffTeams[i].id;
+			Debug.Log("Playoff ID List - " + playoffIDList[i]);
 		}
 
 		myFile.Add("Playoff ID List", playoffIDList);
