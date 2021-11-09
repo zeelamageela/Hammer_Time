@@ -8,6 +8,8 @@ using TigerForge;
 public class TournySelector : MonoBehaviour
 {
     CareerManager cm;
+    public GameObject dialogueGO;
+    public DialogueTrigger coachGreen;
 
     public Text weekText;
     public Text teamNameText;
@@ -36,6 +38,8 @@ public class TournySelector : MonoBehaviour
     public TourStandings tourStandings;
     int week;
 
+    public bool provQualDialogue;
+    bool tourQualDialogue;
     EasyFileSave myFile;
 
     // Start is called before the first frame update
@@ -48,15 +52,34 @@ public class TournySelector : MonoBehaviour
             //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
 
-        provStandings.PrintRows();
-        tourStandings.PrintRows();
 
         if (cm.week == 0)
             NewSeason();
         else
         {
             cm.LoadCareer();
+
+            if (cm.provQual)
+            {
+                if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
+                {
+                    dialogueGO.SetActive(true);
+                    if (cm.week < 10)
+                    {
+                        coachGreen.TriggerDialogue(4);
+                    }
+                    else
+                    {
+                        coachGreen.TriggerDialogue(3);
+                    }
+                    cm.coachDialogue[3] = true;
+                    cm.coachDialogue[4] = true;
+                }
+            }
         }
+
+        provStandings.PrintRows();
+        tourStandings.PrintRows();
 
         SetActiveTournies();
     }
@@ -91,10 +114,19 @@ public class TournySelector : MonoBehaviour
         bool provQualComplete = false;
 
         if (cm.week > 0)
+        {
             weekText.text = "Week " + cm.week.ToString();
+
+            switch (cm.week)
+            {
+                case 0:
+                    break;
+            }
+        }
         else
             weekText.text = "Welcome to Season " + cm.season.ToString();
 
+        #region Panel 1
         if (cm.provQual)
         {
             if (Random.Range(0f, 1f) > 0.5f)
@@ -358,8 +390,9 @@ public class TournySelector : MonoBehaviour
                 }
             }
         }
+        #endregion
 
-
+        #region Panel 2
         if (cm.provQual)
         {
             if (activeTournies[0].tour)
@@ -614,6 +647,8 @@ public class TournySelector : MonoBehaviour
         {
             activeTournies[0] = emptyTourny;
         }
+        #endregion
+
 
         if (cm.provQual)
         {
@@ -642,21 +677,29 @@ public class TournySelector : MonoBehaviour
                 tourComplete = false;
         }
 
+        Debug.Log("Tour Complete is " + tourComplete);
+
         if (tourComplete)
         {
-            for (int i = 0; i < tour.Length; i++)
+            for (int i = 0; i < cm.tourRankList.Count; i++)
             {
-                if (cm.playerTeamIndex == tour[i].id)
+                if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
                 {
                     Debug.Log("Tour rank is" + (i + 1));
                     if (i < 6)
                     {
                         cm.tourQual = true;
                     }
+                    else
+                    {
+                        Debug.Log("Outside the top 6");
+                    }
                 }
             }
         }
         Debug.Log("Prov Qual Complete is " + provQualComplete);
+
+
         if (cm.provQual && provQualComplete && !provChampionship.complete)
         {
             activeTournies[2] = provChampionship;
@@ -688,6 +731,8 @@ public class TournySelector : MonoBehaviour
     }
     public void NewSeason()
     {
+        dialogueGO.SetActive(true);
+        coachGreen.TriggerDialogue(0);
         cm.NewSeason();
     }
 

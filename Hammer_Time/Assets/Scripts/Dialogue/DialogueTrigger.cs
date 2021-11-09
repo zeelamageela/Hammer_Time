@@ -7,6 +7,10 @@ public class DialogueTrigger : MonoBehaviour
     public Dialogue[] dialogue;
     public GameObject talkingHead;
 
+    void Awake()
+    {
+
+    }
     public void TriggerDialogue(int index)
     {
         FindObjectOfType<DialogueManager>().StartDialogue(dialogue[index]);

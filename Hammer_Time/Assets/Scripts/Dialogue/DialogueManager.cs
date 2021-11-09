@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    public string firstName;
+    public string teamName;
 
     private Queue<string> sentences;
     public Text dialogueText;
@@ -24,6 +26,7 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         sentences = new Queue<string>();
+        firstName = FindObjectOfType<CareerManager>().playerName;
     }
 
     private void Update()
@@ -55,6 +58,7 @@ public class DialogueManager : MonoBehaviour
 
         string sentence = sentences.Dequeue();
         Debug.Log(sentence);
+        sentence = sentence.Replace("xxxxx", firstName);
         dialogueText.text = sentence;
 
     }

@@ -238,7 +238,7 @@ public class TournyManager : MonoBehaviour
         {
 			for (int i = 0; i < teams.Length; i++)
 			{
-				teams[i] = cm.currentTournyTeams[i];
+				teams[i] = gsp.teams[i];
 				teams[i].wins = 0;
 				teams[i].loss = 0;
 				teams[i].earnings = 0;
