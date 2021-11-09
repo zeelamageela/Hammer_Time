@@ -76,6 +76,7 @@ public class TournySelector : MonoBehaviour
                     cm.coachDialogue[4] = true;
                 }
             }
+
         }
 
         provStandings.PrintRows();
@@ -689,10 +690,22 @@ public class TournySelector : MonoBehaviour
                     if (i < 6)
                     {
                         cm.tourQual = true;
+                        if (!cm.coachDialogue[5])
+                        {
+                            dialogueGO.SetActive(true);
+                            coachGreen.TriggerDialogue(5);
+                            cm.coachDialogue[5] = true;
+                        }
                     }
                     else
                     {
-                        Debug.Log("Outside the top 6");
+                        Debug.Log("Outside the top 6"); 
+                        if (!cm.coachDialogue[2])
+                        {
+                            dialogueGO.SetActive(true);
+                            coachGreen.TriggerDialogue(2);
+                            cm.coachDialogue[2] = true;
+                        }
                     }
                 }
             }
@@ -700,13 +713,20 @@ public class TournySelector : MonoBehaviour
         Debug.Log("Prov Qual Complete is " + provQualComplete);
 
 
-        if (cm.provQual && provQualComplete && !provChampionship.complete)
+
+        if (cm.tourQual && tourComplete && !tourChampionship.complete)
+        {
+            activeTournies[2] = tourChampionship;
+        }
+        else if (cm.provQual && provQualComplete && !provChampionship.complete)
         {
             activeTournies[2] = provChampionship;
         }
-        else if (cm.tourQual && tourComplete)
+        else if (provChampionship.complete)
         {
-            activeTournies[2] = tourChampionship;
+            dialogueGO.SetActive(true);
+            coachGreen.TriggerDialogue(6);
+            cm.coachDialogue[6] = true;
         }
         else
             activeTournies[2] = emptyTourny;
