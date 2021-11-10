@@ -232,7 +232,10 @@ public class TournySettings : MonoBehaviour
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
-
+        for (int i = 0; i < gsp.teams.Length; i++)
+        {
+            gsp.teams[i].earnings -= entryFee;
+        }
         Debug.Log("Career Earnings after Fee - $" + earnings);
         gsp.LoadTournySettings();
 

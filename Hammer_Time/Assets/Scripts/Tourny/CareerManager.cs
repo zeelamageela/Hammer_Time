@@ -27,6 +27,9 @@ public class CareerManager : MonoBehaviour
     public bool tourQual;
     public Vector2 tourRecord;
 
+    public float xp;
+    public float totalXp;
+
     public bool inProgress;
     public int season;
     public int totalTeams;
@@ -619,6 +622,21 @@ public class CareerManager : MonoBehaviour
         earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
 
+        float xpChange = 0f;
+        for (int i = 0; i < currentTournyTeams.Length; i++)
+        {
+            if (playerTeamIndex == currentTournyTeams[i].id)
+            {
+                xpChange = (16f / currentTournyTeams.Length) * (currentTournyTeams.Length - currentTournyTeams[i].rank);
+                xpChange += currentTournyTeams[i].wins * 3f;
+                xpChange += currentTournyTeams[i].loss;
+
+                if (currentTournyTeams[i].rank < 5)
+                {
+                    xpChange += 5f;
+                }
+            }
+        }
 
         if (currentTourny.qualifier)
         {
@@ -627,10 +645,14 @@ public class CareerManager : MonoBehaviour
                 if (playerTeamIndex == currentTournyTeams[i].id)
                 {
                     if (currentTournyTeams[i].rank < 5)
+                    {
                         provQual = true;
+                        xpChange += 5f;
+                    }
                 }
             }
         }
+
         if (currentTourny.tour)
         {
             for (int i = 0; i < currentTournyTeams.Length; i++)
@@ -736,8 +758,9 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        
-
+        xp += xpChange;
+        totalXp += xpChange;
+        Debug.Log("XP Change is " + xpChange);
         Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();
         Debug.Log("Top Ranked Team is " + provRankList[0].team.name);
@@ -832,7 +855,8 @@ public class CareerManager : MonoBehaviour
             coachDialogue[i] = false;
         }
         coachDialogue[0] = true;
-
+        xp = 0f;
+        totalXp = 0f;
         season++;
 
         Shuffle(tTeamList.teams);
