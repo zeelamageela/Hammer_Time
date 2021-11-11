@@ -10,6 +10,7 @@ public class PlayoffManager : MonoBehaviour
 	public Team[] playoffTeams;
 
 	public BracketDisplay[] brackDisplay;
+
 	public GameObject[] row;
 	public GameObject playoffs;
 	public Button nextButton;
