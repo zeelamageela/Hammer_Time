@@ -104,121 +104,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		//SetBrackets();
 	}
 
-	public void SetBrackets()
-    {
-		winnersDisplay1 = new BracketDisplay[16];
-		winnersDisplay3 = new BracketDisplay[winnersBracket.transform.GetChild(1).transform.childCount];
-		winnersDisplay7 = new BracketDisplay[winnersBracket.transform.GetChild(2).transform.childCount];
-		winnersDisplay12 = new BracketDisplay[winnersBracket.transform.GetChild(3).transform.childCount];
-
-		losersDisplayA2 = new BracketDisplay[losersBracket1.transform.GetChild(0).transform.childCount];
-		losersDisplayA4 = new BracketDisplay[losersBracket1.transform.GetChild(1).transform.childCount];
-		losersDisplayA8 = new BracketDisplay[losersBracket1.transform.GetChild(2).transform.childCount];
-		losersDisplayA9 = new BracketDisplay[losersBracket1.transform.GetChild(3).transform.childCount];
-		losersDisplayA13 = new BracketDisplay[losersBracket1.transform.GetChild(4).transform.childCount];
-
-		losersDisplayB5 = new BracketDisplay[losersBracket2.transform.GetChild(0).transform.childCount];
-		losersDisplayB6 = new BracketDisplay[losersBracket2.transform.GetChild(1).transform.childCount];
-		losersDisplayB10 = new BracketDisplay[losersBracket2.transform.GetChild(2).transform.childCount];
-		losersDisplayB11 = new BracketDisplay[losersBracket2.transform.GetChild(3).transform.childCount];
-		losersDisplayB14 = new BracketDisplay[losersBracket2.transform.GetChild(4).transform.childCount];
-
-		finalsDisplay15 = new BracketDisplay[finalsBracket.transform.GetChild(0).transform.childCount];
-		finalsDisplay16 = new BracketDisplay[finalsBracket.transform.GetChild(1).transform.childCount];
-		finalsDisplay17 = new BracketDisplay[finalsBracket.transform.GetChild(2).transform.childCount];
-		finalsDisplay18 = new BracketDisplay[finalsBracket.transform.GetChild(3).transform.childCount];
-		finalsDisplay19 = new BracketDisplay[finalsBracket.transform.GetChild(4).transform.childCount];
-		finalsDisplay20 = new BracketDisplay[finalsBracket.transform.GetChild(5).transform.childCount];
-
-		Debug.Log("Winners bracket count is " + winnersBracket.transform.childCount);
-		for (int i = 0; i < winnersBracket.transform.childCount; i++)
-		{
-			Debug.Log("Winners bracket count is " + winnersBracket.transform.GetChild(i).transform.childCount);
-			for (int j = 0; j < winnersBracket.transform.GetChild(i).transform.childCount; j++)
-			{
-				if (i == 0)
-				{
-					Debug.Log("Current Bracket is " + winnersBracket.transform.GetChild(i).GetChild(j).gameObject.name);
-					GameObject bracket = winnersBracket.transform.GetChild(i).GetChild(j).gameObject;
-                    winnersDisplay1[j].name = bracket.transform.GetChild(0).GetChild(0).GetComponent<Text>();
-                    winnersDisplay1[j].rank = winnersBracket.transform.GetChild(i).GetChild(j).GetChild(1).gameObject.GetComponentInChildren<Text>();
-					winnersDisplay1[j].panel = bracket.gameObject;
-				}
-				else if (i == 1)
-				{
-					winnersDisplay3[j].name = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					winnersDisplay3[j].rank = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					winnersDisplay3[j].panel = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 2)
-				{
-					winnersDisplay7[j].name = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					winnersDisplay7[j].rank = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					winnersDisplay7[j].panel = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 3)
-				{
-					winnersDisplay12[j].name = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					winnersDisplay12[j].rank = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					winnersDisplay12[j].panel = winnersBracket.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-			}
-		}
-
-		for (int i = 0; i < losersBracket1.transform.childCount; i++)
-		{
-			for (int j = 0; j < losersBracket1.transform.GetChild(i).transform.childCount; j++)
-			{
-				if (i == 0)
-				{
-					losersDisplayA2[j].name = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					losersDisplayA2[j].rank = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					losersDisplayA2[j].panel = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 1)
-				{
-					losersDisplayA4[j].name = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					losersDisplayA4[j].rank = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					losersDisplayA4[j].panel = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 2)
-				{
-					losersDisplayA8[j].name = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					losersDisplayA8[j].rank = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					losersDisplayA8[j].panel = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 3)
-				{
-					losersDisplayA9[j].name = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					losersDisplayA9[j].rank = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					losersDisplayA9[j].panel = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-				else if (i == 4)
-				{
-					losersDisplayA13[j].name = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(0).GetComponentInChildren<Text>();
-					losersDisplayA13[j].rank = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(1).GetComponentInChildren<Text>();
-					losersDisplayA13[j].panel = losersBracket1.transform.GetChild(i).transform.GetChild(j).transform.GetChild(2).gameObject;
-				}
-			}
-		}
-
-		for (int i = 0; i < losersBracket2.transform.childCount; i++)
-		{
-			for (int j = 0; j < losersBracket2.transform.GetChild(i).transform.childCount; j++)
-			{
-				losersBracket2.transform.GetChild(i).transform.GetChild(j);
-			}
-		}
-
-		for (int i = 0; i < finalsBracket.transform.childCount; i++)
-		{
-			for (int j = 0; j < finalsBracket.transform.GetChild(i).transform.childCount; j++)
-			{
-				finalsBracket.transform.GetChild(i).transform.GetChild(j);
-			}
-		}
-	}
-
 	public void SetSeeding()
 	{
 		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
@@ -238,7 +123,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			if (i % 2 == 0)
 			{
 				gameList[i / 2] = new Vector2(teams[i].id, teams[i + 1].id);
+				teams[i].strength = Random.Range(8, 10);
 			}
+			else
+				teams[i].strength = Random.Range(0, 2);
 		}
 
 		SetPlayoffs();
@@ -509,13 +397,25 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						for (int j = 0; j < teams.Length; j++)
 						{
+							for (int k = 0; )
 							if (teams[j].id == gameList[i / 2].x)
                             {
-								losersDisplayA2[i].name.text = teams[i].name;
-								losersDisplayA2[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
+								losersDisplayA2[i].name.text = teams[j].name;
+								losersDisplayA2[i].rank.text = teams[j].wins.ToString() + " " + teams[j].loss.ToString();
 							}
 						}
 					}
+					else
+                    {
+						for (int k = 0; k < teams.Length; k++)
+                        {
+							if (teams[k].id == gameList[(i - 1) / 2].y)
+							{
+								losersDisplayA2[i].name.text = teams[k].name;
+								losersDisplayA2[i].rank.text = teams[k].wins.ToString() + " " + teams[k].loss.ToString();
+							}
+                        }
+                    }
 				}
 
 				for (int i = 0; i < losersBracket1.transform.childCount; i++)
@@ -545,20 +445,42 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			case 3:
 				heading.text = "Round 3";
 
-				for (int i = 0; i < teams.Length; i++)
+				for (int i = 0; i < losersDisplayA2.Length; i++)
 				{
-					winnersDisplay1[i].name.text = teams[i].name;
-					winnersDisplay1[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
+					if (i % 2 == 0)
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[i / 2].x)
+							{
+								winnersDisplay3[i].name.text = teams[j].name;
+								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + " " + teams[j].loss.ToString();
+							}
+						}
+					}
+					else
+					{
+						for (int k = 0; k < teams.Length; k++)
+						{
+							if (teams[k].id == gameList[(i - 1) / 2].y)
+							{
+								winnersDisplay3[i].name.text = teams[k].name;
+								winnersDisplay3[i].rank.text = teams[k].wins.ToString() + " " + teams[k].loss.ToString();
+							}
+						}
+					}
 				}
 
-				winnersBracket.transform.GetChild(0).gameObject.SetActive(true);
-
-				for (int i = 1; i < winnersBracket.transform.childCount; i++)
+				for (int i = 0; i < losersBracket1.transform.childCount; i++)
 				{
-					winnersBracket.transform.GetChild(i).gameObject.SetActive(false);
+					if (i == 1)
+						winnersBracket.transform.GetChild(i).gameObject.SetActive(true);
+					else
+						winnersBracket.transform.GetChild(i).gameObject.SetActive(false);
 				}
-				winnersBracket.SetActive(true);
-				losersBracket1.SetActive(false);
+
+				winnersBracket.SetActive(false);
+				losersBracket1.SetActive(true);
 				losersBracket2.SetActive(false);
 				finalsBracket.SetActive(false);
 
@@ -748,7 +670,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		switch (playoffRound)
 		{
-			case 1:
+            #region Round 1
+            case 1:
 				gameX = new Team[8];
 				gameY = new Team[8];
 
@@ -767,17 +690,41 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
                 }
 
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < 8; i++)
                 {
-					if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+					if (i % 2 == 0)
 					{
-						gameList[i + 8].x = gameX[i].id;
-						gameList[i + 13].x = gameY[i].id;
+						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						{
+							gameList[(i / 2) + 8].x = gameX[i].id;
+							gameX[i].wins++;
+							gameList[(i / 2) + 12].x = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[(i / 2) + 8].x = gameY[i].id;
+							gameY[i].wins++;
+							gameList[(i / 2) + 12].x = gameX[i].id;
+							gameX[i].loss++;
+						}
 					}
 					else
-					{
-						gameList[i + 8].x = gameY[i].id;
-						gameList[i + 13].x = gameX[i].id;
+                    {
+						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						{
+							gameList[((i - 1) / 2) + 8].y = gameX[i].id;
+							gameX[i].wins++;
+							gameList[((i - 1) / 2) + 12].y = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[((i - 1) / 2) + 8].y = gameY[i].id;
+							gameY[i].wins++;
+							gameList[((i - 1) / 2) + 12].y = gameX[i].id;
+							gameX[i].loss++;
+						}
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
@@ -786,26 +733,63 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				contButton.gameObject.SetActive(true);
 				SetPlayoffs();
 				break;
+            #endregion
+            #region Round 2
+            case 2:
+				gameX = new Team[4];
+				gameY = new Team[4];
 
-			case 2:
-				game1X = teams[5];
-				game1Y = teams[6];
-
-				if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
+				for (int i = 0; i < 8; i++)
 				{
-					teams[7] = game1X;
-				}
-				else
-				{
-					teams[7] = game1Y;
+					for (int j = 0; j < teams.Length; j++)
+					{
+						if (gameList[i].x == teams[j].id)
+						{
+							gameX[i] = teams[j];
+						}
+						else if (gameList[i].y == teams[j].id)
+						{
+							gameY[i] = teams[j];
+						}
+					}
 				}
 
 				for (int i = 0; i < 8; i++)
 				{
-					brackDisplay[i].rank.text = teams[i].rank.ToString();
-					brackDisplay[i].name.text = teams[i].name;
-					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
+					if (i % 2 == 0)
+					{
+						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						{
+							gameList[(i / 2) + 16].x = gameX[i].id;
+							gameX[i].wins++;
+							gameList[(i / 2) + 12].x = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[(i / 2) + 16].x = gameY[i].id;
+							gameY[i].wins++;
+							gameList[(i / 2) + 12].x = gameX[i].id;
+							gameX[i].loss++;
+						}
+					}
+					else
+					{
+						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						{
+							gameList[((i - 1) / 2) + 16].y = gameX[i].id;
+							gameX[i].wins++;
+							gameList[((i - 1) / 2) + 12].y = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[((i - 1) / 2) + 16].y = gameY[i].id;
+							gameY[i].wins++;
+							gameList[((i - 1) / 2) + 12].y = gameX[i].id;
+							gameX[i].loss++;
+						}
+					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
@@ -813,7 +797,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				contButton.gameObject.SetActive(true);
 				SetPlayoffs();
 				break;
-
+			#endregion
 			case 3:
 				game1X = teams[4];
 				game1Y = teams[7];
@@ -849,6 +833,58 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		yield break;
 	}
 
+	public void SimRound(int numberOfGames)
+    {
+		Team[] gameX;
+		Team[] gameY;
+		gameX = new Team[numberOfGames];
+		gameY = new Team[numberOfGames];
+
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < teams.Length; j++)
+			{
+				if (gameList[i].x == teams[j].id)
+				{
+					gameX[i] = teams[j];
+				}
+				else if (gameList[i].y == teams[j].id)
+				{
+					gameY[i] = teams[j];
+				}
+			}
+		}
+
+		for (int i = 0; i < 8; i++)
+		{
+			if (i % 2 == 0)
+			{
+				if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+				{
+					gameList[(i / 2) + 8].x = gameX[i].id;
+					gameList[(i / 2) + 12].x = gameY[i].id;
+				}
+				else
+				{
+					gameList[(i / 2) + 8].x = gameY[i].id;
+					gameList[(i / 2) + 12].x = gameX[i].id;
+				}
+			}
+			else
+			{
+				if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+				{
+					gameList[((i - 1) / 2) + 8].y = gameX[i].id;
+					gameList[((i - 1) / 2) + 12].y = gameY[i].id;
+				}
+				else
+				{
+					gameList[((i - 1) / 2) + 8].y = gameY[i].id;
+					gameList[((i - 1) / 2) + 12].y = gameX[i].id;
+				}
+			}
+		}
+	}
 	IEnumerator LoadCareer()
 	{
 		gsp.LoadCareer();
