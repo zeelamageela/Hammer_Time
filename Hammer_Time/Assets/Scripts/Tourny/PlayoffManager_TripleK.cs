@@ -39,6 +39,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public BracketDisplay[] finalsDisplay20;
 
 	public BracketDisplay[] brackDisplay;
+
+	public Vector2[] gameList;
 	public GameObject[] row;
 	public GameObject playoffs;
 	public Button nextButton;
@@ -90,7 +92,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		//playerTeam = tm.playerTeam;
 		playoffRound = gsp.playoffRound;
 		teams = new Team[16];
-
+		gameList = new Vector2[45];
+		
 		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 
 		if (playoffRound > 0)
@@ -224,19 +227,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		heading.text = "Page Playoff";
 
 		playoffRound++;
+
 		for (int i = 0; i < teams.Length; i++)
 		{
-			if (i < 4)
+			teams[i] = tTeamList.teams[i];
+		}
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (i % 2 == 0)
 			{
-				teams[i] = tTeamList.teams[i];
-				winnersDisplay1[i].name.text = teams[i].name;
-				winnersDisplay1[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
-			}
-			else
-			{
-				teams[i] = tTeamList.nullTeam;
+				gameList[i / 2] = new Vector2(teams[i].id, teams[i + 1].id);
 			}
 		}
+
 		SetPlayoffs();
 	}
 
@@ -294,13 +298,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			}
 		}
 
-		for (int i = 0; i < tm.vsDisplay.Length; i++)
-		{
-			tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+		//for (int i = 0; i < tm.vsDisplay.Length; i++)
+		//{
+		//	tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
 
-			yield return new WaitForEndOfFrame();
-			tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
+		//	yield return new WaitForEndOfFrame();
+		//	tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		//}
 	}
 
 	void LoadPlayoffs()
@@ -466,6 +470,14 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		switch (playoffRound)
 		{
 			case 1:
+				heading.text = "Round 1";
+
+				for (int i = 0; i < teams.Length; i++)
+				{
+					winnersDisplay1[i].name.text = teams[i].name;
+					winnersDisplay1[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
+				}
+
 				winnersBracket.transform.GetChild(0).gameObject.SetActive(true);
 
 				for (int i = 1; i < winnersBracket.transform.childCount; i++)
@@ -489,105 +501,76 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				break;
 
 			case 2:
-				heading.text = "Semifinals";
+				heading.text = "Round 2";
 
-				for (int i = 0; i < 7; i++)
+				for (int i = 0; i < losersDisplayA2.Length; i++)
 				{
-					brackDisplay[i].name.text = teams[i].name;
-					brackDisplay[i].rank.text = teams[i].rank.ToString();
-					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
+					if (i % 2 == 0)
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[i / 2].x)
+                            {
+								losersDisplayA2[i].name.text = teams[i].name;
+								losersDisplayA2[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
+							}
+						}
+					}
 				}
 
-				//brackDisplay[4].name.text = teams[4].name;
-				//brackDisplay[4].rank.text = teams[4].rank.ToString();
+				for (int i = 0; i < losersBracket1.transform.childCount; i++)
+				{
+					if (i == 0)
+						losersBracket1.transform.GetChild(i).gameObject.SetActive(true);
+					else
+						losersBracket1.transform.GetChild(i).gameObject.SetActive(false);
+				}
 
+				winnersBracket.SetActive(false);
+				losersBracket1.SetActive(true);
+				losersBracket2.SetActive(false);
+				finalsBracket.SetActive(false);
 
-				if (teams[4].name == tm.teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(false);
-
-					tm.vsDisplay[0].name.text = teams[4].name;
-					tm.vsDisplay[0].rank.text = teams[4].rank.ToString();
-					tm.vsDisplay[1].name.text = "BYE TO FINALS";
-					tm.vsDisplay[1].rank.text = "-";
-					tm.teams[playerTeam].nextOpp = teams[4].name;
-				}
-				else if (teams[5].name == tm.teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(true);
-					tm.vsDisplay[0].name.text = teams[5].name;
-					tm.vsDisplay[0].rank.text = teams[5].rank.ToString();
-					tm.vsDisplay[1].name.text = teams[6].name;
-					tm.vsDisplay[1].rank.text = teams[6].rank.ToString();
-					tm.teams[playerTeam].nextOpp = teams[6].name;
-				}
-				else if (teams[6].name == tm.teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(true);
-					tm.vsDisplay[0].name.text = teams[6].name;
-					tm.vsDisplay[0].rank.text = teams[6].rank.ToString();
-					tm.vsDisplay[1].name.text = teams[5].name;
-					tm.vsDisplay[1].rank.text = teams[5].rank.ToString();
-					tm.teams[playerTeam].nextOpp = teams[5].name;
-				}
-				else
-				{
-					tm.vs.SetActive(false);
-					playButton.gameObject.SetActive(false);
-				}
+				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffs.SetActive(true);
-				StartCoroutine(RefreshPlayoffPanel());
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
-				horizScrollBar.value = 0.5f;
-				StartCoroutine(SaveCareer(true));
+				horizScrollBar.value = 0;
+				vertScrollBar.value = 0;
+				//StartCoroutine(SaveCareer(true));
 				break;
 
 			case 3:
-				heading.text = "Finals";
+				heading.text = "Round 3";
 
-				for (int i = 0; i < 8; i++)
+				for (int i = 0; i < teams.Length; i++)
 				{
-					brackDisplay[i].name.text = teams[i].name;
-					brackDisplay[i].rank.text = teams[i].rank.ToString();
-					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
+					winnersDisplay1[i].name.text = teams[i].name;
+					winnersDisplay1[i].rank.text = teams[i].wins.ToString() + " " + teams[i].loss.ToString();
 				}
 
-				if (teams[4].name == tm.teams[playerTeam].name)
+				winnersBracket.transform.GetChild(0).gameObject.SetActive(true);
+
+				for (int i = 1; i < winnersBracket.transform.childCount; i++)
 				{
-					playButton.gameObject.SetActive(true);
-					tm.vsDisplay[0].name.text = teams[4].name;
-					tm.vsDisplay[0].rank.text = teams[4].rank.ToString();
-					tm.vsDisplay[1].name.text = teams[7].name;
-					tm.vsDisplay[1].rank.text = teams[7].rank.ToString();
-					tm.teams[playerTeam].nextOpp = teams[7].name;
+					winnersBracket.transform.GetChild(i).gameObject.SetActive(false);
 				}
-				else if (teams[7].name == tm.teams[playerTeam].name)
-				{
-					playButton.gameObject.SetActive(true);
-					tm.vsDisplay[0].name.text = teams[7].name;
-					tm.vsDisplay[0].rank.text = teams[7].rank.ToString();
-					tm.vsDisplay[1].name.text = teams[4].name;
-					tm.vsDisplay[1].rank.text = teams[4].rank.ToString();
-					tm.teams[playerTeam].nextOpp = teams[4].name;
-				}
-				else
-				{
-					tm.vs.SetActive(false);
-					playButton.gameObject.SetActive(false);
-				}
+				winnersBracket.SetActive(true);
+				losersBracket1.SetActive(false);
+				losersBracket2.SetActive(false);
+				finalsBracket.SetActive(false);
+
+				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffs.SetActive(true);
-				StartCoroutine(RefreshPlayoffPanel());
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
-				horizScrollBar.value = 1f;
-				StartCoroutine(SaveCareer(true));
+				horizScrollBar.value = 0;
+				vertScrollBar.value = 0;
+				//StartCoroutine(SaveCareer(true));
 				break;
 
 			case 4:
@@ -755,8 +738,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	IEnumerator SimPlayoff(bool game1, bool game2)
 	{
-
 		Debug.Log("Sim Playoffs - Round " + playoffRound);
+		Team[] gameX;
+		Team[] gameY;
 		Team game1X;
 		Team game1Y;
 		Team game2X;
@@ -765,44 +749,36 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		switch (playoffRound)
 		{
 			case 1:
-				if (!game1)
-				{
-					game1X = teams[0];
-					game1Y = teams[1];
+				gameX = new Team[8];
+				gameY = new Team[8];
 
-					if (Random.Range(0, game1X.strength) > Random.Range(0, game1Y.strength))
+				for (int i = 0; i < 8; i++)
+                {
+					for (int j = 0; j < teams.Length; j++)
 					{
-						teams[4] = game1X;
-						teams[5] = game1Y;
+						if (gameList[i].x == teams[j].id)
+						{
+							gameX[i] = teams[j];
+						}
+						else if (gameList[i].y == teams[j].id)
+                        {
+							gameY[i] = teams[j];
+                        }
+					}
+                }
+
+				for (int i = 0; i < 4; i++)
+                {
+					if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+					{
+						gameList[i + 8].x = gameX[i].id;
+						gameList[i + 13].x = gameY[i].id;
 					}
 					else
 					{
-						teams[4] = game1Y;
-						teams[5] = game1X;
+						gameList[i + 8].x = gameY[i].id;
+						gameList[i + 13].x = gameX[i].id;
 					}
-				}
-
-				if (!game2)
-				{
-					game2X = teams[2];
-					game2Y = teams[3];
-
-					if (Random.Range(0, game2X.strength) > Random.Range(0, game2Y.strength))
-					{
-						teams[6] = game2X;
-					}
-					else
-					{
-						teams[6] = game2Y;
-					}
-				}
-
-				for (int i = 0; i < 7; i++)
-				{
-					brackDisplay[i].rank.text = teams[i].rank.ToString();
-					brackDisplay[i].name.text = teams[i].name;
-					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
