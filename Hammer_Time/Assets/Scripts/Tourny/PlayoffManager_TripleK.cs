@@ -832,7 +832,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < losersBracket1.transform.childCount; i++)
 				{
-					if (i <= 2)
+					if (i <= 3)
 						losersBracket1.transform.GetChild(i).gameObject.SetActive(true);
 					else
 						losersBracket1.transform.GetChild(i).gameObject.SetActive(false);
@@ -950,7 +950,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < losersBracket2.transform.childCount; i++)
 				{
-					if (i <= 2)
+					if (i <= 3)
 						losersBracket2.transform.GetChild(i).gameObject.SetActive(true);
 					else
 						losersBracket2.transform.GetChild(i).gameObject.SetActive(false);
@@ -1009,10 +1009,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < winnersBracket.transform.childCount; i++)
 				{
-					if (i <= 2)
-						winnersBracket.transform.GetChild(i).gameObject.SetActive(true);
-					else
-						winnersBracket.transform.GetChild(i).gameObject.SetActive(false);
+					winnersBracket.transform.GetChild(i).gameObject.SetActive(true);
 				}
 
 				winnersBracket.SetActive(true);
