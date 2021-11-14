@@ -50,7 +50,6 @@ public class PlayoffManager : MonoBehaviour
 		}
 		else if(gsp.inProgress)
         {
-
             gsp.LoadTourny();
             gsp.inProgress = false;
 			gsp.careerLoad = false;
