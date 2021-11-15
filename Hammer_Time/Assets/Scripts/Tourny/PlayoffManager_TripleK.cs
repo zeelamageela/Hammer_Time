@@ -1209,8 +1209,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			case 16:
 				heading.text = "F - Round 16";
 
+				finalsDisplay15[0].panel.transform.parent.gameObject.SetActive(false);
 				for (int i = 0; i < 3; i++)
 				{
+					finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
 					if (i % 2 == 0)
 					{
 						for (int j = 0; j < teams.Length; j++)
@@ -1277,6 +1279,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < finalsDisplay17.Length; i++)
 				{
+					finalsDisplay17[i].panel.transform.parent.gameObject.SetActive(true);
 					if (i % 2 == 0)
 					{
 						for (int j = 0; j < teams.Length; j++)
@@ -2344,11 +2347,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					gameList[42].x = gameX[1].id;
 					gameX[1].loss++;
 				}
+
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			#region Round 16
@@ -2383,10 +2386,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			#region Round 17
@@ -2421,10 +2423,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			#region Round 18
@@ -2459,10 +2460,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			#region Round 19
@@ -2497,10 +2497,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			#region Round 20
@@ -2535,10 +2534,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
+				SimResults();
 				break;
 			#endregion
 			default:
@@ -3529,7 +3527,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 14
 			case 14:
-				heading.text = "B - Round 14";
+				heading.text = "B14 - Results";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -3539,10 +3537,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[38].x)
 							{
-								Debug.Log("Setting Losers Bracket B X-" + gameList[38].x + " - " + teams[j].name);
-								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 2)
+									losersDisplayB14[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									losersDisplayB14[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
@@ -3552,31 +3550,32 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[38].y)
 							{
-								Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
-								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 2)
+									losersDisplayB14[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									losersDisplayB14[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
 				}
-
+				for (int j = 0; j < teams.Length; j++)
+				{
+					if (teams[j].id == gameList[39].y)
+					{
+						Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
+						losersDisplayB14[2].panel.transform.parent.gameObject.SetActive(true);
+						losersDisplayB14[2].name.text = teams[j].name;
+						losersDisplayB14[2].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+						break;
+					}
+				}
 				for (int i = 0; i < losersBracket2.transform.childCount; i++)
 				{
 					losersBracket2.transform.GetChild(i).gameObject.SetActive(true);
 				}
 
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(true);
-				finalsBracket.SetActive(false);
-
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				playoffRound++;
 				horizScrollBar.value = 0.93f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -3584,33 +3583,27 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 15
 			case 15:
-				heading.text = "F - Round 15";
+				heading.text = "F15 - Results";
 
-				for (int i = 0; i < finalsDisplay15.Length; i++)
+				for (int i = 1; i < finalsDisplay15.Length; i++)
 				{
-					if (i == 0)
+					if(i % 2 == 0)
 					{
 						for (int j = 0; j < teams.Length; j++)
 						{
-							if (teams[j].id == gameList[41].x)
+							if (teams[j].id == gameList[40].y)
 							{
-								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 1)
+									finalsDisplay15[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay15[i].panel.GetComponent<Image>().color = yellow;
 							}
-						}
-					}
-					else if (i % 2 == 0)
-					{
-						for (int j = 0; j < teams.Length; j++)
-						{
-							if (teams[j].id == gameList[41 - (i / 2)].y)
+							if (teams[j].id == gameList[39].y)
 							{
-								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 2)
+									finalsDisplay15[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay15[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
@@ -3618,45 +3611,23 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						for (int j = 0; j < teams.Length; j++)
 						{
-							if (teams[j].id == gameList[41 - ((i + 1) / 2)].x)
+							if (teams[j].id == gameList[40].x)
 							{
-								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 1)
+									finalsDisplay15[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay15[i].panel.GetComponent<Image>().color = yellow;
+							}
+							if (teams[j].id == gameList[39].x)
+							{
+								if (teams[j].loss > 2)
+									finalsDisplay15[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay15[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
 				}
-
-				for (int i = 0; i < finalsBracket.transform.childCount; i++)
-				{
-					if (i == 0)
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
-					else
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
-				}
-
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
-
-				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				horizScrollBar.value = 0;
-				vertScrollBar.value = 0.9f;
-				//StartCoroutine(SaveCareer(true));
-				break;
-			#endregion
-			#region Round 16
-			case 16:
-				heading.text = "F - Round 16";
-
 				for (int i = 0; i < 3; i++)
 				{
 					if (i % 2 == 0)
@@ -3665,14 +3636,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41].x && i == 0)
 							{
-								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(false);
 							}
 							if (teams[j].id == gameList[42].y && i == 2)
 							{
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
+								finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
 								finalsDisplay16[i].name.text = teams[j].name;
 								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
 								break;
@@ -3686,6 +3655,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[41].y)
 							{
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
+								finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
 								finalsDisplay16[i].name.text = teams[j].name;
 								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
 								break;
@@ -3693,7 +3663,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						}
 					}
 				}
-
 
 				for (int i = 0; i < finalsBracket.transform.childCount; i++)
 				{
@@ -3703,17 +3672,76 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
 				}
 
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
+				StartCoroutine(RefreshPlayoffPanel());
+				playoffRound++;
+				horizScrollBar.value = 0;
+				vertScrollBar.value = 0.9f;
+				//StartCoroutine(SaveCareer(true));
+				break;
+			#endregion
+			#region Round 16
+			case 16:
+				heading.text = "F16 - Results";
+
+				for (int i = 0; i < 2; i++)
+				{
+					finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
+					if (i % 2 == 0)
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[44].x && teams[j].id == gameList[41].x)
+							{
+								finalsDisplay16[i].panel.GetComponent<Image>().color = yellow;
+								break;
+							}
+							else
+								finalsDisplay16[i].panel.GetComponent<Image>().color = dimmed;
+						}
+					}
+					else
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[44].x && teams[j].id == gameList[41].y)
+							{
+								finalsDisplay16[i].panel.GetComponent<Image>().color = yellow;
+								break;
+							}
+							else
+								finalsDisplay16[i].panel.GetComponent<Image>().color = dimmed;
+						}
+					}
+				}
+
+				for (int i = 0; i < finalsDisplay17.Length; i++)
+				{
+					for (int j = 0; j < teams.Length; j++)
+					{
+						if (i == 0 && teams[j].id == gameList[44].x)
+						{
+							Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
+							finalsDisplay17[i].panel.transform.parent.gameObject.SetActive(true);
+							finalsDisplay17[i].name.text = teams[j].name;
+							finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+							break;
+						}
+						else
+						{
+							finalsDisplay17[i].panel.transform.parent.gameObject.SetActive(false);
+						}
+					}
+				}
+				for (int i = 0; i < finalsBracket.transform.childCount; i++)
+				{
+					if (i <= 2)
+						finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
+					else
+						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
+				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				playoffRound++;
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.92f;
 				//StartCoroutine(SaveCareer(true));
@@ -3721,7 +3749,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 17
 			case 17:
-				heading.text = "F - Round 17";
+				heading.text = "F17 - Results";
 
 				for (int i = 0; i < finalsDisplay17.Length; i++)
 				{
@@ -3729,19 +3757,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						for (int j = 0; j < teams.Length; j++)
 						{
-							if (i == 0 && teams[j].id == gameList[44].x)
-							{
-								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
-							}
+							//if (i == 0 && teams[j].id == gameList[44].x)
+							//{
+							//	if (teams[j].loss > 2)
+							//		finalsDisplay17[i].panel.GetComponent<Image>().color = dimmed;
+							//	else
+							//		finalsDisplay17[i].panel.GetComponent<Image>().color = yellow;
+							//}
 							if (i == 2 && teams[j].id == gameList[42].y)
 							{
-								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 2)
+									finalsDisplay17[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay17[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
@@ -3751,43 +3779,14 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[42].x)
 							{
-								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
-								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+								if (teams[j].loss > 2)
+									finalsDisplay17[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay17[i].panel.GetComponent<Image>().color = yellow;
 							}
 						}
 					}
 				}
-
-				for (int i = 0; i < finalsBracket.transform.childCount; i++)
-				{
-					if (i <= 2)
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
-					else
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
-				}
-
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
-
-				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				horizScrollBar.value = 0.3f;
-				vertScrollBar.value = 0.9f;
-				//StartCoroutine(SaveCareer(true));
-				break;
-			#endregion
-			#region Round 18
-			case 18:
-				heading.text = "F - Round 18";
-
 				for (int i = 0; i < finalsDisplay18.Length; i++)
 				{
 					if (i % 2 == 0)
@@ -3817,7 +3816,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						}
 					}
 				}
-
 				for (int i = 0; i < finalsBracket.transform.childCount; i++)
 				{
 					if (i <= 3)
@@ -3826,17 +3824,85 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
 				}
 
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
+				StartCoroutine(RefreshPlayoffPanel());
+				playoffRound++;
+				horizScrollBar.value = 0.3f;
+				vertScrollBar.value = 0.9f;
+				//StartCoroutine(SaveCareer(true));
+				break;
+			#endregion
+			#region Round 18
+			case 18:
+				heading.text = "F18 - Results";
+
+				for (int i = 0; i < finalsDisplay18.Length; i++)
+				{
+					if (i % 2 == 0)
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[43].x)
+							{
+								if (teams[j].loss > 2)
+									finalsDisplay18[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay18[i].panel.GetComponent<Image>().color = yellow;
+							}
+						}
+					}
+					else
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[43].y)
+							{
+								if (teams[j].loss > 2)
+									finalsDisplay18[i].panel.GetComponent<Image>().color = dimmed;
+								else
+									finalsDisplay18[i].panel.GetComponent<Image>().color = yellow;
+							}
+						}
+					}
+				}
+				for (int i = 0; i < finalsDisplay19.Length; i++)
+				{
+					if (i % 2 == 0)
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[44].x)
+							{
+								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
+								finalsDisplay19[i].name.text = teams[j].name;
+								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+								break;
+							}
+						}
+					}
+					else
+					{
+						for (int j = 0; j < teams.Length; j++)
+						{
+							if (teams[j].id == gameList[44].y)
+							{
+								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
+								finalsDisplay19[i].name.text = teams[j].name;
+								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+								break;
+							}
+						}
+					}
+				}
+				for (int i = 0; i < finalsBracket.transform.childCount; i++)
+				{
+					if (i <= 4)
+						finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
+					else
+						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
+				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				playoffRound++;
 				horizScrollBar.value = 0.61f;
 				vertScrollBar.value = 0.95f;
 				//StartCoroutine(SaveCareer(true));
@@ -3878,23 +3944,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < finalsBracket.transform.childCount; i++)
 				{
-					if (i <= 4)
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
-					else
-						finalsBracket.transform.GetChild(i).gameObject.SetActive(false);
+					finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
 				}
 
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
-
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				playoffRound++;
 				horizScrollBar.value = 0.92f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -3902,7 +3956,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 20
 			case 20:
-				heading.text = "F - Round 20";
+				heading.text = "F20 - Results";
 
 				for (int j = 0; j < teams.Length; j++)
 				{
@@ -3920,17 +3974,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					finalsBracket.transform.GetChild(i).gameObject.SetActive(true);
 				}
 
-				winnersBracket.SetActive(false);
-				losersBracket1.SetActive(false);
-				losersBracket2.SetActive(false);
-				finalsBracket.SetActive(true);
-
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				playoffRound++;
 				horizScrollBar.value = 0.95f;
 				vertScrollBar.value = 0.96f;
 				//StartCoroutine(SaveCareer(true));
@@ -3938,58 +3983,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				#endregion
 		}
 	}
-	public void SimRound(int numberOfGames)
-    {
-		Team[] gameX;
-		Team[] gameY;
-		gameX = new Team[numberOfGames];
-		gameY = new Team[numberOfGames];
 
-		for (int i = 0; i < 8; i++)
-		{
-			for (int j = 0; j < teams.Length; j++)
-			{
-				if (gameList[i].x == teams[j].id)
-				{
-					gameX[i] = teams[j];
-				}
-				else if (gameList[i].y == teams[j].id)
-				{
-					gameY[i] = teams[j];
-				}
-			}
-		}
-
-		for (int i = 0; i < 8; i++)
-		{
-			if (i % 2 == 0)
-			{
-				if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
-				{
-					gameList[(i / 2) + 12].x = gameX[i].id;
-					gameList[(i / 2) + 12].x = gameY[i].id;
-				}
-				else
-				{
-					gameList[(i / 2) + 8].x = gameY[i].id;
-					gameList[(i / 2) + 12].x = gameX[i].id;
-				}
-			}
-			else
-			{
-				if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
-				{
-					gameList[((i - 1) / 2) + 8].y = gameX[i].id;
-					gameList[((i - 1) / 2) + 12].y = gameY[i].id;
-				}
-				else
-				{
-					gameList[((i - 1) / 2) + 8].y = gameY[i].id;
-					gameList[((i - 1) / 2) + 12].y = gameX[i].id;
-				}
-			}
-		}
-	}
 	IEnumerator LoadCareer()
 	{
 		gsp.LoadCareer();
