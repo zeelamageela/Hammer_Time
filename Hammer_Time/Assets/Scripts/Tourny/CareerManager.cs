@@ -553,6 +553,7 @@ public class CareerManager : MonoBehaviour
         bool inList = false;
         if (currentTourny.tour)
         {
+            gsp.KO = true;
             for (int i = 0; i < currentTourny.teams; i++)
             {
                 currentTournyTeams[i] = tourTeams[i];
@@ -581,6 +582,7 @@ public class CareerManager : MonoBehaviour
         }
         else
         {
+            gsp.KO = false;
             for (int i = 0; i < currentTourny.teams; i++)
             {
                 currentTournyTeams[i] = teams[i];
@@ -680,13 +682,13 @@ public class CareerManager : MonoBehaviour
                     case 7:
                         currentTournyTeams[i].tourPoints = 6f;
                         break;
-                    case 8:
+                    case 9:
                         currentTournyTeams[i].tourPoints = 4f;
                         break;
-                    case 9:
+                    case 11:
                         currentTournyTeams[i].tourPoints = 2f;
                         break;
-                    case 10:
+                    case 13:
                         currentTournyTeams[i].tourPoints = 1f;
                         break;
                 }

@@ -27,7 +27,10 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
+
     public bool tourny;
+    public bool KO;
+
     public bool story;
     public bool third;
     public bool skip;
@@ -413,6 +416,89 @@ public class GameSettingsPersist : MonoBehaviour
                 }
                 else
                     playoffTeams[i] = tm.tTeamList.nullTeam;
+            }
+            Debug.Log("teamList Count is " + teamList.Count);
+            myFile.Dispose();
+        }
+    }
+
+    public void LoadKOTourny()
+    {
+        TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        cm.LoadCareer();
+        PlayoffManager_TripleK pm3k = FindObjectOfType<PlayoffManager_TripleK>();
+        teamList = new List<Team_List>();
+        myFile = new EasyFileSave("my_player_data");
+        //inProgress = true;
+        if (myFile.Load())
+        {
+            //inProgress = myFile.GetBool("Tourny In Progress");
+            prize = myFile.GetInt("Prize Money");
+            draw = myFile.GetInt("Draw");
+            numberOfTeams = myFile.GetInt("Number Of Teams");
+            playoffRound = myFile.GetInt("Playoff Round");
+            playerTeamIndex = myFile.GetInt("Player Team");
+
+            string[] nameList = new string[numberOfTeams];
+            int[] winsList = new int[numberOfTeams];
+            int[] lossList = new int[numberOfTeams];
+            int[] rankList = new int[numberOfTeams];
+            string[] nextOppList = new string[numberOfTeams];
+            int[] strengthList = new int[numberOfTeams];
+            int[] idList = new int[numberOfTeams];
+
+            //Debug.Log("nameList Count is " + nameList.Length);
+            //nameList = myFile.GetArray<string>("Tourny Name List");
+            Debug.Log("nameList Item 1 is " + nameList[0]);
+            winsList = myFile.GetArray<int>("Tourny Wins List");
+            lossList = myFile.GetArray<int>("Tourny Loss List");
+            rankList = myFile.GetArray<int>("Tourny Rank List");
+            nextOppList = myFile.GetArray<string>("Tourny NextOpp List");
+            strengthList = myFile.GetArray<int>("Tourny Strength List");
+            idList = myFile.GetArray<int>("Tourny Team ID List");
+            //StartCoroutine(Wait());
+            Debug.Log("nameList Count is " + nameList.Length);
+
+            teams = new Team[idList.Length];
+
+            for (int i = 0; i < numberOfTeams; i++)
+            {
+                //Debug.Log("Name List is " + nameList[i]);
+                for (int j = 0; j < tTeamList.teams.Length; j++)
+                {
+                    if (idList[i] == tTeamList.teams[j].id)
+                    {
+                        teams[i] = tTeamList.teams[j];
+                    }
+                }
+                teams[i].wins = winsList[i];
+                //Debug.Log("Wins List is " + winsList[i]);
+                teams[i].loss = lossList[i];
+                //Debug.Log("Loss List is " + lossList[i]);
+                teams[i].rank = rankList[i];
+                teams[i].nextOpp = nextOppList[i];
+                teams[i].strength = strengthList[i];
+                if (i == playerTeamIndex)
+                {
+                    teams[i].name = teamName;
+                }
+            }
+            //StartCoroutine(Wait());
+            playerTeam = teams[playerTeamIndex];
+            for (int i = 0; i < numberOfTeams; i++)
+            {
+                teamList.Add(new Team_List(teams[i]));
+            }
+
+            int[] gameListX = myFile.GetArray<int>("Tourny Game X List");
+            int[] gameListY = myFile.GetArray<int>("Tourny Game Y List");
+            pm3k.gameList = new Vector2[gameListX.Length];
+
+            for (int i = 0; i < pm3k.gameList.Length; i++)
+            {
+                pm3k.gameList[i].x = gameListX[i];
+                pm3k.gameList[i].x = gameListX[i];
             }
             Debug.Log("teamList Count is " + teamList.Count);
             myFile.Dispose();

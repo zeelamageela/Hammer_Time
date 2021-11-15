@@ -248,7 +248,10 @@ public class TournySettings : MonoBehaviour
         //myFile.Add("Career Record", new Vector2(0, 0));
 
         //myFile.Save();
-        SceneManager.LoadScene("Tourny_Home_1");
+        if (gsp.KO)
+            SceneManager.LoadScene("Tourny_Home_3K");
+        else
+            SceneManager.LoadScene("Tourny_Home_1");
     }
 
     public void Player()
