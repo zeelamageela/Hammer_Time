@@ -10,5 +10,6 @@ public class BracketDisplay
     public Text rank;
 
     public GameObject panel;
-    
+    public GameObject bg;
+
 }

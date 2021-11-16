@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TigerForge;
 
 public class PlayoffManager_TripleK : MonoBehaviour
 {
-	public TournyManager tm;
+	
+	public CareerManager cm;
 	public Team[] teams;
 
 	public GameObject winnersBracket;
@@ -14,12 +16,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public GameObject losersBracket2;
 	public GameObject finalsBracket;
 
+	public Color green;
+	public Color red;
 	public Color yellow;
 	public Color dimmed;
 
 	public VSDisplay[] vsDisplay;
 	public Text vsDisplayTitle;
 	public Text vsDisplayVS;
+	public GameObject vsDisplayGO;
 
 	public BracketDisplay[] winnersDisplay1;
 	public BracketDisplay[] winnersDisplay3;
@@ -73,7 +78,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
-
+		cm = FindObjectOfType<CareerManager>();
 		myFile = new EasyFileSave("my_player_data");
 
 		//StartCoroutine(LoadCareer());
@@ -82,10 +87,18 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		teams = new Team[16];
 		gameList = new Vector2[46];
 		playoffs.SetActive(true);
+		if (cm)
+		{
+			playerTeam = cm.playerTeamIndex;
+		}
 		if (gsp.careerLoad)
 		{
 			gsp.LoadCareer();
 			careerEarnings = gsp.earnings;
+			if (cm)
+			{
+				playerTeam = cm.playerTeamIndex;
+			}
 			if (gsp.inProgress)
 			{
 				gsp.LoadKOTourny();
@@ -126,6 +139,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i] = gsp.teams[i];
+				teams[i].wins = 0;
+				teams[i].loss = 0;
 			}
 		}
 		else
@@ -156,7 +171,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			for (int j = 0; j < winnersBracket.transform.GetChild(i).childCount; j++)
 			{
-				for (int k = 0; k < 2; k++)
+				for (int k = 1; k < 3; k++)
 				{
 					winnersBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
 					yield return new WaitForEndOfFrame();
@@ -169,7 +184,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			for (int j = 0; j < losersBracket1.transform.GetChild(i).childCount; j++)
 			{
-				for (int k = 0; j < 2; j++)
+				for (int k = 1; k < 3; k++)
 				{
 					losersBracket1.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
 					yield return new WaitForEndOfFrame();
@@ -182,7 +197,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			for (int j = 0; j < losersBracket2.transform.GetChild(i).childCount; j++)
 			{
-				for (int k = 0; k < 2; k++)
+				for (int k = 1; k < 3; k++)
 				{
 					losersBracket2.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
 					yield return new WaitForEndOfFrame();
@@ -195,7 +210,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			for (int j = 0; j < finalsBracket.transform.GetChild(i).childCount; j++)
 			{
-				for (int k = 0; k < 2; k++)
+				for (int k = 1; k < 3; k++)
 				{
 					finalsBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
 					yield return new WaitForEndOfFrame();
@@ -222,171 +237,44 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		}
 		//teams = gsp.teams;
 
-		for (int i = 0; i < tm.teams.Length; i++)
+		for (int i = 0; i < teams.Length; i++)
 		{
-			if (tm.teams[i].id == gsp.playerTeam.id)
+			if (teams[i].id == gsp.playerTeam.id)
 				playerTeam = i;
-			if (tm.teams[i].name == gsp.playerTeam.nextOpp)
+			if (teams[i].name == gsp.playerTeam.nextOpp)
 				oppTeam = i;
 		}
 
 		Debug.Log("OppTeam is " + oppTeam);
-		switch (playoffRound)
-		{
-			case 1:
-				bool game1 = false;
-				bool game2 = false;
-
-				for (int i = 0; i < 4; i++)
-				{
-					if (tm.teams[playerTeam] == teams[i])
-					{
-						if (i < 2)
-							game1 = true;
-						else
-							game2 = true;
-					}
-				}
-
-				if (game1)
-				{
-					Debug.Log("Game 1 - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
-					if (gsp.playerTeam.name == gsp.redTeamName)
-					{
-						if (gsp.redScore > gsp.yellowScore)
-						{
-							Debug.Log("Red beat Yellow");
-							teams[4] = tm.teams[playerTeam];
-							teams[5] = tm.teams[oppTeam];
-						}
-						else
-						{
-							Debug.Log("Yellow beat Red");
-							teams[5] = tm.teams[playerTeam];
-							teams[4] = tm.teams[oppTeam];
-						}
-					}
-					else
-					{
-						if (gsp.redScore < gsp.yellowScore)
-						{
-							Debug.Log("Yellow beat Red");
-							teams[4] = tm.teams[playerTeam];
-							teams[5] = tm.teams[oppTeam];
-						}
-						else
-						{
-							Debug.Log("Red beat Yellow");
-							teams[5] = tm.teams[playerTeam];
-							teams[4] = tm.teams[oppTeam];
-						}
-					}
-				}
-
-				if (game2)
-				{
-					if (gsp.playerTeam.name == gsp.redTeamName)
-					{
-						if (gsp.redScore > gsp.yellowScore)
-						{
-							teams[6] = tm.teams[playerTeam];
-						}
-						else
-						{
-							teams[6] = tm.teams[oppTeam];
-						}
-					}
-					else
-					{
-						if (gsp.redScore < gsp.yellowScore)
-						{
-							teams[6] = tm.teams[playerTeam];
-						}
-						else
-						{
-							teams[6] = tm.teams[oppTeam];
-						}
-					}
-				}
-
-				StartCoroutine(SimPlayoff());
-				break;
-
-			case 2:
-
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						teams[7] = tm.teams[playerTeam];
-					}
-					else
-					{
-						teams[7] = tm.teams[oppTeam];
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						teams[7] = tm.teams[playerTeam];
-					}
-					else
-					{
-						teams[7] = tm.teams[oppTeam];
-					}
-				}
-				playoffRound++;
-				break;
-
-			case 3:
-
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						teams[8] = tm.teams[playerTeam];
-					}
-					else
-					{
-						teams[8] = tm.teams[oppTeam];
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						teams[8] = tm.teams[playerTeam];
-					}
-					else
-					{
-						teams[8] = tm.teams[oppTeam];
-					}
-				}
-				playoffRound++;
-				break;
-		}
-
-		SetPlayoffs();
+		
 	}
 
 	public void SetPlayoffs()
 	{
 		Debug.Log("Set Playoffs 3K - Round " + playoffRound);
+		bool playerGame = false;
 		switch (playoffRound)
 		{
             #region Round 1
             case 1:
 				heading.text = "Round 1";
-
+				playerGame = true;
 				for (int i = 0; i < winnersDisplay1.Length; i++)
 				{
 					winnersDisplay1[i].name.text = teams[i].name;
 					winnersDisplay1[i].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
 					if (i % 2 == 0 && gameList[i / 2].x == playerTeam)
-						 oppTeam = (int)gameList[i / 2].y;
+					{
+						oppTeam = (int)gameList[i / 2].y;
+						winnersDisplay1[i].bg.GetComponent<Image>().color = yellow;
+						playerGame = true;
+					}
 					if (i % 2 == 1 && gameList[(i - 1) / 2].y == playerTeam)
+					{
 						oppTeam = (int)gameList[(i - 1) / 2].x;
+						winnersDisplay1[i].bg.GetComponent<Image>().color = yellow;
+						playerGame = true;
+					}
 				}
 
 				for (int i = 0; i < teams.Length; i++)
@@ -415,13 +303,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
+				playButton.gameObject.SetActive(true);
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
-				vertScrollBar.value = 1;
 				//StartCoroutine(SaveCareer(true));
 				break;
 #endregion
@@ -438,7 +323,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[(i / 2) + 8].x)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[(i / 2) + 8].y;
+									losersDisplayA2[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 8].x + " - " + teams[j].name);
 								losersDisplayA2[i].name.text = teams[j].name;
 								losersDisplayA2[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -450,7 +339,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[((i - 1) / 2) + 8].y)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[((i - 1) / 2) + 8].x;
+									losersDisplayA2[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 8].y + " - " + teams[j].name);
 								losersDisplayA2[i].name.text = teams[j].name;
 								losersDisplayA2[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -497,7 +390,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[(i / 2) + 12].x)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[(i / 2) + 12].y;
+									winnersDisplay3[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[(i / 2) + 12].x + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
 								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -508,7 +405,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[((i - 1) / 2) + 12].y)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[((i - 1) / 2) + 12].x;
+									winnersDisplay3[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket Y-" + gameList[((i - 1) / 2) + 12].x + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
 								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -555,7 +456,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[(i / 2) + 16].x)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[(i / 2) + 16].y;
+									losersDisplayA4[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 16].x + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
 								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -570,7 +475,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							if (teams[j].id == gameList[((i - 1) / 2) + 16].y)
 							{
 								if (teams[j].id == playerTeam)
+								{
 									oppTeam = (int)gameList[((i - 1) / 2) + 16].x;
+									losersDisplayA4[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 16].y + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
 								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -616,6 +525,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 20].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 20].y;
+									losersDisplayB5[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 20].x + " - " + teams[j].name);
 								losersDisplayB5[i].name.text = teams[j].name;
 								losersDisplayB5[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -629,6 +544,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 20].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 20].x;
+									losersDisplayB5[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 20].y + " - " + teams[j].name);
 								losersDisplayB5[i].name.text = teams[j].name;
 								losersDisplayB5[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -674,6 +595,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 24].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 24].y;
+									losersDisplayB6[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 24].x + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
 								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -687,6 +614,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 24].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 24].x;
+									losersDisplayB6[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 24].y + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
 								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -732,6 +665,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 26].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 26].y;
+									winnersDisplay7[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[(i / 2) + 26].x + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
 								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -745,6 +684,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 26].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 26].x;
+									winnersDisplay7[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket Y-" + gameList[((i - 1) / 2) + 26].y + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
 								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -790,6 +735,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 28].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 28].y;
+									losersDisplayA8[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 28].x + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
 								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -803,6 +754,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 28].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 28].x;
+									losersDisplayA8[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 28].y + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
 								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -848,6 +805,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 30].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 30].y;
+									losersDisplayA9[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 30].x + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
 								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -861,6 +824,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 30].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 30].x;
+									losersDisplayA9[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 30].y + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
 								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -907,6 +876,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 32].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 32].y;
+									losersDisplayB10[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 32].x + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
 								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -920,6 +895,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 32].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 32].x;
+									losersDisplayB10[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 32].y + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
 								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -965,6 +946,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[(i / 2) + 34].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[(i / 2) + 34].y;
+									losersDisplayB11[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 34].x + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
 								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -978,6 +965,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[((i - 1) / 2) + 34].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[((i - 1) / 2) + 34].x;
+									losersDisplayB11[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 34].y + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
 								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1023,6 +1016,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[36].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[36].y;
+									winnersDisplay12[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[36].x + " - " + teams[j].name);
 								winnersDisplay12[i].name.text = teams[j].name;
 								winnersDisplay12[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1036,6 +1035,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[36].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[36].x;
+									winnersDisplay12[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Winners Bracket Y-" + gameList[36].y + " - " + teams[j].name);
 								winnersDisplay12[i].name.text = teams[j].name;
 								winnersDisplay12[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1078,6 +1083,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[37].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[37].y;
+									losersDisplayA13[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[37].x + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
 								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1091,6 +1102,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[37].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[37].x;
+									losersDisplayA13[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[37].y + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
 								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1133,6 +1150,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[38].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[38].y;
+									losersDisplayB14[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[38].x + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
 								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1146,6 +1169,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[38].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[38].x;
+									losersDisplayB14[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
 								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1188,6 +1217,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = 99;
+									finalsDisplay15[i].bg.GetComponent<Image>().color = yellow;
+								}
+
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
 								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1201,6 +1236,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41 - (i / 2)].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[41 - (i / 2)].x;
+									finalsDisplay15[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
 								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1214,6 +1255,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41 - ((i + 1) / 2)].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[41 - ((i + 1) / 2)].y;
+									finalsDisplay15[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
 								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1261,6 +1308,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41].x && i == 0)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[41].y;
+									finalsDisplay16[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
 								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1268,6 +1321,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							}
 							if (teams[j].id == gameList[42].y && i == 2)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[42].x;
+									finalsDisplay16[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
 								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1281,6 +1340,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[41].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[41].x;
+									finalsDisplay16[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
 								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1329,6 +1394,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (i == 0 && teams[j].id == gameList[44].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[44].y;
+									finalsDisplay17[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
 								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1336,6 +1407,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							}
 							if (i == 2 && teams[j].id == gameList[42].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[42].x;
+									finalsDisplay17[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
 								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1349,6 +1426,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[42].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[42].y;
+									finalsDisplay17[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
 								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1395,6 +1478,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[43].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[43].y;
+									finalsDisplay18[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
 								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1408,6 +1497,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[43].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[43].x;
+									finalsDisplay18[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
 								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1455,6 +1550,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[44].x)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[44].y;
+									finalsDisplay19[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
 								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1468,6 +1569,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[44].y)
 							{
+								if (teams[j].id == playerTeam)
+								{
+									oppTeam = (int)gameList[44].x;
+									finalsDisplay19[i].bg.GetComponent<Image>().color = yellow;
+									playerGame = true;
+								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
 								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
@@ -1538,6 +1645,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				break;
 				#endregion
 		}
+
+		if (playerGame)
+			vsDisplayGO.SetActive(true);
+		else
+			vsDisplayGO.SetActive(false);
+
 		for (int i = 0; i < teams.Length; i++)
 		{
 			if (teams[i].id == playerTeam)
@@ -2610,6 +2723,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		}
 		yield break;
 	}
+
 	public void SimResults()
 	{
 		Debug.Log("Sim Results 3K - Round " + playoffRound);
@@ -2730,8 +2844,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffRound++;
-				playoffs.SetActive(true);
-
+				playButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0;
@@ -4088,6 +4201,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				horizScrollBar.value = 0.92f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
+				contButton.gameObject.SetActive(false);
+				playButton.gameObject.SetActive(false);
+				nextButton.gameObject.SetActive(true);
 				break;
 			#endregion
 			#region Round 20
@@ -4118,10 +4234,44 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				break;
 				#endregion
 		}
-		if (playoffRound < 0)
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (teams[i].id == playerTeam)
+			{
+				vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+				vsDisplay[0].name.text = teams[i].name;
+			}
+			if (teams[i].id == oppTeam)
+			{
+				vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+				vsDisplay[1].name.text = teams[i].name;
+			}
+		}
+
+		if (playoffRound < 15)
         {
 			StartCoroutine(SimToFinals());
         }
+	}
+	public void PlayRound()
+	{
+		gsp.TournyKOSetup();
+		SceneManager.LoadScene("End_Menu_Tourny_1");
+	}
+	public void TournyComplete()
+	{
+		CareerManager cm = FindObjectOfType<CareerManager>();
+		gsp.teams = teams;
+		cm.earnings = gsp.earnings;
+		cm.record = gsp.record;
+		gsp.draw = 0;
+		gsp.playoffRound = 0;
+		gsp.inProgress = false;
+		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
+		Debug.Log("CM earnings are " + cm.earnings);
+		cm.TournyResults();
+		SceneManager.LoadScene("Arena_Selector");
 	}
 
 	IEnumerator SimToFinals()

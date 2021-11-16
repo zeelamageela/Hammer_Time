@@ -308,7 +308,65 @@ public class GameSettingsPersist : MonoBehaviour
             redHammer = false;
         }
     }
+    public void TournyKOSetup()
+    {
+        PlayoffManager_TripleK pm = FindObjectOfType<PlayoffManager_TripleK>();
+        careerLoad = false;
+        tourny = true;
+        draw = 0;
+        playoffRound = pm.playoffRound;
+        KO = true;
+        playerTeamIndex = pm.playerTeam;
 
+        teams = pm.teams;
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i].id == playerTeamIndex)
+            {
+                playerTeam = teams[i];
+            }
+        }
+        endCurrent = 1;
+        redScore = 0;
+        yellowScore = 0;
+
+        //playerGO = tm.playerGO;
+        
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            aiYellow = true;
+            aiRed = false;
+
+            yellowTeamName = playerTeam.nextOpp;
+            redTeamName = playerTeam.name;
+            redTeamColour = teamColour;
+            yellowTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
+        }
+        else
+        {
+            aiRed = true;
+            aiYellow = false;
+            yellowTeamName = playerTeam.name;
+            redTeamName = playerTeam.nextOpp;
+            yellowTeamColour = teamColour;
+            redTeamColour = new Color(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f));
+        }
+
+        if (Random.Range(0f, 1f) < 0.5f)
+        {
+            redHammer = true;
+        }
+        else
+        {
+            redHammer = false;
+        }
+    }
     public void LoadCareer()
     {
         teamList = new List<Team_List>();
