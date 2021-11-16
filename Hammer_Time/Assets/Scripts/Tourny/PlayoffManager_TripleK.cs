@@ -2673,6 +2673,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					gameX[0].loss++;
 				}
 
+				for (int i = 0; i < gameX.Length; i++)
+				{
+					gameX[0].tourRecord = new Vector2(gameX[0].wins, gameX[0].loss);
+					gameY[0].tourRecord = new Vector2(gameY[0].wins, gameY[0].loss);
+				}
+
 				StartCoroutine(RefreshPlayoffPanel());
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);

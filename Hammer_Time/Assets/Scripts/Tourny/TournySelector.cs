@@ -14,6 +14,10 @@ public class TournySelector : MonoBehaviour
     public Text weekText;
     public Text teamNameText;
 
+    public Scrollbar hScroll;
+    bool drag;
+
+    public GameObject playButton;
     public Tourny[] tournies;
     public Tourny[] tour;
     public Tourny[] provQual;
@@ -85,10 +89,25 @@ public class TournySelector : MonoBehaviour
         SetActiveTournies();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseDrag()
     {
-        
+        drag = true;
+    }
+    // Update is called once per frame
+    public void Update()
+    {
+        if (hScroll.value < 0.25f)
+        {
+            hScroll.value = Mathf.Lerp(hScroll.value, 0, 2 * Time.deltaTime);
+        }
+        if (hScroll.value >= 0.25f && hScroll.value < 0.75f)
+        {
+            hScroll.value = Mathf.Lerp(hScroll.value, 0.5f, 2 * Time.deltaTime);
+        }
+        if (hScroll.value >= 0.75f)
+        {
+            hScroll.value = Mathf.Lerp(hScroll.value, 1, 2 * Time.deltaTime);
+        }
     }
 
     void Shuffle(Tourny[] a)
@@ -746,7 +765,7 @@ public class TournySelector : MonoBehaviour
             panels[i].format.text = activeTournies[i].format;
             panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString();
             panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString();
-
+            playButton.SetActive(false);
         }
     }
     public void NewSeason()
@@ -813,6 +832,7 @@ public class TournySelector : MonoBehaviour
         currentTourny = activeTournies[button];
         Debug.Log("Button is " + button);
         cm.SetupTourny();
+        playButton.SetActive(true);
     }
 
     public void Profile(bool on)

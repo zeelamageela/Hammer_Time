@@ -378,7 +378,7 @@ RectTransform:
   m_LocalScale: {x: 0.49999955, y: 0.49999955, z: 1}
   m_Children: []
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -536,7 +536,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_SizeDelta: {x: 0, y: 95}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &64754807
 MonoBehaviour:
@@ -581,9 +581,9 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 0.50000006
-  m_Size: 0.33607185
-  m_NumberOfSteps: 3
+  m_Value: 0
+  m_Size: 0.33607182
+  m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1467,7 +1467,7 @@ RectTransform:
   m_LocalScale: {x: 0.49999955, y: 0.49999955, z: 1}
   m_Children: []
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3615,7 +3615,7 @@ RectTransform:
   - {fileID: 78975591}
   - {fileID: 163948476}
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3965,7 +3965,7 @@ RectTransform:
   - {fileID: 1648639451}
   - {fileID: 768246639}
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4547,6 +4547,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1800610883}
   - {fileID: 978771553}
   - {fileID: 1323944289}
   - {fileID: 45633510}
@@ -4558,7 +4559,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 1090.9999, y: 0.44995117}
   m_SizeDelta: {x: 2182, y: -0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1282229478
@@ -4828,7 +4829,7 @@ RectTransform:
   m_LocalScale: {x: 0.49999955, y: 0.49999955, z: 1}
   m_Children: []
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4890,11 +4891,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 750880077222042849, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -167.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 750880077222042849, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -12.699951
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4219014260906158969, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_Type
@@ -4908,6 +4909,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: DisplayNextSentence
       objectReference: {fileID: 0}
+    - target: {fileID: 6899141912123469868, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -296
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141912123469868, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 325.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141912123469869, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1849084681549940793, guid: d2df8bb65366199479bb7ae9811ec627, type: 3}
+    - target: {fileID: 6899141912123469870, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: 48ab3d69028e6d844b20050540c842cd, type: 2}
     - target: {fileID: 6899141913651481762, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_Name
       value: DialogueCanvas
@@ -5855,10 +5872,12 @@ MonoBehaviour:
   coachGreen: {fileID: 1671106720}
   weekText: {fileID: 1555613762}
   teamNameText: {fileID: 829050905}
+  hScroll: {fileID: 64754807}
+  playButton: {fileID: 1767766669}
   tournies:
-  - id: 0
+  - name: The Leduc Fall Classic
+    id: 0
     location: Leduc
-    name: The Leduc Fall Classic
     teams: 8
     prizeMoney: 12000
     entryFee: 100
@@ -5867,9 +5886,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 1
+  - name: The Jim Jumbo Memorial Spiel
+    id: 1
     location: Stettler
-    name: The Jim Jumbo Memorial Spiel
     teams: 12
     prizeMoney: 10000
     entryFee: 100
@@ -5878,9 +5897,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 2
+  - name: The AlberTel Open
+    id: 2
     location: Edmonton
-    name: The AlberTel Open
     teams: 16
     prizeMoney: 50000
     entryFee: 250
@@ -5889,9 +5908,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 3
+  - name: Canmore Club Championship
+    id: 3
     location: Canmore
-    name: Canmore Club Championship
     teams: 16
     prizeMoney: 12000
     entryFee: 250
@@ -5900,9 +5919,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 4
+  - name: Big Ben's Big Cash $piel
+    id: 4
     location: Lethbridge
-    name: Big Ben's Big Cash $piel
     teams: 8
     prizeMoney: 80000
     entryFee: 10000
@@ -5911,9 +5930,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 5
+  - name: Alberta Energy Curling Classic
+    id: 5
     location: Lethbridge
-    name: Alberta Energy Curling Classic
     teams: 16
     prizeMoney: 10000
     entryFee: 150
@@ -5922,9 +5941,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 6
+  - name: Tony's Pizza Cup
+    id: 6
     location: Cochrane
-    name: Tony's Pizza Cup
     teams: 12
     prizeMoney: 6500
     entryFee: 100
@@ -5934,76 +5953,76 @@ MonoBehaviour:
     tour: 0
     complete: 0
   tour:
-  - id: 0
+  - name: Alberta Curling Tour - Fort Mac Classic
+    id: 0
     location: Fort McMurray
-    name: Alberta Curling Tour - Fort Mac Classic
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: 16
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-  - id: 1
+  - name: Alberta Curling Tour - The Banff Open
+    id: 1
     location: Banff
-    name: Alberta Curling Tour - The Banff Open
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: 16
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-  - id: 2
+  - name: Alberta Curling Tour - The Hat Cup
+    id: 2
     location: Medicine Hat
-    name: Alberta Curling Tour - The Hat Cup
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: 16
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-  - id: 3
+  - name: Alberta Curling Tour - The Airdrie Cup
+    id: 3
     location: Airdrie
-    name: Alberta Curling Tour - The Airdrie Cup
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: 16
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-  - id: 4
+  - name: Alberta Curling Tour - The Tour Spiel
+    id: 4
     location: Cochrane
-    name: Alberta Curling Tour - The Tour Spiel
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: 16
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-  - id: 5
+  - name: Alberta Curling Tour - The Last Chance Cup
+    id: 5
     location: Lethbridge
-    name: Alberta Curling Tour - The Last Chance Cup
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Round Robin
+    format: Triple Knockout
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
   provQual:
-  - id: 0
+  - name: Provincial Qualifier
+    id: 0
     location: Jasper
-    name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
     entryFee: 250
@@ -6012,9 +6031,9 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - id: 1
+  - name: Provincial Qualifier
+    id: 1
     location: Okotoks
-    name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
     entryFee: 250
@@ -6023,9 +6042,9 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - id: 2
+  - name: Provincial Qualifier
+    id: 2
     location: Sherwood Park
-    name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
     entryFee: 250
@@ -6034,9 +6053,9 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-  - id: 3
+  - name: Provincial Qualifier
+    id: 3
     location: Slave Lake
-    name: Provincial Qualifier
     teams: 8
     prizeMoney: 25000
     entryFee: 250
@@ -6046,9 +6065,9 @@ MonoBehaviour:
     tour: 0
     complete: 0
   tourChampionship:
+    name: Alberta Curling Tour Championship
     id: 0
     location: Edmonton
-    name: Alberta Curling Tour Championship
     teams: 6
     prizeMoney: 250000
     entryFee: 0
@@ -6058,9 +6077,9 @@ MonoBehaviour:
     tour: 0
     complete: 0
   provChampionship:
+    name: The Provincial Championship
     id: 0
     location: Red Deer
-    name: The Provincial Championship
     teams: 16
     prizeMoney: 150000
     entryFee: 1500
@@ -6072,9 +6091,9 @@ MonoBehaviour:
   panel1Tournies: []
   panel2Tournies: []
   activeTournies:
-  - id: 0
+  - name: 
+    id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -6083,9 +6102,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 0
+  - name: 
+    id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -6094,9 +6113,9 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - id: 0
+  - name: 
+    id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -6106,9 +6125,9 @@ MonoBehaviour:
     tour: 0
     complete: 0
   emptyTourny:
+    name: Nothing Scheduled
     id: 0
     location: 
-    name: Nothing Scheduled
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -6118,9 +6137,9 @@ MonoBehaviour:
     tour: 0
     complete: 0
   currentTourny:
+    name: 
     id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -6835,7 +6854,7 @@ RectTransform:
   - {fileID: 1723336348}
   - {fileID: 1865550996}
   m_Father: {fileID: 1267664151}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -6936,9 +6955,9 @@ MonoBehaviour:
   m_Content: {fileID: 1267664151}
   m_Horizontal: 1
   m_Vertical: 0
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.05
-  m_Inertia: 0
+  m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
   m_Viewport: {fileID: 1964461511}
@@ -7352,7 +7371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1767766670
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7370,7 +7389,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 481.05496, y: -1538.8}
+  m_AnchoredPosition: {x: 481.05496, y: -1349}
   m_SizeDelta: {x: 600, y: 275}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1767766671
@@ -7545,6 +7564,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790549617}
+  m_CullTransparentMesh: 1
+--- !u!1 &1800610882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1800610883}
+  - component: {fileID: 1800610885}
+  - component: {fileID: 1800610884}
+  m_Layer: 5
+  m_Name: BG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1800610883
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800610882}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1267664151}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -26.400024, y: -42.150024}
+  m_SizeDelta: {x: -79.4, y: -84.3}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1800610884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800610882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.1254902, g: 0.15686275, b: 0.1764706, a: 0.32941177}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1800610885
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800610882}
   m_CullTransparentMesh: 1
 --- !u!1 &1800793232
 GameObject:
@@ -8079,6 +8173,7 @@ MonoBehaviour:
   yellowScore: 0
   redScore: 0
   tourny: 0
+  KO: 0
   story: 0
   third: 0
   skip: 0
@@ -9396,6 +9491,8 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
+  xp: 0
+  totalXp: 0
   inProgress: 0
   season: 0
   totalTeams: 32
@@ -9418,9 +9515,9 @@ MonoBehaviour:
   tourTeams: []
   currentTournyTeams: []
   currentTourny:
+    name: 
     id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0

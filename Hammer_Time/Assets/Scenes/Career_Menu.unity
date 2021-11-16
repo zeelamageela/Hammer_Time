@@ -724,6 +724,7 @@ MonoBehaviour:
   yellowScore: 0
   redScore: 0
   tourny: 0
+  KO: 0
   story: 0
   third: 0
   skip: 0
@@ -1024,6 +1025,7 @@ GameObject:
   - component: {fileID: 547480746}
   - component: {fileID: 547480748}
   - component: {fileID: 547480747}
+  - component: {fileID: 547480749}
   m_Layer: 5
   m_Name: DrawText
   m_TagString: Untagged
@@ -1075,7 +1077,7 @@ MonoBehaviour:
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 1
+    m_MinSize: 0
     m_MaxSize: 250
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1083,7 +1085,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Draw #
+  m_Text: 123456789123456789
 --- !u!222 &547480748
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1092,6 +1094,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547480745}
   m_CullTransparentMesh: 1
+--- !u!114 &547480749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547480745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  charLimit: 0
+  lengthLimit: 18
+  fontSizeMin: 35
+  fontSizeMax: 100
 --- !u!1 &554924580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1186,7 +1204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &569149729
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3078,6 +3096,8 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
+  xp: 0
+  totalXp: 0
   inProgress: 0
   season: 0
   totalTeams: 32
@@ -3100,9 +3120,9 @@ MonoBehaviour:
   tourTeams: []
   currentTournyTeams: []
   currentTourny:
+    name: 
     id: 0
     location: 
-    name: 
     teams: 0
     prizeMoney: 0
     entryFee: 0
@@ -3116,6 +3136,7 @@ MonoBehaviour:
   prov: []
   champ: []
   activeTournies: []
+  coachDialogue: 
 --- !u!4 &1524077173
 Transform:
   m_ObjectHideFlags: 0

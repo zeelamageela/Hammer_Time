@@ -5,9 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class Tourny
 {
+    public string name;
     public int id;
     public string location;
-    public string name;
 
     public int teams;
     public int prizeMoney;
