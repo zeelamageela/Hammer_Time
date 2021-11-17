@@ -539,34 +539,39 @@ public class GameSettingsPersist : MonoBehaviour
                         teams[i] = tTeamList.teams[j];
                     }
                 }
-                teams[i].wins = winsList[i];
+            }
+            for (int i = 0; i < teams.Length; i++)
+            {
+                //teams[i].wins = winsList[i];
                 //Debug.Log("Wins List is " + winsList[i]);
-                teams[i].loss = lossList[i];
+                //teams[i].loss = lossList[i];
                 //Debug.Log("Loss List is " + lossList[i]);
-                teams[i].rank = rankList[i];
-                teams[i].nextOpp = nextOppList[i];
-                teams[i].strength = strengthList[i];
-                if (i == playerTeamIndex)
+                //teams[i].rank = rankList[i];
+                //teams[i].nextOpp = nextOppList[i];
+                //teams[i].strength = strengthList[i];
+
+                if (teams[i].id == playerTeamIndex)
                 {
                     teams[i].name = teamName;
+                    playerTeam = teams[i];
                 }
             }
             //StartCoroutine(Wait());
-            playerTeam = teams[playerTeamIndex];
+            //playerTeam = teams[playerTeamIndex];
             for (int i = 0; i < numberOfTeams; i++)
             {
                 teamList.Add(new Team_List(teams[i]));
             }
 
-            int[] gameListX = myFile.GetArray<int>("Tourny Game X List");
-            int[] gameListY = myFile.GetArray<int>("Tourny Game Y List");
-            pm3k.gameList = new Vector2[gameListX.Length];
+            //int[] gameListX = myFile.GetArray<int>("Tourny Game X List");
+            //int[] gameListY = myFile.GetArray<int>("Tourny Game Y List");
+            //pm3k.gameList = new Vector2[gameListX.Length];
 
-            for (int i = 0; i < pm3k.gameList.Length; i++)
-            {
-                pm3k.gameList[i].x = gameListX[i];
-                pm3k.gameList[i].x = gameListX[i];
-            }
+            //for (int i = 0; i < pm3k.gameList.Length; i++)
+            //{
+            //    pm3k.gameList[i].x = gameListX[i];
+            //    pm3k.gameList[i].y = gameListY[i];
+            //}
             Debug.Log("teamList Count is " + teamList.Count);
             myFile.Dispose();
         }

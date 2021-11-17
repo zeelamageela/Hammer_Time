@@ -45,7 +45,7 @@ public class CameraManager : MonoBehaviour
     public void ShotSetup()
     {
         vcam.enabled = false;
-        vcam.m_Lens.OrthographicSize = 7.5f;
+        vcam.m_Lens.OrthographicSize = 8.5f;
         Debug.Log("Shot Setup");
         main.depth = 1;
         house.depth = -1;
