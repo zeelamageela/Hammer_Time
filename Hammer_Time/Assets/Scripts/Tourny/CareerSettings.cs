@@ -114,6 +114,7 @@ public class CareerSettings : MonoBehaviour
             if (gsp.inProgress)
             {
                 tournyInProg.SetActive(true);
+                gsp.KO = myFile.GetBool("Knockout Tourny");
                 tournyNameLoad.text = myFile.GetString("Current Tourny Name");
                 int draw = myFile.GetInt("Draw");
                 int playoffRound = myFile.GetInt("Playoff Round");
@@ -121,10 +122,6 @@ public class CareerSettings : MonoBehaviour
                     drawLoad.text = "Playoff Round " + playoffRound;
                 else
                     drawLoad.text = "Draw " + draw;
-                //cm.currentTourny.id = myFile.GetInt("Current Tourny ID");
-                //cm.currentTourny.tour = myFile.GetBool("Current Tourny Tour");
-                //cm.currentTourny.qualifier = myFile.GetBool("Current Tourny Qualifier");
-                //cm.currentTourny.championship = myFile.GetBool("Current Tourny Championship");
             }
             else
                 tournyInProg.SetActive(false);
@@ -133,18 +130,12 @@ public class CareerSettings : MonoBehaviour
             yield return new WaitForEndOfFrame();
 
             gsp.careerLoad = true;
-            //if (gsp.inProgress)
-            //{
-            //    drawLoad.text = gsp.draw.ToString();
-            //    tournyNameLoad.text = cm.currentTourny.name;
-            //}
-
-            load.SetActive(true);
-            player.SetActive(false);
             nameLoad.text = playerName + " " + teamName;
             colourLoad.color = teamColour;
             earningsLoad.text = "$" + cm.earnings.ToString();
             recordLoad.text = "Week " + week.ToString() + " | " + record.x.ToString() + " - " + record.y.ToString();
+            load.SetActive(true);
+            player.SetActive(false);
         }
         else
         {
@@ -159,7 +150,12 @@ public class CareerSettings : MonoBehaviour
         cm.LoadSettings();
 
         if (gsp.inProgress)
-            SceneManager.LoadScene("Tourny_Home_1");
+        {
+            if (gsp.KO)
+                SceneManager.LoadScene("Tourny_Home_3K");
+            else
+                SceneManager.LoadScene("Tourny_Home_1");
+        }
         else
             SceneManager.LoadScene("Arena_Selector");
     }

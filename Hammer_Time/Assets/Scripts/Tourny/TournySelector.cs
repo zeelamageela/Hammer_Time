@@ -17,6 +17,9 @@ public class TournySelector : MonoBehaviour
     public Scrollbar hScroll;
     bool drag;
 
+    public XPManager xpm;
+    public Text XPText;
+
     public GameObject playButton;
     public Tourny[] tournies;
     public Tourny[] tour;
@@ -55,7 +58,7 @@ public class TournySelector : MonoBehaviour
         //if (cm.inProgress)
             //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
-
+        XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
 
         if (cm.week == 0)
             NewSeason();
@@ -943,6 +946,26 @@ public class TournySelector : MonoBehaviour
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
             tourStandings.gameObject.SetActive(false);
+        }
+    }
+
+    public void XPWindow(bool on)
+    {
+        if (on)
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(false);
+            provStandings.gameObject.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
+            xpm.gameObject.SetActive(true);
+        }
+        else
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(true);
+            provStandings.gameObject.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
+            xpm.gameObject.SetActive(false);
         }
     }
 }

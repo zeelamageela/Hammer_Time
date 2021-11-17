@@ -40,6 +40,7 @@ public class CameraManager : MonoBehaviour
         {
             HouseView();
         }
+        vcam_ft.m_ScreenY = Mathf.Lerp(0.875f, 0.75f, -15f - main.transform.position.y);
     }
     public void ShotSetup()
     {
@@ -85,6 +86,7 @@ public class CameraManager : MonoBehaviour
     {
         Debug.Log("Rock Follow");
         vcam_ft.m_SoftZoneWidth = 2f;
+
         main.depth = 1;
         house.depth = -1;
         top.depth = -1;
@@ -109,11 +111,11 @@ public class CameraManager : MonoBehaviour
     }
     public void ZoomOutTrack(float dist)
     {
-        vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
+        vcam.m_Lens.OrthographicSize = ((8.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
     }
     public void InPlayZoom(float dist)
     {
-        vcam.m_Lens.OrthographicSize = ((7.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
+        vcam.m_Lens.OrthographicSize = ((8.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
     }
 
     public void HouseView()

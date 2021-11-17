@@ -30,6 +30,9 @@ public class CareerManager : MonoBehaviour
     public float xp;
     public float totalXp;
 
+    public CareerStats cStats;
+    public int skillPoints;
+
     public bool inProgress;
     public int season;
     public int totalTeams;
@@ -70,13 +73,8 @@ public class CareerManager : MonoBehaviour
 
     private void Start()
     {
-        //gsp = FindObjectOfType<GameSettingsPersist>();
         tm = FindObjectOfType<TournyManager>();
         pm = FindObjectOfType<PlayoffManager>();
-        //ts = FindObjectOfType<TournySettings>();
-        //tSel = FindObjectOfType<TournySelector>();
-
-        //teams = new Team[totalTeams];
         tourRankList = new List<TourStandings_List>();
         provRankList = new List<Standings_List>();
         //if (inProgress)
@@ -148,6 +146,8 @@ public class CareerManager : MonoBehaviour
             earnings = myFile.GetFloat("Career Earnings");
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
+            xp = myFile.GetFloat("XP");
+            totalXp = myFile.GetFloat("Total XP");
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
             if (tSel)
@@ -362,6 +362,7 @@ public class CareerManager : MonoBehaviour
 
     public void SaveCareer()
     {
+        Debug.Log("Saving Career - " + gsp.inProgress);
         myFile = new EasyFileSave("my_player_data");
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TournyManager>();
@@ -369,6 +370,7 @@ public class CareerManager : MonoBehaviour
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
         myFile.Add("Tourny In Progress", gsp.inProgress);
+        myFile.Add("Knockout Tourny", false);
         myFile.Add("Player Name", playerName);
         myFile.Add("Team Name", teamName);
         myFile.Add("Team Colour", teamColour);
@@ -380,7 +382,8 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
         myFile.Add("Tour Record", tourRecord);
-
+        myFile.Add("Total XP", totalXp);
+        myFile.Add("XP", xp);
         int[] idList = new int[teams.Length];
         int[] winsList = new int[teams.Length];
         int[] lossList = new int[teams.Length];
@@ -779,6 +782,7 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         inProgress = true;
 
+        gsp.cStats = cStats;
         teamRecords = new Vector4[totalTeams];
         tourRecords = new Vector4[totalTourTeams];
 
@@ -848,6 +852,7 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         tSel = FindObjectOfType<TournySelector>();
 
+
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
         coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
@@ -859,6 +864,15 @@ public class CareerManager : MonoBehaviour
         coachDialogue[0] = true;
         xp = 0f;
         totalXp = 0f;
+
+        cStats.drawAccuracy = 5;
+        cStats.guardAccuracy = 5;
+        cStats.takeOutAccuracy = 5;
+        cStats.guardAccuracy = 5;
+        cStats.sweepStrength = 5;
+        cStats.sweepEndurance = 5;
+        cStats.sweepHealth = 75;
+
         season++;
 
         Shuffle(tTeamList.teams);

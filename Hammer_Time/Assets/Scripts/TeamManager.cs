@@ -25,6 +25,12 @@ public class TeamManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         if (gsp.tourny)
         {
+            Shuffle(teamRed);
+            Shuffle(teamYellow);
+            for (int i = 0; i < teamRed.Length; i++)
+            {
+                //teamRed[i].charStats.drawAccuracy = gsp.cStats.drawAccuracy;
+            }
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
         }

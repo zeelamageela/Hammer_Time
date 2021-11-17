@@ -4301,6 +4301,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		myFile = new EasyFileSave("my_player_data");
 
+		myFile.Add("Knockout Tourny", gsp.KO);
 		myFile.Add("Career Record", gsp.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 		

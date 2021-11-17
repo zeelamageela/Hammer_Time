@@ -39,6 +39,8 @@ public class GameSettingsPersist : MonoBehaviour
     public float earnings;
     public Vector2 record;
 
+    public CareerStats cStats;
+
     public string redTeamName;
     public Color redTeamColour;
     public TeamMember[] redTeam;
@@ -203,7 +205,10 @@ public class GameSettingsPersist : MonoBehaviour
         for (int i = 0; i < cm.currentTourny.teams; i++)
         {
             if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+            {
                 playerTeamIndex = i;
+                playerTeam = cm.currentTournyTeams[i];
+            }
         }
         Debug.Log("Player Team Index in GSP is " + playerTeamIndex);
         endCurrent = 0;
@@ -324,6 +329,10 @@ public class GameSettingsPersist : MonoBehaviour
             if (teams[i].id == playerTeamIndex)
             {
                 playerTeam = teams[i];
+            }
+            if (teams[i].id == pm.oppTeam)
+            {
+                playerTeam.nextOpp = teams[i].name;
             }
         }
         endCurrent = 1;
