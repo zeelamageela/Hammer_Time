@@ -40,7 +40,7 @@ public class CameraManager : MonoBehaviour
         {
             HouseView();
         }
-        vcam_ft.m_ScreenY = Mathf.Lerp(0.875f, 0.75f, -15f - main.transform.position.y);
+        vcam_ft.m_ScreenY = Mathf.Lerp(0.85f, 0.75f, (-5f - main.transform.position.y) / 6f);
     }
     public void ShotSetup()
     {

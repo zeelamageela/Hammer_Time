@@ -10,6 +10,7 @@ public class SweeperSelector : MonoBehaviour
     public SweeperParent sweeperR;
     public Collider2D sweeperLCol;
     public Collider2D sweeperRCol;
+    public Collider2D sweepZoneCol;
 
     public GameObject panel;
     public RockManager rm;
@@ -70,7 +71,18 @@ public class SweeperSelector : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
+                if (hit.collider == sweepZoneCol)
+                {
+                    if (sm.sweep)
+                    {
+                        sm.SweepHard(false);
+                    }
+                    else
+                    {
+                        sm.SweepWeight(false);
+                    }
+                    Debug.Log(hit.collider.gameObject.name);
+                }
                 if (hit.collider == sweeperLCol)
                 {
                     if (sweeperL.sweep)

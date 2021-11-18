@@ -869,7 +869,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418176, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418177, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_RootOrder
@@ -939,6 +939,10 @@ PrefabInstance:
       propertyPath: sweeperR
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4255617394087418178, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
+      propertyPath: sweepZoneCol
+      value: 
+      objectReference: {fileID: 1108870801}
     - target: {fileID: 4255617394394023551, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -10062,6 +10066,13 @@ MonoBehaviour:
   teamName: 
   earnings: 0
   record: {x: 0, y: 0}
+  cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
   redTeamName: REDDD
   redTeamColour: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   redTeam:
@@ -15737,6 +15748,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 926392539}
   m_CullTransparentMesh: 1
+--- !u!4 &927428273 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4255617394087418177, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
+  m_PrefabInstance: {fileID: 104438119}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &929186687 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1358951887837846888, guid: 80a419baddcc10946854a44556921a0f, type: 3}
@@ -16525,6 +16541,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1108870799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1108870800}
+  - component: {fileID: 1108870801}
+  m_Layer: 9
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1108870800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108870799}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 927428273}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1108870801
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1108870799}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!114 &1157533000 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4255617394087418178, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}

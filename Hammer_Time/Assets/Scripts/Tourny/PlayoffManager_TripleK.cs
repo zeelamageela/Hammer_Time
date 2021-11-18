@@ -65,7 +65,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public Text careerEarningsText;
 
 	GameSettingsPersist gsp;
-
+	bool cont;
 	EasyFileSave myFile;
 	int pTeams;
 	public int playerTeam;
@@ -168,7 +168,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	void LoadPlayoffs()
 	{
-
+		
 		if (myFile.Load())
 		{
 			Debug.Log("Load Playoffs - Round " + playoffRound);
@@ -213,7 +213,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			myFile.Dispose();
         }
 		Debug.Log("OppTeam is " + oppTeam);
-		
+
+		if (gsp.redScore != gsp.yellowScore)
+		{
+			Debug.Log("We are returning from a game");
+			cont = true;
+			//SimPlayoff();
+		}
 		StartCoroutine(ResetBrackets(gsp.playoffRound));
 		//SetPlayoffs();
 	}
@@ -1681,7 +1687,41 @@ public class PlayoffManager_TripleK : MonoBehaviour
                 {
 					if (i % 2 == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameX[i].name)
+                        {
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[(i / 2) + 12].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[(i / 2) + 8].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 12].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[(i / 2) + 8].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameX[i].name)
+						{
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[(i / 2) + 12].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[(i / 2) + 8].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 12].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[(i / 2) + 8].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
 						{
 							gameList[(i / 2) + 12].x = gameX[i].id;
 							gameX[i].wins++;
@@ -1698,7 +1738,41 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 					else
                     {
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
+						{
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 12].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[((i - 1) / 2) + 8].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 12].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[((i - 1) / 2) + 8].y = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 12].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[((i - 1) / 2) + 8].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 12].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[((i - 1) / 2) + 8].y = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
 						{
 							gameList[((i - 1) / 2) + 12].y = gameX[i].id;
 							gameX[i].wins++;
