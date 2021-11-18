@@ -19,7 +19,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public Color green;
 	public Color red;
 	public Color yellow;
+	public Color[] yellows;
+	public Color yellow1;
+	public Color yellow2;
+	public Color yellow3;
 	public Color dimmed;
+	public Color[] dims;
+	public Color dim1;
+	public Color dim2;
+	public Color dim3;
 
 	public VSDisplay[] vsDisplay;
 	public Text vsDisplayTitle;
@@ -130,7 +138,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	{
 		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
 		//teams = new Team[9];
-		heading.text = "Page Playoff";
+		heading.text = "No Game Data";
 
 		playoffRound++;
 
@@ -148,9 +156,17 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i] = tTeamList.teams[i];
+				if (teams[i].id == playerTeam)
+				{
+					teams[i].name = gsp.teamName;
+					//teams[i].id = 69;
+					//playerTeam = 69;
+				}
 			}
 		}
 		//teams[0].name = gsp.teamName;
+		gsp.teams = teams;
+
 		for (int i = 0; i < teams.Length; i++)
 		{
 			if (i % 2 == 0)
@@ -168,14 +184,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	void LoadPlayoffs()
 	{
-		
+		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
 		if (myFile.Load())
 		{
 			Debug.Log("Load Playoffs - Round " + playoffRound);
-            for (int i = 0; i < teams.Length; i++)
-            {
-                teams[i] = gsp.teams[i];
-            }
             //teams = gsp.teams;
 			int[] winsList = myFile.GetArray<int>("Tourny Wins List");
 			int[] lossList = myFile.GetArray<int>("Tourny Loss List");
@@ -184,7 +196,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			int[] strengthList = myFile.GetArray<int>("Tourny Strength List");
 			int[] idList = myFile.GetArray<int>("Tourny Team ID List");
 			//StartCoroutine(Wait());
-
+			for (int i = 0; i < teams.Length; i++)
+			{
+				teams[i] = gsp.teams[i];
+			}
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i].id = idList[i];
@@ -216,11 +231,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		if (gsp.redScore != gsp.yellowScore)
 		{
+			playerTeam = gsp.playerTeamIndex;
 			Debug.Log("We are returning from a game");
 			cont = true;
-			//SimPlayoff();
+			playoffRound--;
+			StartCoroutine(ResetBrackets(gsp.playoffRound));
+			//StartCoroutine(SimPlayoff());
 		}
-		StartCoroutine(ResetBrackets(gsp.playoffRound));
+		else 
+			StartCoroutine(ResetBrackets(gsp.playoffRound));
 		//SetPlayoffs();
 	}
 
@@ -230,8 +249,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		bool playerGame = false;
 		switch (playoffRound)
 		{
-            #region Round 1
-            case 1:
+			#region Round 1
+			case 1:
 				heading.text = "Round 1";
 				playerGame = true;
 				for (int i = 0; i < winnersDisplay1.Length; i++)
@@ -1622,7 +1641,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		}
 
 		if (playerGame)
+		{
 			vsDisplayGO.SetActive(true);
+			playButton.gameObject.SetActive(true);
+		}
 		else
 			vsDisplayGO.SetActive(false);
 
@@ -1657,6 +1679,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	IEnumerator SimPlayoff()
 	{
+		playButton.gameObject.SetActive(false);
 		Debug.Log("Sim Playoffs - Round " + playoffRound);
 		Team[] gameX;
 		Team[] gameY;
@@ -1817,20 +1840,56 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				for (int i = 0; i < 4; i++)
 				{
-					if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+					if (cont & gsp.redTeamName == gameY[i].name)
 					{
-						gameList[i + 16].y = gameX[i].id;
-						gameX[i].wins++;
-
-						gameList[i + 20].x = gameY[i].id;
-						gameY[i].loss++;
+						if (gsp.redScore < gsp.yellowScore)
+						{
+							gameList[i + 16].y = gameX[i].id;
+							gameX[i].wins++;
+							gameList[i + 20].x = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[i + 16].y = gameY[i].id;
+							gameY[i].wins++;
+							gameList[i + 20].x = gameX[i].id;
+							gameX[i].loss++;
+						}
+					}
+					else if (cont & gsp.yellowTeamName == gameY[i].name)
+					{
+						if (gsp.redScore > gsp.yellowScore)
+						{
+							gameList[i + 16].y = gameX[i].id;
+							gameX[i].wins++;
+							gameList[i + 20].x = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[i + 16].y = gameY[i].id;
+							gameY[i].wins++;
+							gameList[i + 20].x = gameX[i].id;
+							gameX[i].loss++;
+						}
 					}
 					else
 					{
-						gameList[i + 16].y = gameY[i].id;
-						gameY[i].wins++;
-						gameList[i + 20].x = gameX[i].id;
-						gameX[i].loss++;
+						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						{
+							gameList[i + 16].y = gameX[i].id;
+							gameX[i].wins++;
+							gameList[i + 20].x = gameY[i].id;
+							gameY[i].loss++;
+						}
+						else
+						{
+							gameList[i + 16].y = gameY[i].id;
+							gameY[i].wins++;
+							gameList[i + 20].x = gameX[i].id;
+							gameX[i].loss++;
+						}
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
@@ -1864,36 +1923,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i % 2 == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[(i / 2) + 26].x = gameX[i].id;
-							gameX[i].wins++;
-							gameList[19 - i].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[(i / 2) + 26].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - 1].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 26].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[(i / 2) + 26].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - 1].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 26].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[(i / 2) + 26].x = gameY[i].id;
-							gameY[i].wins++;
-							gameList[19 - i].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[(i / 2) + 26].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - i].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 26].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[((i - 1) / 2) + 26].y = gameX[i].id;
-							gameX[i].wins++;
-							gameList[19 - i].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 26].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - i].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 26].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 26].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - i].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 26].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[((i - 1) / 2) + 26].y = gameY[i].id;
-							gameY[i].wins++;
-							gameList[19 - i].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[((i - 1) / 2) + 26].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[19 - i].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 26].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[19 - i].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -1927,36 +2060,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i % 2 == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[(i / 2) + 28].x = gameX[i].id;
-							gameX[i].wins++;
-							gameList[23 - i].y = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[(i / 2) + 28].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 28].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
-						else
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
 						{
-							gameList[(i / 2) + 28].x = gameY[i].id;
-							gameY[i].wins++;
-							gameList[23 - i].y = gameX[i].id;
-							gameX[i].loss++;
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[(i / 2) + 28].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 28].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+                        else
+						{
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[(i / 2) + 28].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 28].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[((i - 1) / 2) + 28].y = gameX[i].id;
-							gameX[i].wins++;
-							gameList[23 - i].y = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 28].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 28].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 28].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 28].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[((i - 1) / 2) + 28].y = gameY[i].id;
-							gameY[i].wins++;
-							gameList[23 - i].y = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[((i - 1) / 2) + 28].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[23 - i].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 28].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[23 - i].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -1990,36 +2197,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i % 2 == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[(i / 2) + 24].x = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 13;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[(i / 2) + 24].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 24].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[(i / 2) + 24].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 24].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[(i / 2) + 24].x = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 13;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[(i / 2) + 24].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[(i / 2) + 24].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[((i - 1) / 2) + 24].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 13;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 24].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 24].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[((i - 1) / 2) + 24].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 24].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[((i - 1) / 2) + 24].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 13;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[((i - 1) / 2) + 24].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 13;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[((i - 1) / 2) + 24].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 13;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2053,36 +2334,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[32].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 11;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[32].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[32].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[32].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[32].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[32].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 11;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[32].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[32].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[33].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 11;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[33].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[33].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[33].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[33].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[33].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 11;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[33].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 11;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[33].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 11;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2116,36 +2471,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[36].x = gameX[i].id;
-							gameX[i].wins++;
-							gameList[30].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[36].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[30].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[30].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[36].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[30].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[30].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[36].x = gameY[i].id;
-							gameY[i].wins++;
-							gameList[30].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[36].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[30].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[30].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[36].y = gameX[i].id;
-							gameX[i].wins++;
-							gameList[31].y = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[36].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[31].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[31].y = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[36].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[31].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[31].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[36].y = gameY[i].id;
-							gameY[i].wins++;
-							gameList[31].y = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[36].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[31].y = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[36].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[31].y = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2180,36 +2609,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[30].y = gameX[i].id;
-							gameX[i].wins++;
-							gameList[32].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[30].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[32].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[30].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[32].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[30].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[32].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[30].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[32].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[30].y = gameY[i].id;
-							gameY[i].wins++;
-							gameList[32].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[30].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[32].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[30].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[32].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[31].x = gameX[i].id;
-							gameX[i].wins++;
-							gameList[33].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[31].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[33].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[31].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[33].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[31].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[33].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[31].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[33].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[31].x = gameY[i].id;
-							gameY[i].wins++;
-							gameList[33].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[31].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[33].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[31].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[33].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2243,36 +2746,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[37].x = gameX[i].id;
-							gameX[i].wins++;
-							gameList[35].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[37].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[35].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[35].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[37].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[35].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[35].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[37].x = gameY[i].id;
-							gameY[i].wins++;
-							gameList[35].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[37].x = gameX[i].id;
+								gameX[i].wins++;
+								gameList[35].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].x = gameY[i].id;
+								gameY[i].wins++;
+								gameList[35].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[37].y = gameX[i].id;
-							gameX[i].wins++;
-							gameList[34].x = gameY[i].id;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[37].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[34].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[34].x = gameX[i].id;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[37].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[34].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[34].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[37].y = gameY[i].id;
-							gameY[i].wins++;
-							gameList[34].x = gameX[i].id;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[37].y = gameX[i].id;
+								gameX[i].wins++;
+								gameList[34].x = gameY[i].id;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[37].y = gameY[i].id;
+								gameY[i].wins++;
+								gameList[34].x = gameX[i].id;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2306,36 +2883,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[34].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 9;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[34].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[34].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[34].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[34].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[34].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 9;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[34].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[34].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[35].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 9;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[35].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[35].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[35].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[35].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[35].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 9;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[35].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 9;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[35].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 9;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2369,36 +3020,110 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (i == 0)
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[38].x = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 7;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[38].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[38].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[38].x = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 7;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[38].x = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].x = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
 						}
 					}
 					else
 					{
-						if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+						if (cont & gsp.redTeamName == gameY[i].name)
 						{
-							gameList[38].y = gameX[i].id;
-							gameX[i].wins++;
-							gameY[i].rank = 7;
-							gameY[i].loss++;
+							if (gsp.redScore < gsp.yellowScore)
+							{
+								gameList[38].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
+						}
+						else if (cont & gsp.yellowTeamName == gameY[i].name)
+						{
+							if (gsp.redScore > gsp.yellowScore)
+							{
+								gameList[38].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
 						}
 						else
 						{
-							gameList[38].y = gameY[i].id;
-							gameY[i].wins++;
-							gameX[i].rank = 7;
-							gameX[i].loss++;
+							if (Random.Range(0, gameX[i].strength) > Random.Range(0, gameY[i].strength))
+							{
+								gameList[38].y = gameX[i].id;
+								gameX[i].wins++;
+								gameY[i].rank = 7;
+								gameY[i].loss++;
+							}
+							else
+							{
+								gameList[38].y = gameY[i].id;
+								gameY[i].wins++;
+								gameX[i].rank = 7;
+								gameX[i].loss++;
+							}
 						}
 					}
 				}
@@ -2424,19 +3149,57 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[41].x = gameX[0].id;
-					gameX[0].wins++;
-					gameList[40].x = gameY[0].id;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[41].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[40].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[41].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[40].x = gameX[0].id;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[41].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[40].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[41].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[40].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[41].x = gameY[0].id;
-					gameY[0].wins++;
-					gameList[40].x = gameX[0].id;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[41].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[40].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[41].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[40].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2461,19 +3224,57 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[40].y = gameX[0].id;
-					gameX[0].wins++;
-					gameList[39].x = gameY[0].id;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[40].y = gameX[0].id;
+						gameX[0].wins++;
+						gameList[39].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[40].y = gameY[0].id;
+						gameY[0].wins++;
+						gameList[39].x = gameX[0].id;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[40].y = gameX[0].id;
+						gameX[0].wins++;
+						gameList[39].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[40].y = gameY[0].id;
+						gameY[0].wins++;
+						gameList[39].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[40].y = gameY[0].id;
-					gameY[0].wins++;
-					gameList[39].x = gameX[0].id;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[40].y = gameX[0].id;
+						gameX[0].wins++;
+						gameList[39].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[40].y = gameY[0].id;
+						gameY[0].wins++;
+						gameList[39].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2498,19 +3299,57 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[39].y = gameX[0].id;
-					gameX[0].wins++;
-					gameY[0].rank = 6;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[39].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 6;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[39].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 6;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[39].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 6;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[39].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 6;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[39].y = gameY[0].id;
-					gameY[0].wins++;
-					gameX[0].rank = 6;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[39].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 6;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[39].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 6;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2537,35 +3376,109 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						}
 					}
 				}
-				
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[42].y = gameX[0].id;
-					gameX[0].wins++;
-					gameY[0].rank = 5;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[42].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 5;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[42].y = gameY[0].id;
+						gameY[0].wins++;
+						gameY[0].rank = 5;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[42].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 5;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[42].y = gameY[0].id;
+						gameY[0].wins++;
+						gameY[0].rank = 5;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[42].y = gameY[0].id;
-					gameY[0].wins++;
-					gameY[0].rank = 5;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[42].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 5;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[42].y = gameY[0].id;
+						gameY[0].wins++;
+						gameY[0].rank = 5;
+						gameX[0].loss++;
+					}
 				}
 
-				if (Random.Range(0, gameX[1].strength) > Random.Range(0, gameY[1].strength))
+				if (cont & gsp.redTeamName == gameY[1].name)
 				{
-					gameList[41].y = gameX[1].id;
-					gameX[1].wins++;
-					gameList[42].x = gameY[1].id;
-					gameY[1].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[41].y = gameX[1].id;
+						gameX[1].wins++;
+						gameList[42].x = gameY[1].id;
+						gameY[1].loss++;
+					}
+					else
+					{
+						gameList[41].y = gameY[1].id;
+						gameY[1].wins++;
+						gameList[42].x = gameX[1].id;
+						gameX[1].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[1].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[41].y = gameX[1].id;
+						gameX[1].wins++;
+						gameList[42].x = gameY[1].id;
+						gameY[1].loss++;
+					}
+					else
+					{
+						gameList[41].y = gameY[1].id;
+						gameY[1].wins++;
+						gameList[42].x = gameX[1].id;
+						gameX[1].loss++;
+					}
 				}
 				else
 				{
-					gameList[41].y = gameY[1].id;
-					gameY[1].wins++;
-					gameList[42].x = gameX[1].id;
-					gameX[1].loss++;
+					if (Random.Range(0, gameX[1].strength) > Random.Range(0, gameY[1].strength))
+					{
+						gameList[41].y = gameX[1].id;
+						gameX[1].wins++;
+						gameList[42].x = gameY[1].id;
+						gameY[1].loss++;
+					}
+					else
+					{
+						gameList[41].y = gameY[1].id;
+						gameY[1].wins++;
+						gameList[42].x = gameX[1].id;
+						gameX[1].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2590,19 +3503,57 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[44].x = gameX[0].id;
-					gameX[0].wins++;
-					gameList[43].x = gameY[0].id;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[44].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[43].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[43].x = gameX[0].id;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[44].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[43].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[43].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[44].x = gameY[0].id;
-					gameY[0].wins++;
-					gameList[43].x = gameX[0].id;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[44].x = gameX[0].id;
+						gameX[0].wins++;
+						gameList[43].x = gameY[0].id;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].x = gameY[0].id;
+						gameY[0].wins++;
+						gameList[43].x = gameX[0].id;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2627,19 +3578,56 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[43].y = gameX[0].id;
-					gameX[0].wins++;
-					gameY[0].rank = 4;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[43].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 4;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[43].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 4;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[43].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 4;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[43].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 4;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[43].y = gameY[0].id;
-					gameY[0].wins++;
-					gameX[0].rank = 4;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[43].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 4;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[43].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 4;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2664,19 +3652,57 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameY[0] = teams[j];
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+
+				if (cont & gsp.redTeamName == gameY[0].name)
 				{
-					gameList[44].y = gameX[0].id;
-					gameX[0].wins++;
-					gameY[0].rank = 3;
-					gameY[0].loss++;
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[44].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 3;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 3;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[44].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 3;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 3;
+						gameX[0].loss++;
+					}
 				}
 				else
 				{
-					gameList[44].y = gameY[0].id;
-					gameY[0].wins++;
-					gameX[0].rank = 3;
-					gameX[0].loss++;
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[44].y = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 3;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[44].y = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 3;
+						gameX[0].loss++;
+					}
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
@@ -2699,6 +3725,58 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					else if (gameList[44].y == teams[j].id)
 					{
 						gameY[0] = teams[j];
+					}
+				}
+
+				if (cont & gsp.redTeamName == gameY[0].name)
+				{
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						gameList[45].x = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 2;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[45].x = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 2;
+						gameX[0].loss++;
+					}
+				}
+				else if (cont & gsp.yellowTeamName == gameY[0].name)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						gameList[45].x = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 2;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[45].x = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 2;
+						gameX[0].loss++;
+					}
+				}
+				else
+				{
+					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+					{
+						gameList[45].x = gameX[0].id;
+						gameX[0].wins++;
+						gameY[0].rank = 2;
+						gameY[0].loss++;
+					}
+					else
+					{
+						gameList[45].x = gameY[0].id;
+						gameY[0].wins++;
+						gameX[0].rank = 2;
+						gameX[0].loss++;
 					}
 				}
 				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
@@ -2780,8 +3858,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			#region Round 1
 			case 1:
-				heading.text = "1 - Results";
-
+				heading.text = "Draw 1 - Results";
+				vsDisplayTitle.text = "Winners Bracket";
 				for (int i = 0; i < winnersDisplay3.Length; i++)
 				{
 					for (int j = 0; j < teams.Length; j++)
@@ -2813,6 +3891,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						if (teams[i].id == gameList[Mathf.FloorToInt(i / 4f) + 12].x | teams[i].id == gameList[Mathf.FloorToInt(i / 4f) + 12].y)
 						{
 							winnersDisplay1[i].panel.GetComponent<Image>().color = yellow;
+
 							Debug.Log("Who won the game? -" + teams[i].id + " - " + teams[i].name);
 						}
 						else
@@ -2829,6 +3908,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
+				winnersBracket.SetActive(true);
+				losersBracket1.SetActive(false);
+				losersBracket2.SetActive(false);
+				finalsBracket.SetActive(false);
 				playoffs.SetActive(true);
 				playoffRound++;
                 simButton.gameObject.SetActive(false);
@@ -2840,7 +3923,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 2
 			case 2:
-				heading.text = "A2 - Results";
+				heading.text = "Draw 2 - Results";
+				vsDisplayTitle.text = "Loser's Bracket";
 
 				for (int i = 0; i < losersDisplayA4.Length; i++)
 				{
@@ -2857,7 +3941,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 8].y + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
 								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								losersDisplayA4[i].panel.GetComponent<Image>().color = yellow;
 								break;
 							}
 						}
@@ -2910,9 +3993,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 3
 			case 3:
-				heading.text = "W3 - Results";
+				heading.text = "Draw 3 - Results";
+				vsDisplayTitle.text = "Winners Bracket";
 
-                for (int i = 0; i < winnersDisplay3.Length; i++)
+				for (int i = 0; i < winnersDisplay3.Length; i++)
                 {
                     for (int j = 0; j < teams.Length; j++)
                     {
@@ -2997,7 +4081,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 4
 			case 4:
-				heading.text = "A4 - Results";
+				heading.text = " Draw 4 - Results";
+				vsDisplayTitle.text = "Loser's Bracket";
 
 				for (int i = 0; i < losersDisplayA4.Length; i++)
 				{
@@ -3084,7 +4169,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 5
 			case 5:
-				heading.text = "B5 - Results";
+				heading.text = "Draw 5 - Results";
+				vsDisplayTitle.text = "Knockout Bracket";
 
 				for (int i = 0; i < losersDisplayB5.Length; i++)
 				{
@@ -3176,7 +4262,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 6
 			case 6:
-				heading.text = "B6 - Results";
+				heading.text = "Draw 6 - Results";
+				vsDisplayTitle.text = "Knockout Bracket";
 
 				for (int i = 0; i < losersDisplayB6.Length; i++)
 				{
@@ -3232,6 +4319,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 32].y + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
 								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+								losersDisplayB10[i].panel.GetComponent<Image>().color = yellow;
 								break;
 							}
 						}
@@ -3263,7 +4351,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 7
 			case 7:
-				heading.text = "W7 - Results";
+				heading.text = "Draw 7 - Results";
+				vsDisplayTitle.text = "Winner's Bracket";
 
 				for (int i = 0; i < winnersDisplay7.Length; i++)
 				{
@@ -3352,7 +4441,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 8
 			case 8:
-				heading.text = "A8 - Results";
+				heading.text = "Draw 8 - Results";
+				vsDisplayTitle.text = "Loser's Bracket";
 
 				for (int i = 0; i < losersDisplayA8.Length; i++)
 				{
@@ -3434,7 +4524,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 9
 			case 9:
-				heading.text = "A9 - Results";
+				heading.text = "Draw 9 - Results";
+				vsDisplayTitle.text = "Loser's Bracket";
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -3519,7 +4610,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 10
 			case 10:
-				heading.text = "B10 - Results";
+				heading.text = "Draw 10 - Results";
+				vsDisplayTitle.text = "Knockout Bracket";
 
 				for (int i = 0; i < losersDisplayB10.Length; i++)
 				{
@@ -3607,7 +4699,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 11
 			case 11:
-				heading.text = "B11 - Results";
+				heading.text = "Draw 11 - Results";
+				vsDisplayTitle.text = "Knockout Bracket";
 
 				for (int i = 0; i < losersDisplayB11.Length; i++)
 				{
@@ -3698,7 +4791,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 12
 			case 12:
-				heading.text = "W12 - Results";
+				heading.text = "Draw 12 - Results";
+				vsDisplayTitle.text = "Winner's Bracket";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -3754,7 +4848,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 13
 			case 13:
-				heading.text = "A13 - Results";
+				heading.text = "Draw 13 - Results";
+				vsDisplayTitle.text = "Loser's Bracket";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -3810,7 +4905,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 14
 			case 14:
-				heading.text = "B14 - Results";
+				heading.text = " Draw 14 - Results";
+				vsDisplayTitle.text = "Knockout Bracket";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -3876,7 +4972,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 15
 			case 15:
-				heading.text = "F15 - Results";
+				heading.text = " Draw 15 - Results";
+				vsDisplayTitle.text = "Final Bracket";
 
 				for (int i = 1; i < finalsDisplay15.Length; i++)
 				{
@@ -3996,7 +5093,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 16
 			case 16:
-				heading.text = "F16 - Results";
+				heading.text = "Draw 16 - Results";
+				vsDisplayTitle.text = "Final Bracket";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -4074,7 +5172,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 17
 			case 17:
-				heading.text = "F17 - Results";
+				heading.text = " Draw 17 - Results";
+				vsDisplayTitle.text = "Final Bracket";
 
 				for (int i = 0; i < finalsDisplay17.Length; i++)
 				{
@@ -4159,6 +5258,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#region Round 18
 			case 18:
 				heading.text = "Semifinal Results";
+				vsDisplayTitle.text = "Final Bracket";
 
 				for (int i = 0; i < finalsDisplay18.Length; i++)
 				{
@@ -4168,7 +5268,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[43].x)
 							{
-								if (teams[j].loss > 2)
+								if (teams[j].rank == 3)
 								{
 									finalsDisplay18[i].panel.GetComponent<Image>().color = dimmed;
 									finalsDisplay18[i].rank.text = "3rd";
@@ -4184,7 +5284,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						{
 							if (teams[j].id == gameList[43].y)
 							{
-								if (teams[j].loss > 2)
+								if (teams[j].rank == 3)
 								{
 									finalsDisplay18[i].panel.GetComponent<Image>().color = dimmed;
 									finalsDisplay18[i].rank.text = "3rd";
@@ -4210,6 +5310,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
 								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+								finalsDisplay19[i].panel.GetComponent<Image>().color = yellow;
 								break;
 							}
 						}
@@ -4312,10 +5413,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			}
 		}
 
-        if (playoffRound < 15)
-        {
-            StartCoroutine(SimToFinals());
-        }
+        //if (playoffRound < 15)
+        //{
+        //    StartCoroutine(SimToFinals());
+        //}
     }
 	public void PlayRound()
 	{
@@ -4343,10 +5444,16 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			playoffRound = i;
 			yield return new WaitForSeconds(0.01f);
 			SetPlayoffs();
-			yield return new WaitForSeconds(0.01f);
+            
+            yield return new WaitForSeconds(0.01f);
 			SimResults();
+			playoffRound--;
 			yield return new WaitForSeconds(0.01f);
+			Debug.Log("Playoff Round in Reset is " + playoffRound + " and i is " + i);
 		}
+		yield return new WaitForSeconds(0.01f);
+		if (cont)
+			StartCoroutine(SimPlayoff());
 		//playoffRound = poRound;
 	}
 	IEnumerator SimToFinals()
@@ -4391,6 +5498,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		int[] strengthList = new int[teams.Length];
 		int[] idList = new int[teams.Length];
 
+		int[] tourWinsList = new int[teams.Length];
+		int[] tourLossList = new int[teams.Length];
+
 		for (int i = 0; i < teams.Length; i++)
 		{
 			nameList[i] = teams[i].name;
@@ -4400,6 +5510,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			nextOppList[i] = teams[i].nextOpp;
 			strengthList[i] = teams[i].strength;
 			idList[i] = teams[i].id;
+			tourWinsList[i] = (int)teams[i].tourRecord.x;
+			tourLossList[i] = (int)teams[i].tourRecord.y;
 		}
 
 		myFile.Add("Tourny Name List", nameList);
@@ -4429,66 +5541,76 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	IEnumerator RefreshPlayoffPanel()
 	{
-		for (int i = 0; i < winnersBracket.transform.childCount; i++)
+		for (int i = 0; i < vsDisplay.Length; i++)
 		{
-			for (int j = 0; j < winnersBracket.transform.GetChild(i).childCount; j++)
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+
+			yield return new WaitForEndOfFrame();
+			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		}
+
+		if (winnersBracket.activeSelf)
+		{
+			for (int i = 0; i < winnersBracket.transform.childCount; i++)
 			{
-				for (int k = 1; k < 3; k++)
+				for (int j = 0; j < winnersBracket.transform.GetChild(i).childCount; j++)
 				{
-					winnersBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
-					yield return new WaitForEndOfFrame();
-					winnersBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
+					for (int k = 1; k < 3; k++)
+					{
+						winnersBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
+						yield return new WaitForEndOfFrame();
+						winnersBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
+					}
+				}
+			}
+		}
+		if (losersBracket1.activeSelf)
+		{
+			for (int i = 0; i < losersBracket1.transform.childCount; i++)
+			{
+				for (int j = 0; j < losersBracket1.transform.GetChild(i).childCount; j++)
+				{
+					for (int k = 1; k < 3; k++)
+					{
+						losersBracket1.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
+						yield return new WaitForEndOfFrame();
+						losersBracket1.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
+					}
+				}
+			}
+		}
+		if (losersBracket2.activeSelf)
+		{
+			for (int i = 0; i < losersBracket2.transform.childCount; i++)
+			{
+				for (int j = 0; j < losersBracket2.transform.GetChild(i).childCount; j++)
+				{
+					for (int k = 1; k < 3; k++)
+					{
+						losersBracket2.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
+						yield return new WaitForEndOfFrame();
+						losersBracket2.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
+					}
+				}
+			}
+		}
+		if (finalsBracket.activeSelf)
+		{
+			for (int i = 0; i < finalsBracket.transform.childCount; i++)
+			{
+				for (int j = 0; j < finalsBracket.transform.GetChild(i).childCount; j++)
+				{
+					for (int k = 1; k < 3; k++)
+					{
+						finalsBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
+						yield return new WaitForEndOfFrame();
+						finalsBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
+					}
 				}
 			}
 		}
 
-		for (int i = 0; i < losersBracket1.transform.childCount; i++)
-		{
-			for (int j = 0; j < losersBracket1.transform.GetChild(i).childCount; j++)
-			{
-				for (int k = 1; k < 3; k++)
-				{
-					losersBracket1.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
-					yield return new WaitForEndOfFrame();
-					losersBracket1.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
-				}
-			}
-		}
-
-		for (int i = 0; i < losersBracket2.transform.childCount; i++)
-		{
-			for (int j = 0; j < losersBracket2.transform.GetChild(i).childCount; j++)
-			{
-				for (int k = 1; k < 3; k++)
-				{
-					losersBracket2.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
-					yield return new WaitForEndOfFrame();
-					losersBracket2.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
-				}
-			}
-		}
-
-		for (int i = 0; i < finalsBracket.transform.childCount; i++)
-		{
-			for (int j = 0; j < finalsBracket.transform.GetChild(i).childCount; j++)
-			{
-				for (int k = 1; k < 3; k++)
-				{
-					finalsBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = false;
-					yield return new WaitForEndOfFrame();
-					finalsBracket.transform.GetChild(i).GetChild(j).GetChild(k).GetComponent<ContentSizeFitter>().enabled = true;
-				}
-			}
-		}
-
-		//for (int i = 0; i < tm.vsDisplay.Length; i++)
-		//{
-		//	tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
-
-		//	yield return new WaitForEndOfFrame();
-		//	tm.vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		//}
-	}
+    }
 
 	public void Menu()
 	{

@@ -183,10 +183,12 @@ public class EndMenu : MonoBehaviour
             else
                 gsp.draw++;
 
-            cm.SaveCareer();
+            //cm.SaveCareer();
             Debug.Log("Gsp Draw from End Menu is " + gsp.draw);
             if (gsp.KO)
+            {
                 contScene = "Tourny_Home_3K";
+            }
                 //SceneManager.LoadScene("Tourny_Home_3K");
         }
         SceneManager.LoadScene(contScene);
