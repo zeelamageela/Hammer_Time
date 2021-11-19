@@ -34,51 +34,7 @@ public class TeamManager : MonoBehaviour
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
 
-            if (teamRedColour == gsp.teamColour)
-            {
-                for (int i = 0; i < teamRed.Length; i++)
-                {
-                    teamRed[i].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                    teamRed[i].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                    teamRed[i].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                    teamRed[i].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                    teamRed[i].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamRed[i].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                }
-
-                for (int i = 0; i < teamYellow.Length; i++)
-                {
-                    teamYellow[i].charStats.drawAccuracy.SetBaseValue(10);
-                    teamYellow[i].charStats.takeOutAccuracy.SetBaseValue(10);
-                    teamYellow[i].charStats.guardAccuracy.SetBaseValue(10);
-                    teamYellow[i].charStats.sweepStrength.SetBaseValue(10);
-                    teamYellow[i].charStats.sweepEndurance.SetBaseValue(10);
-                    teamYellow[i].charStats.sweepHealth = 100;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < teamRed.Length; i++)
-                {
-                    teamRed[i].charStats.drawAccuracy.SetBaseValue(10);
-                    teamRed[i].charStats.takeOutAccuracy.SetBaseValue(10);
-                    teamRed[i].charStats.guardAccuracy.SetBaseValue(10);
-                    teamRed[i].charStats.sweepStrength.SetBaseValue(10);
-                    teamRed[i].charStats.sweepEndurance.SetBaseValue(10);
-                    teamRed[i].charStats.sweepHealth = 100;
-                }
-
-                for (int i = 0; i < teamYellow.Length; i++)
-                {
-                    teamYellow[i].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                    teamYellow[i].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                    teamYellow[i].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                    teamYellow[i].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                    teamYellow[i].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamYellow[i].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                }
-            }
-                playerRed = false;
+            
 
         }
         else
@@ -192,8 +148,30 @@ public class TeamManager : MonoBehaviour
             for (int i = 0; i < teamRed.Length; i++)
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
-                //teamRed[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
-                //teamRed[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
+                if (teamRedColour == gsp.teamColour)
+                {
+                    for (int j = 0; j < teamRed.Length; j++)
+                    {
+                        teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                        teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                        teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                        teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                        teamRed[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < teamRed.Length; j++)
+                    {
+                        teamRed[j].charStats.drawAccuracy.SetBaseValue(10);
+                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(10);
+                        teamRed[j].charStats.guardAccuracy.SetBaseValue(10);
+                        teamRed[j].charStats.sweepStrength.SetBaseValue(10);
+                        teamRed[j].charStats.sweepEndurance.SetBaseValue(10);
+                        teamRed[j].charStats.sweepHealth = 100;
+                    }
+                }
             }
         }
         else
@@ -202,8 +180,30 @@ public class TeamManager : MonoBehaviour
             {
                 teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
 
-                //teamYellow[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
-                //teamYellow[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
+                if (teamYellowColour == gsp.teamColour)
+                {
+                    for (int j = 0; j < teamYellow.Length; j++)
+                    {
+                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                        teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                        teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < teamYellow.Length; j++)
+                    {
+                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(10);
+                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(10);
+                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(10);
+                        teamYellow[j].charStats.sweepStrength.SetBaseValue(10);
+                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(10);
+                        teamYellow[j].charStats.sweepHealth = 100;
+                    }
+                }
             }
         }
         if (rockCurrent < 4)

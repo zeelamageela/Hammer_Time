@@ -97,9 +97,9 @@ public class XPManager : MonoBehaviour
 
     public void SetSkillPoints()
     {
-        float exponent = 2f;
+        float exponent = 1.5f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
-        skillPointsTotal = 30 + Mathf.FloorToInt(xpMult / 625f);
+        skillPointsTotal = 18 + Mathf.FloorToInt(xpMult / 125f);
         Debug.Log("Skill Points Total is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy
@@ -171,6 +171,24 @@ public class XPManager : MonoBehaviour
                 break;
         }
     }
+
+    public void SetStats()
+    {
+        cm = FindObjectOfType<CareerManager>();
+        
+        cm.cStats.drawAccuracy = (int)drawSlider.value;
+        cm.cStats.takeOutAccuracy = (int)takeOutSlider.value;
+        cm.cStats.guardAccuracy = (int)guardSlider.value;
+        cm.cStats.sweepStrength = (int)strengthSlider.value;
+        cm.cStats.sweepEndurance = (int)endurSlider.value;
+        cm.cStats.sweepHealth = healthSlider.value;
+    }
+
+    public void ResetStats()
+    {
+        cStats = cm.cStats;
+    }
+
     public void Back()
     {
         this.gameObject.SetActive(false);

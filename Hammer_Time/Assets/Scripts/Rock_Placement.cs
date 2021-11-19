@@ -46,6 +46,7 @@ public class Rock_Placement : MonoBehaviour
     public Vector2 toAccu;
     public Vector2 tickAccu;
 
+
     // Update is called once per frame
     void Update()
     {

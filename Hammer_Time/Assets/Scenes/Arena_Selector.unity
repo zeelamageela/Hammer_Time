@@ -2395,10 +2395,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1497908066}
-        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
-        m_MethodName: Standings
-        m_Mode: 6
+      - m_Target: {fileID: 133583770}
+        m_TargetAssemblyTypeName: XPManager, Assembly-CSharp
+        m_MethodName: ResetStats
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7672,10 +7672,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1497908066}
-        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
-        m_MethodName: Standings
-        m_Mode: 6
+      - m_Target: {fileID: 133583770}
+        m_TargetAssemblyTypeName: XPManager, Assembly-CSharp
+        m_MethodName: SetStats
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -18582,16 +18582,16 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
-  xp: 58
-  totalXp: 58
+  xp: 200
+  totalXp: 289
   cStats:
-    drawAccuracy: 5
-    takeOutAccuracy: 5
-    guardAccuracy: 5
-    sweepStrength: 5
-    sweepEndurance: 5
-    sweepHealth: 100
-  skillPoints: 30
+    drawAccuracy: 3
+    takeOutAccuracy: 3
+    guardAccuracy: 3
+    sweepStrength: 3
+    sweepEndurance: 3
+    sweepHealth: 30
+  skillPoints: 18
   inProgress: 0
   season: 0
   totalTeams: 32

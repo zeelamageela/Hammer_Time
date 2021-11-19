@@ -878,13 +878,13 @@ public class CareerManager : MonoBehaviour
         xp = 0f;
         totalXp = 0f;
 
-        cStats.drawAccuracy = 5;
-        cStats.guardAccuracy = 5;
-        cStats.takeOutAccuracy = 5;
-        cStats.guardAccuracy = 5;
-        cStats.sweepStrength = 5;
-        cStats.sweepEndurance = 5;
-        cStats.sweepHealth = 50f;
+        cStats.drawAccuracy = 3;
+        cStats.guardAccuracy = 3;
+        cStats.takeOutAccuracy = 3;
+        cStats.guardAccuracy = 3;
+        cStats.sweepStrength = 3;
+        cStats.sweepEndurance = 3;
+        cStats.sweepHealth = 30f;
 
         season++;
 
