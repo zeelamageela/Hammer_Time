@@ -148,6 +148,12 @@ public class CareerManager : MonoBehaviour
             tourQual = myFile.GetBool("Tour Qual");
             xp = myFile.GetFloat("XP");
             totalXp = myFile.GetFloat("Total XP");
+            cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
+            cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
+            cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
+            cStats.sweepStrength = myFile.GetInt("Sweep Strength");
+            cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
+            cStats.sweepHealth = myFile.GetFloat("Sweep Health");
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
             if (tSel)
@@ -384,6 +390,13 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Tour Record", tourRecord);
         myFile.Add("Total XP", totalXp);
         myFile.Add("XP", xp);
+        myFile.Add("Draw Accuracy", cStats.drawAccuracy);
+        myFile.Add("Take Out Accuracy", cStats.takeOutAccuracy);
+        myFile.Add("Guard Accuracy", cStats.guardAccuracy);
+        myFile.Add("Sweep Strength", cStats.sweepStrength);
+        myFile.Add("Sweep Endurance", cStats.sweepEndurance);
+        myFile.Add("Sweep Health", cStats.sweepHealth);
+
         int[] idList = new int[teams.Length];
         int[] winsList = new int[teams.Length];
         int[] lossList = new int[teams.Length];
@@ -632,7 +645,7 @@ public class CareerManager : MonoBehaviour
         {
             if (playerTeamIndex == currentTournyTeams[i].id)
             {
-                xpChange = (16f / currentTournyTeams.Length) * (currentTournyTeams.Length - currentTournyTeams[i].rank);
+                xpChange = currentTournyTeams.Length - currentTournyTeams[i].rank;
                 xpChange += currentTournyTeams[i].wins * 3f;
                 xpChange += currentTournyTeams[i].loss;
 
@@ -652,7 +665,7 @@ public class CareerManager : MonoBehaviour
                     if (currentTournyTeams[i].rank < 5)
                     {
                         provQual = true;
-                        xpChange += 5f;
+                        xpChange += 25f;
                     }
                 }
             }
@@ -871,7 +884,7 @@ public class CareerManager : MonoBehaviour
         cStats.guardAccuracy = 5;
         cStats.sweepStrength = 5;
         cStats.sweepEndurance = 5;
-        cStats.sweepHealth = 75;
+        cStats.sweepHealth = 50f;
 
         season++;
 

@@ -97,9 +97,9 @@ public class XPManager : MonoBehaviour
 
     public void SetSkillPoints()
     {
-        float exponent = 1.5f;
+        float exponent = 2f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
-        skillPointsTotal = 30 + Mathf.FloorToInt(xpMult / 125f);
+        skillPointsTotal = 30 + Mathf.FloorToInt(xpMult / 625f);
         Debug.Log("Skill Points Total is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy
@@ -107,7 +107,7 @@ public class XPManager : MonoBehaviour
                     - cStats.guardAccuracy
                     - cStats.sweepStrength
                     - cStats.sweepEndurance
-                    - (int)(cStats.sweepHealth / 20);
+                    - (int)(cStats.sweepHealth / 10);
     }
 
     public void ButtonAdd(int skill)
@@ -135,7 +135,7 @@ public class XPManager : MonoBehaviour
                 skillPoints--;
                 break;
             case 5:
-                healthSlider.value += 20;
+                healthSlider.value += 10;
                 skillPoints--;
                 break;
         }
@@ -166,7 +166,7 @@ public class XPManager : MonoBehaviour
                 skillPoints++;
                 break;
             case 5:
-                healthSlider.value -= 20;
+                healthSlider.value -= 10;
                 skillPoints++;
                 break;
         }

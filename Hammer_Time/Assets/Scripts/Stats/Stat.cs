@@ -12,4 +12,10 @@ public class Stat
     {
         return baseValue;
     }
+
+    public int SetBaseValue(int newValue)
+    {
+        baseValue = newValue;
+        return baseValue;
+    }
 }

@@ -13,7 +13,7 @@ public class TeamManager : MonoBehaviour
     public Color teamYellowColour;
     public TeamMember[] teamYellow;
 
-
+    bool playerRed;
     //public GameObject[] leadGO;
     //public GameObject[] secondGO;
     //public GameObject[] thirdGO;
@@ -33,6 +33,53 @@ public class TeamManager : MonoBehaviour
             }
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
+
+            if (teamRedColour == gsp.teamColour)
+            {
+                for (int i = 0; i < teamRed.Length; i++)
+                {
+                    teamRed[i].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                    teamRed[i].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                    teamRed[i].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                    teamRed[i].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                    teamRed[i].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                    teamRed[i].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                }
+
+                for (int i = 0; i < teamYellow.Length; i++)
+                {
+                    teamYellow[i].charStats.drawAccuracy.SetBaseValue(10);
+                    teamYellow[i].charStats.takeOutAccuracy.SetBaseValue(10);
+                    teamYellow[i].charStats.guardAccuracy.SetBaseValue(10);
+                    teamYellow[i].charStats.sweepStrength.SetBaseValue(10);
+                    teamYellow[i].charStats.sweepEndurance.SetBaseValue(10);
+                    teamYellow[i].charStats.sweepHealth = 100;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < teamRed.Length; i++)
+                {
+                    teamRed[i].charStats.drawAccuracy.SetBaseValue(10);
+                    teamRed[i].charStats.takeOutAccuracy.SetBaseValue(10);
+                    teamRed[i].charStats.guardAccuracy.SetBaseValue(10);
+                    teamRed[i].charStats.sweepStrength.SetBaseValue(10);
+                    teamRed[i].charStats.sweepEndurance.SetBaseValue(10);
+                    teamRed[i].charStats.sweepHealth = 100;
+                }
+
+                for (int i = 0; i < teamYellow.Length; i++)
+                {
+                    teamYellow[i].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                    teamYellow[i].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                    teamYellow[i].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                    teamYellow[i].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                    teamYellow[i].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                    teamYellow[i].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                }
+            }
+                playerRed = false;
+
         }
         else
         {
@@ -139,129 +186,12 @@ public class TeamManager : MonoBehaviour
 
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
-        #region Target
-        //if (!gm.gsp.story)
-        //{
-        //    if (gm.gsp.third)
-        //    {
-        //        if (rockCurrent <= 11 && rockCurrent >= 8)
-        //        {
-        //            gm.target = false;
-        //        }
-        //        else
-        //        {
-        //            if (redTurn)
-        //            {
-        //                if (!gm.aiTeamRed)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else if (!redTurn)
-        //            {
-        //                if (!gm.aiTeamYellow)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else
-        //                gm.target = false;
-        //        }
-        //    }
-        //    else if (gm.gsp.skip)
-        //    {
-        //        if (rockCurrent <= 11)
-        //        {
-        //            if (redTurn)
-        //            {
-        //                if (!gm.aiTeamRed)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else if (!redTurn)
-        //            {
-        //                if (!gm.aiTeamYellow)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else
-        //                gm.target = false;
-        //        }
-        //        else
-        //            gm.target = false;
-        //    }
-        //    else
-        //        gm.target = false;
-
-        //}
-        //else 
-        //{
-        //    if (gm.gsp.third)
-        //    {
-        //        if (rockCurrent <= 11)
-        //        {
-        //            if (rockCurrent >= 8)
-        //            {
-        //                if (redTurn)
-        //                {
-        //                    if (!gm.aiTeamRed)
-        //                        gm.target = true;
-        //                    else
-        //                        gm.target = false;
-        //                }
-        //                else if (!redTurn)
-        //                {
-        //                    if (!gm.aiTeamYellow)
-        //                        gm.target = true;
-        //                    else
-        //                        gm.target = false;
-        //                }
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else
-        //                gm.target = false;
-        //        }
-        //        else
-        //            gm.target = false;
-        //    }
-        //    else if (gm.gsp.skip)
-        //    {
-        //        if (rockCurrent <= 11)
-        //        {
-        //            if (redTurn)
-        //            {
-        //                if (!gm.aiTeamRed)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else if (!redTurn)
-        //            {
-        //                if (!gm.aiTeamYellow)
-        //                    gm.target = true;
-        //                else
-        //                    gm.target = false;
-        //            }
-        //            else
-        //                gm.target = false;
-        //        }
-        //        else
-        //            gm.target = false;
-        //    }
-        //    else
-        //        gm.target = false;
-        //}
-        #endregion
-
+        
         if (redTurn)
         {
             for (int i = 0; i < teamRed.Length; i++)
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
-
                 //teamRed[i].sweeperL.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
                 //teamRed[i].sweeperR.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
             }

@@ -35,6 +35,11 @@ public class TournySelector : MonoBehaviour
     public Tourny emptyTourny;
     public Tourny currentTourny;
 
+    public Color[] green;
+    public Color[] dimmed;
+    public Color[] yellow;
+    public Color[] purple;
+
     public TournyPanel[] panels;
 
     public GameObject mainMenuGO;

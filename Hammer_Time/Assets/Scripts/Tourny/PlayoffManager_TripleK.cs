@@ -247,11 +247,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	{
 		Debug.Log("Set Playoffs 3K - Round " + playoffRound);
 		bool playerGame = false;
+		vsDisplayTitle.text = "Next Game";
 		switch (playoffRound)
 		{
 			#region Round 1
 			case 1:
-				heading.text = "Round 1";
+				heading.text = "Triple Knockout - Round 1";
 				playerGame = true;
 				for (int i = 0; i < winnersDisplay1.Length; i++)
 				{
@@ -306,7 +307,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 #endregion
             #region Round 2
             case 2:
-				heading.text = "A - Round 2";
+				heading.text = "Loser's Bracket - Draw 2";
 
 				for (int i = 0; i < losersDisplayA2.Length; i++)
 				{
@@ -362,8 +363,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -373,7 +372,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 #endregion
             #region Round 3
             case 3:
-				heading.text = "W - Round 3";
+				heading.text = "Winner's Bracket - Draw 3";
 
 				for (int i = 0; i < winnersDisplay3.Length; i++)
 				{
@@ -427,8 +426,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -438,7 +435,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 4
 			case 4:
-				heading.text = "A - Round 4";
+				heading.text = "Loser's Bracket - Draw 4";
 
 				for (int i = 0; i < losersDisplayA4.Length; i++)
 				{
@@ -498,8 +495,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -509,7 +504,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 5
 			case 5:
-				heading.text = "B - Round 5";
+				heading.text = "Knockout Bracket - Draw 5";
 
 				for (int i = 0; i < losersDisplayB5.Length; i++)
 				{
@@ -568,8 +563,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -579,7 +572,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 6
 			case 6:
-				heading.text = "B - Round 6";
+				heading.text = "Knockout Bracket - Draw 6";
 
 				for (int i = 0; i < losersDisplayB6.Length; i++)
 				{
@@ -638,8 +631,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -649,7 +640,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 7
 			case 7:
-				heading.text = "W - Round 7";
+				heading.text = "Winner's Bracket - Draw 7";
 
 				for (int i = 0; i < winnersDisplay7.Length; i++)
 				{
@@ -708,8 +699,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.35f;
@@ -719,7 +708,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 8
 			case 8:
-				heading.text = "A - Round 8";
+				heading.text = "Loser's Bracket - Draw 8";
 
 				for (int i = 0; i < losersDisplayA8.Length; i++)
 				{
@@ -778,8 +767,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
@@ -789,7 +776,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 9
 			case 9:
-				heading.text = "A - Round 9";
+				heading.text = "Loser's Bracket - Draw 9";
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -848,8 +835,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.63f;
@@ -859,7 +844,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 10
 			case 10:
-				heading.text = "B - Round 10";
+				heading.text = "Knockout Bracket - Round 10";
 
 				for (int i = 0; i < losersDisplayB10.Length; i++)
 				{
@@ -919,8 +904,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
@@ -930,7 +913,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 11
 			case 11:
-				heading.text = "B - Round 11";
+				heading.text = "Knockout Bracket - Draw 11";
 
 				for (int i = 0; i < losersDisplayB11.Length; i++)
 				{
@@ -989,8 +972,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.61f;
@@ -1000,7 +981,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 12
 			case 12:
-				heading.text = "W - Round 12";
+				heading.text = "Winner's Bracket - Draw 12";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -1056,8 +1037,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.75f;
@@ -1067,7 +1046,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 13
 			case 13:
-				heading.text = "A - Round 13";
+				heading.text = "Loser's Bracket - Draw 13";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -1123,8 +1102,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.93f;
@@ -1134,7 +1111,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 14
 			case 14:
-				heading.text = "B - Round 14";
+				heading.text = "Knockout Bracket - Draw 14";
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -1190,8 +1167,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.93f;
@@ -1201,7 +1176,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 15
 			case 15:
-				heading.text = "F - Round 15";
+				heading.text = "Final Bracket - Draw 15";
 
 				for (int i = 0; i < finalsDisplay15.Length; i++)
 				{
@@ -1279,8 +1254,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -1290,7 +1263,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 16
 			case 16:
-				heading.text = "F - Round 16";
+				heading.text = "Final Bracket - Draw 16";
 
 				finalsDisplay15[0].panel.transform.parent.gameObject.SetActive(false);
 				for (int i = 0; i < 3; i++)
@@ -1365,8 +1338,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
@@ -1376,7 +1347,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 17
 			case 17:
-				heading.text = "F - Round 17";
+				heading.text = "Final Bracket - Draw 17";
 
 				finalsDisplay16[2].panel.transform.parent.gameObject.SetActive(false);
 				for (int i = 0; i < finalsDisplay17.Length; i++)
@@ -1450,8 +1421,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
@@ -1461,7 +1430,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 18
 			case 18:
-				heading.text = "F - Round 18";
+				heading.text = "Final Bracket - Draw 18";
 
 				for (int i = 0; i < finalsDisplay18.Length; i++)
 				{
@@ -1521,8 +1490,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				playoffs.SetActive(true);
-
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.61f;
@@ -1532,7 +1499,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 19
 			case 19:
-				heading.text = "F - Round 19";
+				heading.text = "Finals - Draw 19";
 
 				for (int i = 0; i < finalsDisplay19.Length; i++)
 				{
@@ -1592,8 +1559,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(true);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
@@ -1929,7 +1894,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								gameList[(i / 2) + 26].x = gameX[i].id;
 								gameX[i].wins++;
-								gameList[19 - 1].x = gameY[i].id;
+								gameList[19 - i].x = gameY[i].id;
 								gameY[i].loss++;
 							}
 							else
@@ -1946,7 +1911,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								gameList[(i / 2) + 26].x = gameX[i].id;
 								gameX[i].wins++;
-								gameList[19 - 1].x = gameY[i].id;
+								gameList[19 - i].x = gameY[i].id;
 								gameY[i].loss++;
 							}
 							else
@@ -3912,7 +3877,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				losersBracket1.SetActive(false);
 				losersBracket2.SetActive(false);
 				finalsBracket.SetActive(false);
-				playoffs.SetActive(true);
 				playoffRound++;
                 simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4070,7 +4034,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffRound++;
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4158,7 +4121,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4251,7 +4213,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4340,7 +4301,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4430,7 +4390,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-				playoffs.SetActive(true);
 
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
@@ -4602,7 +4561,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-				playoffs.SetActive(true);
 				horizScrollBar.value = 0.94f;
 				vertScrollBar.value = 0.63f;
 				//StartCoroutine(SaveCareer(true));
@@ -5439,6 +5397,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	}
 	IEnumerator ResetBrackets(int poRound)
 	{
+		playoffs.SetActive(false);
+		playButton.transform.parent.gameObject.SetActive(false);
+
 		for (int i = 0; i < poRound; i++)
 		{
 			playoffRound = i;
@@ -5452,6 +5413,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			Debug.Log("Playoff Round in Reset is " + playoffRound + " and i is " + i);
 		}
 		yield return new WaitForSeconds(0.01f);
+		playoffs.SetActive(true);
+		playButton.transform.parent.gameObject.SetActive(true);
 		if (cont)
 			StartCoroutine(SimPlayoff());
 		//playoffRound = poRound;
