@@ -33,6 +33,8 @@ public class SweeperManager : MonoBehaviour
     public GameObject audioHouse;
 
     GameSettingsPersist gsp;
+    float timeLeft;
+    float sweepTimer;
 
     void Awake()
     {
@@ -43,7 +45,9 @@ public class SweeperManager : MonoBehaviour
         //}
         gsp = FindObjectOfType<GameSettingsPersist>();
         rockSounds = sweepSel.GetComponents<AudioSource>();
-        
+
+        //float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        //sweepTimer = sweepEndur * 0.02f;
     }
 
     private void Update()
@@ -68,6 +72,22 @@ public class SweeperManager : MonoBehaviour
                     SweepWhoa(true);
                 else
                     SweepWhoa(false);
+            }
+        }
+
+        if (isSweeping)
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft < 0)
+            {
+                Debug.Log("Whoa called in Tap Timer");
+                rockSounds[0].enabled = false;
+                rockSounds[1].enabled = false;
+                sweeperL.Whoa();
+                sweeperR.Whoa();
+                sweep.OnWhoa();
+                whoaButton.SetActive(false);
+                isSweeping = false;
             }
         }
     }
@@ -174,39 +194,54 @@ public class SweeperManager : MonoBehaviour
     }
     public void SweepTap()
     {
+        //Tap on the sweep target
+
+        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        float sweepTimer = sweepEndur * 0.02f;
+
+        if (timeLeft < sweepTimer)
+            timeLeft = sweepTimer;
+        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+
         CallOut("Sweep");
 
-        rockSounds[0].enabled = true;
-        rockSounds[1].enabled = true;
-        rockSounds[0].pitch = 1f;
-        rockSounds[1].pitch = 1f;
-        sweeperL.Sweep();
-        sweeperR.Sweep();
-        sweep.OnSweep();
+        if (isSweeping == false)
+        {
+            isSweeping = true;
+            rockSounds[0].enabled = true;
+            rockSounds[1].enabled = true;
+            rockSounds[0].pitch = 1f;
+            rockSounds[1].pitch = 1f;
+            sweeperL.Sweep();
+            sweeperR.Sweep();
+            sweep.OnSweep();
+        }
 
+        //set the buttons
         sweepButton.SetActive(false);
         hardButton.SetActive(false);
         whoaButton.SetActive(true);
 
-        isSweeping = true;
-        StartCoroutine(TapTimer());
+        //StartCoroutine(TapTimer());
     }
 
     IEnumerator TapTimer()
     {
-        isSweeping = false;
         float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = sweepEndur * 0.05f;
-        Debug.Log("Sweep Timer is " + sweepTimer);
+        float sweepTimer = sweepEndur * 0.02f;
+        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
         yield return new WaitForSeconds(sweepTimer);
-        if (!isSweeping)
+
+        if (isSweeping == false)
         {
+            Debug.Log("Whoa called in Tap Timer");
+            rockSounds[0].enabled = false;
+            rockSounds[1].enabled = false;
             sweeperL.Whoa();
             sweeperR.Whoa();
             sweep.OnWhoa();
             whoaButton.SetActive(false);
         }
-
     }
     public void SweepWeight(bool aiTurn)
     {

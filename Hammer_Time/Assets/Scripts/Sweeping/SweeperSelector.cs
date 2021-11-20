@@ -73,7 +73,9 @@ public class SweeperSelector : MonoBehaviour
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
                 if (hit.collider == sweepZoneCol)
                 {
+                    //sm.isSweeping = true;
                     sm.SweepTap();
+                        
                     Debug.Log(hit.collider.gameObject.name);
                 }
                 if (hit.collider == sweeperLCol)
