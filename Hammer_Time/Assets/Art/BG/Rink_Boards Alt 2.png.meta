@@ -1,0 +1,816 @@
+fileFormatVersion: 2
+guid: acee2ce93456247f485b574a5998bbb9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7517286558943952510
+    second: Rink_Boards Alt 2_0
+  - first:
+      213: 5016286436398057958
+    second: Rink_Boards Alt 2_1
+  - first:
+      213: 7739110692907338899
+    second: Rink_Boards Alt 2_2
+  - first:
+      213: -6757029435826015743
+    second: Rink_Boards Alt 2_3
+  - first:
+      213: 1218762672228514522
+    second: Rink_Boards Alt 2_4
+  - first:
+      213: 2447260534836143834
+    second: Rink_Boards Alt 2_5
+  - first:
+      213: 8438487366780138306
+    second: Rink_Boards Alt 2_6
+  - first:
+      213: -1848365384469530024
+    second: Rink_Boards Alt 2_7
+  - first:
+      213: 6684484985915109919
+    second: Rink_Boards Alt 2_8
+  - first:
+      213: -147879874862592893
+    second: Rink_Boards Alt 2_9
+  - first:
+      213: 6032773681612381331
+    second: Rink_Boards Alt 2_10
+  - first:
+      213: 2426270767748298646
+    second: Rink_Boards Alt 2_11
+  - first:
+      213: -5756570486415003276
+    second: Rink_Boards Alt 2_12
+  - first:
+      213: 8801953115339451220
+    second: Rink_Boards Alt 2_13
+  - first:
+      213: 4220866824818037573
+    second: Rink_Boards Alt 2_14
+  - first:
+      213: 7819604835827482735
+    second: Rink_Boards Alt 2_15
+  - first:
+      213: -4626620241255727282
+    second: Rink_Boards Alt 2_16
+  - first:
+      213: -4739299662017432564
+    second: Rink_Boards Alt 2_17
+  - first:
+      213: -2748835974695429961
+    second: Rink_Boards Alt 2_18
+  - first:
+      213: -1655644067470960266
+    second: Rink_Boards Alt 2_19
+  - first:
+      213: -1828822141539323299
+    second: Rink_Boards Alt 2_20
+  - first:
+      213: -5034711209171989044
+    second: Rink_Boards Alt 2_21
+  - first:
+      213: 1453133182473890429
+    second: Rink_Boards Alt 2_22
+  - first:
+      213: 7786483704044139902
+    second: Rink_Boards Alt 2_23
+  - first:
+      213: -2766206466136477376
+    second: Rink_Boards Alt 2_24
+  - first:
+      213: -7257441619483349787
+    second: Rink_Boards Alt 2_25
+  - first:
+      213: 737471709001824406
+    second: Rink_Boards Alt 2_26
+  - first:
+      213: -6012838987077253958
+    second: Rink_Boards Alt 2_27
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 64
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 704.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7e3cac0c44c25860800000000000000
+      internalID: 7517286558943952510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 704.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e9cd1dbfed6d9540800000000000000
+      internalID: 5016286436398057958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 704.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39c4b20fb28d66b60800000000000000
+      internalID: 7739110692907338899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 704.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1027bb447853a32a0800000000000000
+      internalID: -6757029435826015743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: adabfaf613ae9e010800000000000000
+      internalID: 1218762672228514522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_5
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 640.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad6adb38d7a66f120800000000000000
+      internalID: 2447260534836143834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 576.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2433d821d878b1570800000000000000
+      internalID: 8438487366780138306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_7
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 576.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85ab093d9794956e0800000000000000
+      internalID: -1848365384469530024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f12f6e3cdaf04cc50800000000000000
+      internalID: 6684484985915109919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_9
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 512.9167
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38cc26d8900a2fdf0800000000000000
+      internalID: -147879874862592893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 448.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39cd4de43b7b8b350800000000000000
+      internalID: 6032773681612381331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_11
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 448.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6973d888868dba120800000000000000
+      internalID: 2426270767748298646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4717cb864ad8c10b0800000000000000
+      internalID: -5756570486415003276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_13
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 384.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45b637149b1d62a70800000000000000
+      internalID: 8801953115339451220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54392899308839a30800000000000000
+      internalID: 4220866824818037573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_15
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 320.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f608c6b0b21d48c60800000000000000
+      internalID: 7819604835827482735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4ff1594761facfb0800000000000000
+      internalID: -4626620241255727282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_17
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 256.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0472593110aa3eb0800000000000000
+      internalID: -4739299662017432564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b8d676be3c2ad9d0800000000000000
+      internalID: -2748835974695429961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_19
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67919eb1e78f509e0800000000000000
+      internalID: -1655644067470960266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d52fd28a3f7be96e0800000000000000
+      internalID: -1828822141539323299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_21
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128.91666
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccd40ae84dc112ab0800000000000000
+      internalID: -5034711209171989044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_22
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64.916664
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7a60b03ee09a2410800000000000000
+      internalID: 1453133182473890429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_23
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64.916664
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e753bec9ca52f0c60800000000000000
+      internalID: 7786483704044139902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0.9166641
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 041fb8200e57c99d0800000000000000
+      internalID: -2766206466136477376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_25
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0.9166641
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ec2f847c43684b90800000000000000
+      internalID: -7257441619483349787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_26
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0.9166641
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69834feac960c3a00800000000000000
+      internalID: 737471709001824406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Boards Alt 2_27
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0.9166641
+        width: 64.25
+        height: 64.083336
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab404a37cca1e8ca0800000000000000
+      internalID: -6012838987077253958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

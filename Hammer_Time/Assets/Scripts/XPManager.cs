@@ -12,6 +12,11 @@ public class XPManager : MonoBehaviour
     public int skillPoints;
     public int skillPointsTotal;
 
+    public Button setButton;
+    public Button resetButton;
+    public Button upgradeButton;
+    public Text upgradeText;
+
     public Text skillPointsText;
     public Text xpCostText;
     public Text xpTotal;
@@ -78,12 +83,13 @@ public class XPManager : MonoBehaviour
             endurButtons[1].gameObject.SetActive(true);
             healthButtons[1].gameObject.SetActive(true);
         }
+
+        if (cm.cStats == cStats)
+        {
+
+        }
     }
 
-    //Display the data from the cm
-    //Spend the skill points
-    //Assign back to the cm
-    //Display results
     public void SetSliders()
     {
         drawSlider.value = cStats.drawAccuracy;

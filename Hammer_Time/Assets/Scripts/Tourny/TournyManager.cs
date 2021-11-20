@@ -569,7 +569,7 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("Player Team", playerTeam);
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
-
+		myFile.Add("BG", gsp.bg);
 		string[] nameList = new string[teams.Length];
         int[] winsList = new int[teams.Length];
         int[] lossList = new int[teams.Length];

@@ -726,6 +726,7 @@ public class PlayoffManager : MonoBehaviour
 
 		myFile.Add("Career Record", gsp.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
+		myFile.Add("BG", gsp.bg);
 		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		//myFile.Add("Player Name", gsp.firstName);
 		//myFile.Add("Team Name", gsp.teamName);

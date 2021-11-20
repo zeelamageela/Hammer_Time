@@ -5443,7 +5443,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		myFile.Add("Knockout Tourny", gsp.KO);
 		myFile.Add("Career Record", gsp.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
-		
+
+		myFile.Add("BG", gsp.bg);
 		myFile.Add("Career Earnings", gsp.earnings);
 
 		myFile.Add("Tourny In Progress", inProgress);

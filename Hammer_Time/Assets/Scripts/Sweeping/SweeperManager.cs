@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SweeperManager : MonoBehaviour
 {
-
+    public bool isSweeping;
     public SweeperParent sweeperL;
     public SweeperParent sweeperR;
 
@@ -144,7 +144,7 @@ public class SweeperManager : MonoBehaviour
         //sweep.OnWhoa();
         if (!aiTurn)
         {
-            sweepButton.SetActive(true);
+            sweepButton.SetActive(false);
             hardButton.SetActive(false);
             whoaButton.SetActive(false);
         }
@@ -172,7 +172,42 @@ public class SweeperManager : MonoBehaviour
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         }
     }
+    public void SweepTap()
+    {
+        CallOut("Sweep");
 
+        rockSounds[0].enabled = true;
+        rockSounds[1].enabled = true;
+        rockSounds[0].pitch = 1f;
+        rockSounds[1].pitch = 1f;
+        sweeperL.Sweep();
+        sweeperR.Sweep();
+        sweep.OnSweep();
+
+        sweepButton.SetActive(false);
+        hardButton.SetActive(false);
+        whoaButton.SetActive(true);
+
+        isSweeping = true;
+        StartCoroutine(TapTimer());
+    }
+
+    IEnumerator TapTimer()
+    {
+        isSweeping = false;
+        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        float sweepTimer = sweepEndur * 0.05f;
+        Debug.Log("Sweep Timer is " + sweepTimer);
+        yield return new WaitForSeconds(sweepTimer);
+        if (!isSweeping)
+        {
+            sweeperL.Whoa();
+            sweeperR.Whoa();
+            sweep.OnWhoa();
+            whoaButton.SetActive(false);
+        }
+
+    }
     public void SweepWeight(bool aiTurn)
     {
         CallOut("Sweep");
@@ -248,7 +283,7 @@ public class SweeperManager : MonoBehaviour
         if (!aiTurn)
         {
             whoaButton.SetActive(false);
-            sweepButton.SetActive(true);
+            sweepButton.SetActive(false);
             hardButton.SetActive(false);
         }
     }

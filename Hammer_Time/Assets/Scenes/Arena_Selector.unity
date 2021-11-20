@@ -1724,6 +1724,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillPoints: 0
   skillPointsTotal: 0
+  setButton: {fileID: 947393419}
+  resetButton: {fileID: 204602308}
+  upgradeButton: {fileID: 1296693051}
+  upgradeText: {fileID: 509266492}
   skillPointsText: {fileID: 1511108282}
   xpCostText: {fileID: 2033929369}
   xpTotal: {fileID: 140832958}
@@ -3127,7 +3131,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Spend XP
+  m_Text: Spend Skill Points
 --- !u!222 &387692752
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4489,7 +4493,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Spend XP
+  m_Text: 'Skill
+
+    Points'
 --- !u!222 &540753446
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -56,6 +56,7 @@ public class CareerManager : MonoBehaviour
     public Tourny[] activeTournies;
 
     public bool[] coachDialogue;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);

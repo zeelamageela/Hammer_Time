@@ -25,6 +25,7 @@ public class Sweep : MonoBehaviour
     public float sweepAmt;
 
     float statCalc;
+    float statEndur;
 
     void Start()
     {
@@ -48,6 +49,7 @@ public class Sweep : MonoBehaviour
     public void OnSweep()
     {
         statCalc = sm.swprLStats.sweepStrength.GetValue() + sm.swprRStats.sweepStrength.GetValue();
+        statEndur = sm.swprLStats.sweepEndurance.GetValue() + sm.swprRStats.sweepEndurance.GetValue();
         StartCoroutine(SweepWeight());
     }
 
@@ -105,7 +107,7 @@ public class Sweep : MonoBehaviour
 
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
         rb.drag -= sweepAmt;
-
+        
     }
 
     IEnumerator SweepHard()

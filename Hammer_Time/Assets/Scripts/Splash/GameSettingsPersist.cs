@@ -13,6 +13,7 @@ public class GameSettingsPersist : MonoBehaviour
     TournyManager tm;
     TeamManager teamM;
 
+    public int bg;
     public bool redHammer;
     public int ends;
     public int rocks;
@@ -139,6 +140,7 @@ public class GameSettingsPersist : MonoBehaviour
             Debug.Log("Loading to GSP");
             Debug.Log("Ends is " + myFile.GetInt("End Total"));
 
+            bg = myFile.GetInt("BG");
             ends = myFile.GetInt("End Total");
             endCurrent = myFile.GetInt("Current End");
             rocks = myFile.GetInt("Rocks Per Team");
@@ -202,6 +204,7 @@ public class GameSettingsPersist : MonoBehaviour
         teamColour = cm.teamColour;
         earnings = cm.earnings;
 
+        bg = Random.Range(0, 3);
         for (int i = 0; i < cm.currentTourny.teams; i++)
         {
             if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
@@ -409,6 +412,7 @@ public class GameSettingsPersist : MonoBehaviour
         if (myFile.Load())
         {
             //inProgress = myFile.GetBool("Tourny In Progress");
+            bg = myFile.GetInt("BG");
             prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");

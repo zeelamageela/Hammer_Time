@@ -32,7 +32,7 @@ public class Rock_Colliders : MonoBehaviour
         GameObject InPlay = GameObject.Find("InPlay_Collider");
         InPlay_Collider = InPlay.GetComponent<Collider2D>();
 
-        GameObject boards = GameObject.Find("Grid/Boards");
+        GameObject boards = GameObject.Find("BG/Boards");
         boards_collider = boards.GetComponent<Collider2D>();
 
         GameObject house = GameObject.Find("House");
@@ -90,7 +90,7 @@ public class Rock_Colliders : MonoBehaviour
             {
                 if (gm.rockList[i].rockInfo.moving)
                 {
-                    gm.cm.InPlayZoom(10);
+                    gm.cm.InPlayZoom(10f);
                 }
             }
         }

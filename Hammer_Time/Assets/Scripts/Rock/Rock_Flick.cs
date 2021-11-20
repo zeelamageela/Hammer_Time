@@ -125,6 +125,7 @@ public class Rock_Flick : MonoBehaviour
     {
         if (!GetComponent<Rock_Info>().released)
         {//if red has hammer
+            Debug.Log("Clicked on Rock");
             if (gm.redHammer)
             {
                 //if the rock is red
@@ -195,143 +196,146 @@ public class Rock_Flick : MonoBehaviour
 
     public void OnMouseUp()
     {
-        //if red has hammer
-        if (!story && gm.redHammer && !GetComponent<Rock_Info>().released)
-        {
-            //if the rock is red
-            if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+        if (!GetComponent<Rock_Info>().released)
+        {//if red has hammer
+            if (!story && gm.redHammer && !GetComponent<Rock_Info>().released)
             {
-                //if the ai team is not red
-                if (!gm.aiTeamRed)
+                //if the rock is red
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
-                    isPressed = false;
-                    rb.isKinematic = false;
+                    //if the ai team is not red
+                    if (!gm.aiTeamRed)
+                    {
+                        isPressed = false;
+                        rb.isKinematic = false;
 
-                    if (rb.position.y >= -24f)
-                    {
-                        RockReset();
+                        if (rb.position.y >= -24f)
+                        {
+                            RockReset();
+                        }
+                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        {
+                            RockReset();
+                        }
+                        else if (springDistance <= 1.5f)
+                        {
+                            RockReset();
+                        }
+                        else
+                        {
+                            GetComponent<CircleCollider2D>().radius = 0.14f;
+                            StartCoroutine(Release());
+                            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            trajLine.Release();
+                            shootKnob.UnParentandHide();
+                        }
                     }
-                    else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                }
+                //if the rock is yellow
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+                {
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamYellow)
                     {
-                        RockReset();
-                    }
-                    else if (springDistance <= 1.5f)
-                    {
-                        RockReset();
-                    }
-                    else
-                    {
-                        GetComponent<CircleCollider2D>().radius = 0.14f;
-                        StartCoroutine(Release());
-                        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-                        trajLine.Release();
-                        shootKnob.UnParentandHide();
+                        isPressed = false;
+                        rb.isKinematic = false;
+
+                        Debug.Log("What the fuckkkk");
+                        if (rb.position.y >= -24f)
+                        {
+                            RockReset();
+                        }
+                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        {
+                            RockReset();
+                        }
+                        else if (springDistance <= 1.5f)
+                        {
+                            RockReset();
+                        }
+                        else
+                        {
+                            GetComponent<CircleCollider2D>().radius = 0.14f;
+                            StartCoroutine(Release());
+                            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            trajLine.Release();
+                            shootKnob.UnParentandHide();
+                        }
                     }
                 }
             }
-            //if the rock is yellow
-            else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
+            //if yellow has the hammer
+            else if (!story && !gm.redHammer && !GetComponent<Rock_Info>().released)
             {
-                //if the ai team is not yellow
-                if (!gm.aiTeamYellow)
+                //if the rock is yellow
+                if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    isPressed = false;
-                    rb.isKinematic = false;
+                    //if the ai team is not yellow
+                    if (!gm.aiTeamRed)
+                    {
+                        isPressed = false;
+                        rb.isKinematic = false;
 
-                    Debug.Log("What the fuckkkk");
-                    if (rb.position.y >= -24f)
-                    {
-                        RockReset();
-                    }
-                    else if (Mathf.Abs(rb.position.x) >= 0.34f)
-                    {
-                        RockReset();
-                    }
-                    else if (springDistance <= 1.5f)
-                    {
-                        RockReset();
-                    }
-                    else
-                    {
-                        GetComponent<CircleCollider2D>().radius = 0.14f;
-                        StartCoroutine(Release());
-                        Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-                        trajLine.Release();
-                        shootKnob.UnParentandHide();
+                        if (rb.position.y >= -24f)
+                        {
+                            RockReset();
+                        }
+                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        {
+                            RockReset();
+                        }
+                        else if (springDistance <= 1.5f)
+                        {
+                            RockReset();
+                        }
+                        else
+                        {
+                            GetComponent<CircleCollider2D>().radius = 0.14f;
+                            StartCoroutine(Release());
+                            //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            trajLine.Release();
+                            shootKnob.UnParentandHide();
+                        }
                     }
                 }
+                //if the rock is red
+                else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
+                {
+                    //if the ai team is not red
+                    if (!gm.aiTeamYellow)
+                    {
+                        isPressed = false;
+                        rb.isKinematic = false;
+
+                        if (rb.position.y >= -24f)
+                        {
+                            RockReset();
+                        }
+                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        {
+                            RockReset();
+                        }
+                        else if (springDistance <= 1.5f)
+                        {
+                            RockReset();
+                        }
+                        else
+                        {
+                            GetComponent<CircleCollider2D>().radius = 0.14f;
+                            StartCoroutine(Release());
+                            //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            trajLine.Release();
+                            shootKnob.UnParentandHide();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                StartCoroutine(RockResetStory());
             }
         }
-        //if yellow has the hammer
-        else if (!story && !gm.redHammer && !GetComponent<Rock_Info>().released)
-        {
-            //if the rock is yellow
-            if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
-            {
-                //if the ai team is not yellow
-                if (!gm.aiTeamRed)
-                {
-                    isPressed = false;
-                    rb.isKinematic = false;
-
-                    if (rb.position.y >= -24f)
-                    {
-                        RockReset();
-                    }
-                    else if (Mathf.Abs(rb.position.x) >= 0.34f)
-                    {
-                        RockReset();
-                    }
-                    else if (springDistance <= 1.5f)
-                    {
-                        RockReset();
-                    }
-                    else
-                    {
-                        GetComponent<CircleCollider2D>().radius = 0.14f;
-                        StartCoroutine(Release());
-                        //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-                        trajLine.Release();
-                        shootKnob.UnParentandHide();
-                    }
-                }
-            }
-            //if the rock is red
-            else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
-            {
-                //if the ai team is not red
-                if (!gm.aiTeamYellow)
-                {
-                    isPressed = false;
-                    rb.isKinematic = false;
-
-                    if (rb.position.y >= -24f)
-                    {
-                        RockReset();
-                    }
-                    else if (Mathf.Abs(rb.position.x) >= 0.34f)
-                    {
-                        RockReset();
-                    }
-                    else if (springDistance <= 1.5f)
-                    {
-                        RockReset();
-                    }
-                    else
-                    {
-                        GetComponent<CircleCollider2D>().radius = 0.14f;
-                        StartCoroutine(Release());
-                        //Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
-                        trajLine.Release();
-                        shootKnob.UnParentandHide();
-                    }
-                }
-            }
-        }
-        else
-        {
-            StartCoroutine(RockResetStory());
-        }
+        
     }
 
     public void RockReset()
