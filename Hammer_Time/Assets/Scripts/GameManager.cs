@@ -175,7 +175,14 @@ public class GameManager : MonoBehaviour
 
             if (rockCurrent > 0)
             {
-                rm.rrp.OnRockPlace(rockCurrent);
+                if (gsp.aiRed)
+                {
+                    rm.rrp.OnRockPlace(rockCurrent, false);
+                }
+                else
+                {
+                    rm.rrp.OnRockPlace(rockCurrent, true);
+                }
                 yield return new WaitUntil(() => rm.rrp.placed);
                 rockBar.ResetBar(redHammer);
                 rockBar.EndUpdate(yellowScore, redScore);
@@ -328,7 +335,14 @@ public class GameManager : MonoBehaviour
 
         if (rockCurrent > 0)
         {
-            rm.rrp.OnRockPlace(rockCurrent);
+            if (gsp.aiRed)
+            {
+                rm.rrp.OnRockPlace(rockCurrent, false);
+            }
+            else
+            {
+                rm.rrp.OnRockPlace(rockCurrent, true);
+            }
             yield return new WaitUntil(() => rm.rrp.placed);
             rockBar.ResetBar(redHammer);
             yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);

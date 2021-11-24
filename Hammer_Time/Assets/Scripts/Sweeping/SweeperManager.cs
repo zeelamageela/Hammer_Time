@@ -105,6 +105,25 @@ public class SweeperManager : MonoBehaviour
             sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
             sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
+
+            if (gsp.redTeamColour == gsp.teamColour)
+            {
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+            }
+            else
+            {
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = 100;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = 100;
+            }
         }
         else
         {
@@ -112,6 +131,25 @@ public class SweeperManager : MonoBehaviour
             sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
             sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
             sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
+
+            if (gsp.redTeamColour == gsp.teamColour)
+            {
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = 100;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = 100;
+            }
+            else
+            {
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+            }
         }
 
         sweeperL.gameObject.SetActive(true);
@@ -197,16 +235,18 @@ public class SweeperManager : MonoBehaviour
         //Tap on the sweep target
 
         float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = sweepEndur * 0.02f;
+        float sweepTimer = 0.5f + (sweepEndur * 0.02f);
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
         Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
 
-        CallOut("Sweep");
+        if (Random.Range(0f, 1f) < 0.25f)
+            CallOut("Sweep");
 
         if (isSweeping == false)
         {
+            CallOut("Sweep");
             isSweeping = true;
             rockSounds[0].enabled = true;
             rockSounds[1].enabled = true;
@@ -220,9 +260,92 @@ public class SweeperManager : MonoBehaviour
         //set the buttons
         sweepButton.SetActive(false);
         hardButton.SetActive(false);
-        whoaButton.SetActive(true);
+        whoaButton.SetActive(false);
 
         //StartCoroutine(TapTimer());
+    }
+
+    public void SweepTapLeft()
+    {
+        //Tap on the sweep target
+
+        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        float sweepTimer = sweepEndur * 0.02f;
+
+        if (timeLeft < sweepTimer)
+            timeLeft = sweepTimer;
+        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+
+        if (Random.Range(0f, 1f) < 0.25f)
+            CallOut("Sweep");
+
+        if (isSweeping == false)
+        {
+            CallOut("Sweep");
+            isSweeping = true;
+            rockSounds[0].enabled = true;
+            rockSounds[1].enabled = false;
+            rockSounds[0].pitch = 1f;
+            rockSounds[1].pitch = 1f;
+            sweep.OnLeft();
+            //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+            sweeperL.Sweep();
+
+            //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
+            sweeperR.Whoa();
+
+            sweeperL.yOffset = Mathf.Lerp(1.2f, 0.6f, (1 - Time.deltaTime));
+            //sweeperL.yOffset = 0.6f;
+            sweeperR.yOffset = Mathf.Lerp(0.6f, 1.2f, (1 - Time.deltaTime));
+            //sweeperR.yOffset = 1.2f;
+        }
+
+        //set the buttons
+        sweepButton.SetActive(false);
+        hardButton.SetActive(false);
+        whoaButton.SetActive(false);
+    }
+
+    public void SweepTapRight()
+    {
+        //Tap on the sweep target
+
+        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        float sweepTimer = sweepEndur * 0.02f;
+
+        if (timeLeft < sweepTimer)
+            timeLeft = sweepTimer;
+        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+
+        if (Random.Range(0f, 1f) < 0.25f)
+            CallOut("Sweep");
+
+        if (isSweeping == false)
+        {
+            CallOut("Sweep");
+            isSweeping = true;
+            isSweeping = true;
+            //am.Play("Sweep");
+            rockSounds[0].enabled = false;
+            rockSounds[1].enabled = true;
+            rockSounds[0].pitch = 1f;
+            rockSounds[1].pitch = 1f;
+
+            sweep.OnRight();
+            //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
+            sweeperL.Whoa();
+
+            //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+            sweeperR.Sweep();
+
+            sweeperL.yOffset = 1.2f;
+            sweeperR.yOffset = 0.6f;
+        }
+
+        //set the buttons
+        sweepButton.SetActive(false);
+        hardButton.SetActive(false);
+        whoaButton.SetActive(false);
     }
 
     IEnumerator TapTimer()
@@ -297,7 +420,7 @@ public class SweeperManager : MonoBehaviour
         if (!aiTurn)
         {
             whoaButton.SetActive(false);
-            sweepButton.SetActive(true);
+            sweepButton.SetActive(false);
             hardButton.SetActive(false);
         }
     }
@@ -325,7 +448,12 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft(bool aiTurn)
     {
+        isSweeping = true;
         //am.Play("Sweep");
+        if (timeLeft < sweepTimer)
+            timeLeft = sweepTimer;
+        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+
         rockSounds[0].enabled = true;
         rockSounds[1].enabled = false;
         rockSounds[0].pitch = 1f;
@@ -337,7 +465,9 @@ public class SweeperManager : MonoBehaviour
         //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         sweeperR.Whoa();
 
+        sweeperL.yOffset = Mathf.Lerp(1.2f, 0.6f, (1 - Time.deltaTime));
         sweeperL.yOffset = 0.6f;
+        sweeperR.yOffset = Mathf.Lerp(0.6f, 1.2f, (1 - Time.deltaTime));
         sweeperR.yOffset = 1.2f;
         if (!aiTurn)
         {
@@ -349,6 +479,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepRight(bool aiTurn)
     {
+        isSweeping = true;
         //am.Play("Sweep");
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = true;

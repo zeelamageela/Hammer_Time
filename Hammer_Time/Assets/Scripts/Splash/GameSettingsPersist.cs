@@ -461,10 +461,11 @@ public class GameSettingsPersist : MonoBehaviour
                 if (i == playerTeamIndex)
                 {
                     teams[i].name = teamName;
+                    playerTeam = teams[i];
                 }
             }
             //StartCoroutine(Wait());
-            playerTeam = teams[playerTeamIndex];
+            //playerTeam = teams[playerTeamIndex];
             for (int i = 0; i < numberOfTeams; i++)
             {
                 teamList.Add(new Team_List(teams[i]));

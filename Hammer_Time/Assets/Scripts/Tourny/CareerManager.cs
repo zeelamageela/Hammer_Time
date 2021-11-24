@@ -247,7 +247,10 @@ public class CareerManager : MonoBehaviour
                 }
 
                 if (teams[i].id == playerTeamIndex)
+                {
                     teams[i].name = teamName;
+                    earnings = earningsList[i];
+                }
 
                 teams[i].wins = winsList[i];
                 teams[i].loss = lossList[i];
@@ -410,6 +413,7 @@ public class CareerManager : MonoBehaviour
             winsList[i] = teams[i].wins;
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
+
         }
         Debug.Log("Total Id List length is " + idList.Length);
         myFile.Add("Total ID List", idList);
@@ -638,7 +642,7 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         //TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
-        earnings = gsp.earnings;
+        //earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
 
         float xpChange = 0f;
@@ -719,6 +723,15 @@ public class CareerManager : MonoBehaviour
                         tourTeams[j].tourPoints = currentTournyTeams[i].tourPoints;
                     }
                 }
+                for (int j = 0; j < teams.Length; j++)
+                {
+                    if (currentTournyTeams[i].id == teams[j].id)
+                    {
+                        teams[i].wins = currentTournyTeams[i].wins;
+                        teams[i].loss = currentTournyTeams[i].loss;
+                        teams[i].earnings = currentTournyTeams[i].earnings;
+                    }
+                }
             }
 
             for (int i = 0; i < totalTourTeams; i++)
@@ -777,6 +790,13 @@ public class CareerManager : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i].id == playerTeamIndex)
+            {
+                playerTeam = teams[i];
+            }
+        }
         xp += xpChange;
         totalXp += xpChange;
         Debug.Log("XP Change is " + xpChange);

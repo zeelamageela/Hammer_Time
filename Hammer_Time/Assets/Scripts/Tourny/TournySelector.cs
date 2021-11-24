@@ -13,6 +13,8 @@ public class TournySelector : MonoBehaviour
 
     public Text weekText;
     public Text teamNameText;
+    public Text earningsText;
+    public Text recordText;
 
     public Scrollbar hScroll;
     bool drag;
@@ -31,6 +33,7 @@ public class TournySelector : MonoBehaviour
     public Tourny[] panel2Tournies;
 
     public Tourny[] activeTournies;
+    public GameObject[] panelGOs;
 
     public Tourny emptyTourny;
     public Tourny currentTourny;
@@ -63,6 +66,8 @@ public class TournySelector : MonoBehaviour
         //if (cm.inProgress)
             //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
+        //recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
+        //earningsText.text = "$" + cm.earnings.ToString();
         XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
 
         if (cm.week == 0)
@@ -145,6 +150,11 @@ public class TournySelector : MonoBehaviour
         {
             weekText.text = "Week " + cm.week.ToString();
 
+            for (int i = 0; i < panelGOs.Length; i++)
+            {
+                panelGOs[i].GetComponent<Image>().color = Color.white;
+                panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[1];
+            }
             switch (cm.week)
             {
                 case 0:
@@ -194,6 +204,8 @@ public class TournySelector : MonoBehaviour
                     if (tourComplete)
                     {
                         activeTournies[0] = emptyTourny;
+                        panelGOs[0].GetComponent<Image>().color = dimmed[0];
+                        panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                     }
                 }
             }
@@ -235,6 +247,8 @@ public class TournySelector : MonoBehaviour
                     if (tourniesComplete)
                     {
                         activeTournies[0] = emptyTourny;
+                        panelGOs[0].GetComponent<Image>().color = dimmed[0];
+                        panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                     }
                 }
             }
@@ -293,6 +307,8 @@ public class TournySelector : MonoBehaviour
                     if (tourComplete)
                     {
                         activeTournies[0] = emptyTourny;
+                        panelGOs[0].GetComponent<Image>().color = dimmed[0];
+                        panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                     }
                 }
             }
@@ -354,6 +370,8 @@ public class TournySelector : MonoBehaviour
                         if (tourComplete)
                         {
                             activeTournies[0] = emptyTourny;
+                            panelGOs[0].GetComponent<Image>().color = dimmed[0];
+                            panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                         }
                     }
                 }
@@ -413,6 +431,8 @@ public class TournySelector : MonoBehaviour
                         if (provQualComplete)
                         {
                             activeTournies[0] = emptyTourny;
+                            panelGOs[0].GetComponent<Image>().color = dimmed[0];
+                            panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                         }
                     }
                 }
@@ -443,6 +463,8 @@ public class TournySelector : MonoBehaviour
                 if (tourniesComplete)
                 {
                     activeTournies[1] = emptyTourny;
+                    panelGOs[1].GetComponent<Image>().color = dimmed[0];
+                    panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                 }
             }
             else
@@ -483,6 +505,8 @@ public class TournySelector : MonoBehaviour
                     if (tourniesComplete)
                     {
                         activeTournies[1] = emptyTourny;
+                        panelGOs[1].GetComponent<Image>().color = dimmed[0];
+                        panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                     }
                 }
             }
@@ -543,6 +567,8 @@ public class TournySelector : MonoBehaviour
                     if (provQualComplete)
                     {
                         activeTournies[1] = emptyTourny;
+                        panelGOs[1].GetComponent<Image>().color = dimmed[0];
+                        panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                     }
                 }
             }
@@ -605,6 +631,8 @@ public class TournySelector : MonoBehaviour
                         if (provQualComplete)
                         {
                             activeTournies[1] = emptyTourny;
+                            panelGOs[1].GetComponent<Image>().color = dimmed[0];
+                            panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                         }
                     }
                 }
@@ -666,6 +694,8 @@ public class TournySelector : MonoBehaviour
                         if (tourComplete)
                         {
                             activeTournies[1] = emptyTourny;
+                            panelGOs[1].GetComponent<Image>().color = dimmed[0];
+                            panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
                         }
                     }
                 }
@@ -674,6 +704,8 @@ public class TournySelector : MonoBehaviour
         if (activeTournies[0].name == activeTournies[1].name && activeTournies[0].location == activeTournies[1].location)
         {
             activeTournies[0] = emptyTourny;
+            panelGOs[0].GetComponent<Image>().color = dimmed[0];
+            panelGOs[0].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
         }
         #endregion
 
@@ -747,6 +779,14 @@ public class TournySelector : MonoBehaviour
         }
         else if (cm.provQual && provQualComplete && !provChampionship.complete)
         {
+            if (week < 10)
+            {
+                panelGOs[2].GetComponent<Image>().color = dimmed[0];
+                panelGOs[2].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
+            }
+            else
+                panelGOs[2].GetComponent<Image>().color = Color.white;
+
             activeTournies[2] = provChampionship;
         }
         else if (provChampionship.complete)
@@ -756,7 +796,12 @@ public class TournySelector : MonoBehaviour
             cm.coachDialogue[6] = true;
         }
         else
+        {
+
             activeTournies[2] = emptyTourny;
+            panelGOs[2].GetComponent<Image>().color = dimmed[0];
+            panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
+        }
 
 
         SetPanels();
@@ -859,7 +904,6 @@ public class TournySelector : MonoBehaviour
                     profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
                 else if (cm.teams[i].rank > 3)
                     profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
-
             }
         }
 

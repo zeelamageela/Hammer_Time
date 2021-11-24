@@ -6,6 +6,7 @@ public class RandomRockPlacerment : MonoBehaviour
 {
     public GameManager gm;
     public RockManager rm;
+    public TeamManager tm;
 
     public bool placed;
     int rockCurrent;
@@ -21,7 +22,7 @@ public class RandomRockPlacerment : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void OnRockPlace(int rockCrnt)
+    public void OnRockPlace(int rockCrnt, bool redTeam)
     {
         placed = false;
         rockCurrent = rockCrnt;
@@ -32,6 +33,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
     IEnumerator RandomRockPlace()
     {
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         int houseCount = 0;
         int houseRed = 0;
         bool[] guardCount = new bool[9];
@@ -70,17 +72,25 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                     }
 
-                    else if (houseCount - houseRed > 2)
+                    else if ((houseCount - houseRed) > 2)
                     {
-                        if (gm.redHammer && i % 2 != 1)
+                        if (gm.redHammer && i % 2 == 1)
                         {
                             houseRed++;
-                            rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                            if (gsp.aiRed)
+                                rockPos[i] = placePos[placeSelector]
+                                    + (Random.insideUnitCircle * ((1 - (0.09f * gsp.cStats.drawAccuracy)) * 1.25f));
+                            else
+                                rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
-                        else if (!gm.redHammer && i % 2 != 0)
+                        else if (!gm.redHammer && i % 2 == 0)
                         {
                             houseRed++;
-                            rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                            if (gsp.aiRed)
+                                rockPos[i] = placePos[placeSelector]
+                                    + (Random.insideUnitCircle * ((1 - (0.09f * gsp.cStats.drawAccuracy)) * 1.25f));
+                            else
+                                rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
                         else
                         {

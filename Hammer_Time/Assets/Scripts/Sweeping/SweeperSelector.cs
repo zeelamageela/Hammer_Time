@@ -80,47 +80,50 @@ public class SweeperSelector : MonoBehaviour
                 }
                 if (hit.collider == sweeperLCol)
                 {
-                    if (sweeperL.sweep)
-                    {
-                        Debug.Log("Hard!");
-                        sm.SweepLeft(false);
-                    }
-                    else if (sweeperL.hard)
-                    {
-                        Debug.Log("Whoa!");
-                        sm.SweepWhoa(false);
-                    }
-                    else if (sweeperL.whoa)
-                    {
-                        Debug.Log("Sweep!");
-                        sm.SweepLeft(false);
-                    }
+                    //if (sweeperL.sweep)
+                    //{
+                    //    Debug.Log("Hard!");
+                    //    sm.SweepLeft(false);
+                    //}
+                    //else if (sweeperL.hard)
+                    //{
+                    //    Debug.Log("Whoa!");
+                    //    sm.SweepWhoa(false);
+                    //}
+                    //else if (sweeperL.whoa)
+                    //{
+                    //    Debug.Log("Sweep!");
+                    //    sm.SweepLeft(false);
+                    //}
+
+                    sm.SweepTapLeft();
 
                     Debug.Log(hit.collider.gameObject.name);
                 }
 
                 if (hit.collider == sweeperRCol)
                 {
-                    if (sweeperR.sweep)
-                    {
-                        Debug.Log("Hard!");
-                        sm.SweepRight(false);
-                    }
-                    else if (sweeperR.hard)
-                    {
-                        Debug.Log("Whoa!");
-                        sm.SweepWhoa(false);
-                    }
-                    else if (sweeperR.whoa)
-                    {
-                        Debug.Log("Sweep!");
-                        sm.SweepRight(false);
-                    }
-                    else
-                    {
-                        Debug.Log("Default Sweep!");
-                        sm.SweepRight(false);
-                    }
+                    //if (sweeperR.sweep)
+                    //{
+                    //    Debug.Log("Hard!");
+                    //    sm.SweepRight(false);
+                    //}
+                    //else if (sweeperR.hard)
+                    //{
+                    //    Debug.Log("Whoa!");
+                    //    sm.SweepWhoa(false);
+                    //}
+                    //else if (sweeperR.whoa)
+                    //{
+                    //    Debug.Log("Sweep!");
+                    //    sm.SweepRight(false);
+                    //}
+                    //else
+                    //{
+                    //    Debug.Log("Default Sweep!");
+                    //    sm.SweepRight(false);
+                    //}
+                    sm.SweepTapRight();
 
                     Debug.Log(hit.collider.gameObject.name);
                 }

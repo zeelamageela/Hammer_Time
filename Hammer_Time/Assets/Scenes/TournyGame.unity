@@ -859,6 +859,14 @@ PrefabInstance:
       propertyPath: yOffset
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2332662073961024391, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
+      propertyPath: m_Size.y
+      value: 1.8168228
+      objectReference: {fileID: 0}
+    - target: {fileID: 2332662073961024391, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.21182021
+      objectReference: {fileID: 0}
     - target: {fileID: 2992158781241939886, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -3212,8 +3220,8 @@ MonoBehaviour:
   bg: 1
   redHammer: 0
   ends: 2
-  rocks: 1
-  volume: 0.45
+  rocks: 6
+  volume: 0.15
   tutorial: 0
   loadGame: 0
   aiYellow: 0
@@ -3234,12 +3242,12 @@ MonoBehaviour:
   earnings: 0
   record: {x: 0, y: 0}
   cStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
-    sweepStrength: 0
-    sweepEndurance: 0
-    sweepHealth: 0
+    drawAccuracy: 3
+    takeOutAccuracy: 3
+    guardAccuracy: 3
+    sweepStrength: 3
+    sweepEndurance: 3
+    sweepHealth: 50
   redTeamName: REDDD
   redTeamColour: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   redTeam:
@@ -3299,7 +3307,7 @@ MonoBehaviour:
     earnings: 0
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
-  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  teamColour: {r: 0, g: 1, b: 0.58431375, a: 1}
   playerGO:
   - charStats: {fileID: 3696769566690430156, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
     sweeperL: {fileID: 0}
@@ -4145,6 +4153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gm: {fileID: 197219300}
   rm: {fileID: 545177317}
+  tm: {fileID: 805824338}
   placed: 0
   placePos:
   - {x: -0.84, y: 4.34}
@@ -13012,6 +13021,14 @@ PrefabInstance:
     - target: {fileID: 7560930193470070712, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560930193470070714, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560930193470070714, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7560930194175334362, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
       propertyPath: m_IsActive

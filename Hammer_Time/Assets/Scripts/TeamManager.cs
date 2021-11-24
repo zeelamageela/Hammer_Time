@@ -148,29 +148,33 @@ public class TeamManager : MonoBehaviour
             for (int i = 0; i < teamRed.Length; i++)
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
-                if (teamRedColour == gsp.teamColour)
+            }
+            if (teamRedColour == gsp.teamColour)
+            {
+                for (int j = 0; j < teamRed.Length; j++)
                 {
-                    for (int j = 0; j < teamRed.Length; j++)
-                    {
-                        teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                        teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                        teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                        teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                        teamRed[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                    }
+                    teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                    teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                    teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                    teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                    teamRed[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    Debug.Log("Red Turn PLAYER stats - "
+                        + teamRed[j].charStats.guardAccuracy.GetValue());
                 }
-                else
+            }
+            else
+            {
+                for (int j = 0; j < teamRed.Length; j++)
                 {
-                    for (int j = 0; j < teamRed.Length; j++)
-                    {
-                        teamRed[j].charStats.drawAccuracy.SetBaseValue(10);
-                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(10);
-                        teamRed[j].charStats.guardAccuracy.SetBaseValue(10);
-                        teamRed[j].charStats.sweepStrength.SetBaseValue(10);
-                        teamRed[j].charStats.sweepEndurance.SetBaseValue(10);
-                        teamRed[j].charStats.sweepHealth = 100;
-                    }
+                    teamRed[j].charStats.drawAccuracy.SetBaseValue(10);
+                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(10);
+                    teamRed[j].charStats.guardAccuracy.SetBaseValue(10);
+                    teamRed[j].charStats.sweepStrength.SetBaseValue(10);
+                    teamRed[j].charStats.sweepEndurance.SetBaseValue(10);
+                    teamRed[j].charStats.sweepHealth = 100;
+                    Debug.Log("Red Turn AI stats - "
+                        + teamRed[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }
@@ -180,29 +184,33 @@ public class TeamManager : MonoBehaviour
             {
                 teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
 
-                if (teamYellowColour == gsp.teamColour)
+            }
+            if (teamYellowColour == gsp.teamColour)
+            {
+                for (int j = 0; j < teamYellow.Length; j++)
                 {
-                    for (int j = 0; j < teamYellow.Length; j++)
-                    {
-                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                        teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                        teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                    }
+                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                    teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                    teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    Debug.Log("Yellow Turn Player stats - "
+                        + teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
-                else
+            }
+            else
+            {
+                for (int j = 0; j < teamYellow.Length; j++)
                 {
-                    for (int j = 0; j < teamYellow.Length; j++)
-                    {
-                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(10);
-                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(10);
-                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(10);
-                        teamYellow[j].charStats.sweepStrength.SetBaseValue(10);
-                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(10);
-                        teamYellow[j].charStats.sweepHealth = 100;
-                    }
+                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(10);
+                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(10);
+                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(10);
+                    teamYellow[j].charStats.sweepStrength.SetBaseValue(10);
+                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(10);
+                    teamYellow[j].charStats.sweepHealth = 100;
+                    Debug.Log("Yellow Turn AI stats - "
+                         + teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }
