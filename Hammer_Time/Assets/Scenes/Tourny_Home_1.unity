@@ -943,12 +943,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1125, y: 2436}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2098,12 +2098,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1125, y: 2436}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2417,6 +2417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c58c93d6a20f394385e30a934717332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bg: 0
   redHammer: 0
   ends: 1
   rocks: 1
@@ -2432,6 +2433,7 @@ MonoBehaviour:
   yellowScore: 0
   redScore: 0
   tourny: 1
+  KO: 0
   story: 0
   third: 0
   skip: 0
@@ -2439,6 +2441,13 @@ MonoBehaviour:
   teamName: BingBangBoomBaby
   earnings: 0
   record: {x: 0, y: 0}
+  cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
   redTeamName: 
   redTeamColour: {r: 0, g: 0, b: 0, a: 0}
   redTeam: []
@@ -2463,6 +2472,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerGO: []
 --- !u!4 &450587699
@@ -3023,7 +3035,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 49, y: 0}
+  m_AnchoredPosition: {x: 49.273438, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &547271911
@@ -3432,18 +3444,23 @@ MonoBehaviour:
   - name: {fileID: 1579127897}
     rank: {fileID: 1767853438}
     panel: {fileID: 0}
+    bg: {fileID: 0}
   - name: {fileID: 1430091665}
     rank: {fileID: 1590931030}
     panel: {fileID: 0}
+    bg: {fileID: 0}
   - name: {fileID: 529436706}
     rank: {fileID: 1879388477}
     panel: {fileID: 0}
+    bg: {fileID: 0}
   - name: {fileID: 154482633}
     rank: {fileID: 1078781143}
     panel: {fileID: 0}
+    bg: {fileID: 0}
   - name: {fileID: 1615113857}
     rank: {fileID: 1221629500}
     panel: {fileID: 0}
+    bg: {fileID: 0}
   vsDisplay:
   - name: {fileID: 1663587427}
     rank: {fileID: 1093005273}
@@ -3474,6 +3491,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   - name: 
     wins: 0
     loss: 0
@@ -3481,6 +3501,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   - name: 
     wins: 0
     loss: 0
@@ -3488,6 +3511,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   - name: 
     wins: 0
     loss: 0
@@ -3495,6 +3521,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   - name: 
     wins: 0
     loss: 0
@@ -3502,6 +3531,9 @@ MonoBehaviour:
     nextOpp: 
     strength: 0
     id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
   dfList: {fileID: 4849789560157747718}
   standDisplayTest: []
   standings: {fileID: 929893583}
@@ -3558,30 +3590,39 @@ MonoBehaviour:
   - name: {fileID: 1950791969466388555}
     rank: {fileID: 1950791969466388554}
     panel: {fileID: 1950791969466388553}
+    bg: {fileID: 0}
   - name: {fileID: 931841681}
     rank: {fileID: 931841680}
     panel: {fileID: 931841679}
+    bg: {fileID: 0}
   - name: {fileID: 1852234039}
     rank: {fileID: 1852234038}
     panel: {fileID: 1852234037}
+    bg: {fileID: 0}
   - name: {fileID: 1979009605}
     rank: {fileID: 1979009604}
     panel: {fileID: 1979009603}
+    bg: {fileID: 0}
   - name: {fileID: 272309696}
     rank: {fileID: 272309695}
     panel: {fileID: 272309694}
+    bg: {fileID: 0}
   - name: {fileID: 1676697294}
     rank: {fileID: 1676697293}
     panel: {fileID: 1676697292}
+    bg: {fileID: 0}
   - name: {fileID: 291855202}
     rank: {fileID: 291855201}
     panel: {fileID: 291855200}
+    bg: {fileID: 0}
   - name: {fileID: 2068616068}
     rank: {fileID: 2068616067}
     panel: {fileID: 2068616066}
+    bg: {fileID: 0}
   - name: {fileID: 62032193}
     rank: {fileID: 62032192}
     panel: {fileID: 62032191}
+    bg: {fileID: 0}
   row:
   - {fileID: 1593906581}
   - {fileID: 288855967}
@@ -5147,12 +5188,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1125, y: 2436}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -6160,7 +6201,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 44, y: 0}
+  m_AnchoredPosition: {x: 43.835938, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1093005272
@@ -10351,7 +10392,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.007949829
+      value: 12.489311
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540841667980, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.x
