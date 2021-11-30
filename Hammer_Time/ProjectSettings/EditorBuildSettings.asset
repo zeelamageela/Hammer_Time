@@ -8,15 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SplashMenu.unity
     guid: 2be35fe4d846ecb43975b11f3cc453f4
-  - enabled: 0
-    path: Assets/Scenes/Game_1.unity
-    guid: b4e23ef1435953744b8ba7f4281df4d6
-  - enabled: 0
-    path: Assets/Scenes/AIGame.unity
-    guid: 80c12ebbf0f4a694e94eb28b64577c17
-  - enabled: 0
-    path: Assets/Scenes/End_Menu_1.unity
-    guid: 884fd3449cde843d9afda0b07ed3a49b
   - enabled: 1
     path: Assets/Scenes/Tourny_Menu_1.unity
     guid: fc8daea601efc714195e52218e1ccc43

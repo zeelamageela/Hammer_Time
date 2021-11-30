@@ -58,7 +58,7 @@ public class ProvStandings : MonoBehaviour
 			standDisplay[i].name.text = provRankList[i].team.name;
 			standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
 			standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
-			standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString();
+			standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
 			provRankList[i].team.rank = i + 1;
 		}
 

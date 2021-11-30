@@ -12,6 +12,7 @@ public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SC
 
 public class GameManager : MonoBehaviour
 {
+    #region Vars
     AudioManager am;
     public TutorialManager tm;
     public TeamManager teamM;
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour
     public string yellowTeamName;
     public int yellowScore;
 
-    public Vector3[] score;
+    public Vector2[] score;
     //public int[] endScoreRed;
     //public int[] endScoreYellow;
 
@@ -94,6 +95,8 @@ public class GameManager : MonoBehaviour
     public List<Guard_List> gList;
 
     EasyFileSave myFile;
+    #endregion
+
     void Start()
     {
         state = GameState.START;
@@ -122,6 +125,7 @@ public class GameManager : MonoBehaviour
         aiTeamRed = gsp.aiRed;
         mixed = gsp.mixed;
         rockCurrent = 2 * (8 - gsp.rocks);
+        score = new Vector2[endTotal];
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
         {
@@ -156,9 +160,9 @@ public class GameManager : MonoBehaviour
 
         if (endCurrent > 1)
         {
-            for (int i = 1; i < endCurrent; i++)
+            for (int i = 0; i < endCurrent; i++)
             {
-                gHUD.Scoreboard(i, gsp.score[i - 1].x, gsp.score[i - 1].y);
+                gHUD.Scoreboard(i, gsp.score[i].x, gsp.score[i].y);
             }
         }
         if (gsp.loadGame)
@@ -861,14 +865,16 @@ public class GameManager : MonoBehaviour
 
             if (winningTeamName == redTeamName)
             {
-                redScore = redScore + houseScore;
+                gsp.score[endCurrent - 1] = new Vector2Int(houseScore, 0);
+                redScore += houseScore;
                 gHUD.Scoreboard(endCurrent, redScore, 0);
                 redHammer = false;
                 gHUD.SetHammer(redHammer);
             }
             else if (winningTeamName == yellowTeamName)
             {
-                yellowScore = yellowScore + houseScore;
+                gsp.score[endCurrent - 1] = new Vector2Int(0, houseScore);
+                yellowScore += houseScore;
                 gHUD.Scoreboard(endCurrent, 0, yellowScore);
                 redHammer = true;
                 gHUD.SetHammer(redHammer);
@@ -925,10 +931,7 @@ public class GameManager : MonoBehaviour
                 yield return StartCoroutine(SaveGame());
                 //yield return StartCoroutine(SaveGame());
                 yield return new WaitForEndOfFrame();
-                if (gsp.tourny)
-                    SceneManager.LoadScene("End_menu_Tourny_1");
-                else
-                    SceneManager.LoadScene("End_Menu_1");
+                SceneManager.LoadScene("End_menu_Tourny_1");
             }
                 //StartCoroutine(ResetGame());
         }
@@ -951,10 +954,7 @@ public class GameManager : MonoBehaviour
 
             gsp.LoadFromGM();
 
-            if (redScore == yellowScore)
-                SceneManager.LoadScene("End_Menu_Tourny_1");
-            else
-                SceneManager.LoadScene("End_Menu_Tourny_FinalScore");
+            SceneManager.LoadScene("End_Menu_Tourny_1");
         }
         else
         {
@@ -1004,8 +1004,21 @@ public class GameManager : MonoBehaviour
         myFile.Add("Ai Yellow", aiTeamYellow);
         myFile.Add("Team", target);
         myFile.Add("Debug", debug);
+
         myFile.Add("End " + endCurrent + " Score", new Vector2Int(redScore, yellowScore));
 
+        int[] redScoreList = new int[score.Length];
+        int[] yellowScoreList = new int[score.Length];
+
+        for (int i = 0; i < score.Length; i++)
+        {
+            redScoreList[i] = (int)gsp.score[i].x;
+            yellowScoreList[i] = (int)gsp.score[i].y;
+        }
+        myFile.Add("Red Score List", redScoreList);
+        myFile.Add("Yellow Score List", yellowScoreList);
+
+       
         for (int i = 1; i < rockTotal; i++)
         {
             myFile.Add("Rock Position " + rockList[i].rockInfo.rockIndex, new Vector2(rockList[i].rock.transform.position.x, rockList[i].rock.transform.position.y));
@@ -1014,7 +1027,7 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        myFile.Save();
+        myFile.Append();
     }
 
     IEnumerator LoadGame()
@@ -1032,10 +1045,18 @@ public class GameManager : MonoBehaviour
             yellowScore = myFile.GetInt("Yellow Score");
             rocksPerTeam = myFile.GetInt("Rocks");
 
+            int[] redScoreList = myFile.GetArray<int>("Red Score List");
+            int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
+
+            for (int i = 0; i < redScoreList.Length; i++)
+            {
+                score[i].x = redScoreList[i];
+                score[i].y = yellowScoreList[i];
+            }
+
             for (int i = 1; i < endCurrent; i++)
             {
-                gHUD.Scoreboard(i, myFile.GetInt("End " + i + " Red"), myFile.GetInt("End " + i + " Yellow"));
-                Debug.Log("End " + i + " Red is " + myFile.GetInt("End " + i + " Red"));
+                gHUD.Scoreboard(i, redScoreList[i], yellowScoreList[i]);
             }
         }
 

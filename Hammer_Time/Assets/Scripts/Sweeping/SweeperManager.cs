@@ -52,25 +52,17 @@ public class SweeperManager : MonoBehaviour
 
     private void Update()
     {
-        if (sweeperL & sweeperR & swprLStats & swprRStats)
+        if (sweeperL && sweeperL.transform.parent.gameObject.activeSelf)
         {
             swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
             swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
 
             if (swprRStats.sweepHealth <= 0f)
             {
-                if (rm.gm.aiTeamRed)
-                    SweepWhoa(rm.gm.aiTeamRed);
-                else if (rm.gm.aiTeamYellow)
-                    SweepWhoa(rm.gm.aiTeamYellow);
-                else
                     SweepWhoa(false);
             }
             if (swprLStats.sweepHealth <= 0f)
             {
-                if (rm.gm.aiTeamRed | rm.gm.aiTeamYellow)
-                    SweepWhoa(true);
-                else
                     SweepWhoa(false);
             }
         }
@@ -448,11 +440,6 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft(bool aiTurn)
     {
-        isSweeping = true;
-        //am.Play("Sweep");
-        if (timeLeft < sweepTimer)
-            timeLeft = sweepTimer;
-        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
 
         rockSounds[0].enabled = true;
         rockSounds[1].enabled = false;
@@ -479,8 +466,6 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepRight(bool aiTurn)
     {
-        isSweeping = true;
-        //am.Play("Sweep");
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = true;
         rockSounds[0].pitch = 1f;

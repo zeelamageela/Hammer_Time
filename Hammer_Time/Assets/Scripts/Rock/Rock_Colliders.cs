@@ -32,7 +32,7 @@ public class Rock_Colliders : MonoBehaviour
         GameObject InPlay = GameObject.Find("InPlay_Collider");
         InPlay_Collider = InPlay.GetComponent<Collider2D>();
 
-        GameObject boards = GameObject.Find("BG/Boards");
+        GameObject boards = GameObject.Find("BG/Boards_1");
         boards_collider = boards.GetComponent<Collider2D>();
 
         GameObject house = GameObject.Find("House");
@@ -84,13 +84,14 @@ public class Rock_Colliders : MonoBehaviour
         GetComponent<Rock_Info>().stopped = true;
         GetComponent<Rock_Info>().rest = true;
 
+
         if (gm.rockCurrent == GetComponent<Rock_Info>().rockIndex)
         {
             for (int i = 0; i < gm.rockCurrent; i++)
             {
                 if (gm.rockList[i].rockInfo.moving)
                 {
-                    gm.cm.InPlayZoom(10f);
+                    gm.cm.RockFollow(gm.rockList[i].rock.transform);
                 }
             }
         }

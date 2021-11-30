@@ -84,10 +84,6 @@ public class XPManager : MonoBehaviour
             healthButtons[1].gameObject.SetActive(true);
         }
 
-        if (cm.cStats == cStats)
-        {
-
-        }
     }
 
     public void SetSliders()
@@ -103,9 +99,11 @@ public class XPManager : MonoBehaviour
 
     public void SetSkillPoints()
     {
+        cm = FindObjectOfType<CareerManager>();
+        cStats = cm.cStats;
         float exponent = 1.5f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
-        skillPointsTotal = 18 + Mathf.FloorToInt(xpMult / 125f);
+        skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 125f);
         Debug.Log("Skill Points Total is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy
@@ -118,6 +116,11 @@ public class XPManager : MonoBehaviour
 
     public void ButtonAdd(int skill)
     {
+        if (setButton.IsActive())
+            Debug.Log("Set Button is active");
+        else
+            Debug.Log("Set button is inactive");
+
         switch (skill)
         {
             case 0:

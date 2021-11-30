@@ -116,7 +116,7 @@ public class CareerSettings : MonoBehaviour
                 tournyInProg.SetActive(true);
                 gsp.KO = myFile.GetBool("Knockout Tourny");
                 tournyNameLoad.text = myFile.GetString("Current Tourny Name");
-                int draw = myFile.GetInt("Draw");
+                int draw = 1 + myFile.GetInt("Draw");
                 int playoffRound = myFile.GetInt("Playoff Round");
                 if (playoffRound > 0)
                     drawLoad.text = "Playoff Round " + playoffRound;
@@ -132,7 +132,7 @@ public class CareerSettings : MonoBehaviour
             gsp.careerLoad = true;
             nameLoad.text = playerName + " " + teamName;
             colourLoad.color = teamColour;
-            earningsLoad.text = "$" + cm.earnings.ToString();
+            earningsLoad.text = "$" + cm.earnings.ToString("n0");
             recordLoad.text = "Week " + week.ToString() + " | " + record.x.ToString() + " - " + record.y.ToString();
             load.SetActive(true);
             player.SetActive(false);

@@ -10,45 +10,28 @@ public class TournySettings : MonoBehaviour
     GameSettingsPersist gsp;
     CareerManager cm;
 
-    public string playerName;
-    public string teamName;
+    public Text tournyName;
+
     public int rocks;
     public int ends;
     public int teams;
     public int prize;
+    public int games;
     public float earnings;
     public float entryFee;
 
     public GameObject settings;
-    public GameObject player;
-    public GameObject load;
-    public InputField playerNameInput;
-    public InputField teamNameInput;
-    public Text nameLoad;
-    public Image colourLoad;
-    public Slider teamsSlider;
-    public Text teamsText;
-    public Slider prizeSlider;
-    public Text prizeText;
+    public Slider gameSlider;
+    public Text gameText;
     public Slider rockSlider;
     public Text rockText;
     public Slider endSlider;
     public Text endText;
-    public Text entryFeeText;
-    public Slider teamColourSlider;
-    public Image teamHandleSlider;
-    public Color teamColour;
 
-    public Text earningsLoad;
-    public Text recordLoad;
-    public Vector2 record;
-    Gradient gradient;
-    public GameObject tournyInProg;
-    public Text drawLoad;
-    public Text rankLoad;
+    public Text[] tournyInfoText;
 
-    GradientColorKey[] colorKey;
-    GradientAlphaKey[] alphaKey;
+    public DialogueTrigger coachGreen;
+    public GameObject dialogueGO;
 
     EasyFileSave myFile;
 
@@ -57,38 +40,8 @@ public class TournySettings : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
 
-        if (cm && cm.inProgress)
-        {
-            StartCoroutine(LoadCareer());
-            Settings();
-        }
-        else
-            StartCoroutine(LoadFromFile());
-
-        gradient = new Gradient();
-
-        // Populate the color keys at the relative time 0 and 1 (0 and 100%)
-        colorKey = new GradientColorKey[5];
-        colorKey[0].color = Color.red;
-        colorKey[0].time = 0.0f;
-        colorKey[1].color = Color.blue;
-        colorKey[1].time = 0.25f;
-        colorKey[2].color = Color.green;
-        colorKey[2].time = 0.5f;
-        colorKey[3].color = Color.yellow;
-        colorKey[3].time = 0.75f;
-        colorKey[4].color = Color.red;
-        colorKey[4].time = 1.0f;
-
-        // Populate the alpha  keys at relative time 0 and 1  (0 and 100%)
-        alphaKey = new GradientAlphaKey[2];
-        alphaKey[0].alpha = 1.0f;
-        alphaKey[0].time = 0.0f;
-        alphaKey[1].alpha = 1.0f;
-        alphaKey[1].time = 1.0f;
-
-        gradient.SetKeys(colorKey, alphaKey);
-
+        StartCoroutine(LoadCareer());
+        Settings();
     }
 
     // Update is called once per frame
@@ -98,65 +51,25 @@ public class TournySettings : MonoBehaviour
         {
             ends = (int)endSlider.value;
             rocks = (int)rockSlider.value;
-            teams = (int)teamsSlider.value * 2;
-            prize = (int)prizeSlider.value * 10000;
+            games = (int)gameSlider.value;
 
             endText.text = ends.ToString();
             rockText.text = rocks.ToString();
-            teamsText.text = teams.ToString();
-            prizeText.text = "$" + prize.ToString();
-
-            if (!gsp.inProgress)
-            {
-                //entryFee = Mathf.RoundToInt((prize)/ (10f * teams));
-                entryFeeText.fontSize = 100;
-                entryFeeText.text = "Entry Fee - $" + entryFee.ToString();
-            }
-            else
-            {
-                entryFeeText.fontSize = 200;
-
-                entryFeeText.text = "Load Tourny";
-            }
-        }
-
-        if (player.activeSelf)
-        {
-            teamName = teamNameInput.text;
-            playerName = playerNameInput.text;
-
-            teamHandleSlider.color = teamColour;
+            gameText.text = games.ToString();
 
         }
     }
 
-    public void TeamColour()
-    {
-        teamColour = gradient.Evaluate(teamColourSlider.value);
-    }
 
     IEnumerator LoadCareer()
     {
-        playerName = cm.playerName;
-        teamName = cm.teamName;
-        teamColour = cm.teamColour;
-        record = cm.record;
         earnings = cm.earnings;
+        
         teams = cm.currentTournyTeams.Length;
         entryFee = cm.currentTourny.entryFee;
         prize = cm.currentTourny.prizeMoney;
 
-        if (gsp.inProgress)
-        {
-            //StartCoroutine(LoadFromFile());
-        }
-        else
-        {
-            load.SetActive(false);
-            player.SetActive(false);
-            settings.SetActive(true);
-            
-        }
+        settings.SetActive(true);
         yield break;
     }
 
@@ -167,43 +80,12 @@ public class TournySettings : MonoBehaviour
 
         if (myFile.Load())
         {
-            playerName = myFile.GetString("Player Name");
-            teamName = myFile.GetString("Team Name");
-            teamColour = myFile.GetUnityColor("Team Colour");
-            earnings = myFile.GetFloat("Career Earnings");
-            record = myFile.GetUnityVector2("Career Record");
-            gsp.inProgress = myFile.GetBool("Tourny In Progress");
-
             if (gsp.inProgress)
             {
-                //tournyInProg.SetActive(true);
-                //if (myFile.GetInt("Playoff Round") > 0)
-                //{
-                //    drawLoad.text = "Playoffs";
-                //}
-                //else
-                //    drawLoad.text = "Draw " + (myFile.GetInt("Draw") + 1).ToString();
-
                 prize = myFile.GetInt("Prize");
                 teams = myFile.GetInt("Number Of Teams");
                 ends = myFile.GetInt("Ends");
                 rocks = myFile.GetInt("Rocks");
-
-                //int[] rankList = myFile.GetArray<int>("Teams Rank");
-                //int playerTeam = myFile.GetInt("Player Team");
-                //if (rankList[playerTeam] == 1)
-                //    rankLoad.text = "1st Place";
-                //else if (rankList[playerTeam] == 2)
-                //    rankLoad.text = "2nd Place";
-                //else if (rankList[playerTeam] == 3)
-                //    rankLoad.text = "3rd Place";
-                //else
-                //    rankLoad.text = rankList[playerTeam] + "th Place";
-
-            }
-            else
-            {
-                tournyInProg.SetActive(false);
 
             }
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
@@ -211,20 +93,7 @@ public class TournySettings : MonoBehaviour
 
             myFile.Dispose();
             yield return new WaitForEndOfFrame();
-            //gsp.careerLoad = true;
-            load.SetActive(true);
-            player.SetActive(false);
-            nameLoad.text = playerName + " " + teamName;
-            colourLoad.color = teamColour;
-            earningsLoad.text = "$" + earnings.ToString();
-            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
         }
-        else
-        {
-            player.SetActive(true);
-            load.SetActive(false);
-        }
-        tournyInProg.SetActive(false);
 
     }
     public void LoadToGSP()
@@ -256,16 +125,6 @@ public class TournySettings : MonoBehaviour
 
     public void Player()
     {
-        if (myFile.Load())
-        {
-            player.SetActive(false);
-            load.SetActive(true);
-        }
-        else
-        {
-            load.SetActive(false);
-            player.SetActive(true);
-        }
 
         settings.SetActive(false);
     }
@@ -274,60 +133,56 @@ public class TournySettings : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
-        if (cm && cm.inProgress)
+        if (cm.week == 1)
         {
-            teamsSlider.value = cm.currentTournyTeams.Length / 2f;
-            teamsSlider.interactable = false;
-            prizeSlider.value = cm.currentTourny.prizeMoney / 10000f;
-            prizeSlider.interactable = false;
+            //Help();
         }
-        else if (gsp.inProgress)
+        if (gsp.KO)
         {
-            Debug.Log("Settings In Progress teams is " + rocks);
-            rockSlider.value = rocks;
-            rockSlider.interactable = false;
-            teamsSlider.value = teams / 2f;
-            teamsSlider.interactable = false;
-            endSlider.value = ends;
-            endSlider.interactable = false;
-            prizeSlider.value = prize / 10000f;
-            prizeSlider.interactable = false;
+            gameText.gameObject.SetActive(false);
+            gameSlider.gameObject.SetActive(false);
+            gameSlider.transform.parent.gameObject.SetActive(false);
+
         }
         else
         {
-            teamsSlider.value = Random.Range(3, 9);
-            prizeSlider.value = Random.Range(1, 16);
-            rockSlider.interactable = true;
-            teamsSlider.interactable = true;
-            endSlider.interactable = true;
-            prizeSlider.interactable = true;
-            Debug.Log("Settings not In Progress teams is " + teamsSlider.value);
-            Debug.Log("Settings not In Progress prize is " + prizeSlider.value);
+            if (teams > 12)
+            {
+                gameSlider.minValue = 5;
+            }
+            else if (teams > 8)
+            {
+                gameSlider.minValue = 4;
+            }
+            else
+            {
+                gameSlider.minValue = 3;
+            }
+            gameSlider.maxValue = teams - 1;
         }
-        load.SetActive(false);
-        settings.SetActive(true);
-        player.SetActive(false);
+        tournyName.text = cm.currentTourny.name;
+        tournyInfoText[0].text = cm.currentTourny.teams.ToString();
+        tournyInfoText[1].text = cm.currentTourny.format;
+        tournyInfoText[2].text = "$" + cm.currentTourny.prizeMoney.ToString("n0");
+        tournyInfoText[3].text = "$" + cm.currentTourny.entryFee.ToString("n0");
 
-        
+        rockSlider.interactable = true;
+        endSlider.interactable = true;
     }
 
-    public void New()
+    public void Help()
     {
-        cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        dialogueGO.SetActive(true);
+        coachGreen.TriggerDialogue(0);
+    }
 
-        ClearPlayer();
-        gsp.careerLoad = false;
-        earnings = 0f;
-        
-        record = Vector2.zero;
-        gsp.draw = 0;
-        gsp.playoffRound = 0;
-        gsp.careerLoad = false;
-        gsp.inProgress = false;
-        load.SetActive(false);
-        settings.SetActive(false);
-        player.SetActive(true);
+    IEnumerator WaitForClick()
+    {
+        while (!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
+        //Debug.Log("Clickeddd");
     }
 
     public void Back()

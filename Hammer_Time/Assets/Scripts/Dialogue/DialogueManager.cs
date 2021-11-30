@@ -101,8 +101,10 @@ public class DialogueManager : MonoBehaviour
         else
             sentence = sentence.Replace("TOURRANK", tourRank.ToString() + "th");
 
-        sentence = sentence.Replace("EARNINGS", "$" + earnings.ToString());
+        sentence = sentence.Replace("EARNINGS", "$" + earnings.ToString("n0"));
         sentence = sentence.Replace("TOURPOINTS", tourPoints.ToString());
+
+        sentence = sentence.Replace("TEAMNAME", cm.teamName);
         dialogueText.text = sentence;
 
     }

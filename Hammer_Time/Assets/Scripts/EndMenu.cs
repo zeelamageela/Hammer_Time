@@ -7,78 +7,122 @@ using UnityEngine.SceneManagement;
 public class EndMenu : MonoBehaviour
 {
     GameSettingsPersist gsp;
-    public Text endText;
-    public Text endNumber;
-    public Text redScore;
-    public Text yellowScore;
+    CareerManager cm;
+
+    public Color yellow;
+    public Color dimmed;
+    public Color white;
+
+    public Text tournyName;
+    public Text end;
+    public Text draw;
+    public Text info;
+    public Text redTotalScore;
+    public Text yellowTotalScore;
+
+    public Text redTeamName;
+    public Image redTeamPanel;
+    public Text yellowTeamName;
+    public Image yellowTeamPanel;
+
+
     public Button contButton;
+    public Button endButton;
     public Button menuButton;
+
     public GameObject yellowSpinner;
     public GameObject yellowSpinnerAI;
     public GameObject redHammerPNG;
     public GameObject yellowHammerPNG;
-    public GameObject sbRedHammerPNG;
-    public GameObject sbYellowHammerPNG;
-    public string contScene;
+
     public GameObject scoreboard;
-    public Image[] scoreCards;
-    public Text[] scoreCardsText;
+    public Vector2[] score;
+    public GameObject[] scoreCols;
 
     // Start is called before the first frame update
     void Start()
     {
-        //for (int i = 0; i < 24; i++)
-        //{
-        //    scoreCardsText[i] = scoreCards[i].gameObject.GetComponent<Text>();
-        //}
-
-        foreach (Image scoreCard in scoreCards)
-        {
-            scoreCard.gameObject.SetActive(false);
-        }
-        
-
         gsp = FindObjectOfType<GameSettingsPersist>();
+        cm = FindObjectOfType<CareerManager>();
 
         if (gsp)
         {
-            if (gsp.endCurrent > gsp.ends)
+            if (gsp.endCurrent == 1)
             {
-                if (gsp.redScore != gsp.yellowScore)
-                {
-                    if (gsp.redScore > gsp.yellowScore)
-                        endText.text = gsp.redTeamName + " Wins!";
-                    else
-                        endText.text = gsp.yellowTeamName + " Wins!";
+                contButton.gameObject.SetActive(true);
+                endButton.gameObject.SetActive(false);
+                contButton.transform.GetComponentInChildren<Text>().text = "Start Game>";
 
-                    contButton.transform.GetComponentInChildren<Text>().text = "Continue>";
-                    endNumber.enabled = false;
-                    
-                    if (!gsp.tourny)
-                        contButton.gameObject.SetActive(false);
-                }
-
-                else
-                    endText.text = "Extra End";
-            }
-            else
-            {
-                contButton.transform.GetComponentInChildren<Text>().text = "Next End>";
                 if (gsp.redHammer)
                 {
                     redHammerPNG.SetActive(true);
-                    sbRedHammerPNG.SetActive(true);
+                    info.text = gsp.redTeamName + " has the hammer";
                 }
                 else
                 {
                     yellowHammerPNG.SetActive(true);
-                    sbYellowHammerPNG.SetActive(true);
+                    info.text = gsp.yellowTeamName + " has the hammer";
+                }
+            }
+            else if (gsp.endCurrent > gsp.ends)
+            {
+                if (gsp.redScore != gsp.yellowScore)
+                {
+                    if (gsp.redScore > gsp.yellowScore)
+                        info.text = gsp.redTeamName + " Wins!";
+                    else
+                        info.text = gsp.yellowTeamName + " Wins!";
+
+                    contButton.gameObject.SetActive(false);
+                    endButton.gameObject.SetActive(true);
+                    contButton.transform.GetComponentInChildren<Text>().text = "End Game>";
+                }
+
+                else
+                {
+                    info.text = "Extra End - " + gsp.endCurrent;
+                    contButton.gameObject.SetActive(true);
+                    endButton.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                contButton.gameObject.SetActive(true);
+                endButton.gameObject.SetActive(false);
+                contButton.transform.GetComponentInChildren<Text>().text = "Next End>";
+                if (gsp.redHammer)
+                {
+                    redHammerPNG.SetActive(true);
+                    info.text = gsp.redTeamName + " has the hammer";
+                }
+                else
+                {
+                    yellowHammerPNG.SetActive(true);
+                    info.text = gsp.yellowTeamName + " has the hammer";
                 }
             }
 
-            endNumber.text = gsp.endCurrent.ToString();
-            redScore.text = gsp.redScore.ToString();
-            yellowScore.text = gsp.yellowScore.ToString();
+            if (gsp.playoffRound > 0)
+            {
+                if (gsp.KO)
+                    draw.text = "Round " + gsp.draw.ToString();
+                else
+                    draw.text = "Playoff Round " + gsp.playoffRound.ToString();
+            }
+            else
+            {
+                draw.text = "Draw " + (gsp.draw + 1).ToString();
+            }
+
+            
+            tournyName.text = cm.currentTourny.name;
+            end.text = "End " + gsp.endCurrent.ToString();
+            redTeamName.text = gsp.redTeamName;
+            yellowTeamName.text = gsp.yellowTeamName;
+            redTeamPanel.color = gsp.redTeamColour;
+            yellowTeamPanel.color = gsp.yellowTeamColour;
+            redTotalScore.text = gsp.redScore.ToString();
+            yellowTotalScore.text = gsp.yellowScore.ToString();
 
             if (gsp.aiYellow)
             {
@@ -91,68 +135,47 @@ public class EndMenu : MonoBehaviour
                 yellowSpinnerAI.SetActive(false);
             }
 
-            for (int i = 0; i < gsp.endCurrent; i++)
+
+            for (int i = 0; i < gsp.ends; i++)
             {
-                Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
-                //if (i > 0 && gsp.score[i].x - gsp.score[i - 1].x > 0)
-                //{
-                //    Scoreboard(i + 1, gsp.score[i].x, 0);
-                //}
-                //else if (i > 0 && gsp.score[i].y - gsp.score[i - 1].y > 0)
-                //    Scoreboard(i + 1, 0, gsp.score[i].y);
-                //else if (i == 0)
-                //    Scoreboard(i + 1, gsp.score[i].x, gsp.score[i].y);
-                //else
-                //    Scoreboard(i + 1, 0, 0);
+                scoreCols[i].SetActive(true);
+                scoreCols[i].transform.GetChild(0).gameObject.SetActive(true);
+
+                scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
+                scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
+                Debug.Log("I IS " + i);
+                if (i < (gsp.endCurrent - 1))
+                {
+                    scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
+                    scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
+                    scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = gsp.score[i].x.ToString();
+                    scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = gsp.score[i].y.ToString();
+                }
+                else if (i == gsp.endCurrent - 1)
+                {
+                    scoreCols[i].transform.GetChild(0).GetComponent<Text>().color = yellow;
+
+                    if (gsp.redHammer)
+                    {
+                        scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
+                        scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = "H";
+                    }
+                    else
+                    {
+                        scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
+                        scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = "H";
+                    }
+                }
+                else
+                {
+                    scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
+                    scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
+                }
             }
         }
 
         
         
-    }
-
-    public void Scoreboard(int endNumber, int redScore, int yellowScore)
-    {
-        int cardNumber;
-        int totalScore;
-
-        if (redScore > 0)
-        {
-            cardNumber = endNumber + 11;
-            totalScore = redScore;
-            StartCoroutine(ScoreCards(cardNumber, totalScore));
-        }
-        else if (yellowScore > 0)
-        {
-            cardNumber = endNumber - 1;
-            totalScore = yellowScore;
-            StartCoroutine(ScoreCards(cardNumber, totalScore));
-        }
-        else
-        {
-            //if (scoreboard.activeSelf)
-            //{
-            //    scoreboard.SetActive(false);
-            //}
-            //else
-            //{
-            //    scoreboard.SetActive(true);
-            //}
-        }
-
-    }
-
-    IEnumerator ScoreCards(int cardNumber, int totalScore)
-    {
-        scoreboard.SetActive(true);
-        scoreCards[cardNumber].gameObject.SetActive(true);
-        //scoreCards[cardNumber].gameObject.transform.GetChild(0).GetComponent<Text>().text = "12";
-        scoreCards[cardNumber].gameObject.transform.GetChild(0).GetComponent<Text>().text = totalScore.ToString();
-
-        yield return new WaitForSeconds(2f);
-
-        //scoreboard.SetActive(true);
-
     }
 
     public void Menu()
@@ -172,25 +195,22 @@ public class EndMenu : MonoBehaviour
         CareerManager cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
 
-        if (gsp && gsp.tourny && gsp.endCurrent > gsp.ends && gsp.redScore != gsp.yellowScore)
-        {
-            //gsp.inProgress = true;
-            if (gsp.playoffRound > 0)
-            {
-                gsp.playoffRound++;
-                Debug.Log("Play off Round - " + gsp.playoffRound);
-            }
-            else
-                gsp.draw++;
+        SceneManager.LoadScene("TournyGame");
+    }
 
-            //cm.SaveCareer();
-            Debug.Log("Gsp Draw from End Menu is " + gsp.draw);
-            if (gsp.KO)
-            {
-                contScene = "Tourny_Home_3K";
-            }
-                //SceneManager.LoadScene("Tourny_Home_3K");
+    public void EndGame()
+    {
+        if (gsp.playoffRound > 0)
+        {
+            gsp.playoffRound++;
+            Debug.Log("Play off Round - " + gsp.playoffRound);
         }
-        SceneManager.LoadScene(contScene);
+        else
+            gsp.draw++;
+
+        if (gsp.KO)
+            SceneManager.LoadScene("Tourny_Home_3K");
+        else
+            SceneManager.LoadScene("Tourny_Home_1");
     }
 }

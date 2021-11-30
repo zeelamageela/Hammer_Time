@@ -31,6 +31,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public bool tourny;
     public bool KO;
+    public int games;
 
     public bool story;
     public bool third;
@@ -155,12 +156,13 @@ public class GameSettingsPersist : MonoBehaviour
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
 
-            score = new Vector2Int[endCurrent];
+            score = new Vector2Int[ends];
+            int[] redScoreList = myFile.GetArray<int>("Red Score List");
+            int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
 
-            for (int i = 1; i < endCurrent; i++)
+            for (int i = 0; i < score.Length; i++)
             {
-                Vector2 tempScore = myFile.GetUnityVector2("End " + i + " Score");
-                score[i - 1] = Vector2Int.RoundToInt(tempScore);
+                score[i] = new Vector2Int(redScoreList[i], yellowScoreList[i]);
                 Debug.Log("Score " + i + " - " + score[i].x + ", " + score[i].y);
             }
         }
@@ -185,7 +187,6 @@ public class GameSettingsPersist : MonoBehaviour
         third = gm.target;
         skip = gm.target;
 
-        score = new Vector2Int[12];
         score[endCurrent - 2] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
@@ -204,7 +205,11 @@ public class GameSettingsPersist : MonoBehaviour
         teamColour = cm.teamColour;
         earnings = cm.earnings;
 
-        bg = Random.Range(0, 3);
+        if (cm.currentTourny.championship)
+            bg = 3;
+        else
+            bg = Random.Range(0, 3);
+
         for (int i = 0; i < cm.currentTourny.teams; i++)
         {
             if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
@@ -233,11 +238,10 @@ public class GameSettingsPersist : MonoBehaviour
 
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
-        firstName = ts.playerName;
-        teamName = ts.teamName;
-        teamColour = ts.teamColour;
+        teamColour = cm.teamColour;
         earnings = ts.earnings;
 
+        games = ts.games;
         ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
@@ -415,6 +419,9 @@ public class GameSettingsPersist : MonoBehaviour
             bg = myFile.GetInt("BG");
             prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
+            ends = myFile.GetInt("Ends");
+            games = myFile.GetInt("Games");
+            rocks = myFile.GetInt("Rocks");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
             playerTeamIndex = myFile.GetInt("Player Team");
@@ -490,6 +497,19 @@ public class GameSettingsPersist : MonoBehaviour
                     playoffTeams[i] = tm.tTeamList.nullTeam;
             }
             Debug.Log("teamList Count is " + teamList.Count);
+
+            score = new Vector2Int[ends];
+
+            //int[] redScoreList = myFile.GetArray<int>("Red Score List");
+            //int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
+
+            //Debug.Log("Red Score List is " + redScoreList.Length + " long");
+            //for (int i = 0; i < score.Length; i++)
+            //{
+            //    score[i].x = redScoreList[i];
+            //    score[i].y = yellowScoreList[i];
+            //}
+
             myFile.Dispose();
         }
     }

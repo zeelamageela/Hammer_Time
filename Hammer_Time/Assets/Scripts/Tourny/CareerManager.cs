@@ -57,6 +57,11 @@ public class CareerManager : MonoBehaviour
 
     public bool[] coachDialogue;
 
+    public bool[] settingDialogue;
+
+    public bool[] gameDialogue;
+   
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -137,6 +142,9 @@ public class CareerManager : MonoBehaviour
         if (myFile.Load())
         {
             coachDialogue = myFile.GetArray<bool>("Coach Dialogue Played List");
+            settingDialogue = myFile.GetArray<bool>("Setting Dialogue Played List");
+            gameDialogue = myFile.GetArray<bool>("Game Dialogue Played List");
+
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
             playerName = myFile.GetString("Player Name");
@@ -379,6 +387,9 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
+        myFile.Add("Settings Dialogue Played List", settingDialogue);
+        myFile.Add("Game Dialogue Played List", gameDialogue);
+
         myFile.Add("Tourny In Progress", gsp.inProgress);
         myFile.Add("Knockout Tourny", false);
         myFile.Add("Player Name", playerName);
@@ -497,16 +508,6 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
         }
 
-        //int[] tournyTeamIDList = new int[currentTournyTeams.Length];
-        //int[] tournyWinsList = new int[currentTournyTeams.Length];
-        //int[] tournyLossList = new int[currentTournyTeams.Length];
-
-        //for (int i = 0; i < currentTournyTeams.Length; i++)
-        //{
-        //    currentTournyTeams[i].id = tournyTeamIDList[i];
-        //    currentTournyTeams[i].wins = tournyWinsList[i];
-        //    currentTournyTeams[i].loss = tournyLossList[i];
-        //}
 
         if (tm)
         {
@@ -827,17 +828,6 @@ public class CareerManager : MonoBehaviour
             tourRecords[i].z = tourTeams[i].tourPoints;
             tourRecords[i].w = tourTeams[i].id;
         }
-        //if (currentTourny.tour)
-        //{
-        //    tourRecords = new Vector4[totalTourTeams];
-        //    for (int i = 0; i < totalTourTeams; i++)
-        //    {
-        //        tourRecords[i].x = tourTeams[i].tourRecord.x;
-        //        tourRecords[i].y = tourTeams[i].tourRecord.y;
-        //        tourRecords[i].z = tourTeams[i].tourPoints;
-        //        tourRecords[i].w = tourTeams[i].id;
-        //    }
-        //}
 
         for (int i = 0; i < totalTeams; i++)
         {
@@ -847,7 +837,6 @@ public class CareerManager : MonoBehaviour
             teamRecords[i].w = teams[i].id;
         }
         
-
         earnings = gsp.earnings;
         SaveCareer();
     }
@@ -905,7 +894,7 @@ public class CareerManager : MonoBehaviour
         cStats.guardAccuracy = 3;
         cStats.sweepStrength = 3;
         cStats.sweepEndurance = 3;
-        cStats.sweepHealth = 30f;
+        cStats.sweepHealth = 50f;
 
         season++;
 

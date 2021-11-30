@@ -12,17 +12,20 @@ public class BGManager : MonoBehaviour
     public GameObject[] ice;
     public Color[] camBG;
 
+    public GameObject randBoards;
+
 
     // Start is called before the first frame update
     void Awake()
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
 
-        //Instantiate(boards[gsp.bg], transform);
+        randBoards = Instantiate(boards[gsp.bg], transform);
+        randBoards.name = "Boards_1";
         Instantiate(ice[gsp.bg], transform);
         cm.main.backgroundColor = camBG[gsp.bg];
         cm.house.backgroundColor = camBG[gsp.bg];
-        //gm.boardCollider = boards[gsp.bg].GetComponent<Collider2D>();
+        boards[gsp.bg].GetComponent<Collider2D>().enabled = false;
     }
 
     // Update is called once per frame

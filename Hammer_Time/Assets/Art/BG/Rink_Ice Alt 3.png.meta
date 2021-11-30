@@ -1,0 +1,1680 @@
+fileFormatVersion: 2
+guid: 96ae145dfc10e4541a67a77ad37a637b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4212351327610633322
+    second: Rink_Ice Alt 3_0
+  - first:
+      213: -1119020956776317442
+    second: Rink_Ice Alt 3_1
+  - first:
+      213: -3811917570324132951
+    second: Rink_Ice Alt 3_2
+  - first:
+      213: 3509935855939559839
+    second: Rink_Ice Alt 3_3
+  - first:
+      213: 3083015861828149830
+    second: Rink_Ice Alt 3_4
+  - first:
+      213: -5481645105410888982
+    second: Rink_Ice Alt 3_5
+  - first:
+      213: -4721552943155163965
+    second: Rink_Ice Alt 3_6
+  - first:
+      213: 2825932109596550766
+    second: Rink_Ice Alt 3_7
+  - first:
+      213: -1633558487631039068
+    second: Rink_Ice Alt 3_8
+  - first:
+      213: 1284232235435205437
+    second: Rink_Ice Alt 3_9
+  - first:
+      213: 138793657268642339
+    second: Rink_Ice Alt 3_10
+  - first:
+      213: -8927109370824520807
+    second: Rink_Ice Alt 3_11
+  - first:
+      213: 7999871736638811539
+    second: Rink_Ice Alt 3_12
+  - first:
+      213: -2112933739465852292
+    second: Rink_Ice Alt 3_13
+  - first:
+      213: 4698901382374439547
+    second: Rink_Ice Alt 3_14
+  - first:
+      213: 6225122909664771838
+    second: Rink_Ice Alt 3_15
+  - first:
+      213: -903965682847848020
+    second: Rink_Ice Alt 3_16
+  - first:
+      213: -6487870737765760326
+    second: Rink_Ice Alt 3_17
+  - first:
+      213: -1537428130300559419
+    second: Rink_Ice Alt 3_18
+  - first:
+      213: -5596312913049752857
+    second: Rink_Ice Alt 3_19
+  - first:
+      213: -1826844485173779352
+    second: Rink_Ice Alt 3_20
+  - first:
+      213: 1866300732063904371
+    second: Rink_Ice Alt 3_21
+  - first:
+      213: 3358499725059337289
+    second: Rink_Ice Alt 3_22
+  - first:
+      213: -6144634049245099011
+    second: Rink_Ice Alt 3_23
+  - first:
+      213: 2522037622587980007
+    second: Rink_Ice Alt 3_24
+  - first:
+      213: 4212471820359905991
+    second: Rink_Ice Alt 3_25
+  - first:
+      213: -9065332460676223221
+    second: Rink_Ice Alt 3_26
+  - first:
+      213: -7230377238719039965
+    second: Rink_Ice Alt 3_27
+  - first:
+      213: -7068079357440728672
+    second: Rink_Ice Alt 3_28
+  - first:
+      213: 3090287903912268602
+    second: Rink_Ice Alt 3_29
+  - first:
+      213: -6550165831875955504
+    second: Rink_Ice Alt 3_30
+  - first:
+      213: -185326174051376111
+    second: Rink_Ice Alt 3_31
+  - first:
+      213: 6601592609206505083
+    second: Rink_Ice Alt 3_32
+  - first:
+      213: -311590313403039778
+    second: Rink_Ice Alt 3_33
+  - first:
+      213: 459092853030356139
+    second: Rink_Ice Alt 3_34
+  - first:
+      213: -7660078588445924392
+    second: Rink_Ice Alt 3_35
+  - first:
+      213: 3549675154385398977
+    second: Rink_Ice Alt 3_36
+  - first:
+      213: 9087859006991767764
+    second: Rink_Ice Alt 3_37
+  - first:
+      213: -4244476025461872681
+    second: Rink_Ice Alt 3_38
+  - first:
+      213: -756695987472105167
+    second: Rink_Ice Alt 3_39
+  - first:
+      213: 5569748290723046026
+    second: Rink_Ice Alt 3_40
+  - first:
+      213: 5352744631632079533
+    second: Rink_Ice Alt 3_41
+  - first:
+      213: -8461224484811271681
+    second: Rink_Ice Alt 3_42
+  - first:
+      213: 3087885361029337471
+    second: Rink_Ice Alt 3_43
+  - first:
+      213: -7952120620970324790
+    second: Rink_Ice Alt 3_44
+  - first:
+      213: -3649755076434394215
+    second: Rink_Ice Alt 3_45
+  - first:
+      213: 8211898460622620087
+    second: Rink_Ice Alt 3_46
+  - first:
+      213: -2498185872354814012
+    second: Rink_Ice Alt 3_47
+  - first:
+      213: 8352969484657841080
+    second: Rink_Ice Alt 3_48
+  - first:
+      213: -8994604620308171599
+    second: Rink_Ice Alt 3_49
+  - first:
+      213: -2179017835634526899
+    second: Rink_Ice Alt 3_50
+  - first:
+      213: -6340424131205843490
+    second: Rink_Ice Alt 3_51
+  - first:
+      213: 6542409802655529288
+    second: Rink_Ice Alt 3_52
+  - first:
+      213: -9136064435047315673
+    second: Rink_Ice Alt 3_53
+  - first:
+      213: -7951781418424633364
+    second: Rink_Ice Alt 3_54
+  - first:
+      213: 5220799628153350949
+    second: Rink_Ice Alt 3_55
+  - first:
+      213: 7673152280113911731
+    second: Rink_Ice Alt 3_56
+  - first:
+      213: -5191836403967848256
+    second: Rink_Ice Alt 3_57
+  - first:
+      213: 5076544290212770657
+    second: Rink_Ice Alt 3_58
+  - first:
+      213: -4557238214999931897
+    second: Rink_Ice Alt 3_59
+  - first:
+      213: -6981186516981031446
+    second: Rink_Ice Alt 3_60
+  - first:
+      213: -982879421737850835
+    second: Rink_Ice Alt 3_61
+  - first:
+      213: 1062953324638523086
+    second: Rink_Ice Alt 3_62
+  - first:
+      213: 5594623890469473647
+    second: Rink_Ice Alt 3_63
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 64
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 961
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6c7067e637457a30800000000000000
+      internalID: 4212351327610633322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 961
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efd312f5e507870f0800000000000000
+      internalID: -1119020956776317442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 961
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ab82cb8a29591bc0800000000000000
+      internalID: -3811917570324132951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 961
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f912fa5801cc5b030800000000000000
+      internalID: 3509935855939559839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 897
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6426921879219ca20800000000000000
+      internalID: 3083015861828149830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_5
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 897
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aeaa933d1d84de3b0800000000000000
+      internalID: -5481645105410888982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_6
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 897
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cc49033d9ca97eb0800000000000000
+      internalID: -4721552943155163965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_7
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 897
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e666fdff74ab73720800000000000000
+      internalID: 2825932109596550766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 833
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a57de0e53f6459e0800000000000000
+      internalID: -1633558487631039068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_9
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 833
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d33a83af96282d110800000000000000
+      internalID: 1284232235435205437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_10
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 833
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 322239e88181de100800000000000000
+      internalID: 138793657268642339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_11
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 833
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99b81f833598c1480800000000000000
+      internalID: -8927109370824520807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 769
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39d2b0795f0450f60800000000000000
+      internalID: 7999871736638811539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_13
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 769
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7a333175f95da2e0800000000000000
+      internalID: -2112933739465852292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_14
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 769
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7a350359e9d53140800000000000000
+      internalID: 4698901382374439547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_15
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 769
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efef6b1ed44146650800000000000000
+      internalID: 6225122909664771838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 705
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca9e5b830087473f0800000000000000
+      internalID: -903965682847848020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_17
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 705
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab202de20f376f5a0800000000000000
+      internalID: -6487870737765760326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_18
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 705
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cffdb9d245f9aae0800000000000000
+      internalID: -1537428130300559419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_19
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 705
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eaecbd5e07e552b0800000000000000
+      internalID: -5596312913049752857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 641
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 864e559ae9eb5a6e0800000000000000
+      internalID: -1826844485173779352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_21
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 641
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 37278b2b0ae66e910800000000000000
+      internalID: 1866300732063904371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_22
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 641
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94ca862b4b9cb9e20800000000000000
+      internalID: 3358499725059337289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_23
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 641
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfbc9fb43efd9baa0800000000000000
+      internalID: -6144634049245099011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 577
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e8f68cfad3100320800000000000000
+      internalID: 2522037622587980007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_25
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 577
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c235ee4dc4b57a30800000000000000
+      internalID: 4212471820359905991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_26
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 577
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0f639e3828713280800000000000000
+      internalID: -9065332460676223221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_27
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 577
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 326f416a53a88ab90800000000000000
+      internalID: -7230377238719039965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 513
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a1697fc54329ed90800000000000000
+      internalID: -7068079357440728672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_29
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 513
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a33906eb978e2ea20800000000000000
+      internalID: 3090287903912268602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_30
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 513
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d4f12351e22915a0800000000000000
+      internalID: -6550165831875955504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_31
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 513
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 114e51c93d69d6df0800000000000000
+      internalID: -185326174051376111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 449
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7e099750819d9b50800000000000000
+      internalID: 6601592609206505083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_33
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 449
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edfb826c2420dabf0800000000000000
+      internalID: -311590313403039778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_34
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 449
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba48bc774860f5600800000000000000
+      internalID: 459092853030356139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_35
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 449
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d3ea10db1fe1b590800000000000000
+      internalID: -7660078588445924392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 385
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1cceb25febaf24130800000000000000
+      internalID: 3549675154385398977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_37
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 385
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d814980e9f8e1e70800000000000000
+      internalID: 9087859006991767764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_38
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 385
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d7eea40b879815c0800000000000000
+      internalID: -4244476025461872681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_39
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 385
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13103cf220daf75f0800000000000000
+      internalID: -756695987472105167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 321
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a82e2e48f88bb4d40800000000000000
+      internalID: 5569748290723046026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_41
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 321
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: daa2fc5e1e4c84a40800000000000000
+      internalID: 5352744631632079533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_42
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 321
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff19cf91921b39a80800000000000000
+      internalID: -8461224484811271681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_43
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 321
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f715843206f5ada20800000000000000
+      internalID: 3087885361029337471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_44
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 257
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acc41086d6464a190800000000000000
+      internalID: -7952120620970324790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_45
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 257
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99303ff5817795dc0800000000000000
+      internalID: -3649755076434394215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_46
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 257
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b50df4342686f170800000000000000
+      internalID: 8211898460622620087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_47
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 257
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c7546f5f29a45dd0800000000000000
+      internalID: -2498185872354814012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_48
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 193
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b355b88d75bbe370800000000000000
+      internalID: 8352969484657841080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_49
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 193
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1b4b177d0cebc2380800000000000000
+      internalID: -8994604620308171599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_50
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 193
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4573cbc2d292c1e0800000000000000
+      internalID: -2179017835634526899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_51
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 193
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed5392e78d94208a0800000000000000
+      internalID: -6340424131205843490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_52
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 129
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 849f0566d0f4bca50800000000000000
+      internalID: 6542409802655529288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_53
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 129
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 727ccef1dcd263180800000000000000
+      internalID: -9136064435047315673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_54
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 129
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce77f372ee895a190800000000000000
+      internalID: -7951781418424633364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_55
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 129
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52b629fc991047840800000000000000
+      internalID: 5220799628153350949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_56
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 65
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b71bab38538c7a60800000000000000
+      internalID: 7673152280113911731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_57
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 65
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c01e815c44e2f7b0800000000000000
+      internalID: -5191836403967848256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_58
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 65
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1637ba0a222837640800000000000000
+      internalID: 5076544290212770657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_59
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 65
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 704081e1dff61c0c0800000000000000
+      internalID: -4557238214999931897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_60
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aed5998c9d7dd1f90800000000000000
+      internalID: -6981186516981031446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_61
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 1
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d28264a9f5c1c52f0800000000000000
+      internalID: -982879421737850835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_62
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 1
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ece46efba6e50ce00800000000000000
+      internalID: 1062953324638523086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rink_Ice Alt 3_63
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 1
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f6dc85b69c814ad40800000000000000
+      internalID: 5594623890469473647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

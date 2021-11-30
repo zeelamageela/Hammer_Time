@@ -24,7 +24,7 @@ public class DrawFormatList : MonoBehaviour
 
     public DrawFormat[] currentFormat;
 
-    public void DrawSelector(int numberOfTeams, int gameLength)
+    public void DrawSelector(int numberOfTeams, int gameLength, int games)
     {
         Debug.Log("Number of Teams is " + numberOfTeams);
 
@@ -93,13 +93,13 @@ public class DrawFormatList : MonoBehaviour
         }
         #endregion
 
-        else if (gameLength == 1)
+        else if (gameLength >= 1)
         {
             switch (numberOfTeams)
             {
                 case 5:
                     currentFormat = team5;
-                    shorterFormat = new DrawFormat[3];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -109,7 +109,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 6:
                     currentFormat = team6;
-                    shorterFormat = new DrawFormat[3];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -119,7 +119,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 7:
                     currentFormat = team7;
-                    shorterFormat = new DrawFormat[3];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -129,7 +129,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 8:
                     currentFormat = team8;
-                    shorterFormat = new DrawFormat[3];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -139,7 +139,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 9:
                     currentFormat = team9;
-                    shorterFormat = new DrawFormat[3];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -149,7 +149,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 10:
                     currentFormat = team10;
-                    shorterFormat = new DrawFormat[4];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -159,7 +159,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 11:
                     currentFormat = team11;
-                    shorterFormat = new DrawFormat[4];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -169,7 +169,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 12:
                     currentFormat = team12;
-                    shorterFormat = new DrawFormat[4];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -179,7 +179,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 13:
                     currentFormat = team13;
-                    shorterFormat = new DrawFormat[5];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -189,7 +189,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 14:
                     currentFormat = team14;
-                    shorterFormat = new DrawFormat[5];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -199,7 +199,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 15:
                     currentFormat = team15;
-                    shorterFormat = new DrawFormat[5];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
@@ -209,7 +209,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 16:
                     currentFormat = team16;
-                    shorterFormat = new DrawFormat[5];
+                    shorterFormat = new DrawFormat[games];
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];

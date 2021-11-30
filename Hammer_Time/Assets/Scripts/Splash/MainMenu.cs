@@ -16,10 +16,10 @@ public class MainMenu : MonoBehaviour
 
         myFile = new EasyFileSave("my_game_data");
 
-        if (myFile.Load())
-            contButton.SetActive(true);
-        else
-            contButton.SetActive(false);
+        //if (myFile.Load())
+        //    contButton.SetActive(true);
+        //else
+        //    contButton.SetActive(false);
     }
    public void PlayGame()
     {

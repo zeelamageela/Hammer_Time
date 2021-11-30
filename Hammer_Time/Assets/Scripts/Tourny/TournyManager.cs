@@ -31,6 +31,9 @@ public class TournyManager : MonoBehaviour
 	public GameObject semiWinner;
 	public GameObject finalWinner;
 	public GameObject vs;
+	public GameObject vsText;
+	public GameObject vsNextGame;
+
 	public Button simButton;
 	public Button contButton;
 	public Button playButton;
@@ -123,13 +126,13 @@ public class TournyManager : MonoBehaviour
 			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
 		}
 
-		for (int i = 0; i < vsDisplay.Length; i++)
-		{
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+		//for (int i = 0; i < vsDisplay.Length; i++)
+		//{
+		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
 
-			yield return new WaitForEndOfFrame();
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
+		//	yield return new WaitForEndOfFrame();
+		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		//}
     }
 
 	IEnumerator SetupStandings()
@@ -138,7 +141,7 @@ public class TournyManager : MonoBehaviour
 		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
 		Debug.Log("Setup Stand Team Length is " + teams.Length);
-		dfList.DrawSelector(teams.Length, 1);
+		dfList.DrawSelector(teams.Length, 1, gsp.games);
 
 		yield return new WaitForEndOfFrame();
 
@@ -566,6 +569,7 @@ public class TournyManager : MonoBehaviour
 		myFile.Add("Prize", prize);
 		myFile.Add("Rocks", gsp.rocks);
 		myFile.Add("Ends", gsp.ends);
+		myFile.Add("Games", gsp.games);
 		//myFile.Add("Player Team", playerTeam);
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
