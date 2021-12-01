@@ -77,10 +77,10 @@ public class EndMenu : MonoBehaviour
                     endButton.gameObject.SetActive(true);
                     contButton.transform.GetComponentInChildren<Text>().text = "End Game>";
                 }
-
                 else
                 {
                     info.text = "Extra End - " + gsp.endCurrent;
+                    gsp.ends++;
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
                 }
