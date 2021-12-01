@@ -3240,7 +3240,7 @@ MonoBehaviour:
   volume: 0.15
   tutorial: 0
   loadGame: 0
-  aiYellow: 0
+  aiYellow: 1
   aiRed: 0
   debug: 1
   mixed: 0
@@ -13074,6 +13074,10 @@ PrefabInstance:
     - target: {fileID: 2910740859972467736, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
       propertyPath: camBG.Array.data[3].r
       value: 0.1254902
+      objectReference: {fileID: 0}
+    - target: {fileID: 7560930193470070712, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7560930193470070712, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
       propertyPath: m_IsActive

@@ -8,6 +8,7 @@ using TigerForge;
 public class CareerSettings : MonoBehaviour
 {
     CareerManager cm;
+    GameSettingsPersist gsp;
 
     public string playerName;
     public string teamName;
@@ -21,6 +22,8 @@ public class CareerSettings : MonoBehaviour
     public GameObject load;
     public InputField playerNameInput;
     public InputField teamNameInput;
+    public Text nextButton;
+
     public Text nameLoad;
     public Image colourLoad;
     public Slider teamColourSlider;
@@ -29,16 +32,24 @@ public class CareerSettings : MonoBehaviour
 
     public Text earningsLoad;
     public Text recordLoad;
-    GameSettingsPersist gsp;
-    Gradient gradient;
+    public Text weekLoad;
+
+    public GameObject gameInProg;
+    public Text gameStats;
+    bool ginProg;
     public GameObject tournyInProg;
     public Text drawLoad;
     public Text tournyNameLoad;
+
+    public GameObject newButton;
+
+    Gradient gradient;
 
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
 
     EasyFileSave myFile;
+    EasyFileSave myFileGame;
 
     void Start()
     {
@@ -90,9 +101,29 @@ public class CareerSettings : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         cm.inProgress = true;
+
+        //cm.LoadCareer();
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
+        myFileGame = new EasyFileSave("my_game_data");
+        //if (myFileGame.Load())
+        //{
+        //    ginProg = myFileGame.GetBool("In Progress");
+        //    if (ginProg)
+        //    {
+        //        int currentEnd = myFileGame.GetInt("Current End");
+        //        int endTotal = myFileGame.GetInt("End Total");
 
+        //        gameInProg.SetActive(true);
+        //        gameStats.text = "End " + currentEnd.ToString() + "/" + endTotal.ToString();
+        //    }
+        //    else
+        //        gameInProg.SetActive(false);
+
+        //    myFileGame.Dispose();
+        //}
+        //else
+        //    gameInProg.SetActive(false);
 
         if (myFile.Load())
         {
@@ -132,15 +163,16 @@ public class CareerSettings : MonoBehaviour
             gsp.careerLoad = true;
             nameLoad.text = playerName + " " + teamName;
             colourLoad.color = teamColour;
+            weekLoad.text = "Week " + week.ToString();
             earningsLoad.text = "$" + cm.earnings.ToString("n0");
-            recordLoad.text = "Week " + week.ToString() + " | " + record.x.ToString() + " - " + record.y.ToString();
+            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
             load.SetActive(true);
             player.SetActive(false);
+            
         }
         else
         {
-            player.SetActive(true);
-            load.SetActive(false);
+            Player();
         }
     }
 
@@ -151,13 +183,22 @@ public class CareerSettings : MonoBehaviour
 
         if (gsp.inProgress)
         {
-            if (gsp.KO)
-                SceneManager.LoadScene("Tourny_Home_3K");
+            if (ginProg)
+            {
+                SceneManager.LoadScene("End_Menu_Tourny_1");
+            }
             else
-                SceneManager.LoadScene("Tourny_Home_1");
+            {
+                if (gsp.KO)
+                    SceneManager.LoadScene("Tourny_Home_3K");
+                else
+                    SceneManager.LoadScene("Tourny_Home_1");
+            }
         }
         else
             SceneManager.LoadScene("Arena_Selector");
+
+        
     }
 
     public void Player()
@@ -166,11 +207,14 @@ public class CareerSettings : MonoBehaviour
         {
             player.SetActive(false);
             load.SetActive(true);
+            nextButton.text = "Continue>";
         }
         else
         {
             load.SetActive(false);
             player.SetActive(true);
+            nextButton.text = "Start>";
+            newButton.gameObject.SetActive(false);
         }
     }
 
@@ -190,8 +234,10 @@ public class CareerSettings : MonoBehaviour
         gsp.playoffRound = 0;
         gsp.inProgress = false;
         cm.inProgress = false;
+
         load.SetActive(false);
         player.SetActive(true);
+        nextButton.text = "Start>";
     }
     public void MainMenu()
     {

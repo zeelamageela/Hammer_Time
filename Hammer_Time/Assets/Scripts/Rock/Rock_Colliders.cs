@@ -32,7 +32,7 @@ public class Rock_Colliders : MonoBehaviour
         GameObject InPlay = GameObject.Find("InPlay_Collider");
         InPlay_Collider = InPlay.GetComponent<Collider2D>();
 
-        GameObject boards = GameObject.Find("BG/Boards_1");
+        GameObject boards = GameObject.Find("BG/Boards_CREATED");
         boards_collider = boards.GetComponent<Collider2D>();
 
         GameObject house = GameObject.Find("House");

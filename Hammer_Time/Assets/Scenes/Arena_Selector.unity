@@ -10085,7 +10085,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1260227559}
   m_FillRect: {fileID: 1783434259}
   m_HandleRect: {fileID: 1260227558}
@@ -10704,7 +10704,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.44970703}
+  m_AnchoredPosition: {x: 0, y: -0.44995117}
   m_SizeDelta: {x: 2182, y: -0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1282229478
@@ -15732,7 +15732,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1110232603}
   m_HandleRect: {fileID: 1110232602}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -20377,6 +20377,7 @@ MonoBehaviour:
   skillPoints: 18
   inProgress: 0
   season: 0
+  tournyResults: 
   totalTeams: 32
   totalTourTeams: 0
   provTeams: 16

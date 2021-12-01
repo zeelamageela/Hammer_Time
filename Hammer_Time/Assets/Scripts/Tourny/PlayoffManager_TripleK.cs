@@ -1611,7 +1611,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			playButton.gameObject.SetActive(true);
 		}
 		else
+		{
 			vsDisplayGO.SetActive(false);
+			if (playoffRound < 18)
+			{
+				StartCoroutine(SimToFinals());
+			}
+		}
 
 		for (int i = 0; i < teams.Length; i++)
 		{
@@ -5419,12 +5425,16 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			StartCoroutine(SimPlayoff());
 		//playoffRound = poRound;
 	}
+
+	
+
 	IEnumerator SimToFinals()
 	{
-		yield return new WaitForSeconds(0.05f);
-		SetPlayoffs();
+		
 		yield return new WaitForSeconds(0.05f);
 		OnSim();
+		yield return new WaitForSeconds(0.05f);
+		SetPlayoffs();
 		yield return new WaitForSeconds(0.05f);
 	}
 	IEnumerator LoadCareer()

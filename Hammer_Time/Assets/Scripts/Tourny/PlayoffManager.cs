@@ -278,6 +278,11 @@ public class PlayoffManager : MonoBehaviour
 
 	public void SetPlayoffs()
 	{
+		if (playoffRound < 1)
+		{
+			playoffRound = 1;
+			gsp.playoffRound = playoffRound;
+		}
 		Debug.Log("Set Playoffs - Round " + playoffRound);
 		switch (playoffRound)
         {

@@ -21,7 +21,7 @@ public class BGManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
 
         randBoards = Instantiate(boards[gsp.bg], transform);
-        randBoards.name = "Boards_1";
+        randBoards.name = "Boards_CREATED";
         Instantiate(ice[gsp.bg], transform);
         cm.main.backgroundColor = camBG[gsp.bg];
         cm.house.backgroundColor = camBG[gsp.bg];

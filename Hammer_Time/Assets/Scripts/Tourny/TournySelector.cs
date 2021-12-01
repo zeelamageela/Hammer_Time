@@ -173,7 +173,7 @@ public class TournySelector : MonoBehaviour
             }
         }
 
-        if (week > 1 & xpm.skillPoints > 0)
+        if (cm.week > 1 & xpm.skillPoints > 0)
         {
             teamNameText.gameObject.SetActive(false);
             teamNameAlertText.text = teamNameText.text;

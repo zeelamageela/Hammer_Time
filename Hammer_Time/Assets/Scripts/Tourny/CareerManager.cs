@@ -35,6 +35,8 @@ public class CareerManager : MonoBehaviour
 
     public bool inProgress;
     public int season;
+    public List<int> tournyResults;
+
     public int totalTeams;
     public int totalTourTeams;
     public int provTeams;
@@ -83,6 +85,7 @@ public class CareerManager : MonoBehaviour
         pm = FindObjectOfType<PlayoffManager>();
         tourRankList = new List<TourStandings_List>();
         provRankList = new List<Standings_List>();
+        tournyResults = new List<int>();
         //if (inProgress)
         //{
         //    LoadCareer();
@@ -651,6 +654,7 @@ public class CareerManager : MonoBehaviour
         {
             if (playerTeamIndex == currentTournyTeams[i].id)
             {
+                tournyResults.Add(currentTournyTeams[i].rank);
                 xpChange = currentTournyTeams.Length - currentTournyTeams[i].rank;
                 xpChange += currentTournyTeams[i].wins * 3f;
                 xpChange += currentTournyTeams[i].loss;

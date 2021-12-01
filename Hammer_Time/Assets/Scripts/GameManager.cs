@@ -103,6 +103,8 @@ public class GameManager : MonoBehaviour
 
         //sweepButton.gameObject.SetActive(false);
 
+        GameObject boards = GameObject.Find("BG/Boards_CREATED");
+        boardCollider = boards.GetComponent<Collider2D>();
         myFile = new EasyFileSave("my_game_data");
         am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
         StartCoroutine(SetupGame());
@@ -752,7 +754,7 @@ public class GameManager : MonoBehaviour
             gHUD.MainDisplayOff();
             gHUD.ScoreboardOff();
 
-            StartCoroutine(SaveGame());
+            StartCoroutine(SaveGame(true));
             //Debug.Log("Current Rock is " + rockCurrent);
             NextTurn();
         }
@@ -865,6 +867,8 @@ public class GameManager : MonoBehaviour
 
             if (winningTeamName == redTeamName)
             {
+                if (score.Length < 1)
+                    gsp.score = new Vector2Int[endTotal];
                 gsp.score[endCurrent - 1] = new Vector2Int(houseScore, 0);
                 redScore += houseScore;
                 gHUD.Scoreboard(endCurrent, redScore, 0);
@@ -873,6 +877,9 @@ public class GameManager : MonoBehaviour
             }
             else if (winningTeamName == yellowTeamName)
             {
+                if (score.Length > 0)
+                    gsp.score = new Vector2Int[endTotal];
+
                 gsp.score[endCurrent - 1] = new Vector2Int(0, houseScore);
                 yellowScore += houseScore;
                 gHUD.Scoreboard(endCurrent, 0, yellowScore);
@@ -905,7 +912,6 @@ public class GameManager : MonoBehaviour
         }
 
         rockBar.EndUpdate(yellowScore, redScore);
-        StartCoroutine(SaveGame());
 
         yield return StartCoroutine(WaitForClick());
 
@@ -915,29 +921,20 @@ public class GameManager : MonoBehaviour
             gHUD.ScoreboardOff();
             gHUD.MainDisplayOff();
             state = GameState.RESET;
-            if (gsp.story)
-            {
-                storyM.SyncToGm();
-                yield return new WaitForEndOfFrame();
-                gsp.StoryGame();
-                yield return new WaitForEndOfFrame();
-                SceneManager.LoadScene("Story_EndMenu");
-            }
-            else
-            {
+
                 endCurrent++;
                 rockCurrent = gsp.rockCurrent;
                 gsp.LoadFromGM();
-                yield return StartCoroutine(SaveGame());
+                yield return StartCoroutine(SaveGame(true));
                 //yield return StartCoroutine(SaveGame());
                 yield return new WaitForEndOfFrame();
                 SceneManager.LoadScene("End_menu_Tourny_1");
-            }
                 //StartCoroutine(ResetGame());
         }
         else if (endCurrent >= endTotal)
         {
             state = GameState.END;
+            yield return StartCoroutine(SaveGame(false));
             StartCoroutine(EndOfGame());
         }
     }
@@ -991,8 +988,10 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Scoring());
     }
 
-    IEnumerator SaveGame()
+    IEnumerator SaveGame(bool inProgress)
     {
+        myFile = new EasyFileSave("my_game_data");
+        myFile.Add("In Progress", inProgress);
         myFile.Add("Red Hammer", redHammer);
         myFile.Add("End Total", endTotal);
         myFile.Add("Current End", endCurrent);
@@ -1004,16 +1003,17 @@ public class GameManager : MonoBehaviour
         myFile.Add("Ai Yellow", aiTeamYellow);
         myFile.Add("Team", target);
         myFile.Add("Debug", debug);
+        Debug.Log("endTotal is " + endTotal);
 
         myFile.Add("End " + endCurrent + " Score", new Vector2Int(redScore, yellowScore));
 
         int[] redScoreList = new int[score.Length];
         int[] yellowScoreList = new int[score.Length];
 
-        for (int i = 0; i < score.Length; i++)
+        for (int i = 0; i < endCurrent; i++)
         {
-            redScoreList[i] = (int)gsp.score[i].x;
-            yellowScoreList[i] = (int)gsp.score[i].y;
+            redScoreList[i] = gsp.score[i].x;
+            yellowScoreList[i] = gsp.score[i].y;
         }
         myFile.Add("Red Score List", redScoreList);
         myFile.Add("Yellow Score List", yellowScoreList);
