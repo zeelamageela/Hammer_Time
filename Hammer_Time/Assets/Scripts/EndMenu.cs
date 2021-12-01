@@ -114,7 +114,6 @@ public class EndMenu : MonoBehaviour
                 draw.text = "Draw " + (gsp.draw + 1).ToString();
             }
 
-            
             tournyName.text = cm.currentTourny.name;
             end.text = "End " + gsp.endCurrent.ToString();
             redTeamName.text = gsp.redTeamName;
@@ -157,13 +156,13 @@ public class EndMenu : MonoBehaviour
 
                     if (gsp.redHammer)
                     {
-                        scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
-                        scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = "H";
+                        scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
+                        scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = "H";
                     }
                     else
                     {
-                        scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
-                        scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = "H";
+                        scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
+                        scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = "H";
                     }
                 }
                 else
