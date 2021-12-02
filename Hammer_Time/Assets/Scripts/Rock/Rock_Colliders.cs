@@ -91,7 +91,8 @@ public class Rock_Colliders : MonoBehaviour
             {
                 if (gm.rockList[i].rockInfo.moving)
                 {
-                    gm.cm.RockFollow(gm.rockList[i].rock.transform);
+                    //gm.cm.RockFollow(gm.rockList[i].rock.transform);
+                    gm.cm.HouseView();
                 }
             }
         }

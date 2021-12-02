@@ -148,7 +148,7 @@ IEnumerator Rules()
         rulesText.enabled = false;
         scenarioText.enabled = true;
         
-        gm.gHUD.Scoreboard(10, 0, 0);
+        //gm.gHUD.Scoreboard(10, 0, 0);
 
         yield return new WaitForFixedUpdate();
 

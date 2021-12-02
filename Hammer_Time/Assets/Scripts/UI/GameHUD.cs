@@ -20,6 +20,16 @@ public class GameHUD : MonoBehaviour
     public GameObject panel;
     public bool scoreCheck;
 
+    public GameObject[] scoreCols;
+    public GameObject scorePanel;
+
+    public Text redTeamName;
+    public Text yellowTeamName;
+    public Image redTeamPanel;
+    public Image yellowTeamPanel;
+    public Text redTotalScore;
+    public Text yellowTotalScore;
+
     private void Start()
     {
         foreach (Image scoreCard in scoreCards)
@@ -38,7 +48,7 @@ public class GameHUD : MonoBehaviour
     {
         if (scoreCheck)
         {
-            Scoreboard(1, 0, 0);
+            ScoringPanel();
             scoreCheck = false;
         }
 
@@ -58,7 +68,8 @@ public class GameHUD : MonoBehaviour
     }
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
     {
-        scoreboard.gameObject.SetActive(false);
+        //scoreboard.gameObject.SetActive(false);
+        
         mainDisplay.enabled = true;
         mainDisplay.text = rock.teamName + " Turn";
 
@@ -144,12 +155,12 @@ public class GameHUD : MonoBehaviour
     public void ScoringUI(string hammerTeamName, string teamName, int score)
     {
         mainDisplay.enabled = true;
-        float waitTime;
+        scorePanel.SetActive(false);
+        ScoringPanel();
 
         if (score == 0)
         {
             mainDisplay.text = hammerTeamName + " Keeps Hammer";
-            waitTime = 1f;
         }
         else
         {
@@ -162,52 +173,101 @@ public class GameHUD : MonoBehaviour
                 mainDisplay.text = teamName + " Stole " + score;
             }
 
-            waitTime = 2f;
         }
 
         StartCoroutine(ClickDisplay());
     }
 
-    public void Scoreboard(int endNumber, int redScore, int yellowScore)
+    public void ScoringPanel()
     {
-        int cardNumber;
-        int totalScore;
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
 
-        if (redScore > 0)
+        for (int i = 0; i < gsp.ends; i++)
         {
-            cardNumber = endNumber + 11;
-            totalScore = redScore;
-            StartCoroutine(ScoreCards(cardNumber, totalScore));
-        }
-        else if (yellowScore > 0)
-        {
-            cardNumber = endNumber - 1;
-            totalScore = yellowScore;
-            StartCoroutine(ScoreCards(cardNumber, totalScore));
-        }
-        else
-        {
-            if (scoreboard.activeSelf)
+            scoreCols[i].SetActive(true);
+            scoreCols[i].transform.GetChild(0).gameObject.SetActive(true);
+
+            scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
+            scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
+            Debug.Log("I IS " + i);
+            if (i < (gm.endCurrent - 1))
             {
-                scoreboard.SetActive(false);
+                scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
+                scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
+                scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = gsp.score[i].x.ToString();
+                scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = gsp.score[i].y.ToString();
+            }
+            else if (i == gsp.endCurrent - 1)
+            {
+                scoreCols[i].transform.GetChild(0).GetComponent<Text>().color = Color.yellow;
+
+                if (gm.redHammer)
+                {
+                    scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
+                    scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = "H";
+                }
+                else
+                {
+                    scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
+                    scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = "H";
+                }
             }
             else
             {
-                scoreboard.SetActive(true);
+                scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
+                scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
             }
         }
-
+        redTeamName.text = gsp.redTeamName;
+        yellowTeamName.text = gsp.yellowTeamName;
+        redTeamPanel.color = gsp.redTeamColour;
+        yellowTeamPanel.color = gsp.yellowTeamColour;
+        redTotalScore.text = gsp.redScore.ToString();
+        yellowTotalScore.text = gsp.yellowScore.ToString();
     }
+
+    #region Old Scoreboard
+    //public void Scoreboard(int endNumber, int redScore, int yellowScore)
+    //{
+    //    int cardNumber;
+    //    int totalScore;
+
+    //    if (redScore > 0)
+    //    {
+    //        cardNumber = endNumber + 11;
+    //        totalScore = redScore;
+    //        StartCoroutine(ScoreCards(cardNumber, totalScore));
+    //    }
+    //    else if (yellowScore > 0)
+    //    {
+    //        cardNumber = endNumber - 1;
+    //        totalScore = yellowScore;
+    //        StartCoroutine(ScoreCards(cardNumber, totalScore));
+    //    }
+    //    else
+    //    {
+    //        if (scoreboard.activeSelf)
+    //        {
+    //            scoreboard.SetActive(false);
+    //        }
+    //        else
+    //        {
+    //            scoreboard.SetActive(true);
+    //        }
+    //    }
+
+    //}
+    #endregion
 
     IEnumerator ScoreCards(int cardNumber, int totalScore)
     {
-        scoreboard.SetActive(true);
+        //scoreboard.SetActive(true);
         scoreCards[cardNumber].gameObject.SetActive(true);
         scoreCardsText[cardNumber].text = totalScore.ToString();
 
         yield return new WaitForSeconds(2f);
 
-        scoreboard.SetActive(true);
+        //scoreboard.SetActive(true);
 
         float waitTime = 2.5f;
         StartCoroutine(ScoreboardTimer(waitTime));
@@ -219,37 +279,33 @@ public class GameHUD : MonoBehaviour
         {
             redHammerPNG.enabled = true;
             yellowHammerPNG.enabled = false;
-            Scoreboard(1, 0, 0);
+            //Scoreboard(1, 0, 0);
         }
         else
         {
             yellowHammerPNG.enabled = true;
             redHammerPNG.enabled = false;
-            Scoreboard(1, 0, 0);
+            //Scoreboard(1, 0, 0);
         }
     }
 
     public void EndOfGame(int redScore, string redTeamName, int yellowScore, string yellowTeamName)
     {
-        float waitTime;
 
         if (redScore > yellowScore)
         {
             mainDisplay.enabled = true;
             mainDisplay.text = redTeamName + " Wins!";
-            waitTime = 2.5f;
         }
         else if (redScore < yellowScore)
         {
             mainDisplay.enabled = true;
             mainDisplay.text = yellowTeamName + " Wins!";
-            waitTime = 2.5f;
         }
         else
         {
             mainDisplay.enabled = true;
             mainDisplay.text = "Tie Game!";
-            waitTime = 2f;
         }
 
         StartCoroutine(ClickDisplay());

@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
         {
             for (int i = 0; i < endCurrent; i++)
             {
-                gHUD.Scoreboard(i, gsp.score[i].x, gsp.score[i].y);
+                //gHUD.ScoringPanel();
             }
         }
         if (gsp.loadGame)
@@ -869,9 +869,10 @@ public class GameManager : MonoBehaviour
             {
                 if (score.Length < 1)
                     gsp.score = new Vector2Int[endTotal];
+
                 gsp.score[endCurrent - 1] = new Vector2Int(houseScore, 0);
                 redScore += houseScore;
-                gHUD.Scoreboard(endCurrent, redScore, 0);
+                //gHUD.ScoringPanel();
                 redHammer = false;
                 gHUD.SetHammer(redHammer);
             }
@@ -882,7 +883,7 @@ public class GameManager : MonoBehaviour
 
                 gsp.score[endCurrent - 1] = new Vector2Int(0, houseScore);
                 yellowScore += houseScore;
-                gHUD.Scoreboard(endCurrent, 0, yellowScore);
+                //gHUD.ScoringPanel();
                 redHammer = true;
                 gHUD.SetHammer(redHammer);
             }
@@ -898,14 +899,14 @@ public class GameManager : MonoBehaviour
             if (redHammer)
             {
                 redHammer = true;
-                gHUD.Scoreboard(endCurrent, 0, 0);
+                //gHUD.ScoringPanel();
                 gHUD.ScoringUI(redTeamName, " ", 0);
                 gHUD.SetHammer(redHammer);
             }
             else
             {
                 redHammer = false;
-                gHUD.Scoreboard(endCurrent, 0, 0);
+                //gHUD.ScoringPanel();
                 gHUD.ScoringUI(yellowTeamName, " ", 0);
                 gHUD.SetHammer(redHammer);
             }
@@ -1056,7 +1057,7 @@ public class GameManager : MonoBehaviour
 
             for (int i = 1; i < endCurrent; i++)
             {
-                gHUD.Scoreboard(i, redScoreList[i], yellowScoreList[i]);
+                gHUD.ScoringPanel();
             }
         }
 
@@ -1110,10 +1111,10 @@ public class GameManager : MonoBehaviour
         aiTeamRed = storyM.aiRed;
         aiTeamYellow = storyM.aiYellow;
 
-        gHUD.Scoreboard(3, 3, 0);
-        gHUD.Scoreboard(4, 0, 2);
-        gHUD.Scoreboard(6, 5, 0);
-        gHUD.Scoreboard(8, 6, 0);
+        //gHUD.Scoreboard(3, 3, 0);
+        //gHUD.Scoreboard(4, 0, 2);
+        //gHUD.Scoreboard(6, 5, 0);
+        //gHUD.Scoreboard(8, 6, 0);
 
         redScore = storyM.redScore;
         yellowScore = storyM.yellowScore;
