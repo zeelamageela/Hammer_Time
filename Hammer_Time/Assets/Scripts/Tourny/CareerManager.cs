@@ -166,6 +166,7 @@ public class CareerManager : MonoBehaviour
             cStats.sweepStrength = myFile.GetInt("Sweep Strength");
             cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
             cStats.sweepHealth = myFile.GetFloat("Sweep Health");
+            gsp.cStats = cStats;
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
             if (tSel)
@@ -375,6 +376,7 @@ public class CareerManager : MonoBehaviour
                 if (playerTeamIndex == teams[i].id)
                 {
                     playerTeam = teams[i];
+                    Debug.Log("CM playerTeamIndex is " + teams[i].id);
                 }
             }
             myFile.Dispose();

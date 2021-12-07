@@ -108,7 +108,7 @@ public class GameSettingsPersist : MonoBehaviour
         gs = GameObject.Find("GameSettings").GetComponent<GameSettings>();
         //load all the saved values
         ends = gs.ends;
-        endCurrent = 1;
+        endCurrent = 0;
         rocks = gs.rocks;
         rockCurrent = 0;
         redScore = 0;
@@ -133,6 +133,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadGame()
     {
+        Debug.Log("Load Game GSP");
         loadGame = true;
         myFile = new EasyFileSave("my_game_data");
         //load all the saved values
@@ -156,7 +157,7 @@ public class GameSettingsPersist : MonoBehaviour
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
 
-            score = new Vector2Int[ends];
+            score = new Vector2Int[ends + 1];
             int[] redScoreList = myFile.GetArray<int>("Red Score List");
             int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
 
@@ -170,6 +171,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadFromGM()
     {
+        Debug.Log("Load From GM  GSP");
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         Debug.Log("Loading to GSP");
@@ -187,7 +189,7 @@ public class GameSettingsPersist : MonoBehaviour
         third = gm.target;
         skip = gm.target;
 
-        score[endCurrent - 2] = new Vector2Int(redScore, yellowScore);
+        //score[endCurrent] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }
@@ -210,11 +212,12 @@ public class GameSettingsPersist : MonoBehaviour
         else
             bg = Random.Range(0, 3);
 
+        playerTeamIndex = cm.playerTeamIndex;
+
         for (int i = 0; i < cm.currentTourny.teams; i++)
         {
             if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
             {
-                playerTeamIndex = i;
                 playerTeam = cm.currentTournyTeams[i];
             }
         }
@@ -256,6 +259,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournySetup()
     {
+        Debug.Log("Tourny Setup GSP");
         TournyManager tm = FindObjectOfType<TournyManager>();
         PlayoffManager pm = FindObjectOfType<PlayoffManager>();
         careerLoad = false;
@@ -271,7 +275,7 @@ public class GameSettingsPersist : MonoBehaviour
         teamList = tm.teamList;
         teams = tm.teams;
         playerTeam = teams[playerTeamIndex];
-        endCurrent = 1;
+        endCurrent = 0;
         redScore = 0;
         yellowScore = 0;
 
@@ -322,6 +326,7 @@ public class GameSettingsPersist : MonoBehaviour
     }
     public void TournyKOSetup()
     {
+        Debug.Log("Tourny KO Setup GSP");
         PlayoffManager_TripleK pm = FindObjectOfType<PlayoffManager_TripleK>();
         careerLoad = false;
         tourny = true;
@@ -342,12 +347,13 @@ public class GameSettingsPersist : MonoBehaviour
                 playerTeam.nextOpp = teams[i].name;
             }
         }
-        endCurrent = 1;
+        endCurrent = 0;
         redScore = 0;
         yellowScore = 0;
 
+        //Debug.Log("Loading Tourny Settings to GSP");
         //playerGO = tm.playerGO;
-        
+
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;
@@ -385,7 +391,8 @@ public class GameSettingsPersist : MonoBehaviour
     }
     public void LoadCareer()
     {
-        teamList = new List<Team_List>();
+        Debug.Log("Load Career GSP");
+        //teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
         
 
@@ -407,6 +414,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTourny()
     {
+        Debug.Log("Load Tourny GSP");
         CareerManager cm = FindObjectOfType<CareerManager>();
         cm.LoadCareer();
         TournyManager tm = FindObjectOfType<TournyManager>();
@@ -465,10 +473,12 @@ public class GameSettingsPersist : MonoBehaviour
                 teams[i].rank = rankList[i];
                 teams[i].nextOpp = nextOppList[i];
                 teams[i].strength = strengthList[i];
-                if (i == playerTeamIndex)
+                if (teams[i].id == cm.playerTeamIndex)
                 {
+                    Debug.Log("i == playerTeamIndex - i is " + i);
                     teams[i].name = teamName;
                     playerTeam = teams[i];
+                    Debug.Log("Player Team id is " + teams[i].id);
                 }
             }
             //StartCoroutine(Wait());
@@ -498,7 +508,7 @@ public class GameSettingsPersist : MonoBehaviour
             }
             Debug.Log("teamList Count is " + teamList.Count);
 
-            score = new Vector2Int[ends];
+            score = new Vector2Int[ends + 1];
 
             //int[] redScoreList = myFile.GetArray<int>("Red Score List");
             //int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
@@ -530,7 +540,7 @@ public class GameSettingsPersist : MonoBehaviour
             draw = myFile.GetInt("Draw");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
-            playerTeamIndex = myFile.GetInt("Player Team");
+            playerTeamIndex = myFile.GetInt("Player Team Index");
 
             string[] nameList = new string[numberOfTeams];
             int[] winsList = new int[numberOfTeams];
@@ -575,7 +585,7 @@ public class GameSettingsPersist : MonoBehaviour
                 //teams[i].nextOpp = nextOppList[i];
                 //teams[i].strength = strengthList[i];
 
-                if (teams[i].id == playerTeamIndex)
+                if (teams[i].id == cm.playerTeamIndex)
                 {
                     teams[i].name = teamName;
                     playerTeam = teams[i];
@@ -587,6 +597,8 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 teamList.Add(new Team_List(teams[i]));
             }
+
+            score = new Vector2Int[ends + 1];
 
             //int[] gameListX = myFile.GetArray<int>("Tourny Game X List");
             //int[] gameListY = myFile.GetArray<int>("Tourny Game Y List");

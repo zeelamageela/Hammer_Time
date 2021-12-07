@@ -89,10 +89,10 @@ public class Rock_Colliders : MonoBehaviour
         {
             for (int i = 0; i < gm.rockCurrent; i++)
             {
-                if (gm.rockList[i].rockInfo.moving)
+                if (gm.rockList[i].rockInfo.moving && gm.rockList[i].rockInfo.inPlay)
                 {
-                    //gm.cm.RockFollow(gm.rockList[i].rock.transform);
-                    gm.cm.HouseView();
+                    gm.cm.RockFollow(gm.rockList[i].rock.transform);
+                    //gm.cm.HouseView();
                 }
             }
         }

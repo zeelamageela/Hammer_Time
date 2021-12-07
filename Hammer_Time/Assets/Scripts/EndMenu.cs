@@ -47,7 +47,7 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
-            if (gsp.endCurrent == 1)
+            if (gsp.endCurrent == 0)
             {
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
@@ -64,7 +64,7 @@ public class EndMenu : MonoBehaviour
                     info.text = gsp.yellowTeamName + " has the hammer";
                 }
             }
-            else if (gsp.endCurrent > gsp.ends)
+            else if (gsp.endCurrent >= gsp.ends)
             {
                 if (gsp.redScore != gsp.yellowScore)
                 {
@@ -79,7 +79,7 @@ public class EndMenu : MonoBehaviour
                 }
                 else
                 {
-                    info.text = "Extra End - " + gsp.endCurrent;
+                    info.text = "Extra End";
                     gsp.ends++;
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
@@ -115,7 +115,7 @@ public class EndMenu : MonoBehaviour
             }
 
             tournyName.text = cm.currentTourny.name;
-            end.text = "End " + gsp.endCurrent.ToString();
+            end.text = "End " + (gsp.endCurrent + 1).ToString();
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
             redTeamPanel.color = gsp.redTeamColour;
@@ -143,14 +143,14 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
                 Debug.Log("I IS " + i);
-                if (i < (gsp.endCurrent - 1))
+                if (i < (gsp.endCurrent))
                 {
                     scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
                     scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
                     scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = gsp.score[i].x.ToString();
                     scoreCols[i].transform.GetChild(2).GetComponent<Text>().text = gsp.score[i].y.ToString();
                 }
-                else if (i == gsp.endCurrent - 1)
+                else if (i == gsp.endCurrent)
                 {
                     scoreCols[i].transform.GetChild(0).GetComponent<Text>().color = yellow;
 

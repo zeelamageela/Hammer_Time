@@ -55,7 +55,7 @@ public class XPManager : MonoBehaviour
     {
         skillPointsText.text = skillPoints.ToString();
         xpCostText.text = skillPointsTotal.ToString();
-        cash.text = cm.earnings.ToString();
+        cash.text = "$" + cm.earnings.ToString("n0");
         xpTotal.text = cm.totalXp.ToString();
 
         drawText.text = drawSlider.value.ToString();
@@ -101,9 +101,9 @@ public class XPManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         cStats = cm.cStats;
-        float exponent = 1.5f;
+        float exponent = 1.2f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
-        skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 125f);
+        skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 47.59f);
         Debug.Log("Skill Points Total is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy

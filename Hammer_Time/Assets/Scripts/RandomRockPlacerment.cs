@@ -161,6 +161,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             rockPos[i] = placePos[placeSelector];
                         }
                     }
+
                     rockPos[i] += Random.insideUnitCircle * 0.35f;
                     break;
             }

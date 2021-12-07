@@ -450,7 +450,7 @@ GameObject:
   - component: {fileID: 45633512}
   - component: {fileID: 45633511}
   m_Layer: 5
-  m_Name: RawImage (1)
+  m_Name: ClubImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3130,7 +3130,7 @@ GameObject:
   - component: {fileID: 379038766}
   - component: {fileID: 379038765}
   m_Layer: 5
-  m_Name: RawImage (2)
+  m_Name: RinkImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8173,7 +8173,7 @@ GameObject:
   - component: {fileID: 978771555}
   - component: {fileID: 978771554}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Panel3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9147,7 +9147,7 @@ GameObject:
   - component: {fileID: 1104995020}
   - component: {fileID: 1104995019}
   m_Layer: 5
-  m_Name: Panel (1)
+  m_Name: Panel2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9866,6 +9866,7 @@ RectTransform:
   - {fileID: 560601360}
   - {fileID: 1338004137}
   - {fileID: 133583769}
+  - {fileID: 1610405585}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10704,7 +10705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.44995117}
+  m_AnchoredPosition: {x: 0, y: 0.44995117}
   m_SizeDelta: {x: 2182, y: -0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1282229478
@@ -11122,7 +11123,7 @@ GameObject:
   - component: {fileID: 1323944291}
   - component: {fileID: 1323944290}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: StadiumImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12884,7 +12885,7 @@ MonoBehaviour:
   XPText: {fileID: 1338004138}
   playButton: {fileID: 1767766669}
   tournies:
-  - name: The Rookie's Fall Classic
+  - name: The Fall Rookie Invitational
     id: 0
     location: Leduc
     teams: 8
@@ -12961,7 +12962,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - name: T. Rox Jurassic Cup
+  - name: T. Rox Jurassic Classic
     id: 7
     location: Drumheller
     teams: 12
@@ -14265,6 +14266,112 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1602195228}
   m_CullTransparentMesh: 1
+--- !u!1001 &1610405584
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1204469915}
+    m_Modifications:
+    - target: {fileID: 4157614953566133347, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_Name
+      value: HelpButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133347, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 126.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 149.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 469.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1097.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+--- !u!224 &1610405585 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4157614953566133372, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+  m_PrefabInstance: {fileID: 1610405584}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1631941434
 GameObject:
   m_ObjectHideFlags: 0
@@ -15086,7 +15193,7 @@ GameObject:
   - component: {fileID: 1705527690}
   - component: {fileID: 1705527689}
   m_Layer: 5
-  m_Name: Panel (2)
+  m_Name: Panel1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15732,7 +15839,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1110232603}
   m_HandleRect: {fileID: 1110232602}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17924,7 +18031,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[7].sentences.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[8].sentences.Array.size
@@ -17932,7 +18039,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[9].sentences.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[10].sentences.Array.size
@@ -17940,7 +18047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[11].sentences.Array.size
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].sentences.Array.data[0]
@@ -17953,13 +18060,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].sentences.Array.data[2]
-      value: Swipe back and forth to look at available bonspiels, then click on it's
-        name to play.
+      value: Swipe back and forth to look at available bonspiels, and TAP the white
+        box to play.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].sentences.Array.data[3]
-      value: They're giving you rookies a break this week, no entry fee for your
-        first tournament.  Let's make it count!
+      value: They're giving you rookies a break this week, no entry fee.  Let's make
+        it count!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].sentences.Array.data[4]
@@ -18032,8 +18139,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[7].sentences.Array.data[2]
-      value: You've shown that you stand out from the rookies, let's see what you
-        can do with some more experienced pros.
+      value: You've shown that you stand out from the rookies...
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: dialogue.Array.data[7].sentences.Array.data[3]
+      value: ...Let's see what you can do with the rest of the pros!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[8].sentences.Array.data[0]
@@ -18051,31 +18161,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[9].sentences.Array.data[0]
-      value: Something exciting is happening, xxxxx, you and Team TEAMNAME are gaining
+      value: Something exciting is happening, xxxxx, Team TEAMNAME you are gaining
         EXPERIENCE!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[9].sentences.Array.data[1]
-      value: When your name flashes like that, it means you've gained a skill point! 
-        You can use these to upgrade your sweeping and shot accuracy.
+      value: When your name flashes like that, it means you've gained SKILL POINTS!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[9].sentences.Array.data[2]
-      value: Click on your name, then click on 'Skill Points' to upgrade your skills.
+      value: Skill points let you upgrade your SWEEPING and SHOT ACCURACY.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: dialogue.Array.data[9].sentences.Array.data[3]
+      value: 'TAP your name to bring up your season stats. TAP ''Skill Points'' to
+        upgrade your skills.  '
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[10].sentences.Array.data[0]
-      value: Every season of pro curling ends with a Provincial Championship.
+      value: We need to qualify for the biggest paycheck of the year, the Provincial
+        Championship.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[10].sentences.Array.data[1]
-      value: To qualify for the big money competition, you have to finish in the
-        TOP 4 of ANY of the qualifier tournaments.
+      value: To qualify for the Championship, you gotta finish in the TOP 4 of a
+        qualifier tournament.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[10].sentences.Array.data[2]
-      value: Now that we've upgraded our skills, I think we have a pretty good shot
-        at qualifying.
+      value: Now that we've been upgrading our skills, I think Team TEAMNAME have
+        an excellent chance to qualify.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[11].sentences.Array.data[0]
@@ -18083,16 +18198,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[11].sentences.Array.data[1]
-      value: Tour 'spiels pay BIG money, and they have a TRIPLE KNOCKOUT format. 
-        Lose 3 games and you're OUT!
+      value: Tour 'spiels pay BIG money, and they use a TRIPLE KNOCKOUT format.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[11].sentences.Array.data[2]
-      value: Let's jump in, I think Team TEAMNAME is ready for this!
+      value: Lose 3 games and you're OUT!  Keep winning and ya stay in the hunt!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[11].sentences.Array.data[3]
-      value: Let's jump in, I have a good feeling about this.
+      value: Each tour event awards TOUR POINTS - the TOP 6 will play for $250K!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: dialogue.Array.data[11].sentences.Array.data[4]
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: qualDialogue.Array.data[0].sentences.Array.size

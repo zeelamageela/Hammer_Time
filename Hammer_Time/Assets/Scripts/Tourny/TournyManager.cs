@@ -31,6 +31,8 @@ public class TournyManager : MonoBehaviour
 	public GameObject semiWinner;
 	public GameObject finalWinner;
 	public GameObject vs;
+	public Text vsTitle;
+	public Text vsVS;
 	public GameObject vsText;
 	public GameObject vsNextGame;
 

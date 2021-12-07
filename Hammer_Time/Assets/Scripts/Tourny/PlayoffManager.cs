@@ -445,6 +445,10 @@ public class PlayoffManager : MonoBehaviour
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
 
+				tm.vsTitle.text = "Results";
+				tm.vsVS.text = " ";
+				tm.vs.SetActive(true);
+
 				if (tm.teams[playerTeam].name == playoffTeams[8].name)
 				{
 					heading.text = "You Win!";
@@ -456,7 +460,7 @@ public class PlayoffManager : MonoBehaviour
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString();
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString("n0");
 					tm.vsDisplay[1].rank.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[4].name | tm.teams[playerTeam].name == playoffTeams[7].name)
@@ -469,7 +473,7 @@ public class PlayoffManager : MonoBehaviour
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString();
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
 					tm.vsDisplay[1].rank.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[5].name | tm.teams[playerTeam].name == playoffTeams[6].name)
@@ -482,7 +486,7 @@ public class PlayoffManager : MonoBehaviour
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.15f).ToString();
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.15f).ToString("n0");
 					tm.vsDisplay[1].rank.gameObject.SetActive(false);
 				}
 				else if (tm.teams[playerTeam].name == playoffTeams[2].name | tm.teams[playerTeam].name == playoffTeams[3].name)
@@ -496,7 +500,7 @@ public class PlayoffManager : MonoBehaviour
 
 					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.075f).ToString();
+					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.075f).ToString("n0");
 					tm.vsDisplay[1].rank.gameObject.SetActive(false);
 				}
                 else
@@ -525,14 +529,13 @@ public class PlayoffManager : MonoBehaviour
 							gsp.earnings += prizePayout; 
 							
 							tm.vs.SetActive(true);
-
 							tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
 							tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-							tm.vsDisplay[1].name.text = "$" + prizePayout.ToString();
+							tm.vsDisplay[1].name.text = "$" + prizePayout.ToString("n0");
 							tm.vsDisplay[1].rank.gameObject.SetActive(false);
 						}
 					}
-					tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
+					//tm.vsDisplay[1].rank.gameObject.transform.parent.gameObject.SetActive(false);
 				}
 
 				for (int i = 0; i < tm.teamList.Count; i++)
@@ -573,7 +576,7 @@ public class PlayoffManager : MonoBehaviour
 
 				}
                 Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
-				careerEarningsText.text = "$ " + gsp.earnings.ToString();
+				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
 				
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 

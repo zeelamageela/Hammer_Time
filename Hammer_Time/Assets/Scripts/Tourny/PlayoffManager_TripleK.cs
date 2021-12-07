@@ -1621,15 +1621,18 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		for (int i = 0; i < teams.Length; i++)
 		{
-			if (teams[i].id == playerTeam)
+			if (playoffRound < 19)
 			{
-				vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
-				vsDisplay[0].name.text = teams[i].name;
-			}
-			if (teams[i].id == oppTeam)
-			{
-				vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
-				vsDisplay[1].name.text = teams[i].name;
+				if (teams[i].id == playerTeam)
+				{
+					vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					vsDisplay[0].name.text = teams[i].name;
+				}
+				if (teams[i].id == oppTeam)
+				{
+					vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					vsDisplay[1].name.text = teams[i].name;
+				}
 			}
 		}
 
@@ -3815,7 +3818,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				break;
 			#endregion
 			default:
-				SetPlayoffs();
+				//SetPlayoffs();
 				break;
 
 		}
@@ -5335,6 +5338,50 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 
+				for (int i = 0; i < teams.Length; i++)
+				{
+					float p = 1.4f;
+					float totalTeams = teams.Length - 5f;
+					float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
+
+					if (teams[i].rank == 1)
+					{
+						teams[i].earnings += gsp.prize * 0.5f;
+					}
+					else if (teams[i].rank == 2)
+						teams[i].earnings += gsp.prize * 0.25f;
+					else if (teams[i].rank == 3)
+						teams[i].earnings += gsp.prize * 0.15f;
+					else if (teams[i].rank == 4)
+						teams[i].earnings += gsp.prize * 0.075f;
+					else if (teams[i].rank == 5)
+						teams[i].earnings += gsp.prize * 0.038f;
+					else
+					{
+						teams[i].earnings += Mathf.RoundToInt(prizePayout);
+						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
+					}
+
+					
+					//Debug.Log("Prize Payout multiplier is " + prizePayout);
+					if (teams[i].id == playerTeam)
+					{
+						vsDisplayGO.SetActive(true);
+
+						vsDisplayTitle.text = "Results";
+						vsDisplayVS.text = "Wins";
+						vsDisplay[0].name.text = teams[i].name;
+						vsDisplay[0].rank.text = teams[i].rank.ToString();
+						vsDisplay[1].name.text = "$" + prizePayout.ToString("n0");
+						vsDisplay[1].rank.gameObject.SetActive(false);
+					}
+					//prizePayout = Mathf.RoundToInt(prizePayout);
+					//tm.teamList[i].team.earnings += prizePayout;
+
+				}
+				Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
+				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
+
 				for (int j = 0; j < teams.Length; j++)
 				{
 					if (teams[j].id == gameList[45].x)
@@ -5363,17 +5410,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 		}
 
-		for (int i = 0; i < teams.Length; i++)
+		if (playoffRound < 19)
 		{
-			if (teams[i].id == playerTeam)
+			for (int i = 0; i < teams.Length; i++)
 			{
-				vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
-				vsDisplay[0].name.text = teams[i].name;
-			}
-			if (teams[i].id == oppTeam)
-			{
-				vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
-				vsDisplay[1].name.text = teams[i].name;
+				if (teams[i].id == playerTeam)
+				{
+					vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					vsDisplay[0].name.text = teams[i].name;
+				}
+				if (teams[i].id == oppTeam)
+				{
+					vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					vsDisplay[1].name.text = teams[i].name;
+				}
 			}
 		}
 
@@ -5515,13 +5565,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	IEnumerator RefreshPlayoffPanel()
 	{
-		for (int i = 0; i < vsDisplay.Length; i++)
-		{
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+		//for (int i = 0; i < vsDisplay.Length; i++)
+		//{
+		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
 
-			yield return new WaitForEndOfFrame();
-			vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		}
+		//	yield return new WaitForEndOfFrame();
+		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+		//}
 
 		if (winnersBracket.activeSelf)
 		{

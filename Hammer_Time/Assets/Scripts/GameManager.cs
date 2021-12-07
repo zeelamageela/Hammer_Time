@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         aiTeamRed = gsp.aiRed;
         mixed = gsp.mixed;
         rockCurrent = 2 * (8 - gsp.rocks);
-        score = new Vector2[endTotal];
+        score = new Vector2[endTotal + 1];
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
         {
@@ -865,23 +865,21 @@ public class GameManager : MonoBehaviour
                 gHUD.ScoringUI(yellowTeamName, winningTeamName, houseScore);
             }
 
+            if (gsp.score.Length < 1)
+                gsp.score = new Vector2Int[endTotal + 1];
+            
+
             if (winningTeamName == redTeamName)
             {
-                if (score.Length < 1)
-                    gsp.score = new Vector2Int[endTotal];
-
-                gsp.score[endCurrent - 1] = new Vector2Int(houseScore, 0);
+                gsp.score[endCurrent] = new Vector2Int(houseScore, 0);
                 redScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = false;
                 gHUD.SetHammer(redHammer);
             }
-            else if (winningTeamName == yellowTeamName)
+            if (winningTeamName == yellowTeamName)
             {
-                if (score.Length > 0)
-                    gsp.score = new Vector2Int[endTotal];
-
-                gsp.score[endCurrent - 1] = new Vector2Int(0, houseScore);
+                gsp.score[endCurrent] = new Vector2Int(0, houseScore);
                 yellowScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = true;
@@ -923,9 +921,10 @@ public class GameManager : MonoBehaviour
             gHUD.MainDisplayOff();
             state = GameState.RESET;
 
-                endCurrent++;
                 rockCurrent = gsp.rockCurrent;
                 gsp.LoadFromGM();
+                endCurrent++;
+                gsp.endCurrent = endCurrent;
                 yield return StartCoroutine(SaveGame(true));
                 //yield return StartCoroutine(SaveGame());
                 yield return new WaitForEndOfFrame();

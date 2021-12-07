@@ -59,7 +59,10 @@ public class GameHUD : MonoBehaviour
         }
 
         if (mainDisplay.enabled)
+        {
             panel.SetActive(true);
+        }
+
         //if (sm.dialogueGO.activeSelf)
         //{
         //    mainDisplay.enabled = false;
@@ -84,7 +87,7 @@ public class GameHUD : MonoBehaviour
     }
     IEnumerator ClickDisplay()
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(1f);
         clickDisplay.enabled = true;
         //yield return StartCoroutine(WaitForClick());
     }

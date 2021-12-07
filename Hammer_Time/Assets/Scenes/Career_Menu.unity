@@ -942,9 +942,7 @@ MonoBehaviour:
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
-  score:
-  - {x: 0, y: 0}
-  - {x: 0, y: 0}
+  score: []
   playerTeam:
     name: 
     wins: 0

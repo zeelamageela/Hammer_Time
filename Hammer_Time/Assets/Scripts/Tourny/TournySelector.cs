@@ -85,13 +85,19 @@ public class TournySelector : MonoBehaviour
             {
                 Debug.Log("Player Rank is " + cm.playerTeam.rank);
                 dialogueGO.SetActive(true);
-                if (cm.playerTeam.rank < 5)
+                for (int i = 0; i < cm.currentTournyTeams.Length; i++)
                 {
-                    coachGreen.TriggerDialogue(7);
-                }
-                else
-                {
-                    coachGreen.TriggerDialogue(8);
+                    if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+                    {
+                        if (cm.currentTournyTeams[i].rank < 5)
+                        {
+                            coachGreen.TriggerDialogue(7);
+                        }
+                        else
+                        {
+                            coachGreen.TriggerDialogue(8);
+                        }
+                    }
                 }
                 cm.coachDialogue[7] = true;
                 cm.coachDialogue[8] = true;
@@ -99,8 +105,9 @@ public class TournySelector : MonoBehaviour
             
             if (cm.week == 3)
             {
-                if (cm.xp < 25)
-                    cm.xp = 25;
+                if (cm.totalXp < 25)
+                    cm.totalXp = 25;
+                Debug.Log("cm.xp is " + cm.xp);
                 dialogueGO.SetActive(true);
                 coachGreen.TriggerDialogue(9);
                 cm.coachDialogue[9] = true;
@@ -120,28 +127,56 @@ public class TournySelector : MonoBehaviour
             }
             if (cm.provQual)
             {
-                if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
+                if (dialogueGO.activeSelf)
+                StartCoroutine(WaitForDialogue());
+                else
                 {
-                    dialogueGO.SetActive(true);
-                    if (cm.week < 10)
+                    if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
                     {
-                        coachGreen.TriggerDialogue(4);
+                        dialogueGO.SetActive(true);
+                        if (cm.week < 10)
+                        {
+                            coachGreen.TriggerDialogue(4);
+                        }
+                        else
+                        {
+                            coachGreen.TriggerDialogue(3);
+                        }
+                        cm.coachDialogue[3] = true;
+                        cm.coachDialogue[4] = true;
                     }
-                    else
-                    {
-                        coachGreen.TriggerDialogue(3);
-                    }
-                    cm.coachDialogue[3] = true;
-                    cm.coachDialogue[4] = true;
                 }
             }
 
         }
+        
         Debug.Log("Skill Points are " + xpm.skillPoints);
-       
+        
         SetActiveTournies();
     }
 
+    IEnumerator WaitForDialogue()
+    {
+        yield return new WaitUntil(() => dialogueGO.activeSelf == false);
+
+        if (cm.provQual)
+        {
+            if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
+            {
+                dialogueGO.SetActive(true);
+                if (cm.week < 10)
+                {
+                    coachGreen.TriggerDialogue(4);
+                }
+                else
+                {
+                    coachGreen.TriggerDialogue(3);
+                }
+                cm.coachDialogue[3] = true;
+                cm.coachDialogue[4] = true;
+            }
+        }
+    }
     // Update is called once per frame
     public void Update()
     {
@@ -919,6 +954,7 @@ public class TournySelector : MonoBehaviour
                             dialogueGO.SetActive(true);
                             coachGreen.TriggerDialogue(2);
                             cm.coachDialogue[2] = true;
+                            cm.tourQual = false;
                         }
                     }
                 }
@@ -934,7 +970,7 @@ public class TournySelector : MonoBehaviour
         }
         else if (cm.provQual && provQualComplete && !provChampionship.complete)
         {
-            if (week < 10)
+            if (cm.week < 10)
             {
                 panelGOs[2].GetComponent<Image>().color = dimmed[0];
                 panelGOs[2].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
@@ -945,7 +981,6 @@ public class TournySelector : MonoBehaviour
                 panelGOs[2].GetComponent<Image>().color = Color.white;
                 activeTournies[2] = provChampionship;
             }
-
         }
         else if (provChampionship.complete)
         {
@@ -1069,7 +1104,7 @@ public class TournySelector : MonoBehaviour
         {
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(true);
-            profPanel.earnings.text = "$ " + cm.earnings.ToString();
+            profPanel.earnings.text = "$ " + cm.earnings.ToString("n0");
             profPanel.record.text = cm.record.x.ToString() + " - " + cm.record.y.ToString();
 
             if (cm.provQual)
