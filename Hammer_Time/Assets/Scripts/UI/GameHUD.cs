@@ -177,7 +177,6 @@ public class GameHUD : MonoBehaviour
             }
 
         }
-
         StartCoroutine(ClickDisplay());
     }
 
