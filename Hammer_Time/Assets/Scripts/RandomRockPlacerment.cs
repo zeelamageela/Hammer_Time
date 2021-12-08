@@ -249,9 +249,41 @@ public class RandomRockPlacerment : MonoBehaviour
             if (aggressive)
             {
                 //and the ai chooses a defensive strategy...
-                if (!aggressive)
+                if (gm.redScore > gm.yellowScore)
                 {
                     //aggressive on defensive - prob of player guards and rocks in house based on draw and guard accuracy
+                    if (gm.endTotal - gm.endCurrent < 2)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            if (gm.redHammer)
+                            {
+                                if (redTeam)
+                                {
+                                    if (Random.Range(0f, 1f) < (gsp.cStats.takeOutAccuracy * 0.1f))
+                                        shotSelector = Random.Range(0, 4);
+                                    else
+                                        shotSelector = 1;
+                                }
+                                else
+                                {
+                                    if (Random.Range(0f, 1f) < (gsp.cStats.takeOutAccuracy * 0.1f))
+                                        shotSelector = 1;
+                                    else 
+                                        shotSelector = Random.Range(0, 4);
+                                }
+                            }
+                            else
+                            {
+                                if (Random.Range(0f, 1f) < 0.5f)
+                                    shotSelector = 1;
+                            }
+                        }
+                        else
+                        {
+
+                        }
+                    }
                 }
                 //and the ai chooses an aggressive strategy...
                 else
@@ -273,26 +305,7 @@ public class RandomRockPlacerment : MonoBehaviour
             else
                 shotSelector = Random.Range(0, 4);
 
-            //defensive on defensive shotselector
-            switch (shotSelector)
-            {
-                //
-                case 0:
-                    if (gm.redHammer && i % 2 == 1)
-                    {
-                        placeSelector = 9;
-                    }
-                    else if (!gm.redHammer && i % 2 != 1)
-                    {
-                        placeSelector = 9;
-                    }
-                    else
-                    {
-                        placeSelector = 10;
-                    }
-                    rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * (1.25f - gsp.cStats.guardAccuracy));
-                    break;
-            }
+            
             switch (shotSelector)
             {
                 case 0:
@@ -302,49 +315,47 @@ public class RandomRockPlacerment : MonoBehaviour
                         placeSelector = 10;
                         rockPos[i] = placePos[placeSelector];
                     }
-                    else if (houseRed > 2)
-                    {
-                        if (gm.redHammer && i % 2 != 0 | !gm.redHammer && i % 2 != 1)
-                        {
-                            rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * (1.25f - gsp.cStats.guardAccuracy));
-                        }
-                        else
-                        {
-                            placeSelector = 10;
-                            rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * (1.25f - gsp.cStats.guardAccuracy));
-                        }
-                    }
-
-                    else if ((houseCount - houseRed) > 2)
-                    {
-                        if (gm.redHammer && i % 2 == 1)
-                        {
-                            houseRed++;
-                            if (gsp.aiRed)
-                                rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1 - (0.09f * gsp.cStats.drawAccuracy)) * 1.25f));
-                            else
-                                rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
-                        }
-                        else if (!gm.redHammer && i % 2 == 0)
-                        {
-                            houseRed++;
-                            if (gsp.aiRed)
-                                rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1 - (0.09f * gsp.cStats.drawAccuracy)) * 1.25f));
-                            else
-                                rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
-                        }
-                        else
-                        {
-                            placeSelector = 10;
-                            rockPos[i] = placePos[placeSelector];
-                        }
-                    }
                     else
                     {
                         houseCount++;
-                        rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                        if (i % 2 == 1)
+                        {
+                            if (gm.redHammer)
+                            {
+                                if (redTeam)
+                                    rockPos[i] = placePos[placeSelector]
+                                        + (Random.insideUnitCircle * (1.5f - (0.1f * gsp.cStats.drawAccuracy)));
+                                else
+                                    rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                            }
+                            else 
+                            {
+                                if (redTeam)
+                                    rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                                else
+                                    rockPos[i] = placePos[placeSelector]
+                                        + (Random.insideUnitCircle * (1.5f - (0.1f * gsp.cStats.drawAccuracy)));
+                            }
+                        }
+                        else
+                        {
+                            if (gm.redHammer)
+                            {
+                                if (redTeam)
+                                    rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                                else
+                                    rockPos[i] = placePos[placeSelector]
+                                        + (Random.insideUnitCircle * (1.5f - (0.1f * gsp.cStats.drawAccuracy)));
+                            }
+                            else
+                            {
+                                if (redTeam)
+                                    rockPos[i] = placePos[placeSelector]
+                                        + (Random.insideUnitCircle * (1.5f - (0.1f * gsp.cStats.drawAccuracy)));
+                                else
+                                    rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
+                            }
+                        }
                     }
                     Debug.Log("case 0 rockPos is - " + rockPos[i].x + ", " + rockPos[i].y);
                     break;
