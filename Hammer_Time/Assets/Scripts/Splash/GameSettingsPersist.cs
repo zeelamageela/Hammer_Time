@@ -29,6 +29,7 @@ public class GameSettingsPersist : MonoBehaviour
     public int yellowScore;
     public int redScore;
 
+
     public bool tourny;
     public bool KO;
     public int games;
@@ -41,6 +42,7 @@ public class GameSettingsPersist : MonoBehaviour
     public float earnings;
     public Vector2 record;
 
+    public int week;
     public CareerStats cStats;
 
     public string redTeamName;
@@ -243,7 +245,7 @@ public class GameSettingsPersist : MonoBehaviour
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         teamColour = cm.teamColour;
         earnings = ts.earnings;
-
+        week = cm.week;
         games = ts.games;
         ends = ts.ends;
         endCurrent = 0;
@@ -334,7 +336,7 @@ public class GameSettingsPersist : MonoBehaviour
         playoffRound = pm.playoffRound;
         KO = true;
         playerTeamIndex = pm.playerTeam;
-
+        
         teams = pm.teams;
         for (int i = 0; i < teams.Length; i++)
         {
@@ -407,7 +409,7 @@ public class GameSettingsPersist : MonoBehaviour
             inProgress = myFile.GetBool("Tourny In Progress");
             draw = myFile.GetInt("Draw");
             //numberOfTeams = myFile.GetInt("Number Of Teams");
-
+            week = myFile.GetInt("Week");
             myFile.Dispose();
         }
     }

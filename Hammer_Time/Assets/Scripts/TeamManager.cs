@@ -13,6 +13,7 @@ public class TeamManager : MonoBehaviour
     public Color teamYellowColour;
     public TeamMember[] teamYellow;
 
+    int aiStats;
     bool playerRed;
     //public GameObject[] leadGO;
     //public GameObject[] secondGO;
@@ -34,8 +35,13 @@ public class TeamManager : MonoBehaviour
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
 
-            
-
+            if (gsp.week < 5)
+                aiStats = 5;
+            else if (gsp.week < 10)
+                aiStats = 7;
+            else
+                aiStats = 10;
+            Debug.Log("Ai Stats are " + aiStats + " in Week " + gsp.week);
         }
         else
         {
@@ -149,7 +155,7 @@ public class TeamManager : MonoBehaviour
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
             }
-            if (teamRedColour == gsp.teamColour)
+            if (gsp.redTeamName == gsp.teamName)
             {
                 for (int j = 0; j < teamRed.Length; j++)
                 {
@@ -167,12 +173,12 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamRed.Length; j++)
                 {
-                    teamRed[j].charStats.drawAccuracy.SetBaseValue(10);
-                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(10);
-                    teamRed[j].charStats.guardAccuracy.SetBaseValue(10);
-                    teamRed[j].charStats.sweepStrength.SetBaseValue(10);
-                    teamRed[j].charStats.sweepEndurance.SetBaseValue(10);
-                    teamRed[j].charStats.sweepHealth = 100;
+                    teamRed[j].charStats.drawAccuracy.SetBaseValue(aiStats);
+                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(aiStats);
+                    teamRed[j].charStats.guardAccuracy.SetBaseValue(aiStats);
+                    teamRed[j].charStats.sweepStrength.SetBaseValue(aiStats);
+                    teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats);
+                    teamRed[j].charStats.sweepHealth = aiStats * 10f;
                     Debug.Log("Red Turn AI stats - "
                         + teamRed[j].charStats.guardAccuracy.GetValue());
                 }
@@ -185,7 +191,7 @@ public class TeamManager : MonoBehaviour
                 teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
 
             }
-            if (teamYellowColour == gsp.teamColour)
+            if (gsp.yellowTeamName == gsp.teamName)
             {
                 for (int j = 0; j < teamYellow.Length; j++)
                 {
@@ -195,7 +201,7 @@ public class TeamManager : MonoBehaviour
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
                     teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                    Debug.Log("Yellow Turn Player stats - "
+                    Debug.Log("Yellow Turn PLAYER stats - "
                         + teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
@@ -203,12 +209,12 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamYellow.Length; j++)
                 {
-                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(10);
-                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(10);
-                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(10);
-                    teamYellow[j].charStats.sweepStrength.SetBaseValue(10);
-                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(10);
-                    teamYellow[j].charStats.sweepHealth = 100;
+                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(aiStats);
+                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(aiStats);
+                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(aiStats);
+                    teamYellow[j].charStats.sweepStrength.SetBaseValue(aiStats);
+                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(aiStats);
+                    teamYellow[j].charStats.sweepHealth = 10 * aiStats;
                     Debug.Log("Yellow Turn AI stats - "
                          + teamYellow[j].charStats.guardAccuracy.GetValue());
                 }

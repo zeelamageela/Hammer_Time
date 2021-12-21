@@ -189,14 +189,26 @@ public class GameManager : MonoBehaviour
                 {
                     rm.rrp.OnRockPlace(rockCurrent, true);
                 }
+                yield return new WaitUntil(() => rm.rrp.round == 1);
+                rockBar.ResetBar(redHammer);
+                rockBar.EndUpdate(yellowScore, redScore);
+                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                yield return new WaitUntil(() => rm.rrp.placed1);
+                Debug.Log("Checking Score");
+                StartCoroutine(CheckScore());
+                yield return new WaitUntil(() => rm.rrp.round == 2);
+                if (gsp.aiRed)
+                {
+                    rm.rrp.OnRockPlace(rockCurrent, false);
+                }
+                else
+                {
+                    rm.rrp.OnRockPlace(rockCurrent, true);
+                }
                 yield return new WaitUntil(() => rm.rrp.placed);
                 rockBar.ResetBar(redHammer);
                 rockBar.EndUpdate(yellowScore, redScore);
                 yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
-                //if (redHammer)
-                //    OnYellowTurn();
-                //else
-                //    OnRedTurn();
                 StartCoroutine(CheckScore());
             }
             else
@@ -768,27 +780,40 @@ public class GameManager : MonoBehaviour
         //Debug.Log("Current Rock is " + rockCurrent);
 
         //gsp.AutoSave();
-
-        if (rockCurrent % 2 == 1)
+        if (rm.rrp.placed)
         {
-            if (redHammer)
+            if (rockCurrent % 2 == 1)
             {
-                OnRedTurn();
+                if (redHammer)
+                {
+                    OnRedTurn();
+                }
+                else
+                {
+                    OnYellowTurn();
+                }
             }
-            else
+            else if (rockCurrent % 2 == 0)
             {
-                OnYellowTurn();
+                if (redHammer)
+                {
+                    OnYellowTurn();
+                }
+                else
+                {
+                    OnRedTurn();
+                }
             }
         }
-        else if (rockCurrent % 2 == 0)
+        else
         {
-            if (redHammer)
+            if (gsp.aiRed)
             {
-                OnYellowTurn();
+                rm.rrp.OnRockPlace(rockCurrent, false);
             }
             else
             {
-                OnRedTurn();
+                rm.rrp.OnRockPlace(rockCurrent, true);
             }
         }
     }
