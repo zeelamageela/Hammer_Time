@@ -74,6 +74,8 @@ public class GameManager : MonoBehaviour
     Rock_Info redRock;
     Rock_Info yellowRock;
 
+    public DialogueManager coachGreen;
+
     public GameObject targetButtons;
     public GameObject targetAi;
     public GameObject targetPlayer;

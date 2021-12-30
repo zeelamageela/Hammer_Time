@@ -235,6 +235,7 @@ public class GameSettingsPersist : MonoBehaviour
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
     }
+
     public void LoadTournySettings()
     {
         TournySettings ts = GameObject.Find("TournySettings").GetComponent<TournySettings>();
@@ -326,6 +327,7 @@ public class GameSettingsPersist : MonoBehaviour
             redHammer = false;
         }
     }
+
     public void TournyKOSetup()
     {
         Debug.Log("Tourny KO Setup GSP");
@@ -391,6 +393,7 @@ public class GameSettingsPersist : MonoBehaviour
             redHammer = false;
         }
     }
+
     public void LoadCareer()
     {
         Debug.Log("Load Career GSP");

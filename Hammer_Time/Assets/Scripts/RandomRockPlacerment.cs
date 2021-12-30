@@ -53,6 +53,7 @@ public class RandomRockPlacerment : MonoBehaviour
             guardCount[i] = false;
         for (int i = 0; i < rockCurrent; i++)
         {
+            Random.InitState(System.DateTime.Now.Millisecond);
             int placeSelector;
             int shotSelector;
             if (i < 4 && Random.Range(0f, 1f) < 0.5f)
@@ -315,6 +316,8 @@ public class RandomRockPlacerment : MonoBehaviour
 
         for (int i = 0; i < rockCurrent; i++)
         {
+            Random.InitState(System.DateTime.Now.Millisecond);
+
             int placeSelector;
             int shotSelector;
 
@@ -1084,6 +1087,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
         for (int i = 8; i < rockCurrent; i++)
         {
+            Random.InitState((int)System.DateTime.Now.Ticks);
             int placeSelector;
             int shotSelector;
             int takeOutSelector = 99;
@@ -1780,6 +1784,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
             Debug.Log("Team Red Draw Accuracy " + tm.teamRed[shooter].charStats.drawAccuracy.GetValue());
 
+            Random.InitState((int)System.DateTime.Now.Ticks);
             switch (shotSelector)
             {
                 case 0:
@@ -1845,7 +1850,25 @@ public class RandomRockPlacerment : MonoBehaviour
                             //takeOut check
                             if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
                             {
+                                Random.InitState((int)System.DateTime.Now.Ticks);
+
+                                if (Random.Range(0f, 15f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
+                                {
+                                    placeSelector = 10;
+                                    rockPos[i] = placePos[placeSelector];
+                                }
+                                else
+                                {
+                                    placeSelector = 9;
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
+                                        + (Random.insideUnitCircle
+                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
+                                }
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex] = placePos[10];
+                            }
+                            else
+                            {
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
                                 if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
@@ -1855,20 +1878,25 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
                                         * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
-                            }
-                            else
-                            {
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].x +=
                                     Random.Range(0f, 0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue());
 
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].y +=
                                     0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue();
+                            }
+                        }
+                        else
+                        {
+                            Random.InitState((int)System.DateTime.Now.Ticks);
+                            if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
+                            {
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
-                                if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
+                                if (Random.Range(0f, 15f) > tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
                                     placeSelector = 10;
                                     rockPos[i] = placePos[placeSelector];
@@ -1876,17 +1904,16 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
+                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
-                            }
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
-                            {
+
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex] = placePos[10];
+                            }
+                            else
+                            {
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
                                 if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
@@ -1896,44 +1923,28 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
                                         * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
-                            }
-                            else
-                            {
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].x +=
                                     Random.Range(0f, 0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue());
 
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].y +=
                                     0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue();
-
-                                if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
-                                {
-                                    placeSelector = 10;
-                                    rockPos[i] = placePos[placeSelector];
-                                }
-                                else
-                                {
-                                    placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
-                                        + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
-                                }
                             }
                         }
                     }
                     else
                     {
-                        if (gm.redHammer)
+                        if (!gm.redHammer)
                         {
                             //takeOut check
-                            if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
+                            if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
                             {
-                                rockPos[gm.houseList[0].rockInfo.rockIndex] = placePos[10];
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
-                                if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
+                                if (Random.Range(0f, 15f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
                                     placeSelector = 10;
                                     rockPos[i] = placePos[placeSelector];
@@ -1941,20 +1952,17 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
+                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex] = placePos[10];
                             }
                             else
                             {
-                                rockPos[gm.houseList[0].rockInfo.rockIndex].x +=
-                                    Random.Range(0f, 0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue());
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
-                                rockPos[gm.houseList[0].rockInfo.rockIndex].y +=
-                                    0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue();
-
-                                if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
+                                if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
                                     placeSelector = 10;
                                     rockPos[i] = placePos[placeSelector];
@@ -1962,19 +1970,25 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
+                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].x +=
+                                    Random.Range(0f, 0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue());
+
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].y +=
+                                    0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue();
                             }
                         }
                         else
                         {
-                            if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
+                            Random.InitState((int)System.DateTime.Now.Ticks);
+                            if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
                             {
-                                rockPos[gm.houseList[0].rockInfo.rockIndex] = placePos[10];
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
-                                if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
+                                if (Random.Range(0f, 15f) > tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
                                     placeSelector = 10;
                                     rockPos[i] = placePos[placeSelector];
@@ -1982,20 +1996,18 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
+                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
+
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex] = placePos[10];
                             }
                             else
                             {
-                                rockPos[gm.houseList[0].rockInfo.rockIndex].x +=
-                                    Random.Range(0f, 0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue());
+                                Random.InitState((int)System.DateTime.Now.Ticks);
 
-                                rockPos[gm.houseList[0].rockInfo.rockIndex].y +=
-                                    0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue();
-
-                                if (Random.Range(0f, 10f) < tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())
+                                if (Random.Range(0f, 10f) < tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())
                                 {
                                     placeSelector = 10;
                                     rockPos[i] = placePos[placeSelector];
@@ -2003,10 +2015,15 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     placeSelector = 9;
-                                    rockPos[i] = placePos[placeSelector]
+                                    rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
-                                        * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
+                                        * (1.5f - (0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].x +=
+                                    Random.Range(0f, 0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue());
+
+                                rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].y +=
+                                    0.05f * tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue();
                             }
                         }
                     }
@@ -2025,12 +2042,16 @@ public class RandomRockPlacerment : MonoBehaviour
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (0.5f + (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue())));
                             }
                             else
                             {
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (1f + (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue())));
                             }
                         }
                         else
@@ -2040,12 +2061,16 @@ public class RandomRockPlacerment : MonoBehaviour
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (0.5f + (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue())));
                             }
                             else
                             {
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (1f + (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue())));
                             }
                         }
                     }
@@ -2058,12 +2083,16 @@ public class RandomRockPlacerment : MonoBehaviour
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (0.5f + (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue())));
                             }
                             else
                             {
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (1f + (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue())));
                             }
                         }
                         else
@@ -2073,12 +2102,16 @@ public class RandomRockPlacerment : MonoBehaviour
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (0.5f + (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue())));
                             }
                             else
                             {
                                 rockPos[i].y = gm.houseList[freezeSelector].rock.transform.position.y
                                     - (1f + (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue()));
                                 rockPos[i].x = gm.houseList[freezeSelector].rock.transform.position.x;
+                                rockPos[i] = rockPos[i] + (Random.insideUnitCircle
+                                        * (1f - (0.05f * tm.teamYellow[shooter].charStats.drawAccuracy.GetValue())));
                             }
                         }
                     }
