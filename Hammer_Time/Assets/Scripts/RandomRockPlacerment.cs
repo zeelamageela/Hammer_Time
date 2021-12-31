@@ -20,6 +20,9 @@ public class RandomRockPlacerment : MonoBehaviour
     public bool aggressive;
     public int round;
 
+    public GameObject dialogueGO;
+    public DialogueTrigger coachDialogue;
+    public DialogueTrigger announDialogue;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +37,15 @@ public class RandomRockPlacerment : MonoBehaviour
         //StartCoroutine(RandomRockPlace());
 
         StartCoroutine(PlayerStrategy());
+    }
+
+    public void Help()
+    {
+        dialogueGO.SetActive(true);
+        if (round == 1)
+            coachDialogue.TriggerDialogue("Strategy", 0);
+        else if (round == 2)
+            coachDialogue.TriggerDialogue("Strategy", 1);
     }
 
     public void OnChoice(bool aggro)
@@ -239,6 +251,7 @@ public class RandomRockPlacerment : MonoBehaviour
     IEnumerator PlayerStrategy()
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
         playerStratGO.SetActive(true);
         gm.rockBar.EndUpdate(gsp.yellowScore, gsp.redScore);
 
@@ -252,10 +265,24 @@ public class RandomRockPlacerment : MonoBehaviour
         if (round == 1)
         {
             rockPos = new Vector2[rockCurrent];
+
+            dialogueGO.SetActive(true);
+            coachDialogue.TriggerDialogue("Strategy", 0);
+            //if (!cm.strategyDialogue[0])
+            //{
+            //    coachDialogue.TriggerDialogue("Strategy", 0);
+            //    cm.strategyDialogue[0] = true;
+            //}
             yield return StartCoroutine(FirstPlacement());
+            
         }
         else if (round == 2)
         {
+            if (!cm.strategyDialogue[1])
+            {
+                coachDialogue.TriggerDialogue("Strategy", 1);
+                cm.strategyDialogue[1] = true;
+            }
             yield return StartCoroutine(SecondPlacement());
             //placed = true;
         }

@@ -91,16 +91,16 @@ public class TournySelector : MonoBehaviour
                     {
                         if (cm.currentTournyTeams[i].rank < 5)
                         {
-                            coachGreen.TriggerDialogue(7);
+                            coachGreen.TriggerDialogue("Intro", 1);
                         }
                         else
                         {
-                            coachGreen.TriggerDialogue(8);
+                            coachGreen.TriggerDialogue("Intro", 2);
                         }
                     }
                 }
-                cm.coachDialogue[7] = true;
-                cm.coachDialogue[8] = true;
+                cm.introDialogue[1] = true;
+                cm.introDialogue[2] = true;
             }
             
             if (cm.week == 3)
@@ -109,21 +109,21 @@ public class TournySelector : MonoBehaviour
                     cm.totalXp = 25;
                 Debug.Log("cm.xp is " + cm.xp);
                 dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue(9);
-                cm.coachDialogue[9] = true;
+                coachGreen.TriggerDialogue("Intro", 3);
+                cm.introDialogue[3] = true;
             }
 
             if (cm.week == 4)
             {
                 dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue(10);
-                cm.coachDialogue[10] = true;
+                coachGreen.TriggerDialogue("Intro", 4);
+                cm.introDialogue[4] = true;
             }
             if (cm.week == 5)
             {
                 dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue(11);
-                cm.coachDialogue[11] = true;
+                coachGreen.TriggerDialogue("Intro", 5);
+                cm.introDialogue[5] = true;
             }
             if (cm.provQual)
             {
@@ -131,19 +131,19 @@ public class TournySelector : MonoBehaviour
                 StartCoroutine(WaitForDialogue());
                 else
                 {
-                    if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
+                    if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
                     {
                         dialogueGO.SetActive(true);
                         if (cm.week < 10)
                         {
-                            coachGreen.TriggerDialogue(4);
+                            coachGreen.TriggerDialogue("Qualifiers", 3);
                         }
                         else
                         {
-                            coachGreen.TriggerDialogue(3);
+                            coachGreen.TriggerDialogue("Qualifiers", 2);
                         }
-                        cm.coachDialogue[3] = true;
-                        cm.coachDialogue[4] = true;
+                        cm.qualDialogue[3] = true;
+                        cm.qualDialogue[2] = true;
                     }
                 }
             }
@@ -161,19 +161,19 @@ public class TournySelector : MonoBehaviour
 
         if (cm.provQual)
         {
-            if (!cm.coachDialogue[3] | !cm.coachDialogue[4])
+            if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
             {
                 dialogueGO.SetActive(true);
                 if (cm.week < 10)
                 {
-                    coachGreen.TriggerDialogue(4);
+                    coachGreen.TriggerDialogue("Qualifiers", 3);
                 }
                 else
                 {
-                    coachGreen.TriggerDialogue(3);
+                    coachGreen.TriggerDialogue("Qualifiers", 2);
                 }
-                cm.coachDialogue[3] = true;
-                cm.coachDialogue[4] = true;
+                cm.qualDialogue[3] = true;
+                cm.qualDialogue[2] = true;
             }
         }
     }
@@ -939,21 +939,21 @@ public class TournySelector : MonoBehaviour
                     if (i < 6)
                     {
                         cm.tourQual = true;
-                        if (!cm.coachDialogue[5])
+                        if (!cm.qualDialogue[4])
                         {
                             dialogueGO.SetActive(true);
-                            coachGreen.TriggerDialogue(5);
-                            cm.coachDialogue[5] = true;
+                            coachGreen.TriggerDialogue("Qualifiers", 4);
+                            cm.qualDialogue[4] = true;
                         }
                     }
                     else
                     {
                         Debug.Log("Outside the top 6"); 
-                        if (!cm.coachDialogue[2])
+                        if (!cm.qualDialogue[1])
                         {
                             dialogueGO.SetActive(true);
-                            coachGreen.TriggerDialogue(2);
-                            cm.coachDialogue[2] = true;
+                            coachGreen.TriggerDialogue("Qualifiers", 1);
+                            cm.qualDialogue[1] = true;
                             cm.tourQual = false;
                         }
                     }
@@ -982,11 +982,11 @@ public class TournySelector : MonoBehaviour
                 activeTournies[2] = provChampionship;
             }
         }
-        else if (provChampionship.complete)
+        else if (provChampionship.complete & !cm.reviewDialogue[0])
         {
             dialogueGO.SetActive(true);
-            coachGreen.TriggerDialogue(6);
-            cm.coachDialogue[6] = true;
+            coachGreen.TriggerDialogue("Review", 0);
+            cm.reviewDialogue[0] = true;
         }
         else
         {
@@ -1017,7 +1017,7 @@ public class TournySelector : MonoBehaviour
     public void NewSeason()
     {
         dialogueGO.SetActive(true);
-        coachGreen.TriggerDialogue(0);
+        coachGreen.TriggerDialogue("Intro", 0);
         cm.NewSeason();
     }
 

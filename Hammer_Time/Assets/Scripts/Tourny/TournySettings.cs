@@ -173,7 +173,7 @@ public class TournySettings : MonoBehaviour
     public void Help()
     {
         dialogueGO.SetActive(true);
-        coachGreen.TriggerDialogue(0);
+        coachGreen.TriggerDialogue("Help", 0);
     }
 
     IEnumerator WaitForClick()

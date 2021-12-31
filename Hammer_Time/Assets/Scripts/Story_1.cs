@@ -93,7 +93,7 @@ public class Story_1 : MonoBehaviour
         gHUD.mainDisplay.enabled = false;
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
-        annDialogue.TriggerDialogue(0);
+        annDialogue.TriggerDialogue("Story", 0);
 
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 
@@ -131,7 +131,7 @@ public class Story_1 : MonoBehaviour
         cm.RockZoom(gm.rockList[5].rock.transform);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(0);
+        skipDialogue.TriggerDialogue("Story", 0);
         targetStory.SetActive(true);
         targetStory.transform.position = gm.rockList[5].rock.transform.position;
         targetPullback.transform.position = targetPullbackPos[0];
@@ -141,14 +141,14 @@ public class Story_1 : MonoBehaviour
         cm.ShotSetup();
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(1);
+        skipDialogue.TriggerDialogue("Story", 1);
         dm.contButton.SetActive(false);
 
         yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(2);
+        skipDialogue.TriggerDialogue("Story", 2);
         dm.contButton.SetActive(false);
 
         rockFlick.story = true;
@@ -187,12 +187,12 @@ public class Story_1 : MonoBehaviour
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(3);
+        skipDialogue.TriggerDialogue("Story", 3);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
-        annDialogue.TriggerDialogue(1);
+        annDialogue.TriggerDialogue("Story", 1);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
     }
 
@@ -233,7 +233,7 @@ public class Story_1 : MonoBehaviour
         cm.RockZoom(gm.rockList[8].rock.transform);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(4);
+        skipDialogue.TriggerDialogue("Story", 4);
         targetStory.SetActive(true);
         targetStory.transform.position = gm.rockList[8].rock.transform.position;
         if (gm.rockList[4].rock.transform.position.y >= 6.5f)
@@ -247,13 +247,13 @@ public class Story_1 : MonoBehaviour
         cm.ShotSetup();
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(5);
+        skipDialogue.TriggerDialogue("Story", 5);
         dm.contButton.SetActive(false);
         yield return new WaitUntil(() => targetPullback.gameObject.GetComponent<TutorialTrajectory>().distance <= 0.15f);
 
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(6);
+        skipDialogue.TriggerDialogue("Story", 6);
         dm.contButton.SetActive(false);
 
         rockFlick.story = true;
@@ -275,7 +275,7 @@ public class Story_1 : MonoBehaviour
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
-        annDialogue.TriggerDialogue(2);
+        annDialogue.TriggerDialogue("Story", 2);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
     }
 
@@ -284,7 +284,7 @@ public class Story_1 : MonoBehaviour
         yield return new WaitUntil(() => gm.rockCurrent == 11);
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
-        annDialogue.TriggerDialogue(3);
+        annDialogue.TriggerDialogue("Story", 3);
 
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 
@@ -317,7 +317,7 @@ public class Story_1 : MonoBehaviour
         cm.RockZoom(gm.rockList[2].rock.transform);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(7);
+        skipDialogue.TriggerDialogue("Story", 7);
         targetStory.SetActive(true);
         targetStory.transform.position = gm.rockList[2].rock.transform.position;
         targetPullback.transform.position = new Vector2(targetPullbackPos[2].x + gm.rockList[2].rock.transform.position.x, targetPullbackPos[2].y);
@@ -330,7 +330,7 @@ public class Story_1 : MonoBehaviour
         dm.contButton.SetActive(true);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(8);
+        skipDialogue.TriggerDialogue("Story", 8);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         targetPlayer.transform.position = targetPullback.transform.position;
         aiTarg.OnTarget("Manual Take Out", gm.rockCurrent, 0);
@@ -345,7 +345,7 @@ public class Story_1 : MonoBehaviour
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(9);
+        skipDialogue.TriggerDialogue("Story", 9);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
     }
 
@@ -358,14 +358,14 @@ public class Story_1 : MonoBehaviour
         {
             dialogueGO.SetActive(true);
             annDialogue.gameObject.SetActive(true);
-            annDialogue.TriggerDialogue(4);
+            annDialogue.TriggerDialogue("Story", 4);
             yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         }
         else
         {
             dialogueGO.SetActive(true);
             annDialogue.gameObject.SetActive(true);
-            annDialogue.TriggerDialogue(5);
+            annDialogue.TriggerDialogue("Story", 5);
             yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         }
         targetAi.transform.position = targetAiPos[3];
@@ -401,7 +401,7 @@ public class Story_1 : MonoBehaviour
         cm.RockZoom(gm.rockList[13].rock.transform);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(10);
+        skipDialogue.TriggerDialogue("Story", 10);
         targetStory.SetActive(true);
         if (gm.houseList[0].rockInfo.teamName == gm.rockList[1].rockInfo.teamName)
             targetStory.transform.position = gm.houseList[0].rock.transform.position;
@@ -416,7 +416,7 @@ public class Story_1 : MonoBehaviour
         dm.contButton.SetActive(true);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(11);
+        skipDialogue.TriggerDialogue("Story", 11);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
         
         rockFlick.story = false;
@@ -433,7 +433,7 @@ public class Story_1 : MonoBehaviour
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);
         dialogueGO.SetActive(true);
         skipDialogue.gameObject.SetActive(true);
-        skipDialogue.TriggerDialogue(12);
+        skipDialogue.TriggerDialogue("Story", 12);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 
         #endregion
@@ -446,7 +446,7 @@ public class Story_1 : MonoBehaviour
 
         dialogueGO.SetActive(true);
         annDialogue.gameObject.SetActive(true);
-        annDialogue.TriggerDialogue(6);
+        annDialogue.TriggerDialogue("Story", 6);
         yield return new WaitUntil(() => dialogueGO.activeSelf == false);
 
         if (gm.houseList[0].rockInfo.teamName != gm.rockList[gm.rockCurrent].rockInfo.teamName)

@@ -30,8 +30,6 @@ public class DialogueManager : MonoBehaviour
     void Start()
     {
         sentences = new Queue<string>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
-        firstName = cm.playerName;
         
     }
 
@@ -65,7 +63,18 @@ public class DialogueManager : MonoBehaviour
         string sentence = sentences.Dequeue();
         Debug.Log(sentence);
 
+        sentence = TextReplace(sentence);
+
+        dialogueText.text = sentence;
+
+    }
+
+    string TextReplace(string sentence)
+    {
         CareerManager cm = FindObjectOfType<CareerManager>();
+        firstName = cm.playerName;
+        sentence = sentence.Replace("xxxxx", firstName);
+
         for (int i = 0; i < cm.provRankList.Count; i++)
         {
             if (cm.playerTeamIndex == cm.provRankList[i].team.id)
@@ -82,7 +91,7 @@ public class DialogueManager : MonoBehaviour
                 tourPoints = cm.tourRankList[i].team.tourPoints;
             }
         }
-        sentence = sentence.Replace("xxxxx", firstName); 
+
         if (provRank == 1)
             sentence = sentence.Replace("PROVRANK", provRank.ToString() + "st");
         else if (provRank == 2)
@@ -105,10 +114,8 @@ public class DialogueManager : MonoBehaviour
         sentence = sentence.Replace("TOURPOINTS", tourPoints.ToString());
 
         sentence = sentence.Replace("TEAMNAME", cm.teamName);
-        dialogueText.text = sentence;
-
+        return sentence;
     }
-
     void EndDialogue()
     {
 

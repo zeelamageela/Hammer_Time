@@ -58,6 +58,12 @@ MonoBehaviour:
     sentences:
     - EMPTY TEXT 2a
     - EMPTY TEXT 2b
+  qualDialogue: []
+  reviewDialogue: []
+  introDialogue: []
+  storyDialogue: []
+  helpDialogue: []
+  strategyDialogue: []
   talkingHead: {fileID: 0}
 --- !u!1 &1998886941380219540
 GameObject:
@@ -103,34 +109,158 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogue:
-  - name: Gene Green
+  - name: Coach Green
     sentences:
-    - We need to clear some YELLOW stones out of here
-    - Alright bud, throw an OUTURN shot at this YELLOW rock.
-  - name: Gene Green
+    - Howdy xxxxx!
+    - Your first season as a pro!  We've got a busy schedule, so I'll get to it.
+    - Swipe back and forth to look at available bonspiels, and TAP the white box
+      to play.
+    - They're giving you rookies a break this week, no entry fee.  Let's make it
+      count!
+  - name: Coach Green
     sentences:
-    - Line your trajectory up with my target
-  - name: Gene Green
+    - Sorry, xxxxxx.  You've failed to qualify for the Provincials this year.
+  - name: Coach Green
     sentences:
-    - Now let 'er rip!
-  - name: Gene Green
+    - Sorry, xxxxx, we've missed the Tour Championship this year.  We'll get them
+      next year!
+  - name: Coach Green
     sentences:
-    - Nice Shot!
-  - name: Gene Green
+    - You've qualified for the Provincial Finals!
+    - This is what we've been working towards, let's get out there and win this!
+  - name: Coach Green
     sentences:
-    - Let's hit this rock back
-    - With some luck we can clear the house and get out of this end
-  - name: Gene Green
+    - You've qualified for the Provincial Finals!!
+    - Let's play some more tournaments before we head to the big show.
+  - name: Coach Green
     sentences:
-    - That's the spot
-  - name: Gene Green
+    - You've qualified for the Tour Championships!!
+    - There's big money on the line here, let's show these other teams what we've
+      got.
+  - name: Coach Green
     sentences:
-    - EMPTY TEXT 3a
-    - EMPTY TEXT 3b
-  - name: Gene Green
+    - Well, xxxxx, it's been a great season.
+    - You finished the season ranked PROVRANK, and earned EARNINGS.
+    - And on the tour, you scored TOURPOINTS and finished TOURRANK.
+  - name: Coach Green
     sentences:
-    - EMPTY TEXT 3a
-    - EMPTY TEXT 3b
+    - Well, xxxxx, I'd say that went pretty dang well!
+    - You've done great, coming out ranked PROVRANK, and earned EARNINGS.
+    - You've shown that you stand out from the rookies...
+    - ...Let's see what you can do with the rest of the pros!
+  - name: Coach Green
+    sentences:
+    - You know, I think we learned a lot out there, xxxxx.
+    - You might have only earned EARNINGS, but you've gained some valuable experience.
+  - name: Coach Green
+    sentences:
+    - Something exciting is happening, xxxxx, Team TEAMNAME you are gaining EXPERIENCE!
+    - When your name flashes like that, it means you've gained SKILL POINTS!
+    - Skill points let you upgrade your SWEEPING and SHOT ACCURACY.
+    - 'TAP your name to bring up your season stats. TAP ''Skill Points'' to upgrade
+      your skills.  '
+  - name: Coach Green
+    sentences:
+    - We need to qualify for the biggest paycheck of the year, the Provincial Championship.
+    - To qualify for the Championship, you gotta finish in the TOP 4 of a qualifier
+      tournament.
+    - Now that we've been upgrading our skills, I think Team TEAMNAME have an excellent
+      chance to qualify.
+  - name: Coach Green
+    sentences:
+    - Week 5 is here, and so is the first event of the Curling Tour!
+    - Tour 'spiels pay BIG money, and they use a TRIPLE KNOCKOUT format.
+    - Lose 3 games and you're OUT!  Keep winning and ya stay in the hunt!
+    - Each tour event awards TOUR POINTS - the TOP 6 will play for $250K!
+    - Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+  qualDialogue:
+  - name: Coach Green
+    sentences:
+    - Sorry, xxxxxx.  You've failed to qualify for the Provincials this year.
+  - name: Coach Green
+    sentences:
+    - Sorry, xxxxx, we've missed the Tour Championship this year.  We'll get them
+      next year!
+  - name: Coach Green
+    sentences:
+    - You've qualified for the Provincial Finals!
+    - This is what we've been working towards, let's get out there and win this!
+  - name: Coach Green
+    sentences:
+    - You've qualified for the Provincial Finals!!
+    - Let's play some more tournaments before we head to the big show.
+  - name: Coach Green
+    sentences:
+    - You've qualified for the Tour Championships!!
+    - There's big money on the line here, let's show these other teams what we've
+      got.
+  reviewDialogue:
+  - name: Coach Green
+    sentences:
+    - Well, xxxxx, it's been a great season.
+    - You finished the season ranked PROVRANK, and earned EARNINGS.
+    - And on the tour, you scored TOURPOINTS and finished TOURRANK.
+  introDialogue:
+  - name: Coach Green
+    sentences:
+    - Howdy xxxxx!
+    - Your first season as a pro!  No time to waste, we've got a busy schedule coming
+      up.
+    - Each week, you can view the available tournaments by swiping back and forth.
+    - Let's jump into our first 'spiel!
+  - name: Coach Green
+    sentences:
+    - Well, xxxxx, I'd say that went pretty dang well!
+    - You've done great, coming out ranked PROVRANK, and earned EARNINGS.
+    - You've shown that you stand out from the rookies...
+    - ...Let's see what you can do with the rest of the pros!
+  - name: Coach Green
+    sentences:
+    - You know, I think we learned a lot out there, xxxxx.
+    - You might have only earned EARNINGS, but you've gained some valuable experience.
+  - name: Coach Green
+    sentences:
+    - Something exciting is happening, xxxxx, Team TEAMNAME is gaining EXPERIENCE!
+    - When your name is flashing, you've gained a SKILL POINT!
+    - TAP 'xxxxx TEAMNAME' to find the SKILL POINTS button.
+  - name: Coach Green
+    sentences:
+    - Every season of pro curling ends with a Provincial Championship.
+    - To qualify for the big money competition, you have to finish in the TOP 4 of
+      ANY of the qualifier tournaments.
+    - Now that we've upgraded our skills, I think we have a pretty good shot at qualifying.
+  - name: Coach Green
+    sentences:
+    - Week 5 is here, and so is the first event of the Curling Tour!
+    - Tour 'spiels pay BIG money, and they use a TRIPLE KNOCKOUT format.
+    - Lose 3 games and you're OUT!  Keep winning and ya stay in the hunt!
+    - Each tour event awards TOUR POINTS - the TOP 6 will play for $250K!
+    - Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+  storyDialogue: []
+  helpDialogue:
+  - name: Coach Green
+    sentences:
+    - This screen is where you will choose your settings for the upcoming tournament.
+    - ROCKS decides the amount of shots per end
+    - ENDS is the number of ends per game
+    - GAMES is the number of games per tournament
+  - name: Coach Green
+    sentences:
+    - This screen is where you will choose your settings for the upcoming tournament.
+    - ROCKS decides the amount of shots per end
+    - ENDS is the number of ends per game
+    - GAMES is the number of games per tournament
+  strategyDialogue:
+  - name: Coach Green
+    sentences:
+    - So, xxxxx, how should we play the first 4 rocks?
+    - An AGGRESSIVE strategy will place GUARDS and DRAW behind them
+    - A DEFENSIVE strategy will try to limit the other team's scoring with TAKEOUTS
+  - name: Coach Green
+    sentences:
+    - How do ya read this one, xxxxx?
+    - An AGGRESSIVE call will try to put rocks in scoring position
+    - DEFENSIVE will try to prevent the other team from scoring
   talkingHead: {fileID: 0}
 --- !u!1 &1998886942087116576
 GameObject:

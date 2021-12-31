@@ -59,10 +59,12 @@ public class CareerManager : MonoBehaviour
 
     public bool[] coachDialogue;
 
-    public bool[] settingDialogue;
-
-    public bool[] gameDialogue;
-   
+    public bool[] qualDialogue;
+    public bool[] reviewDialogue;
+    public bool[] introDialogue;
+    public bool[] helpDialogue;
+    public bool[] strategyDialogue;
+    public bool[] storyDialogue;
 
     private void Awake()
     {
@@ -145,8 +147,12 @@ public class CareerManager : MonoBehaviour
         if (myFile.Load())
         {
             coachDialogue = myFile.GetArray<bool>("Coach Dialogue Played List");
-            settingDialogue = myFile.GetArray<bool>("Setting Dialogue Played List");
-            gameDialogue = myFile.GetArray<bool>("Game Dialogue Played List");
+            qualDialogue = myFile.GetArray<bool>("Qualifying Dialogue Played List");
+            reviewDialogue = myFile.GetArray<bool>("Review Dialogue Played List");
+            introDialogue = myFile.GetArray<bool>("Intro Dialogue Played List");
+            helpDialogue = myFile.GetArray<bool>("Help Dialogue Played List");
+            strategyDialogue = myFile.GetArray<bool>("Strategy Dialogue Played List");
+            storyDialogue = myFile.GetArray<bool>("Story Dialogue Played List");
 
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
@@ -392,8 +398,12 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
-        myFile.Add("Settings Dialogue Played List", settingDialogue);
-        myFile.Add("Game Dialogue Played List", gameDialogue);
+        myFile.Add("Qualifying Dialogue Played List", qualDialogue);
+        myFile.Add("Review Dialogue Played List", reviewDialogue);
+        myFile.Add("Intro Dialogue Played List", introDialogue);
+        myFile.Add("Help Dialogue Played List", helpDialogue);
+        myFile.Add("Strategy Dialogue Played List", strategyDialogue);
+        myFile.Add("Story Dialogue Played List", storyDialogue);
 
         myFile.Add("Tourny In Progress", gsp.inProgress);
         myFile.Add("Knockout Tourny", false);
@@ -885,12 +895,31 @@ public class CareerManager : MonoBehaviour
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
         coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
+        qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
+        reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
+        introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
+        storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
+        helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
+        strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
 
         for (int i = 0; i < coachDialogue.Length; i++)
-        {
             coachDialogue[i] = false;
-        }
+        for (int i = 0; i < qualDialogue.Length; i++)
+            qualDialogue[i] = false;
+        for (int i = 0; i < reviewDialogue.Length; i++)
+            reviewDialogue[i] = false;
+        for (int i = 0; i < introDialogue.Length; i++)
+            introDialogue[i] = false;
+        for (int i = 0; i < storyDialogue.Length; i++)
+            storyDialogue[i] = false;
+        for (int i = 0; i < helpDialogue.Length; i++)
+            helpDialogue[i] = false;
+        for (int i = 0; i < strategyDialogue.Length; i++)
+            strategyDialogue[i] = false;
+
         coachDialogue[0] = true;
+        introDialogue[0] = true;
+
         xp = 0f;
         totalXp = 0f;
 
