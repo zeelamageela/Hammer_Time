@@ -117,7 +117,7 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
         rb.drag = 0.38f;
-        rb.angularDrag = 0.24f;
+        rb.angularDrag = 0.32f;
 
         yield return new WaitForSeconds(sweepTime);
         //sm.SweepHard();
@@ -138,7 +138,7 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
         rb.drag = 0.38f;
-        rb.angularDrag = 0.24f;
+        rb.angularDrag = 0.32f;
 
         yield return new WaitForSeconds(sweepTime);
 
@@ -168,7 +168,7 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
         rb.drag = 0.38f;
-        rb.angularDrag = 0.24f;
+        rb.angularDrag = 0.32f;
 
         yield return new WaitForSeconds(sweepAmt);
 
@@ -202,7 +202,7 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
         
         rb.drag = 0.38f;
-        rb.angularDrag = 0.24f;
+        rb.angularDrag = 0.32f;
         //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
     }
 }

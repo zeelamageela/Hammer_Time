@@ -2059,7 +2059,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 50, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &278052630
@@ -2185,6 +2185,7 @@ Transform:
   - {fileID: 819206749}
   - {fileID: 545177318}
   - {fileID: 2125354294}
+  - {fileID: 1708693059}
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3132,7 +3133,7 @@ MonoBehaviour:
   teamName: REDDD
   earnings: 0
   record: {x: 0, y: 0}
-  week: 13
+  week: 0
   cStats:
     drawAccuracy: 5
     takeOutAccuracy: 6
@@ -7674,7 +7675,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 50, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1228243347
@@ -10142,6 +10143,116 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1358951887837846888, guid: fa4c216c1c93ad24d80f0d65da0823c2, type: 3}
   m_PrefabInstance: {fileID: 1889801337}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1708693058
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1708693059}
+  - component: {fileID: 1708693060}
+  m_Layer: 0
+  m_Name: CareerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1708693059
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708693058}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.74700004, y: 14.711, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 306281938}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1708693060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1708693058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  week: 0
+  seasonLength: 36
+  playerName: Gibble
+  teamName: Gobble
+  teamColour: {r: 0.2392157, g: 0.3529412, b: 0.23137257, a: 1}
+  playerTeamIndex: 0
+  earnings: 0
+  record: {x: 0, y: 0}
+  provQual: 0
+  tourQual: 0
+  tourRecord: {x: 0, y: 0}
+  xp: 0
+  totalXp: 0
+  cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  skillPoints: 20
+  inProgress: 0
+  season: 0
+  tournyResults: 
+  totalTeams: 32
+  totalTourTeams: 16
+  provTeams: 32
+  teamRecords: []
+  tourRecords: []
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+  teams: []
+  tourTeams: []
+  currentTournyTeams: []
+  currentTourny:
+    name: 
+    id: 0
+    location: 
+    teams: 0
+    prizeMoney: 0
+    entryFee: 0
+    format: 
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+  tournies: []
+  tour: []
+  prov: []
+  champ: []
+  activeTournies: []
+  coachDialogue: 
+  qualDialogue: 
+  reviewDialogue: 
+  introDialogue: 
+  helpDialogue: 
+  strategyDialogue: 0000000000
+  storyDialogue: 
 --- !u!1 &1723437704
 GameObject:
   m_ObjectHideFlags: 0
@@ -10562,6 +10673,22 @@ PrefabInstance:
     - target: {fileID: 6899141911911842202, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -116.000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141911911842203, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1087584199}
+    - target: {fileID: 6899141911911842203, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: DisplayNextSentence
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141911911842203, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: DialogueManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141911911842203, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6899141912088853721, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_AnchoredPosition.x

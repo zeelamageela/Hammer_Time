@@ -42,6 +42,7 @@ public class RandomRockPlacerment : MonoBehaviour
     public void Help()
     {
         dialogueGO.SetActive(true);
+
         if (round == 1)
             coachDialogue.TriggerDialogue("Strategy", 0);
         else if (round == 2)
@@ -254,7 +255,26 @@ public class RandomRockPlacerment : MonoBehaviour
         CareerManager cm = FindObjectOfType<CareerManager>();
         playerStratGO.SetActive(true);
         gm.rockBar.EndUpdate(gsp.yellowScore, gsp.redScore);
-
+        if (round < 1)
+        {
+            dialogueGO.SetActive(true);
+            coachDialogue.TriggerDialogue("Strategy", 0);
+            //if (!cm.strategyDialogue[0])
+            //{
+            //    coachDialogue.TriggerDialogue("Strategy", 0);
+            //    cm.strategyDialogue[0] = true;
+            //}
+        }
+        else if (round == 1)
+        {
+            if (!cm.strategyDialogue[1])
+            {
+                coachDialogue.TriggerDialogue("Strategy", 1);
+                cm.strategyDialogue[1] = true;
+            }
+        }
+        else
+            playerStratGO.SetActive(false);
         yield return new WaitForEndOfFrame();
         tm.SetCharacter(gm.rockCurrent, true);
         tm.SetCharacter(gm.rockCurrent, false);
@@ -266,8 +286,6 @@ public class RandomRockPlacerment : MonoBehaviour
         {
             rockPos = new Vector2[rockCurrent];
 
-            dialogueGO.SetActive(true);
-            coachDialogue.TriggerDialogue("Strategy", 0);
             //if (!cm.strategyDialogue[0])
             //{
             //    coachDialogue.TriggerDialogue("Strategy", 0);
@@ -278,11 +296,6 @@ public class RandomRockPlacerment : MonoBehaviour
         }
         else if (round == 2)
         {
-            if (!cm.strategyDialogue[1])
-            {
-                coachDialogue.TriggerDialogue("Strategy", 1);
-                cm.strategyDialogue[1] = true;
-            }
             yield return StartCoroutine(SecondPlacement());
             //placed = true;
         }
@@ -1828,6 +1841,7 @@ public class RandomRockPlacerment : MonoBehaviour
                         houseCount++;
                         if (i % 2 == 1)
                         {
+                            Random.InitState((int)System.DateTime.Now.Ticks);
                             if (gm.redHammer)
                                 rockPos[i] = placePos[placeSelector]
                                     + (Random.insideUnitCircle
@@ -1839,6 +1853,7 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
+                            Random.InitState((int)System.DateTime.Now.Ticks);
                             if (gm.redHammer)
                                 rockPos[i] = placePos[placeSelector]
                                     + (Random.insideUnitCircle
@@ -1849,7 +1864,7 @@ public class RandomRockPlacerment : MonoBehaviour
                                     * (1.5f - (0.05f * tm.teamRed[shooter].charStats.drawAccuracy.GetValue())));
                         }
                     }
-                    Debug.Log("case 0 rockPos is - i - " + rockPos[i].x + ", " + rockPos[i].y);
+                    Debug.Log("case 0 rockPos is - " + i + " - " + rockPos[i].x + ", " + rockPos[i].y);
                     break;
                 case 1:
                     Debug.Log("Case 1 - Out");
@@ -2001,6 +2016,8 @@ public class RandomRockPlacerment : MonoBehaviour
                                         + (Random.insideUnitCircle
                                         * (1.5f - (0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue())));
                                 }
+                                Random.InitState((int)System.DateTime.Now.Ticks);
+
                                 rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex].x +=
                                     Random.Range(0f, 0.05f * tm.teamRed[shooter].charStats.takeOutAccuracy.GetValue());
 
@@ -2022,6 +2039,7 @@ public class RandomRockPlacerment : MonoBehaviour
                                 }
                                 else
                                 {
+                                    Random.InitState((int)System.DateTime.Now.Ticks);
                                     placeSelector = 9;
                                     rockPos[i] = rockPos[gm.houseList[takeOutSelector].rockInfo.rockIndex]
                                         + (Random.insideUnitCircle
