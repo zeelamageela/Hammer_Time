@@ -10,5 +10,7 @@ public class CardDisplay
     public Text description;
     public Text effect;
     public Text effectNumbers;
+    public GameObject costPanel;
+    public Text cost;
     public Image image;
 }

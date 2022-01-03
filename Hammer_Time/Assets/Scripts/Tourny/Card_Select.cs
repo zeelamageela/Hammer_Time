@@ -11,7 +11,8 @@ public class Card_Select : MonoBehaviour
     public HorizontalLayoutGroup hlg;
 
     public Scrollbar scrollbar;
-
+    public GameObject buttons;
+    
     Vector3 initialScale;
     Vector3 maxScale;
 
@@ -49,37 +50,39 @@ public class Card_Select : MonoBehaviour
         //}
         if (cardSize.localScale == initialScale)
         {
-            cardSize.localScale = maxScale;
-            textColour = colour2;
-            bgColour = colour2;
+            cardSize.localScale = maxScale; 
+            textColour = colour3;
+            bgColour = colour1;
             //hlg.spacing = 450;
             for (int i = 0; i < pm.cardGOs.Length; i++)
             {
                 if (i != card)
+                {
                     pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+                    pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour2;
+                    pm.cardGOs[i].GetComponent<Card_Select>().bgColour = colour2;
+                    pm.cardGOs[i].GetComponent<Button>().interactable = false;
+                }
             }
-            pm.AssignPoints(card);
+            buttons.SetActive(true);
+            pm.PreviewPoints(card);
         }
         else
         {
             cardSize.localScale = initialScale;
-            textColour = colour3;
-            bgColour = Color.white;
             //hlg.spacing = 0;
+            for (int i = 0; i < pm.cardGOs.Length; i++)
+            {
+                pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+                pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour3;
+                pm.cardGOs[i].GetComponent<Card_Select>().bgColour = Color.white;
+                pm.cardGOs[i].GetComponent<Button>().interactable = true;
+            }
+            buttons.SetActive(false);
+            pm.UnPreviewPoints(card);
         }
 
-        switch (card)
-        {
-            case 0:
-                scrollbar.value = 0f;
-                break;
-            case 1:
-                scrollbar.value = 0.5f;
-                break;
-            case 2:
-                scrollbar.value = 1f;
-                break;
-        }
+        
         //cardSize.sizeDelta = new Vector2(cardSize.sizeDelta.x * 2f, cardSize.sizeDelta.y * 2f);
 
         Debug.Log("Size is " + cardSize.localScale);

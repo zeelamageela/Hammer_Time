@@ -11,6 +11,9 @@ public class Card
     [TextArea(3, 10)]
     public string description;
 
+    public float cost;
+    public bool active;
+    public bool played;
 
     public int draw;
     public int guard;
@@ -27,4 +30,5 @@ public class Card
     public int oppHealth;
 
     public string[] effects;
+
 }
