@@ -10,8 +10,7 @@ public class Card
     public int id;
     [TextArea(3, 10)]
     public string description;
-    [TextArea(3, 10)]
-    public string effect;
+
 
     public int draw;
     public int guard;
@@ -26,4 +25,6 @@ public class Card
     public int oppStrength;
     public int oppEnduro;
     public int oppHealth;
+
+    public string[] effects;
 }

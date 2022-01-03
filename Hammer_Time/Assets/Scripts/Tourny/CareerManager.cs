@@ -31,6 +31,8 @@ public class CareerManager : MonoBehaviour
     public float totalXp;
 
     public CareerStats cStats;
+    public CareerStats oppStats;
+
     public int skillPoints;
 
     public bool inProgress;

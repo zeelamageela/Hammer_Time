@@ -257,25 +257,27 @@ public class RandomRockPlacerment : MonoBehaviour
         gm.rockBar.EndUpdate(gsp.yellowScore, gsp.redScore);
         if (round < 1)
         {
-            dialogueGO.SetActive(true);
-            coachDialogue.TriggerDialogue("Strategy", 0);
-            //if (!cm.strategyDialogue[0])
-            //{
-            //    coachDialogue.TriggerDialogue("Strategy", 0);
-            //    cm.strategyDialogue[0] = true;
-            //}
+            if (!cm.strategyDialogue[0])
+            {
+                dialogueGO.SetActive(true);
+                coachDialogue.TriggerDialogue("Strategy", 0);
+                cm.strategyDialogue[0] = true;
+            }
         }
         else if (round == 1)
         {
             if (!cm.strategyDialogue[1])
             {
+                dialogueGO.SetActive(true);
                 coachDialogue.TriggerDialogue("Strategy", 1);
                 cm.strategyDialogue[1] = true;
             }
         }
         else
             playerStratGO.SetActive(false);
+
         yield return new WaitForEndOfFrame();
+
         tm.SetCharacter(gm.rockCurrent, true);
         tm.SetCharacter(gm.rockCurrent, false);
 

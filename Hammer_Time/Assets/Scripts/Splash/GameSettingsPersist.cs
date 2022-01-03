@@ -44,6 +44,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public int week;
     public CareerStats cStats;
+    public CareerStats oppStats;
 
     public string redTeamName;
     public Color redTeamColour;

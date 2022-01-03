@@ -173,12 +173,12 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamRed.Length; j++)
                 {
-                    teamRed[j].charStats.drawAccuracy.SetBaseValue(aiStats);
-                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(aiStats);
-                    teamRed[j].charStats.guardAccuracy.SetBaseValue(aiStats);
-                    teamRed[j].charStats.sweepStrength.SetBaseValue(aiStats);
-                    teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats);
-                    teamRed[j].charStats.sweepHealth = aiStats * 10f;
+                    teamRed[j].charStats.drawAccuracy.SetBaseValue(aiStats + gsp.oppStats.drawAccuracy);
+                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(aiStats + gsp.oppStats.takeOutAccuracy);
+                    teamRed[j].charStats.guardAccuracy.SetBaseValue(aiStats + gsp.oppStats.guardAccuracy);
+                    teamRed[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+                    teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+                    teamRed[j].charStats.sweepHealth = (aiStats * 10f) + gsp.oppStats.sweepHealth;
                     Debug.Log("Red Turn AI stats - "
                         + teamRed[j].charStats.guardAccuracy.GetValue());
                 }
@@ -209,12 +209,12 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamYellow.Length; j++)
                 {
-                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(aiStats);
-                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(aiStats);
-                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(aiStats);
-                    teamYellow[j].charStats.sweepStrength.SetBaseValue(aiStats);
-                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(aiStats);
-                    teamYellow[j].charStats.sweepHealth = 10 * aiStats;
+                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(aiStats + gsp.oppStats.drawAccuracy);
+                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(aiStats + gsp.oppStats.takeOutAccuracy);
+                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(aiStats + gsp.oppStats.guardAccuracy);
+                    teamYellow[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+                    teamYellow[j].charStats.sweepHealth = (10 * aiStats) + gsp.oppStats.sweepHealth;
                     Debug.Log("Yellow Turn AI stats - "
                          + teamYellow[j].charStats.guardAccuracy.GetValue());
                 }

@@ -69,6 +69,7 @@ public class Button_Colour : MonoBehaviour
                 break;
         }
     }
+
     public void ChangeColour()
     {
         if (button.image.color == colour1)
