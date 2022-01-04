@@ -59,19 +59,118 @@ public class TournySelector : MonoBehaviour
     EasyFileSave myFile;
 
     // Start is called before the first frame update
-    void Start()
+    //void Start()
+    //{
+    //    GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+    //    //gsp.inProgress = false;
+    //    cm = FindObjectOfType<CareerManager>();
+    //    xpm.SetSkillPoints();
+    //    //if (cm.inProgress)
+    //        //cm.LoadCareer();
+    //    teamNameText.text = cm.playerName + " " + cm.teamName;
+    //    //recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
+    //    //earningsText.text = "$" + cm.earnings.ToString();
+    //    XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
+
+    //    provStandings.PrintRows();
+    //    tourStandings.PrintRows();
+
+    //    if (cm.week == 0)
+    //        NewSeason();
+    //    else
+    //    {
+    //        cm.LoadCareer();
+
+    //        if (cm.week == 2)
+    //        {
+    //            Debug.Log("Player Rank is " + cm.playerTeam.rank);
+    //            dialogueGO.SetActive(true);
+    //            for (int i = 0; i < cm.currentTournyTeams.Length; i++)
+    //            {
+    //                if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+    //                {
+    //                    if (cm.currentTournyTeams[i].rank < 5)
+    //                    {
+    //                        coachGreen.TriggerDialogue("Intro", 1);
+    //                    }
+    //                    else
+    //                    {
+    //                        coachGreen.TriggerDialogue("Intro", 2);
+    //                    }
+    //                }
+    //            }
+    //            cm.introDialogue[1] = true;
+    //            cm.introDialogue[2] = true;
+    //        }
+
+    //        if (cm.week == 3)
+    //        {
+    //            if (cm.totalXp < 25)
+    //                cm.totalXp = 25;
+    //            Debug.Log("cm.xp is " + cm.xp);
+    //            dialogueGO.SetActive(true);
+    //            coachGreen.TriggerDialogue("Intro", 3);
+    //            cm.introDialogue[3] = true;
+    //        }
+
+    //        if (cm.week == 4)
+    //        {
+    //            dialogueGO.SetActive(true);
+    //            coachGreen.TriggerDialogue("Intro", 4);
+    //            cm.introDialogue[4] = true;
+    //        }
+    //        if (cm.week == 5)
+    //        {
+    //            dialogueGO.SetActive(true);
+    //            coachGreen.TriggerDialogue("Intro", 5);
+    //            cm.introDialogue[5] = true;
+    //        }
+    //        if (cm.provQual)
+    //        {
+    //            if (dialogueGO.activeSelf)
+    //            StartCoroutine(WaitForDialogue());
+    //            else
+    //            {
+    //                if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
+    //                {
+    //                    dialogueGO.SetActive(true);
+    //                    if (cm.week < 10)
+    //                    {
+    //                        coachGreen.TriggerDialogue("Qualifiers", 3);
+    //                    }
+    //                    else
+    //                    {
+    //                        coachGreen.TriggerDialogue("Qualifiers", 2);
+    //                    }
+    //                    cm.qualDialogue[3] = true;
+    //                    cm.qualDialogue[2] = true;
+    //                }
+    //            }
+    //        }
+
+    //    }
+
+    //    Debug.Log("Skill Points are " + xpm.skillPoints);
+
+    //    SetActiveTournies();
+    //}
+    private void Start()
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         //gsp.inProgress = false;
         cm = FindObjectOfType<CareerManager>();
-        xpm.SetSkillPoints();
+        
         //if (cm.inProgress)
-            //cm.LoadCareer();
+        //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
         //recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
         //earningsText.text = "$" + cm.earnings.ToString();
         XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
-
+        
+    }
+    public void SetUp()
+    {
+        xpm.SetSkillPoints();
         provStandings.PrintRows();
         tourStandings.PrintRows();
 
@@ -102,7 +201,7 @@ public class TournySelector : MonoBehaviour
                 cm.introDialogue[1] = true;
                 cm.introDialogue[2] = true;
             }
-            
+
             if (cm.week == 3)
             {
                 if (cm.totalXp < 25)
@@ -128,7 +227,7 @@ public class TournySelector : MonoBehaviour
             if (cm.provQual)
             {
                 if (dialogueGO.activeSelf)
-                StartCoroutine(WaitForDialogue());
+                    StartCoroutine(WaitForDialogue());
                 else
                 {
                     if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
@@ -147,12 +246,7 @@ public class TournySelector : MonoBehaviour
                     }
                 }
             }
-
         }
-        
-        Debug.Log("Skill Points are " + xpm.skillPoints);
-        
-        SetActiveTournies();
     }
 
     IEnumerator WaitForDialogue()
@@ -177,10 +271,10 @@ public class TournySelector : MonoBehaviour
             }
         }
     }
+
     // Update is called once per frame
     public void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             drag = true;

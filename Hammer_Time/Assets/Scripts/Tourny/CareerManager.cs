@@ -34,7 +34,7 @@ public class CareerManager : MonoBehaviour
     public CareerStats oppStats;
 
     public int skillPoints;
-
+    public int[] cardIDList;
     public bool inProgress;
     public int season;
     public List<int> tournyResults;
@@ -179,6 +179,8 @@ public class CareerManager : MonoBehaviour
 
             if (tSel)
             {
+                cardIDList = myFile.GetArray<int>("Card ID List");
+
                 int[] provIDList = myFile.GetArray<int>("Prov ID List");
                 bool[] provCompleteList = myFile.GetArray<bool>("Prov Complete List");
                 int[] tourIDList = myFile.GetArray<int>("Tour ID List");
@@ -398,6 +400,7 @@ public class CareerManager : MonoBehaviour
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TournyManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
+        PowerUpManager pm = FindObjectOfType<PowerUpManager>();
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
         myFile.Add("Qualifying Dialogue Played List", qualDialogue);
@@ -484,6 +487,7 @@ public class CareerManager : MonoBehaviour
 
         if (tSel)
         {
+            myFile.Add("Card ID List", pm.idList);
             int[] provIDList = new int[tSel.provQual.Length];
             bool[] provCompleteList = new bool[tSel.provQual.Length];
             int[] tourIDList = new int[tSel.tour.Length];

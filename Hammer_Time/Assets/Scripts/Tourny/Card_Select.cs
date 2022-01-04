@@ -10,11 +10,13 @@ public class Card_Select : MonoBehaviour
     public Image image;
     public HorizontalLayoutGroup hlg;
 
-    public Scrollbar scrollbar;
     public GameObject buttons;
     
     Vector3 initialScale;
     Vector3 maxScale;
+
+    public CardDisplay cardDisplay;
+    public int cardIndex;
 
     public Color colour1;
     public Color colour2;
@@ -26,6 +28,7 @@ public class Card_Select : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pm = FindObjectOfType<PowerUpManager>();
         initialScale = cardSize.localScale;
         maxScale = cardSize.localScale * 2f;
     }
@@ -33,14 +36,14 @@ public class Card_Select : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-            pm.cardDisplays[activeCard].name.color = textColour;
-            pm.cardDisplays[activeCard].description.color = textColour;
-            pm.cardDisplays[activeCard].effect.color = textColour;
+        pm.cardDisplays[activeCard].name.color = textColour;
+        pm.cardDisplays[activeCard].description.color = textColour;
+        pm.cardDisplays[activeCard].effect.color = textColour;
 
         image.color = bgColour;
     }
 
-    public void CardSelect(int card)
+    public void CardSelect()
     {
         //Vector2 cardSizeMax = cardSize.localScale * 2;
         //for (int i = 0; i < 1000; i++)
@@ -56,7 +59,7 @@ public class Card_Select : MonoBehaviour
             //hlg.spacing = 450;
             for (int i = 0; i < pm.cardGOs.Length; i++)
             {
-                if (i != card)
+                if (i != cardIndex)
                 {
                     pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
                     pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour2;
@@ -65,7 +68,7 @@ public class Card_Select : MonoBehaviour
                 }
             }
             buttons.SetActive(true);
-            pm.PreviewPoints(card);
+            pm.PreviewPoints(cardIndex);
         }
         else
         {
@@ -79,7 +82,7 @@ public class Card_Select : MonoBehaviour
                 pm.cardGOs[i].GetComponent<Button>().interactable = true;
             }
             buttons.SetActive(false);
-            pm.UnPreviewPoints(card);
+            pm.UnPreviewPoints(cardIndex);
         }
 
         
@@ -88,4 +91,13 @@ public class Card_Select : MonoBehaviour
         Debug.Log("Size is " + cardSize.localScale);
     }
 
+    public void BuyButton()
+    {
+        pm.BuyCard(cardIndex);
+
+        for (int i = 0; i < pm.cardGOs.Length; i++)
+        {
+            pm.cardGOs[i].GetComponent<Button>().interactable = false;
+        }
+    }
 }
