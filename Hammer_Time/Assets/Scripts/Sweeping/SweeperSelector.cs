@@ -21,9 +21,9 @@ public class SweeperSelector : MonoBehaviour
     public Transform launcher;
 
     bool aiTurn;
+
     private void Update()
     {
-
         if (rockRB != null)
         {
             Vector3 followSpot = new Vector3((rockRB.position.x), (rockRB.position.y), 0f);

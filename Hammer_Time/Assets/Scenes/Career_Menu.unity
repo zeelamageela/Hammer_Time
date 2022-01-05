@@ -2524,7 +2524,7 @@ MonoBehaviour:
   colourLoad: {fileID: 1717434718}
   teamColourSlider: {fileID: 1207824480}
   teamHandleSlider: {fileID: 799486908}
-  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  teamColour: {r: 0.6509804, g: 0.47450984, b: 0.854902, a: 1}
   earningsLoad: {fileID: 143280337}
   recordLoad: {fileID: 1267312183}
   weekLoad: {fileID: 1229332015}
@@ -3790,6 +3790,7 @@ MonoBehaviour:
     sweepEndurance: 0
     sweepHealth: 0
   skillPoints: 20
+  cardIDList: 
   inProgress: 0
   season: 0
   tournyResults: 

@@ -77,9 +77,16 @@ public class PowerUpManager : MonoBehaviour
 
         if (cm.week == 0)
         {
+            //StartCoroutine(WaitForClick());
+            contButton.SetActive(true);
+            infoPanel.SetActive(false);
+            idList = new int[20];
+            cm.cardIDList = idList;
             StartCoroutine(WaitForClick());
         }
-        idList = cm.cardIDList;
+        else
+            idList = cm.cardIDList;
+
         contButton.SetActive(false);
         infoPanel.SetActive(true);
         cardGOs = new GameObject[numberOfCards];
@@ -126,12 +133,12 @@ public class PowerUpManager : MonoBehaviour
     {
         if (cm)
         {
-            drawSlider.value = cm.cStats.drawAccuracy;
-            guardSlider.value = cm.cStats.guardAccuracy;
-            takeOutSlider.value = cm.cStats.takeOutAccuracy;
-            enduranceSlider.value = cm.cStats.sweepEndurance;
-            strengthSlider.value = cm.cStats.sweepStrength;
-            healthSlider.value = cm.cStats.sweepHealth;
+            drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
+            guardSlider.value = cm.modStats.guardAccuracy + cm.modStats.guardAccuracy;
+            takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
+            enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
+            strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
+            healthSlider.value = cm.cStats.sweepHealth + cm.modStats.sweepHealth;
 
             oppDrawSlider.value = 5 + cm.oppStats.drawAccuracy;
             oppGuardSlider.value = 5 + cm.oppStats.guardAccuracy;
@@ -145,9 +152,6 @@ public class PowerUpManager : MonoBehaviour
             xpText.text = xp.ToString();
             cashText.text = "$" + cash.ToString("n0");
         }
-
-        
-
     }
 
     public void BuyCard(int card)
@@ -167,11 +171,12 @@ public class PowerUpManager : MonoBehaviour
     {
         StartCoroutine(WaitForClick());
     }
+
     IEnumerator WaitForClick()
     {
         TournySelector tSel = FindObjectOfType<TournySelector>();
 
-        yield return new WaitForSeconds(3f);
+        //yield return new WaitForSeconds(3f);
 
         while (!Input.GetMouseButtonDown(0))
         {
@@ -188,27 +193,14 @@ public class PowerUpManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        //cm.cStats.drawAccuracy += availCards[card].draw;
-        //cm.cStats.guardAccuracy += availCards[card].guard;
-        //cm.cStats.takeOutAccuracy += availCards[card].takeOut;
-        //cm.cStats.sweepEndurance += availCards[card].sweepEnduro;
-        //cm.cStats.sweepStrength += availCards[card].sweepStrength;
-        //cm.cStats.sweepHealth += (10f * availCards[card].sweepHealth);
-        //cm.oppStats.drawAccuracy += availCards[card].oppDraw;
-        //cm.oppStats.guardAccuracy += availCards[card].oppGuard;
-        //cm.oppStats.takeOutAccuracy += availCards[card].oppTakeOut;
-        //cm.oppStats.sweepEndurance += availCards[card].oppEnduro;
-        //cm.oppStats.sweepStrength += availCards[card].oppStrength;
-        //cm.oppStats.sweepHealth += (10f * availCards[card].oppHealth);
-
         contButton.SetActive(true);
         infoPanel.SetActive(false);
 
-        int idListLength = 0;
+        //int idListLength = 0;
         for (int i = 0; i < numberOfCards; i++)
         {
             if (availCards[i].active)
-                idListLength++;
+                idList[cm.week] = availCards[i].id;
         }
     }
 
@@ -216,12 +208,12 @@ public class PowerUpManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        cm.cStats.drawAccuracy += availCards[card].draw;
-        cm.cStats.guardAccuracy += availCards[card].guard;
-        cm.cStats.takeOutAccuracy += availCards[card].takeOut;
-        cm.cStats.sweepEndurance += availCards[card].sweepEnduro;
-        cm.cStats.sweepStrength += availCards[card].sweepStrength;
-        cm.cStats.sweepHealth += (10f * availCards[card].sweepHealth);
+        cm.modStats.drawAccuracy += availCards[card].draw;
+        cm.modStats.guardAccuracy += availCards[card].guard;
+        cm.modStats.takeOutAccuracy += availCards[card].takeOut;
+        cm.modStats.sweepEndurance += availCards[card].sweepEnduro;
+        cm.modStats.sweepStrength += availCards[card].sweepStrength;
+        cm.modStats.sweepHealth += (10f * availCards[card].sweepHealth);
         cm.oppStats.drawAccuracy += availCards[card].oppDraw;
         cm.oppStats.guardAccuracy += availCards[card].oppGuard;
         cm.oppStats.takeOutAccuracy += availCards[card].oppTakeOut;
@@ -231,16 +223,8 @@ public class PowerUpManager : MonoBehaviour
 
         Debug.Log("Card is " + card + " and the number of Cards is " + numberOfCards + " - " + card / numberOfCards);
         Debug.Log("Card / 2 is " + numberOfCards / 2f);
-        if (card == 0)
-            scrollbar.value = -2f;
-        else if (card == numberOfCards - 1f)
-            scrollbar.value = 2f;
-        else
-        {
 
-            float tempScrollValue = scrollbar.value;
-            scrollbar.value = Mathf.Lerp((float)(card / (numberOfCards - 1f)), tempScrollValue, 2 * Time.deltaTime);
-        }
+
         //scrollbar.value = Mathf.Lerp((float)card / (numberOfCards - 1f), tempScrollValue, 2 * Time.deltaTime);
         Debug.Log("Scrollbar value is " + scrollbar.value);
     }
@@ -248,13 +232,13 @@ public class PowerUpManager : MonoBehaviour
     public void UnPreviewPoints(int card)
     {
         cm = FindObjectOfType<CareerManager>();
-
-        cm.cStats.drawAccuracy -= availCards[card].draw;
-        cm.cStats.guardAccuracy -= availCards[card].guard;
-        cm.cStats.takeOutAccuracy -= availCards[card].takeOut;
-        cm.cStats.sweepEndurance -= availCards[card].sweepEnduro;
-        cm.cStats.sweepStrength -= availCards[card].sweepStrength;
-        cm.cStats.sweepHealth -= (10f * availCards[card].sweepHealth);
+        DisplayCards();
+        cm.modStats.drawAccuracy -= availCards[card].draw;
+        cm.modStats.guardAccuracy -= availCards[card].guard;
+        cm.modStats.takeOutAccuracy -= availCards[card].takeOut;
+        cm.modStats.sweepEndurance -= availCards[card].sweepEnduro;
+        cm.modStats.sweepStrength -= availCards[card].sweepStrength;
+        cm.modStats.sweepHealth -= (10f * availCards[card].sweepHealth);
         cm.oppStats.drawAccuracy -= availCards[card].oppDraw;
         cm.oppStats.guardAccuracy -= availCards[card].oppGuard;
         cm.oppStats.takeOutAccuracy -= availCards[card].oppTakeOut;
@@ -272,6 +256,7 @@ public class PowerUpManager : MonoBehaviour
             cardDisplays[i].description.text = availCards[i].description;
             cardDisplays[i].effect.text = " ";
             cardDisplays[i].cost.text = "$" + availCards[i].cost.ToString("n0");
+
             for (int j = 0; j < cards[i].effects.Length; j++)
             {
                 cardDisplays[i].effect.text += "\n" + availCards[i].effects[j];
@@ -294,6 +279,7 @@ public class PowerUpManager : MonoBehaviour
                 counter++;
             }
         }
+
         if (counter >= numberOfCards - 1)
         {
             contButton.SetActive(true);

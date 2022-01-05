@@ -43,8 +43,8 @@ public class SweeperParent : MonoBehaviour
             transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
         else if (absAngle < 0f)
             transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
-        else
-            transform.localPosition = new Vector3(0f, yOffset, 0f);
+        //else
+        //    transform.localPosition = new Vector3(0f, yOffset, 0f);
 
     }
 

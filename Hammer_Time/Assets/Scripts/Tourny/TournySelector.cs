@@ -247,6 +247,9 @@ public class TournySelector : MonoBehaviour
                 }
             }
         }
+        Debug.Log("Skill Points are " + xpm.skillPoints);
+
+        SetActiveTournies();
     }
 
     IEnumerator WaitForDialogue()

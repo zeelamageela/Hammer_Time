@@ -51,6 +51,15 @@ public class Card_Select : MonoBehaviour
         //    cardSize.localScale = cardSize.localScale * (i / 500f);
         //    //Vector2.Lerp(cardSize.localScale, cardSizeMax, i / 1000f);
         //}
+        if (cardIndex == 0)
+            pm.scrollbar.value = -2f;
+        else if (cardIndex == pm.numberOfCards - 1f)
+            pm.scrollbar.value = 2f;
+        else
+        {
+            pm.scrollbar.value = (float)cardIndex / (pm.numberOfCards - 1);
+        }
+
         if (cardSize.localScale == initialScale)
         {
             cardSize.localScale = maxScale; 

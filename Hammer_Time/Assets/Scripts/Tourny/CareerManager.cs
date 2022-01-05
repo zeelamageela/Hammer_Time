@@ -14,6 +14,7 @@ public class CareerManager : MonoBehaviour
     EasyFileSave myFile;
     TournyTeamList tTeamList;
     CareerSettings cs;
+    PowerUpManager pUpM;
 
     public int week;
     public int seasonLength;
@@ -32,6 +33,7 @@ public class CareerManager : MonoBehaviour
 
     public CareerStats cStats;
     public CareerStats oppStats;
+    public CareerStats modStats;
 
     public int skillPoints;
     public int[] cardIDList;
@@ -400,7 +402,8 @@ public class CareerManager : MonoBehaviour
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TournyManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
-        PowerUpManager pm = FindObjectOfType<PowerUpManager>();
+        pUpM = FindObjectOfType<PowerUpManager>();
+        
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
         myFile.Add("Qualifying Dialogue Played List", qualDialogue);
@@ -487,7 +490,7 @@ public class CareerManager : MonoBehaviour
 
         if (tSel)
         {
-            myFile.Add("Card ID List", pm.idList);
+            myFile.Add("Card ID List", cardIDList);
             int[] provIDList = new int[tSel.provQual.Length];
             bool[] provCompleteList = new bool[tSel.provQual.Length];
             int[] tourIDList = new int[tSel.tour.Length];
