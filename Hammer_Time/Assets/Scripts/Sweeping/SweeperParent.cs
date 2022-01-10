@@ -32,17 +32,29 @@ public class SweeperParent : MonoBehaviour
 
         //Vector3 followSpot = new Vector3((xOffset + transform.parent.position.x), (transform.parent.position.y + yOffset), 0f);
         //transform.position = followSpot;
+        //float angle;
+        //angle = -2 * (transform.parent.rotation.z * Mathf.Rad2Deg);
 
-        float angle = 2 * transform.parent.rotation.z * Mathf.Rad2Deg;
-        transform.localRotation = Quaternion.AngleAxis(-angle, Vector3.forward);
+        //if (angle > 90f)
+        //    angle = (-2 * (transform.parent.rotation.z * Mathf.Rad2Deg)) - 90f;
+        //else if (angle < -90f)
+        //    angle = (-2 * (transform.parent.rotation.z * Mathf.Rad2Deg)) + 90f;
+        //else
+        //    angle = -2 * (transform.parent.rotation.z * Mathf.Rad2Deg);
 
-        float absAngle = Mathf.Abs(angle);
-        //Debug.Log("Parent Rotation is " + transform.parent.rotation.z);
+        //Debug.Log("Angle is " + angle);
+        ////transform.localRotation = Quaternion.AngleAxis(-angle, Vector3.forward);
+        //transform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        transform.rotation = Quaternion.identity;
+        float angle = transform.localRotation.z;
+        float absAngle = Mathf.Abs(angle) * Mathf.Rad2Deg;
+        //Debug.Log("Abs Angle " + absAngle);
 
-        if (absAngle > 0f)
-            transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
-        else if (absAngle < 0f)
-            transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
+        transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 90f) / -90f)) + 0.3f, 0f);
+        //if (absAngle > 90f)
+        //    transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 180f) / -90f)) + 0.3f, 0f);
+        //else if (absAngle > 180f)
+        //    transform.localPosition = new Vector3(0f, ((yOffset - 0.3f) * ((absAngle - 270f) / -90f)) + 0.3f, 0f);
         //else
         //    transform.localPosition = new Vector3(0f, yOffset, 0f);
 

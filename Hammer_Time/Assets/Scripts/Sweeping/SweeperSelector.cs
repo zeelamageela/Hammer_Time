@@ -52,7 +52,7 @@ public class SweeperSelector : MonoBehaviour
                 {
                     float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
                     transform.rotation = Quaternion.AngleAxis((angle - 90f), Vector3.forward);
-
+                    //Debug.Log("Angle is " + angle);
                     if (transform.rotation.z > 30f)
                     {
                         sweeperL.yOffset = 1.2f;
@@ -127,25 +127,52 @@ public class SweeperSelector : MonoBehaviour
 
                     Debug.Log(hit.collider.gameObject.name);
                 }
+
+                if (hit.collider.gameObject.layer == 3)
+                {
+                    ReAttachToRock(hit.collider.gameObject);
+                }
+                Debug.Log(hit.collider.gameObject.name);
+                Debug.Log(hit.collider.gameObject.layer);
             }
         }
     }
 
-    public void PostHitSelect()
+    public void ReAttachToRock(GameObject rock)
     {
-        sweeperL.gameObject.SetActive(false);
-        sweeperR.gameObject.SetActive(false);
-        panel.SetActive(true);
+        sweeperL.gameObject.SetActive(true);
+        sweeperR.gameObject.SetActive(true);
+        //panel.SetActive(true);
+        Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
 
-        GameManager gm = FindObjectOfType<GameManager>();
-        for (int i = 0; i < gm.rockList.Count; i++)
+        if (rockInfo.moving)
         {
-            if (gm.rockList[i].rockInfo.moving)
+            if (rockInfo.teamName == gsp.teamName)
             {
-                Debug.Log(gm.rockList[i].rockInfo.name + " is moving sweepSel");
+                //sm.ResetSweepers();
+                //if (gsp.yellowTeamName == gsp.teamName)
+                //{
+                //    sm.SetupSweepers(false);
+                //}
+                //else
+                //    sm.SetupSweepers(true);
+
+                rockRB = rock.GetComponent<Rigidbody2D>();
             }
             else
-                gm.rockList[i].rock.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.3f);
+            {
+                if (rock.transform.position.y > 6.5f)
+                {
+                    //sm.ResetSweepers();
+                    //if (gsp.yellowTeamName == gsp.teamName)
+                    //    sm.SetupSweepers(false);
+                    //else
+                    //    sm.SetupSweepers(true);
+
+                    rockRB = rock.GetComponent<Rigidbody2D>();
+                }
+            }
         }
     }
 

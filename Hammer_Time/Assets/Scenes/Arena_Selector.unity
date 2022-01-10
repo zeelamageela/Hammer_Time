@@ -3876,6 +3876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f06f63ea98b1c45e392d9ec6a6819651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tSel: {fileID: 0}
   idList: 
   cards: []
   availCards: []
@@ -3904,6 +3905,7 @@ MonoBehaviour:
     image: {fileID: 0}
   cardParent: {fileID: 1545418794}
   cardPrefab: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+  playerCardPrefab: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
   cardGOs:
   - {fileID: 0}
   - {fileID: 0}
@@ -6677,7 +6679,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 829050903}
   - {fileID: 1172725872}
   m_Father: {fileID: 1204469915}
   m_RootOrder: 1
@@ -10678,102 +10679,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 819862556}
   m_CullTransparentMesh: 1
---- !u!1 &829050902
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 829050903}
-  - component: {fileID: 829050906}
-  - component: {fileID: 829050905}
-  - component: {fileID: 829050904}
-  m_Layer: 5
-  m_Name: Text
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &829050903
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829050902}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 515252676}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.00012207031}
-  m_SizeDelta: {x: 800, y: 275}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &829050904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829050902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 081387ff65d1a7e4eab468baaa0e3b5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  charLimit: 0
-  lengthLimit: 15
-  fontSizeMin: 50
-  fontSizeMax: 145
---- !u!114 &829050905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829050902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 9397f6f129704b844a61082425426373, type: 3}
-    m_FontSize: 100
-    m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 0
-    m_MaxSize: 145
-    m_Alignment: 4
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 1
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Player Name
---- !u!222 &829050906
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 829050902}
-  m_CullTransparentMesh: 1
 --- !u!1 &867745690
 GameObject:
   m_ObjectHideFlags: 0
@@ -12073,6 +11978,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: Button_Colour, Assembly-CSharp
         m_MethodName: ChangeColour
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1497908066}
+        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
+        m_MethodName: XPWindow
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -14211,7 +14128,7 @@ GameObject:
   - component: {fileID: 1172725872}
   - component: {fileID: 1172725875}
   m_Layer: 5
-  m_Name: InfoPanel
+  m_Name: BGPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14230,7 +14147,7 @@ RectTransform:
   m_Children:
   - {fileID: 146683077}
   m_Father: {fileID: 515252676}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -14924,9 +14841,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Tour
-
-    Standings'
+  m_Text: Cards
 --- !u!222 &1217079765
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17262,7 +17177,7 @@ GameObject:
   - component: {fileID: 1403238967}
   - component: {fileID: 1403238970}
   m_Layer: 5
-  m_Name: TourStandingsButton
+  m_Name: CardsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17332,10 +17247,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1497908066}
-        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
-        m_MethodName: TourStandings
+      - m_Target: {fileID: 306226384}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 306226386}
+        m_TargetAssemblyTypeName: PowerUpManager, Assembly-CSharp
+        m_MethodName: ViewCards
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -25299,6 +25226,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: storyDialogue.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].name
       value: Coach Green
       objectReference: {fileID: 0}
@@ -25348,6 +25279,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].name
+      value: Coach Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: storyDialogue.Array.data[0].name
       value: Coach Green
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
@@ -25562,8 +25497,12 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: storyDialogue.Array.data[0].sentences.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[0]
-      value: You can purchase cards to improve your stats!
+      value: You've made some cash, let's spend some to upgrade your STATS!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[1]
@@ -25577,11 +25516,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[3]
-      value: Just remember to save some money to enter the biggest tournaments!
+      value: If you run out of money
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[4]
       value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: storyDialogue.Array.data[0].sentences.Array.data[0]
+      value: It's the end of the line for Team TEAMNAME.  Sorry, xxxxx, but we're
+        out of cash!  Let's try again next year.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886942087116576, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: m_Name
@@ -28312,7 +28256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  week: 0
+  week: 5
   seasonLength: 36
   playerName: BingBang
   teamName: BoomBaby
@@ -28323,7 +28267,7 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
-  xp: 200
+  xp: 20
   totalXp: 289
   cStats:
     drawAccuracy: 3

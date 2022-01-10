@@ -261,8 +261,8 @@ public class SweeperManager : MonoBehaviour
     {
         //Tap on the sweep target
 
-        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = sweepEndur * 0.02f;
+        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprLStats.sweepEndurance.GetValue();
+        float sweepTimer = 0.5f + sweepEndur * 0.02f;
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
@@ -302,8 +302,8 @@ public class SweeperManager : MonoBehaviour
     {
         //Tap on the sweep target
 
-        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = sweepEndur * 0.02f;
+        float sweepEndur = swprRStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
+        float sweepTimer = 0.5f + sweepEndur * 0.02f;
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;

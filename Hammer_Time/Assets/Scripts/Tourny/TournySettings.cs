@@ -40,6 +40,7 @@ public class TournySettings : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
 
+        rockSlider.interactable = false;
         StartCoroutine(LoadCareer());
         Settings();
     }

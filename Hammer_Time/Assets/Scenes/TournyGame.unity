@@ -735,7 +735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418176, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4255617394087418177, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_RootOrder
@@ -840,6 +840,10 @@ PrefabInstance:
     - target: {fileID: 4255617395572738028, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SweepHard
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255617395947796847, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5621408780908507341, guid: 76d9275962a4d4b858f851e40e699d9f, type: 3}
       propertyPath: m_Layer
@@ -3108,7 +3112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c58c93d6a20f394385e30a934717332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bg: 2
+  bg: 3
   redHammer: 1
   ends: 2
   rocks: 2
@@ -3141,6 +3145,13 @@ MonoBehaviour:
     sweepStrength: 2
     sweepEndurance: 2
     sweepHealth: 50
+  oppStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
   redTeamName: REDDD
   redTeamColour: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   redTeam:
@@ -7920,7 +7931,7 @@ EdgeCollider2D:
   m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -10206,7 +10217,22 @@ MonoBehaviour:
     sweepStrength: 0
     sweepEndurance: 0
     sweepHealth: 0
+  oppStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  modStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
   skillPoints: 20
+  cardIDList: 
   inProgress: 0
   season: 0
   tournyResults: 

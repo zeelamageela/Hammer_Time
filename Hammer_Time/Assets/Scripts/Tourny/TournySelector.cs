@@ -170,6 +170,7 @@ public class TournySelector : MonoBehaviour
     }
     public void SetUp()
     {
+        cm = FindObjectOfType<CareerManager>();
         xpm.SetSkillPoints();
         provStandings.PrintRows();
         tourStandings.PrintRows();
@@ -205,7 +206,12 @@ public class TournySelector : MonoBehaviour
             if (cm.week == 3)
             {
                 if (cm.totalXp < 25)
+                {
                     cm.totalXp = 25;
+                    cm.xp = 25;
+                    xpm.skillPoints = 1;
+                }
+                xpm.SetSkillPoints();
                 Debug.Log("cm.xp is " + cm.xp);
                 dialogueGO.SetActive(true);
                 coachGreen.TriggerDialogue("Intro", 3);
@@ -305,7 +311,7 @@ public class TournySelector : MonoBehaviour
             }
         }
 
-        if (cm.week > 1 & xpm.skillPoints > 0)
+        if (cm.week > 3 & xpm.skillPoints > 0)
         {
             teamNameText.gameObject.SetActive(false);
             teamNameAlertText.text = teamNameText.text;
@@ -1111,11 +1117,20 @@ public class TournySelector : MonoBehaviour
             playButton.SetActive(false);
         }
     }
+
     public void NewSeason()
     {
         dialogueGO.SetActive(true);
         coachGreen.TriggerDialogue("Intro", 0);
         cm.NewSeason();
+    }
+
+    public void EndOfGame()
+    {
+        dialogueGO.SetActive(true);
+        coachGreen.TriggerDialogue("Story", 0);
+
+        cm.EndCareer();
     }
 
     public void NextWeek()
@@ -1288,6 +1303,25 @@ public class TournySelector : MonoBehaviour
         }
     }
 
+    public void PowerUp(bool on)
+    {
+        if (on)
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(false);
+            provStandings.gameObject.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
+            xpm.gameObject.SetActive(false);
+        }
+        else
+        {
+            mainMenuGO.SetActive(false);
+            profPanelGO.SetActive(true);
+            provStandings.gameObject.SetActive(false);
+            tourStandings.gameObject.SetActive(false);
+            xpm.gameObject.SetActive(false);
+        }
+    }
     public void XPWindow(bool on)
     {
         if (on)

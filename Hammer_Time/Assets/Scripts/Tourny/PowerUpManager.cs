@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class PowerUpManager : MonoBehaviour
 {
     CareerManager cm;
+    public TournySelector tSel;
+
     public int[] idList;
     public Card[] cards;
     public Card[] availCards;
@@ -16,6 +18,7 @@ public class PowerUpManager : MonoBehaviour
     public CardDisplay[] cardDisplays;
     public GameObject cardParent;
     public GameObject cardPrefab;
+    public GameObject playerCardPrefab;
     public GameObject[] cardGOs;
 
     public Card[] inPlayCards;
@@ -51,6 +54,7 @@ public class PowerUpManager : MonoBehaviour
     public Slider oppHealthSlider;
 
     bool drag;
+    int oppStatBase;
     //public static PowerUpManager instance;
 
     //void Awake()
@@ -74,21 +78,34 @@ public class PowerUpManager : MonoBehaviour
     void Start()
     {
         cm = FindObjectOfType<CareerManager>();
+        tSel = FindObjectOfType<TournySelector>();
 
-        if (cm.week == 0)
+        if (cm.week < 4)
         {
+            idList = new int[20];
+            for (int i = 0; i < idList.Length; i++)
+            {
+                idList[i] = 99;
+            }
+            cm.cardIDList = idList;
             //StartCoroutine(WaitForClick());
             contButton.SetActive(true);
             infoPanel.SetActive(false);
-            idList = new int[20];
-            cm.cardIDList = idList;
-            StartCoroutine(WaitForClick());
+            
+            tSel.SetUp();
+            profileButton.interactable = true;
+            mainMenu.SetActive(true);
+            gameObject.SetActive(false);
         }
         else
+        {
             idList = cm.cardIDList;
+            contButton.SetActive(false);
+            infoPanel.SetActive(true);
+            profileButton.interactable = false;
+        }
 
-        contButton.SetActive(false);
-        infoPanel.SetActive(true);
+
         cardGOs = new GameObject[numberOfCards];
         cardDisplays = new CardDisplay[numberOfCards];
         availCards = new Card[numberOfCards];
@@ -96,13 +113,12 @@ public class PowerUpManager : MonoBehaviour
         cards = pUpList.powerUps;
 
         Debug.Log("Cards Length is " + cards.Length);
-        profileButton.interactable = false;
 
         for (int i = 0; i < numberOfCards; i++)
         {
             Debug.Log("i is " + i);
             cardGOs[i] = Instantiate(cardPrefab, cardParent.transform);
-            
+
             cardDisplays[i] = cardGOs[i].GetComponent<Card_Select>().cardDisplay;
             cardGOs[i].GetComponent<Card_Select>().cardIndex = i;
 
@@ -126,26 +142,34 @@ public class PowerUpManager : MonoBehaviour
         scrollbar.value = 0f;
 
         DisplayCards();
+            
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (cm.week < 5)
+            oppStatBase = 5;
+        else if (cm.week < 10)
+            oppStatBase = 7;
+        else
+            oppStatBase = 10;
+
         if (cm)
         {
             drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
-            guardSlider.value = cm.modStats.guardAccuracy + cm.modStats.guardAccuracy;
+            guardSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
             takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
             enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
             strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
             healthSlider.value = cm.cStats.sweepHealth + cm.modStats.sweepHealth;
 
-            oppDrawSlider.value = 5 + cm.oppStats.drawAccuracy;
-            oppGuardSlider.value = 5 + cm.oppStats.guardAccuracy;
-            oppTakeOutSlider.value = 5 + cm.oppStats.takeOutAccuracy;
-            oppEnduranceSlider.value = 5 + cm.oppStats.sweepEndurance;
-            oppStrengthSlider.value = 5 + cm.oppStats.sweepStrength;
-            oppHealthSlider.value = 50 + cm.oppStats.sweepHealth;
+            oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
+            oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
+            oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
+            oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
+            oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
+            oppHealthSlider.value = (oppStatBase * 10) + cm.oppStats.sweepHealth;
 
             xp = cm.xp;
             cash = cm.earnings;
@@ -167,6 +191,43 @@ public class PowerUpManager : MonoBehaviour
         AssignPoints(card);
     }
 
+    public void ViewCards()
+    {
+        tSel.PowerUp(true);
+
+        for (int i = 0; i < cardGOs.Length; i++)
+        {
+            Destroy(cardGOs[i]);
+        }
+
+        for (int i = 0; i < playerCards.Count; i++)
+        {
+            Debug.Log("i is " + i);
+            cardGOs[i] = Instantiate(playerCardPrefab, cardParent.transform);
+
+            cardDisplays[i] = cardGOs[i].GetComponent<Card_Select>().cardDisplay;
+            cardGOs[i].GetComponent<Card_Select>().cardIndex = i;
+
+            for (int j = 0; j < idList.Length; j++)
+            {
+                if (cards[i].id == idList[j])
+                    cards[i].active = true;
+            }
+        }
+
+        for (int i = 0; i < playerCards.Count; i++)
+        {
+            Debug.Log("i is " + i + " - cards is " + cards[i].name);
+
+            availCards[i] = playerCards[i];
+            cardGOs[i].name = playerCards[i].name;
+        }
+
+        scrollbar.value = 0f;
+
+        DisplayCards();
+    }
+
     public void Continue()
     {
         StartCoroutine(WaitForClick());
@@ -174,7 +235,7 @@ public class PowerUpManager : MonoBehaviour
 
     IEnumerator WaitForClick()
     {
-        TournySelector tSel = FindObjectOfType<TournySelector>();
+        tSel = FindObjectOfType<TournySelector>();
 
         //yield return new WaitForSeconds(3f);
 
@@ -196,12 +257,16 @@ public class PowerUpManager : MonoBehaviour
         contButton.SetActive(true);
         infoPanel.SetActive(false);
 
+        Debug.Log("id of played card is " + idList[cm.week]);
+        Debug.Log("availcards length is " + availCards.Length);
         //int idListLength = 0;
-        for (int i = 0; i < numberOfCards; i++)
-        {
-            if (availCards[i].active)
-                idList[cm.week] = availCards[i].id;
-        }
+
+        idList[cm.week] = availCards[card].id;
+        //for (int i = 0; i < numberOfCards; i++)
+        //{
+        //    if (availCards[i].active)
+        //        idList[cm.week] = availCards[i].id;
+        //}
     }
 
     public void PreviewPoints(int card)

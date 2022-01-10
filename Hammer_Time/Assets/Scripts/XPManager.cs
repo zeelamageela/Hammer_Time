@@ -42,6 +42,7 @@ public class XPManager : MonoBehaviour
     public Button[] healthButtons;
 
     // Start is called before the first frame update
+
     void OnEnable()
     {
         cm = FindObjectOfType<CareerManager>();
@@ -191,6 +192,9 @@ public class XPManager : MonoBehaviour
         cm.cStats.sweepStrength = (int)strengthSlider.value;
         cm.cStats.sweepEndurance = (int)endurSlider.value;
         cm.cStats.sweepHealth = healthSlider.value;
+
+        resetButton.interactable = false;
+        this.gameObject.SetActive(false);
     }
 
     public void ResetStats()

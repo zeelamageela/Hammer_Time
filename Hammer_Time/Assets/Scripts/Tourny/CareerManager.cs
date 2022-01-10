@@ -70,6 +70,8 @@ public class CareerManager : MonoBehaviour
     public bool[] strategyDialogue;
     public bool[] storyDialogue;
 
+    List<Standings_List> allTimeList;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -130,9 +132,10 @@ public class CareerManager : MonoBehaviour
     {
         Debug.Log("Loading in CM");
 
+        myFile = new EasyFileSave("my_player_data");
+
         gsp = FindObjectOfType<GameSettingsPersist>();
         tSel = FindObjectOfType<TournySelector>();
-        myFile = new EasyFileSave("my_player_data");
         tTeamList = FindObjectOfType<TournyTeamList>();
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
@@ -318,29 +321,29 @@ public class CareerManager : MonoBehaviour
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
 
             //Debug.Log("ProvRankList count is " + provRankList.Count);
-            if (tm)
-            {
-                for (int i = 0; i < teams.Length; i++)
-                {
-                    for (int j = 0; j < currentTournyTeams.Length; i++)
-                    {
-                        if (teams[i].id == currentTournyTeams[j].id)
-                        {
-                            //teams[i].wins += currentTournyTeams[j].wins;
-                            //teams[i].loss += currentTournyTeams[j].loss;
-                            //teams[i].earnings += currentTournyTeams[j].earnings;
-                        }
-                    }
-                    if (teams[i].id == playerTeamIndex)
-                    {
-                        //teams[i].name = teamName;
-                        //teams[i].wins = (int)record.x;
-                        //teams[i].loss = (int)record.y;
-                        Debug.Log("PlayerTeam ID is " + teams[i].id);
-                    }
-                }
+            //if (tm)
+            //{
+            //    for (int i = 0; i < teams.Length; i++)
+            //    {
+            //        for (int j = 0; j < currentTournyTeams.Length; i++)
+            //        {
+            //            if (teams[i].id == currentTournyTeams[j].id)
+            //            {
+            //                //teams[i].wins += currentTournyTeams[j].wins;
+            //                //teams[i].loss += currentTournyTeams[j].loss;
+            //                //teams[i].earnings += currentTournyTeams[j].earnings;
+            //            }
+            //        }
+            //        if (teams[i].id == playerTeamIndex)
+            //        {
+            //            //teams[i].name = teamName;
+            //            //teams[i].wins = (int)record.x;
+            //            //teams[i].loss = (int)record.y;
+            //            Debug.Log("PlayerTeam ID is " + teams[i].id);
+            //        }
+            //    }
 
-            }
+            //}
 
             if (gsp.inProgress)
             {
@@ -365,6 +368,12 @@ public class CareerManager : MonoBehaviour
                     {
                         if (currentTournyTeams[i].id == teams[j].id)
                             currentTournyTeams[i] = teams[j];
+                        if (currentTournyTeams[i].id == playerTeamIndex)
+                        {
+                            Debug.Log("Player Team - " + playerTeamIndex);
+                            currentTournyTeams[i].name = teamName;
+                            currentTournyTeams[i].earnings = earnings;
+                        }
                     }
 
                     currentTournyTeams[i].wins = tournyWinsList[i];
@@ -393,6 +402,62 @@ public class CareerManager : MonoBehaviour
             }
             myFile.Dispose();
         }
+    }
+
+    IEnumerator SaveHighScore()
+    {
+        myFile = new EasyFileSave("my_hiscore_data");
+        allTimeList = new List<Standings_List>();
+
+        if (myFile.Load())
+        {
+            float[] allTimeEarnings = myFile.GetArray<float>("All Time Earnings");
+            string[] allTimeName = myFile.GetArray<string>("All Time Names");
+
+            for (int i = 0; i < allTimeEarnings.Length; i++)
+            {
+                Team tempTeam = gsp.playerTeam;
+                tempTeam.wins = 0;
+                tempTeam.loss = 0;
+                tempTeam.earnings = 0;
+                tempTeam.name = "";
+
+                tempTeam.name = allTimeName[i];
+                tempTeam.earnings = allTimeEarnings[i];
+                allTimeList.Add(new Standings_List(tempTeam));
+            }
+
+            myFile.Dispose();
+        }
+
+        yield return new WaitForEndOfFrame();
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i].id == playerTeamIndex)
+            {
+                allTimeList.Add(new Standings_List(teams[i]));
+                myFile.Add("All Time Earnings", allTimeList[i].team.name);
+            }
+
+        }
+
+        allTimeList.Sort();
+
+        float[] allTimeEarningsTemp = new float[allTimeList.Count];
+        string[] allTimeNameTemp = new string[allTimeList.Count];
+
+        for (int i = 0; i < allTimeList.Count; i++)
+        {
+            allTimeEarningsTemp[i] = allTimeList[i].team.earnings;
+            allTimeNameTemp[i] = allTimeList[i].team.name;
+        }
+        myFile = new EasyFileSave("my_hiscore_data");
+
+        myFile.Add("All Time Earnings", allTimeEarningsTemp);
+        myFile.Add("All Time Names", allTimeNameTemp);
+
+        myFile.Append();
     }
 
     public void SaveCareer()
@@ -997,6 +1062,11 @@ public class CareerManager : MonoBehaviour
         //    tourRankList[i].team = teams[i];
         //}
         //tourRankList[0].team = tTeamList.playerTeam;
+    }
+
+    public void EndCareer()
+    {
+        SaveHighScore();
     }
 
     void Shuffle(Team[] a)
