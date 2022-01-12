@@ -159,13 +159,14 @@ public class TournySelector : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         //gsp.inProgress = false;
         cm = FindObjectOfType<CareerManager>();
+
         
         //if (cm.inProgress)
         //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
         //recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
         //earningsText.text = "$" + cm.earnings.ToString();
-        XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
+        //XPText.text = cm.xp.ToString() + "/" + cm.totalXp.ToString();
         
     }
     public void SetUp()
@@ -252,7 +253,10 @@ public class TournySelector : MonoBehaviour
                     }
                 }
             }
+
         }
+
+
         Debug.Log("Skill Points are " + xpm.skillPoints);
 
         SetActiveTournies();
@@ -1096,9 +1100,8 @@ public class TournySelector : MonoBehaviour
 
             activeTournies[2] = emptyTourny;
             panelGOs[2].GetComponent<Image>().color = dimmed[0];
-            panelGOs[1].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
+            panelGOs[2].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
         }
-
 
         SetPanels();
 
@@ -1322,6 +1325,7 @@ public class TournySelector : MonoBehaviour
             xpm.gameObject.SetActive(false);
         }
     }
+
     public void XPWindow(bool on)
     {
         if (on)

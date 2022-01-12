@@ -27,7 +27,10 @@ public class PowerUpManager : MonoBehaviour
     public PowerUpList pUpList;
     public GameObject mainMenu;
     public GameObject infoPanel;
+    public Text nextWeekButtonText;
+    public GameObject nextWeekButton;
     public GameObject contButton;
+    public GameObject backButton;
 
     public float xp;
     public float cash;
@@ -89,8 +92,8 @@ public class PowerUpManager : MonoBehaviour
             }
             cm.cardIDList = idList;
             //StartCoroutine(WaitForClick());
-            contButton.SetActive(true);
-            infoPanel.SetActive(false);
+            contButton.SetActive(false);
+            infoPanel.SetActive(true);
             
             tSel.SetUp();
             profileButton.interactable = true;
@@ -103,6 +106,7 @@ public class PowerUpManager : MonoBehaviour
             contButton.SetActive(false);
             infoPanel.SetActive(true);
             profileButton.interactable = false;
+            nextWeekButtonText.text = "Next Week>";
         }
 
 
@@ -193,6 +197,7 @@ public class PowerUpManager : MonoBehaviour
 
     public void ViewCards()
     {
+        tSel = FindObjectOfType<TournySelector>();
         tSel.PowerUp(true);
 
         for (int i = 0; i < cardGOs.Length; i++)
@@ -200,6 +205,8 @@ public class PowerUpManager : MonoBehaviour
             Destroy(cardGOs[i]);
         }
 
+        nextWeekButton.SetActive(false);
+        backButton.SetActive(true);
         for (int i = 0; i < playerCards.Count; i++)
         {
             Debug.Log("i is " + i);
@@ -223,14 +230,24 @@ public class PowerUpManager : MonoBehaviour
             cardGOs[i].name = playerCards[i].name;
         }
 
+        nextWeekButtonText.text = "<Back";
         scrollbar.value = 0f;
 
         DisplayCards();
     }
 
-    public void Continue()
+    public void Continue(bool back)
     {
-        StartCoroutine(WaitForClick());
+        if (!back)
+        {
+            //cm.SaveCareer();
+            tSel.SetUp();
+
+        }
+        profileButton.interactable = true;
+        mainMenu.SetActive(true);
+        gameObject.SetActive(false);
+
     }
 
     IEnumerator WaitForClick()
@@ -238,15 +255,11 @@ public class PowerUpManager : MonoBehaviour
         tSel = FindObjectOfType<TournySelector>();
 
         //yield return new WaitForSeconds(3f);
-
-        while (!Input.GetMouseButtonDown(0))
-        {
-            tSel.SetUp();
-            profileButton.interactable = true;
-            mainMenu.SetActive(true);
-            gameObject.SetActive(false);
-            yield return null;
-        }
+        tSel.SetUp();
+        profileButton.interactable = true;
+        mainMenu.SetActive(true);
+        gameObject.SetActive(false);
+        yield return null;
         Debug.Log("Clickeddd");
     }
 
@@ -254,8 +267,8 @@ public class PowerUpManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        contButton.SetActive(true);
-        infoPanel.SetActive(false);
+        //contButton.SetActive(true);
+        //infoPanel.SetActive(false);
 
         Debug.Log("id of played card is " + idList[cm.week]);
         Debug.Log("availcards length is " + availCards.Length);
@@ -345,11 +358,11 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        if (counter >= numberOfCards - 1)
-        {
-            contButton.SetActive(true);
-            infoPanel.SetActive(false);
-        }
+        //if (counter >= numberOfCards - 1)
+        //{
+        //    contButton.SetActive(true);
+        //    infoPanel.SetActive(false);
+        //}
     }
 
     void Shuffle(Card[] a)
