@@ -5346,26 +5346,27 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 					if (teams[i].rank == 1)
 					{
-						teams[i].earnings += gsp.prize * 0.5f;
+						prizePayout = gsp.prize * 0.5f;
 					}
 					else if (teams[i].rank == 2)
-						teams[i].earnings += gsp.prize * 0.25f;
+						prizePayout = gsp.prize * 0.25f;
 					else if (teams[i].rank == 3)
-						teams[i].earnings += gsp.prize * 0.15f;
+						prizePayout = gsp.prize * 0.15f;
 					else if (teams[i].rank == 4)
-						teams[i].earnings += gsp.prize * 0.075f;
+						prizePayout = gsp.prize * 0.075f;
 					else if (teams[i].rank == 5)
-						teams[i].earnings += gsp.prize * 0.038f;
+						prizePayout = gsp.prize * 0.038f;
 					else
 					{
-						teams[i].earnings += Mathf.RoundToInt(prizePayout);
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 					}
 
-					
+					teams[i].earnings += prizePayout;
+
 					//Debug.Log("Prize Payout multiplier is " + prizePayout);
 					if (teams[i].id == playerTeam)
 					{
+						gsp.earnings = teams[i].earnings;
 						vsDisplayGO.SetActive(true);
 
 						vsDisplayTitle.text = "Results";

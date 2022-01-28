@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class PowerUpManager : MonoBehaviour
 {
     CareerManager cm;
@@ -83,6 +82,7 @@ public class PowerUpManager : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
 
+        
         if (cm.week < 4)
         {
             idList = new int[20];
@@ -102,11 +102,23 @@ public class PowerUpManager : MonoBehaviour
         }
         else
         {
+            cm.LoadCareer();
             idList = cm.cardIDList;
-            contButton.SetActive(false);
-            infoPanel.SetActive(true);
-            profileButton.interactable = false;
-            nextWeekButtonText.text = "Next Week>";
+
+            if (idList[cm.week] == 99)
+            {
+                contButton.SetActive(false);
+                infoPanel.SetActive(true);
+                profileButton.interactable = false;
+                nextWeekButtonText.text = "Next Week>";
+            }
+            else
+            {
+                tSel.SetUp();
+                profileButton.interactable = true;
+                mainMenu.SetActive(true);
+                gameObject.SetActive(false);
+            }
         }
 
 
@@ -138,14 +150,52 @@ public class PowerUpManager : MonoBehaviour
         for (int i = 0; i < numberOfCards; i++)
         {
             Debug.Log("i is " + i + " - cards is " + cards[i].name);
+            bool inList = false;
 
-            availCards[i] = cards[i];
+            foreach(int id in idList)
+            {
+                if (id == cards[i].id)
+                {
+                    inList = true;
+                    break;
+                }
+            }
+
+            if (inList)
+            {
+                inList = false;
+                foreach (int id in idList)
+                {
+                    if (id == cards[i + numberOfCards].id)
+                    {
+                        inList = true;
+                        break;
+                    }
+                }
+                if (inList)
+                {
+                    inList = false;
+                    foreach (int id in idList)
+                    {
+                        if (id == cards[i + (numberOfCards * 2)].id)
+                        {
+                            inList = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                    availCards[i] = cards[i + numberOfCards];
+            }
+            else
+                availCards[i] = cards[i];
+
             cardGOs[i].name = cards[i].name;
 
         }
         scrollbar.value = 0f;
 
-        DisplayCards();
+        DisplayCards(numberOfCards);
             
     }
 
@@ -207,6 +257,24 @@ public class PowerUpManager : MonoBehaviour
 
         nextWeekButton.SetActive(false);
         backButton.SetActive(true);
+        playerCards.Clear();
+        foreach(int id in idList)
+        {
+            if (id != 99)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (cards[i].id == id)
+                    {
+                        cards[i].active = true;
+                        playerCards.Add(cards[i]);
+                        break;
+                    }    
+                }
+            }
+        }
+        cardGOs = new GameObject[playerCards.Count];
+        cardDisplays = new CardDisplay[playerCards.Count];
         for (int i = 0; i < playerCards.Count; i++)
         {
             Debug.Log("i is " + i);
@@ -222,6 +290,8 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
+        Debug.Log("Player cards count is " + playerCards.Count);
+
         for (int i = 0; i < playerCards.Count; i++)
         {
             Debug.Log("i is " + i + " - cards is " + cards[i].name);
@@ -233,7 +303,7 @@ public class PowerUpManager : MonoBehaviour
         nextWeekButtonText.text = "<Back";
         scrollbar.value = 0f;
 
-        DisplayCards();
+        DisplayCards(playerCards.Count);
     }
 
     public void Continue(bool back)
@@ -270,11 +340,11 @@ public class PowerUpManager : MonoBehaviour
         //contButton.SetActive(true);
         //infoPanel.SetActive(false);
 
+        idList[cm.week] = availCards[card].id;
         Debug.Log("id of played card is " + idList[cm.week]);
         Debug.Log("availcards length is " + availCards.Length);
         //int idListLength = 0;
-
-        idList[cm.week] = availCards[card].id;
+        cm.SaveCareer();
         //for (int i = 0; i < numberOfCards; i++)
         //{
         //    if (availCards[i].active)
@@ -310,7 +380,7 @@ public class PowerUpManager : MonoBehaviour
     public void UnPreviewPoints(int card)
     {
         cm = FindObjectOfType<CareerManager>();
-        DisplayCards();
+        DisplayCards(numberOfCards);
         cm.modStats.drawAccuracy -= availCards[card].draw;
         cm.modStats.guardAccuracy -= availCards[card].guard;
         cm.modStats.takeOutAccuracy -= availCards[card].takeOut;
@@ -325,10 +395,10 @@ public class PowerUpManager : MonoBehaviour
         cm.oppStats.sweepHealth -= (10f * availCards[card].oppHealth);
     }
 
-    void DisplayCards()
+    void DisplayCards(int numOfCards)
     {
         int counter = 0;
-        for (int i = 0; i < numberOfCards; i++)
+        for (int i = 0; i < numOfCards; i++)
         {
             cardDisplays[i].name.text = availCards[i].name;
             cardDisplays[i].description.text = availCards[i].description;
@@ -347,7 +417,7 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < numberOfCards; i++)
+        for (int i = 0; i < numOfCards; i++)
         {
             if (cm.earnings < availCards[i].cost && !availCards[i].active)
             {

@@ -3990,9 +3990,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerUps:
-  - name: Sweep Skills Up
+  - name: Green Smoothie
     id: 0
-    description: All Sweep Skills Up
+    description: It may not taste great, but it gives your sweepers a healthy kick
     cost: 600
     active: 0
     played: 0
@@ -4012,9 +4012,9 @@ MonoBehaviour:
     - Sweep Strength +1
     - Sweep Endurance +1
     - Sweep Health +1
-  - name: Opponent Accuracy Down
+  - name: New Jerseys
     id: 1
-    description: Opponent Accuracy Down
+    description: Your new uniforms have the desired effect - intimidation.
     cost: 250
     active: 0
     played: 0
@@ -4034,9 +4034,9 @@ MonoBehaviour:
     - Opp Draw +1
     - Opp Guard +1
     - Opp Take Out +1
-  - name: Accuracy Up
+  - name: Extra Ice Time
     id: 2
-    description: All accuracy stats up
+    description: The extra practice sessions yield improved accuracy for your team
     cost: 1500
     active: 0
     played: 0
@@ -4056,9 +4056,10 @@ MonoBehaviour:
     - Draw +1
     - Guard +1
     - Take Out +1
-  - name: Opponent Sweep Down
+  - name: New Body Spray
     id: 3
-    description: Opponent sweep down
+    description: A bold new scent that you've adopted distracts opposing sweepers
+      with it's sensual energy
     cost: 1000
     active: 0
     played: 0
@@ -4078,9 +4079,10 @@ MonoBehaviour:
     - Opp Strength -1
     - Opp Enduro -1
     - Opp Health -1
-  - name: Mixed Bag 1
+  - name: Old Curling Book
     id: 4
-    description: Draw, Guard Up, Opp Take Out Up
+    description: The techniques learned in this book may not be pretty, but they
+      get results
     cost: 1200
     active: 0
     played: 0
@@ -4100,9 +4102,10 @@ MonoBehaviour:
     - Draw +1
     - Guard +1
     - Opp Take Out +1
-  - name: Mixed Bag 2
+  - name: Crypto Investment
     id: 5
-    description: Sweep Strength Up, Draw Up, Opp Strength Up
+    description: The excitement of gambling gives your team a boost, but annoys your
+      opponents
     cost: 1400
     active: 0
     played: 0
@@ -4122,9 +4125,10 @@ MonoBehaviour:
     - Sweep Strength +1
     - Draw +1
     - Opp Strength +1
-  - name: Mixed Bag 3
+  - name: Alternative Milk Conversion
     id: 6
-    description: Draw, Guard Up, Take Out Down
+    description: As you transition away from dairy, you lose some accuracy on your
+      take outs
     cost: 1100
     active: 0
     played: 0
@@ -4178,6 +4182,164 @@ MonoBehaviour:
     sweepStrength: 0
     sweepEnduro: 0
     sweepHealth: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Purple Sports Drink
+    id: 9
+    description: The electrolytes flow through you, giving you an accuracy boost
+    cost: 2200
+    active: 0
+    played: 0
+    draw: 2
+    guard: 2
+    takeOut: 2
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepHealth: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Hotel Room Upgrades
+    id: 10
+    description: Upgraded hotel rooms improve every aspect of your team's game.
+    cost: 5200
+    active: 0
+    played: 0
+    draw: 2
+    guard: 2
+    takeOut: 2
+    sweepStrength: 2
+    sweepEnduro: 2
+    sweepHealth: 2
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: An Old, Smelly Hat
+    id: 11
+    description: The odour borders on unsportsmanlike, but something about it makes
+      draws a little easier.
+    cost: 250
+    active: 0
+    played: 0
+    draw: 2
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepHealth: 0
+    oppDraw: -1
+    oppGuard: -1
+    oppTakeOut: -1
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Personal Trainer
+    id: 12
+    description: Take your sweeping up a level with a guided training regimen
+    cost: 4100
+    active: 0
+    played: 0
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 2
+    sweepEnduro: 2
+    sweepHealth: 2
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Icemaker's Bar Tab
+    id: 13
+    description: A couple drinks with the icemaker leaves you a little tired, but
+      with a good understanding of the ice conditions
+    cost: 1100
+    active: 0
+    played: 0
+    draw: 1
+    guard: 1
+    takeOut: 1
+    sweepStrength: 0
+    sweepEnduro: -1
+    sweepHealth: -1
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Icemaker's Bar Tab
+    id: 14
+    description: A couple drinks with the icemaker leaves you a little tired, but
+      with a good understanding of the ice conditions
+    cost: 900
+    active: 0
+    played: 0
+    draw: 1
+    guard: 1
+    takeOut: 1
+    sweepStrength: 0
+    sweepEnduro: -1
+    sweepHealth: -1
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppHealth: 0
+    effects:
+    - Draw +2
+    - Guard +2
+    - Take Out +2
+  - name: Icemaker's Bar Tab
+    id: 15
+    description: A couple drinks with the icemaker leaves you a little tired, but
+      with a good understanding of the ice conditions
+    cost: 1200
+    active: 0
+    played: 0
+    draw: 1
+    guard: 1
+    takeOut: 1
+    sweepStrength: 0
+    sweepEnduro: -1
+    sweepHealth: -1
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -6082,6 +6244,169 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: XXth
+--- !u!1 &463914965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 463914966}
+  - component: {fileID: 463914970}
+  - component: {fileID: 463914969}
+  - component: {fileID: 463914968}
+  - component: {fileID: 463914967}
+  m_Layer: 5
+  m_Name: QuitButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &463914966
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463914965}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1870025937}
+  m_Father: {fileID: 556640674}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 481.05493, y: -1349}
+  m_SizeDelta: {x: 600, y: 275}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &463914967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463914965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e350b30b4f54c64905e065a2e37602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AnySelectable: {fileID: 463914968}
+  colour1: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
+  colour3: {r: 0.2901961, g: 0.2901961, b: 0.31764707, a: 1}
+  main: {fileID: 1870025939}
+--- !u!114 &463914968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463914965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 2
+  m_Colors:
+    m_NormalColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+    m_HighlightedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_PressedColor: {r: 1, g: 0.57627124, b: 0, a: 1}
+    m_SelectedColor: {r: 0.95294124, g: 0.7568628, b: 0.4901961, a: 1}
+    m_DisabledColor: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 21300000, guid: 8f7afaf15f0904657b354889085435c2, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 7f07ba02bcc9f485e8bbc2e565832dd2, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 7f07ba02bcc9f485e8bbc2e565832dd2, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 7f07ba02bcc9f485e8bbc2e565832dd2, type: 3}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 463914969}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1497908066}
+        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
+        m_MethodName: EndOfSeason
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 463914967}
+        m_TargetAssemblyTypeName: Button_Colour, Assembly-CSharp
+        m_MethodName: ChangeColour
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &463914969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463914965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 8f7afaf15f0904657b354889085435c2, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &463914970
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463914965}
+  m_CullTransparentMesh: 1
 --- !u!1 &467039349
 GameObject:
   m_ObjectHideFlags: 0
@@ -7626,6 +7951,7 @@ RectTransform:
   - {fileID: 1078135570}
   - {fileID: 1555613761}
   - {fileID: 1767766670}
+  - {fileID: 463914966}
   m_Father: {fileID: 1204469915}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10184,9 +10510,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Provincial
-
-    Standings'
+  m_Text: Standings
 --- !u!222 &745935346
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15509,7 +15833,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.44921875}
+  m_AnchoredPosition: {x: 0, y: 0.44995117}
   m_SizeDelta: {x: 2182, y: -0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1282229478
@@ -18722,6 +19046,7 @@ MonoBehaviour:
     format: {fileID: 163948477}
     purse: {fileID: 1450564670}
     entry: {fileID: 78975592}
+  quitButton: {fileID: 463914965}
   mainMenuGO: {fileID: 556640673}
   profPanelGO: {fileID: 560601359}
   profPanel:
@@ -24858,6 +25183,101 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Round Robin
+--- !u!1 &1870025936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1870025937}
+  - component: {fileID: 1870025940}
+  - component: {fileID: 1870025939}
+  - component: {fileID: 1870025938}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1870025937
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870025936}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 463914966}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 8, y: 8.5}
+  m_SizeDelta: {x: 584, y: 259}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1870025938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870025936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.019607844, g: 0.023529414, b: 0.054901965, a: 1}
+  m_EffectDistance: {x: -15, y: -15}
+  m_UseGraphicAlpha: 1
+--- !u!114 &1870025939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870025936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
+    m_FontSize: 145
+    m_FontStyle: 0
+    m_BestFit: 1
+    m_MinSize: 10
+    m_MaxSize: 300
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: '   GAME OVER   '
+--- !u!222 &1870025940
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870025936}
+  m_CullTransparentMesh: 1
 --- !u!1 &1870073675
 GameObject:
   m_ObjectHideFlags: 0
@@ -24985,8 +25405,8 @@ RectTransform:
   m_Father: {fileID: 161096706}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.33205402, y: 0}
-  m_AnchorMax: {x: 0.667946, y: 1}
+  m_AnchorMin: {x: 0.332054, y: 0}
+  m_AnchorMax: {x: 0.6679459, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}

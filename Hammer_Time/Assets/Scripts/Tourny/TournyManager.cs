@@ -563,7 +563,7 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("First Name", gsp.firstName);
 		//myFile.Add("Team Name", gsp.teamName);
 		//myFile.Add("Team Colour", cm.teamColour);
-		//myFile.Add("Career Earnings", gsp.earnings);
+		myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("Tourny In Progress", true);
 		myFile.Add("Draw", draw);

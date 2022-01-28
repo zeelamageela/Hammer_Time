@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TigerForge;
 
@@ -11,11 +12,37 @@ public class MainMenu : MonoBehaviour
     EasyFileSave myFile;
     public GameObject contButton;
 
+    public Text allTimeEarnings;
+    public Text allTimeNames;
+
     void Start()
     {
 
-        myFile = new EasyFileSave("my_game_data");
+        myFile = new EasyFileSave("my_hiscore_data");
 
+        float[] allTimeEarningsList;
+        string[] allTimeNamesList;
+
+        if (myFile.Load())
+        {
+            Debug.Log("All Time Load");
+            allTimeEarningsList = myFile.GetArray<float>("All Time Earnings");
+            allTimeNamesList = myFile.GetArray<string>("All Time Names");
+
+            myFile.Dispose();
+        }
+        else
+        {
+            allTimeEarningsList = new float[1];
+            allTimeNamesList = new string[1];
+
+            allTimeEarnings.gameObject.SetActive(false);
+
+            allTimeNamesList[0] = "No High Score Set";
+        }
+
+        allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
+        allTimeNames.text = allTimeNamesList[0];
         //if (myFile.Load())
         //    contButton.SetActive(true);
         //else

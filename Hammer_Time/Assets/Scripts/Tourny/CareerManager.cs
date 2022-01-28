@@ -139,6 +139,7 @@ public class CareerManager : MonoBehaviour
         tTeamList = FindObjectOfType<TournyTeamList>();
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
+        pUpM = FindObjectOfType<PowerUpManager>();
         //teamRecords = new Vector3[totalTeams];
 
         if (provRankList != null)
@@ -173,6 +174,7 @@ public class CareerManager : MonoBehaviour
             tourQual = myFile.GetBool("Tour Qual");
             xp = myFile.GetFloat("XP");
             totalXp = myFile.GetFloat("Total XP");
+
             cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
             cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
             cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
@@ -182,10 +184,14 @@ public class CareerManager : MonoBehaviour
             gsp.cStats = cStats;
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
+            //if (pUpM)
+            //{
+                cardIDList = myFile.GetArray<int>("Card ID List");
+                Debug.Log("cardIdList Length - " + cardIDList.Length);
+            //}
+
             if (tSel)
             {
-                cardIDList = myFile.GetArray<int>("Card ID List");
-
                 int[] provIDList = myFile.GetArray<int>("Prov ID List");
                 bool[] provCompleteList = myFile.GetArray<bool>("Prov Complete List");
                 int[] tourIDList = myFile.GetArray<int>("Tour ID List");
@@ -265,7 +271,7 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Total ID List Length is " + idList.Length);
             Debug.Log("Total Teams List Length is " + teams.Length);
 
-            for (int i = 0; i < teams.Length; i++)
+            for (int i = 0; i < idList.Length; i++)
             {
                 for (int j = 0; j < tTeamList.teams.Length; j++)
                 {
@@ -290,7 +296,7 @@ public class CareerManager : MonoBehaviour
             float[] tourPointsList = myFile.GetArray<float>("Tour Points List");
 
             Debug.Log("Tour Record List Length is " + tourWinsList.Length + " " + tourLossList.Length);
-            Debug.Log("Total Teams List Length is " + tourTeams.Length);
+            Debug.Log("Total Teams List Length is " + tourTeamsIDList.Length);
 
             for (int i = 0; i < teams.Length; i++)
             {
@@ -300,9 +306,9 @@ public class CareerManager : MonoBehaviour
 
                 //if (teams[i].id == playerTeamIndex)
                 //    teams[i].name = teamName;
-                for (int j = 0; j < tourPointsList.Length; j++)
+                for (int j = 0; j < tourTeamsIDList.Length; j++)
                 {
-                    if (tourTeamsIDList[j] == teams[i].id)
+                    if (teams[i].id == tourTeamsIDList[j])
                     {
                         teams[i].tourRecord.x = tourWinsList[j];
                         teams[i].tourRecord.y = tourLossList[j];
@@ -437,11 +443,10 @@ public class CareerManager : MonoBehaviour
             if (teams[i].id == playerTeamIndex)
             {
                 allTimeList.Add(new Standings_List(teams[i]));
-                myFile.Add("All Time Earnings", allTimeList[i].team.name);
             }
-
         }
 
+        Debug.Log("All Time List - " + allTimeList.Count);
         allTimeList.Sort();
 
         float[] allTimeEarningsTemp = new float[allTimeList.Count];
@@ -452,22 +457,26 @@ public class CareerManager : MonoBehaviour
             allTimeEarningsTemp[i] = allTimeList[i].team.earnings;
             allTimeNameTemp[i] = allTimeList[i].team.name;
         }
-        myFile = new EasyFileSave("my_hiscore_data");
 
-        myFile.Add("All Time Earnings", allTimeEarningsTemp);
-        myFile.Add("All Time Names", allTimeNameTemp);
+        //myFile = new EasyFileSave("my_hiscore_data");
+        if (myFile.Load())
+        {
+            myFile.Add("All Time Earnings", allTimeEarningsTemp);
+            myFile.Add("All Time Names", allTimeNameTemp);
 
-        myFile.Append();
+            myFile.Save();
+        }
     }
 
     public void SaveCareer()
     {
-        Debug.Log("Saving Career - " + gsp.inProgress);
-        myFile = new EasyFileSave("my_player_data");
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TournyManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
         pUpM = FindObjectOfType<PowerUpManager>();
+
+        Debug.Log("Saving Career - " + gsp.inProgress);
+        myFile = new EasyFileSave("my_player_data");
         
 
         myFile.Add("Coach Dialogue Played List", coachDialogue);
@@ -505,6 +514,11 @@ public class CareerManager : MonoBehaviour
         int[] lossList = new int[teams.Length];
         float[] earningsList = new float[teams.Length];
 
+        int[] tourTeamIDList = new int[tourTeams.Length];
+        int[] tourWinsList = new int[tourTeams.Length];
+        int[] tourLossList = new int[tourTeams.Length];
+        float[] tourPointsList = new float[tourTeams.Length];
+
         for (int i = 0; i < teams.Length; i++)
         {
             idList[i] = teams[i].id;
@@ -513,88 +527,117 @@ public class CareerManager : MonoBehaviour
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
 
+            if (playerTeamIndex == teams[i].id)
+            {
+                earningsList[i] = earnings;
+                teams[i].earnings = earnings;
+            }
+
         }
+
         Debug.Log("Total Id List length is " + idList.Length);
         myFile.Add("Total ID List", idList);
         myFile.Add("Total Wins List", winsList);
         myFile.Add("Total Loss List", lossList);
         myFile.Add("Total Earnings List", earningsList);
 
-        int[] tourTeamIDList = new int[tourTeams.Length];
-        int[] tourWinsList = new int[tourTeams.Length];
-        int[] tourLossList = new int[tourTeams.Length];
-        float[] tourPointsList = new float[tourTeams.Length];
 
-        for (int i = 0; i < tourTeams.Length; i++)
+        myFile.Add("Card ID List", cardIDList);
+
+        if (!pUpM)
         {
-            if (playerTeamIndex == tourTeams[i].id)
+            for (int i = 0; i < teams.Length; i++)
             {
-                Debug.Log("Before Save tourTeams record is " + tourTeams[i].tourRecord.x + " - " + tourTeams[i].tourRecord.y);
+                idList[i] = teams[i].id;
+                //Debug.Log("Id List - " + idList[i]);
+                winsList[i] = teams[i].wins;
+                lossList[i] = teams[i].loss;
+                earningsList[i] = teams[i].earnings;
+
+                if (playerTeamIndex == teams[i].id)
+                {
+                    earningsList[i] = earnings;
+                    teams[i].earnings = earnings;
+                }
+
             }
-        }
-        for (int i = 0; i < tourTeams.Length; i++)
-        {
-            tourTeamIDList[i] = tourTeams[i].id;
-            //Debug.Log("Id List - " + idList[i]);
-            tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
-            tourLossList[i] = (int)tourTeams[i].tourRecord.y;
-            tourPointsList[i] = tourTeams[i].tourPoints;
-        }
-        Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
-        myFile.Add("Tour Team ID List", tourTeamIDList);
-        myFile.Add("Tour Wins List", tourWinsList);
-        myFile.Add("Tour Loss List", tourLossList);
-        myFile.Add("Tour Points List", tourPointsList);
+            Debug.Log("Total Id List length is " + idList.Length);
+            myFile.Add("Total ID List", idList);
+            myFile.Add("Total Wins List", winsList);
+            myFile.Add("Total Loss List", lossList);
+            myFile.Add("Total Earnings List", earningsList);
 
-        myFile.Add("Current Tourny Name", currentTourny.name);
-        myFile.Add("Current Tourny ID", currentTourny.id);
-        myFile.Add("Current Tourny Tour", currentTourny.tour);
-        myFile.Add("Current Tourny Qualifier", currentTourny.qualifier);
-        myFile.Add("Current Tourny Championship", currentTourny.championship);
-        myFile.Add("Prize Money", currentTourny.prizeMoney);
-
-        if (tSel)
-        {
-            myFile.Add("Card ID List", cardIDList);
-            int[] provIDList = new int[tSel.provQual.Length];
-            bool[] provCompleteList = new bool[tSel.provQual.Length];
-            int[] tourIDList = new int[tSel.tour.Length];
-            bool[] tourCompleteList = new bool[tSel.tour.Length];
-            int[] tourniesIDList = new int[tSel.tournies.Length];
-            bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
-
-            for (int i = 0; i < prov.Length; i++)
+            for (int i = 0; i < tourTeams.Length; i++)
             {
-                provIDList[i] = prov[i].id;
-                provCompleteList[i] = prov[i].complete;
-                Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
+                if (playerTeamIndex == tourTeams[i].id)
+                {
+                    Debug.Log("Before Save tourTeams record is " + tourTeams[i].tourRecord.x + " - " + tourTeams[i].tourRecord.y);
+                }
             }
-
-            for (int i = 0; i < tour.Length; i++)
+            for (int i = 0; i < tourTeams.Length; i++)
             {
-                tourIDList[i] = tour[i].id;
-                tourCompleteList[i] = tour[i].complete;
-                Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
+                tourTeamIDList[i] = tourTeams[i].id;
+                //Debug.Log("Id List - " + idList[i]);
+                tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
+                tourLossList[i] = (int)tourTeams[i].tourRecord.y;
+                tourPointsList[i] = tourTeams[i].tourPoints;
             }
+            Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
+            myFile.Add("Tour Team ID List", tourTeamIDList);
+            myFile.Add("Tour Wins List", tourWinsList);
+            myFile.Add("Tour Loss List", tourLossList);
+            myFile.Add("Tour Points List", tourPointsList);
 
-            for (int i = 0; i < tournies.Length; i++)
+            myFile.Add("Current Tourny Name", currentTourny.name);
+            myFile.Add("Current Tourny ID", currentTourny.id);
+            myFile.Add("Current Tourny Tour", currentTourny.tour);
+            myFile.Add("Current Tourny Qualifier", currentTourny.qualifier);
+            myFile.Add("Current Tourny Championship", currentTourny.championship);
+            myFile.Add("Prize Money", currentTourny.prizeMoney);
+
+            if (tSel)
             {
-                tourniesIDList[i] = tournies[i].id;
-                tourniesCompleteList[i] = tournies[i].complete;
-                Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
+                int[] provIDList = new int[tSel.provQual.Length];
+                bool[] provCompleteList = new bool[tSel.provQual.Length];
+                int[] tourIDList = new int[tSel.tour.Length];
+                bool[] tourCompleteList = new bool[tSel.tour.Length];
+                int[] tourniesIDList = new int[tSel.tournies.Length];
+                bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
+
+                for (int i = 0; i < prov.Length; i++)
+                {
+                    provIDList[i] = prov[i].id;
+                    provCompleteList[i] = prov[i].complete;
+                    Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
+                }
+
+                for (int i = 0; i < tour.Length; i++)
+                {
+                    tourIDList[i] = tour[i].id;
+                    tourCompleteList[i] = tour[i].complete;
+                    Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
+                }
+
+                for (int i = 0; i < tournies.Length; i++)
+                {
+                    tourniesIDList[i] = tournies[i].id;
+                    tourniesCompleteList[i] = tournies[i].complete;
+                    Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
+                }
+
+                myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
+                myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
+                myFile.Add("Prov ID List", provIDList);
+                myFile.Add("Prov Complete List", provCompleteList);
+                myFile.Add("Tour ID List", tourIDList);
+                myFile.Add("Tour Complete List", tourCompleteList);
+                myFile.Add("Tournies ID List", tourniesIDList);
+                myFile.Add("Tournies Complete List", tourniesCompleteList);
+                myFile.Add("Number Of Teams", currentTourny.teams);
+
+                Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
             }
 
-            myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
-            myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
-            myFile.Add("Prov ID List", provIDList);
-            myFile.Add("Prov Complete List", provCompleteList);
-            myFile.Add("Tour ID List", tourIDList);
-            myFile.Add("Tour Complete List", tourCompleteList);
-            myFile.Add("Tournies ID List", tourniesIDList);
-            myFile.Add("Tournies Complete List", tourniesCompleteList);
-            myFile.Add("Number Of Teams", currentTourny.teams);
-
-            Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
         }
 
 
@@ -1066,7 +1109,8 @@ public class CareerManager : MonoBehaviour
 
     public void EndCareer()
     {
-        SaveHighScore();
+        Debug.Log("Ending Career");
+        StartCoroutine(SaveHighScore());
     }
 
     void Shuffle(Team[] a)

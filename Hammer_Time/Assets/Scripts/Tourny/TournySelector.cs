@@ -46,6 +46,7 @@ public class TournySelector : MonoBehaviour
 
     public TournyPanel[] panels;
 
+    public GameObject quitButton;
     public GameObject mainMenuGO;
     public GameObject profPanelGO;
     public ProfilePanel profPanel;
@@ -182,6 +183,14 @@ public class TournySelector : MonoBehaviour
         {
             cm.LoadCareer();
 
+            if (cm.earnings < 0)
+            {
+                dialogueGO.SetActive(true);
+                coachGreen.TriggerDialogue("Story", 0);
+                quitButton.SetActive(true);
+                cm.EndCareer();
+            }
+
             if (cm.week == 2)
             {
                 Debug.Log("Player Rank is " + cm.playerTeam.rank);
@@ -254,11 +263,12 @@ public class TournySelector : MonoBehaviour
                 }
             }
 
+            
+
         }
 
 
         Debug.Log("Skill Points are " + xpm.skillPoints);
-
         SetActiveTournies();
     }
 
@@ -365,12 +375,14 @@ public class TournySelector : MonoBehaviour
             weekText.text = "Welcome to Season " + cm.season.ToString();
 
         #region Panel 1
-        if (cm.week == 1 | cm.week == 3 | cm.week == 5)
+        if (cm.earnings < 0)
+            activeTournies[0] = emptyTourny;
+        else if (cm.week == 1 | cm.week == 3 | cm.week == 5)
             activeTournies[0] = emptyTourny;
         else if (cm.week == 2)
         {
-            activeTournies[0] = tournies[1];
             hScroll.value = 0f;
+            activeTournies[0] = tournies[1];
         }
         else if (cm.week == 4)
         {
@@ -669,7 +681,10 @@ public class TournySelector : MonoBehaviour
         #endregion
 
         #region Panel 2
-        if (cm.week == 1)
+
+        if (cm.earnings < 0)
+            activeTournies[1] = emptyTourny;
+        else if (cm.week == 1)
             activeTournies[1] = tournies[0];
         else if (cm.week == 2)
             activeTournies[1] = emptyTourny;
@@ -1007,6 +1022,8 @@ public class TournySelector : MonoBehaviour
         #endregion
 
 
+        if (cm.earnings < 0)
+            activeTournies[0] = emptyTourny;
         if (cm.provQual)
         {
             provQualComplete = true;
@@ -1071,7 +1088,9 @@ public class TournySelector : MonoBehaviour
 
 
 
-        if (cm.tourQual && tourComplete && !tourChampionship.complete)
+        if (cm.earnings < 0)
+            activeTournies[2] = emptyTourny;
+        else if (cm.tourQual && tourComplete && !tourChampionship.complete)
         {
             activeTournies[2] = tourChampionship;
         }
@@ -1094,6 +1113,8 @@ public class TournySelector : MonoBehaviour
             dialogueGO.SetActive(true);
             coachGreen.TriggerDialogue("Review", 0);
             cm.reviewDialogue[0] = true;
+            quitButton.SetActive(true);
+            cm.EndCareer();
         }
         else
         {
@@ -1134,6 +1155,11 @@ public class TournySelector : MonoBehaviour
         coachGreen.TriggerDialogue("Story", 0);
 
         cm.EndCareer();
+    }
+
+    public void EndOfSeason()
+    {
+        SceneManager.LoadScene("SplashMenu");
     }
 
     public void NextWeek()
@@ -1345,4 +1371,5 @@ public class TournySelector : MonoBehaviour
             xpm.gameObject.SetActive(false);
         }
     }
+
 }

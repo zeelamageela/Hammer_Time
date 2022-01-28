@@ -49,6 +49,7 @@ public class DialogueManager : MonoBehaviour
         {
             sentences.Enqueue(sentence);
         }
+
         DisplayNextSentence();
     }
 
@@ -75,14 +76,18 @@ public class DialogueManager : MonoBehaviour
         firstName = cm.playerName;
         sentence = sentence.Replace("xxxxx", firstName);
 
+        cm.provRankList.Sort();
+
         for (int i = 0; i < cm.provRankList.Count; i++)
         {
             if (cm.playerTeamIndex == cm.provRankList[i].team.id)
             {
-                provRank = i + 1;
+                provRank = cm.provRankList[i].team.rank;
                 earnings = cm.provRankList[i].team.earnings;
             }
         }
+
+        cm.tourRankList.Sort();
         for (int i = 0; i < cm.tourRankList.Count; i++)
         {
             if (cm.playerTeamIndex == cm.tourRankList[i].team.id)

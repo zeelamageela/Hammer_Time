@@ -106,6 +106,7 @@ public class CareerSettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
         myFileGame = new EasyFileSave("my_game_data");
+
         //if (myFileGame.Load())
         //{
         //    ginProg = myFileGame.GetBool("In Progress");
@@ -124,6 +125,7 @@ public class CareerSettings : MonoBehaviour
         //}
         //else
         //    gameInProg.SetActive(false);
+
 
         if (myFile.Load())
         {
