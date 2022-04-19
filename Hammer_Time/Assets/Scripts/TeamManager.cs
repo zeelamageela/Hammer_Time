@@ -165,8 +165,8 @@ public class TeamManager : MonoBehaviour
                     teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
                     teamRed[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                    Debug.Log("Red Turn PLAYER stats - "
-                        + teamRed[j].charStats.guardAccuracy.GetValue());
+                    //Debug.Log("Red Turn PLAYER stats " + j + " - "
+                        //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
             }
             else
@@ -179,8 +179,8 @@ public class TeamManager : MonoBehaviour
                     teamRed[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
                     teamRed[j].charStats.sweepHealth = (aiStats * 10f) + gsp.oppStats.sweepHealth;
-                    Debug.Log("Red Turn AI stats - "
-                        + teamRed[j].charStats.guardAccuracy.GetValue());
+                    //Debug.Log("Red Turn AI stats " + j + " - "
+                        //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }
@@ -201,8 +201,8 @@ public class TeamManager : MonoBehaviour
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
                     teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
-                    Debug.Log("Yellow Turn PLAYER stats - "
-                        + teamYellow[j].charStats.guardAccuracy.GetValue());
+                    //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
+                        //+ teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
             else
@@ -215,8 +215,8 @@ public class TeamManager : MonoBehaviour
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
                     teamYellow[j].charStats.sweepHealth = (10 * aiStats) + gsp.oppStats.sweepHealth;
-                    Debug.Log("Yellow Turn AI stats - "
-                         + teamYellow[j].charStats.guardAccuracy.GetValue());
+                    //Debug.Log("Yellow Turn AI stats " + j + " - "
+                         //+ teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }

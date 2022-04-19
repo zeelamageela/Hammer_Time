@@ -147,7 +147,7 @@ public class RockBar : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        ActiveRock(redTurn);
+        ActiveRock(redTurn, 0);
 
     }
 
@@ -185,11 +185,11 @@ public class RockBar : MonoBehaviour
         }
     }
 
-    public void ActiveRock(bool redTurn)
+    public void ActiveRock(bool redTurn, int rockCrnt)
     {
         if (rockListUI.Count != 0 && gm.rockCurrent < rockListUI.Count)
         {
-            rockCurrent = gm.rockCurrent;
+            rockCurrent = rockCrnt;
             rockListUI[rockCurrent].GetComponent<RockBar_Dot>().ActiveRockSprite();
             //Debug.Log("Active Rock is " + rockListUI[rockCurrent].name);
             //Debug.Log("RedTurn is " + redTurn);

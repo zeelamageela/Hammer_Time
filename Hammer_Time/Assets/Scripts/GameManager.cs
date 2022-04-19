@@ -12,7 +12,7 @@ public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SC
 
 public class GameManager : MonoBehaviour
 {
-    #region Vars
+    #region Variables
     AudioManager am;
     public TutorialManager tm;
     public TeamManager teamM;
@@ -181,36 +181,60 @@ public class GameManager : MonoBehaviour
         {
             yield return StartCoroutine(SetupRocks());
 
+            yield return new WaitUntil(() => rockList.Count == 16);
+
             if (rockCurrent > 0)
             {
-                if (gsp.aiRed)
-                {
-                    rm.rrp.OnRockPlace(rockCurrent, false);
-                }
-                else
-                {
-                    rm.rrp.OnRockPlace(rockCurrent, true);
-                }
-                yield return new WaitUntil(() => rm.rrp.round == 1);
+                cm.HouseView();
                 rockBar.ResetBar(redHammer);
-                rockBar.EndUpdate(yellowScore, redScore);
-                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
-                yield return new WaitUntil(() => rm.rrp.placed1);
-                Debug.Log("Checking Score");
-                StartCoroutine(CheckScore());
-                yield return new WaitUntil(() => rm.rrp.round == 2);
-                if (gsp.aiRed)
+                int tempRckCrnt = rockCurrent;
+                for (int i = 0; i < rockCurrent; i++)
                 {
-                    rm.rrp.OnRockPlace(rockCurrent, false);
+                    //cm.TopView();
+                    Debug.Log("placed1 is " + rm.rrp.placed1);
+                    rm.rrp.placed1 = false;
+                    Debug.Log("placed1 is " + rm.rrp.placed1);
+                    if (gsp.aiRed)
+                    {
+                        rm.rrp.OnRockPlace(i, false);
+                    }
+                    else if (gsp.aiYellow)
+                    {
+                        rm.rrp.OnRockPlace(i, true);
+                    }
+
+                    if (i % 2 == 0)
+                    {
+                        if (redHammer)
+                            rockBar.ActiveRock(false, i);
+                        else
+                            rockBar.ActiveRock(true, i);
+                    }
+                    else
+                    {
+                        if (redHammer)
+                            rockBar.ActiveRock(true, i);
+                        else
+                            rockBar.ActiveRock(false, i);
+                    }
+
+                    //yield return new WaitForEndOfFrame();
+                    rockBar.ShotUpdate(i, rockList[i].rockInfo.outOfPlay);
+                    yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+
+                    yield return new WaitUntil(() => rm.rrp.placed1);
+
+                    yield return new WaitForSeconds(0.25f);
+
+                    gHUD.MainDisplayOff();
                 }
-                else
-                {
-                    rm.rrp.OnRockPlace(rockCurrent, true);
-                }
-                yield return new WaitUntil(() => rm.rrp.placed);
-                rockBar.ResetBar(redHammer);
                 rockBar.EndUpdate(yellowScore, redScore);
-                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                //rockBar.ResetBar(redHammer);
+                //rockBar.EndUpdate(yellowScore, redScore);
+                //yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                //yield return new WaitUntil(() => rm.rrp.placed1);
+                //Debug.Log("Checking Score");
+                //StartCoroutine(CheckScore());
                 StartCoroutine(CheckScore());
             }
             else
@@ -218,7 +242,7 @@ public class GameManager : MonoBehaviour
                 rockBar.ResetBar(redHammer);
                 rockBar.EndUpdate(yellowScore, redScore);
                 yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
-
+                rm.rrp.placed = true;
                 if (redHammer)
                     OnYellowTurn();
                 else
@@ -431,7 +455,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(redRock_1.name);
 
         //Debug.Log("Current Rock is " + rockCurrent);
-        rockBar.ActiveRock(true);
+        rockBar.ActiveRock(true, rockCurrent);
 
         if (debug)
         {
@@ -468,7 +492,7 @@ public class GameManager : MonoBehaviour
         cm.RockFollow(redRock_1.transform);
         boardCollider.enabled = true;
 
-        rockBar.ActiveRock(true);
+        rockBar.ActiveRock(true, rockCurrent);
 
         yield return new WaitUntil(() => redRock.released == true);
 
@@ -555,7 +579,7 @@ public class GameManager : MonoBehaviour
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
         Debug.Log(yellowRock_1.name);
 
-        rockBar.ActiveRock(false);
+        rockBar.ActiveRock(false, rockCurrent);
         if (debug)
         {
             dbText.enabled = true;
@@ -590,7 +614,7 @@ public class GameManager : MonoBehaviour
         cm.RockFollow(yellowRock_1.transform);
         //am.Play("RockScrape");
         boardCollider.enabled = true;
-        rockBar.ActiveRock(false);
+        rockBar.ActiveRock(false, rockCurrent);
 
         yield return new WaitUntil(() => yellowRock.released == true);
 

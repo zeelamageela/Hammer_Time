@@ -75,6 +75,7 @@ public class Rock_Colliders : MonoBehaviour
 
     IEnumerator OutOfPlay()
     {
+        //Handheld.Vibrate();
         outOfPlay = true;
         //am.Play("OutOfPlay");
         //body.velocity = Vector2.zero;
@@ -125,6 +126,7 @@ public class Rock_Colliders : MonoBehaviour
             outOfPlay = true;
             inPlay = false;
             Debug.Log("trigger boards");
+            Handheld.Vibrate();
         }
 
         if (collider == house_collider)
