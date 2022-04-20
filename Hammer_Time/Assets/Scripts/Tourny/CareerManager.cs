@@ -429,6 +429,7 @@ public class CareerManager : MonoBehaviour
                 tempTeam.name = "";
 
                 tempTeam.name = allTimeName[i];
+                tempTeam.wins = Mathf.RoundToInt(allTimeEarnings[i]);
                 tempTeam.earnings = allTimeEarnings[i];
                 allTimeList.Add(new Standings_List(tempTeam));
             }

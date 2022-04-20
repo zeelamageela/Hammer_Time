@@ -10,6 +10,9 @@ public class GameHUD : MonoBehaviour
 
     public Text mainDisplay;
     public Text clickDisplay;
+    public Text logDisplay;
+
+    string[] actionLogs;
 
     public GameObject scoreboard;
     public Image scoreboardUI;
@@ -72,7 +75,7 @@ public class GameHUD : MonoBehaviour
     public void SetHUD(int redRocksLeft, int yellowRocksLeft, int rocksPerTeam, int rockCurrent, Rock_Info rock)
     {
         //scoreboard.gameObject.SetActive(false);
-        
+
         mainDisplay.enabled = true;
         mainDisplay.text = rock.teamName + " Turn";
 
@@ -153,6 +156,18 @@ public class GameHUD : MonoBehaviour
         mainDisplay.enabled = true;
         mainDisplay.text = message;
         StartCoroutine(RefreshPanel());
+    }
+
+    public void MessageLog(string message)
+    {
+        logDisplay.enabled = true;
+
+        actionLogs[3] = actionLogs[2];
+        actionLogs[2] = actionLogs[1];
+        actionLogs[1] = actionLogs[0];
+        actionLogs[0] = message;
+
+        logDisplay.text = actionLogs[0] + "/n" + actionLogs[1] + "/n" + actionLogs[2] + "/n" + actionLogs[3];
     }
 
     public void ScoringUI(string hammerTeamName, string teamName, int score)

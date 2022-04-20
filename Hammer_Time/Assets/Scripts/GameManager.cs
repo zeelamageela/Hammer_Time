@@ -224,10 +224,12 @@ public class GameManager : MonoBehaviour
 
                     yield return new WaitUntil(() => rm.rrp.placed1);
 
-                    yield return new WaitForSeconds(0.25f);
+                    //yield return new WaitForSeconds(0.25f);
 
                     gHUD.MainDisplayOff();
                 }
+                rockCurrent--;
+
                 rockBar.EndUpdate(yellowScore, redScore);
                 //rockBar.ResetBar(redHammer);
                 //rockBar.EndUpdate(yellowScore, redScore);

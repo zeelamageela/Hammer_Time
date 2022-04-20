@@ -3398,7 +3398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bg: 3
-  redHammer: 1
+  redHammer: 0
   ends: 2
   rocks: 2
   volume: 0.15
@@ -3425,7 +3425,7 @@ MonoBehaviour:
   week: 5
   cStats:
     drawAccuracy: 7
-    takeOutAccuracy: 5
+    takeOutAccuracy: 12
     guardAccuracy: 8
     sweepStrength: 10
     sweepEndurance: 10

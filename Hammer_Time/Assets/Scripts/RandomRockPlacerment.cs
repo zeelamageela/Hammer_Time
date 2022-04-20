@@ -568,6 +568,7 @@ public class RandomRockPlacerment : MonoBehaviour
                                 + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
                             Debug.Log("Takeout Check - SUCCESS");
                             gm.gHUD.Message("Takeout Check - SUCCESS");
+                            
                         }
                         else
                         {
@@ -1168,7 +1169,7 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rock.transform.parent = null;
             //rm.rb.DeadRock(i);
             yield return new WaitForEndOfFrame();
-            Debug.Log("Rock Position " + i + " " + rockPos[i]);
+            //Debug.Log("Rock Position " + i + " " + rockPos[i]);
             gm.rockList[i].rock.transform.position = rockPos[i];
 
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
@@ -1312,6 +1313,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                     rockPos[takeOutSelector] = placePos[10];
                     Debug.Log("Opponent Rock Out of Play Check - SUCCESS");
+                    houseCount--;
                 }
                 else
                 {
