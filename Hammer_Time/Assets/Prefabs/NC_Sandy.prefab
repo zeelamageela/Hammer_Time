@@ -571,16 +571,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Sandy
   drawAccuracy:
-    baseValue: 7
+    baseValue: 10
   takeOutAccuracy:
-    baseValue: 7
+    baseValue: 10
   guardAccuracy:
-    baseValue: 7
+    baseValue: 10
   sweepStrength:
-    baseValue: 7
+    baseValue: 10
   sweepEndurance:
-    baseValue: 7
-  sweepHealth: 70
+    baseValue: 10
+  sweepHealth: 100
   sweeping: 0
   sweepingHard: 0
   shooting: 0

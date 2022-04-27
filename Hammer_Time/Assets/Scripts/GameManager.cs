@@ -191,9 +191,9 @@ public class GameManager : MonoBehaviour
                 for (int i = 0; i < rockCurrent; i++)
                 {
                     //cm.TopView();
-                    Debug.Log("placed1 is " + rm.rrp.placed1);
+                    //Debug.Log("placed1 is " + rm.rrp.placed1);
                     rm.rrp.placed1 = false;
-                    Debug.Log("placed1 is " + rm.rrp.placed1);
+                    //Debug.Log("placed1 is " + rm.rrp.placed1);
                     if (gsp.aiRed)
                     {
                         rm.rrp.OnRockPlace(i, false);
@@ -224,9 +224,12 @@ public class GameManager : MonoBehaviour
 
                     yield return new WaitUntil(() => rm.rrp.placed1);
 
-                    //yield return new WaitForSeconds(0.25f);
+                    //yield return new WaitForSeconds(2.25f);
 
                     gHUD.MainDisplayOff();
+                    //yield return StartCoroutine(CheckScore());
+
+                    //yield return new WaitUntil(() => !gHUD.panel.activeSelf);
                 }
                 rockCurrent--;
 

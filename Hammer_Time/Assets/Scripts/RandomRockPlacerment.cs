@@ -324,6 +324,7 @@ public class RandomRockPlacerment : MonoBehaviour
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         Debug.Log("RedTeam is " + redTeam);
+        gm.houseList.Sort();
         //int houseCount = 0;
         bool aiAgg;
 
@@ -407,61 +408,1079 @@ public class RandomRockPlacerment : MonoBehaviour
             }
         }
 
-        if (houseCount > 3)
+        #region old scenario
+        //if (houseCount > 3)
+        //{
+        //    aiAgg = false;
+        //}
+        //else if (activeScore < otherScore)
+        //{
+        //    aiAgg = true;
+        //}
+        //else
+        //{
+        //    aiAgg = false;
+        //}
+
+        //float activeLuckStat;
+        //float otherLuckStat;
+
+        //activeLuckStat = activeCharStats.drawAccuracy.GetValue() + activeCharStats.guardAccuracy.GetValue() + activeCharStats.takeOutAccuracy.GetValue();
+        //activeLuckStat /= 3f;
+        //otherLuckStat = otherCharStats.drawAccuracy.GetValue() + otherCharStats.guardAccuracy.GetValue() + otherCharStats.takeOutAccuracy.GetValue();
+        //otherLuckStat /= 3f;
+
+        //Debug.Log("gm.houseList.Count is " + gm.houseList.Count);
+        //Debug.Log("Active Luck is " + activeLuckStat);
+        //Debug.Log("Active Team is " + activeTeamName);
+        //Debug.Log("Other Team is " + otherTeamName);
+       
+        //if (aiTurn)
+        //{
+        //    //and the ai chooses a defensive strategy...
+        //    //aggressive on defensive - prob of player guards and rocks in house based on draw and guard accuracy
+        //    //player rocks based on guard and draw accuracy, ai rocks unhindered
+        //    if (!aiAgg)
+        //    {
+        //        Debug.Log("houseCount is " + houseCount);
+        //        Debug.Log("gm.houseList is " + gm.houseList.Count);
+        //        if (rockCurrent < 5)
+        //        {
+        //            if (houseCount > 0)
+        //            {
+        //                //if there's an opponent, takeout
+        //                bool stopCounting = false;
+
+        //                for (int j = 0; j < gm.rockList.Count; j++)
+        //                {
+        //                    if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                        == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+        //                    {
+                                
+        //                        takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
+        //                        stopCounting = true;
+        //                        Debug.Log("Takeout Selector < 5 - " + takeOutSelector);
+        //                    }
+        //                }
+
+        //                if (stopCounting)
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 4;
+        //                        Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                        Debug.Log("Takeout Check - SUCCESS");
+        //                        gm.gHUD.Message("Takeout Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        stopCounting = false;
+        //                        for (int j = 0; j < gm.rockList.Count; j++)
+        //                        {
+        //                            if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+        //                            {
+        //                                takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
+        //                                stopCounting = true;
+        //                            }
+        //                        }
+        //                        if (stopCounting)
+        //                        {
+        //                            if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                            {
+        //                                shotSelector = 4;
+        //                                Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                                Debug.Log("Takeout Check - crash - FAIL");
+        //                                gm.gHUD.Message("Takeout Check - crash - FAIL");
+        //                            }
+        //                            else
+        //                            {
+        //                                shotSelector = 1;
+        //                                Debug.Log("Takeout Check - out - FAIL");
+        //                                gm.gHUD.Message("Takeout Check - out - FAIL");
+        //                            }
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Takeout Check - out - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - out - FAIL");
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (houseCount > 2)
+        //                    {
+        //                        //guard
+        //                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 3;
+        //                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("No Takeout Target - Draw Check - FAIL");
+        //                            gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        //draw to house
+        //                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 3;
+        //                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("No Takeout Target - Draw Check - FAIL");
+        //                            gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
+        //                        }
+        //                    }
+        //                    //draw to house
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("No Takeout Target - Draw Check - FAIL");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //draw to house
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 3;
+        //                        Debug.Log("Draw Check - short - FAIL");
+        //                        gm.gHUD.Message("Draw Check - short - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Draw Check - long - FAIL");
+        //                        gm.gHUD.Message("Draw Check - long - FAIL");
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else if (houseCount > 0)
+        //        {
+        //            //if there's an opponent, takeout
+        //            bool stopCounting = false;
+
+        //            for (int j = 0; j < gm.rockList.Count; j++)
+        //            {
+        //                if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                        == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+        //                {
+        //                    takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
+        //                    stopCounting = true;
+        //                }
+        //            }
+        //            if (stopCounting)
+        //            {
+        //                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 4;
+        //                    Debug.Log("Takeout - HIT - "
+        //                        + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                    Debug.Log("Takeout Check - SUCCESS");
+        //                    gm.gHUD.Message("Takeout Check - SUCCESS");
+                            
+        //                }
+        //                else
+        //                {
+        //                    stopCounting = false;
+        //                    for (int j = 0; j < gm.rockList.Count; j++)
+        //                    {
+        //                        if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+        //                        {
+        //                            takeOutSelector = j;
+        //                            stopCounting = true;
+        //                        }
+        //                    }
+        //                    if (stopCounting)
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 4;
+        //                            Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                            Debug.Log("Takeout Check - crash - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - crash - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Takeout Check - out - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - out - FAIL");
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Takeout Check - No Target - out - FAIL");
+        //                        gm.gHUD.Message("Takeout Check - No Target - out - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //draw to house
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    shotSelector = 1;
+        //                    Debug.Log("No Takeout Target - Draw Check - FAIL");
+        //                    gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
+        //                }
+        //            }
+        //        }
+        //        else if (guardCounter > 0)
+        //        {
+
+        //            //if there's an opponent guard, takeout
+        //            bool stopCounting = false;
+                    
+        //            for (int j = 0; j < gm.rockList.Count; j++)
+        //            {
+        //                if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                        == otherTeamName && !gm.rockList[j].rockInfo.outOfPlay)
+        //                {
+        //                    takeOutSelector = j;
+        //                    stopCounting = true;
+        //                }
+        //            }
+        //            if (stopCounting)
+        //            {
+        //                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 4;
+        //                    Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                    Debug.Log("Takeout Check - SUCCESS");
+        //                    gm.gHUD.Message("Takeout Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    stopCounting = false;
+        //                    for (int j = 0; j < gm.rockList.Count; j++)
+        //                    {
+        //                        if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+        //                        {
+        //                            takeOutSelector = j;
+        //                            stopCounting = true;
+        //                        }
+        //                    }
+        //                    if (stopCounting)
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 4;
+        //                            Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                            Debug.Log("Takeout Check - crash - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - crash - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Takeout Check - out - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - out - FAIL");
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Takeout Check - FAIL");
+        //                        gm.gHUD.Message("Takeout Check - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //draw to house
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 3;
+        //                        Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("No Takeout Target - Draw Check - long - FAIL");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - long - FAIL");
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            //draw to house
+        //            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //            {
+        //                shotSelector = 0;
+        //                Debug.Log("Draw Check - SUCCESS");
+        //                gm.gHUD.Message("Draw Check - SUCCESS");
+        //            }
+        //            else
+        //            {
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 3;
+        //                    Debug.Log("Draw Check - short - FAIL");
+        //                    gm.gHUD.Message("Draw Check - short - FAIL");
+        //                }
+        //                else
+        //                {
+        //                    shotSelector = 1;
+        //                    Debug.Log("Draw Check - long - FAIL");
+        //                    gm.gHUD.Message("Draw Check - long - FAIL");
+        //                }
+        //            }
+        //        }
+        //    }
+        //    //and the ai chooses an aggressive strategy...
+        //    //aggressive on aggressive - high prob of guards and rocks in house
+        //    //player rocks based on draw and guard accuracy, ai rocks unhindered
+        //    else
+        //    {
+        //        if (rockCurrent % 2 == 0)
+        //        {
+        //            if (guardCounter < 3)
+        //            {
+        //                //guard check
+        //                if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 3;
+        //                    Debug.Log("Guard Check - SUCCESS");
+        //                    gm.gHUD.Message("Guard Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("Guard Check - long - FAIL");
+        //                        gm.gHUD.Message("Guard Check - long - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Guard Check - short - FAIL");
+        //                        gm.gHUD.Message("Guard Check - short - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else if (houseCount < 2)
+        //            {
+        //                //draw check
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 3;
+        //                        Debug.Log("Draw Check - short - FAIL");
+        //                        gm.gHUD.Message("Draw Check - short - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Draw Check - long - FAIL");
+        //                        gm.gHUD.Message("Draw Check - long - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //freeze to opponent stone if there is one
+        //                bool stopCounting = false;
+
+        //                for (int j = 0; j < gm.rockList.Count; j++)
+        //                {
+        //                    if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                        == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+        //                    {
+        //                        freezeSelector = j;
+        //                        stopCounting = true;
+        //                    }
+        //                }
+        //                if (stopCounting)
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 5;
+        //                        Debug.Log("Freeze - TARGET - " + gm.rockList[freezeSelector].rockInfo.teamName + " " + gm.rockList[freezeSelector].rockInfo.rockNumber);
+        //                        Debug.Log("Freeze Check - SUCCESS");
+        //                        gm.gHUD.Message("Freeze Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("Freeze Check - FAIL");
+        //                        gm.gHUD.Message("Freeze Check - FAIL");
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    //draw to house
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("Draw Check - SUCCESS");
+        //                        gm.gHUD.Message("Draw Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 3;
+        //                            Debug.Log("Draw Check - short - FAIL");
+        //                            gm.gHUD.Message("Draw Check - short - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Draw Check - long - FAIL");
+        //                            gm.gHUD.Message("Draw Check - long - FAIL");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (guardCounter < 3)
+        //            {
+        //                //guard check
+        //                if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 3;
+        //                    Debug.Log("Guard Check - SUCCESS");
+        //                    gm.gHUD.Message("Guard Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("Guard Check - long - FAIL");
+        //                        gm.gHUD.Message("Guard Check - long - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Guard Check - short - FAIL");
+        //                        gm.gHUD.Message("Guard Check - short - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else if (houseCount < 2)
+        //            {
+        //                //draw check
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("Draw Check - SUCCESS");
+        //                    gm.gHUD.Message("Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 3;
+        //                        Debug.Log("Draw Check - short - FAIL");
+        //                        gm.gHUD.Message("Draw Check - short - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Draw Check - long - FAIL");
+        //                        gm.gHUD.Message("Draw Check - long - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //freeze check
+        //                bool stopCounting = false;
+
+        //                for (int j = 0; j < gm.rockList.Count; j++)
+        //                {
+        //                    if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                        == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+        //                    {
+        //                        freezeSelector = j;
+        //                        stopCounting = true;
+        //                    }
+        //                }
+        //                if (stopCounting)
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 5;
+        //                        Debug.Log("Freeze - TARGET - " + gm.rockList[freezeSelector].rockInfo.teamName + " " + gm.rockList[freezeSelector].rockInfo.rockNumber);
+        //                        Debug.Log("Freeze Check - SUCCESS");
+        //                        gm.gHUD.Message("Freeze Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 3;
+        //                            Debug.Log("Freeze Check - short - FAIL");
+        //                            gm.gHUD.Message("Freeze Check - short - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Freeze Check - long - FAIL");
+        //                            gm.gHUD.Message("Freeze Check - long - FAIL");
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    //draw to house
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 0;
+        //                        Debug.Log("Draw Check - SUCCESS");
+        //                        gm.gHUD.Message("Draw Check - SUCCESS");
+        //                    }
+        //                    else
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 3;
+        //                            Debug.Log("Draw Check - short - FAIL");
+        //                            gm.gHUD.Message("Draw Check - short - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Draw Check - long - FAIL");
+        //                            gm.gHUD.Message("Draw Check - long - FAIL");
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.Log("Player Shot - Placement");
+
+        //    Random.InitState(System.DateTime.Now.Millisecond);
+
+        //    bool stopCounting = false;
+        //    switch(playerSelection)
+        //    {
+        //        case 0:
+        //            #region Draw
+        //            //draw to house
+        //            if (Random.Range(0f, 6f) < activeCharStats.drawAccuracy.GetValue())
+        //            {
+        //                shotSelector = 0;
+        //                Debug.Log("Draw Check - SUCCESS");
+        //                gm.gHUD.Message("Draw Check - SUCCESS");
+        //            }
+        //            else
+        //            {
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 3;
+        //                    Debug.Log("Draw Check - short - FAIL");
+        //                    gm.gHUD.Message("Draw Check - short - FAIL");
+        //                }
+        //                else
+        //                {
+        //                    shotSelector = 1;
+        //                    Debug.Log("Draw Check - long - FAIL");
+        //                    gm.gHUD.Message("Draw Check - long - FAIL");
+        //                }
+        //            }
+        //            break;
+        //            #endregion
+        //        case 1:
+        //            #region Left Guard
+        //            shotSelector = 6;
+        //            break;
+        //            #endregion
+        //        case 2:
+        //            #region Centre Guard
+        //            shotSelector = 6;
+        //            break;
+        //            #endregion
+        //        case 3:
+        //            #region Right Guard
+        //            shotSelector = 6;
+        //            break;
+        //            #endregion
+        //        case 4:
+        //            #region Takeout
+        //            //if there's an opponent, takeout
+        //            //stopCounting = false;
+
+        //            for (int j = 0; j < gm.rockList.Count; j++)
+        //            {
+        //                if (!stopCounting && gm.rockList[j].rockInfo.teamName
+        //                    == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+        //                {
+
+        //                    takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
+        //                    stopCounting = true;
+        //                    Debug.Log("Takeout Selector < 5 - " + takeOutSelector);
+        //                }
+        //            }
+
+        //            if (stopCounting)
+        //            {
+        //                if (Random.Range(0f, 6f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 4;
+        //                    Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                    Debug.Log("Takeout Check - SUCCESS");
+        //                    gm.gHUD.Message("Takeout Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    stopCounting = false;
+        //                    for (int j = 0; j < gm.rockList.Count; j++)
+        //                    {
+        //                        if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+        //                        {
+        //                            takeOutSelector = j;
+        //                            stopCounting = true;
+        //                        }
+        //                    }
+        //                    if (stopCounting)
+        //                    {
+        //                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                        {
+        //                            shotSelector = 4;
+        //                            Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+        //                            Debug.Log("Takeout Check - crash - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - crash - FAIL");
+        //                        }
+        //                        else
+        //                        {
+        //                            shotSelector = 1;
+        //                            Debug.Log("Takeout Check - out - FAIL");
+        //                            gm.gHUD.Message("Takeout Check - out - FAIL");
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("Takeout Check - FAIL");
+        //                        gm.gHUD.Message("Takeout Check - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //draw to house
+        //                if (Random.Range(0f, 6f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+        //                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                    {
+        //                        shotSelector = 3;
+        //                        Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+        //                    }
+        //                    else
+        //                    {
+        //                        shotSelector = 1;
+        //                        Debug.Log("No Takeout Target - Draw Check - long - FAIL");
+        //                        gm.gHUD.Message("No Takeout Target - Draw Check - long - FAIL");
+        //                    }
+        //                }
+        //            }
+        //            break;
+        //            #endregion
+        //        case 5:
+        //            #region Freeze
+        //            //freeze to opponent stone if there is one
+        //            stopCounting = false;
+
+        //            for (int j = 0; j < gm.houseList.Count; j++)
+        //            {
+        //                if (!stopCounting && gm.houseList[j].rockInfo.teamName == otherTeamName)
+        //                {
+        //                    freezeSelector = j;
+        //                    stopCounting = true;
+        //                }
+        //            }
+        //            if (stopCounting)
+        //            {
+        //                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 4;
+        //                    Debug.Log("Freeze - TARGET - " + gm.houseList[freezeSelector].rockInfo.teamName + " " + gm.houseList[freezeSelector].rockInfo.rockNumber);
+        //                    Debug.Log("Freeze Check - SUCCESS");
+        //                    gm.gHUD.Message("Freeze Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    shotSelector = 1;
+        //                    Debug.Log("Freeze Check - FAIL");
+        //                    gm.gHUD.Message("Freeze Check - FAIL");
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //draw to house
+        //                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+        //                {
+        //                    shotSelector = 0;
+        //                    Debug.Log("No Freeze Target - Draw Check - SUCCESS");
+        //                    gm.gHUD.Message("No Freeze Target - Draw Check - SUCCESS");
+        //                }
+        //                else
+        //                {
+        //                    shotSelector = 1;
+        //                    Debug.Log("No Freeze Target - Draw Check - FAIL");
+        //                    gm.gHUD.Message("No Freeze Target - Draw Check - FAIL");
+        //                }
+        //            }
+        //            break;
+        //        #endregion
+        //        default:
+        //            break;
+        //    }
+        //}
+        //if the player chooses a draw in the house..
+
+        //and the ai is using a defensive strategy...
+        //
+        #endregion
+
+        int scenario = 0;
+        #region Scenario Selector
+        if (gm.endCurrent == gm.endTotal - 1)
         {
-            aiAgg = false;
+            if (activeScore == otherScore)
+                scenario = 9;
+            else if (activeScore < otherScore)
+                scenario = 10;
+            else
+                scenario = 11;
+            Debug.Log("Last End");
         }
-        else if (activeScore < otherScore)
+        else if (gm.endCurrent == gm.endTotal - 2)
         {
-            aiAgg = true;
+            if (activeScore == otherScore)
+                scenario = 6;
+            else if (activeScore < otherScore)
+                scenario = 7;
+            else
+                scenario = 8;
+            Debug.Log("Penultimate End");
+        }
+        else if (gm.endCurrent >= gm.endTotal - 4)
+        {
+            if (activeScore == otherScore)
+                scenario = 3;
+            else if (activeScore < otherScore)
+                scenario = 4;
+            else
+                scenario = 5;
+            Debug.Log("Middle Ends");
         }
         else
         {
-            aiAgg = false;
+            if (activeScore == otherScore)
+                scenario = 0;
+            else if (activeScore < otherScore)
+                scenario = 1;
+            else
+                scenario = 2;
+            Debug.Log("Early Ends");
         }
+        #endregion
 
-        float activeLuckStat;
-        float otherLuckStat;
 
-        activeLuckStat = activeCharStats.drawAccuracy.GetValue() + activeCharStats.guardAccuracy.GetValue() + activeCharStats.takeOutAccuracy.GetValue();
-        activeLuckStat /= 3f;
-        otherLuckStat = otherCharStats.drawAccuracy.GetValue() + otherCharStats.guardAccuracy.GetValue() + otherCharStats.takeOutAccuracy.GetValue();
-        otherLuckStat /= 3f;
-
-        Debug.Log("Active Luck is " + activeLuckStat);
-        Debug.Log("Active Team is " + activeTeamName);
-        Debug.Log("Other Team is " + otherTeamName);
-        if (aiTurn)
+        switch (scenario)
         {
-            //and the ai chooses a defensive strategy...
-            //aggressive on defensive - prob of player guards and rocks in house based on draw and guard accuracy
-            //player rocks based on guard and draw accuracy, ai rocks unhindered
-            if (!aiAgg)
-            {
-                Debug.Log("houseCount is " + houseCount);
-                Debug.Log("gm.houseList is " + gm.houseList.Count);
+            case 0:
+                #region Early Game - Tied
+                
+                Debug.Log("Early Game - Tied");
+                #endregion
+                break;
+            case 1:
+                #region Early Game - Losing
+                Debug.Log("Early Game - Losing");
+                #endregion
+                break;
+            case 2:
+                #region Early Game - Winning
+                Debug.Log("Early Game - Winning");
+                #endregion
+                break;
+            case 3:
+                #region Mid Game - Tied
+                Debug.Log("Mid Game - Tied");
+                #endregion
+                break;
+            case 4:
+                #region Mid Game - Losing
+                Debug.Log("Mid Game - Losing");
+                #endregion
+                break;
+            case 5:
+                #region Mid Game - Winning
+                Debug.Log("Mid Game - Winning");
+                #endregion
+                break;
+            case 6:
+                #region Penultimate End - Tied
+                Debug.Log("Penultimate End - Tied");
+                //with hammer
+                    //blank to keep hammer
+                //without hammer
+                    //force 1 to take hammer
                 if (rockCurrent < 5)
                 {
-                    if (houseCount > 0)
+                    if (gm.houseList.Count > 0)
                     {
-                        //if there's an opponent, takeout
-                        bool stopCounting = false;
+                        bool hit = false;
 
-                        for (int j = 0; j < gm.rockList.Count; j++)
+                        //check house for opponent rocks
+                        foreach (House_List rock in gm.houseList)
                         {
-                            if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                                == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+                            if (!hit && rock.rockInfo.teamName == otherTeamName)
                             {
-                                
-                                takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
-                                stopCounting = true;
-                                Debug.Log("Takeout Selector < 5 - " + takeOutSelector);
+                                bool guarded = false;
+                                //guard check
+                                foreach (Guard_List guard in gm.gList)
+                                {
+                                    if (!guarded
+                                        && Mathf.Abs(guard.lastTransform.position.x - rock.rock.transform.position.x) < 0.5f)
+                                    {
+                                        guarded = true;
+                                    }
+                                }
+                                //if not guarded, that's the target
+                                if (!guarded)
+                                {
+                                    hit = true;
+                                    takeOutSelector = rock.rockInfo.rockIndex;
+                                    Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                }
                             }
                         }
 
-                        if (stopCounting)
+                        if (hit)
                         {
-                            if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+                            //SKILL check
+                            if (Random.Range(0f, 11f) < activeCharStats.takeOutAccuracy.GetValue())
+                            {
+                                shotSelector = 4;
+                                Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                Debug.Log("Takeout Check - SUCCESS");
+                                gm.gHUD.Message("Takeout Check - SUCCESS");
+                            }
+                            //SKILL check - fail
+                            else
+                            {
+                                //RANDOM crash check
+                                if (Random.Range(0f, 1f) < 0.5f)
+                                {
+                                    hit = false;
+                                    foreach (Rock_List rock in gm.rockList)
+                                    {
+                                        if (!hit && takeOutSelector != rock.rockInfo.rockIndex && rock.rockInfo.inPlay)
+                                        {
+                                            hit = true;
+                                            takeOutSelector = rock.rockInfo.rockIndex;
+                                            Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                        }
+                                    }
+
+                                    //crash target found
+                                    if (hit)
+                                    {
+                                        shotSelector = 4;
+                                        Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                        Debug.Log("Takeout Check - crash - FAIL");
+                                        gm.gHUD.Message("Takeout Check - crash - FAIL");
+                                    }
+                                    //no valid crash target - out
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("Takeout Check - out - FAIL");
+                                        gm.gHUD.Message("Takeout Check - out - FAIL");
+                                    }
+                                }
+                                //crash check - out
+                                else
+                                {
+                                    shotSelector = 1;
+                                    Debug.Log("Takeout Check - out - FAIL");
+                                    gm.gHUD.Message("Takeout Check - out - FAIL");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                //guard
+                                //SKILL check
+                                if (Random.Range(0f, 11f) < activeCharStats.guardAccuracy.GetValue())
+                                {
+                                    shotSelector = 3;
+                                    Debug.Log("No Takeout Target - Guard Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Guard Check - SUCCESS");
+                                }
+                                else
+                                {
+                                    //RANDOM check
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 0;
+                                        Debug.Log("Guard Check - long - FAIL");
+                                        gm.gHUD.Message("Guard Check - long - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("Guard Check - short - FAIL");
+                                        gm.gHUD.Message("Guard Check - short - FAIL");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //draw to house
+                                if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
+                                {
+                                    shotSelector = 0;
+                                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+                                }
+                                else
+                                {
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 3;
+                                        Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("No Takeout Target - long - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - long - FAIL");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //draw to house
+                        if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
+                        {
+                            shotSelector = 0;
+                            Debug.Log("Draw Check - SUCCESS");
+                        }
+                        else
+                        {
+                            if (Random.Range(0f, 1f) < 0.5f)
+                            {
+                                shotSelector = 3;
+                                Debug.Log("Draw Check - short - FAIL");
+                                gm.gHUD.Message("Draw Check - short - FAIL");
+                            }
+                            else
+                            {
+                                shotSelector = 1;
+                                Debug.Log("Draw Check - long - FAIL");
+                                gm.gHUD.Message("Draw Check - long - FAIL");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //if there's rocks in the hosue 
+                    if (gm.houseList.Count > 0)
+                    {
+                        //check for opponent rocks
+                        bool hit = false;
+                        int counter = 0;
+
+                        foreach (House_List rock in gm.houseList)
+                        {
+                            if (!hit && rock.rockInfo.teamName == otherTeamName)
+                            {
+                                bool guarded = false;
+                                foreach (Guard_List guard in gm.gList)
+                                {
+                                    if (!guarded
+                                        && Mathf.Abs(guard.lastTransform.position.x - rock.rock.transform.position.x) < 0.5f)
+                                    {
+                                        guarded = true;
+                                    }
+                                }
+                                if (!guarded)
+                                {
+                                    hit = true;
+                                    takeOutSelector = rock.rockInfo.rockIndex;
+                                    Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                }
+                            }
+                        }
+
+                        if (hit)
+                        {
+                            //takeout check
+                            if (Random.Range(0f, 11f) < activeCharStats.takeOutAccuracy.GetValue())
                             {
                                 shotSelector = 4;
                                 Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
@@ -470,18 +1489,21 @@ public class RandomRockPlacerment : MonoBehaviour
                             }
                             else
                             {
-                                stopCounting = false;
-                                for (int j = 0; j < gm.rockList.Count; j++)
+                                //check for deflections
+                                if (Random.Range(0f, 1f) < 0.5f)
                                 {
-                                    if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+                                    hit = false;
+                                    foreach (Rock_List rock in gm.rockList)
                                     {
-                                        takeOutSelector = j;
-                                        stopCounting = true;
+                                        if (!hit && takeOutSelector != rock.rockInfo.rockIndex && rock.rockInfo.inPlay)
+                                        {
+                                            hit = true;
+                                            takeOutSelector = rock.rockInfo.rockIndex;
+                                            Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                        }
                                     }
-                                }
-                                if (stopCounting)
-                                {
-                                    if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+
+                                    if (hit)
                                     {
                                         shotSelector = 4;
                                         Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
@@ -498,551 +1520,249 @@ public class RandomRockPlacerment : MonoBehaviour
                                 else
                                 {
                                     shotSelector = 1;
-                                    Debug.Log("Takeout Check - FAIL");
-                                    gm.gHUD.Message("Takeout Check - FAIL");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //draw to house
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 0;
-                                Debug.Log("No Takeout Target - Draw Check - SUCCESS");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("No Takeout Target - Draw Check - FAIL");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //draw to house
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("Draw Check - SUCCESS");
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 3;
-                                Debug.Log("Draw Check - short - FAIL");
-                                gm.gHUD.Message("Draw Check - short - FAIL");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Draw Check - long - FAIL");
-                                gm.gHUD.Message("Draw Check - long - FAIL");
-                            }
-                        }
-                    }
-                }
-                else if (houseCount > 0)
-                {
-                    //if there's an opponent, takeout
-                    bool stopCounting = false;
-
-                    for (int j = 0; j < gm.rockList.Count; j++)
-                    {
-                        if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                                == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
-                        {
-                            takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
-                            stopCounting = true;
-                        }
-                    }
-                    if (stopCounting)
-                    {
-                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
-                        {
-                            shotSelector = 4;
-                            Debug.Log("Takeout - HIT - "
-                                + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                            Debug.Log("Takeout Check - SUCCESS");
-                            gm.gHUD.Message("Takeout Check - SUCCESS");
-                            
-                        }
-                        else
-                        {
-                            stopCounting = false;
-                            for (int j = 0; j < gm.rockList.Count; j++)
-                            {
-                                if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
-                                {
-                                    takeOutSelector = j;
-                                    stopCounting = true;
-                                }
-                            }
-                            if (stopCounting)
-                            {
-                                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
-                                {
-                                    shotSelector = 4;
-                                    Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                                    Debug.Log("Takeout Check - crash - FAIL");
-                                    gm.gHUD.Message("Takeout Check - crash - FAIL");
-                                }
-                                else
-                                {
-                                    shotSelector = 1;
                                     Debug.Log("Takeout Check - out - FAIL");
                                     gm.gHUD.Message("Takeout Check - out - FAIL");
                                 }
                             }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Takeout Check - FAIL");
-                                gm.gHUD.Message("Takeout Check - FAIL");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //draw to house
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
-                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
                         }
                         else
                         {
-                            shotSelector = 1;
-                            Debug.Log("No Takeout Target - Draw Check - FAIL");
-                            gm.gHUD.Message("No Takeout Target - Draw Check - FAIL");
-                        }
-                    }
-                }
-                else if (guardCounter > 0)
-                {
+                            if (gm.gList.Count > 0)
+                            {
+                                //check for opponent rocks
+                                hit = false;
 
-                    //if there's an opponent guard, takeout
-                    bool stopCounting = false;
-                    
-                    for (int j = 0; j < gm.rockList.Count; j++)
-                    {
-                        if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                                == otherTeamName && !gm.rockList[j].rockInfo.outOfPlay)
-                        {
-                            takeOutSelector = j;
-                            stopCounting = true;
-                        }
-                    }
-                    if (stopCounting)
-                    {
-                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
-                        {
-                            shotSelector = 4;
-                            Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                            Debug.Log("Takeout Check - SUCCESS");
-                            gm.gHUD.Message("Takeout Check - SUCCESS");
-                        }
-                        else
-                        {
-                            stopCounting = false;
-                            for (int j = 0; j < gm.rockList.Count; j++)
-                            {
-                                if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+                                foreach (Guard_List rock in gm.gList)
                                 {
-                                    takeOutSelector = j;
-                                    stopCounting = true;
+                                    if (!hit && gm.rockList[rock.rockIndex].rockInfo.teamName == otherTeamName)
+                                    {
+                                        hit = true;
+                                        takeOutSelector = rock.rockIndex;
+                                        Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                    }
                                 }
-                            }
-                            if (stopCounting)
-                            {
-                                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+
+                                if (hit)
                                 {
-                                    shotSelector = 4;
-                                    Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                                    Debug.Log("Takeout Check - crash - FAIL");
-                                    gm.gHUD.Message("Takeout Check - crash - FAIL");
+                                    //takeout check
+                                    if (Random.Range(0f, 11f) < activeCharStats.takeOutAccuracy.GetValue())
+                                    {
+                                        shotSelector = 4;
+                                        Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                        Debug.Log("Takeout Check - SUCCESS");
+                                        gm.gHUD.Message("Takeout Check - SUCCESS");
+                                    }
+                                    else
+                                    {
+                                        //check for deflections
+                                        if (Random.Range(0f, 1f) < 0.5f)
+                                        {
+                                            hit = false;
+                                            foreach (Rock_List rock in gm.rockList)
+                                            {
+                                                if (!hit && takeOutSelector != rock.rockInfo.rockIndex && rock.rockInfo.inPlay)
+                                                {
+                                                    hit = true;
+                                                    takeOutSelector = rock.rockInfo.rockIndex;
+                                                    Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                                }
+                                            }
+
+                                            if (hit)
+                                            {
+                                                shotSelector = 4;
+                                                Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                                Debug.Log("Takeout Check - crash - FAIL");
+                                                gm.gHUD.Message("Takeout Check - crash - FAIL");
+                                            }
+                                            else
+                                            {
+                                                shotSelector = 1;
+                                                Debug.Log("Takeout Check - out - FAIL");
+                                                gm.gHUD.Message("Takeout Check - out - FAIL");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                            Debug.Log("Takeout Check - out - FAIL");
+                                            gm.gHUD.Message("Takeout Check - out - FAIL");
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    shotSelector = 1;
-                                    Debug.Log("Takeout Check - out - FAIL");
-                                    gm.gHUD.Message("Takeout Check - out - FAIL");
+                                    if (houseCount > 2)
+                                    {
+                                        //guard
+                                        if (Random.Range(0f, 11f) < activeCharStats.guardAccuracy.GetValue())
+                                        {
+                                            shotSelector = 3;
+                                            Debug.Log("No Takeout Target - Guard Check - SUCCESS");
+                                            gm.gHUD.Message("No Takeout Target - Guard Check - SUCCESS");
+                                        }
+                                        else
+                                        {
+                                            if (Random.Range(0f, 1f) < 0.5f)
+                                            {
+                                                shotSelector = 0;
+                                                Debug.Log("Guard Check - long - FAIL");
+                                                gm.gHUD.Message("Guard Check - long - FAIL");
+                                            }
+                                            else
+                                            {
+                                                shotSelector = 1;
+                                                Debug.Log("Guard Check - short - FAIL");
+                                                gm.gHUD.Message("Guard Check - short - FAIL");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //draw to house
+                                        if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
+                                        {
+                                            shotSelector = 0;
+                                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+                                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+                                        }
+                                        else
+                                        {
+                                            if (Random.Range(0f, 1f) < 0.5f)
+                                            {
+                                                shotSelector = 3;
+                                                Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+                                                gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+                                            }
+                                            else
+                                            {
+                                                shotSelector = 1;
+                                                Debug.Log("No Takeout Target - long - FAIL");
+                                                gm.gHUD.Message("No Takeout Target - long - FAIL");
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            else
+                            if (gm.houseList.Count > 2)
                             {
-                                shotSelector = 1;
-                                Debug.Log("Takeout Check - FAIL");
-                                gm.gHUD.Message("Takeout Check - FAIL");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //draw to house
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
-                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 3;
-                                Debug.Log("No Takeout Target - Draw Check - short - FAIL");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("No Takeout Target - Draw Check - long - FAIL");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - long - FAIL");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    //draw to house
-                    if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                    {
-                        shotSelector = 0;
-                        Debug.Log("Draw Check - SUCCESS");
-                        gm.gHUD.Message("Draw Check - SUCCESS");
-                    }
-                    else
-                    {
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 3;
-                            Debug.Log("Draw Check - short - FAIL");
-                            gm.gHUD.Message("Draw Check - short - FAIL");
-                        }
-                        else
-                        {
-                            shotSelector = 1;
-                            Debug.Log("Draw Check - long - FAIL");
-                            gm.gHUD.Message("Draw Check - long - FAIL");
-                        }
-                    }
-                }
-            }
-            //and the ai chooses an aggressive strategy...
-            //aggressive on aggressive - high prob of guards and rocks in house
-            //player rocks based on draw and guard accuracy, ai rocks unhindered
-            else
-            {
-                if (rockCurrent % 2 == 0)
-                {
-                    if (guardCounter < 3)
-                    {
-                        //guard check
-                        if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
-                        {
-                            shotSelector = 3;
-                            Debug.Log("Guard Check - SUCCESS");
-                            gm.gHUD.Message("Guard Check - SUCCESS");
-                        }
-                        else
-                        {
-                            shotSelector = 1;
-                            Debug.Log("Guard Check - FAIL");
-                            gm.gHUD.Message("Guard Check - FAIL");
-                        }
-                    }
-                    else if (houseCount < 2)
-                    {
-                        //draw check
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("Draw Check - SUCCESS");
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 3;
-                                Debug.Log("Draw Check - short - FAIL");
-                                gm.gHUD.Message("Draw Check - short - FAIL");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Draw Check - long - FAIL");
-                                gm.gHUD.Message("Draw Check - long - FAIL");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //freeze to opponent stone if there is one
-                        bool stopCounting = false;
-
-                        for (int j = 0; j < gm.rockList.Count; j++)
-                        {
-                            if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                                == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
-                            {
-                                freezeSelector = j;
-                                stopCounting = true;
-                            }
-                        }
-                        if (stopCounting)
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 5;
-                                Debug.Log("Freeze - TARGET - " + gm.rockList[freezeSelector].rockInfo.teamName + " " + gm.rockList[freezeSelector].rockInfo.rockNumber);
-                                Debug.Log("Freeze Check - SUCCESS");
-                                gm.gHUD.Message("Freeze Check - SUCCESS");
-                            }
-                            else
-                            {
-                                shotSelector = 0;
-                                Debug.Log("Freeze Check - FAIL");
-                                gm.gHUD.Message("Freeze Check - FAIL");
-                            }
-                        }
-                        else
-                        {
-                            //draw to house
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 0;
-                                Debug.Log("Draw Check - SUCCESS");
-                                gm.gHUD.Message("Draw Check - SUCCESS");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Draw Check - FAIL");
-                                gm.gHUD.Message("Draw Check - FAIL");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (guardCounter < 3)
-                    {
-                        //guard check
-                        if (Random.Range(0f, 10f) < activeCharStats.guardAccuracy.GetValue())
-                        {
-                            shotSelector = 3;
-                            Debug.Log("Guard Check - SUCCESS");
-                            gm.gHUD.Message("Guard Check - SUCCESS");
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Guard Check - short - FAIL");
-                                gm.gHUD.Message("Guard Check - short - FAIL");
-                            }
-                            else
-                            {
-                                shotSelector = 3;
-                                Debug.Log("Guard Check - long - FAIL");
-                                gm.gHUD.Message("Guard Check - long - FAIL");
-                            }
-                        }
-                    }
-                    else if (houseCount < 2)
-                    {
-                        //draw check
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("Draw Check - SUCCESS");
-                            gm.gHUD.Message("Draw Check - SUCCESS");
-                        }
-                        else
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 3;
-                                Debug.Log("Draw Check - short - FAIL");
-                                gm.gHUD.Message("Draw Check - short - FAIL");
-                            }
-                            else
-                            {
-                                shotSelector = 1;
-                                Debug.Log("Draw Check - long - FAIL");
-                                gm.gHUD.Message("Draw Check - long - FAIL");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //freeze check
-                        bool stopCounting = false;
-
-                        for (int j = 0; j < gm.rockList.Count; j++)
-                        {
-                            if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                                == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
-                            {
-                                freezeSelector = j;
-                                stopCounting = true;
-                            }
-                        }
-                        if (stopCounting)
-                        {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 5;
-                                Debug.Log("Freeze - TARGET - " + gm.rockList[freezeSelector].rockInfo.teamName + " " + gm.rockList[freezeSelector].rockInfo.rockNumber);
-                                Debug.Log("Freeze Check - SUCCESS");
-                                gm.gHUD.Message("Freeze Check - SUCCESS");
-                            }
-                            else
-                            {
-                                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+                                //guard
+                                if (Random.Range(0f, 11f) < activeCharStats.guardAccuracy.GetValue())
                                 {
                                     shotSelector = 3;
-                                    Debug.Log("Freeze Check - short - FAIL");
-                                    gm.gHUD.Message("Freeze Check - short - FAIL");
+                                    Debug.Log("No Takeout Target - Guard Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Guard Check - SUCCESS");
                                 }
                                 else
                                 {
-                                    shotSelector = 1;
-                                    Debug.Log("Freeze Check - long - FAIL");
-                                    gm.gHUD.Message("Freeze Check - long - FAIL");
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 0;
+                                        Debug.Log("Guard Check - long - FAIL");
+                                        gm.gHUD.Message("Guard Check - long - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("Guard Check - short - FAIL");
+                                        gm.gHUD.Message("Guard Check - short - FAIL");
+                                    }
                                 }
-                            }
-                        }
-                        else
-                        {
-                            //draw to house
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                            {
-                                shotSelector = 0;
-                                Debug.Log("Draw Check - SUCCESS");
-                                gm.gHUD.Message("Draw Check - SUCCESS");
                             }
                             else
                             {
-                                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+                                //draw to house
+                                if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
                                 {
-                                    shotSelector = 3;
-                                    Debug.Log("Draw Check - short - FAIL");
-                                    gm.gHUD.Message("Draw Check - short - FAIL");
+                                    shotSelector = 0;
+                                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
                                 }
                                 else
                                 {
-                                    shotSelector = 1;
-                                    Debug.Log("Draw Check - long - FAIL");
-                                    gm.gHUD.Message("Draw Check - long - FAIL");
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 3;
+                                        Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("No Takeout Target - long - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - long - FAIL");
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
-        }
-        else
-        {
-            Debug.Log("Player Shot - Placement");
-
-            Random.InitState(System.DateTime.Now.Millisecond);
-
-            bool stopCounting = false;
-            switch(playerSelection)
-            {
-                case 0:
-                    #region Draw
-                    //draw to house
-                    if (Random.Range(0f, 6f) < activeCharStats.drawAccuracy.GetValue())
+                    else if (gm.gList.Count > 0)
                     {
-                        shotSelector = 0;
-                        Debug.Log("Draw Check - SUCCESS");
-                        gm.gHUD.Message("Draw Check - SUCCESS");
-                    }
-                    else
-                    {
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 3;
-                            Debug.Log("Draw Check - short - FAIL");
-                            gm.gHUD.Message("Draw Check - short - FAIL");
-                        }
-                        else
-                        {
-                            shotSelector = 1;
-                            Debug.Log("Draw Check - long - FAIL");
-                            gm.gHUD.Message("Draw Check - long - FAIL");
-                        }
-                    }
-                    break;
-                    #endregion
-                case 1:
-                    #region Left Guard
-                    shotSelector = 6;
-                    break;
-                    #endregion
-                case 2:
-                    #region Centre Guard
-                    shotSelector = 6;
-                    break;
-                    #endregion
-                case 3:
-                    #region Right Guard
-                    shotSelector = 6;
-                    break;
-                    #endregion
-                case 4:
-                    #region Takeout
-                    //if there's an opponent, takeout
-                    //stopCounting = false;
+                        //check for opponent rocks
+                        bool hit = false;
+                        int counter = 0;
 
-                    for (int j = 0; j < gm.rockList.Count; j++)
-                    {
-                        if (!stopCounting && gm.rockList[j].rockInfo.teamName
-                            == otherTeamName && gm.rockList[j].rockInfo.inHouse && !gm.rockList[j].rockInfo.outOfPlay)
+                        foreach (House_List rock in gm.houseList)
                         {
-
-                            takeOutSelector = gm.rockList[j].rockInfo.rockIndex;
-                            stopCounting = true;
-                            Debug.Log("Takeout Selector < 5 - " + takeOutSelector);
-                        }
-                    }
-
-                    if (stopCounting)
-                    {
-                        if (Random.Range(0f, 6f) < activeCharStats.takeOutAccuracy.GetValue())
-                        {
-                            shotSelector = 4;
-                            Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                            Debug.Log("Takeout Check - SUCCESS");
-                            gm.gHUD.Message("Takeout Check - SUCCESS");
-                        }
-                        else
-                        {
-                            stopCounting = false;
-                            for (int j = 0; j < gm.rockList.Count; j++)
+                            if (!hit && rock.rockInfo.teamName == otherTeamName)
                             {
-                                if (!stopCounting && !gm.rockList[j].rockInfo.outOfPlay && j != takeOutSelector)
+                                bool guarded = false;
+                                foreach (Guard_List guard in gm.gList)
                                 {
-                                    takeOutSelector = j;
-                                    stopCounting = true;
+                                    if (!guarded
+                                        && Mathf.Abs(guard.lastTransform.position.x - rock.rock.transform.position.x) < 0.5f)
+                                    {
+                                        guarded = true;
+                                    }
+                                }
+                                if (!guarded)
+                                {
+                                    hit = true;
+                                    takeOutSelector = rock.rockInfo.rockIndex;
+                                    Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
                                 }
                             }
-                            if (stopCounting)
+                        }
+
+                        if (hit)
+                        {
+                            //takeout check
+                            if (Random.Range(0f, 11f) < activeCharStats.takeOutAccuracy.GetValue())
                             {
-                                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+                                shotSelector = 4;
+                                Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                Debug.Log("Takeout Check - SUCCESS");
+                                gm.gHUD.Message("Takeout Check - SUCCESS");
+                            }
+                            else
+                            {
+                                //check for deflections
+                                if (Random.Range(0f, 1f) < 0.5f)
                                 {
-                                    shotSelector = 4;
-                                    Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
-                                    Debug.Log("Takeout Check - crash - FAIL");
-                                    gm.gHUD.Message("Takeout Check - crash - FAIL");
+                                    hit = false;
+                                    foreach (Rock_List rock in gm.rockList)
+                                    {
+                                        if (!hit && takeOutSelector != rock.rockInfo.rockIndex && rock.rockInfo.inPlay)
+                                        {
+                                            hit = true;
+                                            takeOutSelector = rock.rockInfo.rockIndex;
+                                            Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                                        }
+                                    }
+
+                                    if (hit)
+                                    {
+                                        shotSelector = 4;
+                                        Debug.Log("Takeout - HIT - " + gm.rockList[takeOutSelector].rockInfo.teamName + " " + gm.rockList[takeOutSelector].rockInfo.rockNumber);
+                                        Debug.Log("Takeout Check - crash - FAIL");
+                                        gm.gHUD.Message("Takeout Check - crash - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("Takeout Check - out - FAIL");
+                                        gm.gHUD.Message("Takeout Check - out - FAIL");
+                                    }
                                 }
                                 else
                                 {
@@ -1051,99 +1771,1063 @@ public class RandomRockPlacerment : MonoBehaviour
                                     gm.gHUD.Message("Takeout Check - out - FAIL");
                                 }
                             }
+                        }
+                        else
+                        {
+                            if (houseCount > 2)
+                            {
+                                //guard
+                                if (Random.Range(0f, 11f) < activeCharStats.guardAccuracy.GetValue())
+                                {
+                                    shotSelector = 3;
+                                    Debug.Log("No Takeout Target - Guard Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Guard Check - SUCCESS");
+                                }
+                                else
+                                {
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 0;
+                                        Debug.Log("Guard Check - long - FAIL");
+                                        gm.gHUD.Message("Guard Check - long - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("Guard Check - short - FAIL");
+                                        gm.gHUD.Message("Guard Check - short - FAIL");
+                                    }
+                                }
+                            }
                             else
                             {
-                                shotSelector = 1;
-                                Debug.Log("Takeout Check - FAIL");
-                                gm.gHUD.Message("Takeout Check - FAIL");
+                                //draw to house
+                                if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
+                                {
+                                    shotSelector = 0;
+                                    Debug.Log("No Takeout Target - Draw Check - SUCCESS");
+                                    gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+                                }
+                                else
+                                {
+                                    if (Random.Range(0f, 1f) < 0.5f)
+                                    {
+                                        shotSelector = 3;
+                                        Debug.Log("No Takeout Target - Draw Check - short - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+                                    }
+                                    else
+                                    {
+                                        shotSelector = 1;
+                                        Debug.Log("No Takeout Target - long - FAIL");
+                                        gm.gHUD.Message("No Takeout Target - long - FAIL");
+                                    }
+                                }
                             }
                         }
                     }
                     else
                     {
                         //draw to house
-                        if (Random.Range(0f, 6f) < activeCharStats.drawAccuracy.GetValue())
+                        if (Random.Range(0f, 11f) < activeCharStats.drawAccuracy.GetValue())
                         {
                             shotSelector = 0;
-                            Debug.Log("No Takeout Target - Draw Check - SUCCESS");
-                            gm.gHUD.Message("No Takeout Target - Draw Check - SUCCESS");
+                            Debug.Log("Draw Check - SUCCESS");
                         }
                         else
                         {
-                            if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+                            if (Random.Range(0f, 1f) < 0.5f)
                             {
                                 shotSelector = 3;
-                                Debug.Log("No Takeout Target - Draw Check - short - FAIL");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - short - FAIL");
+                                Debug.Log("Draw Check - short - FAIL");
+                                gm.gHUD.Message("Draw Check - short - FAIL");
                             }
                             else
                             {
                                 shotSelector = 1;
-                                Debug.Log("No Takeout Target - Draw Check - long - FAIL");
-                                gm.gHUD.Message("No Takeout Target - Draw Check - long - FAIL");
+                                Debug.Log("Draw Check - long - FAIL");
+                                gm.gHUD.Message("Draw Check - long - FAIL");
                             }
                         }
                     }
-                    break;
-                    #endregion
-                case 5:
-                    #region Freeze
-                    //freeze to opponent stone if there is one
-                    stopCounting = false;
-
-                    for (int j = 0; j < gm.houseList.Count; j++)
-                    {
-                        if (!stopCounting && gm.houseList[j].rockInfo.teamName == otherTeamName)
-                        {
-                            freezeSelector = j;
-                            stopCounting = true;
-                        }
-                    }
-                    if (stopCounting)
-                    {
-                        if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
-                        {
-                            shotSelector = 4;
-                            Debug.Log("Freeze - TARGET - " + gm.houseList[freezeSelector].rockInfo.teamName + " " + gm.houseList[freezeSelector].rockInfo.rockNumber);
-                            Debug.Log("Freeze Check - SUCCESS");
-                            gm.gHUD.Message("Freeze Check - SUCCESS");
-                        }
-                        else
-                        {
-                            shotSelector = 1;
-                            Debug.Log("Freeze Check - FAIL");
-                            gm.gHUD.Message("Freeze Check - FAIL");
-                        }
-                    }
-                    else
-                    {
-                        //draw to house
-                        if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
-                        {
-                            shotSelector = 0;
-                            Debug.Log("No Freeze Target - Draw Check - SUCCESS");
-                            gm.gHUD.Message("No Freeze Target - Draw Check - SUCCESS");
-                        }
-                        else
-                        {
-                            shotSelector = 1;
-                            Debug.Log("No Freeze Target - Draw Check - FAIL");
-                            gm.gHUD.Message("No Freeze Target - Draw Check - FAIL");
-                        }
-                    }
-                    break;
+                }
                 #endregion
-                default:
-                    break;
-            }
+                break;
+            case 7:
+                #region Penultimate End - Losing
+                Debug.Log("Penultimate End - Losing");
+                //with hammer
+                    //blank to keep hammer
+                //without hammer
+                    //steal 1
+                if (rockCurrent < 5)
+                {
+                    if (rockCurrent % 2 == 0)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                    if (gm.houseList.Count > 2)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (gm.gList.Count < 2)
+                        {
+                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        }
+                    }
+                }
+                else if (rockCurrent > 13)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                else
+                {
+                    if (gm.gList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.gList.Count > 0)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    //Crash check
+                                    if (shotSelector == 99)
+                                    {
+                                        TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                        if (hit)
+                                        {
+                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                        }
+                                    }
+                                }
+                                else if (gm.houseList.Count > 2)
+                                {
+                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                }
+                            }
+                            else if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                #endregion
+                break;
+            case 8:
+                #region Penultimate End - Winning
+                Debug.Log("Penultimate End - Winning");
+                //with hammer
+                    //prevent scoring (very conservative)
+                //without hammer
+                    //force 1
+
+                if (rockCurrent % 2 == 1)
+                {
+
+                }
+                if (rockCurrent < 5)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (gm.houseList.Count > 2)
+                        {
+                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                }
+                else if (rockCurrent > 13)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                else
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.gList.Count > 0)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    //Crash check
+                                    if (shotSelector == 99)
+                                    {
+                                        TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                        if (hit)
+                                        {
+                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                        }
+                                    }
+                                }
+                                else if (gm.houseList.Count > 2)
+                                {
+                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                }
+                            }
+                            else if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else if (gm.gList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                #endregion
+                break;
+            case 9:
+                #region Last End - Tied
+                //with hammer
+                    //prevent opponent scoring at all costs
+                //without hammer
+                    //steal 1 at all costs
+                Debug.Log("Last End - Tied");
+                if (rockCurrent < 5)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (gm.houseList.Count > 2)
+                        {
+                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                }
+                else if (rockCurrent > 13)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                else
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.gList.Count > 0)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    //Crash check
+                                    if (shotSelector == 99)
+                                    {
+                                        TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                        if (hit)
+                                        {
+                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                        }
+                                    }
+                                }
+                                else if (gm.houseList.Count > 2)
+                                {
+                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                }
+                            }
+                            else if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else if (gm.gList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                #endregion
+                break;
+            case 10:
+                #region Last End - Losing
+                Debug.Log("Last End - Losing");
+                //with hammer
+                    //score
+                //without hammer
+                    //steal
+                if (rockCurrent < 5)
+                {
+                    if (gm.houseList.Count > 2)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Freeze", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = 4;
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                    }
+                }
+                else if (rockCurrent > 13)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                else
+                {
+                    if (gm.gList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.gList.Count > 0)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    //Crash check
+                                    if (shotSelector == 99)
+                                    {
+                                        TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                        if (hit)
+                                        {
+                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                        }
+                                    }
+                                }
+                                else if (gm.houseList.Count > 2)
+                                {
+                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                }
+                            }
+                            else if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                #endregion
+                break;
+            case 11:
+                #region Last End - Winning
+                Debug.Log("Last End - Winning");
+                if (rockCurrent < 5)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (gm.houseList.Count > 2)
+                        {
+                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                }
+                else if (rockCurrent > 13)
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                else
+                {
+                    if (gm.houseList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "House", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (gm.gList.Count > 0)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    //Crash check
+                                    if (shotSelector == 99)
+                                    {
+                                        TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                        if (hit)
+                                        {
+                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        }
+                                        else
+                                        {
+                                            shotSelector = 1;
+                                        }
+                                    }
+                                }
+                                else if (gm.houseList.Count > 2)
+                                {
+                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                }
+                            }
+                            else if (gm.houseList.Count > 2)
+                            {
+                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            }
+                            else
+                            {
+                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            }
+                        }
+                    }
+                    else if (gm.gList.Count > 0)
+                    {
+                        bool hit;
+                        TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
+
+                        if (hit)
+                        {
+                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            //Crash check
+                            if (shotSelector == 99)
+                            {
+                                TakeOutTarget(activeTeamName, otherTeamName, "All", out hit, out takeOutSelector);
+
+                                if (hit)
+                                {
+                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                }
+                                else
+                                {
+                                    shotSelector = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        }
+                    }
+                    else
+                    {
+                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                    }
+                }
+                #endregion
+                break;
         }
-        //if the player chooses a draw in the house..
 
-        //and the ai is using a defensive strategy...
-        //
-
-
-        ShotSelector(shotSelector, takeOutSelector, freezeSelector, shooter, activeCharStats, otherCharStats);
+        ShotSelector(shotSelector, takeOutSelector, shooter, activeCharStats, otherCharStats);
 
         Debug.Log("Team Yellow TakeOut Accuracy " + tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue());
 
@@ -1200,6 +2884,24 @@ public class RandomRockPlacerment : MonoBehaviour
             //Handheld.Vibrate();
             //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
             yield return new WaitForEndOfFrame();
+
+            gm.houseList.Clear();
+            gm.gList.Clear();
+            int counter = 0;
+            foreach (Rock_List rock in gm.rockList)
+            {
+                if (rock.rockInfo.inPlay == true && rock.rockInfo.inHouse && rock.rockInfo.distance < 1.5f)
+                {
+                    counter++;
+                    gm.houseList.Add(new House_List(rock.rock, rock.rockInfo));
+                    Debug.Log("Adding House " + counter + " - " + rock.rockInfo.teamName + rock.rockInfo.rockNumber);
+                }
+                if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
+                {
+                    gm.gList.Add(new Guard_List(rockCurrent, rock.rockInfo.freeGuard, rock.rock.transform));
+                    Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                }
+            }
         }
 
         //gm.rockCurrent = rockCurrent - 1;
@@ -1207,7 +2909,7 @@ public class RandomRockPlacerment : MonoBehaviour
         placed1 = true;
     }
 
-    void ShotSelector(int shotSelector, int takeOutSelector, int freezeSelector, int shooter, CharacterStats activeCharStats, CharacterStats otherCharStats)
+    void ShotSelector(int shotSelector, int takeOutSelector, int shooter, CharacterStats activeCharStats, CharacterStats otherCharStats)
     {
         Random.InitState((int)System.DateTime.Now.Ticks);
         //placed = false;
@@ -1216,15 +2918,15 @@ public class RandomRockPlacerment : MonoBehaviour
         switch (shotSelector)
         {
             case 0:
-                #region Draw to Position
+                #region Draw Random
                 Debug.Log("Case 0 - House");
-                Debug.Log("Case 0 - " + houseCount + " - i is " + rockCurrent);
+                //Debug.Log("Case 0 - " + houseCount + " - i is " + rockCurrent);
                 placeSelector = 9;
                 rockPos[rockCurrent] = placePos[placeSelector]
                     + (Random.insideUnitCircle
                     * (1.5f - (0.05f * activeCharStats.drawAccuracy.GetValue())));
-                houseCount++;
-                gm.houseList.Add(new House_List (gm.rockList[rockCurrent].rock, gm.rockList[rockCurrent].rockInfo));
+                //houseCount++;
+                //gm.houseList.Add(new House_List (gm.rockList[rockCurrent].rock, gm.rockList[rockCurrent].rockInfo));
                 Debug.Log("case 0 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
                 #endregion
@@ -1237,10 +2939,10 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             #endregion
             case 2:
-                #region Out
-                Debug.Log("Case 2 - Out");
-                placeSelector = 10;
-                rockPos[rockCurrent] = placePos[placeSelector];
+                #region Draw Four Foot
+                Debug.Log("Case 2 - Four Foot");
+                placeSelector = 9;
+                rockPos[rockCurrent] = placePos[placeSelector] + (Random.insideUnitCircle * 0.5f);
                 Debug.Log("case 2 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
             #endregion
@@ -1298,6 +3000,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     rockPos[rockCurrent] = rockPos[takeOutSelector]
                         + (Random.insideUnitCircle * (1.5f - (0.05f * activeCharStats.takeOutAccuracy.GetValue())));
                     Debug.Log("Hit and Roll Check - SUCCESS");
+                    houseCount++;
                 }
                 else
                 {
@@ -1328,42 +3031,44 @@ public class RandomRockPlacerment : MonoBehaviour
                 #endregion
             case 5:
                 #region Freeze
-                Debug.Log("Case 5 - Freeze - " + freezeSelector);
+                Debug.Log("Case 5 - Freeze - " + takeOutSelector);
                 //takeOut check
                 if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
                 {
-                    rockPos[rockCurrent].y = rockPos[freezeSelector].y - 0.5f;
-                    rockPos[rockCurrent].x = rockPos[freezeSelector].x;
+                    rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.5f;
+                    rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
                             * (0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue())));
                     Debug.Log("Close Freeze Check - SUCCESS");
+                    
                 }
                 else
                 {
-                    rockPos[rockCurrent].y = rockPos[freezeSelector].y - 0.5f;
-                    rockPos[rockCurrent].x = rockPos[freezeSelector].x;
+                    rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.5f;
+                    rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
                             * (2f - (0.1f * activeCharStats.drawAccuracy.GetValue())));
                     Debug.Log("Close Freeze Check - FAIL");
                 }
+                houseCount++;
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
 
                 if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
                 {
-                    rockPos[freezeSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
                     Debug.Log("Opponent Freeze Check - SUCCESS");
                 }
                 else
                 {
-                    rockPos[freezeSelector].x += Random.Range(0f, 0.1f * activeCharStats.drawAccuracy.GetValue());
-                    rockPos[freezeSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].x += Random.Range(0f, 0.1f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
                     Debug.Log("Opponent Freeze Check - FAIL");
                 }
                 break;
             #endregion
             case 6:
-                #region Guard
+                #region Manual Guard
                 Debug.Log("Case 6 - Guard");
                 Debug.Log("case 6 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
 
@@ -1406,6 +3111,238 @@ public class RandomRockPlacerment : MonoBehaviour
         Debug.Log("Rock " + rockCurrent + " is placed");
         placed = true;
     }
-    
 
+    void TakeOutTarget(string activeTeamName, string otherTeamName, string targetRange, out bool hit, out int takeOutSelector)
+    {
+        hit = false;
+        takeOutSelector = 99;
+
+        Random.InitState(System.DateTime.Now.Millisecond);
+
+        switch (targetRange)
+        {
+            case "House":
+                foreach (House_List rock in gm.houseList)
+                {
+                    if (!hit && rock.rockInfo.teamName == otherTeamName)
+                    {
+                        bool guarded = false;
+                        //guard check
+                        foreach (Guard_List guard in gm.gList)
+                        {
+                            if (!guarded
+                                && Mathf.Abs(guard.lastTransform.position.x - rock.rock.transform.position.x) < 0.5f)
+                            {
+                                guarded = true;
+                            }
+                        }
+                        //if not guarded, that's the target
+                        if (!guarded)
+                        {
+                            hit = true;
+                            takeOutSelector = rock.rockInfo.rockIndex;
+                            Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                        }
+                    }
+                }
+                Debug.Log("Takeout Target - House - TakeoutSelector - " + takeOutSelector);
+                break;
+
+            case "Guards":
+
+                if (rockCurrent % 2 == 1)
+                {
+                    foreach (Guard_List rock in gm.gList)
+                    {
+                        if (!hit && Mathf.Abs(rock.lastTransform.position.x) < 0.5f)
+                        {
+                            hit = true;
+                            takeOutSelector = rock.rockIndex;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (Guard_List rock in gm.gList)
+                    {
+                        if (!hit && Mathf.Abs(rock.lastTransform.position.x) > 0.5f)
+                        {
+                            hit = true;
+                            takeOutSelector = rock.rockIndex;
+                        }
+                    }
+                }
+
+                Debug.Log("Takeout Target - Guards - TakeoutSelector - " + takeOutSelector);
+                break;
+
+            case "All":
+
+                foreach (Rock_List rock in gm.rockList)
+                {
+                    if (!hit && rock.rockInfo.inPlay && rock.rock.transform.position.y > gm.rockList[takeOutSelector].rock.transform.position.y)
+                    {
+                        hit = true;
+                        takeOutSelector = rock.rockInfo.rockIndex;
+                    }
+                }
+                Debug.Log("Takeout Target - All - TakeoutSelector - " + takeOutSelector);
+                break;
+            default:
+                takeOutSelector = 99;
+                Debug.Log("Takeout Target - Default - TakeoutSelector - " + takeOutSelector);
+                break;
+        }
+    }
+
+    int SkillCheck(string shot, int skill)
+    {
+        int shotSelector;
+        switch (shot)
+        {
+            case "Guard":
+                if (Random.Range(0f, 11f) < skill)
+                {
+                    shotSelector = 3;
+                    Debug.Log("Guard Check - SUCCESS");
+                    gm.gHUD.Message("Guard Check - SUCCESS");
+                }
+                else
+                {
+                    //RANDOM check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 0;
+                        Debug.Log("Guard Check - long - FAIL");
+                        gm.gHUD.Message("Guard Check - long - FAIL");
+                    }
+                    else
+                    {
+                        shotSelector = 1;
+                        Debug.Log("Guard Check - short - FAIL");
+                        gm.gHUD.Message("Guard Check - short - FAIL");
+                    }
+                }
+                break;
+
+            case "Draw":
+                if (Random.Range(0f, 11f) < skill)
+                {
+                    shotSelector = 0;
+                    Debug.Log("Draw Check - SUCCESS");
+                    gm.gHUD.Message("Draw Check - SUCCESS");
+                }
+                else
+                {
+                    //RANDOM check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 3;
+                        Debug.Log("Draw Check - short - FAIL");
+                        gm.gHUD.Message("Draw Check - short - FAIL");
+                    }
+                    else
+                    {
+                        shotSelector = 1;
+                        Debug.Log("Draw Check - long - FAIL");
+                        gm.gHUD.Message("Draw Check - long - FAIL");
+                    }
+                }
+                break;
+
+            case "Draw Four Foot":
+                if (Random.Range(0f, 11f) < skill)
+                {
+                    shotSelector = 2;
+                    Debug.Log("Draw Check - SUCCESS");
+                    gm.gHUD.Message("Draw Check - SUCCESS");
+                }
+                else
+                {
+                    //RANDOM check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 3;
+                        Debug.Log("Draw Check - short - FAIL");
+                        gm.gHUD.Message("Draw Check - short - FAIL");
+                    }
+                    else
+                    {
+                        shotSelector = 1;
+                        Debug.Log("Draw Check - long - FAIL");
+                        gm.gHUD.Message("Draw Check - long - FAIL");
+                    }
+                }
+                break;
+
+            case "Takeout":
+                //SKILL check
+                if (Random.Range(0f, 11f) < skill)
+                {
+                    shotSelector = 4;
+                    Debug.Log("Takeout Check - SUCCESS");
+                    gm.gHUD.Message("Takeout Check - SUCCESS");
+                }
+                //SKILL check - fail
+                else
+                {
+                    //RANDOM crash check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 99;
+                        Debug.Log("Takeout Check - crash - FAIL");
+                        gm.gHUD.Message("Takeout Check - crash - FAIL");
+                    }
+                    //crash check - out
+                    else
+                    {
+                        shotSelector = 1;
+                        Debug.Log("Takeout Check - out - FAIL");
+                        gm.gHUD.Message("Takeout Check - out - FAIL");
+                    }
+                }
+                break;
+
+            case "Freeze":
+                //SKILL check
+                if (Random.Range(0f, 11f) < skill)
+                {
+                    shotSelector = 5;
+                    Debug.Log("Freeze Check - SUCCESS");
+                    gm.gHUD.Message("Freeze Check - SUCCESS");
+                }
+                //SKILL check - fail
+                else
+                {
+                    //RANDOM crash check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 99;
+                        Debug.Log("Freeze Check - out - FAIL");
+                        gm.gHUD.Message("Freeze Check - out - FAIL");
+                    }
+                    //RANDOM check
+                    if (Random.Range(0f, 1f) < 0.5f)
+                    {
+                        shotSelector = 3;
+                        Debug.Log("Draw Check - short - FAIL");
+                        gm.gHUD.Message("Draw Check - short - FAIL");
+                    }
+                    else
+                    {
+                        shotSelector = 1;
+                        Debug.Log("Draw Check - long - FAIL");
+                        gm.gHUD.Message("Draw Check - long - FAIL");
+                    }
+                }
+                break;
+            default:
+                shotSelector = 1;
+                Debug.Log("Skill Check Default - FAIL");
+                gm.gHUD.Message("Skill Check Default - FAIL");
+                break;
+        }
+
+        return shotSelector;
+    }
 }

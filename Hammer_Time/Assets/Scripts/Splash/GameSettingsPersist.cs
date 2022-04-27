@@ -104,6 +104,8 @@ public class GameSettingsPersist : MonoBehaviour
         }
 
         teamM = FindObjectOfType<TeamManager>();
+
+        score = new Vector2Int[ends + 1];
     }
 
     public void LoadSettings()

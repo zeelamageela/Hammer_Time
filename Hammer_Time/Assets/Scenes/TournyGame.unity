@@ -1036,11 +1036,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.39
+      value: -0.54
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.17
+      value: 6.47
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3400,18 +3400,18 @@ MonoBehaviour:
   bg: 3
   redHammer: 0
   ends: 2
-  rocks: 2
+  rocks: 0
   volume: 0.15
   tutorial: 0
   loadGame: 0
-  aiYellow: 0
-  aiRed: 1
+  aiYellow: 1
+  aiRed: 0
   debug: 1
   mixed: 0
   rockCurrent: 0
-  endCurrent: 1
-  yellowScore: 1
-  redScore: 5
+  endCurrent: 0
+  yellowScore: 5
+  redScore: 4
   tourny: 1
   KO: 0
   games: 0
@@ -3422,11 +3422,11 @@ MonoBehaviour:
   teamName: REDDD
   earnings: 0
   record: {x: 0, y: 0}
-  week: 5
+  week: 15
   cStats:
-    drawAccuracy: 7
+    drawAccuracy: 12
     takeOutAccuracy: 12
-    guardAccuracy: 8
+    guardAccuracy: 12
     sweepStrength: 10
     sweepEndurance: 10
     sweepHealth: 100
@@ -7140,6 +7140,7 @@ MonoBehaviour:
   sm: {fileID: 0}
   mainDisplay: {fileID: 1228243347}
   clickDisplay: {fileID: 775309546}
+  logDisplay: {fileID: 0}
   scoreboard: {fileID: 1938397114}
   scoreboardUI: {fileID: 1938397116}
   scoreCards:
@@ -11692,7 +11693,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 643.0126
+      value: 642.4502
       objectReference: {fileID: 0}
     - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -11708,7 +11709,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 287.68127
+      value: 287.4001
       objectReference: {fileID: 0}
     - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_AnchoredPosition.y
