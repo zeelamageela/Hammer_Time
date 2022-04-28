@@ -105,7 +105,6 @@ public class GameSettingsPersist : MonoBehaviour
 
         teamM = FindObjectOfType<TeamManager>();
 
-        score = new Vector2Int[ends + 1];
     }
 
     public void LoadSettings()
@@ -161,8 +160,9 @@ public class GameSettingsPersist : MonoBehaviour
 
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
-
+            Debug.Log("ends is " + ends);
             score = new Vector2Int[ends + 1];
+            Debug.Log("score length is " + score.Length);
             int[] redScoreList = myFile.GetArray<int>("Red Score List");
             int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
 

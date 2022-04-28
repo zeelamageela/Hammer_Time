@@ -16,7 +16,15 @@ public class Traj_Transform : MonoBehaviour
     float angle;
     //bool flipAxis = false;
 
-    
+    public GameObject aimUI;
+    public Transform point1;
+    public Transform point2;
+    public LineRenderer lr;
+
+    public GameObject aimUIY;
+    public Transform pointY1;
+    public Transform pointY2;
+    public LineRenderer lrY;
     void Update()
     {
         //if the rock list has rocks in it
@@ -52,6 +60,30 @@ public class Traj_Transform : MonoBehaviour
             
         }
 
+        if (trajLine.aimCircle.GetComponent<SpriteRenderer>().enabled)
+        {
+            lr.enabled = true;
+            lrY.enabled = true;
 
+            point1.localPosition = new Vector3(trajLine.aimCircle.transform.position.x, 0f, 0f);
+            point2.localPosition = new Vector3(trajLine.curlPointGO.transform.position.x, 0f, 0f);
+            lr.startColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+            lr.endColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+
+            pointY1.localPosition = new Vector3(0f, trajLine.aimCircle.transform.position.y, 0f);
+            pointY2.localPosition = new Vector3(0f, 0f, 0f);
+            lrY.startColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+            lrY.endColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+
+            Vector3[] aimX = new Vector3[2] { point1.transform.position, point2.transform.position };
+            lr.SetPositions(aimX);
+            Vector3[] aimY = new Vector3[2] { pointY1.transform.position, pointY2.transform.position };
+            lrY.SetPositions(aimY);
+        }
+        else
+        {
+            lr.enabled = false;
+            lrY.enabled = false;
+        }
     }
 }

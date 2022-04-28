@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Lofelt.NiceVibrations;
 
 public class SweeperManager : MonoBehaviour
 {
@@ -35,6 +36,8 @@ public class SweeperManager : MonoBehaviour
     GameSettingsPersist gsp;
     float timeLeft;
     float sweepTimer;
+
+    public HapticClip sweepHap;
 
     void Awake()
     {
@@ -75,6 +78,7 @@ public class SweeperManager : MonoBehaviour
                 Debug.Log("Whoa called in Tap Timer");
                 rockSounds[0].enabled = false;
                 rockSounds[1].enabled = false;
+                HapticController.Stop();
                 sweeperL.Whoa();
                 sweeperR.Whoa();
                 sweep.OnWhoa();
@@ -244,6 +248,10 @@ public class SweeperManager : MonoBehaviour
             rockSounds[1].enabled = true;
             rockSounds[0].pitch = 1f;
             rockSounds[1].pitch = 1f;
+            HapticController.Load(sweepHap);
+            HapticController.Loop(true);
+            HapticController.Play();
+            HapticController.clipFrequencyShift = 1f;
             sweeperL.Sweep();
             sweeperR.Sweep();
             sweep.OnSweep();
@@ -279,6 +287,10 @@ public class SweeperManager : MonoBehaviour
             rockSounds[1].enabled = false;
             rockSounds[0].pitch = 1f;
             rockSounds[1].pitch = 1f;
+            HapticController.Load(sweepHap);
+            HapticController.Loop(true);
+            HapticController.Play();
+            HapticController.clipFrequencyShift = 1f;
             sweep.OnLeft();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
             sweeperL.Sweep();
@@ -322,6 +334,10 @@ public class SweeperManager : MonoBehaviour
             rockSounds[1].enabled = true;
             rockSounds[0].pitch = 1f;
             rockSounds[1].pitch = 1f;
+            HapticController.Load(sweepHap);
+            HapticController.Loop(true);
+            HapticController.Play();
+            HapticController.clipFrequencyShift = 1f;
 
             sweep.OnRight();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);

@@ -203,6 +203,7 @@ MonoBehaviour:
   curl: {x: -0.323, y: 0}
   scaleFactor: 0.1
   flipAxis: 0
+  slideHap: {fileID: -8404250095460277587, guid: f4c5f8f4bfc2443849823656667eeb57, type: 3}
 --- !u!114 &-3200148751317697448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +255,9 @@ MonoBehaviour:
   inHouse: 0
   shotTaken: 0
   guard: 0
+  outHap: {fileID: -8404250095460277587, guid: c2b7f5cf840474d25bf9a8266189bd20, type: 3}
+  sideHap: {fileID: -8404250095460277587, guid: 6952a805b322d459085f6309ed4a58ad, type: 3}
+  hitHap: {fileID: -8404250095460277587, guid: 53e73bfa2b5714bef9504bac2cf10c35, type: 3}
 --- !u!82 &6741938035944311583
 AudioSource:
   m_ObjectHideFlags: 0

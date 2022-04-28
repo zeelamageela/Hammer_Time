@@ -119,8 +119,7 @@ public class AI_Strategy : MonoBehaviour
                 else
                     AggressiveNotHammer(rockCurrent, phase);
             }
-            else
-                if (gm.redScore < gm.yellowScore)
+            else if (gm.redScore < gm.yellowScore)
                 ConservativeStealOrBlank(rockCurrent, phase);
             else
                 AggressiveNotHammer(rockCurrent, phase);
@@ -175,7 +174,7 @@ public class AI_Strategy : MonoBehaviour
             #region Early Not Hammer
             case "early hammer":
                 //if there's rocks in the house
-                if (gm.houseList.Count != 0)
+                if (gm.houseList.Count > 0)
                 {
                     //if I have shot rock
                     if (closestRockInfo.teamName == rockInfo.teamName)
@@ -1701,7 +1700,6 @@ public class AI_Strategy : MonoBehaviour
 
     public void ConservativeStealOrBlank(int rockCurrent, string phase)
     {
-
         {
             GameObject rock = gm.rockList[rockCurrent].rock;
             Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;

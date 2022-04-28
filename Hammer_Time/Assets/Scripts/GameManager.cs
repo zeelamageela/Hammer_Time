@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Cinemachine;
 using TigerForge;
 using Photon.Pun;
+using Lofelt.NiceVibrations;
 
 public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
 
@@ -275,6 +276,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 1; i <= 16; i++)
         {
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
             if (i % 2 == notHammer)
             {
                 GameObject yellowRock_go;

@@ -132,7 +132,7 @@ public class TrajectoryLine : MonoBehaviour
         aimCircle.GetComponent<SpriteRenderer>().enabled = true;
 
         aimCircle.transform.position = lr.GetPosition(lr.positionCount - 1);
-        aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
+        aimCircle.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
 
         //lr.SetPositions(lr.GetPositions());
         //DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Lofelt.NiceVibrations;
 
 public class Rock_Force : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class Rock_Force : MonoBehaviour
     TrajectoryLine trajLine;
     AudioManager am;
     AudioSource[] rockSounds;
+
+    public HapticClip slideHap;
+
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -58,6 +62,10 @@ public class Rock_Force : MonoBehaviour
         float audVel = body.velocity.y / 4f;
         rockSounds[1].volume = audVel;
 
+        HapticController.Load(slideHap);
+        HapticController.Loop(true);
+        HapticController.Play();
+        HapticController.clipLevel = audVel;
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
@@ -79,6 +87,7 @@ public class Rock_Force : MonoBehaviour
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
                 body.drag = 0.55f;
+                HapticController.Stop();
             }
 
             //if (debugVertex)

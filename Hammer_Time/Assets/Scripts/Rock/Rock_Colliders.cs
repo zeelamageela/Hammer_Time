@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Lofelt.NiceVibrations;
 
 public class Rock_Colliders : MonoBehaviour
 {
@@ -23,6 +24,10 @@ public class Rock_Colliders : MonoBehaviour
     SweeperManager sm;
     GameManager gm;
     AudioSource[] rockSounds;
+
+    public HapticClip outHap;
+    public HapticClip sideHap;
+    public HapticClip hitHap;
 
 // Start is called before the first frame update
     void Awake()
@@ -75,6 +80,7 @@ public class Rock_Colliders : MonoBehaviour
 
     IEnumerator OutOfPlay()
     {
+        HapticController.Play(outHap);
         //Handheld.Vibrate();
         outOfPlay = true;
         //am.Play("OutOfPlay");
@@ -126,7 +132,7 @@ public class Rock_Colliders : MonoBehaviour
             outOfPlay = true;
             inPlay = false;
             Debug.Log("trigger boards");
-            Handheld.Vibrate();
+            HapticController.Play(sideHap);
         }
 
         if (collider == house_collider)
@@ -152,6 +158,8 @@ public class Rock_Colliders : MonoBehaviour
             //am.Play("Hit");
             rockSounds[0].volume = collision.relativeVelocity.magnitude;
             rockSounds[0].enabled = true;
+            HapticController.Play(hitHap);
+            HapticController.clipLevel = collision.relativeVelocity.magnitude;
             //Debug.Log("Relative Velocity - " + collision.relativeVelocity.magnitude);
 
             //Time.timeScale = 0f;
@@ -220,6 +228,7 @@ public class Rock_Colliders : MonoBehaviour
             Debug.Log("collider boards");
             StartCoroutine(OutOfPlay());
             rockSounds[2].enabled = true;
+            HapticController.Play(sideHap);
         }
     }
 
