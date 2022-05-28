@@ -53,6 +53,7 @@ public class TeamMenu : MonoBehaviour
 
             for (int i = 0; i < activePlayers.Length; i++)
             {
+                Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id); 
                 for (int j = 0; j < playerPool.Length; j++)
                 {
                     if (activePlayers[i].id == playerPool[j].id)

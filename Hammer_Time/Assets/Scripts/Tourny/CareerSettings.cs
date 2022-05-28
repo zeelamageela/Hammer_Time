@@ -251,6 +251,8 @@ public class CareerSettings : MonoBehaviour
         load.SetActive(false);
         player.SetActive(true);
         nextButton.text = "Start>";
+
+        NameGenerator();
     }
     public void MainMenu()
     {
@@ -263,5 +265,17 @@ public class CareerSettings : MonoBehaviour
         myFile = new EasyFileSave("my_player_data");
         if (myFile.Load())
             myFile.Delete();
+    }
+
+    void NameGenerator()
+    {
+        int first = Random.Range(0, 10);
+        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greecy", "Treep", "Cherp", "Glimp", "Jam", "Cray", "Stint" };
+
+        int last = Random.Range(0, 10);
+        string[] name2 = { "Griffle", "Stamp", "Gloob", "Fristensen", "Jumble", "Stoffer", "Wellzy", "Trinklet", "Guston", "Stoobler" };
+
+        playerNameInput.text = name1[first];
+        teamNameInput.text = name2[last];
     }
 }

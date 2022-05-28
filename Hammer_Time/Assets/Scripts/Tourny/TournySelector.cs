@@ -211,6 +211,7 @@ public class TournySelector : MonoBehaviour
                 }
                 cm.introDialogue[1] = true;
                 cm.introDialogue[2] = true;
+                hScroll.value = 0f;
             }
 
             if (cm.week == 3)
@@ -1144,8 +1145,9 @@ public class TournySelector : MonoBehaviour
 
     public void NewSeason()
     {
-        //dialogueGO.SetActive(true);
-        //coachGreen.TriggerDialogue("Intro", 0);
+        dialogueGO.SetActive(true);
+        coachGreen.TriggerDialogue("Intro", 7);
+        cm.introDialogue[7] = true;
         cm.NewSeason();
     }
 

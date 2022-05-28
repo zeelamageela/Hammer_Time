@@ -20240,7 +20240,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: 1417.24}
+  m_AnchoredPosition: {x: 562.44995, y: -482.99988}
   m_SizeDelta: {x: 1124.9, y: 966}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1466449042
@@ -27820,7 +27820,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.size
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.size
@@ -27876,6 +27876,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].name
+      value: Coach Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].name
       value: Coach Green
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
@@ -28090,12 +28094,30 @@ PrefabInstance:
       value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[0].sentences.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.size
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].sentences.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[0].sentences.Array.data[1]
+      value: Welcome to the pros!  No time to waste, we've got a busy schedule coming
+        up.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[0].sentences.Array.data[2]
+      value: Let's start by looking at Team TEAMNAME.  You'll get a chance to replace
+        team members every week.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[4].sentences.Array.data[1]
@@ -28126,6 +28148,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[4]
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.data[0]
+      value: Now that your roster is set, let's jump into our first 'spiel!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.data[1]
+      value: Swipe back and forth to view available tournaments, and click the tourny
+        name to play!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.data[2]
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.data[3]
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[7].sentences.Array.data[4]
       value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}

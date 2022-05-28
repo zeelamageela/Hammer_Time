@@ -195,6 +195,7 @@ public class CareerManager : MonoBehaviour
 
             for (int i = 0; i < playersIdList.Length; i++)
             {
+                Debug.Log("CM LOADCAREER - Active Players Id - " + i + " - " + playersIdList[i]);
                 teamSel.activePlayers[i].id = playersIdList[i];
 
             }
@@ -719,18 +720,17 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Tourny Earnings List", tournyEarningsList);
         }
 
-        if (teamSel)
+
+        //activePlayers = teamSel.activePlayers;
+        int[] playerIdList = new int[activePlayers.Length];
+
+        for (int i = 0; i < playerIdList.Length; i++)
         {
-            activePlayers = teamSel.activePlayers;
-            int[] playerIdList = new int[activePlayers.Length];
-
-            for (int i = 0; i < playerIdList.Length; i++)
-            {
-                playerIdList[i] = activePlayers[i].id;
-            }
-
-            myFile.Add("Active Players ID List", playerIdList);
+            playerIdList[i] = activePlayers[i].id;
+            Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
         }
+
+        myFile.Add("Active Players ID List", playerIdList);
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
         //myFile.Add("Tourny Wins List", tournyWinsList);
         //myFile.Add("Tourny Loss List", tournyLossList);
