@@ -86,7 +86,7 @@ public class AI_Shooter : MonoBehaviour
         takeOutY = aiTarg.takeOutY;
 
         if (!gsp.story)
-            aiSweep.OnSweep(aiShotType, aiTarg.targetPos, inturn);
+            aiSweep.OnSweep(true, aiShotType, aiTarg.targetPos, inturn);
 
         yield return new WaitForSeconds(0.5f);
 

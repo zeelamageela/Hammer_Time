@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MoreMountains.Feedbacks;
 
 public class Sweep : MonoBehaviour
 {
     public GameManager gm;
     public SweeperManager sm;
+    public MMFeedbackFloatingText fltText;
 
     RockManager rm;
     GameObject rock;
@@ -32,6 +34,11 @@ public class Sweep : MonoBehaviour
         rm = GetComponent<RockManager>();
     }
 
+    private void Update()
+    {
+        fltText.Direction = sm.sweepSel.moveDirection;
+    }
+
     public void EnterSweepZone()
     {
         //sweepButton.gameObject.SetActive(true);
@@ -50,6 +57,9 @@ public class Sweep : MonoBehaviour
     {
         statCalc = sm.swprLStats.sweepStrength.GetValue() + sm.swprRStats.sweepStrength.GetValue();
         statEndur = sm.swprLStats.sweepEndurance.GetValue() + sm.swprRStats.sweepEndurance.GetValue();
+        fltText.Direction = sm.sweepSel.moveDirection;
+
+        //Time.timeScale = 0.25f;
         StartCoroutine(SweepWeight());
     }
 
@@ -89,25 +99,40 @@ public class Sweep : MonoBehaviour
 
     public void OnWhoa()
     {
+        Time.timeScale = 1f;
         StartCoroutine(Whoa());
     }
 
     IEnumerator SweepWeight()
     {
+        Debug.Log("Rock being swept - " + gm.rockList[gm.rockCurrent].rock.name);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+
+        //fltText.Value = "SWEEP!";
+        //fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        //fltText.Direction = sm.sweepSel.moveDirection;
+        //fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
 
         //rb.angularDrag = rb.angularDrag + (5f * (sweepAmt));
 
         yield return new WaitForSeconds(sweepTime);
         //sm.SweepWeight();
         //sweepSel.SweepWeight();
-        float curl = rock.GetComponent<Rock_Force>().curl.x + ((statCalc / 4f) * sweepAmt);
+        float curl = rock.GetComponent<Rock_Force>().curl.x + ((statCalc / 2f) * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
-        rb.drag -= sweepAmt;
-        
+
+
+        Debug.Log("Sweep Amount is " + sweepAmt);
+
+        rb.drag -= sweepAmt * statCalc / 2f;
+
+        fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+        fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        fltText.Direction = sm.sweepSel.moveDirection;
+        fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
     }
 
     IEnumerator SweepHard()
@@ -134,7 +159,11 @@ public class Sweep : MonoBehaviour
     {
         sm.CallOut("Line");
         rock = gm.rockList[gm.rockCurrent].rock;
-        rb = rock.GetComponent<Rigidbody2D>();
+        fltText.Value = "LINE!";
+        //fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        //fltText.Direction = sm.sweepSel.moveDirection;
+        //fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
+        //rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
         rb.drag = 0.38f;
@@ -153,17 +182,26 @@ public class Sweep : MonoBehaviour
         //    //sweepSel.SweepRight();
         //}
 
-        rb.drag = (rb.drag - (sweepAmt / 2f));
+        rb.drag -= sweepAmt * statCalc / 4f;
 
-        float curl = rock.GetComponent<Rock_Force>().curl.x + ((statCalc / 2.5f) * sweepAmt);
+        float curl = rock.GetComponent<Rock_Force>().curl.x + (statCalc * sweepAmt * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+
+        fltText.Value = "Drag - " + rb.drag.ToString() + " --- Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+        fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        fltText.Direction = sm.sweepSel.moveDirection;
+        fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
     }
 
     IEnumerator SweepCurl(bool inturn)
     {
         sm.CallOut("Curl");
         rock = gm.rockList[gm.rockCurrent].rock;
+        //fltText.Value = "CURL!";
+        //fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        //fltText.Direction = sm.sweepSel.moveDirection;
+        //fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
         rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
@@ -183,11 +221,16 @@ public class Sweep : MonoBehaviour
         //    //sweepSel.SweepLeft();
         //}
 
-        rb.drag -= sweepAmt / 2f;
+        rb.drag -= sweepAmt * statCalc / 4f;
 
-        float curl = rock.GetComponent<Rock_Force>().curl.x - ((statCalc / 5f) * sweepAmt);
+        float curl = rock.GetComponent<Rock_Force>().curl.x - (sweepAmt * statCalc * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+
+        fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+        fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        fltText.Direction = sm.sweepSel.moveDirection;
+        fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
     }
 
     IEnumerator Whoa()
@@ -200,9 +243,15 @@ public class Sweep : MonoBehaviour
         //sweepSel.SweepWhoa();
 
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
-        
+
+        Time.timeScale = 1f;
         rb.drag = 0.38f;
         rb.angularDrag = 0.32f;
         //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
+
+        fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+        fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
+        fltText.Direction = sm.sweepSel.moveDirection;
+        fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
     }
 }

@@ -15,9 +15,9 @@ public class RockManager : MonoBehaviour
     public bool inturn;
     bool isPressed;
 
-
     void OnEnable()
     {
+
     }
 
     // Update is called once per frame
@@ -52,8 +52,10 @@ public class RockManager : MonoBehaviour
                     cm.top.depth = -1;
                     cm.InPlayZoom(dist);
                 }
+
             }
             
         }
     }
+
 }

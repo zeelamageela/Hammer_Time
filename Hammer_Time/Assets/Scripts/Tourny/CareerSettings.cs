@@ -134,6 +134,7 @@ public class CareerSettings : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             cm.earnings = myFile.GetFloat("Career Earnings");
             earnings = cm.earnings;
+            Debug.Log("Earnings are " + earnings);
             record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
             Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
@@ -148,7 +149,7 @@ public class CareerSettings : MonoBehaviour
             cm.cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
             cm.cStats.sweepStrength = myFile.GetInt("Sweep Strength");
             cm.cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
-            cm.cStats.sweepHealth = myFile.GetFloat("Sweep Health");
+            cm.cStats.sweepCohesion = myFile.GetInt("Sweep Health");
             cm.cardIDList = myFile.GetArray<int>("Card ID List");
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
@@ -222,9 +223,10 @@ public class CareerSettings : MonoBehaviour
         }
         else
         {
-            load.SetActive(false);
-            player.SetActive(true);
-            nextButton.text = "Start>";
+            New();
+            //load.SetActive(false);
+            //player.SetActive(true);
+            //nextButton.text = "Start>";
             newButton.gameObject.SetActive(false);
         }
     }
@@ -236,11 +238,11 @@ public class CareerSettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         
         gsp.careerLoad = false;
-        earnings = 0f;
-        cm.earnings = 0f;
         record = Vector2.zero;
         week = 0;
         season = 0;
+        earnings = 1000f;
+        cm.earnings = 1000f; 
         gsp.draw = 0;
         gsp.playoffRound = 0;
         gsp.inProgress = false;

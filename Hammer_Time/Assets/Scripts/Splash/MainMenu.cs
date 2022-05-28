@@ -22,7 +22,6 @@ public class MainMenu : MonoBehaviour
 
         float[] allTimeEarningsList;
         string[] allTimeNamesList;
-
         if (myFile.Load())
         {
             Debug.Log("All Time Load");
@@ -33,6 +32,7 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
+            Debug.Log("No Hi Score data");
             allTimeEarningsList = new float[1];
             allTimeNamesList = new string[1];
 

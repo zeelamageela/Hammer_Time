@@ -225,7 +225,7 @@ public class GameManager : MonoBehaviour
 
                     yield return new WaitUntil(() => rm.rrp.placed1);
 
-                    //yield return new WaitForSeconds(2.25f);
+                    yield return new WaitForSeconds(0.25f);
 
                     gHUD.MainDisplayOff();
                     //yield return StartCoroutine(CheckScore());
@@ -722,7 +722,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Rock List is " + rockList.Count);
         foreach (Rock_List rock in rockList)
         {
-            if (rock.rockInfo.inHouse == true)
+            if (rock.rockInfo.inHouse == true && rock.rockInfo.inPlay)
             {
                 houseList.Add(new House_List(rock.rock, rock.rockInfo));
                 //Debug.Log("Adding House " + rock.rockInfo.teamName + rock.rockInfo.rockNumber + " - " + rock.rockInfo.rockIndex);
@@ -734,7 +734,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForFixedUpdate();
+        //yield return new WaitForFixedUpdate();
 
         houseList.Sort();
         // if the we have shot all the rocks, go to the final scoring
@@ -748,9 +748,11 @@ public class GameManager : MonoBehaviour
         {
             if (houseList.Count != 0)
             {
+                int counter = 0;
                 foreach (House_List rock in houseList)
                 {
-                    //Debug.Log(rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                    counter++;
+                    Debug.Log("House List " + counter + " - " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
                 }
             }
 
@@ -880,7 +882,7 @@ public class GameManager : MonoBehaviour
 
             foreach (Rock_List rock in rockList)
             {
-                if (rock.rockInfo.inHouse)
+                if (rock.rockInfo.inHouse && rock.rockInfo.inPlay)
                 {
                     houseList.Add(new House_List(rock.rock, rock.rockInfo));
                 }

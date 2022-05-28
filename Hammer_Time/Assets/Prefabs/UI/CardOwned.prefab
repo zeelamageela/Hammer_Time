@@ -383,7 +383,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3895292122862513683}
         m_TargetAssemblyTypeName: Card_Select, Assembly-CSharp
-        m_MethodName: CardSelect
+        m_MethodName: ViewCard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

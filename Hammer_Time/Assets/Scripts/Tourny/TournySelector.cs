@@ -1144,8 +1144,8 @@ public class TournySelector : MonoBehaviour
 
     public void NewSeason()
     {
-        dialogueGO.SetActive(true);
-        coachGreen.TriggerDialogue("Intro", 0);
+        //dialogueGO.SetActive(true);
+        //coachGreen.TriggerDialogue("Intro", 0);
         cm.NewSeason();
     }
 

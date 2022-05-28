@@ -39,6 +39,7 @@ public class EndMenu : MonoBehaviour
     public Vector2[] score;
     public GameObject[] scoreCols;
 
+    int ends;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +48,7 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
+            ends = gsp.ends;
             if (gsp.endCurrent == 0)
             {
                 contButton.gameObject.SetActive(true);
@@ -64,7 +66,7 @@ public class EndMenu : MonoBehaviour
                     info.text = gsp.yellowTeamName + " has the hammer";
                 }
             }
-            else if (gsp.endCurrent >= gsp.ends)
+            else if (gsp.endCurrent >= ends)
             {
                 if (gsp.redScore != gsp.yellowScore)
                 {
@@ -75,12 +77,12 @@ public class EndMenu : MonoBehaviour
 
                     contButton.gameObject.SetActive(false);
                     endButton.gameObject.SetActive(true);
-                    contButton.transform.GetComponentInChildren<Text>().text = "End Game>";
+                    contButton.transform.GetComponentInChildren<Text>().text = "Tourny Home>";
                 }
                 else
                 {
                     info.text = "Extra End";
-                    gsp.ends++;
+                    ends++;
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
                 }
@@ -105,7 +107,7 @@ public class EndMenu : MonoBehaviour
             if (gsp.playoffRound > 0)
             {
                 if (gsp.KO)
-                    draw.text = "Round " + gsp.draw.ToString();
+                    draw.text = "Round " + gsp.playoffRound.ToString();
                 else
                     draw.text = "Playoff Round " + gsp.playoffRound.ToString();
             }
@@ -118,8 +120,8 @@ public class EndMenu : MonoBehaviour
             end.text = "End " + (gsp.endCurrent + 1).ToString();
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
-            redTeamPanel.color = gsp.redTeamColour;
-            yellowTeamPanel.color = gsp.yellowTeamColour;
+            //redTeamPanel.color = gsp.redTeamColour;
+            //yellowTeamPanel.color = gsp.yellowTeamColour;
             redTotalScore.text = gsp.redScore.ToString();
             yellowTotalScore.text = gsp.yellowScore.ToString();
 
@@ -135,7 +137,7 @@ public class EndMenu : MonoBehaviour
             }
 
 
-            for (int i = 0; i < gsp.ends; i++)
+            for (int i = 0; i < ends; i++)
             {
                 scoreCols[i].SetActive(true);
                 scoreCols[i].transform.GetChild(0).gameObject.SetActive(true);

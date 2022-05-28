@@ -255,7 +255,7 @@ MonoBehaviour:
   inHouse: 0
   shotTaken: 0
   guard: 0
-  outHap: {fileID: -8404250095460277587, guid: c2b7f5cf840474d25bf9a8266189bd20, type: 3}
+  outHap: {fileID: -8404250095460277587, guid: 5044fe5a338f74885911a85c206ad431, type: 3}
   sideHap: {fileID: -8404250095460277587, guid: 6952a805b322d459085f6309ed4a58ad, type: 3}
   hitHap: {fileID: -8404250095460277587, guid: 53e73bfa2b5714bef9504bac2cf10c35, type: 3}
 --- !u!82 &4241899863138473124

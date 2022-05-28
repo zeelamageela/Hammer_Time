@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Lofelt.NiceVibrations;
+using MoreMountains.Feedbacks;
 
 public class SweeperManager : MonoBehaviour
 {
@@ -37,7 +38,9 @@ public class SweeperManager : MonoBehaviour
     float timeLeft;
     float sweepTimer;
 
+    public GameObject aimCircle;
     public HapticClip sweepHap;
+    public MMFeedbackFloatingText fltText;
 
     void Awake()
     {
@@ -68,6 +71,8 @@ public class SweeperManager : MonoBehaviour
             {
                     SweepWhoa(false);
             }
+
+
         }
 
         if (isSweeping)
@@ -99,8 +104,8 @@ public class SweeperManager : MonoBehaviour
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
-            sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
-            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
+            //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
+            //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
             if (gsp.redTeamColour == gsp.teamColour)
             {
@@ -108,8 +113,8 @@ public class SweeperManager : MonoBehaviour
                 sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                 sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
                 sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
             }
             else
             {
@@ -125,8 +130,8 @@ public class SweeperManager : MonoBehaviour
         {
             sweeperL = Instantiate(sweeperYellowL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
-            sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
-            sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
+            //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
+            //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
 
             if (gsp.redTeamColour == gsp.teamColour)
             {
@@ -143,8 +148,8 @@ public class SweeperManager : MonoBehaviour
                 sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                 sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
                 sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepHealth;
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
             }
         }
 
@@ -225,7 +230,10 @@ public class SweeperManager : MonoBehaviour
 
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
         }
+
+        ShotLocation();
     }
+
     public void SweepTap()
     {
         //Tap on the sweep target
@@ -243,6 +251,9 @@ public class SweeperManager : MonoBehaviour
         if (isSweeping == false)
         {
             CallOut("Sweep");
+            //fltText.Value = "SWEEP!";
+            //fltText.TargetTransform = sweepSel.transform;
+            //fltText.Play(sweepSel.transform.position);
             isSweeping = true;
             rockSounds[0].enabled = true;
             rockSounds[1].enabled = true;
@@ -251,7 +262,7 @@ public class SweeperManager : MonoBehaviour
             HapticController.Load(sweepHap);
             HapticController.Loop(true);
             HapticController.Play();
-            HapticController.clipFrequencyShift = 1f;
+            //HapticController.clipFrequencyShift = 1f;
             sweeperL.Sweep();
             sweeperR.Sweep();
             sweep.OnSweep();
@@ -290,7 +301,7 @@ public class SweeperManager : MonoBehaviour
             HapticController.Load(sweepHap);
             HapticController.Loop(true);
             HapticController.Play();
-            HapticController.clipFrequencyShift = 1f;
+            //HapticController.clipFrequencyShift = 1f;
             sweep.OnLeft();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
             sweeperL.Sweep();
@@ -328,7 +339,7 @@ public class SweeperManager : MonoBehaviour
         {
             CallOut("Sweep");
             isSweeping = true;
-            isSweeping = true;
+            //isSweeping = true;
             //am.Play("Sweep");
             rockSounds[0].enabled = false;
             rockSounds[1].enabled = true;
@@ -337,7 +348,7 @@ public class SweeperManager : MonoBehaviour
             HapticController.Load(sweepHap);
             HapticController.Loop(true);
             HapticController.Play();
-            HapticController.clipFrequencyShift = 1f;
+            //HapticController.clipFrequencyShift = 1f;
 
             sweep.OnRight();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
@@ -374,6 +385,7 @@ public class SweeperManager : MonoBehaviour
             whoaButton.SetActive(false);
         }
     }
+
     public void SweepWeight(bool aiTurn)
     {
         CallOut("Sweep");
@@ -421,8 +433,10 @@ public class SweeperManager : MonoBehaviour
         rockSounds[0].pitch = 1f;
         rockSounds[1].pitch = 1f;
 
-        sweeperL.Whoa();
-        sweeperR.Whoa();
+        if (sweeperL != null)
+            sweeperL.Whoa();
+        if (sweeperR != null)
+            sweeperR.Whoa();
         sweep.OnWhoa();
 
         if (!aiTurn)
@@ -432,6 +446,7 @@ public class SweeperManager : MonoBehaviour
             hardButton.SetActive(false);
         }
     }
+
     public void SweepWhoa(bool aiTurn)
     {
         //am.Stop("Sweep");
@@ -516,5 +531,154 @@ public class SweeperManager : MonoBehaviour
             skipSounds[i].enabled = false;
 
         skipSounds[Random.Range(0, skipSounds.Length)].enabled = true;
+    }
+
+
+    void ShotLocation()
+    {
+        AI_Sweeper aiSweep = FindObjectOfType<AI_Sweeper>();
+        AI_Shooter aiShoot = FindObjectOfType<AI_Shooter>();
+        RockManager rm = FindObjectOfType<RockManager>();
+        Vector3 aimPos = aimCircle.transform.position;
+
+        string shotType;
+
+        //aim circle is in the house
+        if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 1.5f)
+        {
+            //Button
+            if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.25f)
+            {
+                shotType = "Button";
+            }
+            //in the centre
+            else if (Mathf.Abs(aimPos.x) < 0.25f)
+            {
+                //in the front of the house
+                if (aimPos.y < 6.5f)
+                {
+                    //in the four foot
+                    if (aimPos.y < 6f)
+                    {
+                        shotType = "Top Four Foot";
+                    }
+                    else
+                    {
+                        shotType = "Top Twelve Foot";
+                    }
+                }
+                else
+                {
+                    //in the four foot
+                    if (aimPos.y < 7f)
+                    {
+                        shotType = "Back Four Foot";
+                    }
+                    else
+                    {
+                        shotType = "Back Twelve Foot";
+                    }
+                }
+            }
+            //on the left
+            else if (aimPos.x < 0f)
+            {
+                //in the four foot
+                if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.75f)
+                {
+                    shotType = "Left Four Foot";
+                }
+                else
+                {
+                    shotType = "Left Twelve Foot";
+                }
+            }
+            //on the right
+            else if (aimPos.x > 0f)
+            {
+                //in the four foot
+                if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.75f)
+                {
+                    shotType = "Right Four Foot";
+                }
+                else
+                {
+                    shotType = "Right Twelve Foot";
+                }
+            }
+            //something has gone wrong
+            else
+            {
+                shotType = "Default - No Shot";
+            }
+        }
+        //outside the house
+        else
+        {
+            //in the centre
+            if (Mathf.Abs(aimPos.x) < 0.35f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "High Centre Guard";
+                    }
+                    else
+                    {
+                        shotType = "Centre Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Tight Centre Guard";
+                }
+            }
+            //on the left
+            else if (aimPos.x < 0f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "Left High Corner Guard";
+                    }
+                    else
+                    {
+                        shotType = "Left Corner Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Left Tight Corner Guard";
+                }
+            }
+            //on the right
+            else if (aimPos.x > 0f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "Right High Corner Guard";
+                    }
+                    else
+                    {
+                        shotType = "Right Corner Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Right Tight Corner Guard";
+                }
+            }
+            else
+            {
+                shotType = "Default - No Shot";
+            }
+        }
+
+
+        aiSweep.OnSweep(false, shotType, new Vector2(aimPos.x, aimPos.y), rm.inturn);
     }
 }

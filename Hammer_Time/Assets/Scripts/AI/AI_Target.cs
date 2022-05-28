@@ -779,7 +779,7 @@ public class AI_Target : MonoBehaviour
         //rm.inturn = true;
         //takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
 
-        if (targetX > 0f)
+        if (targetX > -0.5f)
         {
             rm.inturn = false;
             takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;

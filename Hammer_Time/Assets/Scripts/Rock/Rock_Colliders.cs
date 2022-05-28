@@ -239,7 +239,9 @@ public class Rock_Colliders : MonoBehaviour
             Debug.Log("Out");
             inPlay = false;
             inHouse = false;
-            StartCoroutine(OutOfPlay());
+            if (gameObject.activeSelf)
+                StartCoroutine(OutOfPlay());
+
             rockSounds[2].enabled = true;
         }
 

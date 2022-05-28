@@ -248,7 +248,7 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         teamColour = cm.teamColour;
-        earnings = ts.earnings;
+        //earnings = ts.earnings;
         week = cm.week;
         games = ts.games;
         ends = ts.ends;
@@ -312,6 +312,7 @@ public class GameSettingsPersist : MonoBehaviour
         {
             aiRed = true;
             aiYellow = false;
+
             yellowTeamName = playerTeam.name;
             redTeamName = playerTeam.nextOpp;
             yellowTeamColour = teamColour;
@@ -345,7 +346,7 @@ public class GameSettingsPersist : MonoBehaviour
         teams = pm.teams;
         for (int i = 0; i < teams.Length; i++)
         {
-            if (teams[i].id == playerTeamIndex)
+            if (teams[i].player)
             {
                 playerTeam = teams[i];
             }
@@ -403,7 +404,6 @@ public class GameSettingsPersist : MonoBehaviour
         //teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
         
-
         if (myFile.Load())
         {
             firstName = myFile.GetString("First Name");
@@ -449,6 +449,7 @@ public class GameSettingsPersist : MonoBehaviour
             string[] nextOppList = new string[numberOfTeams];
             int[] strengthList = new int[numberOfTeams];
             int[] idList = new int[numberOfTeams];
+            bool[] playerList = new bool[numberOfTeams];
 
             //Debug.Log("nameList Count is " + nameList.Length);
             //nameList = myFile.GetArray<string>("Tourny Name List");
@@ -459,6 +460,7 @@ public class GameSettingsPersist : MonoBehaviour
             nextOppList = myFile.GetArray<string>("Tourny NextOpp List");
             strengthList = myFile.GetArray<int>("Tourny Strength List");
             idList = myFile.GetArray<int>("Tourny Team ID List");
+            playerList = myFile.GetArray<bool>("Tourny Player List");
             //StartCoroutine(Wait());
             Debug.Log("nameList Count is " + nameList.Length);
 
@@ -481,7 +483,9 @@ public class GameSettingsPersist : MonoBehaviour
                 teams[i].rank = rankList[i];
                 teams[i].nextOpp = nextOppList[i];
                 teams[i].strength = strengthList[i];
-                if (teams[i].id == cm.playerTeamIndex)
+                teams[i].player = playerList[i];
+
+                if (teams[i].player)
                 {
                     Debug.Log("i == playerTeamIndex - i is " + i);
                     teams[i].name = teamName;
@@ -546,6 +550,8 @@ public class GameSettingsPersist : MonoBehaviour
             //inProgress = myFile.GetBool("Tourny In Progress");
             prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
+            ends = myFile.GetInt("Ends");
+            rocks = myFile.GetInt("Rocks");
             numberOfTeams = myFile.GetInt("Number Of Teams");
             playoffRound = myFile.GetInt("Playoff Round");
             playerTeamIndex = myFile.GetInt("Player Team Index");

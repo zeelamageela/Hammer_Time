@@ -14,6 +14,7 @@ public class CharacterStats : MonoBehaviour
     public Stat guardAccuracy;
     public Stat sweepStrength;
     public Stat sweepEndurance;
+    public Stat sweepCohesion;
 
 
     public float sweepHealth;
@@ -24,12 +25,12 @@ public class CharacterStats : MonoBehaviour
 
     private void Start()
     {
-
         sweeper = GetComponent<SweeperParent>();
     }
+
     private void OnEnable()
     {
-        //sweepHealth = 100;
+        sweepHealth = 100;
         sweepMax = sweepHealth;
         if (!GetComponent<SweeperParent>())
         {
@@ -71,7 +72,7 @@ public class CharacterStats : MonoBehaviour
     public void OnSweepRecover()
     {
         if (sweepHealth < sweepMax)
-            sweepHealth += (sweepEndurance.GetValue()) * 0.05f;
+            sweepHealth += sweepEndurance.GetValue() * 0.075f;
     }
 
     public void OnShoot()

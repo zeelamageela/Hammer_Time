@@ -27,7 +27,7 @@ public class DrawFormatList : MonoBehaviour
     public void DrawSelector(int numberOfTeams, int gameLength, int games)
     {
         Debug.Log("Number of Teams is " + numberOfTeams);
-
+        Debug.Log("Games is " + games);
         DrawFormat[] shorterFormat;
         //DrawFormat[] shortestFormat;
 
@@ -89,7 +89,6 @@ public class DrawFormatList : MonoBehaviour
                     Debug.Log("Need between 5 and 16 teams for a tourny");
                     break;
             }
-
         }
         #endregion
 
@@ -223,6 +222,8 @@ public class DrawFormatList : MonoBehaviour
                     break;
             }
         }
+
+        Debug.Log("currentFormat Length is " + currentFormat.Length);
     }
 }
 

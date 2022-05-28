@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoreMountains.Feedbacks;
 
 public class AI_Sweeper : MonoBehaviour
 {
     public AIManager aim;
     public GameManager gm;
     public SweeperManager sm;
+    public MMFeedbackFloatingText fltText;
 
     //Transform target;
     
-    public void OnSweep(string aiShotType, Vector2 target, bool inturn)
+    public void OnSweep(bool aiTurn, string shotType, Vector2 target, bool inturn)
     {
-        StartCoroutine(TargetShot(aiShotType, target, inturn));
+        if (aiTurn)
+            StartCoroutine(TargetShot(shotType, target, inturn));
+        else
+            StartCoroutine(PlayerSpeed(shotType, target, inturn));
     }
     IEnumerator TargetShot(string aiShotType, Vector2 target, bool inturn)
     {
@@ -251,7 +256,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.velocity.y <= 1.85f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.48f)
-                    sm.SweepLeft(true);
+                    fltText.Value = "Sweep the Curl!!";
                 else if (!inturn && rock.transform.position.x >= 0.46f)
                     sm.SweepRight(true);
                 else
@@ -914,5 +919,867 @@ public class AI_Sweeper : MonoBehaviour
                 break;
         }
 
+    }
+
+    IEnumerator PlayerSpeed(string playerShotType, Vector2 target, bool inturn)
+    {
+
+        Rigidbody2D rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
+        GameObject rock = gm.rockList[gm.rockCurrent].rock;
+
+        Debug.Log("sweeperL is " + sm.sweeperL.gameObject.activeSelf);
+        fltText.TargetTransform = rock.transform;
+
+        Debug.Log("Player Speed Callouts - " + playerShotType);
+
+        switch (playerShotType)
+        {
+            #region Centre Guards
+            case "Centre Guard":
+
+                break;
+
+            case "Tight Centre Guard":
+
+                break;
+
+            case "High Centre Guard":
+
+                break;
+            #endregion
+
+            #region Corner Guards
+            case "Left Corner Guard":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.75f)
+                    fltText.Value = "Rock is slow!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+
+                if (rockRB.velocity.y <= 2.4f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Left Tight Corner Guard":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.25f)
+                    fltText.Value = "Rock is slow!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.75f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.5f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.25f)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Left High Corner Guard":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.3f)
+                    fltText.Value = "Rock is slow!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.95f)
+                                         fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Right Corner Guard":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.75f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.4f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Right Tight Corner Guard":
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.25f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.75f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.5f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.25f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                break;
+
+            case "Right High Corner Guard":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.3f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.85f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+            #endregion
+
+            #region Twelve Foot Draws
+            case "Top Twelve Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.58f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.04f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.85f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.48f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.46f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.25f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.44f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.42f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.34f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.32f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                fltText.Value = "Speed is good!!";
+                break;
+
+            case "Left Twelve Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.9f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.45f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.3f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -1.62f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= -0.47f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -1.63f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= -0.74f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -1.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= -0.96f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                //yield return new WaitUntil(() => Mathf.Abs(rock.transform.position.x) >= 0.05f);
+                //sm.SweepWhoa(true);
+
+                break;
+
+            case "Back Twelve Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 5.5f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.8f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.71f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.7f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1.55f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.63f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 1f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.57f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
+                Debug.Log("y = 6.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 6.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.5f)
+                    fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.44f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.41f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
+                fltText.Value = "Speed is good!!";
+                break;
+
+            case "Right Twelve Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.9f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.45f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.3f)
+                        fltText.Value = "Rock is slow!!";
+                else if (!inturn && rock.transform.position.x <= 1.62f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (inturn && rock.transform.position.x >= 0.47f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (!inturn && rock.transform.position.x <= 1.63f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (inturn && rock.transform.position.x >= 0.74f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                        fltText.Value = "Rock is slow!!";
+                else if (!inturn && rock.transform.position.x <= 1.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (inturn && rock.transform.position.x >= 0.96f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
+                fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                break;
+            #endregion
+
+            #region Four Foot Draws
+            case "Button":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.9f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.45f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.3f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.4f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.4f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
+                fltText.Value = "Speed is good!!";
+
+                break;
+
+            case "Left Four Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.9f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.45f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.3f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -1f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.33f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.95f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.18f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.83f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => Mathf.Abs(0.37f - rock.transform.position.x) >= 0.1f);
+                fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Right Four Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.9f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.45f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.3f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.36f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 1f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.2f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.92f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.3f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.8f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Top Four Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 4.75f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.3f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.2f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.85f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.5f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.5f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.4f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.35f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.35f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Back Four Foot":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 5f)
+                        fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 3.6f)
+                        fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 2.4f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.69f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.66f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.95f)
+                        fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.59f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.57f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                if (rockRB.velocity.y <= 0.52f)
+                    fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= -0.48f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= 0.45f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+                //yield return new WaitUntil(() => Mathf.Abs(rock.transform.position.x) >= 0.05f);
+                //sm.SweepWhoa(true);
+                fltText.Play(rockRB.position);
+                break;
+            #endregion
+
+
+            case "Draw To Target":
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
+                Debug.Log("y = -7 velLimit is " + velLimit);
+                if (rockRB.velocity.y <= velLimit)
+                    fltText.Value = "Rock is slow!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
+                if (rockRB.velocity.y <= velLimit)
+                    fltText.Value = "Rock is slow!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
+                if (rockRB.velocity.y <= velLimit)
+                    fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= target.x - 0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= target.x + 0.65f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
+                Debug.Log("y = 3.5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
+                if (rockRB.velocity.y <= velLimit)
+                    fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= target.x - 0.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= target.x + 0.55f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
+                Debug.Log("y = 5 velocity is " + rockRB.velocity.x + ", " + rockRB.velocity.y);
+                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
+                if (rockRB.velocity.y <= velLimit)
+                    fltText.Value = "Rock is slow!!";
+                else if (inturn && rock.transform.position.x <= target.x - 0.4f)
+                    fltText.Value = "Sweep the Curl!!";
+                else if (!inturn && rock.transform.position.x >= target.x + 0.4f)
+                    fltText.Value = "Sweep the Curl!!";
+                else
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                yield return new WaitUntil(() => rock.transform.position.y >= target.x);
+                velLimit = 0.5f * ((target.y - 5.225f) / 2.55f);
+                if (rockRB.velocity.y >= velLimit)
+                    fltText.Value = "Speed is good!!";
+
+                fltText.Play(rockRB.position);
+                break;
+
+            case "Guard To Target":
+
+                break;
+
+            default:
+                break;
+        }
+
+        fltText.Play(rockRB.position);
     }
 }

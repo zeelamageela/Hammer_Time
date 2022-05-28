@@ -12,6 +12,8 @@ public class TrajectoryLine : MonoBehaviour
     public CameraManager cm;
 
     GameObject rock;
+    Rock_Info rockInfo;
+
     public float springDistance;
     public Vector3 springDirection;
     public float angle;
@@ -29,7 +31,13 @@ public class TrajectoryLine : MonoBehaviour
 
     public GameObject shootKnob;
     Color knobColour;
+
+    public int lookAheadCount;
     List<GameObject> dots;
+    List<Vector2> points;
+
+    bool aiTurn;
+    Vector2 initVel;
 
     void Start()
     {
@@ -58,13 +66,92 @@ public class TrajectoryLine : MonoBehaviour
         if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            if (gm.aiTeamRed)
+            {
+                if (gm.redHammer)
+                {
+                    if (gm.rockCurrent % 2 == 0)
+                        aiTurn = false;
+                    else
+                        aiTurn = true;
+                }
+                else
+                {
+                    if (gm.rockCurrent % 2 == 0)
+                        aiTurn = true;
+                    else
+                        aiTurn = false;
+                }
+            }
+            else if (gm.aiTeamYellow)
+            {
+                if (gm.redHammer)
+                {
+                    if (gm.rockCurrent % 2 == 0)
+                        aiTurn = true;
+                    else
+                        aiTurn = false;
+                }
+                else
+                {
+                    if (gm.rockCurrent % 2 == 0)
+                        aiTurn = false;
+                    else
+                        aiTurn = true;
+                }
+            }
         }
 
         knobColour = shootKnob.GetComponent<SpriteRenderer>().color;
+
+        if (!aiTurn && rock && rockInfo && rockInfo.released && points.Count > 0)
+        {
+            lr.enabled = true;
+            int counter = 0;
+            List<Vector2> tempPoints = new List<Vector2>();
+            foreach(Vector2 point in points)
+            {
+                if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + 1.25f)
+                    tempPoints.Add(point);
+                //else
+                //    lr.SetPosition(counter, new Vector3(point.x, point.y, 0f));
+
+            }
+
+            if (tempPoints.Count > lookAheadCount)
+                lr.positionCount = lookAheadCount;
+            else
+                lr.positionCount = tempPoints.Count;
+            //else
+            //    lr.positionCount = 6;
+
+            for (int i = 0; i < lr.positionCount; i++)
+            {
+                lr.SetPosition(i, new Vector3(tempPoints[i].x, tempPoints[i].y, 0f));
+            }
+            foreach (Vector2 point in tempPoints)
+            {
+                if (counter <= lr.positionCount)
+                counter++;
+            }
+        }
+
+        if (rock && rockInfo && rockInfo.released && rockInfo.rest)
+            lr.enabled = false;
+        if (rock && rockInfo && rockInfo.hit)
+            lr.enabled = false;
+        if (aiTurn)
+            lr.enabled = false;
+        //if (lr.enabled && rockInfo && rockInfo.rest || rockInfo.hit)
+        //{
+        //    lr.enabled = false;
+        //}
     }
 
     public void DrawTrajectory()
     {
+        //aiTurn = false;
         lr.enabled = false;
 
         if (dots.Count != 0)
@@ -98,7 +185,8 @@ public class TrajectoryLine : MonoBehaviour
             }
             else
             {
-                lr.positionCount = 100;
+                float dist = Vector2.Distance(new Vector2(0, -25), aimCircle.transform.position);
+                lr.positionCount = 250;
             }
         }
 
@@ -106,46 +194,71 @@ public class TrajectoryLine : MonoBehaviour
         lr.endWidth = Mathf.Lerp(0f, 0.1f, springDistance / 3.25f);
 
         float t = 0f;
-        Vector3 B = new Vector3(0, -25, 0);
-
+        Vector3 B;
         lr.SetPosition(0, launcher.transform.position);
 
         for (int i = 1; i < lr.positionCount; i++)
         {
             B = ((1 - t) * (1 - t) * hogLinePoint) + (2 * (1 - t) * t * curlPoint) + (t * t * targetPoint);
+            
             lr.SetPosition(i, B);
             pos.Add(B);
             t += (1 / (float)lr.positionCount);
         }
 
-        int counter = lr.positionCount / 20;
+        int counter = lr.positionCount / dotCount;
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        float dotStat = (gsp.cStats.drawAccuracy + gsp.cStats.takeOutAccuracy + gsp.cStats.guardAccuracy) / 6.5f;
+
+        Debug.Log("Dotstat is " + dotStat);
 
         for (int i = 1; i < dotCount; i++)
         {
-            Vector2 dotPos = lr.GetPosition(i * counter);
+            Vector2 dotPos = pos[i * counter];
+
+            //if (dotPos.y > 0f)
+            //{
+            //    dotPos = new Vector2(dotPos.x, 0f);
+            //}
             GameObject dotPlace = Instantiate(dot, dotPos, Quaternion.identity);
             dotPlace.transform.parent = transform;
             dotPlace.GetComponent<SpriteRenderer>().color = knobColour;
+
+            if (dotPos.y > (0f + dotStat))
+            {
+                dotPlace.transform.localScale = new Vector3(0f, 0f, 0f);
+            }
             dots.Add(dotPlace);
+            
         }
+
+        points = new List<Vector2>();
+
+        for (int i = 0; i < pos.Count; i++)
+        {
+            points.Add(pos[i]);
+            //points[i] = new Vector2(pos[i].x, pos[i].y);
+        }
+
 
         aimCircle.GetComponent<SpriteRenderer>().enabled = true;
 
         aimCircle.transform.position = lr.GetPosition(lr.positionCount - 1);
-        aimCircle.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0f);
+        aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
         //lr.SetPositions(lr.GetPositions());
         //DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);
         //edgeCol.SetPoints(pos2D);
+
     }
 
     public void Release()
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
-        lr.enabled = false;
-        lr.startWidth = 0.1f;
-        lr.endWidth = 0.1f;
-
+        //lr.enabled = true;
+        lr.startWidth = 0.075f;
+        lr.endWidth = 0.075f;
+        
         if (dots.Count != 0)
         {
             foreach (GameObject dot in dots)
@@ -154,6 +267,7 @@ public class TrajectoryLine : MonoBehaviour
             }
             dots.Clear();
         }
+
     }
 
 

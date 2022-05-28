@@ -888,7 +888,15 @@ MonoBehaviour:
   teamName: 
   earnings: 0
   record: {x: 0, y: 0}
+  week: 0
   cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
@@ -928,6 +936,7 @@ MonoBehaviour:
     earnings: 0
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
+    player: 0
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerGO: []
 --- !u!4 &1008780141
@@ -2552,6 +2561,50 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 929893587}
     m_Modifications:
+    - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940114849534, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622940506941659, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.b
+      value: 0.86666673
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.g
+      value: 0.91372555
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9490197
+      objectReference: {fileID: 0}
     - target: {fileID: 237622941369529446, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_Name
       value: ScorePanel
@@ -2639,6 +2692,22 @@ PrefabInstance:
     - target: {fileID: 237622941369529447, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941397382138, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941397382138, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4194815
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941397382138, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.g
+      value: 0.75335455
+      objectReference: {fileID: 0}
+    - target: {fileID: 237622941397382138, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
+      propertyPath: m_Color.r
+      value: 0.809
       objectReference: {fileID: 0}
     - target: {fileID: 3629184364198608157, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_SizeDelta.x

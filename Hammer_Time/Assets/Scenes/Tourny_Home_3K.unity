@@ -7191,7 +7191,15 @@ MonoBehaviour:
   teamName: BingBangBoomBaby
   earnings: 0
   record: {x: 0, y: 0}
+  week: 0
   cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
@@ -7209,7 +7217,7 @@ MonoBehaviour:
   numberOfTeams: 16
   prize: 100000
   careerLoad: 0
-  inProgress: 0
+  inProgress: 1
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -7225,6 +7233,7 @@ MonoBehaviour:
     earnings: 0
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
+    player: 0
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerGO: []
 --- !u!4 &450587699
@@ -16626,7 +16635,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 288.85736, y: 12.468933}
+  m_AnchoredPosition: {x: 289.0805, y: 12.649506}
   m_SizeDelta: {x: 1514.3, y: 782.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1178493287
@@ -17095,6 +17104,132 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1210636980
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1210636982}
+  - component: {fileID: 1210636981}
+  m_Layer: 0
+  m_Name: CareerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1210636981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210636980}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  week: 5
+  seasonLength: 25
+  playerName: BingBang
+  teamName: BoomBaby
+  teamColour: {r: 0, g: 0, b: 0, a: 0}
+  playerTeamIndex: 0
+  earnings: 700
+  record: {x: 0, y: 0}
+  provQual: 0
+  tourQual: 0
+  tourRecord: {x: 0, y: 0}
+  xp: 0
+  totalXp: 0
+  cStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  oppStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  modStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepHealth: 0
+  skillPoints: 0
+  cardIDList: 
+  inProgress: 0
+  season: 0
+  tournyResults: 
+  totalTeams: 0
+  totalTourTeams: 0
+  provTeams: 0
+  teamRecords: []
+  tourRecords: []
+  playerTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+    player: 0
+  teams: []
+  tourTeams: []
+  currentTournyTeams: []
+  currentTourny:
+    name: 
+    id: 0
+    location: 
+    teams: 0
+    prizeMoney: 0
+    entryFee: 0
+    format: 
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+  tournies: []
+  tour: []
+  prov: []
+  champ: []
+  activeTournies: []
+  coachDialogue: 
+  qualDialogue: 
+  reviewDialogue: 
+  introDialogue: 
+  helpDialogue: 
+  strategyDialogue: 
+  storyDialogue: 
+--- !u!4 &1210636982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1210636980}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1216137864
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21104,8 +21239,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 690531717}
   m_HandleRect: {fileID: 690531716}
   m_Direction: 0
-  m_Value: -0.028172148
-  m_Size: 0.594736
+  m_Value: -0.028580165
+  m_Size: 0.5910373
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23478,7 +23613,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 3108800}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.93267775
+  m_Size: 0.92703223
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

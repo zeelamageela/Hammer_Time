@@ -19,6 +19,12 @@ public class ShootingKnob : MonoBehaviour
     GradientColorKey[] colorKey;
     GradientAlphaKey[] alphaKey;
 
+    public Color redTrans;
+    public Color red;
+    public Color yellow;
+    public Color green;
+    public Color brightGreen;
+
     void Start()
     {
         lr = GetComponent<LineRenderer>();
@@ -69,11 +75,6 @@ public class ShootingKnob : MonoBehaviour
             lr.startWidth = Mathf.Lerp(0f, 0.3f, distance / 3.25f);
             lr.endWidth = Mathf.Lerp(0f, 0.1f, distance / 3.25f);
 
-            Color redTrans = new Color(1f, 0f, 0f, 0.1f);
-            Color red = new Color(1f, 0f, 0f, 0.75f);
-            Color yellow = new Color(1f, 1f, 0f, 0.75f);
-            Color green = new Color(0.2f, 0.8f, 0.2f, 0.75f);
-            Color brightGreen = new Color(0.6f, 1f, 0.6f, 1f);
 
             if (distColor > 10f)
             {

@@ -19,4 +19,6 @@ public class Team
 
     public Vector2 tourRecord;
     public float tourPoints;
+
+    public bool player;
 }

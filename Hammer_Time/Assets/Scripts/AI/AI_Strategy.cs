@@ -16,7 +16,6 @@ public class AI_Strategy : MonoBehaviour
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
 
-
     public Transform cenGuard;
     public Transform tCenGuard;
     public Transform lCornGuard;
@@ -35,6 +34,11 @@ public class AI_Strategy : MonoBehaviour
 
     string phase;
 
+    public string activeTeamName;
+    public int activeTeamScore;
+    public string oppTeamName;
+    public int oppTeamScore;
+
     private void Update()
     {
         cenGuard = aiTarg.cenGuard;
@@ -51,75 +55,77 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        //early phase is shots 1-3 in an 8 rock game
-        if (gm.rockTotal - rockCurrent >= 11)
+        if (rockCurrent % 2 == 0)
         {
             if (gm.redHammer)
             {
-                phase = "early no hammer";
+                activeTeamName = gm.yellowTeamName;
+                activeTeamScore = gm.yellowScore;
+                oppTeamName = gm.redTeamName;
+                oppTeamScore = gm.redScore;
             }
             else
             {
-                phase = "early hammer";
-            }
-        }
-        //middle phase is shots 4 and 5 in an 8 rock game
-        else if (gm.rockTotal - rockCurrent <= 12 && gm.rockTotal - rockCurrent >= 7)
-        {
-            if (gm.redHammer)
-            {
-                phase = "middle no hammer";
-            }
-            else
-            {
-                phase = "middle hammer";
-            }
-        }
-        //late phase is shots 6-8 in an 8 rock game
-        else if (gm.rockTotal - rockCurrent <= 4)
-        {
-            if (gm.redHammer)
-            {
-                phase = "late no hammer";
-            }
-            else
-            {
-                phase = "late hammer";
+                activeTeamName = gm.redTeamName;
+                activeTeamScore = gm.redScore;
+                oppTeamName = gm.yellowTeamName;
+                oppTeamScore = gm.yellowScore;
             }
         }
         else
         {
             if (gm.redHammer)
             {
-                phase = "late no hammer";
-                Debug.Log("Default Phase - late no hammer");
+                activeTeamName = gm.redTeamName;
+                activeTeamScore = gm.redScore;
+                oppTeamName = gm.yellowTeamName;
+                oppTeamScore = gm.yellowScore;
             }
             else
             {
-                phase = "late hammer";
-                Debug.Log("Default Phase - late hammer");
+                activeTeamName = gm.yellowTeamName;
+                activeTeamScore = gm.yellowScore;
+                oppTeamName = gm.redTeamName;
+                oppTeamScore = gm.redScore;
             }
         }
-
-        if (gm.redHammer)
+        //early phase is shots 1-2 in an 8 rock game
+        if (rockCurrent < 4)
         {
+            phase = "early";
+        }
+        //middle phase is shots 3-5 in an 8 rock game
+        else if (rockCurrent < 10)
+        {
+            phase = "middle";
+        }
+        //late phase is shots 6-8 in an 8 rock game
+        else
+        {
+            phase = "late";
+        }
+
+        if (rockCurrent % 2 == 0)
+        {
+            //two or more ends left
             if (gm.endTotal - gm.endCurrent >= 2)
             {
-                if (gm.redScore - gm.yellowScore >= 2)
+                if (activeTeamScore - oppTeamScore >= 2)
                     AggressiveNotHammer(rockCurrent, phase);
-                if (gm.redScore <= gm.yellowScore)
+                if (activeTeamScore <= oppTeamScore)
                     ConservativeStealOrBlank(rockCurrent, phase);
                 else
                     ConservativeSteal(rockCurrent, phase);
             }
+            //one end left
             else if (gm.endTotal - gm.endCurrent == 1)
             {
-                if (gm.redScore - gm.yellowScore <= 1)
+                if (activeTeamScore - oppTeamScore <= 1)
                     ConservativeStealOrBlank(rockCurrent, phase);
                 else
                     AggressiveNotHammer(rockCurrent, phase);
             }
-            else if (gm.redScore < gm.yellowScore)
+            else if (activeTeamScore < oppTeamScore)
                 ConservativeStealOrBlank(rockCurrent, phase);
             else
                 AggressiveNotHammer(rockCurrent, phase);
@@ -128,23 +134,21 @@ public class AI_Strategy : MonoBehaviour
         {
             if (gm.endTotal - gm.endCurrent >= 2)
             {
-                if (gm.redScore - gm.yellowScore >= 2)
+                if (activeTeamScore < oppTeamScore)
                     AggressiveHammer(rockCurrent, phase);
-                if (gm.redScore <= gm.yellowScore)
-                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
                 else
-                    ConservativeSteal(rockCurrent, phase);
+                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
             }
             else if (gm.endTotal - gm.endCurrent == 1)
             {
-                if (gm.redScore - gm.yellowScore <= 1)
+                if (activeTeamScore - oppTeamScore <= 1)
                     ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
                 else
                     AggressiveHammer(rockCurrent, phase);
             }
             else
             {
-                if (gm.redScore < gm.yellowScore)
+                if (activeTeamScore < oppTeamScore)
                     ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
                 else
                     AggressiveHammer(rockCurrent, phase);
@@ -165,14 +169,14 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Phase is " + phase);
+        Debug.Log("Conservative Steal - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
 
         switch (phase)
         {
             #region Early Not Hammer
-            case "early hammer":
+            case "early":
                 //if there's rocks in the house
                 if (gm.houseList.Count > 0)
                 {
@@ -510,14 +514,14 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Phase is " + phase);
+        Debug.Log("Aggressive Hammer - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
 
         switch (phase)
         {
             #region Early Hammer
-            case "early hammer":
+            case "early":
 
                 //left corner guard
                 if (lCornGuard)
@@ -554,7 +558,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Middle Hammer
-            case "middle hammer":
+            case "middle":
 
                 //no one is in the house
                 if (gm.houseList.Count == 0)
@@ -700,12 +704,12 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Late Hammer
-            case "late hammer":
+            case "late":
 
                 //no one is in the house
                 if (gm.houseList.Count == 0)
                 {
-                    if (gm.rockTotal - rockCurrent > 1)
+                    if (rockCurrent < 15)
                     {
                         //left corner and no right corner guard
                         if (lCornGuard && !rCornGuard)
@@ -735,7 +739,7 @@ public class AI_Strategy : MonoBehaviour
                 //closest rock is mine
                 else if (closestRockInfo.teamName == rockInfo.teamName)
                 {
-                    if (gm.rockTotal - rockCurrent > 1)
+                    if (rockCurrent < 15)
                     {
                         //left guard only
                         if (lCornGuard && !rCornGuard)
@@ -789,11 +793,13 @@ public class AI_Strategy : MonoBehaviour
                                     rm.inturn = false;
                                     aiShoot.OnShot("Left Twelve Foot", rockCurrent);
                                 }
-                                else aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
+                                else
+                                    aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
                             }
                         }
                         //any other guard combo
-                        else aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, rockCurrent);
+                        else
+                            aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, rockCurrent);
                     }
                     else
                     {
@@ -803,7 +809,6 @@ public class AI_Strategy : MonoBehaviour
                             //if the second shot is mine
                             if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
                             {
-
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                             }
                             else
@@ -820,54 +825,61 @@ public class AI_Strategy : MonoBehaviour
                 //closest rock is not mine
                 else if (closestRockInfo.teamName != rockInfo.teamName)
                 {
-                    //if it's in the four foot
-                    if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
-                    {
-                        //tight centre guard
-                        if (tCenGuard)
-                        {
-                            //if the tight centre guard is not covering it
-                            if (Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
-                            {
-                                aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
-                            }
-                            else
-                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                        }
-                        //centre guard
-                        if (cenGuard)
-                        {
-                            //if the tight centre guard is not covering it
-                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
-                            {
-                                aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
-                            }
-                            else
-                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                        }
-                        else
-                        {
-                            aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
-                        }
-                    }
-                    //if it's not in the four foot and there's more than one rock in the house
-                    else if (gm.houseList.Count > 1)
-                    {
-                        //if the second shot is mine
-                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
-                        {
-
-                            aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                        }
-                        else
-                        {
-                            aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                        }
-                    }
-                    //not in the four foot and the only rock
-                    else
+                    if (rockCurrent < 15)
                     {
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                    }
+                    else
+                    {
+                        //if it's in the four foot
+                        if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
+                        {
+                            //tight centre guard
+                            if (tCenGuard)
+                            {
+                                //if the tight centre guard is not covering it
+                                if (Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
+                                {
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
+                                }
+                                else
+                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                            }
+                            //centre guard
+                            if (cenGuard)
+                            {
+                                //if the centre guard is not covering it
+                                if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
+                                {
+                                    aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
+                                }
+                                else
+                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                            }
+                            else
+                            {
+                                aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
+                            }
+                        }
+                        //if it's not in the four foot and there's more than one rock in the house
+                        else if (gm.houseList.Count > 1)
+                        {
+                            //if the second shot is mine
+                            if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                            {
+
+                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                            }
+                            else
+                            {
+                                aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                            }
+                        }
+                        //not in the four foot and the only rock
+                        else
+                        {
+                            aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                        }
                     }
 
                 }
@@ -875,6 +887,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             default:
+                Debug.Log("Something's gone wrong in AISweeper");
                 break;
         }
     }
@@ -890,14 +903,14 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Phase is " + phase);
+        Debug.Log("Score Two or Blank - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
 
         switch (phase)
         {
             #region Early Hammer
-            case "early hammer":
+            case "early":
                 //if there's rocks in the house
                 if (gm.houseList.Count != 0)
                 {
@@ -932,7 +945,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Middle Hammer
-            case "middle hammer":
+            case "middle":
 
                 if (gm.houseList.Count != 0)
                 {
@@ -1000,66 +1013,119 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Late Hammer
-            case "late hammer":
+            case "late":
 
-                if (gm.houseList.Count != 0)
+                if (gm.houseList.Count > 0)
                 {
+                    
                     if (closestRockInfo.teamName != rockInfo.teamName)
                     {
-                        if (cenGuard)
+                        if (gm.rockCurrent == 15)
                         {
-                            if (Mathf.Abs(cenGuard.position.x - closestRock.transform.position.x) > 0.1f)
-                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
-                            else
-                                aiTarg.OnTarget("Peel", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                        }
-                        else if (tCenGuard)
-                        {
-                            if (Mathf.Abs(tCenGuard.position.x - closestRock.transform.position.x) > 0.1f)
-                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
-                            else
-                                aiTarg.OnTarget("Peel", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                            aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                         }
                         else
-                            aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                        {
+                            bool targFound = false;
+                            int rockTarget = 99;
+                            for (int i = 0; i < gm.gList.Count; i++)
+                            {
+                                if (!targFound && Mathf.Abs(gm.gList[i].lastTransform.position.x) < 0.25f)
+                                {
+                                    rockTarget = gm.gList[i].rockIndex;
+                                    targFound = true;
+                                }
+                            }
+                            if (targFound)
+                            {
+                                aiTarg.OnTarget("Peel", rockCurrent, rockTarget);
+                            }
+                            else
+                            {
+                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                            }
+                        }
+
 
                     }
                     else if (closestRockInfo.teamName == rockInfo.teamName)
                     {
-                        if (gm.houseList.Count > 1)
+                        if (gm.rockCurrent == 15)
                         {
-                            if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
-                            {
-                                if (closestRock.transform.position.x <= 0f)
-                                {
-                                    aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                                }
-                                else
-                                {
-                                    aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                                }
-                            }
-                            else
-                                aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                            aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                         }
                         else
                         {
-                            if (closestRock.transform.position.x <= 0f)
+                            if (gm.houseList.Count > 1)
                             {
-                                aiShoot.OnShot("Right Twelve Foot", rockCurrent);
+                                if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
+                                {
+                                    if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) < 0.5f)
+                                    {
+                                        bool targFound = false;
+                                        int rockTarget = 99;
+                                        for (int i = 0; i < gm.gList.Count; i++)
+                                        {
+                                            if (!targFound && Mathf.Abs(gm.gList[i].lastTransform.position.x) < 0.25f)
+                                            {
+                                                rockTarget = gm.gList[i].rockIndex;
+                                                targFound = true;
+                                            }
+                                        }
+                                        if (targFound)
+                                        {
+                                            aiTarg.OnTarget("Peel", rockCurrent, rockTarget);
+                                        }
+                                        else
+                                        {
+                                            if (closestRock.transform.position.x < 0f)
+                                            {
+                                                aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                                            }
+                                            else
+                                            {
+                                                aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (closestRock.transform.position.x < 0f)
+                                        {
+                                            aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                                        }
+                                        else
+                                        {
+                                            aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                }
                             }
                             else
                             {
-                                aiShoot.OnShot("Left Twelve Foot", rockCurrent);
+                                if (closestRock.transform.position.x < 0f)
+                                {
+                                    aiShoot.OnShot("Right Twelve Foot", rockCurrent);
+                                }
+                                else
+                                {
+                                    aiShoot.OnShot("Left Twelve Foot", rockCurrent);
+                                }
                             }
+
                         }
+
                     }
                 }
                 else
                 {
-                    if (gm.rockTotal - gm.rockCurrent <= 1)
+                    if (gm.rockCurrent < 15)
                         aiTarg.OnTarget("Take Out", rockCurrent, 0);
-                    else if (gm.endTotal - gm.endCurrent <= 1)
+                    else
                     {
                         if (Random.value > 0.5f)
                             aiShoot.OnShot("Left Twelve Foot", rockCurrent);
@@ -1088,14 +1154,14 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Phase is " + phase);
+        Debug.Log("Aggressive Not Hammer - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
 
         switch (phase)
         {
             #region Early No Hammer
-            case "early no hammer":
+            case "early":
 
                 //no one is in the house
                 if (gm.houseList.Count == 0)
@@ -1213,7 +1279,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Middle No Hammer
-            case "middle no hammer":
+            case "middle":
                 //no one is in the house
                 if (gm.houseList.Count == 0)
                 {
@@ -1368,7 +1434,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Late No Hammer
-            case "late no hammer":
+            case "late":
 
                 #region No Rocks in House
                 if (gm.houseList.Count == 0)
@@ -1710,14 +1776,14 @@ public class AI_Strategy : MonoBehaviour
                 closestRockInfo = gm.houseList[0].rockInfo;
             }
 
-            Debug.Log("Phase is " + phase);
+            Debug.Log("Steal or Force - " + phase);
 
             aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
 
             switch (phase)
             {
             #region Early Not Hammer
-                case "early no hammer":
+                case "early":
 
                     if (gm.houseList.Count != 0)
                     {
@@ -1736,7 +1802,7 @@ public class AI_Strategy : MonoBehaviour
 #endregion
 
             #region Middle Not Hammer
-                case "middle no hammer":
+                case "middle":
 
                     if (gm.houseList.Count != 0)
                     {
@@ -1771,7 +1837,7 @@ public class AI_Strategy : MonoBehaviour
 #endregion
 
             #region Late Not Hammer
-                case "late no hammer":
+                case "late":
                     //there's rocks in the house
                     if (gm.houseList.Count != 0)
                     {

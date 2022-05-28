@@ -67,7 +67,7 @@ public class TournyManager : MonoBehaviour
 		careerEarnings = gsp.earnings;
 		myFile = new EasyFileSave("my_player_data");
 
-		Debug.Log("Gsp is " + gsp.inProgress);
+		Debug.Log("Gsp In Progress is " + gsp.inProgress);
         if (gsp.careerLoad)
 		{
 			//cm.LoadCareer();
@@ -180,16 +180,16 @@ public class TournyManager : MonoBehaviour
 			else if (gsp.inProgress)
 			{
 				Debug.Log("Setup Stand inProgress is " + true);
-				playerTeam = gsp.playerTeamIndex;
-                //for (int i = 0; i < teams.Length; i++)
-                //{
-                //    if (teams[i].name == gsp.playerTeam.nextOpp)
-                //        oppTeam = i;
-                //    if (teams[i].name == gsp.playerTeam.name)
-                //        playerTeam = i;
-                //}
+                //playerTeam = gsp.playerTeamIndex;
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].name == gsp.playerTeam.nextOpp)
+                        oppTeam = i;
+                    if (teams[i].name == gsp.playerTeam.name)
+                        playerTeam = i;
+                }
                 //gsp.inProgress = false;
-				yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
 				StartCoroutine(DrawScoring());
             }
 			else
@@ -199,7 +199,7 @@ public class TournyManager : MonoBehaviour
 				{
 					if (teams[i].name == gsp.playerTeam.nextOpp)
 						oppTeam = i;
-					if (teams[i].name == gsp.playerTeam.name)
+					if (teams[i].player)
 						playerTeam = i;
 				}
 
@@ -247,9 +247,9 @@ public class TournyManager : MonoBehaviour
 				teams[i] = gsp.teams[i];
 				teams[i].wins = 0;
 				teams[i].loss = 0;
-				teams[i].earnings = 0;
-				teams[i].tourPoints = 0;
-				teams[i].tourRecord = Vector2.zero;
+				//teams[i].earnings = 0;
+				//teams[i].tourPoints = 0;
+				//teams[i].tourRecord = Vector2.zero;
 			}
 
 			for (int i = 0; i < teams.Length; i++)
@@ -263,7 +263,7 @@ public class TournyManager : MonoBehaviour
 			}
 
 			//teamList[playerTeam].team.name = gsp.teamName;
-
+			teamList.Sort();
 			yield return new WaitForEndOfFrame();
 			SetDraw();
 		}
@@ -369,7 +369,6 @@ public class TournyManager : MonoBehaviour
 				teams[drawFormat[draw].game[i].x].nextOpp = teams[drawFormat[draw].game[i].y].name;
 				teams[drawFormat[draw].game[i].y].nextOpp = teams[drawFormat[draw].game[i].x].name;
 			}
-
 		}
 		else if (draw == drawFormat.Length)
         {
@@ -564,6 +563,7 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("Team Name", gsp.teamName);
 		//myFile.Add("Team Colour", cm.teamColour);
 		myFile.Add("Career Earnings", gsp.earnings);
+		Debug.Log("TM Career Earnings - " + gsp.earnings);
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("Tourny In Progress", true);
 		myFile.Add("Draw", draw);
@@ -583,6 +583,7 @@ public class TournyManager : MonoBehaviour
         string[] nextOppList = new string[teams.Length];
         int[] strengthList = new int[teams.Length];
         int[] idList = new int[teams.Length];
+		bool[] playerList = new bool[teams.Length];
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -593,6 +594,7 @@ public class TournyManager : MonoBehaviour
             nextOppList[i] = teams[i].nextOpp;
             strengthList[i] = teams[i].strength;
             idList[i] = teams[i].id;
+			playerList[i] = teams[i].player;
 			//Debug.Log("Tourny Id List - " + idList[i]);
         }
 
@@ -603,7 +605,7 @@ public class TournyManager : MonoBehaviour
         myFile.Add("Tourny NextOpp List", nextOppList);
         myFile.Add("Tourny Strength List", strengthList);
         myFile.Add("Tourny Team ID List", idList);
-
+		myFile.Add("Tourny Player List", playerList);
         //yield return myFile.TestDataSaveLoad();
         yield return myFile.Append();
 

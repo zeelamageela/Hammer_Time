@@ -15,19 +15,20 @@ public class Card
     public bool active;
     public bool played;
 
+    public int length;
     public int draw;
     public int guard;
     public int takeOut;
     public int sweepStrength;
     public int sweepEnduro;
-    public int sweepHealth;
+    public int sweepCohesion;
 
     public int oppDraw;
     public int oppGuard;
     public int oppTakeOut;
     public int oppStrength;
     public int oppEnduro;
-    public int oppHealth;
+    public int oppCohesion;
 
     public string[] effects;
 

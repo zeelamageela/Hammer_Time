@@ -19,8 +19,9 @@ public class SweeperSelector : MonoBehaviour
     bool inturn;
     Rigidbody2D rockRB;
     public Transform launcher;
-
     bool aiTurn;
+
+    public Vector2 moveDirection;
 
     private void Update()
     {
@@ -44,7 +45,7 @@ public class SweeperSelector : MonoBehaviour
             //}
 
             
-            Vector2 moveDirection = rockRB.velocity;
+            moveDirection = rockRB.velocity;
 
             if (moveDirection != Vector2.zero)
             {

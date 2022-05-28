@@ -15,6 +15,7 @@ public class CareerManager : MonoBehaviour
     TournyTeamList tTeamList;
     CareerSettings cs;
     PowerUpManager pUpM;
+    TeamMenu teamSel;
 
     public int week;
     public int seasonLength;
@@ -27,6 +28,8 @@ public class CareerManager : MonoBehaviour
     public bool provQual;
     public bool tourQual;
     public Vector2 tourRecord;
+
+    public Player[] activePlayers;
 
     public float xp;
     public float totalXp;
@@ -85,6 +88,7 @@ public class CareerManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
     }
 
     private void Start()
@@ -126,6 +130,7 @@ public class CareerManager : MonoBehaviour
         earnings = gsp.earnings;
         record = gsp.record;
 
+        Debug.Log("Earnings - CM from GSP - " + earnings);
     }
 
     public void LoadCareer()
@@ -140,6 +145,7 @@ public class CareerManager : MonoBehaviour
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
         pUpM = FindObjectOfType<PowerUpManager>();
+        teamSel = FindObjectOfType<TeamMenu>();
         //teamRecords = new Vector3[totalTeams];
 
         if (provRankList != null)
@@ -180,10 +186,18 @@ public class CareerManager : MonoBehaviour
             cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
             cStats.sweepStrength = myFile.GetInt("Sweep Strength");
             cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
-            cStats.sweepHealth = myFile.GetFloat("Sweep Health");
+            cStats.sweepCohesion = myFile.GetInt("Sweep Cohesion");
             gsp.cStats = cStats;
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
+            int[] playersIdList = myFile.GetArray<int>("Active Players ID List");
+            Debug.Log("Players Id Length - " + playersIdList.Length);
+
+            for (int i = 0; i < playersIdList.Length; i++)
+            {
+                teamSel.activePlayers[i].id = playersIdList[i];
+
+            }
             //if (pUpM)
             //{
                 cardIDList = myFile.GetArray<int>("Card ID List");
@@ -279,15 +293,17 @@ public class CareerManager : MonoBehaviour
                         teams[i] = tTeamList.teams[j];
                 }
 
+                teams[i].wins = winsList[i];
+                teams[i].loss = lossList[i];
+                teams[i].earnings = earningsList[i];
+
                 if (teams[i].id == playerTeamIndex)
                 {
                     teams[i].name = teamName;
                     earnings = earningsList[i];
+                    Debug.Log("Earnings - CM from EarningsList - " + earnings);
+                    teams[i].player = true;
                 }
-
-                teams[i].wins = winsList[i];
-                teams[i].loss = lossList[i];
-                teams[i].earnings = earningsList[i];
             }
 
             int[] tourTeamsIDList = myFile.GetArray<int>("Tour Team ID List");
@@ -316,6 +332,7 @@ public class CareerManager : MonoBehaviour
                     }
                 }
             }
+
             for (int i = 0; i < tourTeams.Length; i++)
             {
                 for (int j = 0; j < teams.Length; j++)
@@ -364,27 +381,34 @@ public class CareerManager : MonoBehaviour
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
                 float[] tournyEarningsList = myFile.GetArray<float>("Tourny Earnings List");
+                bool[] tournyPlayerList = myFile.GetArray<bool>("Tourny Player List");
+                float[] tournyTourPointsList = myFile.GetArray<float>("Tourny Tour Points List");
                 //currentTournyTeams = new Team[tournyIDList.Length];
 
                 for (int i = 0; i < currentTournyTeams.Length; i++)
                 {
                     currentTournyTeams[i].id = tournyIDList[i];
+                    currentTournyTeams[i].player = tournyPlayerList[i];
 
                     for (int j = 0; j < teams.Length; j++)
                     {
                         if (currentTournyTeams[i].id == teams[j].id)
                             currentTournyTeams[i] = teams[j];
-                        if (currentTournyTeams[i].id == playerTeamIndex)
+                        if (currentTournyTeams[i].player)
                         {
                             Debug.Log("Player Team - " + playerTeamIndex);
                             currentTournyTeams[i].name = teamName;
-                            currentTournyTeams[i].earnings = earnings;
+                            //currentTournyTeams[i].earnings = earnings;
                         }
                     }
 
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
                     currentTournyTeams[i].earnings = tournyEarningsList[i];
+                    currentTournyTeams[i].tourPoints = tournyTourPointsList[i];
+
+                    if (currentTournyTeams[i].player)
+                        Debug.Log("Player Team is " + currentTournyTeams[i].name);
                 }
             }
 
@@ -400,12 +424,13 @@ public class CareerManager : MonoBehaviour
 
             for (int i = 0; i < teams.Length; i++)
             {
-                if (playerTeamIndex == teams[i].id)
+                if (teams[i].player)
                 {
                     playerTeam = teams[i];
                     Debug.Log("CM playerTeamIndex is " + teams[i].id);
                 }
             }
+
             myFile.Dispose();
         }
     }
@@ -434,7 +459,7 @@ public class CareerManager : MonoBehaviour
                 allTimeList.Add(new Standings_List(tempTeam));
             }
 
-            myFile.Dispose();
+            //myFile.Append();
         }
 
         yield return new WaitForEndOfFrame();
@@ -459,13 +484,15 @@ public class CareerManager : MonoBehaviour
             allTimeNameTemp[i] = allTimeList[i].team.name;
         }
 
-        //myFile = new EasyFileSave("my_hiscore_data");
+        Debug.Log("All Time List Length - " + allTimeList.Count);
+
+        myFile = new EasyFileSave("my_hiscore_data");
         if (myFile.Load())
         {
             myFile.Add("All Time Earnings", allTimeEarningsTemp);
             myFile.Add("All Time Names", allTimeNameTemp);
 
-            myFile.Save();
+            myFile.Append();
         }
     }
 
@@ -475,6 +502,7 @@ public class CareerManager : MonoBehaviour
         tm = FindObjectOfType<TournyManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
         pUpM = FindObjectOfType<PowerUpManager>();
+        teamSel = FindObjectOfType<TeamMenu>();
 
         Debug.Log("Saving Career - " + gsp.inProgress);
         myFile = new EasyFileSave("my_player_data");
@@ -508,7 +536,7 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Guard Accuracy", cStats.guardAccuracy);
         myFile.Add("Sweep Strength", cStats.sweepStrength);
         myFile.Add("Sweep Endurance", cStats.sweepEndurance);
-        myFile.Add("Sweep Health", cStats.sweepHealth);
+        myFile.Add("Sweep Cohesion", cStats.sweepCohesion);
 
         int[] idList = new int[teams.Length];
         int[] winsList = new int[teams.Length];
@@ -527,11 +555,13 @@ public class CareerManager : MonoBehaviour
             winsList[i] = teams[i].wins;
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
+            //tourPointsList[i] = teams[i].tourPoints;
 
             if (playerTeamIndex == teams[i].id)
             {
                 earningsList[i] = earnings;
                 teams[i].earnings = earnings;
+                Debug.Log("Earnings - CM - " + earnings);
             }
 
         }
@@ -555,11 +585,11 @@ public class CareerManager : MonoBehaviour
                 lossList[i] = teams[i].loss;
                 earningsList[i] = teams[i].earnings;
 
-                if (playerTeamIndex == teams[i].id)
-                {
-                    earningsList[i] = earnings;
-                    teams[i].earnings = earnings;
-                }
+                //if (playerTeamIndex == teams[i].id)
+                //{
+                //    earningsList[i] = earnings;
+                //    teams[i].earnings = earnings;
+                //}
 
             }
             Debug.Log("Total Id List length is " + idList.Length);
@@ -689,12 +719,24 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Tourny Earnings List", tournyEarningsList);
         }
 
+        if (teamSel)
+        {
+            activePlayers = teamSel.activePlayers;
+            int[] playerIdList = new int[activePlayers.Length];
+
+            for (int i = 0; i < playerIdList.Length; i++)
+            {
+                playerIdList[i] = activePlayers[i].id;
+            }
+
+            myFile.Add("Active Players ID List", playerIdList);
+        }
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
         //myFile.Add("Tourny Wins List", tournyWinsList);
         //myFile.Add("Tourny Loss List", tournyLossList);
 
         myFile.Append();
-
+        StartCoroutine(SaveHighScore());
     }
 
     public void SetupTourny()
@@ -998,6 +1040,7 @@ public class CareerManager : MonoBehaviour
             teams[i] = tTeamList.teams[i];
         }
         teams[0].name = teamName;
+        teams[0].player = true;
         playerTeamIndex = teams[0].id;
         gsp.playerTeamIndex = playerTeamIndex;
         week++;
@@ -1008,7 +1051,7 @@ public class CareerManager : MonoBehaviour
         tTeamList = FindObjectOfType<TournyTeamList>();
         gsp = FindObjectOfType<GameSettingsPersist>();
         tSel = FindObjectOfType<TournySelector>();
-
+        teamSel = FindObjectOfType<TeamMenu>();
 
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
@@ -1041,13 +1084,12 @@ public class CareerManager : MonoBehaviour
         xp = 0f;
         totalXp = 0f;
 
-        cStats.drawAccuracy = 3;
-        cStats.guardAccuracy = 3;
-        cStats.takeOutAccuracy = 3;
-        cStats.guardAccuracy = 3;
-        cStats.sweepStrength = 3;
-        cStats.sweepEndurance = 3;
-        cStats.sweepHealth = 50f;
+        cStats.drawAccuracy = teamSel.activePlayers[0].draw + teamSel.activePlayers[1].draw + teamSel.activePlayers[2].draw + 1;
+        cStats.guardAccuracy = teamSel.activePlayers[0].guard + teamSel.activePlayers[1].guard + teamSel.activePlayers[2].guard + 1;
+        cStats.takeOutAccuracy = teamSel.activePlayers[0].takeOut + teamSel.activePlayers[1].takeOut + teamSel.activePlayers[2].takeOut + 1;
+        cStats.sweepStrength = teamSel.activePlayers[0].sweepStrength + teamSel.activePlayers[1].sweepStrength + teamSel.activePlayers[2].sweepStrength + 1;
+        cStats.sweepEndurance = teamSel.activePlayers[0].sweepEnduro + teamSel.activePlayers[1].sweepEnduro + teamSel.activePlayers[2].sweepEnduro + 1;
+        cStats.sweepCohesion = teamSel.activePlayers[0].sweepCohesion + teamSel.activePlayers[1].sweepCohesion + teamSel.activePlayers[2].sweepCohesion + 1;
 
         season++;
 
@@ -1064,6 +1106,8 @@ public class CareerManager : MonoBehaviour
 
 
         teams[0].name = teamName;
+        teams[0].player = true;
+        teams[0].earnings = earnings;
         playerTeamIndex = teams[0].id;
         gsp.playerTeamIndex = playerTeamIndex;
 

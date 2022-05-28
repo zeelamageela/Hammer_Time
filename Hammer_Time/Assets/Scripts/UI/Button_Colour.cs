@@ -59,7 +59,7 @@ public class Button_Colour : MonoBehaviour
                 main.rectTransform.anchoredPosition = mainPos2;
                 main.color = colour2;
                 main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.HeavyImpact);
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
                 break;
             case 3:
                 //Selected Selection State

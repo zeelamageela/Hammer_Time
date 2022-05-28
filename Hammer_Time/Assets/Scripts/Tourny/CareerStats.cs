@@ -11,5 +11,5 @@ public class CareerStats
     public int guardAccuracy;
     public int sweepStrength;
     public int sweepEndurance;
-    public float sweepHealth;
+    public int sweepCohesion;
 }

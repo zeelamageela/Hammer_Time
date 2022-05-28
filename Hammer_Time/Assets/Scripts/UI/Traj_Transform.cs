@@ -25,6 +25,7 @@ public class Traj_Transform : MonoBehaviour
     public Transform pointY1;
     public Transform pointY2;
     public LineRenderer lrY;
+
     void Update()
     {
         //if the rock list has rocks in it

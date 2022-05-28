@@ -100,6 +100,58 @@ public class Card_Select : MonoBehaviour
         Debug.Log("Size is " + cardSize.localScale);
     }
 
+    public void ViewCard()
+    {
+        //Vector2 cardSizeMax = cardSize.localScale * 2;
+        //for (int i = 0; i < 1000; i++)
+        //{
+        //    cardSize.localScale = cardSize.localScale * (i / 500f);
+        //    //Vector2.Lerp(cardSize.localScale, cardSizeMax, i / 1000f);
+        //}
+        if (cardIndex == 0)
+            pm.scrollbar.value = -2f;
+        else if (cardIndex == pm.numberOfCards - 1f)
+            pm.scrollbar.value = 2f;
+        else
+        {
+            pm.scrollbar.value = (float)cardIndex / (pm.numberOfCards - 1);
+        }
+
+        if (cardSize.localScale == initialScale)
+        {
+            cardSize.localScale = maxScale;
+            textColour = colour3;
+            bgColour = colour1;
+            //hlg.spacing = 450;
+            for (int i = 0; i < pm.cardGOs.Length; i++)
+            {
+                if (i != cardIndex)
+                {
+                    pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+                    pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour2;
+                    pm.cardGOs[i].GetComponent<Card_Select>().bgColour = colour2;
+                    pm.cardGOs[i].GetComponent<Button>().interactable = false;
+                }
+            }
+            buttons.SetActive(true);
+            //pm.PreviewPoints(cardIndex);
+        }
+        else
+        {
+            cardSize.localScale = initialScale;
+            //hlg.spacing = 0;
+            for (int i = 0; i < pm.cardGOs.Length; i++)
+            {
+                pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+                pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour3;
+                pm.cardGOs[i].GetComponent<Card_Select>().bgColour = colour1;
+                pm.cardGOs[i].GetComponent<Button>().interactable = true;
+            }
+            buttons.SetActive(false);
+            //pm.UnPreviewPoints(cardIndex);
+        }
+    }
+
     public void BuyButton()
     {
         pm.BuyCard(cardIndex);

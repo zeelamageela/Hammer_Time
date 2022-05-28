@@ -94,7 +94,7 @@ public class XPManager : MonoBehaviour
         guardSlider.value = cStats.guardAccuracy;
         strengthSlider.value = cStats.sweepStrength;
         endurSlider.value = cStats.sweepEndurance;
-        healthSlider.value = cStats.sweepHealth;
+        healthSlider.value = cStats.sweepCohesion;
 
     }
 
@@ -112,7 +112,7 @@ public class XPManager : MonoBehaviour
                     - cStats.guardAccuracy
                     - cStats.sweepStrength
                     - cStats.sweepEndurance
-                    - (int)(cStats.sweepHealth / 10);
+                    - cStats.sweepCohesion;
     }
 
     public void ButtonAdd(int skill)
@@ -176,7 +176,7 @@ public class XPManager : MonoBehaviour
                 skillPoints++;
                 break;
             case 5:
-                healthSlider.value -= 10;
+                healthSlider.value -= 1;
                 skillPoints++;
                 break;
         }
@@ -191,7 +191,7 @@ public class XPManager : MonoBehaviour
         cm.cStats.guardAccuracy = (int)guardSlider.value;
         cm.cStats.sweepStrength = (int)strengthSlider.value;
         cm.cStats.sweepEndurance = (int)endurSlider.value;
-        cm.cStats.sweepHealth = healthSlider.value;
+        cm.cStats.sweepCohesion = (int)healthSlider.value;
 
         resetButton.interactable = false;
         this.gameObject.SetActive(false);

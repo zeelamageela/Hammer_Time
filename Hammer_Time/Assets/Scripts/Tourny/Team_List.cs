@@ -22,9 +22,16 @@ public class Team_List : IComparable<Team_List>
         {
             return 1;
         }
-        else if (team.wins >= other.team.wins)
+        else if (team.wins > other.team.wins)
         {
             return -1;
+        }
+        else if (team.wins == other.team.wins)
+        {
+            if (team.player)
+                return -1;
+            else
+                return 1;
         }
         else return 0;
     }

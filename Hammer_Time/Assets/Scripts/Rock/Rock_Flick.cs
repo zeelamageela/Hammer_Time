@@ -362,6 +362,8 @@ public class Rock_Flick : MonoBehaviour
         mouseUp = false;
         springReleased = true;
 
+
+        //ShotLocation();
         //GetComponent<SpringJoint2D>().enabled = true;
         //Debug.Log("Waht is happening in here. is the spring enabled " + GetComponent<SpringJoint2D>().enabled);
         launcher.GetComponent<Collider2D>().enabled = true;
@@ -382,5 +384,153 @@ public class Rock_Flick : MonoBehaviour
         //yield return new WaitUntil(() => rb.position == launcher_rb.position);
 
         //shotTaken = true;
+    }
+
+    void ShotLocation()
+    {
+        AI_Sweeper aiSweep = FindObjectOfType<AI_Sweeper>();
+        AI_Shooter aiShoot = FindObjectOfType<AI_Shooter>();
+        RockManager rm = FindObjectOfType<RockManager>();
+        Vector3 aimPos = trajLine.aimCircle.transform.position;
+
+        string shotType;
+
+        //aim circle is in the house
+        if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 1.5f)
+        {
+            //Button
+            if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.25f)
+            {
+                shotType = "Button";
+            }
+            //in the centre
+            else if (Mathf.Abs(aimPos.x) < 0.25f)
+            {
+                //in the front of the house
+                if (aimPos.y < 6.5f)
+                {
+                    //in the four foot
+                    if (aimPos.y < 6f)
+                    {
+                        shotType = "Top Four Foot";
+                    }
+                    else
+                    {
+                        shotType = "Top Twelve Foot";
+                    }
+                }
+                else
+                {
+                    //in the four foot
+                    if (aimPos.y < 7f)
+                    {
+                        shotType = "Back Four Foot";
+                    }
+                    else
+                    {
+                        shotType = "Back Twelve Foot";
+                    }
+                }
+            }
+            //on the left
+            else if (aimPos.x < 0f)
+            {
+                //in the four foot
+                if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.75f)
+                {
+                    shotType = "Left Four Foot";
+                }
+                else
+                {
+                    shotType = "Left Twelve Foot";
+                }
+            }
+            //on the right
+            else if (aimPos.x > 0f)
+            {
+                //in the four foot
+                if (Vector2.Distance(new Vector2(0f, 6.5f), new Vector2(aimPos.x, aimPos.y)) < 0.75f)
+                {
+                    shotType = "Right Four Foot";
+                }
+                else
+                {
+                    shotType = "Right Twelve Foot";
+                }
+            }
+            //something has gone wrong
+            else
+            {
+                shotType = "Default - No Shot";
+            }
+        }
+        //outside the house
+        else
+        {
+            //in the centre
+            if (Mathf.Abs(aimPos.x) < 0.35f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "High Centre Guard";
+                    }
+                    else
+                    {
+                        shotType = "Centre Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Tight Centre Guard";
+                }
+            }
+            //on the left
+            else if (aimPos.x < 0f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "Left High Corner Guard";
+                    }
+                    else
+                    {
+                        shotType = "Left Corner Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Left Tight Corner Guard";
+                }
+            }
+            //on the right
+            else if (aimPos.x > 0f)
+            {
+                if (aimPos.y < 2f)
+                {
+                    if (aimPos.y < 4f)
+                    {
+                        shotType = "Right High Corner Guard";
+                    }
+                    else
+                    {
+                        shotType = "Right Corner Guard";
+                    }
+                }
+                else
+                {
+                    shotType = "Right Tight Corner Guard";
+                }
+            }
+            else
+            {
+                shotType = "Default - No Shot";
+            }
+        }
+
+
+        aiSweep.OnSweep(false, shotType, new Vector2(aimPos.x, aimPos.y), rm.inturn);
     }
 }

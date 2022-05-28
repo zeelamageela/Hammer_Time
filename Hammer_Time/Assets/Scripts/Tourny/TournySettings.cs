@@ -20,6 +20,7 @@ public class TournySettings : MonoBehaviour
     public float earnings;
     public float entryFee;
 
+    public GameObject expandButton;
     public GameObject settings;
     public Slider gameSlider;
     public Text gameText;
@@ -41,8 +42,14 @@ public class TournySettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
 
         rockSlider.interactable = false;
-        StartCoroutine(LoadCareer());
-        Settings();
+        if (cm)
+        {
+            StartCoroutine(LoadCareer());
+            Settings();
+        }
+        else
+            StartCoroutine(LoadFromFile());
+
     }
 
     // Update is called once per frame
@@ -70,7 +77,7 @@ public class TournySettings : MonoBehaviour
         entryFee = cm.currentTourny.entryFee;
         prize = cm.currentTourny.prizeMoney;
 
-        settings.SetActive(true);
+        //settings.SetActive(true);
         yield break;
     }
 
@@ -97,6 +104,7 @@ public class TournySettings : MonoBehaviour
         }
 
     }
+
     public void LoadToGSP()
     {
         gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
@@ -134,10 +142,12 @@ public class TournySettings : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
-        if (cm.week == 1)
-        {
-            //Help();
-        }
+
+        //if (cm.week == 1)
+        //{
+        //    //Help();
+        //}
+
         if (gsp.KO)
         {
             gameText.gameObject.SetActive(false);
@@ -150,14 +160,17 @@ public class TournySettings : MonoBehaviour
             if (teams > 12)
             {
                 gameSlider.minValue = 5;
+                games = 5;
             }
             else if (teams > 8)
             {
                 gameSlider.minValue = 4;
+                games = 4;
             }
             else
             {
                 gameSlider.minValue = 3;
+                games = 3;
             }
             gameSlider.maxValue = teams - 1;
         }
@@ -166,7 +179,8 @@ public class TournySettings : MonoBehaviour
         tournyInfoText[1].text = cm.currentTourny.format;
         tournyInfoText[2].text = "$" + cm.currentTourny.prizeMoney.ToString("n0");
         tournyInfoText[3].text = "$" + cm.currentTourny.entryFee.ToString("n0");
-
+        ends = 2;
+        rocks = 2;
         rockSlider.interactable = true;
         endSlider.interactable = true;
     }
@@ -186,6 +200,31 @@ public class TournySettings : MonoBehaviour
         //Debug.Log("Clickeddd");
     }
 
+    public void Expand(bool active)
+    {
+        Animator expandAnim = expandButton.GetComponent<Animator>();
+        //Animator panelAnim = tournyName.transform.parent.gameObject.GetComponent<Animator>();
+
+        if (active)
+        {
+            expandAnim.SetBool("Expand", true);
+            expandButton.transform.GetChild(0).gameObject.SetActive(false);
+            StartCoroutine(WaitForTime(0.35f));
+        }
+        else
+        {
+            expandAnim.SetBool("Expand", false);
+            expandButton.transform.GetChild(0).gameObject.SetActive(true);
+            settings.gameObject.SetActive(true);
+        }
+    }
+
+    IEnumerator WaitForTime(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        settings.SetActive(true);
+    }
     public void Back()
     {
         SceneManager.LoadScene("Arena_Selector");

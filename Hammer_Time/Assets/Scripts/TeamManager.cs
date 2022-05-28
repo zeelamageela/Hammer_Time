@@ -164,7 +164,7 @@ public class TeamManager : MonoBehaviour
                     teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
                     teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamRed[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
                     //Debug.Log("Red Turn PLAYER stats " + j + " - "
                         //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
@@ -178,7 +178,7 @@ public class TeamManager : MonoBehaviour
                     teamRed[j].charStats.guardAccuracy.SetBaseValue(aiStats + gsp.oppStats.guardAccuracy);
                     teamRed[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
-                    teamRed[j].charStats.sweepHealth = (aiStats * 10f) + gsp.oppStats.sweepHealth;
+                    teamRed[j].charStats.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
                     //Debug.Log("Red Turn AI stats " + j + " - "
                         //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
@@ -188,7 +188,7 @@ public class TeamManager : MonoBehaviour
         {
             for (int i = 0; i < teamYellow.Length; i++)
             {
-                teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
+                //teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
 
             }
             if (gsp.yellowTeamName == gsp.teamName)
@@ -200,9 +200,9 @@ public class TeamManager : MonoBehaviour
                     teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamYellow[j].charStats.sweepHealth = gsp.cStats.sweepHealth;
+                    teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
                     //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
-                        //+ teamYellow[j].charStats.guardAccuracy.GetValue());
+                    //+ teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
             else
@@ -214,9 +214,9 @@ public class TeamManager : MonoBehaviour
                     teamYellow[j].charStats.guardAccuracy.SetBaseValue(aiStats + gsp.oppStats.guardAccuracy);
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
-                    teamYellow[j].charStats.sweepHealth = (10 * aiStats) + gsp.oppStats.sweepHealth;
+                    teamYellow[j].charStats.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
                     //Debug.Log("Yellow Turn AI stats " + j + " - "
-                         //+ teamYellow[j].charStats.guardAccuracy.GetValue());
+                    //+ teamYellow[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }

@@ -65,7 +65,7 @@ public class Rock_Force : MonoBehaviour
         HapticController.Load(slideHap);
         HapticController.Loop(true);
         HapticController.Play();
-        HapticController.clipLevel = audVel;
+        HapticController.clipLevel = audVel * 4f;
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
@@ -102,4 +102,5 @@ public class Rock_Force : MonoBehaviour
         }
 
     }
+
 }
