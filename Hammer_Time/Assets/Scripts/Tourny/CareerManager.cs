@@ -55,6 +55,7 @@ public class CareerManager : MonoBehaviour
     public Team[] tourTeams;
     public Team[] currentTournyTeams;
     public Tourny currentTourny;
+    
     public List<Standings_List> provRankList;
     public List<TourStandings_List> tourRankList;
 
@@ -190,20 +191,21 @@ public class CareerManager : MonoBehaviour
             gsp.cStats = cStats;
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
-            int[] playersIdList = myFile.GetArray<int>("Active Players ID List");
-            Debug.Log("Players Id Length - " + playersIdList.Length);
-
-            for (int i = 0; i < playersIdList.Length; i++)
+            if (teamSel)
             {
-                Debug.Log("CM LOADCAREER - Active Players Id - " + i + " - " + playersIdList[i]);
-                teamSel.activePlayers[i].id = playersIdList[i];
+                int[] playersIdList = myFile.GetArray<int>("Active Players ID List");
+                Debug.Log("Players Id Length - " + playersIdList.Length);
 
+
+                for (int i = 0; i < playersIdList.Length; i++)
+                {
+                    Debug.Log("CM LOADCAREER - Active Players Id - " + i + " - " + playersIdList[i]);
+                    teamSel.activePlayers[i].id = playersIdList[i];
+                }
             }
-            //if (pUpM)
-            //{
-                cardIDList = myFile.GetArray<int>("Card ID List");
-                Debug.Log("cardIdList Length - " + cardIDList.Length);
-            //}
+
+            cardIDList = myFile.GetArray<int>("Card ID List");
+            Debug.Log("cardIdList Length - " + cardIDList.Length);
 
             if (tSel)
             {
@@ -315,59 +317,33 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Tour Record List Length is " + tourWinsList.Length + " " + tourLossList.Length);
             Debug.Log("Total Teams List Length is " + tourTeamsIDList.Length);
 
-            for (int i = 0; i < teams.Length; i++)
+            if (tourTeams.Length > 0)
             {
-                //tourTeams[i].id = tourTeamsIDList[i];
-                //Debug.Log("Tour Teams ID is " + tourTeamsIDList[i]);
-
-
-                //if (teams[i].id == playerTeamIndex)
-                //    teams[i].name = teamName;
-                for (int j = 0; j < tourTeamsIDList.Length; j++)
+                for (int i = 0; i < teams.Length; i++)
                 {
-                    if (teams[i].id == tourTeamsIDList[j])
+                    for (int j = 0; j < tourTeamsIDList.Length; j++)
                     {
-                        teams[i].tourRecord.x = tourWinsList[j];
-                        teams[i].tourRecord.y = tourLossList[j];
-                        teams[i].tourPoints = tourPointsList[j];
+                        if (teams[i].id == tourTeamsIDList[j])
+                        {
+                            teams[i].tourRecord.x = tourWinsList[j];
+                            teams[i].tourRecord.y = tourLossList[j];
+                            teams[i].tourPoints = tourPointsList[j];
+                        }
+                    }
+                }
+
+                for (int i = 0; i < tourTeams.Length; i++)
+                {
+                    for (int j = 0; j < teams.Length; j++)
+                    {
+                        if (tourTeamsIDList[i] == teams[j].id)
+                            tourTeams[i] = teams[j];
                     }
                 }
             }
 
-            for (int i = 0; i < tourTeams.Length; i++)
-            {
-                for (int j = 0; j < teams.Length; j++)
-                {
-                    if (tourTeamsIDList[i] == teams[j].id)
-                        tourTeams[i] = teams[j];
-                }
-            }
+
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
-
-            //Debug.Log("ProvRankList count is " + provRankList.Count);
-            //if (tm)
-            //{
-            //    for (int i = 0; i < teams.Length; i++)
-            //    {
-            //        for (int j = 0; j < currentTournyTeams.Length; i++)
-            //        {
-            //            if (teams[i].id == currentTournyTeams[j].id)
-            //            {
-            //                //teams[i].wins += currentTournyTeams[j].wins;
-            //                //teams[i].loss += currentTournyTeams[j].loss;
-            //                //teams[i].earnings += currentTournyTeams[j].earnings;
-            //            }
-            //        }
-            //        if (teams[i].id == playerTeamIndex)
-            //        {
-            //            //teams[i].name = teamName;
-            //            //teams[i].wins = (int)record.x;
-            //            //teams[i].loss = (int)record.y;
-            //            Debug.Log("PlayerTeam ID is " + teams[i].id);
-            //        }
-            //    }
-
-            //}
 
             if (gsp.inProgress)
             {
@@ -438,7 +414,7 @@ public class CareerManager : MonoBehaviour
 
     IEnumerator SaveHighScore()
     {
-        myFile = new EasyFileSave("my_hiscore_data");
+        myFile = new EasyFileSave("my_player_data");
         allTimeList = new List<Standings_List>();
 
         if (myFile.Load())
@@ -455,12 +431,12 @@ public class CareerManager : MonoBehaviour
                 tempTeam.name = "";
 
                 tempTeam.name = allTimeName[i];
-                tempTeam.wins = Mathf.RoundToInt(allTimeEarnings[i]);
+                //tempTeam.wins = Mathf.RoundToInt(allTimeEarnings[i]);
                 tempTeam.earnings = allTimeEarnings[i];
                 allTimeList.Add(new Standings_List(tempTeam));
             }
 
-            //myFile.Append();
+            myFile.Dispose();
         }
 
         yield return new WaitForEndOfFrame();
@@ -593,11 +569,11 @@ public class CareerManager : MonoBehaviour
                 //}
 
             }
-            Debug.Log("Total Id List length is " + idList.Length);
-            myFile.Add("Total ID List", idList);
-            myFile.Add("Total Wins List", winsList);
-            myFile.Add("Total Loss List", lossList);
-            myFile.Add("Total Earnings List", earningsList);
+            //Debug.Log("Total Id List length is " + idList.Length);
+            //myFile.Add("Total ID List", idList);
+            //myFile.Add("Total Wins List", winsList);
+            //myFile.Add("Total Loss List", lossList);
+            //myFile.Add("Total Earnings List", earningsList);
 
             for (int i = 0; i < tourTeams.Length; i++)
             {
@@ -613,6 +589,8 @@ public class CareerManager : MonoBehaviour
                 tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
                 tourLossList[i] = (int)tourTeams[i].tourRecord.y;
                 tourPointsList[i] = tourTeams[i].tourPoints;
+                Debug.Log("Tour Points Length - " + tourPointsList.Length);
+                Debug.Log("Tour Points - " + i + " - " + tourPointsList[i]);
             }
             Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
             myFile.Add("Tour Team ID List", tourTeamIDList);
@@ -1084,12 +1062,22 @@ public class CareerManager : MonoBehaviour
         xp = 0f;
         totalXp = 0f;
 
-        cStats.drawAccuracy = teamSel.activePlayers[0].draw + teamSel.activePlayers[1].draw + teamSel.activePlayers[2].draw + 1;
-        cStats.guardAccuracy = teamSel.activePlayers[0].guard + teamSel.activePlayers[1].guard + teamSel.activePlayers[2].guard + 1;
-        cStats.takeOutAccuracy = teamSel.activePlayers[0].takeOut + teamSel.activePlayers[1].takeOut + teamSel.activePlayers[2].takeOut + 1;
-        cStats.sweepStrength = teamSel.activePlayers[0].sweepStrength + teamSel.activePlayers[1].sweepStrength + teamSel.activePlayers[2].sweepStrength + 1;
-        cStats.sweepEndurance = teamSel.activePlayers[0].sweepEnduro + teamSel.activePlayers[1].sweepEnduro + teamSel.activePlayers[2].sweepEnduro + 1;
-        cStats.sweepCohesion = teamSel.activePlayers[0].sweepCohesion + teamSel.activePlayers[1].sweepCohesion + teamSel.activePlayers[2].sweepCohesion + 1;
+        cStats.drawAccuracy = 3;
+        cStats.guardAccuracy = 3;
+        cStats.takeOutAccuracy = 3;
+        cStats.sweepStrength = 3;
+        cStats.sweepEndurance = 3;
+        cStats.sweepCohesion = 3;
+
+        for (int i = 0; i < activePlayers.Length; i++)
+        {
+            modStats.drawAccuracy += activePlayers[i].draw;
+            modStats.takeOutAccuracy += activePlayers[i].takeOut;
+            modStats.guardAccuracy += activePlayers[i].guard;
+            modStats.sweepStrength += activePlayers[i].sweepStrength;
+            modStats.sweepEndurance += activePlayers[i].sweepEnduro;
+            modStats.sweepCohesion += activePlayers[i].sweepCohesion;
+        }
 
         season++;
 

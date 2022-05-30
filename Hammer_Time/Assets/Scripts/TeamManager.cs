@@ -148,7 +148,8 @@ public class TeamManager : MonoBehaviour
 
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
-        
+        CareerManager cm = FindObjectOfType<CareerManager>();
+
         if (redTurn)
         {
             for (int i = 0; i < teamRed.Length; i++)
@@ -159,12 +160,24 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamRed.Length; j++)
                 {
-                    teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                    teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                    teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                    teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                    if (j < 3)
+                    {
+                        teamRed[j].charStats.drawAccuracy.SetBaseValue(cm.activePlayers[j].draw);
+                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(cm.activePlayers[j].takeOut);
+                        teamRed[j].charStats.guardAccuracy.SetBaseValue(cm.activePlayers[j].guard);
+                        teamRed[j].charStats.sweepStrength.SetBaseValue(cm.activePlayers[j].sweepStrength);
+                        teamRed[j].charStats.sweepEndurance.SetBaseValue(cm.activePlayers[j].sweepEnduro);
+                        teamRed[j].charStats.sweepCohesion.SetBaseValue(cm.activePlayers[j].sweepCohesion);
+                    }
+                    else
+                    {
+                        teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                        teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                        teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                        teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                        teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                    }
                     //Debug.Log("Red Turn PLAYER stats " + j + " - "
                         //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
@@ -195,12 +208,24 @@ public class TeamManager : MonoBehaviour
             {
                 for (int j = 0; j < teamYellow.Length; j++)
                 {
-                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                    teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                    teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                    if (j < 3)
+                    {
+                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(cm.activePlayers[j].draw);
+                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(cm.activePlayers[j].takeOut);
+                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(cm.activePlayers[j].guard);
+                        teamYellow[j].charStats.sweepStrength.SetBaseValue(cm.activePlayers[j].sweepStrength);
+                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(cm.activePlayers[j].sweepEnduro);
+                        teamYellow[j].charStats.sweepCohesion.SetBaseValue(cm.activePlayers[j].sweepCohesion);
+                    }
+                    else
+                    {
+                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
+                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
+                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
+                        teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
+                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
+                        teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                    }
                     //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
                     //+ teamYellow[j].charStats.guardAccuracy.GetValue());
                 }

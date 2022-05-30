@@ -272,10 +272,28 @@ public class CareerSettings : MonoBehaviour
         int first = Random.Range(0, 10);
         string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greecy", "Treep", "Cherp", "Glimp", "Jam", "Cray", "Stint" };
 
-        int last = Random.Range(0, 10);
-        string[] name2 = { "Griffle", "Stamp", "Gloob", "Fristensen", "Jumble", "Stoffer", "Wellzy", "Trinklet", "Guston", "Stoobler" };
+        int syllables = Random.Range(0, 3);
+
+        int lasta = Random.Range(0, 10);
+        string[] name2a = { "Griff", "Stamp", "Gloob", "Frist", "Jum", "Stoff", "Well", "Trink", "Gust", "Stoob" };
+
+        int lastb = Random.Range(0, 10);
+        string[] name2b = { "", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
+
+        int lastc = Random.Range(0, 10);
+        string[] name2c = { "", "sen", "rov", "witz", "vich", "ter", "vun", "brun", "son", "bing" };
+
+        if (syllables == 0)
+        {
+            lastb = 0;
+            lastc = 0;
+        }
+        else if (syllables == 1)
+        {
+            lastc = 0;
+        }
 
         playerNameInput.text = name1[first];
-        teamNameInput.text = name2[last];
+        teamNameInput.text = name2a[lasta] + name2b[lastb] + name2c[lastc];
     }
 }

@@ -7046,9 +7046,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1222090148}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -7566,9 +7566,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 439716819}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -11447,16 +11447,16 @@ MonoBehaviour:
   - name: Tim 'Tam' Dingle
     id: 0
     description: Your starting Lead
-    cost: 300
+    cost: 100
     image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
     active: 1
     view: 0
-    draw: 1
-    guard: 1
-    takeOut: 1
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 0
+    draw: 3
+    guard: 3
+    takeOut: 2
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 1
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11466,16 +11466,16 @@ MonoBehaviour:
   - name: Elle 'The Smell' Bell
     id: 1
     description: Your starting Second
-    cost: 300
+    cost: 100
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 1
     view: 0
-    draw: 1
-    guard: 1
-    takeOut: 1
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 0
+    draw: 2
+    guard: 3
+    takeOut: 3
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 1
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11485,16 +11485,16 @@ MonoBehaviour:
   - name: Kate 'The Great' King
     id: 2
     description: Your starting Third
-    cost: 300
+    cost: 100
     image: {fileID: 21300000, guid: a93140fcdfced44cf865e8d26f180af3, type: 3}
     active: 1
     view: 0
-    draw: 2
-    guard: 0
-    takeOut: 1
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: 2
+    draw: 4
+    guard: 2
+    takeOut: 4
+    sweepStrength: 1
+    sweepEnduro: 1
+    sweepCohesion: 3
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11508,12 +11508,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 2
-    takeOut: 1
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 0
+    draw: 5
+    guard: 5
+    takeOut: 3
+    sweepStrength: 2
+    sweepEnduro: 2
+    sweepCohesion: 1
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11527,11 +11527,11 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 0
     view: 0
-    draw: 1
-    guard: 2
-    takeOut: 1
+    draw: 5
+    guard: 6
+    takeOut: 3
     sweepStrength: 2
-    sweepEnduro: 1
+    sweepEnduro: 2
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -11546,11 +11546,11 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a93140fcdfced44cf865e8d26f180af3, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 0
-    takeOut: 0
-    sweepStrength: 2
-    sweepEnduro: 3
+    draw: 6
+    guard: 2
+    takeOut: 2
+    sweepStrength: 4
+    sweepEnduro: 4
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -11565,12 +11565,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
     active: 0
     view: 0
-    draw: 3
+    draw: 4
     guard: 0
-    takeOut: 2
-    sweepStrength: 2
-    sweepEnduro: 2
-    sweepCohesion: 0
+    takeOut: 4
+    sweepStrength: 4
+    sweepEnduro: 4
+    sweepCohesion: 2
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11584,12 +11584,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 1
-    guard: 1
+    draw: 2
+    guard: 4
     takeOut: 2
-    sweepStrength: 0
-    sweepEnduro: 3
-    sweepCohesion: 0
+    sweepStrength: 4
+    sweepEnduro: 4
+    sweepCohesion: 2
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11603,12 +11603,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 0
-    takeOut: 0
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 1
+    draw: 5
+    guard: 5
+    takeOut: 5
+    sweepStrength: 5
+    sweepEnduro: 5
+    sweepCohesion: 5
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11622,12 +11622,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 1
-    takeOut: 2
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 0
+    draw: 7
+    guard: 3
+    takeOut: 7
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 7
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11641,12 +11641,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a93140fcdfced44cf865e8d26f180af3, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 2
-    takeOut: 2
-    sweepStrength: 1
-    sweepEnduro: 0
-    sweepCohesion: 1
+    draw: 6
+    guard: 6
+    takeOut: 6
+    sweepStrength: 4
+    sweepEnduro: 4
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11660,12 +11660,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 2
-    takeOut: 2
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 1
+    draw: 4
+    guard: 4
+    takeOut: 4
+    sweepStrength: 6
+    sweepEnduro: 6
+    sweepCohesion: 6
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11679,12 +11679,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 2
-    takeOut: 2
-    sweepStrength: 2
-    sweepEnduro: 2
-    sweepCohesion: 2
+    draw: 6
+    guard: 5
+    takeOut: 4
+    sweepStrength: 4
+    sweepEnduro: 6
+    sweepCohesion: 5
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -11698,18 +11698,18 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 4
-    guard: 4
-    takeOut: 4
-    sweepStrength: 4
-    sweepEnduro: 4
-    sweepCohesion: 4
+    draw: 6
+    guard: 6
+    takeOut: 6
+    sweepStrength: 8
+    sweepEnduro: 8
+    sweepCohesion: 8
     oppDraw: 0
     oppGuard: 0
-    oppTakeOut: 1
+    oppTakeOut: -1
     oppStrength: 0
-    oppEnduro: 1
-    oppCohesion: 0
+    oppEnduro: 0
+    oppCohesion: -1
   - name: '''Crow'''
     id: 14
     description: Upgrade level 3
@@ -11717,15 +11717,15 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a93140fcdfced44cf865e8d26f180af3, type: 3}
     active: 0
     view: 0
-    draw: 4
-    guard: 3
-    takeOut: 4
-    sweepStrength: 3
-    sweepEnduro: 2
-    sweepCohesion: 3
-    oppDraw: 1
-    oppGuard: 1
-    oppTakeOut: 1
+    draw: 8
+    guard: 8
+    takeOut: 8
+    sweepStrength: 6
+    sweepEnduro: 6
+    sweepCohesion: 6
+    oppDraw: -1
+    oppGuard: -1
+    oppTakeOut: -1
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -11736,15 +11736,15 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
     active: 0
     view: 0
-    draw: 4
-    guard: 4
-    takeOut: 4
-    sweepStrength: 4
-    sweepEnduro: 4
-    sweepCohesion: 4
-    oppDraw: 1
-    oppGuard: 1
-    oppTakeOut: 1
+    draw: 5
+    guard: 5
+    takeOut: 9
+    sweepStrength: 9
+    sweepEnduro: 7
+    sweepCohesion: 7
+    oppDraw: -1
+    oppGuard: -1
+    oppTakeOut: -1
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -11755,14 +11755,14 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 2
-    takeOut: 2
+    draw: 9
+    guard: 7
+    takeOut: 5
     sweepStrength: 5
-    sweepEnduro: 5
-    sweepCohesion: 5
-    oppDraw: 0
-    oppGuard: 0
+    sweepEnduro: 7
+    sweepCohesion: 9
+    oppDraw: -1
+    oppGuard: -1
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
@@ -11774,17 +11774,17 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 0
     view: 0
-    draw: 2
+    draw: 5
     guard: 5
-    takeOut: 3
-    sweepStrength: 3
-    sweepEnduro: 3
-    sweepCohesion: 3
+    takeOut: 6
+    sweepStrength: 9
+    sweepEnduro: 9
+    sweepCohesion: 8
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
+    oppStrength: -1
+    oppEnduro: -1
     oppCohesion: 0
   teamDisplay:
   - charName: {fileID: 1266140132}
@@ -19100,9 +19100,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 441200005}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -25628,9 +25628,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1651773672}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -26084,9 +26084,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 372666484}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -28095,7 +28095,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[0].sentences.Array.size
-      value: 3
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.size
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.size
@@ -28107,7 +28111,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].sentences.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[0].sentences.Array.data[1]
@@ -28116,8 +28120,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[0].sentences.Array.data[2]
-      value: Let's start by looking at Team TEAMNAME.  You'll get a chance to replace
-        team members every week.
+      value: 'Let''s start by looking at Team TEAMNAME. '
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[0].sentences.Array.data[3]
+      value: You can shop for FREE AGENTS every week...
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[0].sentences.Array.data[4]
+      value: ...but make sure you have enough CASH to pay them!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[1].sentences.Array.data[1]
+      value: You've done great, and came away with EARNINGS.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[2].sentences.Array.data[1]
+      value: EARNINGS might now seem like a lot, but you've gained some valuable
+        experience.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[4].sentences.Array.data[1]
@@ -28127,6 +28147,26 @@ PrefabInstance:
       propertyPath: introDialogue.Array.data[4].sentences.Array.data[2]
       value: Spend your skill points, if ya got 'em, and let's enter a Provincial
         Qualifier!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[1]
+      value: The Tour pays BIG money, and uses a TRIPLE KNOCKOUT format.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[2]
+      value: Lose 3 games and you're OUT!  Keep winning to stay in the hunt!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[3]
+      value: Each tour stop also awards TOUR POINTS...
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[4]
+      value: ...collect these to qualify for the $250K Tour Championship!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[5]
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[0]
@@ -28173,8 +28213,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].sentences.Array.data[0]
-      value: It's the end of the line for Team TEAMNAME.  Sorry, xxxxx, but we're
-        out of cash!  Let's try again next year.
+      value: 'It''s the end of the line for Team TEAMNAME. '
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: storyDialogue.Array.data[0].sentences.Array.data[1]
+      value: Sorry, xxxxx, but we're out of cash!  Let's try again next year.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886942087116576, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: m_Name
@@ -30583,9 +30626,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1089310698}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 10
+  m_MaxValue: 40
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 4
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

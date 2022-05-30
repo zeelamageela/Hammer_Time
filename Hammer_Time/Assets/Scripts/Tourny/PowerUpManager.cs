@@ -348,7 +348,7 @@ public class PowerUpManager : MonoBehaviour
         Debug.Log("id of played card is " + idList[cm.week]);
         Debug.Log("availcards length is " + availCards.Length);
         //int idListLength = 0;
-        cm.SaveCareer();
+        //cm.SaveCareer();
         //for (int i = 0; i < numberOfCards; i++)
         //{
         //    if (availCards[i].active)

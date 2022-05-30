@@ -173,6 +173,8 @@ public class TournySelector : MonoBehaviour
     public void SetUp()
     {
         cm = FindObjectOfType<CareerManager>();
+        PowerUpManager pm = FindObjectOfType<PowerUpManager>();
+
         xpm.SetSkillPoints();
         provStandings.PrintRows();
         tourStandings.PrintRows();
@@ -185,6 +187,7 @@ public class TournySelector : MonoBehaviour
 
             if (cm.earnings < 0)
             {
+                pm.profileButton.interactable = false;
                 dialogueGO.SetActive(true);
                 coachGreen.TriggerDialogue("Story", 0);
                 quitButton.SetActive(true);
@@ -193,24 +196,6 @@ public class TournySelector : MonoBehaviour
 
             if (cm.week == 2)
             {
-                Debug.Log("Player Rank is " + cm.playerTeam.rank);
-                dialogueGO.SetActive(true);
-                for (int i = 0; i < cm.currentTournyTeams.Length; i++)
-                {
-                    if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
-                    {
-                        if (cm.currentTournyTeams[i].rank < 5)
-                        {
-                            coachGreen.TriggerDialogue("Intro", 1);
-                        }
-                        else
-                        {
-                            coachGreen.TriggerDialogue("Intro", 2);
-                        }
-                    }
-                }
-                cm.introDialogue[1] = true;
-                cm.introDialogue[2] = true;
                 hScroll.value = 0f;
             }
 
@@ -377,7 +362,9 @@ public class TournySelector : MonoBehaviour
 
         #region Panel 1
         if (cm.earnings < 0)
+        {
             activeTournies[0] = emptyTourny;
+        }
         else if (cm.week == 1 | cm.week == 3 | cm.week == 5)
             activeTournies[0] = emptyTourny;
         else if (cm.week == 2)
@@ -1153,6 +1140,7 @@ public class TournySelector : MonoBehaviour
 
     public void EndOfGame()
     {
+        cm = FindObjectOfType<CareerManager>();
         dialogueGO.SetActive(true);
         coachGreen.TriggerDialogue("Story", 0);
 

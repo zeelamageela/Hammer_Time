@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TigerForge;
 
 public class TeamMenu : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class TeamMenu : MonoBehaviour
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
 
+    EasyFileSave myFile;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,24 +47,73 @@ public class TeamMenu : MonoBehaviour
 
     IEnumerator SetUpTeam()
     {
+        myFile = new EasyFileSave("my_player_data");
 
+        cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
+        cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
+        cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
+        cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
+        cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
+        cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
+        cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
+
+        for (int i = 0; i < cm.coachDialogue.Length; i++)
+            cm.coachDialogue[i] = false;
+        for (int i = 0; i < cm.qualDialogue.Length; i++)
+            cm.qualDialogue[i] = false;
+        for (int i = 0; i < cm.reviewDialogue.Length; i++)
+            cm.reviewDialogue[i] = false;
+        for (int i = 0; i < cm.introDialogue.Length; i++)
+            cm.introDialogue[i] = false;
+        for (int i = 0; i < cm.storyDialogue.Length; i++)
+            cm.storyDialogue[i] = false;
+        for (int i = 0; i < cm.helpDialogue.Length; i++)
+            cm.helpDialogue[i] = false;
+        for (int i = 0; i < cm.strategyDialogue.Length; i++)
+            cm.strategyDialogue[i] = false;
 
         Debug.Log("TeamMenu Earnings are " + cm.earnings);
         if (cm.week > 0)
         {
-            cm.LoadCareer();
-
-            for (int i = 0; i < activePlayers.Length; i++)
+            //cm.LoadCareer();
+            if (myFile.Load())
             {
-                Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id); 
-                for (int j = 0; j < playerPool.Length; j++)
+                int[] activePlayerIdList = myFile.GetArray<int>("Active Players ID List");
+
+                for (int i = 0; i < activePlayers.Length; i++)
                 {
-                    if (activePlayers[i].id == playerPool[j].id)
+                    Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
+                    for (int j = 0; j < playerPool.Length; j++)
                     {
-                        activePlayers[i] = playerPool[j];
-                        activePlayers[i].active = true;
-                        playerPool[j].active = true;
+                        if (activePlayerIdList[i] == playerPool[j].id)
+                        {
+                            activePlayers[i] = playerPool[j];
+                            activePlayers[i].active = true;
+                            playerPool[j].active = true;
+                        }
                     }
+                }
+
+                if (cm.week == 2)
+                {
+                    Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
+                    dialogueGO.SetActive(true);
+                    for (int i = 0; i < cm.currentTournyTeams.Length; i++)
+                    {
+                        if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+                        {
+                            if (cm.currentTournyTeams[i].rank < 5)
+                            {
+                                coachGreen.TriggerDialogue("Intro", 1);
+                            }
+                            else
+                            {
+                                coachGreen.TriggerDialogue("Intro", 2);
+                            }
+                        }
+                    }
+                    cm.introDialogue[1] = true;
+                    cm.introDialogue[2] = true;
                 }
             }
 
@@ -76,33 +128,32 @@ public class TeamMenu : MonoBehaviour
 
             Shuffle(playerPool);
 
-            cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
-            cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
-            cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
-            cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
-            cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
-            cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
-            cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
+            //cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
+            //cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
+            //cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
+            //cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
+            //cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
+            //cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
+            //cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
 
-            for (int i = 0; i < cm.coachDialogue.Length; i++)
-                cm.coachDialogue[i] = false;
-            for (int i = 0; i < cm.qualDialogue.Length; i++)
-                cm.qualDialogue[i] = false;
-            for (int i = 0; i < cm.reviewDialogue.Length; i++)
-                cm.reviewDialogue[i] = false;
-            for (int i = 0; i < cm.introDialogue.Length; i++)
-                cm.introDialogue[i] = false;
-            for (int i = 0; i < cm.storyDialogue.Length; i++)
-                cm.storyDialogue[i] = false;
-            for (int i = 0; i < cm.helpDialogue.Length; i++)
-                cm.helpDialogue[i] = false;
-            for (int i = 0; i < cm.strategyDialogue.Length; i++)
-                cm.strategyDialogue[i] = false;
+            //for (int i = 0; i < cm.coachDialogue.Length; i++)
+            //    cm.coachDialogue[i] = false;
+            //for (int i = 0; i < cm.qualDialogue.Length; i++)
+            //    cm.qualDialogue[i] = false;
+            //for (int i = 0; i < cm.reviewDialogue.Length; i++)
+            //    cm.reviewDialogue[i] = false;
+            //for (int i = 0; i < cm.introDialogue.Length; i++)
+            //    cm.introDialogue[i] = false;
+            //for (int i = 0; i < cm.storyDialogue.Length; i++)
+            //    cm.storyDialogue[i] = false;
+            //for (int i = 0; i < cm.helpDialogue.Length; i++)
+            //    cm.helpDialogue[i] = false;
+            //for (int i = 0; i < cm.strategyDialogue.Length; i++)
+            //    cm.strategyDialogue[i] = false;
 
             dialogueGO.SetActive(true);
             coachGreen.TriggerDialogue("Intro", 0);
             cm.introDialogue[0] = true;
-
         }
 
         SelectFreeAgents();
@@ -228,12 +279,16 @@ public class TeamMenu : MonoBehaviour
         {
             teamCost += activePlayers[i].cost;
         }
+
+        Debug.Log("Team Cost is " + teamCost);
+
         cm.earnings -= teamCost;
         teamMenu.SetActive(false);
         agentMenu.SetActive(false);
         pm.cardParent.SetActive(true);
         setTeamButton.SetActive(false);
         pm.nextWeekButton.SetActive(true);
+        cm.SaveCareer();
         pm.SetUp();
     }
 

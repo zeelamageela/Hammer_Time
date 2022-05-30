@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
 
-        myFile = new EasyFileSave("my_hiscore_data");
+        myFile = new EasyFileSave("my_player_data");
 
         float[] allTimeEarningsList;
         string[] allTimeNamesList;
@@ -28,6 +28,8 @@ public class MainMenu : MonoBehaviour
             allTimeEarningsList = myFile.GetArray<float>("All Time Earnings");
             allTimeNamesList = myFile.GetArray<string>("All Time Names");
 
+            allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
+            allTimeNames.text = allTimeNamesList[0];
             myFile.Dispose();
         }
         else
@@ -38,11 +40,9 @@ public class MainMenu : MonoBehaviour
 
             allTimeEarnings.gameObject.SetActive(false);
 
-            allTimeNamesList[0] = "No High Score Set";
+            allTimeNames.text = "No High Score Set";
         }
 
-        allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
-        allTimeNames.text = allTimeNamesList[0];
         //if (myFile.Load())
         //    contButton.SetActive(true);
         //else
