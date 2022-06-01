@@ -77,6 +77,7 @@ public class TournyManager : MonoBehaviour
                 Debug.Log("In Progress is True");
                 gsp.LoadTourny();
                 playoffRound--;
+				Debug.Log("Playoff Round is " + playoffRound);
             }
             else
             {

@@ -6,6 +6,8 @@ using MoreMountains.Feedbacks;
 
 public class SweeperManager : MonoBehaviour
 {
+    public TeamManager tm;
+
     public bool isSweeping;
     public SweeperParent sweeperL;
     public SweeperParent sweeperR;
@@ -109,21 +111,16 @@ public class SweeperManager : MonoBehaviour
 
             if (gsp.redTeamColour == gsp.teamColour)
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent);
             }
             else
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = 100;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = 100;
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
             }
         }
         else
@@ -135,21 +132,16 @@ public class SweeperManager : MonoBehaviour
 
             if (gsp.redTeamColour == gsp.teamColour)
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(10);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(10);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = 100;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = 100;
+                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
+                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
+                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
+                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
+                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
+                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
             }
             else
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.cStats.sweepCohesion;
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent);
             }
         }
 
@@ -521,7 +513,7 @@ public class SweeperManager : MonoBehaviour
 
     public void CallOut(string call)
     {
-        Debug.Log("Sweeping " + call);
+        //Debug.Log("Sweeping " + call);
         if (Random.Range(0f, 1f) < 0.5f)
             skipSounds = audioHouse.transform.Find("Audio" + call).GetComponents<AudioSource>();
         else

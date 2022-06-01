@@ -359,8 +359,6 @@ public class CareerManager : MonoBehaviour
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
                 float[] tournyEarningsList = myFile.GetArray<float>("Tourny Earnings List");
                 bool[] tournyPlayerList = myFile.GetArray<bool>("Tourny Player List");
-                float[] tournyTourPointsList = myFile.GetArray<float>("Tourny Tour Points List");
-                //currentTournyTeams = new Team[tournyIDList.Length];
 
                 for (int i = 0; i < currentTournyTeams.Length; i++)
                 {
@@ -371,18 +369,19 @@ public class CareerManager : MonoBehaviour
                     {
                         if (currentTournyTeams[i].id == teams[j].id)
                             currentTournyTeams[i] = teams[j];
-                        if (currentTournyTeams[i].player)
-                        {
-                            Debug.Log("Player Team - " + playerTeamIndex);
-                            currentTournyTeams[i].name = teamName;
-                            //currentTournyTeams[i].earnings = earnings;
-                        }
+                        
+                    }
+
+                    if (currentTournyTeams[i].player)
+                    {
+                        Debug.Log("Player Team - " + playerTeamIndex);
+                        currentTournyTeams[i].name = teamName;
+                        //currentTournyTeams[i].earnings = earnings;
                     }
 
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
                     currentTournyTeams[i].earnings = tournyEarningsList[i];
-                    currentTournyTeams[i].tourPoints = tournyTourPointsList[i];
 
                     if (currentTournyTeams[i].player)
                         Debug.Log("Player Team is " + currentTournyTeams[i].name);
@@ -532,7 +531,6 @@ public class CareerManager : MonoBehaviour
             winsList[i] = teams[i].wins;
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
-            //tourPointsList[i] = teams[i].tourPoints;
 
             if (playerTeamIndex == teams[i].id)
             {
@@ -548,7 +546,6 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Total Wins List", winsList);
         myFile.Add("Total Loss List", lossList);
         myFile.Add("Total Earnings List", earningsList);
-
 
         myFile.Add("Card ID List", cardIDList);
 
@@ -674,6 +671,10 @@ public class CareerManager : MonoBehaviour
             int[] tournyStrengthList = new int[teams.Length];
             int[] tournyIDList = new int[teams.Length];
             float[] tournyEarningsList = new float[teams.Length];
+            int[] tournyTourTeamIDList = new int[teams.Length];
+            int[] tournyTourWinsList = new int[teams.Length];
+            int[] tournyTourLossList = new int[teams.Length];
+            float[] tournyTourPointsList = new float[teams.Length];
 
             for (int i = 0; i < teams.Length; i++)
             {
@@ -685,6 +686,7 @@ public class CareerManager : MonoBehaviour
                 tournyStrengthList[i] = teams[i].strength;
                 tournyIDList[i] = teams[i].id;
                 tournyEarningsList[i] = teams[i].earnings;
+                tournyTourPointsList[i] = teams[i].tourPoints;
                 //Debug.Log("Tourny Id List - " + idList[i]);
             }
 

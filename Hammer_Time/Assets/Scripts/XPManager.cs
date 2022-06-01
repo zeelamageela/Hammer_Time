@@ -145,7 +145,7 @@ public class XPManager : MonoBehaviour
                 skillPoints--;
                 break;
             case 5:
-                healthSlider.value += 10;
+                healthSlider.value += 1;
                 skillPoints--;
                 break;
         }

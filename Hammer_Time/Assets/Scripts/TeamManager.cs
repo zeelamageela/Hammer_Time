@@ -7,11 +7,15 @@ public class TeamManager : MonoBehaviour
     public GameManager gm;
     public SweeperManager sm;
     public GameSettingsPersist gsp;
+    public CareerManager cm;
 
     public Color teamRedColour;
     public TeamMember[] teamRed;
     public Color teamYellowColour;
     public TeamMember[] teamYellow;
+
+    public int[] activeSweeperL;
+    public int[] activeSweeperR;
 
     int aiStats;
     bool playerRed;
@@ -146,6 +150,38 @@ public class TeamManager : MonoBehaviour
         //}
     }
 
+    public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, int rockCurrent)
+    {
+        cm = FindObjectOfType<CareerManager>();
+
+        if (rockCurrent < 4)
+        {
+            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
+            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
+            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+            sweeperL.sweepHealth = cm.activePlayers[1].sweepCohesion;
+            sweeperR.sweepHealth = cm.activePlayers[2].sweepCohesion;
+        }
+        else if (rockCurrent < 8)
+        {
+            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+            sweeperL.sweepHealth = cm.activePlayers[2].sweepCohesion;
+            sweeperR.sweepHealth = cm.activePlayers[0].sweepCohesion;
+        }
+        else
+        {
+            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
+            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
+            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+            sweeperL.sweepHealth = cm.activePlayers[1].sweepCohesion;
+            sweeperR.sweepHealth = cm.activePlayers[0].sweepCohesion;
+        }
+    }
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
         CareerManager cm = FindObjectOfType<CareerManager>();

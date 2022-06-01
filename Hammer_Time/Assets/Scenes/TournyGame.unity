@@ -3681,14 +3681,14 @@ MonoBehaviour:
     guardAccuracy: 6
     sweepStrength: 10
     sweepEndurance: 10
-    sweepHealth: 100
+    sweepCohesion: 0
   oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   redTeamName: REDDD
   redTeamColour: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   redTeam:
@@ -14034,6 +14034,64 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
+  activePlayers:
+  - name: Shit Head
+    id: 0
+    description: 
+    cost: 0
+    image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
+    active: 0
+    view: 0
+    draw: 3
+    guard: 3
+    takeOut: 3
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 3
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+  - name: Butt Hole
+    id: 1
+    description: 
+    cost: 0
+    image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
+    active: 0
+    view: 0
+    draw: 3
+    guard: 3
+    takeOut: 3
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 3
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+  - name: Nut Sack
+    id: 2
+    description: 
+    cost: 0
+    image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
+    active: 0
+    view: 0
+    draw: 3
+    guard: 3
+    takeOut: 3
+    sweepStrength: 3
+    sweepEnduro: 3
+    sweepCohesion: 3
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
   xp: 0
   totalXp: 0
   cStats:
@@ -14042,21 +14100,21 @@ MonoBehaviour:
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   modStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   skillPoints: 20
   cardIDList: 
   inProgress: 0
@@ -17126,6 +17184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa2b5ccf432e434ab9aab9380fe9e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tm: {fileID: 805824338}
   isSweeping: 0
   sweeperL: {fileID: 0}
   sweeperR: {fileID: 0}

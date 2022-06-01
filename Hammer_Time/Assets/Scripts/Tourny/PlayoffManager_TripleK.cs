@@ -5524,7 +5524,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		myFile.Add("BG", gsp.bg);
 		myFile.Add("Career Earnings", gsp.earnings);
-
+		
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.inProgress = inProgress;
 		myFile.Add("Number Of Teams", 16);
