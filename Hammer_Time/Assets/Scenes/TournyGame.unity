@@ -3658,7 +3658,7 @@ MonoBehaviour:
   loadGame: 0
   aiYellow: 0
   aiRed: 1
-  debug: 1
+  debug: 0
   mixed: 0
   rockCurrent: 0
   endCurrent: 0
@@ -10260,6 +10260,7 @@ MonoBehaviour:
   trajTransform: {fileID: 96538966}
   gm: {fileID: 197219300}
   cm: {fileID: 57450608}
+  tm: {fileID: 0}
   springDistance: 0
   springDirection: {x: 0, y: 0, z: 0}
   angle: 0
@@ -11051,11 +11052,11 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   IntensityImpactsLifetime: 0
-  IntensityLifetimeMultiplier: 1
-  IntensityImpactsMovement: 0
-  IntensityMovementMultiplier: 1
+  IntensityLifetimeMultiplier: 2
+  IntensityImpactsMovement: 1
+  IntensityMovementMultiplier: 2
   IntensityImpactsScale: 1
-  IntensityScaleMultiplier: 1
+  IntensityScaleMultiplier: 2
   DebugRandomValue: {x: 100, y: 500}
   DebugInterval: {x: 0.3, y: 0.5}
   TestSpawnOneBtn: 0
@@ -17849,67 +17850,67 @@ PrefabInstance:
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[0].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 935cdf23b2203445a9a5e276c5d44808, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[0].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: b61b6c574fe134821b848f11af29dca3, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[1].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 3b4228e97f7a48443a8e3cf6ab63986c, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[1].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 4e5bc003eee9b4dcd85dafcaa58dc7db, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[2].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 3b4228e97f7a48443a8e3cf6ab63986c, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[2].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 4e5bc003eee9b4dcd85dafcaa58dc7db, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[3].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 935cdf23b2203445a9a5e276c5d44808, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[3].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: b61b6c574fe134821b848f11af29dca3, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[0].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 935cdf23b2203445a9a5e276c5d44808, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[0].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: b61b6c574fe134821b848f11af29dca3, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[1].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 3b4228e97f7a48443a8e3cf6ab63986c, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[1].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 4e5bc003eee9b4dcd85dafcaa58dc7db, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[2].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 3b4228e97f7a48443a8e3cf6ab63986c, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[2].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 4e5bc003eee9b4dcd85dafcaa58dc7db, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[3].sweeperL
       value: 
-      objectReference: {fileID: 889100766325987374, guid: 935cdf23b2203445a9a5e276c5d44808, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[3].sweeperR
       value: 
-      objectReference: {fileID: 889100766325987374, guid: b61b6c574fe134821b848f11af29dca3, type: 3}
+      objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168935, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: m_RootOrder
       value: 4

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BroomController
+  m_Controller: {fileID: 9100000, guid: aef59f3849b409f4b9fb0a934d6f3ddf, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: ade565818d0396d43aa718808773e61b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: aaee554b36ec754449ba520d854b3b22, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: b5d6f1d5260d3c04d993a4356a2374dd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 615ce12b6c4533c4b8f2178b2514f840, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 387d295cbd89ccf44925dab9d4bf92fc, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 389f28550a573364abcd094f007b3d3f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 22b2bb67310c2f04cafe7f537545f3ad, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d42ff0a652b95864eafcb84223fe90ac, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 51793336e2d98404e983a61a63690152, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 28d2831d59f7932449b26a39c3a33472, type: 2}

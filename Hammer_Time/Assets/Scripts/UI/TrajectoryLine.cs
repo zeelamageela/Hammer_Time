@@ -10,6 +10,7 @@ public class TrajectoryLine : MonoBehaviour
     public Traj_Transform trajTransform;
     public GameManager gm;
     public CameraManager cm;
+    public TeamManager tm;
 
     GameObject rock;
     Rock_Info rockInfo;
@@ -107,12 +108,50 @@ public class TrajectoryLine : MonoBehaviour
 
         if (!aiTurn && rock && rockInfo && rockInfo.released && points.Count > 0)
         {
+            float cohesion = 0;
+            if (gm.redHammer)
+            {
+                if (gm.rockCurrent % 2 == 0)
+                {
+                    for (int i = 0; i > tm.teamYellow.Length; i++)
+                    {
+                        cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i > tm.teamRed.Length; i++)
+                    {
+                        cohesion += tm.teamRed[i].charStats.sweepCohesion.GetValue();
+                    }
+                }
+            }
+            else
+            {
+                if (gm.rockCurrent % 2 == 0)
+                {
+                    for (int i = 0; i > tm.teamRed.Length; i++)
+                    {
+                        cohesion += tm.teamRed[i].charStats.sweepCohesion.GetValue();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i > tm.teamYellow.Length; i++)
+                    {
+                        cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
+                    }
+                }
+            }
+
+            Debug.Log("Cohesion is " + cohesion);
+
             lr.enabled = true;
             int counter = 0;
             List<Vector2> tempPoints = new List<Vector2>();
             foreach(Vector2 point in points)
             {
-                if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + 1.25f)
+                if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + (cohesion / 40f))
                     tempPoints.Add(point);
                 //else
                 //    lr.SetPosition(counter, new Vector3(point.x, point.y, 0f));

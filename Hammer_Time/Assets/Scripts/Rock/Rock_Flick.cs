@@ -531,6 +531,6 @@ public class Rock_Flick : MonoBehaviour
         }
 
 
-        aiSweep.OnSweep(false, shotType, new Vector2(aimPos.x, aimPos.y), rm.inturn);
+        aiSweep.OnSweep(false, "Draw To Target", new Vector2(aimPos.x, aimPos.y), rm.inturn);
     }
 }
