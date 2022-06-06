@@ -106,7 +106,7 @@ public class TrajectoryLine : MonoBehaviour
 
         knobColour = shootKnob.GetComponent<SpriteRenderer>().color;
 
-        if (!aiTurn && rock && rockInfo && rockInfo.released && points.Count > 0)
+        if (rock != null && rockInfo != null && rockInfo.released && !aiTurn)
         {
             float cohesion = 0;
             if (gm.redHammer)
@@ -149,13 +149,17 @@ public class TrajectoryLine : MonoBehaviour
             lr.enabled = true;
             int counter = 0;
             List<Vector2> tempPoints = new List<Vector2>();
-            foreach(Vector2 point in points)
-            {
-                if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + (cohesion / 40f))
-                    tempPoints.Add(point);
-                //else
-                //    lr.SetPosition(counter, new Vector3(point.x, point.y, 0f));
 
+            if (points != null && points.Count > 0)
+            {
+                foreach (Vector2 point in points)
+                {
+                    if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + (cohesion / 40f))
+                        tempPoints.Add(point);
+                    //else
+                    //    lr.SetPosition(counter, new Vector3(point.x, point.y, 0f));
+
+                }
             }
 
             if (tempPoints.Count > lookAheadCount)
