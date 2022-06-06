@@ -71,6 +71,7 @@ public class CrowdManager : MonoBehaviour
             aoc = new AnimatorOverrideController(animator.runtimeAnimatorController);
             animator.runtimeAnimatorController = aoc;
             int clipIndex = Random.Range(0, crowdClips.Length);
+            
             aoc["Crowd1A"] = crowdClips[clipIndex];
             go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         }
