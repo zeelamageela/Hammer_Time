@@ -194,7 +194,7 @@ public class XPManager : MonoBehaviour
         cm.cStats.sweepCohesion = (int)healthSlider.value;
 
         resetButton.interactable = false;
-        this.gameObject.SetActive(false);
+        //this.gameObject.SetActive(false);
     }
 
     public void ResetStats()

@@ -32,47 +32,47 @@ public class TourStandings : MonoBehaviour
 			{
 				Destroy(row[i]);
 			}
-		}
-		//teams = cm.teams;
-		tourRankList = cm.tourRankList;
-		row = new GameObject[tourRankList.Count];
-		standDisplay = new StandingDisplay[tourRankList.Count];
+			//teams = cm.teams;
+			tourRankList = cm.tourRankList;
+			row = new GameObject[tourRankList.Count];
+			standDisplay = new StandingDisplay[tourRankList.Count];
 
-		tourRankList.Sort();
+			tourRankList.Sort();
 
-		for (int i = 0; i < tourRankList.Count; i++)
-		{
-			row[i] = Instantiate(standTextRow, standTextParent);
-			row[i].name = "Row " + (i + 1);
-			row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-			//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-			RowVariables rv = row[i].GetComponent<RowVariables>();
-			//yield return new WaitForEndOfFrame();
-
-			standDisplay[i] = rv.standDisplay;
-		}
-
-		for (int i = 0; i < tourRankList.Count; i++)
-		{
-			//Debug.Log("Counting to tourRankLimit - " + i);
-			standDisplay[i].name.text = tourRankList[i].team.name;
-			standDisplay[i].wins.text = tourRankList[i].team.tourRecord.x.ToString();
-			standDisplay[i].loss.text = tourRankList[i].team.tourRecord.y.ToString();
-			standDisplay[i].nextOpp.text = tourRankList[i].team.tourPoints.ToString();
-			tourRankList[i].team.rank = i + 1;
-		}
-
-		for (int i = 0; i < tourRankList.Count; i++)
-		{
-			if (cm.playerTeamIndex == tourRankList[i].team.id)
+			for (int i = 0; i < tourRankList.Count; i++)
 			{
-				scrollbar.value = (i - tourRankList.Count) / (1f - tourRankList.Count);
-				standDisplay[i].panel.enabled = true;
-				Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + i);
+				row[i] = Instantiate(standTextRow, standTextParent);
+				row[i].name = "Row " + (i + 1);
+				row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
+				//Text[] tList = row.transform.GetComponentsInChildren<Text>();
+
+				RowVariables rv = row[i].GetComponent<RowVariables>();
+				//yield return new WaitForEndOfFrame();
+
+				standDisplay[i] = rv.standDisplay;
 			}
-			else
-				standDisplay[i].panel.enabled = false;
+
+			for (int i = 0; i < tourRankList.Count; i++)
+			{
+				//Debug.Log("Counting to tourRankLimit - " + i);
+				standDisplay[i].name.text = tourRankList[i].team.name;
+				standDisplay[i].wins.text = tourRankList[i].team.tourRecord.x.ToString();
+				standDisplay[i].loss.text = tourRankList[i].team.tourRecord.y.ToString();
+				standDisplay[i].nextOpp.text = tourRankList[i].team.tourPoints.ToString();
+				tourRankList[i].team.rank = i + 1;
+			}
+
+			for (int i = 0; i < tourRankList.Count; i++)
+			{
+				if (cm.playerTeamIndex == tourRankList[i].team.id)
+				{
+					scrollbar.value = (i - tourRankList.Count) / (1f - tourRankList.Count);
+					standDisplay[i].panel.enabled = true;
+					Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + i);
+				}
+				else
+					standDisplay[i].panel.enabled = false;
+			}
 		}
 	}
 

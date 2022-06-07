@@ -161,7 +161,7 @@ public class TournySelector : MonoBehaviour
     //}
     private void Start()
     {
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        //GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         //gsp.inProgress = false;
         cm = FindObjectOfType<CareerManager>();
 
@@ -179,6 +179,7 @@ public class TournySelector : MonoBehaviour
     public void SetUp()
     {
         cm = FindObjectOfType<CareerManager>();
+
         PowerUpManager pm = FindObjectOfType<PowerUpManager>();
 
         xpm.SetSkillPoints();
@@ -193,8 +194,12 @@ public class TournySelector : MonoBehaviour
 
             if (cm.earnings < 0)
             {
-                pm.profileButton.interactable = false;
+                //pm.profileButton.interactable = false;
                 dialogueGO.SetActive(true);
+                for (int i = 0; i < panelGOs.Length; i++)
+                {
+                    panelGOs[i].SetActive(false);
+                }
                 coachGreen.TriggerDialogue("Story", 0);
                 quitButton.SetActive(true);
                 cm.EndCareer();
@@ -205,7 +210,7 @@ public class TournySelector : MonoBehaviour
                 hScroll.value = 0f;
             }
 
-            if (cm.week == 3)
+            else if (cm.week == 3)
             {
                 if (cm.totalXp < 25)
                 {
@@ -220,13 +225,13 @@ public class TournySelector : MonoBehaviour
                 cm.introDialogue[3] = true;
             }
 
-            if (cm.week == 4)
+            else if (cm.week == 4)
             {
                 dialogueGO.SetActive(true);
                 coachGreen.TriggerDialogue("Intro", 4);
                 cm.introDialogue[4] = true;
             }
-            if (cm.week == 5)
+            else if (cm.week == 5)
             {
                 dialogueGO.SetActive(true);
                 coachGreen.TriggerDialogue("Intro", 5);
@@ -1124,6 +1129,14 @@ public class TournySelector : MonoBehaviour
 
     public void SetPanels()
     {
+        for (int i = 0; i < activeTournies.Length; i++)
+        {
+            if (activeTournies[i] == emptyTourny)
+                panelGOs[i].SetActive(false);
+            else
+                panelGOs[i].SetActive(true);
+        }
+
         for (int i = 0; i < panels.Length; i++)
         {
             panels[i].location.text = activeTournies[i].location;
@@ -1134,13 +1147,15 @@ public class TournySelector : MonoBehaviour
             panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString();
             playButton.SetActive(false);
         }
+
+
     }
 
     public void NewSeason()
     {
         dialogueGO.SetActive(true);
-        coachGreen.TriggerDialogue("Intro", 7);
-        cm.introDialogue[7] = true;
+        coachGreen.TriggerDialogue("Intro", 0);
+        //cm.introDialogue[7] = true;
         cm.NewSeason();
     }
 
@@ -1442,7 +1457,7 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                StartCoroutine(WaitForTime(0.85f, i, expandButton));
+                StartCoroutine(WaitForTime(0.5f, i, expandButton));
             }
         }
 

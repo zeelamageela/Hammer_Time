@@ -1131,7 +1131,7 @@ public class CareerManager : MonoBehaviour
                 }
             }
         }
-
+        introDialogue[0] = true;
         week++;
         //Shuffle(teams);
 

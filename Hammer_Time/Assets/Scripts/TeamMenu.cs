@@ -30,6 +30,27 @@ public class TeamMenu : MonoBehaviour
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
 
+    public Slider drawSlider;
+    public Slider guardSlider;
+    public Slider takeOutSlider;
+    public Slider strengthSlider;
+    public Slider enduranceSlider;
+    public Slider healthSlider;
+
+    public Slider oppDrawSlider;
+    public Slider oppGuardSlider;
+    public Slider oppTakeOutSlider;
+    public Slider oppStrengthSlider;
+    public Slider oppEnduranceSlider;
+    public Slider oppHealthSlider;
+
+    public float xp;
+    public float cash;
+    public Text xpText;
+    public Text cashText;
+
+    int oppStatBase;
+
     EasyFileSave myFile;
 
     // Start is called before the first frame update
@@ -44,27 +65,34 @@ public class TeamMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //for (int i = 0; i < freeAgentDisplay.Length; i++)
-        //{
-        //    if (freeAgentDisplay[i].charName.transform.parent.GetComponent<Button>().interactable)
-        //    {
-        //        freeAgentDisplay[i].charName.rectTransform.anchoredPosition += new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].cost.rectTransform.anchoredPosition += new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].photo.rectTransform.anchoredPosition += new Vector2(15f, 15f);
-        //        GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
-        //        tempPanel.GetComponent<Image>().rectTransform.anchoredPosition += new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = Color.white;
-        //    }
-        //    else
-        //    {
-        //        freeAgentDisplay[i].charName.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].cost.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].photo.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
-        //        GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
-        //        tempPanel.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(15f, 15f);
-        //        freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = Color.white;
-        //    }
-        //}
+        if (cm)
+        {
+            if (cm.week < 5)
+                oppStatBase = 5;
+            else if (cm.week < 10)
+                oppStatBase = 7;
+            else
+                oppStatBase = 10;
+
+            drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
+            guardSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
+            takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
+            enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
+            strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
+            healthSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
+
+            oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
+            oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
+            oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
+            oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
+            oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
+            oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
+
+            xp = cm.xp;
+            cash = cm.earnings;
+            xpText.text = xp.ToString();
+            cashText.text = "$" + cash.ToString("n0");
+        }
     }
 
     public void TeamMenuOpen()
@@ -100,7 +128,7 @@ public class TeamMenu : MonoBehaviour
             cm.strategyDialogue[i] = false;
 
         Debug.Log("TeamMenu Earnings are " + cm.earnings);
-        if (cm.week > 0)
+        if (cm.week > 1)
         {
             //cm.LoadCareer();
             if (myFile.Load())
@@ -155,32 +183,9 @@ public class TeamMenu : MonoBehaviour
 
             Shuffle(playerPool);
 
-            //cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
-            //cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
-            //cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
-            //cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
-            //cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
-            //cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
-            //cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
-
-            //for (int i = 0; i < cm.coachDialogue.Length; i++)
-            //    cm.coachDialogue[i] = false;
-            //for (int i = 0; i < cm.qualDialogue.Length; i++)
-            //    cm.qualDialogue[i] = false;
-            //for (int i = 0; i < cm.reviewDialogue.Length; i++)
-            //    cm.reviewDialogue[i] = false;
-            //for (int i = 0; i < cm.introDialogue.Length; i++)
-            //    cm.introDialogue[i] = false;
-            //for (int i = 0; i < cm.storyDialogue.Length; i++)
-            //    cm.storyDialogue[i] = false;
-            //for (int i = 0; i < cm.helpDialogue.Length; i++)
-            //    cm.helpDialogue[i] = false;
-            //for (int i = 0; i < cm.strategyDialogue.Length; i++)
-            //    cm.strategyDialogue[i] = false;
-
             dialogueGO.SetActive(true);
-            coachGreen.TriggerDialogue("Intro", 0);
-            cm.introDialogue[0] = true;
+            coachGreen.TriggerDialogue("Intro", 8);
+            cm.introDialogue[8] = true;
         }
 
         SelectFreeAgents();
@@ -354,12 +359,26 @@ public class TeamMenu : MonoBehaviour
         Debug.Log("Team Cost is " + teamCost);
 
         cm.earnings -= teamCost;
-        teamMenu.SetActive(false);
-        agentMenu.SetActive(false);
-        //pm.cardParent.SetActive(true);
-        setTeamButton.SetActive(false);
+        //teamMenu.SetActive(false);
+        //agentMenu.SetActive(false);
+        ////pm.cardParent.SetActive(true);
+        //setTeamButton.SetActive(false);
         //pm.nextWeekButton.SetActive(true);
         cm.SaveCareer();
+
+        for (int i = 0; i < teamDisplay.Length; i++)
+        {
+            teamDisplay[i].charName.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+            teamDisplay[i].cost.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+            teamDisplay[i].description.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+            //freeAgentDisplay[i].photo.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+            teamDisplay[i].photo.transform.parent.gameObject.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(35f, 35f);
+            GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
+            tempPanel.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(35f, 35f);
+            teamDisplay[i].charName.transform.parent.GetComponent<Image>().color = buttonDisabledColor;
+            teamDisplay[i].charName.transform.parent.GetComponent<Button>().interactable = false;
+        }
+
         //pm.SetUp();
     }
 

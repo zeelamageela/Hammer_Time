@@ -32,45 +32,45 @@ public class ProvStandings : MonoBehaviour
             {
 				Destroy(row[i]);
             }
-        }
 		//teams = cm.teams;
-		provRankList = cm.provRankList;
-		row = new GameObject[provRankList.Count];
-		standDisplay = new StandingDisplay[provRankList.Count];
+			provRankList = cm.provRankList;
+			row = new GameObject[provRankList.Count];
+			standDisplay = new StandingDisplay[provRankList.Count];
 
-		for (int i = 0; i < provRankList.Count; i++)
-		{
-			row[i] = Instantiate(standTextRow, standTextParent);
-			row[i].name = "Row " + (i + 1);
-			row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-			//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-			RowVariables rv = row[i].GetComponent<RowVariables>();
-			//yield return new WaitForEndOfFrame();
-
-			standDisplay[i] = rv.standDisplay;
-		}
-
-		provRankList.Sort();
-		for (int i = 0; i < provRankList.Count; i++)
-		{
-            //Debug.Log("Counting to provRankLimit - " + i);
-			standDisplay[i].name.text = provRankList[i].team.name;
-			standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
-			standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
-			standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
-			provRankList[i].team.rank = i + 1;
-		}
-
-		for (int i = 0; i < provRankList.Count; i++)
-		{
-			if (cm.playerTeamIndex == provRankList[i].team.id)
+			for (int i = 0; i < provRankList.Count; i++)
 			{
-				scrollbar.value = (float)(i - provRankList.Count) / (1f - provRankList.Count);
-				standDisplay[i].panel.enabled = true;
+				row[i] = Instantiate(standTextRow, standTextParent);
+				row[i].name = "Row " + (i + 1);
+				row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
+				//Text[] tList = row.transform.GetComponentsInChildren<Text>();
+
+				RowVariables rv = row[i].GetComponent<RowVariables>();
+				//yield return new WaitForEndOfFrame();
+
+				standDisplay[i] = rv.standDisplay;
 			}
-			else
-				standDisplay[i].panel.enabled = false;
+
+			provRankList.Sort();
+			for (int i = 0; i < provRankList.Count; i++)
+			{
+				//Debug.Log("Counting to provRankLimit - " + i);
+				standDisplay[i].name.text = provRankList[i].team.name;
+				standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
+				standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
+				standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
+				provRankList[i].team.rank = i + 1;
+			}
+
+			for (int i = 0; i < provRankList.Count; i++)
+			{
+				if (cm.playerTeamIndex == provRankList[i].team.id)
+				{
+					scrollbar.value = (float)(i - provRankList.Count) / (1f - provRankList.Count);
+					standDisplay[i].panel.enabled = true;
+				}
+				else
+					standDisplay[i].panel.enabled = false;
+			}
 		}
 	}
 
