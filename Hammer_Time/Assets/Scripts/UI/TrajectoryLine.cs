@@ -117,6 +117,7 @@ public class TrajectoryLine : MonoBehaviour
                     for (int i = 0; i > tm.teamYellow.Length; i++)
                     {
                         cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
+                        Debug.Log("Cohesion is " + cohesion);
                     }
                 }
                 else
@@ -144,7 +145,7 @@ public class TrajectoryLine : MonoBehaviour
                         cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
                     }
                 }
-                Debug.Log("Cohesion is " + cohesion);
+                //Debug.Log("Cohesion is " + cohesion);
             }
 
 

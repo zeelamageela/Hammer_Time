@@ -3889,6 +3889,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bg: 3
+  crowdDensity: 0
+  tournyType: 0
   redHammer: 1
   ends: 2
   rocks: 2
@@ -4354,6 +4356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bc08cf8e677e40188e5d024de210089, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gsp: {fileID: 0}
   cameraMen: {fileID: 1438398992}
   tournyType: 0
   crowdDensity: 11
@@ -19924,6 +19927,10 @@ PrefabInstance:
       propertyPath: ice.Array.data[3]
       value: 
       objectReference: {fileID: 5246324363050219186, guid: 560dc4bcfb3124be4a4823a5f32b19d5, type: 3}
+    - target: {fileID: 2910740859972467736, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
+      propertyPath: boards.Array.data[0]
+      value: 
+      objectReference: {fileID: 4464037964472056815, guid: da2d58c4a22d91f46aa5e49a9b0a122e, type: 3}
     - target: {fileID: 2910740859972467736, guid: 89ac8484a22ce4d1cb2e438224a2ce11, type: 3}
       propertyPath: boards.Array.data[3]
       value: 

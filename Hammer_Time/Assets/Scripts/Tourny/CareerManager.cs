@@ -703,14 +703,52 @@ public class CareerManager : MonoBehaviour
 
         //activePlayers = teamSel.activePlayers;
         int[] playerIdList = new int[activePlayers.Length];
+        int[] playerDrawList = new int[activePlayers.Length];
+        int[] playerGuardList = new int[activePlayers.Length];
+        int[] playerTakeoutList = new int[activePlayers.Length];
+        int[] playerStrengthList = new int[activePlayers.Length];
+        int[] playerEnduroList = new int[activePlayers.Length];
+        int[] playerCohesionList = new int[activePlayers.Length];
+
+        int[] playerOppDrawList = new int[activePlayers.Length];
+        int[] playerOppGuardList = new int[activePlayers.Length];
+        int[] playerOppTakeoutList = new int[activePlayers.Length];
+        int[] playerOppStrengthList = new int[activePlayers.Length];
+        int[] playerOppEnduroList = new int[activePlayers.Length];
+        int[] playerOppCohesionList = new int[activePlayers.Length];
 
         for (int i = 0; i < playerIdList.Length; i++)
         {
             playerIdList[i] = activePlayers[i].id;
             Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
+            playerDrawList[i] = activePlayers[i].draw;
+            playerGuardList[i] = activePlayers[i].guard;
+            playerTakeoutList[i] = activePlayers[i].takeOut;
+            playerStrengthList[i] = activePlayers[i].sweepStrength;
+            playerEnduroList[i] = activePlayers[i].sweepEnduro;
+            playerCohesionList[i] = activePlayers[i].sweepCohesion;
+
+            playerOppDrawList[i] = activePlayers[i].oppDraw;
+            playerOppGuardList[i] = activePlayers[i].oppGuard;
+            playerOppTakeoutList[i] = activePlayers[i].oppTakeOut;
+            playerOppStrengthList[i] = activePlayers[i].oppStrength;
+            playerOppEnduroList[i] = activePlayers[i].oppEnduro;
+            playerOppCohesionList[i] = activePlayers[i].oppCohesion;
         }
 
         myFile.Add("Active Players ID List", playerIdList);
+        myFile.Add("Active Players Draw List", playerDrawList);
+        myFile.Add("Active Players Guard List", playerGuardList);
+        myFile.Add("Active Players Takeout List", playerTakeoutList);
+        myFile.Add("Active Players Strength List", playerStrengthList);
+        myFile.Add("Active Players Endurance List", playerEnduroList);
+        myFile.Add("Active Players Cohesion List", playerCohesionList);
+        myFile.Add("Active Players Opp Draw List", playerOppDrawList);
+        myFile.Add("Active Players Opp Guard List", playerOppGuardList);
+        myFile.Add("Active Players Opp Takeout List", playerOppTakeoutList);
+        myFile.Add("Active Players Opp Strength List", playerOppStrengthList);
+        myFile.Add("Active Players Opp Endurance List", playerOppEnduroList);
+        myFile.Add("Active Players Opp Cohesion List", playerOppCohesionList);
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
         //myFile.Add("Tourny Wins List", tournyWinsList);
         //myFile.Add("Tourny Loss List", tournyLossList);

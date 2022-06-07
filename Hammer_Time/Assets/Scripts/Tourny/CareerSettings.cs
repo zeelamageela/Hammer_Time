@@ -154,6 +154,40 @@ public class CareerSettings : MonoBehaviour
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 
+            int[] activePlayersId = myFile.GetArray<int>("Active Players ID List");
+
+            int[] playerDrawList = myFile.GetArray<int>("Active Players Draw List");
+            int[] playerGuardList = myFile.GetArray<int>("Active Players Guard List");
+            int[] playerTakeoutList = myFile.GetArray<int>("Active Players Takeout List");
+            int[] playerStrengthList = myFile.GetArray<int>("Active Players Strength List");
+            int[] playerEnduroList = myFile.GetArray<int>("Active Players Endurance List");
+            int[] playerCohesionList = myFile.GetArray<int>("Active Players Cohesion List");
+
+            int[] playerOppDrawList = myFile.GetArray<int>("Active Players Opp Draw List");
+            int[] playerOppGuardList = myFile.GetArray<int>("Active Players Opp Guard List");
+            int[] playerOppTakeoutList = myFile.GetArray<int>("Active Players Opp Takeout List");
+            int[] playerOppStrengthList = myFile.GetArray<int>("Active Players Opp Strength List");
+            int[] playerOppEnduroList = myFile.GetArray<int>("Active Players Opp Endurance List");
+            int[] playerOppCohesionList = myFile.GetArray<int>("Active Players Opp Cohesion List");
+            for (int i = 0; i < activePlayersId.Length; i++)
+            {
+                cm.activePlayers[i].id = activePlayersId[i];
+
+                cm.activePlayers[i].draw = playerDrawList[i];
+                cm.activePlayers[i].guard = playerGuardList[i];
+                cm.activePlayers[i].takeOut = playerTakeoutList[i];
+                cm.activePlayers[i].sweepStrength = playerStrengthList[i];
+                cm.activePlayers[i].sweepEnduro = playerEnduroList[i];
+                cm.activePlayers[i].sweepCohesion = playerCohesionList[i];
+
+                cm.activePlayers[i].oppDraw = playerOppDrawList[i];
+                cm.activePlayers[i].oppGuard = playerOppGuardList[i];
+                cm.activePlayers[i].oppTakeOut = playerOppTakeoutList[i];
+                cm.activePlayers[i].oppStrength = playerOppStrengthList[i];
+                cm.activePlayers[i].oppEnduro = playerOppEnduroList[i];
+                cm.activePlayers[i].oppCohesion = playerOppCohesionList[i];
+            }
+
             if (gsp.inProgress)
             {
                 tournyInProg.SetActive(true);
