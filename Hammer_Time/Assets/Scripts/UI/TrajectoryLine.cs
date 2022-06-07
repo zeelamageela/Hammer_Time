@@ -108,9 +108,10 @@ public class TrajectoryLine : MonoBehaviour
 
         if (rock != null && rockInfo != null && rockInfo.released && !aiTurn)
         {
-            float cohesion = 0;
+            float cohesion;
             if (gm.redHammer)
             {
+                cohesion = 0;
                 if (gm.rockCurrent % 2 == 0)
                 {
                     for (int i = 0; i > tm.teamYellow.Length; i++)
@@ -128,6 +129,7 @@ public class TrajectoryLine : MonoBehaviour
             }
             else
             {
+                cohesion = 0;
                 if (gm.rockCurrent % 2 == 0)
                 {
                     for (int i = 0; i > tm.teamRed.Length; i++)
@@ -142,11 +144,11 @@ public class TrajectoryLine : MonoBehaviour
                         cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
                     }
                 }
+                Debug.Log("Cohesion is " + cohesion);
             }
 
-            Debug.Log("Cohesion is " + cohesion);
 
-            lr.enabled = true;
+            //lr.enabled = true;
             int counter = 0;
             List<Vector2> tempPoints = new List<Vector2>();
 

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CrowdManager : MonoBehaviour
 {
+    public GameSettingsPersist gsp;
     public GameObject cameraMen;
 
     public int tournyType;
@@ -23,6 +24,8 @@ public class CrowdManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gsp = FindObjectOfType<GameSettingsPersist>();
+
         SetUpCrowd();
         if (tournyType > 0)
             cameraMen.SetActive(true);

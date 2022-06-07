@@ -14,6 +14,9 @@ public class GameSettingsPersist : MonoBehaviour
     TeamManager teamM;
 
     public int bg;
+    public int crowdDensity;
+    public int tournyType;
+
     public bool redHammer;
     public int ends;
     public int rocks;

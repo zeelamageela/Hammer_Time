@@ -17,6 +17,8 @@ public class TeamMenu : MonoBehaviour
     public Player[] activePlayers;
     public Player[] freeAgents;
 
+    public Color buttonDisabledColor;
+    public Color buttonEnabledColor;
 
     public Player[] playerPool;
 
@@ -31,20 +33,45 @@ public class TeamMenu : MonoBehaviour
     EasyFileSave myFile;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        cm = FindObjectOfType<CareerManager>();
-        //Shuffle(playerPool);
-        StartCoroutine(SetUpTeam());
+    //void Start()
+    //{
+    //    cm = FindObjectOfType<CareerManager>();
+    //    //Shuffle(playerPool);
+    //    StartCoroutine(SetUpTeam());
 
-    }
+    //}
 
     // Update is called once per frame
     void Update()
     {
-
+        //for (int i = 0; i < freeAgentDisplay.Length; i++)
+        //{
+        //    if (freeAgentDisplay[i].charName.transform.parent.GetComponent<Button>().interactable)
+        //    {
+        //        freeAgentDisplay[i].charName.rectTransform.anchoredPosition += new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].cost.rectTransform.anchoredPosition += new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].photo.rectTransform.anchoredPosition += new Vector2(15f, 15f);
+        //        GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
+        //        tempPanel.GetComponent<Image>().rectTransform.anchoredPosition += new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = Color.white;
+        //    }
+        //    else
+        //    {
+        //        freeAgentDisplay[i].charName.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].cost.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].photo.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+        //        GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
+        //        tempPanel.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+        //        freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = Color.white;
+        //    }
+        //}
     }
 
+    public void TeamMenuOpen()
+    {
+        cm = FindObjectOfType<CareerManager>();
+        StartCoroutine(SetUpTeam());
+    }
     IEnumerator SetUpTeam()
     {
         myFile = new EasyFileSave("my_player_data");
@@ -185,10 +212,25 @@ public class TeamMenu : MonoBehaviour
 
     public void ViewTeam()
     {
+        for (int i = 0; i < freeAgentDisplay.Length; i++)
+        {
+            if (!freeAgentDisplay[i].charName.transform.parent.GetComponent<Button>().interactable)
+            {
+                freeAgentDisplay[i].charName.rectTransform.anchoredPosition += new Vector2(15f, 15f);
+                freeAgentDisplay[i].cost.rectTransform.anchoredPosition += new Vector2(15f, 15f);
+                //freeAgentDisplay[i].photo.rectTransform.anchoredPosition += new Vector2(35f, 35f);
+                freeAgentDisplay[i].photo.transform.parent.gameObject.GetComponent<Image>().rectTransform.anchoredPosition += new Vector2(35f, 35f);
+                GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
+                tempPanel.GetComponent<Image>().rectTransform.anchoredPosition += new Vector2(35f, 35f);
+                freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = buttonEnabledColor;
+                freeAgentDisplay[i].charName.transform.parent.GetComponent<Button>().interactable = true;
+            }
+        }
+
         teamMenu.SetActive(true);
         setTeamButton.SetActive(true);
         agentMenu.SetActive(false);
-        pm.nextWeekButton.gameObject.SetActive(false);
+        //pm.nextWeekButton.gameObject.SetActive(false);
         PreviewPoints();
 
         for (int i = 0; i < playerPool.Length; i++)
@@ -208,6 +250,7 @@ public class TeamMenu : MonoBehaviour
             teamDisplay[i].photo.sprite = activePlayers[i].image;
             teamDisplay[i].description.text = activePlayers[i].description;
         }
+
     }
 
     public void ViewFreeAgents(int teamMember)
@@ -218,12 +261,40 @@ public class TeamMenu : MonoBehaviour
         replaceMemberDisplay.charName.text = activePlayers[teamMember].name;
         replaceMemberDisplay.cost.text = "$" + activePlayers[teamMember].cost.ToString("N0");
         replaceMemberDisplay.photo.sprite = activePlayers[teamMember].image;
+        replaceMemberDisplay.description.text = activePlayers[teamMember].description;
+        if (teamMember == 0)
+            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Lead";
+        else if (teamMember == 1)
+            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Second";
+        else
+            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Third";
 
+        float moneyToSpend = cm.earnings;
+        for (int i = 0; i < activePlayers.Length; i++)
+        {
+            if (i != teamMember)
+            {
+                moneyToSpend -= (activePlayers[i].cost);
+            }
+        }
+        Debug.Log("Money to Spend is " + moneyToSpend);
         for (int i = 0; i < freeAgentDisplay.Length; i++)
         {
             freeAgentDisplay[i].charName.text = freeAgents[i].name;
             freeAgentDisplay[i].cost.text = "$" + freeAgents[i].cost.ToString("N0");
             freeAgentDisplay[i].photo.sprite = freeAgents[i].image;
+
+            if (freeAgents[i].cost > moneyToSpend)
+            {
+                freeAgentDisplay[i].charName.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+                freeAgentDisplay[i].cost.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+                //freeAgentDisplay[i].photo.rectTransform.anchoredPosition -= new Vector2(15f, 15f);
+                freeAgentDisplay[i].photo.transform.parent.gameObject.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(35f, 35f);
+                GameObject tempPanel = freeAgentDisplay[i].charName.transform.parent.GetChild(2).gameObject;
+                tempPanel.GetComponent<Image>().rectTransform.anchoredPosition -= new Vector2(35f, 35f);
+                freeAgentDisplay[i].charName.transform.parent.GetComponent<Image>().color = buttonDisabledColor;
+                freeAgentDisplay[i].charName.transform.parent.GetComponent<Button>().interactable = false;
+            }
         }
 
     }
@@ -285,11 +356,11 @@ public class TeamMenu : MonoBehaviour
         cm.earnings -= teamCost;
         teamMenu.SetActive(false);
         agentMenu.SetActive(false);
-        pm.cardParent.SetActive(true);
+        //pm.cardParent.SetActive(true);
         setTeamButton.SetActive(false);
-        pm.nextWeekButton.SetActive(true);
+        //pm.nextWeekButton.SetActive(true);
         cm.SaveCareer();
-        pm.SetUp();
+        //pm.SetUp();
     }
 
     void Shuffle(Player[] a)
