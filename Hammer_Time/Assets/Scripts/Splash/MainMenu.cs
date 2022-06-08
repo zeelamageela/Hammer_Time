@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
 
-        myFile = new EasyFileSave("my_player_data");
+        myFile = new EasyFileSave("my_hiscore_data");
 
         float[] allTimeEarningsList;
         string[] allTimeNamesList;

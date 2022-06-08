@@ -26,6 +26,7 @@ public class CrowdManager : MonoBehaviour
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
 
+        crowdDensity = gsp.week;
         SetUpCrowd();
         if (tournyType > 0)
             cameraMen.SetActive(true);
@@ -64,7 +65,59 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
-        
+        for (int j = 0; j < 5; j++)
+        {
+            for (int i = 0; i < 19; i++)
+            {
+                seatPos = new Vector2((i * -0.46f), j * -0.55f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    if (i >= j)
+                    {
+                        counter++;
+                        GameObject go = Instantiate(crowdGO, crowdSections[1].transform, false);
+                        go.transform.localPosition = seatPos;
+                        activeCrowd.Add(go);
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; j < 5; j++)
+        {
+            for (int i = 0; i < 51; i++)
+            {
+                seatPos = new Vector2((i * 0.46f), j * -0.55f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, crowdSections[2].transform, false);
+                    go.transform.localPosition = seatPos;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int j = 0; j < 5; j++)
+        {
+            for (int i = 0; i < 19; i++)
+            {
+                seatPos = new Vector2((i * 0.46f), j * -0.55f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    if (i >= j)
+                    {
+                        counter++;
+                        GameObject go = Instantiate(crowdGO, crowdSections[3].transform, false);
+                        go.transform.localPosition = seatPos;
+                        activeCrowd.Add(go);
+                    }
+                }
+            }
+        }
 
         foreach (GameObject go in activeCrowd)
         {

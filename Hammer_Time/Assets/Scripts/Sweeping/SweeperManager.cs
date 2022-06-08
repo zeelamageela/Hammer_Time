@@ -82,6 +82,7 @@ public class SweeperManager : MonoBehaviour
             timeLeft -= Time.deltaTime;
             if (timeLeft < 0)
             {
+                timeLeft = 0f;
                 Debug.Log("Whoa called in Tap Timer");
                 rockSounds[0].enabled = false;
                 rockSounds[1].enabled = false;
@@ -671,6 +672,6 @@ public class SweeperManager : MonoBehaviour
         }
 
 
-        aiSweep.OnSweep(false, "Draw To Target", new Vector2(aimPos.x, aimPos.y), rm.inturn);
+        aiSweep.OnSweep(false, shotType, new Vector2(aimPos.x, aimPos.y), rm.inturn);
     }
 }

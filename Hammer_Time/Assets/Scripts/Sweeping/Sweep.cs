@@ -125,7 +125,7 @@ public class Sweep : MonoBehaviour
         Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
 
 
-        Debug.Log("Sweep Amount is " + sweepAmt);
+        Debug.Log("Sweep Amount is " + ((statCalc / 2f) * sweepAmt));
 
         rb.drag -= sweepAmt * statCalc / 2f;
 

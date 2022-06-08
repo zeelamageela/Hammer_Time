@@ -24,7 +24,7 @@ public class PlayoffManager : MonoBehaviour
 	GameSettingsPersist gsp;
 
 	EasyFileSave myFile;
-	int pTeams;
+	//int pTeams;
 	public int playerTeam;
 	public int oppTeam;
 	public int playoffRound;
@@ -78,7 +78,7 @@ public class PlayoffManager : MonoBehaviour
 	public void SetSeeding(int numberOfTeams)
     {
 
-		pTeams = 4;
+		//pTeams = 4;
 		playoffTeams = new Team[9];
 		heading.text = "Page Playoff";
 

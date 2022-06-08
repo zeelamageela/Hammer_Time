@@ -9,7 +9,7 @@ public class RandomRockPlacerment : MonoBehaviour
     public GameManager gm;
     public RockManager rm;
     public TeamManager tm;
-    public CameraManager camera;
+    public CameraManager cam;
     public Transform house;
     public bool placed;
     public bool placed1;

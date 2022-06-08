@@ -1776,7 +1776,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.36707762
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -28437,6 +28437,7 @@ MonoBehaviour:
   provStandings: {fileID: 568778479}
   tourStandings: {fileID: 1363280645}
   provQualDialogue: 1
+  teamPaid: 0
 --- !u!4 &1497908067
 Transform:
   m_ObjectHideFlags: 0
