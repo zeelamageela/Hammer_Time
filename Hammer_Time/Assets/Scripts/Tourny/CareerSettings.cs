@@ -155,6 +155,7 @@ public class CareerSettings : MonoBehaviour
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 
             int[] activePlayersId = myFile.GetArray<int>("Active Players ID List");
+            string[] activePlayersName = myFile.GetArray<string>("Active Players Name List");
 
             int[] playerDrawList = myFile.GetArray<int>("Active Players Draw List");
             int[] playerGuardList = myFile.GetArray<int>("Active Players Guard List");
@@ -169,9 +170,18 @@ public class CareerSettings : MonoBehaviour
             int[] playerOppStrengthList = myFile.GetArray<int>("Active Players Opp Strength List");
             int[] playerOppEnduroList = myFile.GetArray<int>("Active Players Opp Endurance List");
             int[] playerOppCohesionList = myFile.GetArray<int>("Active Players Opp Cohesion List");
-            for (int i = 0; i < activePlayersId.Length; i++)
+
+            Debug.Log("Player Id List Length - " + activePlayersId.Length);
+            Debug.Log("Player Name 3 - " + activePlayersName[2]);
+
+            //cm.activePlayers = new Player[3];
+
+            for (int i = 0; i < cm.activePlayers.Length; i++)
             {
+                Debug.Log("Setting Active Player " + i);
+                cm.activePlayers[i].name = activePlayersName[i];
                 cm.activePlayers[i].id = activePlayersId[i];
+
 
                 cm.activePlayers[i].draw = playerDrawList[i];
                 cm.activePlayers[i].guard = playerGuardList[i];

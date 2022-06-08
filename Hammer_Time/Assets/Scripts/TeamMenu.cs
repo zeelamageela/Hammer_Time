@@ -53,14 +53,15 @@ public class TeamMenu : MonoBehaviour
 
     EasyFileSave myFile;
 
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    cm = FindObjectOfType<CareerManager>();
-    //    //Shuffle(playerPool);
-    //    StartCoroutine(SetUpTeam());
+    bool callCount;
 
-    //}
+    // Start is called before the first frame update
+    void Start()
+    {
+        cm = FindObjectOfType<CareerManager>();
+        //Shuffle(playerPool);
+        callCount = false;
+    }
 
     // Update is called once per frame
     void Update()
@@ -97,9 +98,14 @@ public class TeamMenu : MonoBehaviour
 
     public void TeamMenuOpen()
     {
-        cm = FindObjectOfType<CareerManager>();
-        StartCoroutine(SetUpTeam());
+        if (!callCount)
+        {
+            callCount = true;
+            cm = FindObjectOfType<CareerManager>();
+            StartCoroutine(SetUpTeam());
+        }
     }
+
     IEnumerator SetUpTeam()
     {
         myFile = new EasyFileSave("my_player_data");
@@ -152,23 +158,6 @@ public class TeamMenu : MonoBehaviour
                 if (cm.week == 2)
                 {
                     Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
-                    dialogueGO.SetActive(true);
-                    for (int i = 0; i < cm.currentTournyTeams.Length; i++)
-                    {
-                        if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
-                        {
-                            if (cm.currentTournyTeams[i].rank < 5)
-                            {
-                                coachGreen.TriggerDialogue("Intro", 1);
-                            }
-                            else
-                            {
-                                coachGreen.TriggerDialogue("Intro", 2);
-                            }
-                        }
-                    }
-                    cm.introDialogue[1] = true;
-                    cm.introDialogue[2] = true;
                 }
             }
 

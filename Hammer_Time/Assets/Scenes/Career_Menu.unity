@@ -723,6 +723,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bg: 0
+  crowdDensity: 0
+  tournyType: 0
   redHammer: 0
   ends: 0
   rocks: 0
@@ -754,14 +756,14 @@ MonoBehaviour:
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   redTeamName: 
   redTeamColour: {r: 0.8962264, g: 0.26633143, b: 0.26633143, a: 1}
   redTeam: []
@@ -789,6 +791,7 @@ MonoBehaviour:
     earnings: 0
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
+    player: 0
   teamColour: {r: 0, g: 0, b: 0, a: 1}
   playerGO:
   - charStats: {fileID: 0}
@@ -3773,6 +3776,64 @@ MonoBehaviour:
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
+  activePlayers:
+  - name: 
+    id: 0
+    description: 
+    cost: 0
+    image: {fileID: 0}
+    active: 0
+    view: 0
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+  - name: 
+    id: 0
+    description: 
+    cost: 0
+    image: {fileID: 0}
+    active: 0
+    view: 0
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+  - name: 
+    id: 0
+    description: 
+    cost: 0
+    image: {fileID: 0}
+    active: 0
+    view: 0
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
   xp: 0
   totalXp: 0
   cStats:
@@ -3781,14 +3842,21 @@ MonoBehaviour:
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
+  modStats:
+    drawAccuracy: 0
+    takeOutAccuracy: 0
+    guardAccuracy: 0
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepCohesion: 0
   skillPoints: 20
   cardIDList: 
   inProgress: 0
@@ -3810,6 +3878,7 @@ MonoBehaviour:
     earnings: 0
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
+    player: 0
   teams: []
   tourTeams: []
   currentTournyTeams: []

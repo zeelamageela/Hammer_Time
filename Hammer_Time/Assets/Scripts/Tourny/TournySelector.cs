@@ -53,6 +53,7 @@ public class TournySelector : MonoBehaviour
     public GameObject profPanelGO;
     public ProfilePanel profPanel;
     public GameObject teamPanel;
+    public TeamMenu teamMenu;
     public GameObject powerUpPanel;
 
     public ProvStandings provStandings;
@@ -62,7 +63,7 @@ public class TournySelector : MonoBehaviour
     public bool provQualDialogue;
     bool tourQualDialogue;
     EasyFileSave myFile;
-
+    public bool teamPaid;
     // Start is called before the first frame update
     //void Start()
     //{
@@ -175,6 +176,7 @@ public class TournySelector : MonoBehaviour
 
         //Profile(true);
         SetUp();
+        teamPaid = false;
     }
     public void SetUp()
     {
@@ -187,7 +189,7 @@ public class TournySelector : MonoBehaviour
         tourStandings.PrintRows();
 
         if (cm.week == 0)
-            NewSeason();
+            StartCoroutine(NewSeason());
         else
         {
             cm.LoadCareer();
@@ -205,9 +207,32 @@ public class TournySelector : MonoBehaviour
                 cm.EndCareer();
             }
 
-            if (cm.week == 2)
+            if (cm.week == 1)
             {
-                hScroll.value = 0f;
+                menuButtons[3].gameObject.SetActive(false);
+                menuButtons[4].gameObject.SetActive(false);
+            }
+
+            else if (cm.week == 2)
+            {
+                dialogueGO.SetActive(true);
+                for (int i = 0; i < cm.currentTournyTeams.Length; i++)
+                {
+                    if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+                    {
+                        if (cm.currentTournyTeams[i].rank < 5)
+                        {
+                            coachGreen.TriggerDialogue("Intro", 1);
+                        }
+                        else
+                        {
+                            coachGreen.TriggerDialogue("Intro", 2);
+                        }
+                    }
+                }
+                cm.introDialogue[1] = true;
+                cm.introDialogue[2] = true;
+                menuButtons[3].gameObject.SetActive(false);
             }
 
             else if (cm.week == 3)
@@ -259,9 +284,6 @@ public class TournySelector : MonoBehaviour
                     }
                 }
             }
-
-            
-
         }
 
 
@@ -380,8 +402,8 @@ public class TournySelector : MonoBehaviour
             activeTournies[0] = emptyTourny;
         else if (cm.week == 2)
         {
-            hScroll.value = 0f;
             activeTournies[0] = tournies[1];
+            hScroll.value = 0f;
         }
         else if (cm.week == 4)
         {
@@ -1012,6 +1034,7 @@ public class TournySelector : MonoBehaviour
                 }
             }
         }
+
         if (activeTournies[0].name == activeTournies[1].name && activeTournies[0].location == activeTournies[1].location)
         {
             activeTournies[0] = emptyTourny;
@@ -1151,12 +1174,16 @@ public class TournySelector : MonoBehaviour
 
     }
 
-    public void NewSeason()
+    IEnumerator NewSeason()
     {
         dialogueGO.SetActive(true);
         coachGreen.TriggerDialogue("Intro", 0);
         //cm.introDialogue[7] = true;
         cm.NewSeason();
+        yield return new WaitUntil(() => !dialogueGO.activeSelf);
+        yield return new WaitForSeconds(0.75f);
+        teamMenu.TeamMenuOpen();
+        Expand(menuButtons[2]);
     }
 
     public void EndOfGame()
@@ -1214,6 +1241,7 @@ public class TournySelector : MonoBehaviour
                     tournies[i].complete = true;
             }
         }
+
         cm.tournies = tournies;
         cm.tour = tour;
         cm.prov = provQual;
@@ -1457,7 +1485,7 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                StartCoroutine(WaitForTime(0.5f, i, expandButton));
+                StartCoroutine(WaitForTime(0.45f, i, expandButton));
             }
         }
 
@@ -1482,6 +1510,17 @@ public class TournySelector : MonoBehaviour
                 menuButtons[i].interactable = true;
             }
         }
+
+        if (week == 1)
+        {
+            menuButtons[3].gameObject.SetActive(false);
+            menuButtons[4].gameObject.SetActive(false);
+        }
+        else if (week == 2 | week == 3)
+        {
+            menuButtons[3].gameObject.SetActive(false);
+        }
+
         switch (menuSelector)
         {
             case 0:

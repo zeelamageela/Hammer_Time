@@ -388,14 +388,17 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            for (int i = 0; i < teams.Length; i++)
+            if (provRankList != null)
             {
-                provRankList.Add(new Standings_List(teams[i]));
-            }
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    provRankList.Add(new Standings_List(teams[i]));
+                }
 
-            for (int i = 0; i < tourTeams.Length; i++)
-            {
-                tourRankList.Add(new TourStandings_List(tourTeams[i]));
+                for (int i = 0; i < tourTeams.Length; i++)
+                {
+                    tourRankList.Add(new TourStandings_List(tourTeams[i]));
+                }
             }
 
             for (int i = 0; i < teams.Length; i++)
@@ -413,7 +416,7 @@ public class CareerManager : MonoBehaviour
 
     IEnumerator SaveHighScore()
     {
-        myFile = new EasyFileSave("my_player_data");
+        myFile = new EasyFileSave("my_hiscore_data");
         allTimeList = new List<Standings_List>();
 
         if (myFile.Load())
@@ -462,7 +465,7 @@ public class CareerManager : MonoBehaviour
 
         Debug.Log("All Time List Length - " + allTimeList.Count);
 
-        myFile = new EasyFileSave("my_hiscore_data");
+        //myFile = new EasyFileSave("my_hiscore_data");
         if (myFile.Load())
         {
             myFile.Add("All Time Earnings", allTimeEarningsTemp);
@@ -548,7 +551,58 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Total Earnings List", earningsList);
 
         myFile.Add("Card ID List", cardIDList);
+        int[] playerIdList = new int[activePlayers.Length];
+        string[] playerNameList = new string[activePlayers.Length];
 
+        int[] playerDrawList = new int[activePlayers.Length];
+        int[] playerGuardList = new int[activePlayers.Length];
+        int[] playerTakeoutList = new int[activePlayers.Length];
+        int[] playerStrengthList = new int[activePlayers.Length];
+        int[] playerEnduroList = new int[activePlayers.Length];
+        int[] playerCohesionList = new int[activePlayers.Length];
+
+        int[] playerOppDrawList = new int[activePlayers.Length];
+        int[] playerOppGuardList = new int[activePlayers.Length];
+        int[] playerOppTakeoutList = new int[activePlayers.Length];
+        int[] playerOppStrengthList = new int[activePlayers.Length];
+        int[] playerOppEnduroList = new int[activePlayers.Length];
+        int[] playerOppCohesionList = new int[activePlayers.Length];
+
+        for (int i = 0; i < playerIdList.Length; i++)
+        {
+            playerIdList[i] = activePlayers[i].id;
+            Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
+            playerNameList[i] = activePlayers[i].name;
+
+            playerDrawList[i] = activePlayers[i].draw;
+            playerGuardList[i] = activePlayers[i].guard;
+            playerTakeoutList[i] = activePlayers[i].takeOut;
+            playerStrengthList[i] = activePlayers[i].sweepStrength;
+            playerEnduroList[i] = activePlayers[i].sweepEnduro;
+            playerCohesionList[i] = activePlayers[i].sweepCohesion;
+
+            playerOppDrawList[i] = activePlayers[i].oppDraw;
+            playerOppGuardList[i] = activePlayers[i].oppGuard;
+            playerOppTakeoutList[i] = activePlayers[i].oppTakeOut;
+            playerOppStrengthList[i] = activePlayers[i].oppStrength;
+            playerOppEnduroList[i] = activePlayers[i].oppEnduro;
+            playerOppCohesionList[i] = activePlayers[i].oppCohesion;
+        }
+
+        myFile.Add("Active Players ID List", playerIdList);
+        myFile.Add("Active Players Name List", playerNameList);
+        myFile.Add("Active Players Draw List", playerDrawList);
+        myFile.Add("Active Players Guard List", playerGuardList);
+        myFile.Add("Active Players Takeout List", playerTakeoutList);
+        myFile.Add("Active Players Strength List", playerStrengthList);
+        myFile.Add("Active Players Endurance List", playerEnduroList);
+        myFile.Add("Active Players Cohesion List", playerCohesionList);
+        myFile.Add("Active Players Opp Draw List", playerOppDrawList);
+        myFile.Add("Active Players Opp Guard List", playerOppGuardList);
+        myFile.Add("Active Players Opp Takeout List", playerOppTakeoutList);
+        myFile.Add("Active Players Opp Strength List", playerOppStrengthList);
+        myFile.Add("Active Players Opp Endurance List", playerOppEnduroList);
+        myFile.Add("Active Players Opp Cohesion List", playerOppCohesionList);
         if (!pUpM)
         {
             for (int i = 0; i < teams.Length; i++)
@@ -702,53 +756,7 @@ public class CareerManager : MonoBehaviour
 
 
         //activePlayers = teamSel.activePlayers;
-        int[] playerIdList = new int[activePlayers.Length];
-        int[] playerDrawList = new int[activePlayers.Length];
-        int[] playerGuardList = new int[activePlayers.Length];
-        int[] playerTakeoutList = new int[activePlayers.Length];
-        int[] playerStrengthList = new int[activePlayers.Length];
-        int[] playerEnduroList = new int[activePlayers.Length];
-        int[] playerCohesionList = new int[activePlayers.Length];
-
-        int[] playerOppDrawList = new int[activePlayers.Length];
-        int[] playerOppGuardList = new int[activePlayers.Length];
-        int[] playerOppTakeoutList = new int[activePlayers.Length];
-        int[] playerOppStrengthList = new int[activePlayers.Length];
-        int[] playerOppEnduroList = new int[activePlayers.Length];
-        int[] playerOppCohesionList = new int[activePlayers.Length];
-
-        for (int i = 0; i < playerIdList.Length; i++)
-        {
-            playerIdList[i] = activePlayers[i].id;
-            Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
-            playerDrawList[i] = activePlayers[i].draw;
-            playerGuardList[i] = activePlayers[i].guard;
-            playerTakeoutList[i] = activePlayers[i].takeOut;
-            playerStrengthList[i] = activePlayers[i].sweepStrength;
-            playerEnduroList[i] = activePlayers[i].sweepEnduro;
-            playerCohesionList[i] = activePlayers[i].sweepCohesion;
-
-            playerOppDrawList[i] = activePlayers[i].oppDraw;
-            playerOppGuardList[i] = activePlayers[i].oppGuard;
-            playerOppTakeoutList[i] = activePlayers[i].oppTakeOut;
-            playerOppStrengthList[i] = activePlayers[i].oppStrength;
-            playerOppEnduroList[i] = activePlayers[i].oppEnduro;
-            playerOppCohesionList[i] = activePlayers[i].oppCohesion;
-        }
-
-        myFile.Add("Active Players ID List", playerIdList);
-        myFile.Add("Active Players Draw List", playerDrawList);
-        myFile.Add("Active Players Guard List", playerGuardList);
-        myFile.Add("Active Players Takeout List", playerTakeoutList);
-        myFile.Add("Active Players Strength List", playerStrengthList);
-        myFile.Add("Active Players Endurance List", playerEnduroList);
-        myFile.Add("Active Players Cohesion List", playerCohesionList);
-        myFile.Add("Active Players Opp Draw List", playerOppDrawList);
-        myFile.Add("Active Players Opp Guard List", playerOppGuardList);
-        myFile.Add("Active Players Opp Takeout List", playerOppTakeoutList);
-        myFile.Add("Active Players Opp Strength List", playerOppStrengthList);
-        myFile.Add("Active Players Opp Endurance List", playerOppEnduroList);
-        myFile.Add("Active Players Opp Cohesion List", playerOppCohesionList);
+        
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
         //myFile.Add("Tourny Wins List", tournyWinsList);
         //myFile.Add("Tourny Loss List", tournyLossList);
@@ -1141,6 +1149,7 @@ public class CareerManager : MonoBehaviour
 
         Shuffle(teams);
         bool inList = true;
+
         for (int i = 0; i < totalTourTeams; i++)
         {
             tourTeams[i] = teams[i];
@@ -1158,6 +1167,7 @@ public class CareerManager : MonoBehaviour
                 break;
             }
         }
+
         if (!inList)
         {
             Debug.Log("inList is " + inList);
@@ -1169,15 +1179,13 @@ public class CareerManager : MonoBehaviour
                 }
             }
         }
-        introDialogue[0] = true;
-        week++;
-        //Shuffle(teams);
 
-        //for (int i = 1; i < tourTeams; i++)
-        //{
-        //    tourRankList[i].team = teams[i];
-        //}
-        //tourRankList[0].team = tTeamList.playerTeam;
+        introDialogue[0] = true;
+
+        
+        week++;
+
+        //tSel.Expand(tSel.menuButtons[2]);
     }
 
     public void EndCareer()
