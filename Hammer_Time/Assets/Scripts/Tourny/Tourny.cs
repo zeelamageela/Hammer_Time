@@ -18,4 +18,7 @@ public class Tourny
     public bool qualifier;
     public bool tour;
     public bool complete;
+
+    public int BG;
+    public int crowdDensity;
 }

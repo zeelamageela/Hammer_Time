@@ -6071,7 +6071,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: -34.74
+  m_Spacing: -30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -13106,7 +13106,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562, y: -1323.87}
+  m_AnchoredPosition: {x: 562, y: -1333.3501}
   m_SizeDelta: {x: 1124, y: 151.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &680341462
@@ -13775,7 +13775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -205
+      value: -195
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -18041,7 +18041,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -490.16666
+      value: -483.5
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -18716,7 +18716,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 80
+    m_Top: 70
     m_Bottom: 0
   m_ChildAlignment: 1
   m_Spacing: 5
@@ -28092,7 +28092,7 @@ MonoBehaviour:
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
-    location: Leduc
+    location: Victoria, British Columbia
     teams: 8
     prizeMoney: 12000
     entryFee: 0
@@ -28101,9 +28101,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 4
+    crowdDensity: 1
   - name: The Jim Jumbo Memorial Spiel
     id: 1
-    location: Stettler
+    location: St Johns, Newfoundland
     teams: 12
     prizeMoney: 6500
     entryFee: 50
@@ -28112,9 +28114,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - name: Canmore Club Championship
+    BG: 1
+    crowdDensity: 2
+  - name: The LA Open
     id: 3
-    location: Canmore
+    location: Vernon, California
     teams: 16
     prizeMoney: 12000
     entryFee: 250
@@ -28123,9 +28127,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - name: The AlberTel Open
+    BG: 1
+    crowdDensity: 8
+  - name: The Tallinn International Challenger
     id: 2
-    location: Edmonton
+    location: Tallinn, Estonia
     teams: 16
     prizeMoney: 50000
     entryFee: 250
@@ -28134,9 +28140,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 2
+    crowdDensity: 2
   - name: Big Ben's Big Cash $piel
     id: 4
-    location: Lethbridge
+    location: Las Vegas, Nevada
     teams: 8
     prizeMoney: 80000
     entryFee: 10000
@@ -28145,9 +28153,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - name: Alberta Energy Curling Classic
+    BG: 2
+    crowdDensity: 4
+  - name: Match Town Trophy
     id: 5
-    location: Lethbridge
+    location: Jonkoping, Sweden
     teams: 16
     prizeMoney: 10000
     entryFee: 150
@@ -28156,9 +28166,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 1
+    crowdDensity: 4
   - name: Tony's Pizza Cup
     id: 6
-    location: Cochrane
+    location: Montreal, Quebec
     teams: 12
     prizeMoney: 6500
     entryFee: 100
@@ -28167,9 +28179,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 1
+    crowdDensity: 3
   - name: T. Rox Jurassic Classic
     id: 7
-    location: Drumheller
+    location: Drumheller, Alberta
     teams: 12
     prizeMoney: 15000
     entryFee: 0
@@ -28178,9 +28192,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-  - name: The North Hill Championship
+    BG: 1
+    crowdDensity: 5
+  - name: The National
     id: 8
-    location: Calgary
+    location: Swift Current, Saskatchewan
     teams: 12
     prizeMoney: 6500
     entryFee: 100
@@ -28189,21 +28205,12 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 2
+    crowdDensity: 8
   tour:
-  - name: Alberta Curling Tour - Fort Mac Classic
-    id: 0
-    location: Fort McMurray
-    teams: 16
-    prizeMoney: 40000
-    entryFee: 500
-    format: Triple Knockout
-    championship: 0
-    qualifier: 0
-    tour: 1
-    complete: 0
-  - name: Alberta Curling Tour - The Banff Open
+  - name: World Tour - Hokkaido Curling Classic
     id: 1
-    location: Banff
+    location: Sapporo, Japan
     teams: 16
     prizeMoney: 40000
     entryFee: 500
@@ -28212,9 +28219,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - name: Alberta Curling Tour - The Hat Cup
+    BG: 1
+    crowdDensity: 4
+  - name: World Tour - The Swiss Cup
     id: 2
-    location: Medicine Hat
+    location: Basel, Switzerland
     teams: 16
     prizeMoney: 40000
     entryFee: 500
@@ -28223,31 +28232,11 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  - name: Alberta Curling Tour - The Airdrie Cup
-    id: 3
-    location: Airdrie
-    teams: 16
-    prizeMoney: 40000
-    entryFee: 500
-    format: Triple Knockout
-    championship: 0
-    qualifier: 0
-    tour: 1
-    complete: 0
-  - name: Alberta Curling Tour - The Tour Spiel
-    id: 4
-    location: Cochrane
-    teams: 16
-    prizeMoney: 40000
-    entryFee: 500
-    format: Triple Knockout
-    championship: 0
-    qualifier: 0
-    tour: 1
-    complete: 0
-  - name: Alberta Curling Tour - The Last Chance Cup
+    BG: 1
+    crowdDensity: 5
+  - name: World Tour - The Prague Classic
     id: 5
-    location: Lethbridge
+    location: Prague, Czechia
     teams: 16
     prizeMoney: 40000
     entryFee: 500
@@ -28256,43 +28245,51 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-  provQual:
-  - name: Provincial Qualifier
+    BG: 2
+    crowdDensity: 6
+  - name: World Tour - The Hat Classic
     id: 0
-    location: Jasper
-    teams: 8
-    prizeMoney: 2500
-    entryFee: 0
-    format: Round Robin
+    location: Medicine Hat, Alberta
+    teams: 16
+    prizeMoney: 40000
+    entryFee: 500
+    format: Triple Knockout
     championship: 0
-    qualifier: 1
-    tour: 0
+    qualifier: 0
+    tour: 1
     complete: 0
-  - name: Provincial Qualifier
-    id: 1
-    location: Okotoks
-    teams: 8
-    prizeMoney: 2500
-    entryFee: 0
-    format: Round Robin
+    BG: 2
+    crowdDensity: 8
+  - name: World Tour - The US Open
+    id: 4
+    location: Blaine, Minnesota
+    teams: 16
+    prizeMoney: 40000
+    entryFee: 500
+    format: Triple Knockout
     championship: 0
-    qualifier: 1
-    tour: 0
+    qualifier: 0
+    tour: 1
     complete: 0
-  - name: Provincial Qualifier
-    id: 2
-    location: Sherwood Park
-    teams: 8
-    prizeMoney: 2500
-    entryFee: 0
-    format: Round Robin
-    championship: 0
-    qualifier: 1
-    tour: 0
-    complete: 0
-  - name: Provincial Qualifier
+    BG: 1
+    crowdDensity: 5
+  - name: World Tour - The Masters
     id: 3
-    location: Slave Lake
+    location: Oakville, Ontario
+    teams: 16
+    prizeMoney: 40000
+    entryFee: 500
+    format: Triple Knockout
+    championship: 0
+    qualifier: 0
+    tour: 1
+    complete: 0
+    BG: 2
+    crowdDensity: 11
+  provQual:
+  - name: Championship Qualifier
+    id: 0
+    location: Kirkcaldy, Scotland
     teams: 8
     prizeMoney: 2500
     entryFee: 0
@@ -28301,10 +28298,51 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
+    BG: 3
+    crowdDensity: 3
+  - name: Championship Qualifier
+    id: 1
+    location: St Petersburg, Russia
+    teams: 8
+    prizeMoney: 2500
+    entryFee: 0
+    format: Round Robin
+    championship: 0
+    qualifier: 1
+    tour: 0
+    complete: 0
+    BG: 1
+    crowdDensity: 2
+  - name: Championship Qualifier
+    id: 2
+    location: Sherwood Park, Alberta
+    teams: 8
+    prizeMoney: 2500
+    entryFee: 0
+    format: Round Robin
+    championship: 0
+    qualifier: 1
+    tour: 0
+    complete: 0
+    BG: 2
+    crowdDensity: 4
+  - name: Championship Qualifier
+    id: 3
+    location: Karlstad, Sweden
+    teams: 8
+    prizeMoney: 2500
+    entryFee: 0
+    format: Round Robin
+    championship: 0
+    qualifier: 1
+    tour: 0
+    complete: 0
+    BG: 1
+    crowdDensity: 7
   tourChampionship:
-    name: Alberta Curling Tour Championship
+    name: World Tour Championship
     id: 0
-    location: Edmonton
+    location: Dumfries, Scotland
     teams: 6
     prizeMoney: 250000
     entryFee: 0
@@ -28313,10 +28351,12 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 2
+    crowdDensity: 11
   provChampionship:
-    name: The Provincial Championship
+    name: The Player's Championship
     id: 0
-    location: Red Deer
+    location: Toronto, Ontario
     teams: 16
     prizeMoney: 150000
     entryFee: 1500
@@ -28325,6 +28365,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 2
+    crowdDensity: 11
   panel1Tournies: []
   panel2Tournies: []
   activeTournies:
@@ -28339,6 +28381,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   - name: 
     id: 0
     location: 
@@ -28350,6 +28394,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   - name: 
     id: 0
     location: 
@@ -28361,6 +28407,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   panelGOs:
   - {fileID: 1705527687}
   - {fileID: 1104995017}
@@ -28377,6 +28425,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   currentTourny:
     name: 
     id: 0
@@ -28389,6 +28439,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   green:
   - {r: 0.12941177, g: 0.29803923, b: 0.12941177, a: 1}
   - {r: 0.5254902, g: 0.94509804, b: 0.25490198, a: 1}
@@ -33769,7 +33821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562, y: -1067.71}
+  m_AnchoredPosition: {x: 562, y: -1072.45}
   m_SizeDelta: {x: 1124, y: 430.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1748293733
@@ -42743,6 +42795,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   tournies: []
   tour: []
   prov: []
@@ -43378,7 +43432,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -775.3333
+      value: -772
       objectReference: {fileID: 0}
     - target: {fileID: 4758637141306915109, guid: c8908043187bc4a4fa648e1148049891, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

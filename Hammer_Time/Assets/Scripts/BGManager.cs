@@ -5,6 +5,7 @@ using UnityEngine;
 public class BGManager : MonoBehaviour
 {
     public GameManager gm;
+    public CareerManager carM;
     public CameraManager cm;
     GameSettingsPersist gsp;
 
@@ -19,7 +20,9 @@ public class BGManager : MonoBehaviour
     void Awake()
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
+        carM = FindObjectOfType<CareerManager>();
 
+        gsp.bg = carM.currentTourny.BG;
         randBoards = Instantiate(boards[gsp.bg], transform);
         randBoards.name = "Boards_CREATED";
         Instantiate(ice[gsp.bg], transform);

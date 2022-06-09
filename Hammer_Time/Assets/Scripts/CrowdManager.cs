@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class CrowdManager : MonoBehaviour
 {
+    public CareerManager cm;
     public GameSettingsPersist gsp;
+    public BGManager bgm;
+
     public GameObject cameraMen;
 
     public int tournyType;
@@ -25,10 +28,12 @@ public class CrowdManager : MonoBehaviour
     void Start()
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
+        cm = FindObjectOfType<CareerManager>();
 
-        crowdDensity = gsp.week;
+        crowdDensity = cm.currentTourny.crowdDensity;
+        
         SetUpCrowd();
-        if (tournyType > 0)
+        if (crowdDensity > 7)
             cameraMen.SetActive(true);
         else
             cameraMen.SetActive(false);
