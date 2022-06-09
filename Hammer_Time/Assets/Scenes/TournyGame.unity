@@ -833,7 +833,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &94653246
 Transform:
   m_ObjectHideFlags: 0
@@ -4063,12 +4063,12 @@ MonoBehaviour:
   tournyType: 0
   redHammer: 1
   ends: 2
-  rocks: 2
+  rocks: 8
   volume: 0.15
   tutorial: 0
   loadGame: 0
   aiYellow: 1
-  aiRed: 1
+  aiRed: 0
   debug: 0
   mixed: 0
   rockCurrent: 0
@@ -6238,7 +6238,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &718333470
 Transform:
   m_ObjectHideFlags: 0
@@ -8690,7 +8690,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &961492395
 Transform:
   m_ObjectHideFlags: 0
@@ -8827,7 +8827,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &969614662
 Transform:
   m_ObjectHideFlags: 0
@@ -11635,7 +11635,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1289126440
 Transform:
   m_ObjectHideFlags: 0
@@ -13146,7 +13146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1437086053
 Transform:
   m_ObjectHideFlags: 0
@@ -13419,7 +13419,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1450584713
 Transform:
   m_ObjectHideFlags: 0
@@ -15655,9 +15655,9 @@ MonoBehaviour:
     draw: 3
     guard: 3
     takeOut: 3
-    sweepStrength: 3
-    sweepEnduro: 3
-    sweepCohesion: 3
+    sweepStrength: 7
+    sweepEnduro: 8
+    sweepCohesion: 7
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -15674,9 +15674,9 @@ MonoBehaviour:
     draw: 3
     guard: 3
     takeOut: 3
-    sweepStrength: 3
-    sweepEnduro: 3
-    sweepCohesion: 3
+    sweepStrength: 8
+    sweepEnduro: 8
+    sweepCohesion: 8
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -15691,12 +15691,12 @@ MonoBehaviour:
     active: 0
     view: 0
     draw: 3
-    guard: 3
+    guard: 9
     takeOut: 3
-    sweepStrength: 3
-    sweepEnduro: 3
-    sweepCohesion: 3
-    oppDraw: 0
+    sweepStrength: 10
+    sweepEnduro: 8
+    sweepCohesion: 10
+    oppDraw: -1
     oppGuard: 0
     oppTakeOut: 0
     oppStrength: 0
@@ -18471,7 +18471,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2068555448
 Transform:
   m_ObjectHideFlags: 0
@@ -19753,6 +19753,46 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2125354293}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: redStats.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: redStats.Array.data[0]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: redStats.Array.data[1]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: redStats.Array.data[2]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: redStats.Array.data[3]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: yellowStats.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: yellowStats.Array.data[0]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: yellowStats.Array.data[1]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: yellowStats.Array.data[2]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: yellowStats.Array.data[3]
+      value: 
+      objectReference: {fileID: 66866172643203113, guid: 578191d701fe7406c8b49d9e81f8401f, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamRed.Array.data[0].sweeperL
       value: 
       objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
@@ -19785,6 +19825,22 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
     - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamRed.Array.data[0].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamRed.Array.data[1].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamRed.Array.data[2].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamRed.Array.data[3].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: teamYellow.Array.data[0].sweeperL
       value: 
       objectReference: {fileID: 889100766325987374, guid: f2a86709340847b44bf40201acf561e1, type: 3}
@@ -19816,6 +19872,22 @@ PrefabInstance:
       propertyPath: teamYellow.Array.data[3].sweeperR
       value: 
       objectReference: {fileID: 889100766325987374, guid: 8115ee4fbbfae2a4db673d46a7c2ec78, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamYellow.Array.data[0].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 022bb42b4d1402f448f5a171975dc677, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamYellow.Array.data[1].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 440dffe9166e14d449b230beed97e0b5, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamYellow.Array.data[2].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: e707276b4f26f4a4a8e5238fd7148c5c, type: 3}
+    - target: {fileID: 2966168892021168934, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
+      propertyPath: teamYellow.Array.data[3].charStats
+      value: 
+      objectReference: {fileID: 3696769566690430156, guid: 12c8afd7eb0e2834fbac9fd9cba96487, type: 3}
     - target: {fileID: 2966168892021168935, guid: f1da67e740e914ed981dce2f8f7ca0b7, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -20195,6 +20267,10 @@ PrefabInstance:
     - target: {fileID: 4718989231258857567, guid: c76e516237a414d3b8dd3a6c03ce0cec, type: 3}
       propertyPath: m_Name
       value: Crowd
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718989231258857567, guid: c76e516237a414d3b8dd3a6c03ce0cec, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c76e516237a414d3b8dd3a6c03ce0cec, type: 3}

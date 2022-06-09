@@ -27,15 +27,13 @@ public class TeamManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
         if (gsp.tourny)
         {
             Shuffle(teamRed);
             Shuffle(teamYellow);
-            for (int i = 0; i < teamRed.Length; i++)
-            {
-                //teamRed[i].charStats.drawAccuracy = gsp.cStats.drawAccuracy;
-            }
+
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
 
@@ -46,6 +44,7 @@ public class TeamManager : MonoBehaviour
             else
                 aiStats = 10;
             Debug.Log("Ai Stats are " + aiStats + " in Week " + gsp.week);
+
         }
         else
         {
@@ -123,7 +122,6 @@ public class TeamManager : MonoBehaviour
             #endregion
         }
 
-
     }
 
     void Shuffle(TeamMember[] a)
@@ -150,36 +148,48 @@ public class TeamManager : MonoBehaviour
         //}
     }
 
-    public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, int rockCurrent)
+    public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, int rockCurrent, bool aiTurn)
     {
         cm = FindObjectOfType<CareerManager>();
 
-        if (rockCurrent < 4)
+        if (aiTurn)
         {
-            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
-            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
-            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
-            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
-            sweeperL.sweepHealth = cm.activePlayers[1].sweepCohesion;
-            sweeperR.sweepHealth = cm.activePlayers[2].sweepCohesion;
-        }
-        else if (rockCurrent < 8)
-        {
-            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
-            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
-            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-            sweeperL.sweepHealth = cm.activePlayers[2].sweepCohesion;
-            sweeperR.sweepHealth = cm.activePlayers[0].sweepCohesion;
+            sweeperL.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+            sweeperR.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+            sweeperL.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+            sweeperR.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+            sweeperL.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+            sweeperR.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
         }
         else
         {
-            sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
-            sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-            sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
-            sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-            sweeperL.sweepHealth = cm.activePlayers[1].sweepCohesion;
-            sweeperR.sweepHealth = cm.activePlayers[0].sweepCohesion;
+            if (rockCurrent < 4)
+            {
+                sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+                sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
+            }
+            else if (rockCurrent < 8)
+            {
+                sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+            }
+            else
+            {
+                sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+            }
         }
     }
     public void SetCharacter(int rockCurrent, bool redTurn)
@@ -215,7 +225,7 @@ public class TeamManager : MonoBehaviour
                         teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
                     }
                     //Debug.Log("Red Turn PLAYER stats " + j + " - "
-                        //+ teamRed[j].charStats.guardAccuracy.GetValue());
+                    //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
             }
             else
@@ -229,7 +239,7 @@ public class TeamManager : MonoBehaviour
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
                     teamRed[j].charStats.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
                     //Debug.Log("Red Turn AI stats " + j + " - "
-                        //+ teamRed[j].charStats.guardAccuracy.GetValue());
+                    //+ teamRed[j].charStats.guardAccuracy.GetValue());
                 }
             }
         }
@@ -237,8 +247,7 @@ public class TeamManager : MonoBehaviour
         {
             for (int i = 0; i < teamYellow.Length; i++)
             {
-                //teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
-
+                teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
             }
             if (gsp.yellowTeamName == gsp.teamName)
             {

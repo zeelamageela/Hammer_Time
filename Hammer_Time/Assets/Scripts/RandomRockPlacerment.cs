@@ -313,8 +313,9 @@ public class RandomRockPlacerment : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
-        tm.SetCharacter(rockCurrent, true);
-        tm.SetCharacter(rockCurrent, false);
+        if (aiTurn && redTeam)
+        //tm.SetCharacter(rockCurrent, true);
+        //tm.SetCharacter(rockCurrent, false);
 
         //if (!aiTurn)
         //    yield return new WaitUntil(() => !playerStratGO.activeSelf);

@@ -67,11 +67,13 @@ public class SweeperManager : MonoBehaviour
 
             if (swprRStats.sweepHealth <= 0f)
             {
-                    SweepWhoa(false);
+                swprRStats.sweepHealth = 0f;
+                SweepWhoa(false);
             }
             if (swprLStats.sweepHealth <= 0f)
             {
-                    SweepWhoa(false);
+                swprLStats.sweepHealth = 0f;
+                SweepWhoa(false);
             }
 
 
@@ -82,7 +84,7 @@ public class SweeperManager : MonoBehaviour
             timeLeft -= Time.deltaTime;
             if (timeLeft < 0)
             {
-                timeLeft = 0f;
+                //timeLeft = 0f;
                 Debug.Log("Whoa called in Tap Timer");
                 rockSounds[0].enabled = false;
                 rockSounds[1].enabled = false;
@@ -110,18 +112,13 @@ public class SweeperManager : MonoBehaviour
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
-            if (gsp.redTeamColour == gsp.teamColour)
+            if (gsp.redTeamName == gsp.teamName)
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, false);
             }
             else
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, true);
             }
         }
         else
@@ -131,18 +128,13 @@ public class SweeperManager : MonoBehaviour
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
 
-            if (gsp.redTeamColour == gsp.teamColour)
+            if (gsp.redTeamName != gsp.teamName)
             {
-                sweeperL.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
-                sweeperR.GetComponent<CharacterStats>().sweepStrength.SetBaseValue(gsp.oppStats.sweepStrength);
-                sweeperL.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
-                sweeperR.GetComponent<CharacterStats>().sweepEndurance.SetBaseValue(gsp.oppStats.sweepEndurance);
-                sweeperL.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
-                sweeperR.GetComponent<CharacterStats>().sweepHealth = gsp.oppStats.sweepCohesion;
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, false);
             }
             else
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, true);
             }
         }
 

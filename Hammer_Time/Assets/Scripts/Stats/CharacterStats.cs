@@ -30,8 +30,8 @@ public class CharacterStats : MonoBehaviour
 
     private void OnEnable()
     {
-        sweepHealth = 100;
-        sweepMax = sweepHealth;
+        sweepHealth = 100f;
+        sweepMax = 100f;
         if (!GetComponent<SweeperParent>())
         {
             OnShoot();
@@ -58,13 +58,14 @@ public class CharacterStats : MonoBehaviour
     }
     public void OnSweepFatigue(float fatigue)
     {
-        fatigue = fatigue - (sweepEndurance.GetValue() * 0.065f);
+        fatigue -= (sweepEndurance.GetValue() * 0.065f);
         //Debug.Log("Fatigue is " + fatigue);
         sweepHealth -= fatigue;
         //Debug.Log("Sweep Health is " + fatigue);
 
         if (sweepHealth <= 0)
         {
+            sweepHealth = 0f;
             sweeper.Whoa();
         }
     }
