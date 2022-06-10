@@ -1160,6 +1160,16 @@ public class TournySelector : MonoBehaviour
                 panelGOs[i].SetActive(true);
         }
 
+        if (activeTournies[2] == emptyTourny)
+        {
+            if (activeTournies[0] == emptyTourny)
+                hScroll.value = 0.5f;
+            else
+                hScroll.value = 0f;
+        }
+        else
+            hScroll.value = 1f;
+            
         for (int i = 0; i < panels.Length; i++)
         {
             panels[i].location.text = activeTournies[i].location;

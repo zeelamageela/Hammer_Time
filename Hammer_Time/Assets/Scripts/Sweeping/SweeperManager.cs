@@ -104,7 +104,7 @@ public class SweeperManager : MonoBehaviour
         //sweeperRedR.gameObject.SetActive(false);
         //sweeperYellowL.gameObject.SetActive(false);
         //sweeperYellowR.gameObject.SetActive(false);
-
+        GameManager gm = FindObjectOfType<GameManager>();
         if (redTurn)
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
@@ -114,11 +114,11 @@ public class SweeperManager : MonoBehaviour
 
             if (gsp.redTeamName == gsp.teamName)
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, false);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
             else
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, true);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, true);
             }
         }
         else
@@ -130,11 +130,11 @@ public class SweeperManager : MonoBehaviour
 
             if (gsp.redTeamName != gsp.teamName)
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, false);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
             else
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gsp.rockCurrent, true);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, true);
             }
         }
 

@@ -149,7 +149,8 @@ public class GameSettingsPersist : MonoBehaviour
             Debug.Log("Loading to GSP");
             Debug.Log("Ends is " + myFile.GetInt("End Total"));
 
-            bg = myFile.GetInt("BG");
+            bg = myFile.GetInt("Current Tourny BG");
+            crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
             ends = myFile.GetInt("End Total");
             endCurrent = myFile.GetInt("Current End");
             rocks = myFile.GetInt("Rocks Per Team");
@@ -214,11 +215,12 @@ public class GameSettingsPersist : MonoBehaviour
         teamName = cm.teamName;
         teamColour = cm.teamColour;
         earnings = cm.earnings;
-
-        if (cm.currentTourny.championship)
-            bg = 3;
-        else
-            bg = Random.Range(0, 3);
+        bg = cm.currentTourny.BG;
+        crowdDensity = cm.currentTourny.crowdDensity;
+        //if (cm.currentTourny.championship)
+        //    bg = 3;
+        //else
+        //    bg = Random.Range(0, 3);
 
         playerTeamIndex = cm.playerTeamIndex;
 
@@ -435,7 +437,8 @@ public class GameSettingsPersist : MonoBehaviour
         if (myFile.Load())
         {
             //inProgress = myFile.GetBool("Tourny In Progress");
-            bg = myFile.GetInt("BG");
+            bg = myFile.GetInt("Current Tourny BG");
+            crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
             prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
             ends = myFile.GetInt("Ends");

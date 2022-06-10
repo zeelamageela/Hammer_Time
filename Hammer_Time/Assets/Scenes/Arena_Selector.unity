@@ -1776,8 +1776,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.36707762
+  m_Value: 0.5
+  m_Size: 0.36707765
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23930,7 +23930,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1090.9999, y: -0.0008544922}
+  m_AnchoredPosition: {x: 0, y: -0.0008544922}
   m_SizeDelta: {x: 2182, y: 0.0020752}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1274206330
@@ -28092,7 +28092,7 @@ MonoBehaviour:
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
-    location: Victoria, British Columbia
+    location: St John's, Newfoundland
     teams: 8
     prizeMoney: 12000
     entryFee: 0
@@ -28105,7 +28105,7 @@ MonoBehaviour:
     crowdDensity: 1
   - name: The Jim Jumbo Memorial Spiel
     id: 1
-    location: St Johns, Newfoundland
+    location: Victoria, British Columbia
     teams: 12
     prizeMoney: 6500
     entryFee: 50
@@ -37392,8 +37392,8 @@ RectTransform:
   m_Father: {fileID: 161096706}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.63292235, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.3164612, y: 0}
+  m_AnchorMax: {x: 0.6835388, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}

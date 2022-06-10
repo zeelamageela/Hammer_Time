@@ -154,6 +154,8 @@ public class TeamManager : MonoBehaviour
 
         if (aiTurn)
         {
+            sweeperL.name = "AI Sweeper Left";
+            sweeperR.name = "AI Sweeper Right";
             sweeperL.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
             sweeperR.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
             sweeperL.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
@@ -163,17 +165,21 @@ public class TeamManager : MonoBehaviour
         }
         else
         {
-            if (rockCurrent < 4)
+            if (rockCurrent > 8)
             {
+                sweeperL.name = cm.activePlayers[1].name;
+                sweeperR.name = cm.activePlayers[0].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
-                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
-                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
-                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
             }
-            else if (rockCurrent < 8)
+            else if (rockCurrent > 4)
             {
+                sweeperL.name = cm.activePlayers[2].name;
+                sweeperR.name = cm.activePlayers[0].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
@@ -183,12 +189,14 @@ public class TeamManager : MonoBehaviour
             }
             else
             {
+                sweeperL.name = cm.activePlayers[1].name;
+                sweeperR.name = cm.activePlayers[2].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
-                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
-                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
-                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
             }
         }
     }

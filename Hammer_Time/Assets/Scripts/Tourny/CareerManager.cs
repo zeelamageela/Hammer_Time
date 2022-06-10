@@ -353,6 +353,8 @@ public class CareerManager : MonoBehaviour
                 currentTourny.qualifier = myFile.GetBool("Current Tourny Qualifier");
                 currentTourny.championship = myFile.GetBool("Current Tourny Championship");
                 currentTourny.prizeMoney = myFile.GetInt("Prize Money");
+                currentTourny.BG = myFile.GetInt("Current Tourny BG");
+                currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
 
                 int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
@@ -655,6 +657,8 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Current Tourny Qualifier", currentTourny.qualifier);
             myFile.Add("Current Tourny Championship", currentTourny.championship);
             myFile.Add("Prize Money", currentTourny.prizeMoney);
+            myFile.Add("Current Tourny BG", currentTourny.BG);
+            myFile.Add("Current Tourny Crowd Density", currentTourny.crowdDensity);
 
             if (tSel)
             {

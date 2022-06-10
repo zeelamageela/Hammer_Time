@@ -160,6 +160,8 @@ public class Sweep : MonoBehaviour
 
     IEnumerator SweepLine(bool inturn)
     {
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rb = rock.GetComponent<Rigidbody2D>();
         sm.CallOut("Line");
         rock = gm.rockList[gm.rockCurrent].rock;
         fltText.Value = "LINE!";
