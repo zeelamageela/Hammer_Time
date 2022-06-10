@@ -35,13 +35,17 @@ public class CrowdManager : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
 
         crowdDensity = cm.currentTourny.crowdDensity;
-        if (cm.currentTourny.BG == 0 | cm.currentTourny.BG == 4)
-            LocalCrowd();
+        if (cm.currentTourny.BG == 0)
+            ClubCrowd();
         else if (cm.currentTourny.BG == 1)
         {
             RinkCrowd();
         }
-        else if (cm.currentTourny.BG == 2 | cm.currentTourny.BG == 3)
+        else if (cm.currentTourny.BG == 2)
+        {
+            BleacherCrowd();
+        }
+        else if (cm.currentTourny.BG == 3)
         {
             if (Random.Range(0f, 1f) < 0.5f)
                 StadiumCrowd(false);
@@ -53,6 +57,10 @@ public class CrowdManager : MonoBehaviour
             else
                 cameraMen.SetActive(false);
         }
+        else if (cm.currentTourny.BG == 4)
+        {
+            OutdoorCrowd();
+        }
 
     }
 
@@ -62,7 +70,7 @@ public class CrowdManager : MonoBehaviour
         
     }
 
-    void LocalCrowd()
+    void ClubCrowd()
     {
         for (int i = 0; i < bgs.Length; i++)
         {
@@ -79,9 +87,9 @@ public class CrowdManager : MonoBehaviour
 
         int counter = 0;
 
-        for (int k = 0; k < benchSections.Length; k++)
+        for (int k = 0; k < 4; k++)
         {
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 5; i++)
             {
                 seatPos = new Vector2((i * 0.46f), 0f);
 
@@ -99,7 +107,23 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
-        AssignAnimations();
+        for (int k = 4; k < 6; k++)
+        {
+            for (int i = 0; i < 11; i++)
+            {
+                seatPos = new Vector2((i * 0.46f), 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, benchSections[k].transform, false);
+                    go.transform.localPosition = seatPos;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        AssignAnimations("Clapping");
     }
 
     void StadiumCrowd(bool left)
@@ -292,7 +316,7 @@ public class CrowdManager : MonoBehaviour
         }
 
 
-        AssignAnimations();
+        AssignAnimations("All");
     }
 
     void RinkCrowd()
@@ -316,7 +340,7 @@ public class CrowdManager : MonoBehaviour
         {
             for (int i = 0; i < 15; i++)
             {
-                seatPos = new Vector2((i * 0.46f), j * 0.55f);
+                seatPos = new Vector2((i * 0.46f), j * -0.55f);
 
                 if (Random.Range(0, 10) < crowdDensity)
                 {
@@ -329,39 +353,197 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < 15; i++)
+        for (int j = 9; j < 13; j++)
         {
-            seatPos = new Vector2(i * 0.46f, 0f);
-
-            if (Random.Range(0, 10) < crowdDensity)
+            for (int i = 0; i < 9; i++)
             {
-                counter++;
-                GameObject go = Instantiate(crowdGO, bleacherSections[1].transform, false);
-                go.transform.localPosition = seatPos;
-                go.transform.localRotation = Quaternion.Euler(0f, 0f, -15f);
-                activeCrowd.Add(go);
+                seatPos = new Vector2(i * 0.46f, 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, bleacherSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    activeCrowd.Add(go);
+                }
             }
         }
 
-        for (int i = 0; i < 15; i++)
-        {
-            seatPos = new Vector2(i * 0.46f, 0f);
-
-            if (Random.Range(0, 10) < crowdDensity)
-            {
-                counter++;
-                GameObject go = Instantiate(crowdGO, bleacherSections[2].transform, false);
-                go.transform.localPosition = seatPos;
-                go.transform.localRotation = Quaternion.Euler(0f, 0f, 15f);
-                activeCrowd.Add(go);
-            }
-        }
-
-        AssignAnimations();
+        AssignAnimations("All");
     }
 
-    void AssignAnimations()
+    void BleacherCrowd()
     {
+        for (int i = 0; i < bgs.Length; i++)
+        {
+            if (i == 1)
+            {
+                bgs[i].SetActive(true);
+            }
+            else
+                bgs[i].SetActive(false);
+
+        }
+
+        activeCrowd = new List<GameObject>();
+
+        int counter = 0;
+
+        for (int j = 0; j < 5; j++)
+        {
+            for (int i = 0; i < 15; i++)
+            {
+                seatPos = new Vector2((i * 0.46f), j * -0.55f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, bleacherSections[0].transform, false);
+                    go.transform.localPosition = seatPos;
+                    go.GetComponent<SpriteRenderer>().sortingOrder = j + 3;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int k = 1; k < 9; k++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    if (k % 2 == 0)
+                        seatPos = new Vector2((i * 0.46f) + (j * 0.1f), j * -0.55f);
+                    else
+                        seatPos = new Vector2((i * 0.46f) - (j * 0.1f), j * -0.55f);
+
+                    if (Random.Range(0, 10) < crowdDensity)
+                    {
+                        counter++;
+                        GameObject go = Instantiate(crowdGO, bleacherSections[k].transform, false);
+                        go.transform.localPosition = seatPos;
+                        go.GetComponent<SpriteRenderer>().sortingOrder = j + 3;
+                        activeCrowd.Add(go);
+                    }
+                }
+            }
+        }
+
+        for (int j = 9; j < 13; j++)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                seatPos = new Vector2(i * 0.46f, 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, bleacherSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        AssignAnimations("All");
+    }
+
+    void OutdoorCrowd()
+    {
+        for (int i = 0; i < bgs.Length; i++)
+        {
+            if (i == 4)
+            {
+                bgs[i].SetActive(true);
+            }
+            else
+                bgs[i].SetActive(false);
+
+        }
+
+        activeCrowd = new List<GameObject>();
+
+        int counter = 0;
+
+        for (int j = 0; j < 5; j++)
+        {
+            for (int i = 0; i < 15; i++)
+            {
+                seatPos = new Vector2((i * 0.46f), j * -0.55f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, bleacherSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    go.GetComponent<SpriteRenderer>().sortingOrder = j + 3;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int k = 1; k < 9; k++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    if (k % 2 == 0)
+                        seatPos = new Vector2((i * 0.46f) + (j * 0.1f), j * -0.55f);
+                    else
+                        seatPos = new Vector2((i * 0.46f) - (j * 0.1f), j * -0.55f);
+
+                    if (Random.Range(0, 10) < crowdDensity)
+                    {
+                        counter++;
+                        GameObject go = Instantiate(crowdGO, bleacherSections[k].transform, false);
+                        go.transform.localPosition = seatPos;
+                        go.GetComponent<SpriteRenderer>().sortingOrder = j + 3;
+                        activeCrowd.Add(go);
+                    }
+                }
+            }
+        }
+
+        AssignAnimations("All");
+    }
+
+    void AssignAnimations(string range)
+    {
+        AnimationClip[] tempCrowdClips = new AnimationClip[crowdClips.Length];
+        switch (range)
+        {
+            case "Clapping":
+                tempCrowdClips = new AnimationClip[16];
+                for (int i = 0; i < tempCrowdClips.Length; i++)
+                {
+                    tempCrowdClips[i] = crowdClips[i];
+                }
+                break;
+
+            case "Nuns":
+                tempCrowdClips = new AnimationClip[1];
+                for (int i = 17; i < tempCrowdClips.Length; i++)
+                {
+                    tempCrowdClips[i] = crowdClips[i];
+                }
+                break;
+
+            case "Beer Guys":
+                tempCrowdClips = new AnimationClip[1];
+                for (int i = 16; i < tempCrowdClips.Length; i++)
+                {
+                    tempCrowdClips[i] = crowdClips[i];
+                }
+                break;
+
+            default:
+                for (int i = 0; i < tempCrowdClips.Length; i++)
+                {
+                    tempCrowdClips[i] = crowdClips[i];
+                }
+                break;
+        }
         foreach (GameObject go in activeCrowd)
         {
             Animator animator = go.GetComponent<Animator>();
@@ -369,9 +551,9 @@ public class CrowdManager : MonoBehaviour
 
             aoc = new AnimatorOverrideController(animator.runtimeAnimatorController);
             animator.runtimeAnimatorController = aoc;
-            int clipIndex = Random.Range(0, crowdClips.Length);
+            int clipIndex = Random.Range(0, tempCrowdClips.Length);
 
-            aoc["Crowd1A"] = crowdClips[clipIndex];
+            aoc["Crowd1A"] = tempCrowdClips[clipIndex];
             go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 0.8f);
         }
     }
