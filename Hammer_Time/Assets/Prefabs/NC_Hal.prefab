@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_Sprite: {fileID: 3908842066040364065, guid: f99f86b1ea136364e80703b3bb13de72, type: 3}
-  m_Color: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.5857141, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
+  colour1: {r: 0, g: 1, b: 0.5857141, a: 1}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -462,17 +462,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Hal
   drawAccuracy:
-    baseValue: 6
+    baseValue: 5
   takeOutAccuracy:
-    baseValue: 6
+    baseValue: 5
   guardAccuracy:
-    baseValue: 6
+    baseValue: 5
   sweepStrength:
-    baseValue: 10
+    baseValue: 5
   sweepEndurance:
-    baseValue: 10
+    baseValue: 5
   sweepCohesion:
-    baseValue: 0
+    baseValue: 5
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

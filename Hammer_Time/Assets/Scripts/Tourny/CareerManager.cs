@@ -74,6 +74,7 @@ public class CareerManager : MonoBehaviour
     public bool[] strategyDialogue;
     public bool[] storyDialogue;
 
+    public bool teamPaid;
     List<Standings_List> allTimeList;
 
     private void Awake()
@@ -487,8 +488,8 @@ public class CareerManager : MonoBehaviour
 
         Debug.Log("Saving Career - " + gsp.inProgress);
         myFile = new EasyFileSave("my_player_data");
-        
 
+        myFile.Add("Team Paid", teamPaid);
         myFile.Add("Coach Dialogue Played List", coachDialogue);
         myFile.Add("Qualifying Dialogue Played List", qualDialogue);
         myFile.Add("Review Dialogue Played List", reviewDialogue);
@@ -1050,6 +1051,7 @@ public class CareerManager : MonoBehaviour
     public void NextWeek()
     {
         week++;
+        teamPaid = false;
         tSel.SetActiveTournies();
     }
 

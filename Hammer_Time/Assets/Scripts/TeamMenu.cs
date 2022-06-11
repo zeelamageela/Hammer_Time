@@ -160,6 +160,7 @@ public class TeamMenu : MonoBehaviour
                     Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
                 }
             }
+            cm.teamPaid = false;
 
             Shuffle(playerPool);
         }
@@ -348,13 +349,14 @@ public class TeamMenu : MonoBehaviour
         Debug.Log("Team Cost is " + teamCost);
 
         cm.earnings -= teamCost;
+        cm.teamPaid = true;
         //teamMenu.SetActive(false);
         //agentMenu.SetActive(false);
         ////pm.cardParent.SetActive(true);
         //setTeamButton.SetActive(false);
         //pm.nextWeekButton.SetActive(true);
         cm.SaveCareer();
-
+        
         for (int i = 0; i < teamDisplay.Length; i++)
         {
             teamDisplay[i].charName.rectTransform.anchoredPosition -= new Vector2(15f, 15f);

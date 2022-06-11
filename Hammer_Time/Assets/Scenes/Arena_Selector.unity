@@ -28114,10 +28114,10 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 1
+    BG: 0
     crowdDensity: 2
   - name: The LA Open
-    id: 3
+    id: 2
     location: Vernon, California
     teams: 16
     prizeMoney: 12000
@@ -28127,10 +28127,10 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 1
-    crowdDensity: 8
+    BG: 2
+    crowdDensity: 6
   - name: The Tallinn International Challenger
-    id: 2
+    id: 3
     location: Tallinn, Estonia
     teams: 16
     prizeMoney: 50000
@@ -28140,7 +28140,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 2
+    BG: 1
     crowdDensity: 2
   - name: Big Ben's Big Cash $piel
     id: 4
@@ -28154,7 +28154,7 @@ MonoBehaviour:
     tour: 0
     complete: 0
     BG: 2
-    crowdDensity: 4
+    crowdDensity: 6
   - name: Match Town Trophy
     id: 5
     location: Jonkoping, Sweden
@@ -28166,7 +28166,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 1
+    BG: 4
     crowdDensity: 4
   - name: Tony's Pizza Cup
     id: 6
@@ -28179,7 +28179,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 1
+    BG: 0
     crowdDensity: 3
   - name: T. Rox Jurassic Classic
     id: 7
@@ -28198,14 +28198,27 @@ MonoBehaviour:
     id: 8
     location: Swift Current, Saskatchewan
     teams: 12
-    prizeMoney: 6500
-    entryFee: 100
+    prizeMoney: 16500
+    entryFee: 1000
     format: Round Robin
     championship: 0
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 2
+    BG: 3
+    crowdDensity: 8
+  - name: Ken's Highly Legal Cash Game
+    id: 9
+    location: Off the coast of Japan
+    teams: 12
+    prizeMoney: 27000
+    entryFee: 0
+    format: King of the Sheet
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 3
     crowdDensity: 8
   tour:
   - name: World Tour - Hokkaido Curling Classic
@@ -28232,7 +28245,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 1
     complete: 0
-    BG: 1
+    BG: 2
     crowdDensity: 5
   - name: World Tour - The Prague Classic
     id: 5
@@ -28246,7 +28259,7 @@ MonoBehaviour:
     tour: 1
     complete: 0
     BG: 2
-    crowdDensity: 6
+    crowdDensity: 4
   - name: World Tour - The Hat Classic
     id: 0
     location: Medicine Hat, Alberta
@@ -28285,7 +28298,7 @@ MonoBehaviour:
     tour: 1
     complete: 0
     BG: 2
-    crowdDensity: 11
+    crowdDensity: 10
   provQual:
   - name: Championship Qualifier
     id: 0
@@ -42809,6 +42822,7 @@ MonoBehaviour:
   helpDialogue: 
   strategyDialogue: 
   storyDialogue: 
+  teamPaid: 0
 --- !u!1 &2116167309
 GameObject:
   m_ObjectHideFlags: 0
