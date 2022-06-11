@@ -21,7 +21,7 @@ public class RockManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (gm.rockList.Count != 0)
         {
