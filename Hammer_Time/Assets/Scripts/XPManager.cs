@@ -9,6 +9,7 @@ public class XPManager : MonoBehaviour
     CareerStats cStats;
     GameSettingsPersist gsp;
 
+    public GameObject xpGO;
     public int skillPoints;
     public int skillPointsTotal;
 
@@ -43,12 +44,11 @@ public class XPManager : MonoBehaviour
 
     // Start is called before the first frame update
 
-    void OnEnable()
+    void Start()
     {
         cm = FindObjectOfType<CareerManager>();
         cStats = cm.cStats;
         SetSkillPoints();
-        SetSliders();
     }
 
     // Update is called once per frame
@@ -149,6 +149,7 @@ public class XPManager : MonoBehaviour
                 skillPoints--;
                 break;
         }
+        SetStats();
     }
 
     public void ButtonSubtract(int skill)
@@ -180,6 +181,7 @@ public class XPManager : MonoBehaviour
                 skillPoints++;
                 break;
         }
+        SetStats();
     }
 
     public void SetStats()
@@ -202,8 +204,8 @@ public class XPManager : MonoBehaviour
         cStats = cm.cStats;
     }
 
-    public void Back()
-    {
-        this.gameObject.SetActive(false);
-    }
+    //public void Back()
+    //{
+    //    this.gameObject.SetActive(false);
+    //}
 }

@@ -8,6 +8,7 @@ using TigerForge;
 public class TournySelector : MonoBehaviour
 {
     CareerManager cm;
+    public XPManager xpm;
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
 
@@ -27,7 +28,6 @@ public class TournySelector : MonoBehaviour
 
     public Button[] menuButtons;
 
-    public XPManager xpm;
     public Text XPText;
 
     public GameObject playButton;
@@ -256,17 +256,17 @@ public class TournySelector : MonoBehaviour
             }
         }
 
-        if (cm.week > 3 & xpm.skillPoints > 0)
-        {
-            teamNameText.gameObject.SetActive(false);
-            teamNameAlertText.text = teamNameText.text;
-            teamNameAlertText.gameObject.SetActive(true);
-        }
-        else
-        {
-            teamNameText.gameObject.SetActive(true);
-            teamNameAlertText.gameObject.SetActive(false);
-        }
+        //if (cm.week > 3 & xpm.skillPoints > 0)
+        //{
+        //    teamNameText.gameObject.SetActive(false);
+        //    teamNameAlertText.text = teamNameText.text;
+        //    teamNameAlertText.gameObject.SetActive(true);
+        //}
+        //else
+        //{
+        //    teamNameText.gameObject.SetActive(true);
+        //    teamNameAlertText.gameObject.SetActive(false);
+        //}
     }
 
     void Shuffle(Tourny[] a)
@@ -1052,7 +1052,6 @@ public class TournySelector : MonoBehaviour
         }
         else
         {
-
             activeTournies[2] = emptyTourny;
             panelGOs[2].GetComponent<Image>().color = dimmed[0];
             panelGOs[2].transform.GetChild(1).GetComponent<Image>().color = dimmed[0];
@@ -1064,13 +1063,13 @@ public class TournySelector : MonoBehaviour
 
     public void SetPanels()
     {
-        for (int i = 0; i < activeTournies.Length; i++)
-        {
-            if (activeTournies[i] == emptyTourny)
-                panelGOs[i].SetActive(false);
-            else
-                panelGOs[i].SetActive(true);
-        }
+        //for (int i = 0; i < activeTournies.Length; i++)
+        //{
+        //    if (activeTournies[i] == emptyTourny)
+        //        panelGOs[i].SetActive(false);
+        //    else
+        //        panelGOs[i].SetActive(true);
+        //}
 
         if (activeTournies[2] == emptyTourny)
         {
@@ -1088,8 +1087,8 @@ public class TournySelector : MonoBehaviour
             panels[i].buttonText.text = activeTournies[i].name;
             panels[i].teams.text = activeTournies[i].teams.ToString();
             panels[i].format.text = activeTournies[i].format;
-            panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString();
-            panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString();
+            panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString("n0");
+            panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString("n0");
             playButton.SetActive(false);
         }
 
@@ -1130,6 +1129,9 @@ public class TournySelector : MonoBehaviour
     public void PlayTourny()
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        TeamMenu tm = FindObjectOfType<TeamMenu>();
+        XPManager xpm = FindObjectOfType<XPManager>();
+
         gsp.LoadFromTournySelector();
         cm.PlayTourny();
         if (currentTourny.tour)
@@ -1171,6 +1173,8 @@ public class TournySelector : MonoBehaviour
         cm.champ[0] = tourChampionship;
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
+        tm.SetTeam();
+        xpm.SetSkillPoints();
         cm.SaveCareer();
         SceneManager.LoadScene("Tourny_Menu_1");
     }
@@ -1210,7 +1214,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(true);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             profPanel.earnings.text = "$ " + cm.earnings.ToString("n0");
@@ -1221,41 +1225,44 @@ public class TournySelector : MonoBehaviour
             else
                 profPanel.provQual.text = "No";
 
-
-            cm.provRankList.Sort();
-            for (int i = 0; i < cm.provRankList.Count; i++)
+            if (cm.provRankList.Count > 0)
             {
-                if (cm.playerTeamIndex == cm.provRankList[i].team.id)
+                cm.provRankList.Sort();
+                for (int i = 0; i < cm.provRankList.Count; i++)
                 {
-                    if (i == 0)
-                        profPanel.provRank.text = (i + 1).ToString() + "st";
-                    else if (i == 1)
-                        profPanel.provRank.text = (i + 1).ToString() + "nd";
-                    else if (i == 2)
-                        profPanel.provRank.text = (i + 1).ToString() + "rd";
-                    else if (i > 2)
-                        profPanel.provRank.text = (i + 1).ToString() + "th";
+                    if (cm.playerTeamIndex == cm.provRankList[i].team.id)
+                    {
+                        if (i == 0)
+                            profPanel.provRank.text = (i + 1).ToString() + "st";
+                        else if (i == 1)
+                            profPanel.provRank.text = (i + 1).ToString() + "nd";
+                        else if (i == 2)
+                            profPanel.provRank.text = (i + 1).ToString() + "rd";
+                        else if (i > 2)
+                            profPanel.provRank.text = (i + 1).ToString() + "th";
 
+                    }
+                }
+                cm.tourRankList.Sort();
+
+                for (int i = 0; i < cm.tourRankList.Count; i++)
+                {
+                    if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
+                    {
+                        if (i == 0)
+                            profPanel.tourRank.text = (i + 1).ToString() + "st";
+                        else if (i == 1)
+                            profPanel.tourRank.text = (i + 1).ToString() + "nd";
+                        else if (i == 2)
+                            profPanel.tourRank.text = (i + 1).ToString() + "rd";
+                        else if (i > 2)
+                            profPanel.tourRank.text = (i + 1).ToString() + "th";
+
+                        profPanel.tourPoints.text = cm.tourRankList[i].team.tourPoints.ToString() + " points";
+                    }
                 }
             }
-            cm.tourRankList.Sort();
-
-            for (int i = 0; i < cm.tourRankList.Count; i++)
-            {
-                if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
-                {
-                    if (i == 0)
-                        profPanel.tourRank.text = (i + 1).ToString() + "st";
-                    else if (i == 1)
-                        profPanel.tourRank.text = (i + 1).ToString() + "nd";
-                    else if (i == 2)
-                        profPanel.tourRank.text = (i + 1).ToString() + "rd";
-                    else if (i > 2)
-                        profPanel.tourRank.text = (i + 1).ToString() + "th";
-
-                    profPanel.tourPoints.text = cm.tourRankList[i].team.tourPoints.ToString() + " points";
-                }
-            }
+            
         }
         else
         {
@@ -1263,7 +1270,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1277,7 +1284,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(true);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1287,7 +1294,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1301,7 +1308,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(true);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1311,7 +1318,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1325,7 +1332,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(true);
         }
@@ -1334,8 +1341,7 @@ public class TournySelector : MonoBehaviour
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
-            tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             powerUpPanel.SetActive(false);
             teamPanel.SetActive(false);
         }
@@ -1349,7 +1355,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(true);
+            xpm.xpGO.SetActive(true);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1359,7 +1365,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1373,7 +1379,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(true);
             powerUpPanel.SetActive(false);
         }
@@ -1383,7 +1389,7 @@ public class TournySelector : MonoBehaviour
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
-            xpm.gameObject.SetActive(false);
+            xpm.xpGO.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
         }
@@ -1454,6 +1460,7 @@ public class TournySelector : MonoBehaviour
                 break;
             case 1:
                 XPWindow(true);
+                xpm.SetSkillPoints();
                 break;
             case 2:
                 TeamWindow(true);
