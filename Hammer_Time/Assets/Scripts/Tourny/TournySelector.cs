@@ -11,6 +11,11 @@ public class TournySelector : MonoBehaviour
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
 
+    public Sprite buttonOutline_pressed;
+    public Sprite buttonFilled_pressed;
+    public Sprite buttonOutline;
+    public Sprite buttonFilled;
+
     public Text weekText;
     public Text teamNameText;
     public Text teamNameAlertText;
@@ -1176,6 +1181,8 @@ public class TournySelector : MonoBehaviour
         Debug.Log("Button is " + button);
         cm.SetupTourny();
         playButton.SetActive(true);
+
+        PlayTourny();
     }
 
     public void Profile(bool on)
@@ -1398,7 +1405,6 @@ public class TournySelector : MonoBehaviour
                 expandAnim = menuButtons[i].GetComponent<Animator>();
                 expandAnim.SetBool("Expand", false);
                 expandAnim.SetBool("Shrink", true);
-                menuButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
             else
             {
@@ -1419,12 +1425,14 @@ public class TournySelector : MonoBehaviour
         {
             if (i == menuSelector)
             {
-
+                menuButtons[i].GetComponent<Image>().enabled = false;
             }
             else
             {
+                menuButtons[i].GetComponent<Image>().enabled = true;
                 menuButtons[i].gameObject.SetActive(true);
                 menuButtons[i].interactable = true;
+                menuButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
         }
 
