@@ -46158,6 +46158,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.data[0].name
       value: Coach Green
       objectReference: {fileID: 0}
@@ -46219,6 +46223,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].name
+      value: Coach Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[1].name
+      value: Coach Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[2].name
       value: Coach Green
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
@@ -46433,12 +46445,16 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[3].sentences.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[5].sentences.Array.size
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.size
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[7].sentences.Array.size
@@ -46451,6 +46467,14 @@ PrefabInstance:
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].sentences.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[1].sentences.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[2].sentences.Array.size
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[0].sentences.Array.data[1]
@@ -46488,7 +46512,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[3].sentences.Array.data[1]
-      value: 'When gain '
+      value: As you gain XP, you'll gain SKILL POINTS to level up you and your team.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[3].sentences.Array.data[2]
+      value: Assign them in the SKILL POINTS panel.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[4].sentences.Array.data[0]
+      value: Every season of pro curling ends with the World Championship.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[4].sentences.Array.data[1]
@@ -46496,8 +46528,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[4].sentences.Array.data[2]
-      value: Spend your skill points, if ya got 'em, and let's enter a Provincial
+      value: Spend your skill points, if ya got 'em, and let's enter a Championship
         Qualifier!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: introDialogue.Array.data[5].sentences.Array.data[0]
+      value: Week 5 is here, and so is the first event of the World Curling Tour!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[5].sentences.Array.data[1]
@@ -46521,7 +46557,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[0]
-      value: You've made some cash, let's spend some to upgrade your STATS!
+      value: You've made some cash, let's spend some to upgrade your team's STATS!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[1]
@@ -46535,7 +46571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[3]
-      value: If you run out of money
+      value: Let's try a TOUR EVENT, I think you and Team TEAMNAME are ready!
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.data[6].sentences.Array.data[4]
@@ -46589,6 +46625,34 @@ PrefabInstance:
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: storyDialogue.Array.data[0].sentences.Array.data[1]
       value: Sorry, xxxxx, but we're out of cash!  Let's try again next year.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[0].sentences.Array.data[0]
+      value: Well, xxxxx, it's been a great season!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[1].sentences.Array.data[0]
+      value: Wow, xxxxx!  That couldn't have gone any better!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[1].sentences.Array.data[1]
+      value: You are the World Champion, and earned EARNINGS.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[1].sentences.Array.data[2]
+      value: And on the tour, you scored TOURPOINTS and finished TOURRANK.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[2].sentences.Array.data[0]
+      value: Well, xxxxx, what a great season!
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[2].sentences.Array.data[1]
+      value: You won the Tour Championship, earning TOURPOINTS.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
+      propertyPath: reviewDialogue.Array.data[2].sentences.Array.data[2]
+      value: And you finished a respectable PROVRANK and earned EARNINGS.
       objectReference: {fileID: 0}
     - target: {fileID: 1998886942087116576, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: m_Name

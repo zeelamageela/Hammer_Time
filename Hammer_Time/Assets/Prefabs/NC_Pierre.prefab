@@ -406,13 +406,13 @@ MonoBehaviour:
   takeOutAccuracy:
     baseValue: 3
   guardAccuracy:
-    baseValue: 3
+    baseValue: 9
   sweepStrength:
-    baseValue: 8
+    baseValue: 10
   sweepEndurance:
     baseValue: 8
   sweepCohesion:
-    baseValue: 8
+    baseValue: 10
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

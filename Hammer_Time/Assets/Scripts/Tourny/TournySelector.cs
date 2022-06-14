@@ -107,6 +107,8 @@ public class TournySelector : MonoBehaviour
 
             if (cm.earnings < 0)
             {
+                menuButtons[3].gameObject.SetActive(false);
+                menuButtons[4].gameObject.SetActive(false);
                 //pm.profileButton.interactable = false;
                 dialogueGO.SetActive(true);
                 for (int i = 0; i < panelGOs.Length; i++)

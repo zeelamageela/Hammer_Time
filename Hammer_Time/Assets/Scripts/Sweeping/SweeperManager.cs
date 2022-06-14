@@ -12,6 +12,8 @@ public class SweeperManager : MonoBehaviour
     public SweeperParent sweeperL;
     public SweeperParent sweeperR;
 
+    public SweeperParent sweeperTee;
+
     public SweeperParent sweeperRedL;
     public SweeperParent sweeperRedR;
     public SweeperParent sweeperYellowL;
@@ -75,7 +77,6 @@ public class SweeperManager : MonoBehaviour
                 swprLStats.sweepHealth = 0f;
                 SweepWhoa(false);
             }
-
 
         }
 
