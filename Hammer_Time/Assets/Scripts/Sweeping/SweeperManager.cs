@@ -16,11 +16,15 @@ public class SweeperManager : MonoBehaviour
 
     public SweeperParent sweeperRedL;
     public SweeperParent sweeperRedR;
+    public SweeperParent sweeperRedTee;
+
     public SweeperParent sweeperYellowL;
     public SweeperParent sweeperYellowR;
+    public SweeperParent sweeperYellowTee;
 
     public CharacterStats swprLStats;
     public CharacterStats swprRStats;
+    public CharacterStats swprTStats;
 
     public Sweep sweep;
 
@@ -110,6 +114,7 @@ public class SweeperManager : MonoBehaviour
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
+            sweeperTee = Instantiate(sweeperRedTee, sweepSel.gameObject.transform);
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
