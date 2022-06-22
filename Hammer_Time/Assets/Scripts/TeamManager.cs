@@ -188,46 +188,46 @@ public class TeamManager : MonoBehaviour
             {
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[0].name;
-                sweeperT.name = cm.activePlayers[3].name;
+                sweeperT.name = cm.playerName + " " + cm.teamName;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
             }
             else if (rockCurrent > 3)
             {
                 sweeperL.name = cm.activePlayers[2].name;
                 sweeperR.name = cm.activePlayers[0].name;
-                sweeperT.name = cm.activePlayers[3].name;
+                sweeperT.name = cm.playerName + " " + cm.teamName;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
             }
             else
             {
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[2].name;
-                sweeperT.name = cm.activePlayers[3].name;
+                sweeperT.name = cm.playerName + " " + cm.teamName;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
             }
         }
     }

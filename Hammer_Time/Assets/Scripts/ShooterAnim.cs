@@ -67,9 +67,17 @@ public class ShooterAnim : MonoBehaviour
         if (isPressed)
         {
 
+            anim.SetBool("mouseDown", true);
             if (springDistance > 0.5f && rock.transform.position.y < -25.1f)
             {
                 pullback = (springDistance) / 3f;
+                pullback = Mathf.Clamp(pullback, 0f, 1f);
+                anim.SetBool("mouseDown", false);
+                anim.Play("Shooter_2_Backswing", 0, pullback);
+            }
+            else
+            {
+                pullback = 0f / 3f;
                 pullback = Mathf.Clamp(pullback, 0f, 1f);
                 anim.SetBool("mouseDown", false);
                 anim.Play("Shooter_2_Backswing", 0, pullback);

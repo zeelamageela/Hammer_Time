@@ -1,0 +1,2448 @@
+fileFormatVersion: 2
+guid: 06bb2f72834025a478634176b4aeaebc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -949971344887290988
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_0
+  - first:
+      213: -1426773742240353711
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_1
+  - first:
+      213: 6978767732479182412
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_2
+  - first:
+      213: 1395613624846110633
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_3
+  - first:
+      213: -6266945266861226806
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_4
+  - first:
+      213: 8433476612013450148
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_5
+  - first:
+      213: -4162359288770474197
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_6
+  - first:
+      213: -8220671527251016306
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_7
+  - first:
+      213: -1852564825264263613
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_8
+  - first:
+      213: 5316475629309023994
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_9
+  - first:
+      213: -7161114407737590313
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_10
+  - first:
+      213: -2513585066038426944
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_11
+  - first:
+      213: 3428680667254241333
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_12
+  - first:
+      213: -8108555401359191791
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_13
+  - first:
+      213: -5450222694970770390
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_14
+  - first:
+      213: -4828591676337248316
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_15
+  - first:
+      213: -8898925272238960447
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_16
+  - first:
+      213: -4449454053717677024
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_17
+  - first:
+      213: 6645940832192522815
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_18
+  - first:
+      213: 760910581385913561
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_19
+  - first:
+      213: 2987461993493966012
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_20
+  - first:
+      213: -7146488632214171797
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_21
+  - first:
+      213: 7289128694041777156
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_22
+  - first:
+      213: 5161566670214931423
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_23
+  - first:
+      213: 9041907466531325963
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_24
+  - first:
+      213: 7195829598153690819
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_25
+  - first:
+      213: -7522727388387800167
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_26
+  - first:
+      213: -9103203363938499304
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_27
+  - first:
+      213: 3571174291264420162
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_28
+  - first:
+      213: -6815332609004590236
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_29
+  - first:
+      213: 6737933524608846859
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_30
+  - first:
+      213: -2460598068486317819
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_31
+  - first:
+      213: -7397478301136853176
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_32
+  - first:
+      213: 3131455085109990257
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_33
+  - first:
+      213: -2164279326058049296
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_34
+  - first:
+      213: -7160268360484622024
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_35
+  - first:
+      213: 7012466582854428168
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_36
+  - first:
+      213: 6817407930580341133
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_37
+  - first:
+      213: 2171459156014327153
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_38
+  - first:
+      213: -5453418714963320157
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_39
+  - first:
+      213: -7229222983419095891
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_40
+  - first:
+      213: -1786766540937349146
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_41
+  - first:
+      213: 6509217422969230126
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_42
+  - first:
+      213: 4887632498133958497
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_43
+  - first:
+      213: 1886128567056074797
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_44
+  - first:
+      213: -340039325256703196
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_45
+  - first:
+      213: 5627755253124934845
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_46
+  - first:
+      213: -7075573237254440594
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_47
+  - first:
+      213: -7211366476941776867
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_48
+  - first:
+      213: -444008169951769165
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_49
+  - first:
+      213: 204540809804779128
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_50
+  - first:
+      213: -7692004615347942263
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_51
+  - first:
+      213: 8727275280552553356
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_52
+  - first:
+      213: 6942148916406285972
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_53
+  - first:
+      213: -3718525843619078054
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_54
+  - first:
+      213: 8357716941074515569
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_55
+  - first:
+      213: 5165996945902723583
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_56
+  - first:
+      213: -2958641498288843034
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_57
+  - first:
+      213: -4331239829316790056
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_58
+  - first:
+      213: -8943334616650928115
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_59
+  - first:
+      213: -4408787772141315918
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_60
+  - first:
+      213: 4327086839512644853
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_61
+  - first:
+      213: -8787194164516441374
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_62
+  - first:
+      213: -567932775806284101
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_63
+  - first:
+      213: -3215406561963473717
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_64
+  - first:
+      213: 3785960603181590565
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_65
+  - first:
+      213: 4945339825117856706
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_66
+  - first:
+      213: -7126358998135832798
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_67
+  - first:
+      213: 508015174932008073
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_68
+  - first:
+      213: -3348799423839733293
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_69
+  - first:
+      213: -4104555251805094788
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_70
+  - first:
+      213: -266640196696883829
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_71
+  - first:
+      213: 3690187559733889880
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_72
+  - first:
+      213: -3385712646109518313
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_73
+  - first:
+      213: 7261882320318299301
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_74
+  - first:
+      213: -7113528335449474975
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_75
+  - first:
+      213: -5203124369785264167
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_76
+  - first:
+      213: -383087051333469679
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_77
+  - first:
+      213: 5589371138074477577
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_78
+  - first:
+      213: -2841912883324075126
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_79
+  - first:
+      213: -3510934023445031153
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_80
+  - first:
+      213: 6414458432040315775
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_81
+  - first:
+      213: 8188827745529472275
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_82
+  - first:
+      213: -3483526484328031112
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_83
+  - first:
+      213: -1088374030757518244
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_84
+  - first:
+      213: -7341556465670574870
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_85
+  - first:
+      213: 5056474694738232696
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_86
+  - first:
+      213: -9155632979280462920
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_87
+  - first:
+      213: 1559964571328472323
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_88
+  - first:
+      213: -3149203694235622213
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_89
+  - first:
+      213: -8251932645553323974
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_90
+  - first:
+      213: 7862579357552646614
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_91
+  - first:
+      213: 4799234087408102918
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_92
+  - first:
+      213: 4169842715589380802
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_93
+  - first:
+      213: -4071457991740885113
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_94
+  - first:
+      213: 348760859016148320
+    second: Shooter_Pierre_Idle_NoColour135_1[135,240]_95
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4936131581601d2f0800000000000000
+      internalID: -949971344887290988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_1
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 152b8ee37d4133ce0800000000000000
+      internalID: -1426773742240353711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_2
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c464160174099d060800000000000000
+      internalID: 6978767732479182412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_3
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9afc5a092373e5310800000000000000
+      internalID: 1395613624846110633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_4
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac4cbe5cb765709a0800000000000000
+      internalID: -6266945266861226806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_5
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a360a0db4ab90570800000000000000
+      internalID: 8433476612013450148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_6
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2fc94da7445c36c0800000000000000
+      internalID: -4162359288770474197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_7
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e85090b0dce4aed80800000000000000
+      internalID: -8220671527251016306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_8
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34e6db25b1e5a46e0800000000000000
+      internalID: -1852564825264263613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af65cfdba6ae7c940800000000000000
+      internalID: 5316475629309023994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_10
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7dd7eda236c9e9c90800000000000000
+      internalID: -7161114407737590313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_11
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c28d0233b3fd1dd0800000000000000
+      internalID: -2513585066038426944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_12
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53830f3a6ee159f20800000000000000
+      internalID: 3428680667254241333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_13
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 111196cc2df987f80800000000000000
+      internalID: -8108555401359191791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_14
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2cbe7fd55bec54b0800000000000000
+      internalID: -5450222694970770390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_15
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c7a28e04756dfcb0800000000000000
+      internalID: -4828591676337248316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_16
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c053790d9aa08480800000000000000
+      internalID: -8898925272238960447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_17
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02c6cb3cc1d5042c0800000000000000
+      internalID: -4449454053717677024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f3a6915a9ff1b3c50800000000000000
+      internalID: 6645940832192522815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_19
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d4e75d642c4f8a00800000000000000
+      internalID: 760910581385913561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_20
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbc2036dad8957920800000000000000
+      internalID: 2987461993493966012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_21
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6fc185e37292dc90800000000000000
+      internalID: -7146488632214171797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_22
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40497728def282560800000000000000
+      internalID: 7289128694041777156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_23
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd328a61a8191a740800000000000000
+      internalID: 5161566670214931423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_24
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b084d8a4fee4b7d70800000000000000
+      internalID: 9041907466531325963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_25
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ce4136f4e8bcd360800000000000000
+      internalID: 7195829598153690819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_26
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99b0b012c47e99790800000000000000
+      internalID: -7522727388387800167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8150e4675cceaa180800000000000000
+      internalID: -9103203363938499304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_28
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 249b2d5d81c5f8130800000000000000
+      internalID: 3571174291264420162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_29
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46b252ee9131b61a0800000000000000
+      internalID: -6815332609004590236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_30
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0c818e67d2f18d50800000000000000
+      internalID: 6737933524608846859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_31
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5095cd0f7133addd0800000000000000
+      internalID: -2460598068486317819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_32
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 847e31bbda0e65990800000000000000
+      internalID: -7397478301136853176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_33
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 173521a0fc9257b20800000000000000
+      internalID: 3131455085109990257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_34
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f096977b6fe6f1e0800000000000000
+      internalID: -2164279326058049296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_35
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83178d4ecdd91ac90800000000000000
+      internalID: -7160268360484622024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 806e5561439415160800000000000000
+      internalID: 7012466582854428168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_37
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d811c27846c4c9e50800000000000000
+      internalID: 6817407930580341133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_38
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 175e086f892922e10800000000000000
+      internalID: 2171459156014327153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_39
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a2e42b72909154b0800000000000000
+      internalID: -5453418714963320157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_40
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da41737aff3acab90800000000000000
+      internalID: -7229222983419095891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_41
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e730e63c412437e0800000000000000
+      internalID: -1786766540937349146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_42
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e235dd542c2655a50800000000000000
+      internalID: 6509217422969230126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_43
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16ffdeb7cdb54d340800000000000000
+      internalID: 4887632498133958497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_44
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d28081840ffdc2a10800000000000000
+      internalID: 1886128567056074797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42329680900f74bf0800000000000000
+      internalID: -340039325256703196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_46
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbca959e59dc91e40800000000000000
+      internalID: 5627755253124934845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_47
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e693033f0a38ecd90800000000000000
+      internalID: -7075573237254440594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_48
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d18a9bc85641ceb90800000000000000
+      internalID: -7211366476941776867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_49
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bd47a00ce096d9f0800000000000000
+      internalID: -444008169951769165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_50
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87e0c7668cca6d200800000000000000
+      internalID: 204540809804779128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_51
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98c458b6e82804590800000000000000
+      internalID: -7692004615347942263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_52
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8be16ae0a28d1970800000000000000
+      internalID: 8727275280552553356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_53
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 496724c88a7775060800000000000000
+      internalID: 6942148916406285972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a50a9f26274256cc0800000000000000
+      internalID: -3718525843619078054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_55
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 176c20ed6439cf370800000000000000
+      internalID: 8357716941074515569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_56
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff1e8470ade41b740800000000000000
+      internalID: 5165996945902723583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_57
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e693cc9b3bc0f6d0800000000000000
+      internalID: -2958641498288843034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_58
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d89c88b25854e3c0800000000000000
+      internalID: -4331239829316790056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_59
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d00311bcc84e2e380800000000000000
+      internalID: -8943334616650928115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_60
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b85e6741e6d0d2c0800000000000000
+      internalID: -4408787772141315918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_61
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fc3b6dfd86ec0c30800000000000000
+      internalID: 4327086839512644853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_62
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e2bc93c67d9d0680800000000000000
+      internalID: -8787194164516441374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_63
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbec3c1462c4e18f0800000000000000
+      internalID: -567932775806284101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_64
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc405b194c49063d0800000000000000
+      internalID: -3215406561963473717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_65
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52823461c1f6a8430800000000000000
+      internalID: 3785960603181590565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_66
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c30eb19e5061a440800000000000000
+      internalID: 4945339825117856706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_67
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22f743e8f361a1d90800000000000000
+      internalID: -7126358998135832798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_68
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98c845a2c15dc0700800000000000000
+      internalID: 508015174932008073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_69
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d9fffdaaaca681d0800000000000000
+      internalID: -3348799423839733293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_70
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7c713fceb0b907c0800000000000000
+      internalID: -4104555251805094788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_71
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b8dba016724bc4cf0800000000000000
+      internalID: -266640196696883829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85b018cb80e263330800000000000000
+      internalID: 3690187559733889880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_73
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 716281169488301d0800000000000000
+      internalID: -3385712646109518313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_74
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5acf247ce7367c460800000000000000
+      internalID: 7261882320318299301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_75
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 168bbd10baba74d90800000000000000
+      internalID: -7113528335449474975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_76
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d765c8f3f9cac7b0800000000000000
+      internalID: -5203124369785264167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_77
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11a77334b500faaf0800000000000000
+      internalID: -383087051333469679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_78
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90400c2bf6f619d40800000000000000
+      internalID: 5589371138074477577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_79
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a83ccda2a4f7f88d0800000000000000
+      internalID: -2841912883324075126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_80
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f07d9be7b18a64fc0800000000000000
+      internalID: -3510934023445031153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_81
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7ba54c65fbb40950800000000000000
+      internalID: 6414458432040315775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_82
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 315a523c27f84a170800000000000000
+      internalID: 8188827745529472275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_83
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87c56f77e1708afc0800000000000000
+      internalID: -3483526484328031112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_84
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5420f1e59155e0f0800000000000000
+      internalID: -1088374030757518244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_85
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aecab3daa4d8d1a90800000000000000
+      internalID: -7341556465670574870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_86
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 875cf9bc1f43c2640800000000000000
+      internalID: 5056474694738232696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_87
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bbf2206058a0f080800000000000000
+      internalID: -9155632979280462920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_88
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3056a38338b16a510800000000000000
+      internalID: 1559964571328472323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_89
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb4ecbfdce7cb44d0800000000000000
+      internalID: -3149203694235622213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_90
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a30485fbafe3b7d80800000000000000
+      internalID: -8251932645553323974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_91
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d99e39944e7d1d60800000000000000
+      internalID: 7862579357552646614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_92
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60ee7ed99fd4a9240800000000000000
+      internalID: 4799234087408102918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_93
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ca84f76bd14ed930800000000000000
+      internalID: 4169842715589380802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_94
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 787fb5c27864f77c0800000000000000
+      internalID: -4071457991740885113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Pierre_Idle_NoColour135_1[135,240]_95
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 065b739472c07d400800000000000000
+      internalID: 348760859016148320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

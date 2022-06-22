@@ -1,0 +1,2448 @@
+fileFormatVersion: 2
+guid: 40e9c8cffa7e2954da65ee101f730b16
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2817709054915596727
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_0
+  - first:
+      213: -9032284975048036200
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_1
+  - first:
+      213: 1611934711159651168
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_2
+  - first:
+      213: -8049919150407942276
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_3
+  - first:
+      213: -8113743721025233684
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_4
+  - first:
+      213: -662612030715548013
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_5
+  - first:
+      213: 290893186742584179
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_6
+  - first:
+      213: -940254734255033595
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_7
+  - first:
+      213: -817262950568304335
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_8
+  - first:
+      213: -4551520101067756237
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_9
+  - first:
+      213: 1118429636777168814
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_10
+  - first:
+      213: -1719012743777978474
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_11
+  - first:
+      213: 2202946616330664091
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_12
+  - first:
+      213: -7980594777484001419
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_13
+  - first:
+      213: -5592189535958178974
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_14
+  - first:
+      213: 3059405288867689083
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_15
+  - first:
+      213: -4406880061870824278
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_16
+  - first:
+      213: -7471144586663793662
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_17
+  - first:
+      213: -4749056113985928570
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_18
+  - first:
+      213: 1366170202016485726
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_19
+  - first:
+      213: 5463110186488479856
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_20
+  - first:
+      213: -4640662458331697676
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_21
+  - first:
+      213: 2573030023234851949
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_22
+  - first:
+      213: 5228638249245543534
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_23
+  - first:
+      213: -9212666402747256309
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_24
+  - first:
+      213: 3606473982433163014
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_25
+  - first:
+      213: -8983230811373181063
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_26
+  - first:
+      213: -6887739137525440588
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_27
+  - first:
+      213: 5274852978933822590
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_28
+  - first:
+      213: 1317170953464714816
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_29
+  - first:
+      213: 632166356722807196
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_30
+  - first:
+      213: -1854509379497233679
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_31
+  - first:
+      213: 352101120257395521
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_32
+  - first:
+      213: -7490257773085255
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_33
+  - first:
+      213: 5686818524149428428
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_34
+  - first:
+      213: 6568927417595441778
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_35
+  - first:
+      213: -7023788048355318860
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_36
+  - first:
+      213: 5436691373498567424
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_37
+  - first:
+      213: -7226559464973247958
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_38
+  - first:
+      213: 67397840332279939
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_39
+  - first:
+      213: -9027921721184039878
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_40
+  - first:
+      213: 5521425412242030335
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_41
+  - first:
+      213: 707529679647908752
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_42
+  - first:
+      213: 7125986021896484958
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_43
+  - first:
+      213: -7790354769304865551
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_44
+  - first:
+      213: -7480750767452154363
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_45
+  - first:
+      213: -8399217099501283678
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_46
+  - first:
+      213: -8895735831982510015
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_47
+  - first:
+      213: -5973400441040728723
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_48
+  - first:
+      213: 908556179582878125
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_49
+  - first:
+      213: 7796715019758727677
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_50
+  - first:
+      213: 3584900555610455300
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_51
+  - first:
+      213: 7292909864624804742
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_52
+  - first:
+      213: -8648331962084262230
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_53
+  - first:
+      213: 5242714532811524959
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_54
+  - first:
+      213: -2562038515557586422
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_55
+  - first:
+      213: -3829223136547839657
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_56
+  - first:
+      213: -1267288732257051676
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_57
+  - first:
+      213: -3751073422822620710
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_58
+  - first:
+      213: -2852928169298964206
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_59
+  - first:
+      213: 1599197426355461571
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_60
+  - first:
+      213: 6017011607702656936
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_61
+  - first:
+      213: -4125205511692679328
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_62
+  - first:
+      213: -1914097304879692698
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_63
+  - first:
+      213: 544971184006330833
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_64
+  - first:
+      213: -7796379528830902893
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_65
+  - first:
+      213: -5753662839752751464
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_66
+  - first:
+      213: 5539853436327634664
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_67
+  - first:
+      213: 986421778771515418
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_68
+  - first:
+      213: -7055784496696763003
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_69
+  - first:
+      213: 3051824158533710850
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_70
+  - first:
+      213: 7656454942068306978
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_71
+  - first:
+      213: -8181085432337098739
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_72
+  - first:
+      213: -4065150446224204151
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_73
+  - first:
+      213: 5644111849572387087
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_74
+  - first:
+      213: -931214347891317122
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_75
+  - first:
+      213: -1809050596634669796
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_76
+  - first:
+      213: -3291387289262229476
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_77
+  - first:
+      213: -1448307650454837653
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_78
+  - first:
+      213: 1832222702854106031
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_79
+  - first:
+      213: 3536683285528397839
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_80
+  - first:
+      213: -3285360021666724006
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_81
+  - first:
+      213: 6429753941855745338
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_82
+  - first:
+      213: -95391971961109063
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_83
+  - first:
+      213: -6422609988853368348
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_84
+  - first:
+      213: -2460850134517964444
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_85
+  - first:
+      213: 1519405595902846658
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_86
+  - first:
+      213: -9043961493522617531
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_87
+  - first:
+      213: 6551949479730493782
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_88
+  - first:
+      213: 5822975141495475629
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_89
+  - first:
+      213: 7544146755599643994
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_90
+  - first:
+      213: 2852059715707658524
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_91
+  - first:
+      213: 4033780433379154050
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_92
+  - first:
+      213: 195251327997849920
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_93
+  - first:
+      213: 9159863630512291329
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_94
+  - first:
+      213: -5930190779197812432
+    second: Shooter_Sandy_Idle_NoColour135_1[135,240]_95
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b155a2e4738a1720800000000000000
+      internalID: 2817709054915596727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_1
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 890f9289ba0e6a280800000000000000
+      internalID: -9032284975048036200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_2
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06bfac3541ebe5610800000000000000
+      internalID: 1611934711159651168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_3
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7ff159de21f84090800000000000000
+      internalID: -8049919150407942276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_4
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cec1cbdf211366f80800000000000000
+      internalID: -8113743721025233684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_5
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39eac456eddedc6f0800000000000000
+      internalID: -662612030715548013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_6
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3738f57efc5790400800000000000000
+      internalID: 290893186742584179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_7
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50379560d4b83f2f0800000000000000
+      internalID: -940254734255033595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_8
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2400
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 131e94f2daf78a4f0800000000000000
+      internalID: -817262950568304335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33d6ec34590c5d0c0800000000000000
+      internalID: -4551520101067756237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_10
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eaf4f5634d5758f00800000000000000
+      internalID: 1118429636777168814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_11
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6977eba6407d428e0800000000000000
+      internalID: -1719012743777978474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_12
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b98b98d9640729e10800000000000000
+      internalID: 2202946616330664091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_13
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57f7ab7355b3f3190800000000000000
+      internalID: -7980594777484001419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_14
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2636e88ee3d8462b0800000000000000
+      internalID: -5592189535958178974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_15
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b72f8ea96e0357a20800000000000000
+      internalID: 3059405288867689083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_16
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa42070beed97d2c0800000000000000
+      internalID: -4406880061870824278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_17
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2160
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20c625e0599215890800000000000000
+      internalID: -7471144586663793662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 682c87b30a6f71eb0800000000000000
+      internalID: -4749056113985928570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_19
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e519ae97f8c95f210800000000000000
+      internalID: 1366170202016485726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_20
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 070c67215cdd0db40800000000000000
+      internalID: 5463110186488479856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_21
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fde5a8d41e099fb0800000000000000
+      internalID: -4640662458331697676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_22
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6414537c2d35b320800000000000000
+      internalID: 2573030023234851949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_23
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6c0d4109cadf8840800000000000000
+      internalID: 5228638249245543534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_24
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b02f21ea7b8062080800000000000000
+      internalID: -9212666402747256309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_25
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 607fd96aaf4cc0230800000000000000
+      internalID: 3606473982433163014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_26
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1920
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 977e1c81c27255380800000000000000
+      internalID: -8983230811373181063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bf9d3a4fb5d960a0800000000000000
+      internalID: -6887739137525440588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_28
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e74f2c346da043940800000000000000
+      internalID: 5274852978933822590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_29
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0461ab5e008874210800000000000000
+      internalID: 1317170953464714816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_30
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c917a6bb3f7e5c800800000000000000
+      internalID: 632166356722807196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_31
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f2ff628b857346e0800000000000000
+      internalID: -1854509379497233679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_32
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14b85f57a1ae2e400800000000000000
+      internalID: 352101120257395521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_33
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9bdb82676a365eff0800000000000000
+      internalID: -7490257773085255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_34
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc0b9025153abee40800000000000000
+      internalID: 5686818524149428428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_35
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1680
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 272b911cea4892b50800000000000000
+      internalID: 6568927417595441778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b3a520dbfd768e90800000000000000
+      internalID: -7023788048355318860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_37
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00b00d6dff1037b40800000000000000
+      internalID: 5436691373498567424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_38
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2a580e547a16bb90800000000000000
+      internalID: -7226559464973247958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_39
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38052ab8af17fe000800000000000000
+      internalID: 67397840332279939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_40
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3ccaccc60166b280800000000000000
+      internalID: -9027921721184039878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_41
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffe308e982b00ac40800000000000000
+      internalID: 5521425412242030335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_42
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 093a577be76a1d900800000000000000
+      internalID: 707529679647908752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_43
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e58f985288694e260800000000000000
+      internalID: 7125986021896484958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_44
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1440
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f43055cc9913e390800000000000000
+      internalID: -7790354769304865551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50698cccfc80f2890800000000000000
+      internalID: -7480750767452154363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_46
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a6d6d88c8cff6b80800000000000000
+      internalID: -8399217099501283678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_47
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 140f7f6746ffb8480800000000000000
+      internalID: -8895735831982510015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_48
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6d0b9282f73a1da0800000000000000
+      internalID: -5973400441040728723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_49
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: da106861807db9c00800000000000000
+      internalID: 908556179582878125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_50
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df1fbaf600f733c60800000000000000
+      internalID: 7796715019758727677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_51
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40df24ccf0020c130800000000000000
+      internalID: 3584900555610455300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_52
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68357e3e1ee953560800000000000000
+      internalID: 7292909864624804742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_53
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1200
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aae7f4cb6e3faf780800000000000000
+      internalID: -8648331962084262230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5b420b271dd1c840800000000000000
+      internalID: 5242714532811524959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_55
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0a225b5b8fc17cd0800000000000000
+      internalID: -2562038515557586422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_56
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 751eb5c68dddbdac0800000000000000
+      internalID: -3829223136547839657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_57
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4eb96f5cc9fa96ee0800000000000000
+      internalID: -1267288732257051676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_58
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad1cf32989281fbc0800000000000000
+      internalID: -3751073422822620710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_59
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 211da3b02fc5868d0800000000000000
+      internalID: -2852928169298964206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_60
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cdd2ab169d713610800000000000000
+      internalID: 1599197426355461571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_61
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a7d48e7d28b08350800000000000000
+      internalID: 6017011607702656936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_62
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 960
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0670312817350c6c0800000000000000
+      internalID: -4125205511692679328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_63
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6640d1d74a2cf65e0800000000000000
+      internalID: -1914097304879692698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_64
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d9758b8760209700800000000000000
+      internalID: 544971184006330833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_65
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39d18e12022bdc390800000000000000
+      internalID: -7796379528830902893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_66
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8960c27a122e620b0800000000000000
+      internalID: -5753662839752751464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_67
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e62904595381ec40800000000000000
+      internalID: 5539853436327634664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_68
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a18926aa16970bd00800000000000000
+      internalID: 986421778771515418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_69
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58d5ea62261d41e90800000000000000
+      internalID: -7055784496696763003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_70
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2047b5627e14a5a20800000000000000
+      internalID: 3051824158533710850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_71
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 720
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 224f3c44431314a60800000000000000
+      internalID: 7656454942068306978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_72
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d089c600522f67e80800000000000000
+      internalID: -8181085432337098739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_73
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98e194e053fa597c0800000000000000
+      internalID: -4065150446224204151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_74
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f09c55ac2d9e35e40800000000000000
+      internalID: 5644111849572387087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_75
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e76e0300c79a313f0800000000000000
+      internalID: -931214347891317122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_76
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1dc1ee2116f4e6e0800000000000000
+      internalID: -1809050596634669796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_77
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c18f94de2b4a252d0800000000000000
+      internalID: -3291387289262229476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_78
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b66a8298dd396ebe0800000000000000
+      internalID: -1448307650454837653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_79
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fab660937dc5d6910800000000000000
+      internalID: 1832222702854106031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_80
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 480
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f084bf4c5b2d41130800000000000000
+      internalID: 3536683285528397839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_81
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a570945877e0862d0800000000000000
+      internalID: -3285360021666724006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_82
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a35ba71d4231b3950800000000000000
+      internalID: 6429753941855745338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_83
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b585d4c1891daef0800000000000000
+      internalID: -95391971961109063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_84
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e9f48b5e3e4ed6a0800000000000000
+      internalID: -6422609988853368348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_85
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 461a59e37dd49ddd0800000000000000
+      internalID: -2460850134517964444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_86
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c6a78dd653061510800000000000000
+      internalID: 1519405595902846658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_87
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54be54840f46d7280800000000000000
+      internalID: -9043961493522617531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_88
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65934ad86533dea50800000000000000
+      internalID: 6551949479730493782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_89
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 240
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dad84cc2a0d5fc050800000000000000
+      internalID: 5822975141495475629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_90
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a55beece08132b860800000000000000
+      internalID: 7544146755599643994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_91
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c11e4f8533d849720800000000000000
+      internalID: 2852059715707658524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_92
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2885c79aeeddaf730800000000000000
+      internalID: 4033780433379154050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_93
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0413c3f5c0ca5b200800000000000000
+      internalID: 195251327997849920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_94
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10e74bfd07f5e1f70800000000000000
+      internalID: 9159863630512291329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shooter_Sandy_Idle_NoColour135_1[135,240]_95
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 0
+        width: 135
+        height: 240
+      alignment: 9
+      pivot: {x: 0.545, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0311e93e7eab3bda0800000000000000
+      internalID: -5930190779197812432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
