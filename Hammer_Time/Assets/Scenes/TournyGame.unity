@@ -8099,7 +8099,7 @@ MonoBehaviour:
   tournyType: 0
   redHammer: 1
   ends: 2
-  rocks: 2
+  rocks: 8
   volume: 0.15
   tutorial: 0
   loadGame: 0
