@@ -148,7 +148,7 @@ public class TeamManager : MonoBehaviour
         //}
     }
 
-    public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, int rockCurrent, bool aiTurn)
+    public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, CharacterStats sweeperT, int rockCurrent, bool aiTurn)
     {
         cm = FindObjectOfType<CareerManager>();
 
@@ -156,47 +156,78 @@ public class TeamManager : MonoBehaviour
         {
             sweeperL.name = "AI Sweeper Left";
             sweeperR.name = "AI Sweeper Right";
+            sweeperT.name = "AI Sweeper Tee";
             sweeperL.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
             sweeperR.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+            sweeperT.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
             sweeperL.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
             sweeperR.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+            sweeperT.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
             sweeperL.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
             sweeperR.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+            sweeperT.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
         }
         else
         {
-            if (rockCurrent > 8)
+            if (rockCurrent > 11)
             {
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[0].name;
+                sweeperT.name = cm.activePlayers[2].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
             }
-            else if (rockCurrent > 4)
+            else if (rockCurrent > 7)
+            {
+                sweeperL.name = cm.activePlayers[1].name;
+                sweeperR.name = cm.activePlayers[0].name;
+                sweeperT.name = cm.activePlayers[3].name;
+                sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
+                sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
+                sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
+            }
+            else if (rockCurrent > 3)
             {
                 sweeperL.name = cm.activePlayers[2].name;
                 sweeperR.name = cm.activePlayers[0].name;
+                sweeperT.name = cm.activePlayers[3].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
             }
             else
             {
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[2].name;
+                sweeperT.name = cm.activePlayers[3].name;
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[3].sweepStrength);
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
+                sweeperT.sweepEndurance.SetBaseValue(cm.activePlayers[3].sweepEnduro);
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.activePlayers[3].sweepCohesion);
             }
         }
     }
@@ -302,8 +333,10 @@ public class TeamManager : MonoBehaviour
         {
             sm.sweeperRedL = teamRed[1].sweeperL;
             sm.sweeperRedR = teamRed[2].sweeperR;
+            sm.sweeperRedTee = teamRed[3].sweeperL;
             sm.sweeperYellowL = teamYellow[1].sweeperL;
             sm.sweeperYellowR = teamYellow[2].sweeperR;
+            sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[0].shooter;
             gm.shooterAnimYellow = teamYellow[0].shooter;
         }
@@ -311,8 +344,10 @@ public class TeamManager : MonoBehaviour
         {
             sm.sweeperRedL = teamRed[0].sweeperL;
             sm.sweeperRedR = teamRed[2].sweeperR;
+            sm.sweeperRedTee = teamRed[3].sweeperL;
             sm.sweeperYellowL = teamYellow[0].sweeperL;
             sm.sweeperYellowR = teamYellow[2].sweeperR;
+            sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[1].shooter;
             gm.shooterAnimYellow = teamYellow[1].shooter;
         }
@@ -320,8 +355,10 @@ public class TeamManager : MonoBehaviour
         {
             sm.sweeperRedL = teamRed[0].sweeperL;
             sm.sweeperRedR = teamRed[1].sweeperR;
+            sm.sweeperRedTee = teamRed[3].sweeperL;
             sm.sweeperYellowL = teamYellow[0].sweeperL;
             sm.sweeperYellowR = teamYellow[1].sweeperR;
+            sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[2].shooter;
             gm.shooterAnimYellow = teamYellow[2].shooter;
         }
@@ -329,8 +366,10 @@ public class TeamManager : MonoBehaviour
         {
             sm.sweeperRedL = teamRed[0].sweeperL;
             sm.sweeperRedR = teamRed[1].sweeperR;
+            sm.sweeperRedTee = teamRed[2].sweeperL;
             sm.sweeperYellowL = teamYellow[0].sweeperL;
             sm.sweeperYellowR = teamYellow[1].sweeperR;
+            sm.sweeperYellowTee = teamYellow[2].sweeperL;
             gm.shooterAnimRed = teamRed[3].shooter;
             gm.shooterAnimYellow = teamYellow[3].shooter;
         }

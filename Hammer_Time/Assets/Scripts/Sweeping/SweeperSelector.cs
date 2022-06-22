@@ -6,8 +6,15 @@ public class SweeperSelector : MonoBehaviour
 {
     public GameObject halL;
     public GameObject halR;
+
     public SweeperParent sweeperL;
     public SweeperParent sweeperR;
+
+    public GameObject tSweepParent;
+
+    public SweeperParent sweeperRedTee;
+    public SweeperParent sweeperYellowTee;
+
     public Collider2D sweeperLCol;
     public Collider2D sweeperRCol;
     public Collider2D sweepZoneCol;
@@ -18,6 +25,7 @@ public class SweeperSelector : MonoBehaviour
     public Sweep sweep;
     bool inturn;
     Rigidbody2D rockRB;
+    Rigidbody2D rock2RB;
     public Transform launcher;
     bool aiTurn;
 
@@ -65,8 +73,6 @@ public class SweeperSelector : MonoBehaviour
                         sweeperR.yOffset = 1.2f;
                     }
                 }
-
-                
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -79,24 +85,9 @@ public class SweeperSelector : MonoBehaviour
                         
                     Debug.Log(hit.collider.gameObject.name);
                 }
+
                 if (hit.collider == sweeperLCol)
                 {
-                    //if (sweeperL.sweep)
-                    //{
-                    //    Debug.Log("Hard!");
-                    //    sm.SweepLeft(false);
-                    //}
-                    //else if (sweeperL.hard)
-                    //{
-                    //    Debug.Log("Whoa!");
-                    //    sm.SweepWhoa(false);
-                    //}
-                    //else if (sweeperL.whoa)
-                    //{
-                    //    Debug.Log("Sweep!");
-                    //    sm.SweepLeft(false);
-                    //}
-
                     sm.SweepTapLeft();
 
                     Debug.Log(hit.collider.gameObject.name);
@@ -104,26 +95,6 @@ public class SweeperSelector : MonoBehaviour
 
                 if (hit.collider == sweeperRCol)
                 {
-                    //if (sweeperR.sweep)
-                    //{
-                    //    Debug.Log("Hard!");
-                    //    sm.SweepRight(false);
-                    //}
-                    //else if (sweeperR.hard)
-                    //{
-                    //    Debug.Log("Whoa!");
-                    //    sm.SweepWhoa(false);
-                    //}
-                    //else if (sweeperR.whoa)
-                    //{
-                    //    Debug.Log("Sweep!");
-                    //    sm.SweepRight(false);
-                    //}
-                    //else
-                    //{
-                    //    Debug.Log("Default Sweep!");
-                    //    sm.SweepRight(false);
-                    //}
                     sm.SweepTapRight();
 
                     Debug.Log(hit.collider.gameObject.name);
@@ -132,46 +103,44 @@ public class SweeperSelector : MonoBehaviour
                 if (hit.collider.gameObject.layer == 3)
                 {
                     ReAttachToRock(hit.collider.gameObject);
+                    Debug.Log(hit.collider.gameObject.name);
+                    Debug.Log(hit.collider.gameObject.layer);
                 }
-                Debug.Log(hit.collider.gameObject.name);
-                Debug.Log(hit.collider.gameObject.layer);
+
             }
         }
     }
 
     public void ReAttachToRock(GameObject rock)
     {
-        sweeperL.gameObject.SetActive(true);
-        sweeperR.gameObject.SetActive(true);
         //panel.SetActive(true);
         Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
 
         if (rockInfo.moving)
         {
-            if (rockInfo.teamName == gsp.teamName)
+            if (rockInfo.teamName == gsp.yellowTeamName)
             {
-                //sm.ResetSweepers();
-                //if (gsp.yellowTeamName == gsp.teamName)
-                //{
-                //    sm.SetupSweepers(false);
-                //}
-                //else
-                //    sm.SetupSweepers(true);
-
-                rockRB = rock.GetComponent<Rigidbody2D>();
+                if (rock.transform.position.y > 6.5f)
+                {
+                    sweeperRedTee.gameObject.SetActive(true);
+                    rock2RB = rock.GetComponent<Rigidbody2D>();
+                }
+            }
+            else if (rockInfo.teamName == gsp.redTeamName)
+            {
+                if (rock.transform.position.y > 6.5f)
+                {
+                    sweeperYellowTee.gameObject.SetActive(true);
+                    rock2RB = rock.GetComponent<Rigidbody2D>();
+                }
             }
             else
             {
                 if (rock.transform.position.y > 6.5f)
                 {
-                    //sm.ResetSweepers();
-                    //if (gsp.yellowTeamName == gsp.teamName)
-                    //    sm.SetupSweepers(false);
-                    //else
-                    //    sm.SetupSweepers(true);
-
-                    rockRB = rock.GetComponent<Rigidbody2D>();
+                    sweeperRedTee.gameObject.SetActive(true);
+                    rock2RB = rock.GetComponent<Rigidbody2D>();
                 }
             }
         }

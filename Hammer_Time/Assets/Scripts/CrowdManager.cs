@@ -25,6 +25,7 @@ public class CrowdManager : MonoBehaviour
     public GameObject[] bleacherSections;
     public GameObject[] stadiumSections;
     public GameObject[] beersSnacksSections;
+    public GameObject[] denSections;
 
     public List<GameObject> activeCrowd;
 
@@ -66,6 +67,10 @@ public class CrowdManager : MonoBehaviour
         {
             OutdoorCrowd();
         }
+        else if (cm.currentTourny.BG == 5)
+        {
+            DenCrowd();
+        }
 
     }
 
@@ -85,7 +90,6 @@ public class CrowdManager : MonoBehaviour
             }
             else
                 bgs[i].SetActive(false);
-
         }
 
         activeCrowd = new List<GameObject>();
@@ -281,7 +285,7 @@ public class CrowdManager : MonoBehaviour
                     counter++;
                     GameObject go = Instantiate(crowdGO, bleacherSections[0].transform, false);
                     go.transform.localPosition = seatPos;
-                    go.GetComponent<SpriteRenderer>().sortingOrder = j + 3;
+                    go.GetComponent<SpriteRenderer>().sortingOrder = j + 6;
                     activeCrowd.Add(go);
                 }
             }
@@ -612,6 +616,92 @@ public class CrowdManager : MonoBehaviour
         }
 
         AssignAnimations("No Nuns");
+    }
+
+
+    void DenCrowd()
+    {
+        for (int i = 0; i < bgs.Length; i++)
+        {
+            if (i == 6)
+            {
+                bgs[i].SetActive(true);
+            }
+            else
+                bgs[i].SetActive(false);
+
+        }
+
+        activeCrowd = new List<GameObject>();
+
+        int counter = 0;
+
+
+        for (int k = 0; k < 7; k++)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                seatPos = new Vector2(i * 0.6f, 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, denSections[k].transform, false);
+                    go.transform.localPosition = seatPos;
+                    go.GetComponent<SpriteRenderer>().sortingOrder = 3;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int j = 7; j < 12; j++)
+        {
+            for (int i = 0; i < 11; i++)
+            {
+                if (i < 5)
+                    seatPos = new Vector2(i * 0.5f, 0f);
+                else
+                    seatPos = new Vector2(6f * 0.5f, (i - 4f) * -0.5f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, denSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    if (i > 4)
+                        go.transform.localRotation = Quaternion.Euler(0f, 0f, -90f);
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int j = 12; j < 14; j++)
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                if (i < 7)
+                    seatPos = new Vector2(i * 0.6f, 0f);
+                else
+                    seatPos = new Vector2(7f * 0.6f, (i - 7f) * 0.6f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, denSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    if (i > 4)
+                        go.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        if (crowdDensity < 7)
+            AssignAnimations("Clapping");
+        else
+            AssignAnimations("No Nuns");
     }
 
     void AssignAnimations(string range)

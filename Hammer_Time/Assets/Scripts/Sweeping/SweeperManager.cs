@@ -11,8 +11,7 @@ public class SweeperManager : MonoBehaviour
     public bool isSweeping;
     public SweeperParent sweeperL;
     public SweeperParent sweeperR;
-
-    public SweeperParent sweeperTee;
+    public SweeperParent sweeperT;
 
     public SweeperParent sweeperRedL;
     public SweeperParent sweeperRedR;
@@ -24,7 +23,8 @@ public class SweeperManager : MonoBehaviour
 
     public CharacterStats swprLStats;
     public CharacterStats swprRStats;
-    public CharacterStats swprTStats;
+    public CharacterStats swprRTStats;
+    public CharacterStats swprYTStats;
 
     public Sweep sweep;
 
@@ -114,33 +114,36 @@ public class SweeperManager : MonoBehaviour
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
-            sweeperTee = Instantiate(sweeperRedTee, sweepSel.gameObject.transform);
+            sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
+            sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
             if (gsp.redTeamName == gsp.teamName)
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, false);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
             else
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, true);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperRedTee.GetComponent<CharacterStats>(), gm.rockCurrent, true);
             }
         }
         else
         {
             sweeperL = Instantiate(sweeperYellowL, sweepSel.gameObject.transform);
             sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
+            sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
+            sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
 
             if (gsp.redTeamName != gsp.teamName)
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, false);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperRedTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
             else
             {
-                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), gm.rockCurrent, true);
+                tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, true);
             }
         }
 
@@ -151,6 +154,7 @@ public class SweeperManager : MonoBehaviour
 
         sweepSel.SetColliders();
         sweepSel.gameObject.SetActive(false);
+        sweepSel.tSweepParent.SetActive(false);
         sweeperL.sweep = false;
         sweeperL.hard = false;
         sweeperL.whoa = true;
@@ -170,6 +174,8 @@ public class SweeperManager : MonoBehaviour
 
         Destroy(sweeperL.gameObject);
         Destroy(sweeperR.gameObject);
+        Destroy(sweeperRedTee.gameObject);
+        Destroy(sweeperYellowTee.gameObject);
 
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = false;
@@ -188,6 +194,8 @@ public class SweeperManager : MonoBehaviour
     public void Release(GameObject rock, bool aiTurn)
     {
         sweepSel.gameObject.SetActive(true);
+
+        sweepSel.tSweepParent.SetActive(false);
         sweepSel.AttachToRock(rock);
         
         inturn = rm.inturn;
