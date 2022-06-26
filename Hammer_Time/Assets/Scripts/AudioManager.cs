@@ -10,6 +10,8 @@ public class AudioManager : MonoBehaviour
 
     public static AudioManager instance;
 
+    public HammerMixer hm;
+
     bool scrape;
     bool hit;
     GameObject rockGO;
@@ -37,6 +39,8 @@ public class AudioManager : MonoBehaviour
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
         }
+
+        
     }
 
     private void Update()
