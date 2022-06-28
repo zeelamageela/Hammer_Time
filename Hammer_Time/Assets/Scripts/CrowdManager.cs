@@ -314,9 +314,9 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
-        for (int j = 9; j < 13; j++)
+        for (int j = 9; j < 11; j++)
         {
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 11; i++)
             {
                 seatPos = new Vector2(i * 0.46f, 0f);
 
@@ -330,7 +330,23 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
-        for (int j = 4; j < 6; j++)
+        for (int j = 11; j < 13; j++)
+        {
+            for (int i = 0; i < 14; i++)
+            {
+                seatPos = new Vector2(i * 0.46f, 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, bleacherSections[j].transform, false);
+                    go.transform.localPosition = seatPos;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
+        for (int j = 3; j < 5; j++)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -348,7 +364,7 @@ public class CrowdManager : MonoBehaviour
 
         for (int i = 0; i < 15; i++)
         {
-            Vector2 beerPos = new Vector2(i * 0.75f, Random.Range(0f, 0.05f));
+            Vector2 beerPos = new Vector2(i * 1f, Random.Range(0f, 0.05f));
 
             if (Random.Range(0, 15) < crowdDensity)
             {
@@ -618,7 +634,6 @@ public class CrowdManager : MonoBehaviour
         AssignAnimations("No Nuns");
     }
 
-
     void DenCrowd()
     {
         for (int i = 0; i < bgs.Length; i++)
@@ -636,8 +651,7 @@ public class CrowdManager : MonoBehaviour
 
         int counter = 0;
 
-
-        for (int k = 0; k < 7; k++)
+        for (int k = 0; k < 4; k++)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -654,18 +668,34 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
+        for (int k = 4; k < 7; k++)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                seatPos = new Vector2(i * 0.6f, 0f);
+
+                if (Random.Range(0, 10) < crowdDensity)
+                {
+                    counter++;
+                    GameObject go = Instantiate(crowdGO, denSections[k].transform, false);
+                    go.transform.localPosition = seatPos;
+                    go.GetComponent<SpriteRenderer>().sortingOrder = 3;
+                    activeCrowd.Add(go);
+                }
+            }
+        }
+
         for (int j = 7; j < 12; j++)
         {
-            for (int i = 0; i < 11; i++)
+            for (int i = 0; i < 10; i++)
             {
                 if (i < 5)
                     seatPos = new Vector2(i * 0.5f, 0f);
                 else
-                    seatPos = new Vector2(6f * 0.5f, (i - 4f) * -0.5f);
+                    seatPos = new Vector2(5.25f * 0.5f, (i - 3.5f) * -0.5f);
 
                 if (Random.Range(0, 10) < crowdDensity)
                 {
-
                     counter++;
                     GameObject go = Instantiate(crowdGO, denSections[j].transform, false);
                     go.transform.localPosition = seatPos;
@@ -678,23 +708,63 @@ public class CrowdManager : MonoBehaviour
 
         for (int j = 12; j < 14; j++)
         {
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 20; i++)
             {
-                if (i < 7)
-                    seatPos = new Vector2(i * 0.6f, 0f);
+                if (i < 5)
+                    seatPos = new Vector2(i * 0.5f, 0f);
+                else if (i < 10)
+                    seatPos = new Vector2(5.25f * 0.5f, (i - 3.5f) * 0.5f);
+                else if (i < 15)
+                    seatPos = new Vector2(5.25f * 0.5f, (i - 1.5f) * 0.5f);
                 else
-                    seatPos = new Vector2(7f * 0.6f, (i - 7f) * 0.6f);
+                    seatPos = new Vector2(5.25f * 0.5f, (i + 0.5f) * 0.5f);
 
                 if (Random.Range(0, 10) < crowdDensity)
                 {
-
                     counter++;
                     GameObject go = Instantiate(crowdGO, denSections[j].transform, false);
                     go.transform.localPosition = seatPos;
                     if (i > 4)
-                        go.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                        go.transform.localRotation = Quaternion.Euler(0f, 0f, -90f);
+                    else
+                        go.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+
                     activeCrowd.Add(go);
                 }
+            }
+        }
+
+        for (int i = 0; i < 7; i++)
+        {
+            seatPos = new Vector2(i * 1.125f, 0f);
+
+            if (Random.Range(0, 10) < crowdDensity)
+            {
+                counter++;
+                GameObject go = Instantiate(crowdGO, denSections[14].transform, false);
+                go.transform.localPosition = seatPos;
+                if (i == 0 | i == 2 | i == 5)
+                    go.transform.localRotation = Quaternion.Euler(0f, 0f, 22f);
+                else
+                    go.transform.localRotation = Quaternion.Euler(0f, 0f, -25f);
+                activeCrowd.Add(go);
+            }
+        }
+
+        for (int i = 0; i < 5; i++)
+        {
+            seatPos = new Vector2(i * 1.125f, 0f);
+
+            if (Random.Range(0, 10) < crowdDensity)
+            {
+                counter++;
+                GameObject go = Instantiate(crowdGO, denSections[15].transform, false);
+                go.transform.localPosition = seatPos;
+                if (i == 0 | i == 3)
+                    go.transform.localRotation = Quaternion.Euler(0f, 0f, 22f);
+                else
+                    go.transform.localRotation = Quaternion.Euler(0f, 0f, -25f);
+                activeCrowd.Add(go);
             }
         }
 
