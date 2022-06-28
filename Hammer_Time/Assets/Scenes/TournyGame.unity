@@ -967,8 +967,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 52671493}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.355, y: -4.07, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 4.0850005, y: -4.07, z: 0}
+  m_LocalScale: {x: 3.0533, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2051732081}
   m_RootOrder: 2
@@ -16847,7 +16847,7 @@ Camera:
   far clip plane: 1000
   field of view: 1
   orthographic: 1
-  orthographic size: 13
+  orthographic size: 10
   m_Depth: 5
   m_CullingMask:
     serializedVersion: 2
@@ -16871,7 +16871,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 913926330}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01, y: 6.12, z: -307.63373}
+  m_LocalPosition: {x: -0.01, y: 5.5, z: -307.63373}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -20329,8 +20329,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054420977}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.59, y: 12.404, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.59, y: 12.124, z: 0}
+  m_LocalScale: {x: 1, y: 3.0533, z: 1}
   m_Children: []
   m_Father: {fileID: 2051732081}
   m_RootOrder: 1
@@ -20683,7 +20683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1075365433
 Transform:
   m_ObjectHideFlags: 0
@@ -24224,8 +24224,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1290175253}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.355, y: -23.09, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 4.085, y: -23.09, z: 0}
+  m_LocalScale: {x: 3.0533, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2051732081}
   m_RootOrder: 4
@@ -31248,8 +31248,8 @@ MonoBehaviour:
     qualifier: 1
     tour: 0
     complete: 0
-    BG: 1
-    crowdDensity: 11
+    BG: 3
+    crowdDensity: 2
   tournies: []
   tour: []
   prov: []
@@ -35050,8 +35050,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1883470769}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.355, y: 6.231, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 4.0850005, y: 6.231, z: 0}
+  m_LocalScale: {x: 3.0533, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2051732081}
   m_RootOrder: 0
@@ -36239,8 +36239,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1912019659}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.355, y: -14.38, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 4.0850005, y: -14.38, z: 0}
+  m_LocalScale: {x: 3.0533, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2051732081}
   m_RootOrder: 3
