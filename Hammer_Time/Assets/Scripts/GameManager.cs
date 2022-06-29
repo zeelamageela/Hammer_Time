@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
         debug = gsp.debug;
 
         Debug.Log("redHammer is " + redHammer);
-        am.Play("Theme");
+        am.PlayBG(0);
         am.Play("Ambience");
         targetAi.SetActive(false);
         targetPlayer.SetActive(false);
@@ -428,6 +428,8 @@ public class GameManager : MonoBehaviour
         state = GameState.REDTURN;
         //Debug.Log("Red Turn");
 
+        am.PlayBG(2);
+
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
             Destroy(GameObject.FindGameObjectWithTag("Player"));
@@ -550,6 +552,8 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.YELLOWTURN;
         Debug.Log("Yellow Turn");
+
+        am.PlayBG(0);
 
         cm.ShotSetup();
 

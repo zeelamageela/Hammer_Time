@@ -13,21 +13,43 @@ public class HammerMixer : MonoBehaviour
     public AudioSource TextureLayer1;
     public AudioSource TextureLayer2;
 
-    private AudioSource[] Sources = new AudioSource[5];
+    private AudioSource[] Sources;
+
+    public int musicFade;
+
     private bool[] arr = new bool[5];
+
+    public Sound[] themeLayers;
 
     // Start is called before the first frame update
     void Start()
     {
-        Sources[0] = PercussionLayer;
-        Sources[1] = MelodyLayer1;
-        Sources[2] = MelodyLayer2;
-        Sources[3] = TextureLayer1;
-        Sources[4] = TextureLayer2;
 
-        foreach (AudioSource source in Sources)
+    }
+
+    public void StartBG()
+    {
+        Sources = new AudioSource[themeLayers.Length];
+
+        foreach (Sound s in themeLayers)
         {
-            source.Play(0);
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+        }
+
+        Debug.Log("Sources.Length is " + Sources.Length);
+
+        //for (int i = 0; i < Sources.Length; i++)
+        //{
+        //    Sources[i] = themeLayers[i].source;
+        //}
+
+        foreach (Sound s in themeLayers)
+        {
+            s.source.Play(0);
         }
 
         SyncSources();
@@ -84,29 +106,34 @@ public class HammerMixer : MonoBehaviour
     //}
 
     //LayerStates[] corresponds to Sources[]
-    private void EnableLayers(bool[] LayerStates)
+
+    public void EnableLayers(bool[] LayerStates)
     {
+        if (themeLayers[0].source == null)
+        {
+            StartBG();
+        }
+
         // FIXME
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < LayerStates.Length; i++)
         {
             if (LayerStates[i] == true)
             {
-                Sources[i].volume = 1.0f;
+                themeLayers[i].source.volume = 1f;
             }
             else if (LayerStates[i] == false)
             {
-                Sources[i].volume = 0.0f;
+                themeLayers[i].source.volume = 0.0f;
             }
         }
     }
 
-
     private IEnumerator SyncSources()
     {
         AudioSource Clock = PercussionLayer;
-        foreach (AudioSource source in Sources)
+        foreach (Sound s in themeLayers)
         {
-            source.timeSamples = Clock.timeSamples;
+            s.source.timeSamples = Clock.timeSamples;
         }
         yield return null;
     }

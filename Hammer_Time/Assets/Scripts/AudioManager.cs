@@ -21,6 +21,8 @@ public class AudioManager : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
+
+
         if (instance == null)
         {
             instance = this;
@@ -40,7 +42,8 @@ public class AudioManager : MonoBehaviour
             s.source.loop = s.loop;
         }
 
-        
+        hm = GetComponent<HammerMixer>();
+        hm.StartBG();
     }
 
     private void Update()
@@ -49,6 +52,31 @@ public class AudioManager : MonoBehaviour
         {
             float vel = rb.velocity.x;
             //Sound Array.Find(sounds, sound => sound.name == "RockScrape");
+
+        }
+    }
+
+    public void PlayBG(int scenario)
+    {
+        hm = GetComponent<HammerMixer>();
+        switch(scenario)
+        {
+            case 0:
+                hm.EnableLayers(new bool[] { true, false, true, true, false, true });
+                break;
+            case 1:
+                hm.EnableLayers(new bool[] { true, true, false, false, false, true });
+                break;
+            case 2:
+                hm.EnableLayers(new bool[] { true, false, false, false, true, false });
+                break;
+            case 3:
+                hm.EnableLayers(new bool[] { false, false, false, false, true, true });
+                break;
+
+            default:
+                hm.EnableLayers(new bool[] { true, false, false, false, false, false });
+                break;
 
         }
     }
@@ -69,9 +97,21 @@ public class AudioManager : MonoBehaviour
 
     public void Volume(string name, float volume)
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-
-        s.source.volume = volume;
+        if (name == "Theme")
+        {
+            for (int i = 0; i < hm.themeLayers.Length; i++)
+            {
+                foreach(Sound s in hm.themeLayers)
+                {
+                    s.source.volume = volume;
+                }
+            }
+        }
+        else
+        {
+            Sound s = Array.Find(sounds, sound => sound.name == name);
+            s.source.volume = volume;
+        }
     }
 
     public void PlayHit(string name, float velocity)

@@ -11,7 +11,7 @@ public class OptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        am.Play("Theme");
+        //am.Play("Theme");
     }
     // Update is called once per frame
     void Update()

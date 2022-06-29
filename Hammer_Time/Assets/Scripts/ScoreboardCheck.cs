@@ -24,7 +24,7 @@ public class ScoreboardCheck : MonoBehaviour
             {
                 gHUD.scoreCheck = true;
                 Debug.Log(hit.collider.gameObject.name);
-                pm.Pause();
+                //pm.Pause();
             }
         }
     }
