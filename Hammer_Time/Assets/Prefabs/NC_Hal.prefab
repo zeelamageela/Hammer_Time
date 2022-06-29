@@ -169,6 +169,7 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+  amIRock: 0
 --- !u!114 &7952030149584085839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,6 +368,7 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+  amIRock: 0
 --- !u!114 &3079994252068631952
 MonoBehaviour:
   m_ObjectHideFlags: 0

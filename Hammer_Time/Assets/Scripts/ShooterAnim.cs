@@ -31,6 +31,8 @@ public class ShooterAnim : MonoBehaviour
     public float throwSpeed;
     public bool extend;
 
+    public bool amIRock;
+
     int slowdownTimer;
 
 
@@ -118,7 +120,10 @@ public class ShooterAnim : MonoBehaviour
             {
                 extend = false;
                 anim.SetBool("isReleased", true);
-                anim.Play("Shooter_2_Release", 0, 0f);
+                if (amIRock)
+                    gameObject.SetActive(false);
+                else
+                    anim.Play("Shooter_2_Release", 0, 0f);
                 rock.GetComponent<SpriteRenderer>().enabled = true;
                 rj.enabled = false;
 

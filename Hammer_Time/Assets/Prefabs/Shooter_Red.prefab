@@ -96,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 3703111443046092690}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: b02a2754dab9444d7819fd1c7a88fc14, type: 2}
+  m_Controller: {fileID: 22100000, guid: c524df9e94c5ba04184909513a7634e1, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -168,3 +168,4 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+  amIRock: 1

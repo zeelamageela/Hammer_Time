@@ -168,6 +168,7 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+  amIRock: 0
 --- !u!1 &6672064197766881345
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +337,7 @@ MonoBehaviour:
   springDirection: {x: 0, y: 0}
   throwSpeed: 0
   extend: 0
+  amIRock: 0
 --- !u!1 &8703072043521731236
 GameObject:
   m_ObjectHideFlags: 0
