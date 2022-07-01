@@ -12687,6 +12687,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &621097789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3895292122171389974, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+  m_PrefabInstance: {fileID: 621097783}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &627308860 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9003547273277895196, guid: c8908043187bc4a4fa648e1148049891, type: 3}
@@ -17157,7 +17162,7 @@ MonoBehaviour:
     description: {fileID: 621097787}
     effect: {fileID: 621097786}
     effectNumbers: {fileID: 621097785}
-    costPanel: {fileID: 58661491}
+    costPanel: {fileID: 621097789}
     cost: {fileID: 621097784}
     image: {fileID: 0}
   - name: {fileID: 1050706411}
@@ -29917,7 +29922,7 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 3
+    BG: 5
     crowdDensity: 8
   tour:
   - name: World Tour - Hokkaido Curling Classic

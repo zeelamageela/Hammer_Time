@@ -328,7 +328,7 @@ public class PowerUpManager : MonoBehaviour
 
     public void ViewCards()
     {
-        DisplayCards(cards.Length);
+        //DisplayCards(cards.Length);
     }
 
     void DisplayCards(int numOfCards)
@@ -409,7 +409,7 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        if (cm.activeCardIDList.Length > 0)
+        if (cm.activeCardIDList != null && cm.activeCardIDList.Length > 0)
         {
             activeIdList = cm.activeCardIDList;
         }
@@ -422,7 +422,9 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        if (cm.usedCardIDList.Length > 0)
+        Debug.Log("activeList Length is " + activeIdList.Length);
+
+        if (cm.usedCardIDList != null)
         {
             usedIdList = cm.usedCardIDList;
         }
@@ -446,6 +448,7 @@ public class PowerUpManager : MonoBehaviour
                 {
                     cards[j].active = true;
                     playerCards[i] = cards[j];
+                    playerCards[i].active = true;
                 }
             }
         }
@@ -470,6 +473,8 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
+        Debug.Log("AvailCards Length is " + availCards.Count);
+
         for (int i = 0; i < playerCards.Length; i++)
         {
             if (playerCards[i].active)
@@ -489,10 +494,10 @@ public class PowerUpManager : MonoBehaviour
 
         for (int i = 0; i < cardGOs.Length; i++)
         {
-            cardDisplays[i].name.text = availCards[i].name;
-            cardDisplays[i].description.text = availCards[i].description;
+            cardDisplays[i].name.text = playerCards[i].name;
+            cardDisplays[i].description.text = playerCards[i].description;
             cardDisplays[i].effect.text = " ";
-            cardDisplays[i].cost.text = "$" + availCards[i].cost.ToString("n0");
+            cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
             for (int j = 0; j < cards[i].effects.Length; j++)
             {
@@ -514,5 +519,46 @@ public class PowerUpManager : MonoBehaviour
         //        cardGOs[i].GetComponent<Button>().interactable = false;
         //    }
         //}
+    }
+
+    public void CardSelectMenu(int card)
+    {
+        for (int i = 0; i < cardGOs.Length; i++)
+        {
+            if (i == card)
+            {
+                cardDisplays[i].name.text = playerCards[card].name;
+                cardDisplays[i].description.text = playerCards[card].description;
+                cardDisplays[i].effect.text = " ";
+                cardDisplays[i].cost.text = "$" + playerCards[card].cost.ToString("n0");
+
+                for (int j = 0; j < cards[i].effects.Length; j++)
+                {
+                    cardDisplays[i].effect.text += "\n" + playerCards[card].effects[j];
+                }
+
+                if (availCards[i].active)
+                {
+                    cardDisplays[i].costPanel.SetActive(false);
+                }
+            }
+            else
+            {
+                cardDisplays[i].name.text = availCards[i].name;
+                cardDisplays[i].description.text = availCards[i].description;
+                cardDisplays[i].effect.text = " ";
+                cardDisplays[i].cost.text = "$" + availCards[i].cost.ToString("n0");
+
+                for (int j = 0; j < cards[i].effects.Length; j++)
+                {
+                    cardDisplays[i].effect.text += "\n" + availCards[i].effects[j];
+                }
+
+                if (availCards[i].active)
+                {
+                    cardDisplays[i].costPanel.SetActive(false);
+                }
+            }
+        }
     }
 }
