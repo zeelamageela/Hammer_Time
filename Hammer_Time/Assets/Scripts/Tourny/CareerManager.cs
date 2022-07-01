@@ -39,7 +39,11 @@ public class CareerManager : MonoBehaviour
     public CareerStats modStats;
 
     public int skillPoints;
+
     public int[] cardIDList;
+    public int[] activeCardIDList;
+    public int[] usedCardIDList;
+
     public bool inProgress;
     public int season;
     public List<int> tournyResults;
@@ -206,7 +210,11 @@ public class CareerManager : MonoBehaviour
             }
 
             cardIDList = myFile.GetArray<int>("Card ID List");
+            activeCardIDList = myFile.GetArray<int>("Active Card ID List");
+            usedCardIDList = myFile.GetArray<int>("Used Card ID List");
             Debug.Log("cardIdList Length - " + cardIDList.Length);
+
+
 
             if (tSel)
             {
@@ -553,7 +561,13 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Total Loss List", lossList);
         myFile.Add("Total Earnings List", earningsList);
 
+        cardIDList = pUpM.idList;
+        activeCardIDList = pUpM.activeIdList;
+        usedCardIDList = pUpM.usedIdList;
         myFile.Add("Card ID List", cardIDList);
+        myFile.Add("Active Card ID List", activeCardIDList);
+        myFile.Add("Used Card ID List", usedCardIDList);
+
         int[] playerIdList = new int[activePlayers.Length];
         string[] playerNameList = new string[activePlayers.Length];
 

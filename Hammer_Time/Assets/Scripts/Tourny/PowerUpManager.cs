@@ -9,10 +9,15 @@ public class PowerUpManager : MonoBehaviour
     public TournySelector tSel;
 
     public int[] idList;
-    public Card[] cards;
-    public Card[] availCards;
+    public int[] activeIdList;
+    public int[] usedIdList;
 
-    public List<Card> playerCards;
+    public Card[] cards;
+    public List<Card> availCards;
+    public Card[] playerCards;
+    public List<Card> usedCards;
+
+    //public List<Card> playerCards;
 
     public CardDisplay[] cardDisplays;
     public GameObject cardParent;
@@ -58,24 +63,6 @@ public class PowerUpManager : MonoBehaviour
 
     bool drag;
     int oppStatBase;
-    //public static PowerUpManager instance;
-
-    //void Awake()
-    //{
-    //    DontDestroyOnLoad(gameObject);
-
-    //    if (instance == null)
-    //    {
-    //        instance = this;
-    //    }
-    //    else
-    //    {
-    //        Destroy(gameObject);
-    //        return;
-    //    }
-
-    //    Application.targetFrameRate = 30;
-    //}
 
     // Start is called before the first frame update
     void Start()
@@ -83,158 +70,160 @@ public class PowerUpManager : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
         cardParent.SetActive(false);
+        SetUp();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (cm.week < 5)
-            oppStatBase = 5;
-        else if (cm.week < 10)
-            oppStatBase = 7;
-        else
-            oppStatBase = 10;
+    //void Update()
+    //{
+    //    if (cm.week < 5)
+    //        oppStatBase = 5;
+    //    else if (cm.week < 10)
+    //        oppStatBase = 7;
+    //    else
+    //        oppStatBase = 10;
 
-        if (cm)
-        {
-            drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
-            guardSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
-            takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
-            enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
-            strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
-            healthSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
+    //    if (cm)
+    //    {
+    //        drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
+    //        guardSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
+    //        takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
+    //        enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
+    //        strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
+    //        healthSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
 
-            oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
-            oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
-            oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
-            oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
-            oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
-            oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
+    //        oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
+    //        oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
+    //        oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
+    //        oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
+    //        oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
+    //        oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
 
-            xp = cm.xp;
-            cash = cm.earnings;
-            xpText.text = xp.ToString();
-            cashText.text = "$" + cash.ToString("n0");
-        }
-    }
+    //        //xp = cm.xp;
+    //        //cash = cm.earnings;
+    //        //xpText.text = xp.ToString();
+    //        //cashText.text = "$" + cash.ToString("n0");
+    //    }
+    //}
 
-    public void SetUp()
-    {
-        if (cm.week > 4)
-        {
-            cardParent.SetActive(true);
-            cm.LoadCareer();
-            idList = cm.cardIDList;
+    
+    //public void SetUp()
+    //{
+    //    if (cm.week > 4)
+    //    {
+    //        cardParent.SetActive(true);
+    //        //cm.LoadCareer();
+    //        idList = cm.cardIDList;
 
-            if (idList[cm.week] == 99)
-            {
-                contButton.SetActive(false);
-                infoPanel.SetActive(true);
-                profileButton.interactable = false;
-                nextWeekButtonText.text = "Next Week>";
-            }
-            else
-            {
-                tSel.SetUp();
-                profileButton.interactable = true;
-                mainMenu.SetActive(true);
-                gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            idList = new int[20];
-            for (int i = 0; i < idList.Length; i++)
-            {
-                idList[i] = 99;
-            }
-            cm.cardIDList = idList;
-            //StartCoroutine(WaitForClick());
-            contButton.SetActive(false);
-            infoPanel.SetActive(true);
+    //        if (idList[cm.week] == 99)
+    //        {
+    //            contButton.SetActive(false);
+    //            infoPanel.SetActive(true);
+    //            profileButton.interactable = false;
+    //            nextWeekButtonText.text = "Next Week>";
+    //        }
+    //        else
+    //        {
+    //            tSel.SetUp();
+    //            profileButton.interactable = true;
+    //            mainMenu.SetActive(true);
+    //            gameObject.SetActive(false);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        idList = new int[20];
 
-            tSel.SetUp();
-            profileButton.interactable = true;
-            mainMenu.SetActive(true);
-            gameObject.SetActive(false);
-        }
+    //        for (int i = 0; i < idList.Length; i++)
+    //        {
+    //            idList[i] = 99;
+    //        }
 
-        cardGOs = new GameObject[numberOfCards];
-        cardDisplays = new CardDisplay[numberOfCards];
-        availCards = new Card[numberOfCards];
-        playerCards = new List<Card>();
-        cards = pUpList.powerUps;
+    //        cm.cardIDList = idList;
+    //        //StartCoroutine(WaitForClick());
+    //        contButton.SetActive(false);
+    //        infoPanel.SetActive(true);
 
-        Debug.Log("Cards Length is " + cards.Length);
+    //        tSel.SetUp();
+    //        profileButton.interactable = true;
+    //        mainMenu.SetActive(true);
+    //        gameObject.SetActive(false);
+    //    }
 
-        for (int i = 0; i < numberOfCards; i++)
-        {
-            //Debug.Log("i is " + i);
-            cardGOs[i] = Instantiate(cardPrefab, cardParent.transform);
+    //    availCards = new Card[numberOfCards];
+    //    playerCards = new List<Card>();
+    //    cards = pUpList.powerUps;
 
-            cardDisplays[i] = cardGOs[i].GetComponent<Card_Select>().cardDisplay;
-            cardGOs[i].GetComponent<Card_Select>().cardIndex = i;
+    //    Debug.Log("Cards Length is " + cards.Length);
 
-            for (int j = 0; j < idList.Length; j++)
-            {
-                if (cards[i].id == idList[j])
-                    cards[i].active = true;
-            }
-        }
+    //    for (int i = 0; i < numberOfCards; i++)
+    //    {
+    //        //Debug.Log("i is " + i);
+    //        cardGOs[i] = Instantiate(cardPrefab, cardParent.transform);
 
-        Shuffle(cards);
+    //        cardDisplays[i] = cardGOs[i].GetComponent<Card_Select>().cardDisplay;
+    //        cardGOs[i].GetComponent<Card_Select>().cardIndex = i;
 
-        for (int i = 0; i < numberOfCards; i++)
-        {
-            Debug.Log("i is " + i + " - cards is " + cards[i].name);
-            bool inList = false;
+    //        for (int j = 0; j < idList.Length; j++)
+    //        {
+    //            if (cards[i].id == idList[j])
+    //                cards[i].active = true;
+    //        }
+    //    }
 
-            foreach (int id in idList)
-            {
-                if (id == cards[i].id)
-                {
-                    inList = true;
-                    break;
-                }
-            }
+    //    Shuffle(cards);
 
-            if (inList)
-            {
-                inList = false;
-                foreach (int id in idList)
-                {
-                    if (id == cards[i + numberOfCards].id)
-                    {
-                        inList = true;
-                        break;
-                    }
-                }
-                if (inList)
-                {
-                    inList = false;
-                    foreach (int id in idList)
-                    {
-                        if (id == cards[i + (numberOfCards * 2)].id)
-                        {
-                            inList = true;
-                            break;
-                        }
-                    }
-                }
-                else
-                    availCards[i] = cards[i + numberOfCards];
-            }
-            else
-                availCards[i] = cards[i];
+    //    for (int i = 0; i < numberOfCards; i++)
+    //    {
+    //        Debug.Log("i is " + i + " - cards is " + cards[i].name);
+    //        bool inList = false;
 
-            cardGOs[i].name = cards[i].name;
+    //        foreach (int id in idList)
+    //        {
+    //            if (id == cards[i].id)
+    //            {
+    //                inList = true;
+    //                break;
+    //            }
+    //        }
 
-        }
-        scrollbar.value = 0f;
+    //        if (inList)
+    //        {
+    //            inList = false;
+    //            foreach (int id in idList)
+    //            {
+    //                if (id == cards[i + numberOfCards].id)
+    //                {
+    //                    inList = true;
+    //                    break;
+    //                }
+    //            }
+    //            if (inList)
+    //            {
+    //                inList = false;
+    //                foreach (int id in idList)
+    //                {
+    //                    if (id == cards[i + (numberOfCards * 2)].id)
+    //                    {
+    //                        inList = true;
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //            else
+    //                availCards[i] = cards[i + numberOfCards];
+    //        }
+    //        else
+    //            availCards[i] = cards[i];
 
-        DisplayCards(numberOfCards);
+    //        cardGOs[i].name = cards[i].name;
 
-    }
+    //    }
+    //    scrollbar.value = 0f;
+
+    //    DisplayCards(numberOfCards);
+
+    //}
 
     public void BuyCard(int card)
     {
@@ -242,72 +231,10 @@ public class PowerUpManager : MonoBehaviour
 
         cm.earnings -= availCards[card].cost;
         availCards[card].active = true;
-        playerCards.Add(availCards[card]);
 
         Debug.Log("Buying " + availCards[card].name + " for $" + availCards[card].cost + ", money left is " + cm.earnings);
 
         AssignPoints(card);
-    }
-
-    public void ViewCards()
-    {
-        tSel = FindObjectOfType<TournySelector>();
-        tSel.PowerUp(true);
-
-        for (int i = 0; i < cardGOs.Length; i++)
-        {
-            Destroy(cardGOs[i]);
-        }
-
-        nextWeekButton.SetActive(false);
-        backButton.SetActive(true);
-        playerCards.Clear();
-        foreach(int id in idList)
-        {
-            if (id != 99)
-            {
-                for (int i = 0; i < cards.Length; i++)
-                {
-                    if (cards[i].id == id)
-                    {
-                        cards[i].active = true;
-                        playerCards.Add(cards[i]);
-                        break;
-                    }    
-                }
-            }
-        }
-        cardGOs = new GameObject[playerCards.Count];
-        cardDisplays = new CardDisplay[playerCards.Count];
-        for (int i = 0; i < playerCards.Count; i++)
-        {
-            Debug.Log("i is " + i);
-            cardGOs[i] = Instantiate(playerCardPrefab, cardParent.transform);
-
-            cardDisplays[i] = cardGOs[i].GetComponent<Card_Select>().cardDisplay;
-            cardGOs[i].GetComponent<Card_Select>().cardIndex = i;
-
-            for (int j = 0; j < idList.Length; j++)
-            {
-                if (cards[i].id == idList[j])
-                    cards[i].active = true;
-            }
-        }
-
-        Debug.Log("Player cards count is " + playerCards.Count);
-        availCards = new Card[playerCards.Count];
-        for (int i = 0; i < playerCards.Count; i++)
-        {
-            Debug.Log("i is " + i + " - cards is " + cards[i].name);
-
-            availCards[i] = playerCards[i];
-            cardGOs[i].name = playerCards[i].name;
-        }
-
-        nextWeekButtonText.text = "<Back";
-        scrollbar.value = 0f;
-
-        DisplayCards(playerCards.Count);
     }
 
     public void Continue(bool back)
@@ -346,7 +273,7 @@ public class PowerUpManager : MonoBehaviour
 
         idList[cm.week] = availCards[card].id;
         Debug.Log("id of played card is " + idList[cm.week]);
-        Debug.Log("availcards length is " + availCards.Length);
+        Debug.Log("availcards length is " + availCards.Count);
         //int idListLength = 0;
         //cm.SaveCareer();
         //for (int i = 0; i < numberOfCards; i++)
@@ -399,11 +326,17 @@ public class PowerUpManager : MonoBehaviour
         cm.oppStats.sweepCohesion -= availCards[card].oppCohesion;
     }
 
+    public void ViewCards()
+    {
+        DisplayCards(cards.Length);
+    }
+
     void DisplayCards(int numOfCards)
     {
         int counter = 0;
         Debug.Log("Num of Cards " + numOfCards);
-        Debug.Log("availCards " + availCards.Length);
+        Debug.Log("availCards " + availCards.Count);
+
         for (int i = 0; i < numOfCards; i++)
         {
             cardDisplays[i].name.text = availCards[i].name;
@@ -456,5 +389,130 @@ public class PowerUpManager : MonoBehaviour
             a[i] = a[rnd];
             a[rnd] = temp;
         }
+    }
+
+    void SetUp()
+    {
+        //cardParent.SetActive(true);
+        cards = new Card[pUpList.powerUps.Length];
+        //cm.LoadCareer();
+        if (cm.cardIDList.Length > 0)
+        {
+            idList = cm.cardIDList;
+        }
+        else
+        {
+            idList = new int[cards.Length];
+            for (int i = 0; i < idList.Length; i++)
+            {
+                idList[i] = i;
+            }
+        }
+
+        if (cm.activeCardIDList.Length > 0)
+        {
+            activeIdList = cm.activeCardIDList;
+        }
+        else
+        {
+            activeIdList = new int[4];
+            for (int i = 0; i < activeIdList.Length; i++)
+            {
+                activeIdList[i] = i;
+            }
+        }
+
+        if (cm.usedCardIDList.Length > 0)
+        {
+            usedIdList = cm.usedCardIDList;
+        }
+
+        for (int i = 0; i < idList.Length; i++)
+        {
+            for (int j = 0; j < pUpList.powerUps.Length; j++)
+            {
+                if (pUpList.powerUps[j].id == idList[i])
+                {
+                    cards[i] = pUpList.powerUps[j];
+                }
+            }
+        }
+
+        for (int i = 0; i < activeIdList.Length; i++)
+        {
+            for (int j = 0; j < cards.Length; j++)
+            {
+                if (cards[j].id == activeIdList[i])
+                {
+                    cards[j].active = true;
+                    playerCards[i] = cards[j];
+                }
+            }
+        }
+
+        for (int i = 0; i < usedIdList.Length; i++)
+        {
+            for (int j = 0; j < cards.Length; j++)
+            {
+                if (cards[j].id == usedIdList[i])
+                {
+                    cards[j].played = true;
+                    usedCards.Add(cards[j]);
+                }
+            }
+        }
+
+        for (int i = 0; i < cards.Length; i++)
+        {
+            if (!cards[i].active && !cards[i].played)
+            {
+                availCards.Add(cards[i]);
+            }
+        }
+
+        for (int i = 0; i < playerCards.Length; i++)
+        {
+            if (playerCards[i].active)
+            {
+                //cardGOs[i].GetComponent<Card_Select>().textColour = cardGOs[i].GetComponent<Card_Select>().colour3;
+                //cardGOs[i].GetComponent<Card_Select>().bgColour = cardGOs[i].GetComponent<Card_Select>().colour2;
+                cardDisplays[i].costPanel.SetActive(false);
+                cardGOs[i].GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                cardGOs[i].GetComponent<Card_Select>().textColour = cardGOs[i].GetComponent<Card_Select>().colour3;
+                cardGOs[i].GetComponent<Card_Select>().bgColour = cardGOs[i].GetComponent<Card_Select>().colour2;
+                cardGOs[i].GetComponent<Button>().interactable = false;
+            }
+        }
+
+        for (int i = 0; i < cardGOs.Length; i++)
+        {
+            cardDisplays[i].name.text = availCards[i].name;
+            cardDisplays[i].description.text = availCards[i].description;
+            cardDisplays[i].effect.text = " ";
+            cardDisplays[i].cost.text = "$" + availCards[i].cost.ToString("n0");
+
+            for (int j = 0; j < cards[i].effects.Length; j++)
+            {
+                cardDisplays[i].effect.text += "\n" + availCards[i].effects[j];
+            }
+
+            if (availCards[i].active)
+            {
+                cardDisplays[i].costPanel.SetActive(false);
+            }
+        }
+
+        //for (int i = 0; i < cardGOs.Length; i++)
+        //{
+        //    if (cm.earnings < availCards[i].cost && !availCards[i].active)
+        //    {
+        //        cardGOs[i].GetComponent<Card_Select>().textColour = cardGOs[i].GetComponent<Card_Select>().colour3;
+        //        cardGOs[i].GetComponent<Card_Select>().bgColour = cardGOs[i].GetComponent<Card_Select>().colour2;
+        //        cardGOs[i].GetComponent<Button>().interactable = false;
+        //    }
+        //}
     }
 }
