@@ -12193,6 +12193,30 @@ PrefabInstance:
       propertyPath: pm
       value: 
       objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513683, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CardClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PowerUpManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Name
       value: Card3
@@ -12542,6 +12566,26 @@ PrefabInstance:
       propertyPath: pm
       value: 
       objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513683, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CardClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PowerUpManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Name
       value: Card1
@@ -17460,6 +17504,30 @@ PrefabInstance:
       propertyPath: pm
       value: 
       objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513683, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CardClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PowerUpManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Name
       value: Card4
@@ -21496,6 +21564,30 @@ PrefabInstance:
       propertyPath: pm
       value: 
       objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513683, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 794133087}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CardClick
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PowerUpManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3895292122862513684, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3895292122862513686, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Name
       value: Card2

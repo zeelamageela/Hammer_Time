@@ -63,10 +63,12 @@ public class PowerUpManager : MonoBehaviour
 
     bool drag;
     int oppStatBase;
+    int clickCount;
 
     // Start is called before the first frame update
     void Start()
     {
+        clickCount = 0;
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
         cardParent.SetActive(false);
@@ -448,7 +450,7 @@ public class PowerUpManager : MonoBehaviour
                 {
                     cards[j].active = true;
                     playerCards[i] = cards[j];
-                    playerCards[i].active = true;
+                    //playerCards[i].active = true;
                 }
             }
         }
@@ -521,20 +523,65 @@ public class PowerUpManager : MonoBehaviour
         //}
     }
 
+    public void CardClick(int card)
+    {
+        clickCount++;
+
+        if (clickCount % 2 == 0)
+        {
+            CardSelectMenu(card);
+        }
+        else
+            CardBuy(card);
+    }
+
     public void CardSelectMenu(int card)
     {
-        for (int i = 0; i < cardGOs.Length; i++)
+        cardDisplays[0].name.text = playerCards[card].name;
+        cardDisplays[0].description.text = playerCards[card].description;
+        cardDisplays[0].effect.text = " ";
+        cardDisplays[0].cost.text = "$" + playerCards[card].cost.ToString("n0");
+
+        for (int j = 0; j < cards[0].effects.Length; j++)
         {
-            if (i == card)
+            cardDisplays[0].effect.text += "\n" + playerCards[card].effects[j];
+        }
+
+        if (availCards[0].active)
+        {
+            cardDisplays[0].costPanel.SetActive(false);
+        }
+
+        for (int i = 1; i < cardGOs.Length; i++)
+        {
+            cardDisplays[i].name.text = availCards[i - 1].name;
+            cardDisplays[i].description.text = availCards[i - 1].description;
+            cardDisplays[i].effect.text = " ";
+            cardDisplays[i].cost.text = "$" + availCards[i - 1].cost.ToString("n0");
+            cardDisplays[i].costPanel.SetActive(true);
+
+            for (int j = 0; j < cards[i].effects.Length; j++)
             {
-                cardDisplays[i].name.text = playerCards[card].name;
-                cardDisplays[i].description.text = playerCards[card].description;
+                cardDisplays[i].effect.text += "\n" + availCards[i - 1].effects[j];
+            }
+
+        }
+    }
+
+    public void CardBuy(int card)
+    {
+        if (card == 0)
+        { 
+            for (int i = 0; i < cardGOs.Length; i++)
+            {
+                cardDisplays[i].name.text = playerCards[i].name;
+                cardDisplays[i].description.text = playerCards[i].description;
                 cardDisplays[i].effect.text = " ";
-                cardDisplays[i].cost.text = "$" + playerCards[card].cost.ToString("n0");
+                cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
                 for (int j = 0; j < cards[i].effects.Length; j++)
                 {
-                    cardDisplays[i].effect.text += "\n" + playerCards[card].effects[j];
+                    cardDisplays[i].effect.text += "\n" + availCards[i].effects[j];
                 }
 
                 if (availCards[i].active)
@@ -542,12 +589,15 @@ public class PowerUpManager : MonoBehaviour
                     cardDisplays[i].costPanel.SetActive(false);
                 }
             }
-            else
+        }
+        else
+        {
+            for (int i = 0; i < cardGOs.Length; i++)
             {
-                cardDisplays[i].name.text = availCards[i].name;
-                cardDisplays[i].description.text = availCards[i].description;
+                cardDisplays[i].name.text = playerCards[i].name;
+                cardDisplays[i].description.text = playerCards[i].description;
                 cardDisplays[i].effect.text = " ";
-                cardDisplays[i].cost.text = "$" + availCards[i].cost.ToString("n0");
+                cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
                 for (int j = 0; j < cards[i].effects.Length; j++)
                 {
