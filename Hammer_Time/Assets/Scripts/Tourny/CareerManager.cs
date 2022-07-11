@@ -693,6 +693,7 @@ public class CareerManager : MonoBehaviour
                 int[] tourniesIDList = new int[tSel.tournies.Length];
                 bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
 
+                Debug.Log("Tournies Complete list is " + tourCompleteList.Length + " long");
                 for (int i = 0; i < prov.Length; i++)
                 {
                     provIDList[i] = prov[i].id;
