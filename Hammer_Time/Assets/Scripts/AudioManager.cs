@@ -5,23 +5,24 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-
-    public Sound[] sounds;
-
     public static AudioManager instance;
 
+    public Sound[] sounds;
     public HammerMixer hm;
 
     bool scrape;
     bool hit;
+
+    // DM: unused rockGO right? can we remove?
     GameObject rockGO;
     Rigidbody2D rb;
+    // DM: unused vel right? can we remove?
     float vel;
+
     // Start is called before the first frame update
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-
 
         if (instance == null)
         {
@@ -43,7 +44,9 @@ public class AudioManager : MonoBehaviour
         }
 
         hm = GetComponent<HammerMixer>();
-        hm.StartBG();
+        // hm.StartBG();
+        // DM: replaced with call to EnableLayers(), is this correct?
+        hm.EnableLayers(new bool[] { true, false, false, false, false });
     }
 
     private void Update()
@@ -51,8 +54,8 @@ public class AudioManager : MonoBehaviour
         if (scrape)
         {
             float vel = rb.velocity.x;
-            //Sound Array.Find(sounds, sound => sound.name == "RockScrape");
-
+            // DM: needed?
+            Sound s = Array.Find(sounds, sound => sound.name == "RockScrape");
         }
     }
 
@@ -95,13 +98,16 @@ public class AudioManager : MonoBehaviour
         s.source.Stop();
     }
 
+    // DM: leaving as is but you can also look at the new function EnableLayersByVolume() in HammerMixer.cs...
     public void Volume(string name, float volume)
     {
         if (name == "Theme")
         {
-            for (int i = 0; i < hm.themeLayers.Length; i++)
+            // need to go through layers and sounds, or just sounds?
+            for (int i = 0; i < hm.numLayers; i++)
             {
-                foreach(Sound s in hm.themeLayers)
+                
+                foreach(Sound s in hm.AudioSamples)
                 {
                     s.source.volume = volume;
                 }
@@ -114,6 +120,8 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    // DM: can we just make Play() function above take an optional parameter that is velocit?
+    // velocity / 4 is a custom volume reduction?
     public void PlayHit(string name, float velocity)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
