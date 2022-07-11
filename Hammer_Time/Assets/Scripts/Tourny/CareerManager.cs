@@ -43,6 +43,7 @@ public class CareerManager : MonoBehaviour
     public int[] cardIDList;
     public int[] activeCardIDList;
     public int[] usedCardIDList;
+    public int[] activeCardLengthList;
 
     public bool inProgress;
     public int season;
@@ -78,6 +79,7 @@ public class CareerManager : MonoBehaviour
     public bool[] strategyDialogue;
     public bool[] storyDialogue;
 
+    public float costPerWeek;
     public bool teamPaid;
     List<Standings_List> allTimeList;
 
@@ -212,6 +214,7 @@ public class CareerManager : MonoBehaviour
             cardIDList = myFile.GetArray<int>("Card ID List");
             activeCardIDList = myFile.GetArray<int>("Active Card ID List");
             usedCardIDList = myFile.GetArray<int>("Used Card ID List");
+            activeCardLengthList = myFile.GetArray<int>("Active Card Length List");
             Debug.Log("cardIdList Length - " + cardIDList.Length);
 
 
@@ -235,7 +238,7 @@ public class CareerManager : MonoBehaviour
                 champ[0].complete = myFile.GetBool("Tour Championship Complete");
                 champ[1].complete = myFile.GetBool("Prov Championship Complete");
 
-                for (int i = 0; i < prov.Length; i++)
+                for (int i = 0; i < provIDList.Length; i++)
                 {
                     prov[i].id = provIDList[i];
 
@@ -247,7 +250,7 @@ public class CareerManager : MonoBehaviour
                     prov[i].complete = provCompleteList[i];
                     Debug.Log("prov tourny " + i + " is " + prov[i].complete);
                 }
-                for (int i = 0; i < tour.Length; i++)
+                for (int i = 0; i < tourIDList.Length; i++)
                 {
                     tour[i].id = tourIDList[i];
 
@@ -258,7 +261,7 @@ public class CareerManager : MonoBehaviour
                     }
                     tour[i].complete = tourCompleteList[i];
                 }
-                for (int i = 0; i < tournies.Length; i++)
+                for (int i = 0; i < tourniesIDList.Length; i++)
                 {
                     tournies[i].id = tourniesIDList[i];
 
@@ -561,12 +564,18 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Total Loss List", lossList);
         myFile.Add("Total Earnings List", earningsList);
 
-        cardIDList = pUpM.idList;
-        activeCardIDList = pUpM.activeIdList;
-        usedCardIDList = pUpM.usedIdList;
-        myFile.Add("Card ID List", cardIDList);
-        myFile.Add("Active Card ID List", activeCardIDList);
-        myFile.Add("Used Card ID List", usedCardIDList);
+        if (pUpM != null)
+        {
+            Debug.Log("puUpM idList is " + pUpM.idList.Length + " long");
+            cardIDList = pUpM.idList;
+            activeCardIDList = pUpM.activeIdList;
+            usedCardIDList = pUpM.usedIdList;
+            activeCardLengthList = pUpM.activeLengthList;
+            myFile.Add("Card ID List", cardIDList);
+            myFile.Add("Active Card ID List", activeCardIDList);
+            myFile.Add("Used Card ID List", usedCardIDList);
+            myFile.Add("Active Card Length List", activeCardLengthList);
+        }
 
         int[] playerIdList = new int[activePlayers.Length];
         string[] playerNameList = new string[activePlayers.Length];

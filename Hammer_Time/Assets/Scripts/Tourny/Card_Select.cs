@@ -38,7 +38,7 @@ public class Card_Select : MonoBehaviour
     {
         pm.cardDisplays[activeCard].name.color = textColour;
         pm.cardDisplays[activeCard].description.color = textColour;
-        pm.cardDisplays[activeCard].effect.color = textColour;
+        //pm.cardDisplays[activeCard].effect.color = textColour;
 
         image.color = bgColour;
     }
@@ -51,45 +51,45 @@ public class Card_Select : MonoBehaviour
         //    cardSize.localScale = cardSize.localScale * (i / 500f);
         //    //Vector2.Lerp(cardSize.localScale, cardSizeMax, i / 1000f);
         //}
-        
 
-        if (cardSize.localScale == initialScale)
-        {
-            cardSize.localScale = maxScale; 
-            textColour = colour3;
-            bgColour = colour1;
-            //hlg.spacing = 450;
-            for (int i = 0; i < pm.cardGOs.Length; i++)
-            {
-                if (i != cardIndex)
-                {
-                    pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
-                    pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour2;
-                    pm.cardGOs[i].GetComponent<Card_Select>().bgColour = colour2;
-                    pm.cardGOs[i].GetComponent<Button>().interactable = false;
-                }
-            }
-            buttons.SetActive(true);
-            pm.PreviewPoints(cardIndex);
-        }
-        else
-        {
-            cardSize.localScale = initialScale;
-            //hlg.spacing = 0;
-            for (int i = 0; i < pm.cardGOs.Length; i++)
-            {
-                pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
-                pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour3;
-                pm.cardGOs[i].GetComponent<Card_Select>().bgColour = Color.white;
-                pm.cardGOs[i].GetComponent<Button>().interactable = true;
-            }
-            buttons.SetActive(false);
-            pm.UnPreviewPoints(cardIndex);
-        }
 
-        
+        //if (cardSize.localScale == initialScale)
+        //{
+        //    cardSize.localScale = maxScale; 
+        //    textColour = colour3;
+        //    bgColour = colour1;
+        //    //hlg.spacing = 450;
+        //    for (int i = 0; i < pm.cardGOs.Length; i++)
+        //    {
+        //        if (i != cardIndex)
+        //        {
+        //            pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+        //            pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour2;
+        //            pm.cardGOs[i].GetComponent<Card_Select>().bgColour = colour2;
+        //            pm.cardGOs[i].GetComponent<Button>().interactable = false;
+        //        }
+        //    }
+        //    buttons.SetActive(true);
+        //    pm.PreviewPoints(cardIndex);
+        //}
+        //else
+        //{
+        //    cardSize.localScale = initialScale;
+        //    //hlg.spacing = 0;
+        //    for (int i = 0; i < pm.cardGOs.Length; i++)
+        //    {
+        //        pm.cardGOs[i].GetComponent<Card_Select>().cardSize.localScale = initialScale;
+        //        pm.cardGOs[i].GetComponent<Card_Select>().textColour = colour3;
+        //        pm.cardGOs[i].GetComponent<Card_Select>().bgColour = Color.white;
+        //        pm.cardGOs[i].GetComponent<Button>().interactable = true;
+        //    }
+        //    buttons.SetActive(false);
+        //    pm.UnPreviewPoints(cardIndex);
+        //}
+
         //cardSize.sizeDelta = new Vector2(cardSize.sizeDelta.x * 2f, cardSize.sizeDelta.y * 2f);
 
+        buttons.SetActive(true);
         Debug.Log("Size is " + cardSize.localScale);
     }
 

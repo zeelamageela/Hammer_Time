@@ -8,8 +8,7 @@ public class CardDisplay
 {
     public Text name;
     public Text description;
-    public Text effect;
-    public Text effectNumbers;
+    public Slider[] effectSliders;
     public GameObject costPanel;
     public Text cost;
     public Image image;

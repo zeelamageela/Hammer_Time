@@ -46,8 +46,11 @@ public class TeamMenu : MonoBehaviour
 
     public float xp;
     public float cash;
+    //public float costPerWeek;
     public Text xpText;
     public Text cashText;
+    public Text costPerWeekText;
+    public Text recordText;
 
     int oppStatBase;
 
@@ -59,6 +62,7 @@ public class TeamMenu : MonoBehaviour
     void Start()
     {
         cm = FindObjectOfType<CareerManager>();
+        pm = FindObjectOfType<PowerUpManager>();
         //Shuffle(playerPool);
         callCount = false;
     }
@@ -93,6 +97,13 @@ public class TeamMenu : MonoBehaviour
             cash = cm.earnings;
             xpText.text = xp.ToString();
             cashText.text = "$" + cash.ToString("n0");
+            recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
+
+            if (pm)
+            {
+                cm.costPerWeek = cm.activePlayers[0].cost + cm.activePlayers[1].cost + cm.activePlayers[2].cost + pm.costPerWeek;
+                costPerWeekText.text = "$" + cm.costPerWeek.ToString("n0");
+            }
         }
     }
 
@@ -313,7 +324,8 @@ public class TeamMenu : MonoBehaviour
     public void ChangeTeamMember(int freeAgent)
     {
         int playerToReplace = 99;
-        
+
+        UnPreviewPoints();
         for (int i = 0; i < activePlayers.Length; i++)
         {
             if (activePlayers[i].name == replaceMemberDisplay.charName.text)
@@ -394,19 +406,40 @@ public class TeamMenu : MonoBehaviour
     public void PreviewPoints()
     {
         cm = FindObjectOfType<CareerManager>();
+        pm = FindObjectOfType<PowerUpManager>();
 
-        cm.modStats.drawAccuracy = activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
-        cm.modStats.guardAccuracy = activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
-        cm.modStats.takeOutAccuracy = activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
-        cm.modStats.sweepEndurance = activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
-        cm.modStats.sweepStrength = activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
-        cm.modStats.sweepCohesion = activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
-        cm.oppStats.drawAccuracy = activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
-        cm.oppStats.guardAccuracy = activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
-        cm.oppStats.takeOutAccuracy = activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
-        cm.oppStats.sweepEndurance = activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
-        cm.oppStats.sweepStrength = activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
-        cm.oppStats.sweepCohesion = activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
+        cm.modStats.drawAccuracy += activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
+        cm.modStats.guardAccuracy += activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
+        cm.modStats.takeOutAccuracy += activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
+        cm.modStats.sweepEndurance += activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
+        cm.modStats.sweepStrength += activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
+        cm.modStats.sweepCohesion += activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
+        cm.oppStats.drawAccuracy += activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
+        cm.oppStats.guardAccuracy += activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
+        cm.oppStats.takeOutAccuracy += activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
+        cm.oppStats.sweepEndurance += activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
+        cm.oppStats.sweepStrength += activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
+        cm.oppStats.sweepCohesion += activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
+
+    }
+
+    public void UnPreviewPoints()
+    {
+        cm = FindObjectOfType<CareerManager>();
+        pm = FindObjectOfType<PowerUpManager>();
+
+        cm.modStats.drawAccuracy -= activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
+        cm.modStats.guardAccuracy -= activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
+        cm.modStats.takeOutAccuracy -= activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
+        cm.modStats.sweepEndurance -= activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
+        cm.modStats.sweepStrength -= activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
+        cm.modStats.sweepCohesion -= activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
+        cm.oppStats.drawAccuracy -= activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
+        cm.oppStats.guardAccuracy -= activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
+        cm.oppStats.takeOutAccuracy -= activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
+        cm.oppStats.sweepEndurance -= activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
+        cm.oppStats.sweepStrength -= activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
+        cm.oppStats.sweepCohesion -= activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
 
     }
 }

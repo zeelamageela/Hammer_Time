@@ -89,6 +89,7 @@ public class TournySelector : MonoBehaviour
         SetUp();
         teamPaid = false;
     }
+
     public void SetUp()
     {
         cm = FindObjectOfType<CareerManager>();
@@ -96,8 +97,6 @@ public class TournySelector : MonoBehaviour
         PowerUpManager pm = FindObjectOfType<PowerUpManager>();
 
         xpm.SetSkillPoints();
-        provStandings.PrintRows();
-        tourStandings.PrintRows();
 
         if (cm.week == 0)
             StartCoroutine(NewSeason());
@@ -200,6 +199,8 @@ public class TournySelector : MonoBehaviour
         }
 
 
+        provStandings.PrintRows();
+        tourStandings.PrintRows();
         Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
     }
@@ -1195,18 +1196,21 @@ public class TournySelector : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        for (int i = 0; i < cm.teams.Length; i++)
+        if (cm.provRankList.Count > 0)
         {
-            if (cm.playerTeamIndex == cm.provRankList[i].team.id)
+            for (int i = 0; i < cm.teams.Length; i++)
             {
-                if (cm.teams[i].rank == 1)
-                    profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
-                else if (cm.teams[i].rank == 2)
-                    profPanel.provRank.text = cm.teams[i].rank.ToString() + "nd";
-                else if (cm.teams[i].rank == 3)
-                    profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
-                else if (cm.teams[i].rank > 3)
-                    profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
+                if (cm.playerTeamIndex == cm.provRankList[i].team.id)
+                {
+                    if (cm.teams[i].rank == 1)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
+                    else if (cm.teams[i].rank == 2)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "nd";
+                    else if (cm.teams[i].rank == 3)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
+                    else if (cm.teams[i].rank > 3)
+                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
+                }
             }
         }
 
@@ -1442,16 +1446,6 @@ public class TournySelector : MonoBehaviour
                 menuButtons[i].interactable = true;
                 menuButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
-        }
-
-        if (week == 1)
-        {
-            menuButtons[3].gameObject.SetActive(false);
-            menuButtons[4].gameObject.SetActive(false);
-        }
-        else if (week == 2 | week == 3)
-        {
-            menuButtons[3].gameObject.SetActive(false);
         }
 
         switch (menuSelector)
