@@ -1129,7 +1129,7 @@ public class TournySelector : MonoBehaviour
         XPManager xpm = FindObjectOfType<XPManager>();
 
         gsp.LoadFromTournySelector();
-        cm.PlayTourny();
+        //cm.PlayTourny();
         if (currentTourny.tour)
         {
             for (int i = 0; i < tour.Length; i++)
