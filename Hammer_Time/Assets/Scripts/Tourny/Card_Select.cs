@@ -148,7 +148,7 @@ public class Card_Select : MonoBehaviour
 
     public void BuyButton()
     {
-        pm.BuyCard(cardIndex);
+        //pm.BuyCard(cardIndex);
 
         for (int i = 0; i < pm.cardGOs.Length; i++)
         {

@@ -156,7 +156,7 @@ public class Rock_Colliders : MonoBehaviour
 
             //Debug.Log("Hit!");
             //am.Play("Hit");
-            rockSounds[0].volume = collision.relativeVelocity.magnitude;
+            rockSounds[0].volume = collision.relativeVelocity.magnitude * am.maxVol;
             rockSounds[0].enabled = true;
             HapticController.Play(hitHap);
             HapticController.clipLevel = collision.relativeVelocity.magnitude;
@@ -178,22 +178,14 @@ public class Rock_Colliders : MonoBehaviour
                 //if the rock is red
                 if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
-                    //if the ai team is not red
-                    if (!gm.aiTeamRed)
-                    {
-                        sm.SweepHit(false);
-                    }
-                    else sm.SweepHit(true);
+                    //is it aiTeam
+                    sm.SweepHit(gm.aiTeamRed);
                 }
                 //if the rock is yellow
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    //if the ai team is not yellow
-                    if (!gm.aiTeamYellow)
-                    {
-                        sm.SweepHit(false);
-                    }
-                    else sm.SweepHit(true);
+                    //is the aiTeam yellow
+                    sm.SweepHit(gm.aiTeamYellow);
                 }
             }
             else if (!gm.redHammer)
@@ -201,22 +193,12 @@ public class Rock_Colliders : MonoBehaviour
                 //if the rock is yellow
                 if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    //if the ai team is not yellow
-                    if (!gm.aiTeamRed)
-                    {
-                        sm.SweepHit(false);
-                    }
-                    else sm.SweepHit(true);
+                    sm.SweepHit(gm.aiTeamYellow);
                 }
                 //if the rock is red
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
-                    //if the ai team is not red
-                    if (!gm.aiTeamYellow)
-                    {
-                        sm.SweepHit(false);
-                    }
-                    else sm.SweepHit(true);
+                    sm.SweepHit(gm.aiTeamRed);
                 }
             }
         }

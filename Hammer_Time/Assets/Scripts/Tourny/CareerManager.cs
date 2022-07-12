@@ -24,6 +24,7 @@ public class CareerManager : MonoBehaviour
     public Color teamColour;
     public int playerTeamIndex;
     public float earnings;
+    public float cash;
     public Vector2 record;
     public bool provQual;
     public bool tourQual;
@@ -137,7 +138,7 @@ public class CareerManager : MonoBehaviour
 
         earnings = gsp.earnings;
         record = gsp.record;
-
+        SaveCareer();
         Debug.Log("Earnings - CM from GSP - " + earnings);
     }
 
@@ -270,7 +271,9 @@ public class CareerManager : MonoBehaviour
                         if (tournies[i].id == tSel.tournies[j].id)
                             tournies[i] = tSel.tournies[j];
                     }
+
                     tournies[i].complete = tourniesCompleteList[i];
+                    Debug.Log("Tourny " + tournies[i].id + " complete is " + tournies[i].complete);
                 }
 
                 //for (int i = 0; i < activeTournies.Length; i++)
@@ -684,52 +687,53 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Current Tourny BG", currentTourny.BG);
             myFile.Add("Current Tourny Crowd Density", currentTourny.crowdDensity);
 
-            if (tSel)
-            {
-                int[] provIDList = new int[tSel.provQual.Length];
-                bool[] provCompleteList = new bool[tSel.provQual.Length];
-                int[] tourIDList = new int[tSel.tour.Length];
-                bool[] tourCompleteList = new bool[tSel.tour.Length];
-                int[] tourniesIDList = new int[tSel.tournies.Length];
-                bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
-
-                Debug.Log("Tournies Complete list is " + tourCompleteList.Length + " long");
-                for (int i = 0; i < prov.Length; i++)
-                {
-                    provIDList[i] = prov[i].id;
-                    provCompleteList[i] = prov[i].complete;
-                    Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
-                }
-
-                for (int i = 0; i < tour.Length; i++)
-                {
-                    tourIDList[i] = tour[i].id;
-                    tourCompleteList[i] = tour[i].complete;
-                    Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
-                }
-
-                for (int i = 0; i < tournies.Length; i++)
-                {
-                    tourniesIDList[i] = tournies[i].id;
-                    tourniesCompleteList[i] = tournies[i].complete;
-                    Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
-                }
-
-                myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
-                myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
-                myFile.Add("Prov ID List", provIDList);
-                myFile.Add("Prov Complete List", provCompleteList);
-                myFile.Add("Tour ID List", tourIDList);
-                myFile.Add("Tour Complete List", tourCompleteList);
-                myFile.Add("Tournies ID List", tourniesIDList);
-                myFile.Add("Tournies Complete List", tourniesCompleteList);
-                myFile.Add("Number Of Teams", currentTourny.teams);
-
-                Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
-            }
 
         }
 
+
+        if (tSel)
+        {
+            int[] provIDList = new int[tSel.provQual.Length];
+            bool[] provCompleteList = new bool[tSel.provQual.Length];
+            int[] tourIDList = new int[tSel.tour.Length];
+            bool[] tourCompleteList = new bool[tSel.tour.Length];
+            int[] tourniesIDList = new int[tSel.tournies.Length];
+            bool[] tourniesCompleteList = new bool[tSel.tournies.Length];
+
+            Debug.Log("Tournies Complete list is " + tourCompleteList.Length + " long");
+            for (int i = 0; i < prov.Length; i++)
+            {
+                provIDList[i] = prov[i].id;
+                provCompleteList[i] = prov[i].complete;
+                Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
+            }
+
+            for (int i = 0; i < tour.Length; i++)
+            {
+                tourIDList[i] = tour[i].id;
+                tourCompleteList[i] = tour[i].complete;
+                Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
+            }
+
+            for (int i = 0; i < tournies.Length; i++)
+            {
+                tourniesIDList[i] = tournies[i].id;
+                tourniesCompleteList[i] = tournies[i].complete;
+                Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
+            }
+
+            myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
+            myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
+            myFile.Add("Prov ID List", provIDList);
+            myFile.Add("Prov Complete List", provCompleteList);
+            myFile.Add("Tour ID List", tourIDList);
+            myFile.Add("Tour Complete List", tourCompleteList);
+            myFile.Add("Tournies ID List", tourniesIDList);
+            myFile.Add("Tournies Complete List", tourniesCompleteList);
+            myFile.Add("Number Of Teams", currentTourny.teams);
+
+            Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
+        }
 
         if (tm)
         {
@@ -1068,7 +1072,7 @@ public class CareerManager : MonoBehaviour
             teamRecords[i].w = teams[i].id;
         }
         
-        earnings = gsp.earnings;
+        //earnings = gsp.earnings;
         SaveCareer();
     }
 

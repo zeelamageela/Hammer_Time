@@ -9,6 +9,7 @@ public class CareerSettings : MonoBehaviour
 {
     CareerManager cm;
     GameSettingsPersist gsp;
+    AudioManager am;
 
     public string playerName;
     public string teamName;
@@ -77,7 +78,9 @@ public class CareerSettings : MonoBehaviour
         alphaKey[1].time = 1.0f;
 
         gradient.SetKeys(colorKey, alphaKey);
-
+        am = FindObjectOfType<AudioManager>();
+        if (am != null)
+            am.PlayBG(3);
     }
     // Update is called once per frame
     void Update()

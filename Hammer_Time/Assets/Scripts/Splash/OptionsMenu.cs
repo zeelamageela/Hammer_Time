@@ -11,12 +11,12 @@ public class OptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        //am.Play("Theme");
+        am.PlayBG(4);
     }
     // Update is called once per frame
     void Update()
     {
         volume = volumeSlider.value;
-        am.Volume("Theme", volume);
+        am.Volume(volume);
     }
 }

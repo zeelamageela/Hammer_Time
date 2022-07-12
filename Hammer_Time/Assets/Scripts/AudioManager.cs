@@ -10,11 +10,11 @@ public class AudioManager : MonoBehaviour
     public Sound[] sounds;
     public HammerMixer hm;
 
+    public float maxVol = 1f;
     bool scrape;
-    bool hit;
 
     // DM: unused rockGO right? can we remove?
-    GameObject rockGO;
+    
     Rigidbody2D rb;
     // DM: unused vel right? can we remove?
     float vel;
@@ -43,53 +43,63 @@ public class AudioManager : MonoBehaviour
             s.source.loop = s.loop;
         }
 
-        hm = GetComponent<HammerMixer>();
-        // hm.StartBG();
+        foreach(Sound s in hm.AudioSamples)
+        {
+            s.source = gameObject.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+            s.source.loop = s.loop;
+        }
+
+        //PlayBG(4);
         // DM: replaced with call to EnableLayers(), is this correct?
-        hm.EnableLayers(new bool[] { true, false, false, false, false });
+        //hm.EnableLayers(new bool[] { true, false, false, true, false, false });
     }
 
     private void Update()
     {
-        if (scrape)
-        {
-            float vel = rb.velocity.x;
-            // DM: needed?
-            Sound s = Array.Find(sounds, sound => sound.name == "RockScrape");
-        }
+        hm.maxVol = maxVol;
     }
 
     public void PlayBG(int scenario)
     {
         hm = GetComponent<HammerMixer>();
+
+        Debug.Log("BG Scenario is " + scenario);
         switch(scenario)
         {
             case 0:
-                hm.EnableLayers(new bool[] { true, false, true, true, false, true });
+                hm.EnableLayers(new bool[] { true, true, false, false, true, false });
                 break;
             case 1:
                 hm.EnableLayers(new bool[] { true, true, false, false, false, true });
                 break;
             case 2:
-                hm.EnableLayers(new bool[] { true, false, false, false, true, false });
+                hm.EnableLayers(new bool[] { true, false, true, true, false, false });
                 break;
             case 3:
-                hm.EnableLayers(new bool[] { false, false, false, false, true, true });
+                hm.EnableLayers(new bool[] { false, false, true, false, true, true });
                 break;
-
+            case 4:
+                hm.EnableLayers(new bool[] { true, false, true, true, false, false });
+                break;
             default:
-                hm.EnableLayers(new bool[] { true, false, false, false, false, false });
+                hm.EnableLayers(new bool[] { false, false, false, false, false, false });
                 break;
 
         }
     }
 
-    public void Play(string name)
+
+    public void Play(string name, float velocity = 4f)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
 
+        s.source.volume = maxVol;
+        s.source.volume = velocity / 4f;
         s.source.Play();
-    }
+   }
 
     public void Stop(string name)
     {
@@ -99,28 +109,22 @@ public class AudioManager : MonoBehaviour
     }
 
     // DM: leaving as is but you can also look at the new function EnableLayersByVolume() in HammerMixer.cs...
-    public void Volume(string name, float volume)
+    public void Volume(float volume)
     {
-        if (name == "Theme")
+        foreach (Sound s in sounds)
         {
-            // need to go through layers and sounds, or just sounds?
-            for (int i = 0; i < hm.numLayers; i++)
-            {
-                
-                foreach(Sound s in hm.AudioSamples)
-                {
-                    s.source.volume = volume;
-                }
-            }
+            float volRatio = s.volume / 1f;
+            s.source.volume *= volume * volRatio;
         }
-        else
+
+        foreach (Sound s in hm.AudioSamples)
         {
-            Sound s = Array.Find(sounds, sound => sound.name == name);
-            s.source.volume = volume;
+            s.source.volume *= volume;
         }
     }
 
     // DM: can we just make Play() function above take an optional parameter that is velocit?
+    // Z: ya of course!  I'll do that
     // velocity / 4 is a custom volume reduction?
     public void PlayHit(string name, float velocity)
     {

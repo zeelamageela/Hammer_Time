@@ -12,17 +12,21 @@ public class PauseMenu : MonoBehaviour
     AudioManager am;
 
     public Slider volumeSlider;
+    public float volume;
     // Update is called once per frame
     private void Start()
     {
         am = FindObjectOfType<AudioManager>();
+        am.PlayBG(3);
     }
     void Update()
     {
         if (GameIsPaused)
         {
-            //am.Volume("Ambience", volumeSlider.value * 0.5f);
-            am.Volume("Theme", volumeSlider.value);
+            volume = volumeSlider.value;
+            am.Volume(volume);
+            
+            am.maxVol = volume;
 
         }
 

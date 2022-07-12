@@ -520,6 +520,8 @@ public class SweeperManager : MonoBehaviour
 
     public void CallOut(string call)
     {
+        am = FindObjectOfType<AudioManager>();
+
         //Debug.Log("Sweeping " + call);
         if (Random.Range(0f, 1f) < 0.5f)
             skipSounds = audioHouse.transform.Find("Audio" + call).GetComponents<AudioSource>();
@@ -529,7 +531,9 @@ public class SweeperManager : MonoBehaviour
         for (int i = 0; i < skipSounds.Length; i++)
             skipSounds[i].enabled = false;
 
-        skipSounds[Random.Range(0, skipSounds.Length)].enabled = true;
+        int rndCall = Random.Range(0, skipSounds.Length);
+        skipSounds[rndCall].volume = am.maxVol;
+        skipSounds[rndCall].enabled = true;
     }
 
 

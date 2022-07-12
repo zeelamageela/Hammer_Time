@@ -542,9 +542,10 @@ public class TournyManager : MonoBehaviour
 		CareerManager cm = FindObjectOfType<CareerManager>();
 
 		gsp.teams = teams;
-		cm.earnings = gsp.earnings;
-		cm.record = gsp.record;
-		gsp.draw = 0;
+        cm.earnings = gsp.earnings;
+		cm.cash = gsp.earnings;
+        cm.record = gsp.record;
+        gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.inProgress = false;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);

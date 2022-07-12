@@ -59,13 +59,14 @@ public class Rock_Force : MonoBehaviour
 
         Vector2 vel = new Vector2(velX * scaleFactor, velY);
 
-        float audVel = body.velocity.y / 4f;
+        float audVel = am.maxVol * (body.velocity.y / 4f) ;
         rockSounds[1].volume = audVel;
 
         HapticController.Load(slideHap);
         HapticController.Loop(true);
         HapticController.Play();
         HapticController.clipLevel = audVel * 4f;
+
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);

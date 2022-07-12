@@ -10,7 +10,8 @@ public class Button_Colour : MonoBehaviour
     public Selectable AnySelectable;
     private PropertyInfo _selectableStateInfo = null;
 
-    
+    AudioManager am;
+
     Button button;
 
     public Color colour1;
@@ -29,6 +30,7 @@ public class Button_Colour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        am = FindObjectOfType<AudioManager>();
         button = GetComponent<Button>();
         button.image.color = colour1;
 
@@ -52,6 +54,8 @@ public class Button_Colour : MonoBehaviour
             case 1:
                 //Highlighted Selection State
                 button.image.color = colour1;
+                main.rectTransform.anchoredPosition = mainPos1;
+                main.gameObject.GetComponent<Shadow>().effectDistance = shadowPos;
                 break;
             case 2:
                 //Pressed Selection State
@@ -60,14 +64,19 @@ public class Button_Colour : MonoBehaviour
                 main.color = colour2;
                 main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
                 HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
+                am.Play("Button");
                 break;
             case 3:
                 //Selected Selection State
                 button.image.color = colour2;
+                main.rectTransform.anchoredPosition = mainPos1;
+                main.gameObject.GetComponent<Shadow>().effectDistance = shadowPos;
                 break;
             case 4:
                 //Disabled Selection State
                 button.image.color = colour3;
+                main.rectTransform.anchoredPosition = mainPos1;
+                main.gameObject.GetComponent<Shadow>().effectDistance = shadowPos;
                 break;
         }
     }
@@ -82,4 +91,6 @@ public class Button_Colour : MonoBehaviour
             main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
         }
     }
+
+    
 }

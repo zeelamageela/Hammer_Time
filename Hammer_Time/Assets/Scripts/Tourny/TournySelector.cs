@@ -104,7 +104,7 @@ public class TournySelector : MonoBehaviour
         {
             cm.LoadCareer();
 
-            if (cm.earnings < 0)
+            if (cm.cash < 0)
             {
                 menuButtons[3].gameObject.SetActive(false);
                 menuButtons[4].gameObject.SetActive(false);
@@ -117,12 +117,6 @@ public class TournySelector : MonoBehaviour
                 coachGreen.TriggerDialogue("Story", 0);
                 quitButton.SetActive(true);
                 cm.EndCareer();
-            }
-
-            if (cm.week == 1)
-            {
-                menuButtons[3].gameObject.SetActive(false);
-                menuButtons[4].gameObject.SetActive(false);
             }
 
             else if (cm.week == 2)
@@ -144,7 +138,6 @@ public class TournySelector : MonoBehaviour
                 }
                 cm.introDialogue[1] = true;
                 cm.introDialogue[2] = true;
-                menuButtons[3].gameObject.SetActive(false);
             }
 
             else if (cm.week == 3)
@@ -1187,7 +1180,7 @@ public class TournySelector : MonoBehaviour
         currentTourny = activeTournies[button];
         Debug.Log("Button is " + button);
         cm.SetupTourny();
-        playButton.SetActive(true);
+        //playButton.SetActive(true);
 
         PlayTourny();
     }

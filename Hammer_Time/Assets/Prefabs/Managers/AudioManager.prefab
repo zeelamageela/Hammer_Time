@@ -64,6 +64,7 @@ MonoBehaviour:
     loop: 1
     source: {fileID: 0}
   hm: {fileID: 1221968833}
+  maxVol: 1
 --- !u!114 &1221968833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,46 +77,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1616f2719cfdc9428293cc42ed3bd9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PercussionLayer: {fileID: 0}
-  MelodyLayer1: {fileID: 0}
-  MelodyLayer2: {fileID: 0}
-  TextureLayer1: {fileID: 0}
-  TextureLayer2: {fileID: 0}
-  musicFade: 100
-  themeLayers:
-  - name: Perc1
-    clip: {fileID: 8300000, guid: 2ca5e7b311478461a8e6b17874dfb071, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Perc2
-    clip: {fileID: 8300000, guid: b29e7e0478bdf45d7952ed436766733d, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Flute1
-    clip: {fileID: 8300000, guid: f35fbdfa94ba04ae69e977d4938d4357, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Flute2
-    clip: {fileID: 8300000, guid: a9e2ba24770664dbba34839dd28a8154, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Pulse1
-    clip: {fileID: 8300000, guid: d8cf8ad1edad84c2abf5a5df271dc090, type: 3}
-    volume: 1
-    pitch: 1
-    loop: 1
-    source: {fileID: 0}
-  - name: Bass1
+  numLayers: 5
+  AudioSamples:
+  - name: Theme Bass 1
     clip: {fileID: 8300000, guid: 8f6d47b855a144bf18060f1651181c10, type: 3}
     volume: 1
     pitch: 1
     loop: 1
     source: {fileID: 0}
+  - name: Theme Perc 1
+    clip: {fileID: 8300000, guid: 2ca5e7b311478461a8e6b17874dfb071, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Theme Perc 2
+    clip: {fileID: 8300000, guid: b29e7e0478bdf45d7952ed436766733d, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Theme Pulse 1
+    clip: {fileID: 8300000, guid: d8cf8ad1edad84c2abf5a5df271dc090, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Theme Flute 1
+    clip: {fileID: 8300000, guid: f35fbdfa94ba04ae69e977d4938d4357, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Theme Flute 2
+    clip: {fileID: 8300000, guid: a9e2ba24770664dbba34839dd28a8154, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  maxVol: 0

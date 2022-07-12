@@ -71,7 +71,7 @@ public class TournySettings : MonoBehaviour
 
     IEnumerator LoadCareer()
     {
-        earnings = cm.earnings;
+        gsp.earnings = cm.earnings;
         
         teams = cm.currentTournyTeams.Length;
         entryFee = cm.currentTourny.entryFee;
@@ -85,6 +85,8 @@ public class TournySettings : MonoBehaviour
     {
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
+
+        gsp.earnings = cm.earnings;
 
         if (myFile.Load())
         {
@@ -114,7 +116,7 @@ public class TournySettings : MonoBehaviour
         {
             gsp.teams[i].earnings -= entryFee;
         }
-        Debug.Log("Career Earnings after Fee - $" + earnings);
+        //Debug.Log("Career Earnings after Fee - $" + earnings);
         gsp.LoadTournySettings();
 
         //myFile = new EasyFileSave("my_player_data");

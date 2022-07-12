@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
             allTimeNames.text = "No High Score Set";
         }
 
-        am.PlayBG(3);
+        am.PlayBG(0);
         //if (myFile.Load())
         //    contButton.SetActive(true);
         //else

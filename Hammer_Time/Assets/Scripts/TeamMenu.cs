@@ -99,7 +99,7 @@ public class TeamMenu : MonoBehaviour
             cashText.text = "$" + cash.ToString("n0");
             recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
 
-            if (pm)
+            if (cm.activePlayers.Length > 0 && pm)
             {
                 cm.costPerWeek = cm.activePlayers[0].cost + cm.activePlayers[1].cost + cm.activePlayers[2].cost + pm.costPerWeek;
                 costPerWeekText.text = "$" + cm.costPerWeek.ToString("n0");
@@ -276,6 +276,7 @@ public class TeamMenu : MonoBehaviour
             replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Third";
 
         float moneyToSpend = cm.earnings;
+
         for (int i = 0; i < activePlayers.Length; i++)
         {
             if (i != teamMember)
@@ -360,14 +361,14 @@ public class TeamMenu : MonoBehaviour
 
         Debug.Log("Team Cost is " + teamCost);
 
-        cm.earnings -= teamCost;
+        cm.earnings -= cm.costPerWeek;
         cm.teamPaid = true;
         //teamMenu.SetActive(false);
         //agentMenu.SetActive(false);
         ////pm.cardParent.SetActive(true);
         //setTeamButton.SetActive(false);
         //pm.nextWeekButton.SetActive(true);
-        cm.SaveCareer();
+        //cm.SaveCareer();
         
         for (int i = 0; i < teamDisplay.Length; i++)
         {

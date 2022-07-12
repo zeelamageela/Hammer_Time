@@ -26,22 +26,14 @@ public class PowerUpManager : MonoBehaviour
     //public List<Card> playerCards;
 
     public CardDisplay[] cardDisplays;
-    public GameObject cardParent;
-    public GameObject cardPrefab;
-    public GameObject playerCardPrefab;
     public GameObject[] cardGOs;
 
-    public Card[] inPlayCards;
+    public GameObject replacePanel;
+    public GameObject viewPanel;
 
-    public Scrollbar scrollbar;
+    public Text replaceHeading;
+
     public PowerUpList pUpList;
-    public GameObject mainMenu;
-
-    public GameObject infoPanel;
-    public Text nextWeekButtonText;
-    public GameObject nextWeekButton;
-    public GameObject contButton;
-    public GameObject backButton;
 
     public float xp;
     public float cash;
@@ -84,7 +76,6 @@ public class PowerUpManager : MonoBehaviour
         clickCount = 0;
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
-        cardParent.SetActive(false);
         SetUp();
     }
 
@@ -93,17 +84,17 @@ public class PowerUpManager : MonoBehaviour
         
     }
 
-    public void BuyCard(int card)
-    {
-        cm = FindObjectOfType<CareerManager>();
+    //public void BuyCard(int card)
+    //{
+    //    cm = FindObjectOfType<CareerManager>();
 
-        cm.earnings -= availCards[card].cost;
-        availCards[card].active = true;
+    //    cm.earnings -= availCards[card].cost;
+    //    availCards[card].active = true;
 
-        Debug.Log("Buying " + availCards[card].name + " for $" + availCards[card].cost + ", money left is " + cm.earnings);
+    //    Debug.Log("Buying " + availCards[card].name + " for $" + availCards[card].cost + ", money left is " + cm.earnings);
 
-        AssignPoints(card);
-    }
+    //    AssignPoints(card);
+    //}
 
     public void Continue(bool back)
     {
@@ -114,7 +105,6 @@ public class PowerUpManager : MonoBehaviour
 
         }
         profileButton.interactable = true;
-        mainMenu.SetActive(true);
         gameObject.SetActive(false);
 
     }
@@ -126,7 +116,6 @@ public class PowerUpManager : MonoBehaviour
         //yield return new WaitForSeconds(3f);
         tSel.SetUp();
         profileButton.interactable = true;
-        mainMenu.SetActive(true);
         gameObject.SetActive(false);
         yield return null;
         Debug.Log("Clickeddd");
@@ -284,7 +273,7 @@ public class PowerUpManager : MonoBehaviour
     void SetUp()
     {
         cards = new Card[pUpList.powerUps.Length];
-
+        availCards = new List<Card>();
         if (cm.cardIDList.Length > 0)
         {
             idList = cm.cardIDList;
@@ -297,6 +286,7 @@ public class PowerUpManager : MonoBehaviour
             for (int i = 0; i < idList.Length; i++)
             {
                 idList[i] = pUpList.powerUps[i].id;
+                cards[i] = pUpList.powerUps[i];
             }
         }
 
@@ -313,7 +303,7 @@ public class PowerUpManager : MonoBehaviour
             for (int i = 0; i < activeIdList.Length; i++)
             {
                 activeIdList[i] = 99;
-                activeLengthList[i] = 0;
+                activeLengthList[i] = 100;
             }
         }
 
@@ -388,7 +378,7 @@ public class PowerUpManager : MonoBehaviour
 
         for (int i = 0; i < cards.Length; i++)
         {
-            if (!cards[i].active | !cards[i].played)
+            if (cards[i].active != true)
             {
                 availCards.Add(cards[i]);
             }
@@ -397,7 +387,7 @@ public class PowerUpManager : MonoBehaviour
 
         Debug.Log("AvailCards Length is " + availCards.Count);
 
-        for (int i = 0; i < playerCards.Length; i++)
+        for (int i = 0; i < (playerCards.Length / 2f); i++)
         {
             //if (playerCards[i].active)
             //{
@@ -414,9 +404,9 @@ public class PowerUpManager : MonoBehaviour
             //}
         }
 
-        for (int i = 0; i < cardGOs.Length; i++)
+        for (int i = 0; i < (cardGOs.Length / 2f); i++)
         {
-            cardDisplays[i].name.text = playerCards[i].name;
+            cardDisplays[i].name.text = playerCards[i].name + " - " + playerCards[i].length.ToString();
             cardDisplays[i].description.text = playerCards[i].description;
             cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
@@ -502,62 +492,65 @@ public class PowerUpManager : MonoBehaviour
 
     public void ReplaceCard(int card)
     {
+        viewPanel.SetActive(false);
+        replacePanel.SetActive(true);
+
+        if (card < 2)
+            replaceHeading.text = "Power Ups";
+        else
+            replaceHeading.text = "Sponsorships";
+
         for (int i = 0; i < playerCards.Length; i++)
         {
             UnPreviewPoints(i);
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
-                cardDisplays[i].effectSliders[j].minValue = -25f;
+                cardDisplays[i + 4].effectSliders[j].minValue = -25f;
             }
         }
 
-        cardDisplays[0].name.text = playerCards[card].name;
-        cardDisplays[0].description.text = playerCards[card].description;
-        cardDisplays[0].cost.text = "$" + playerCards[card].cost.ToString("n0");
+        cardDisplays[4].name.text = playerCards[card].name + " - " + playerCards[card].length.ToString();
+        cardDisplays[4].description.text = playerCards[card].description;
+        cardDisplays[4].cost.text = "$" + playerCards[card].cost.ToString("n0");
 
-        cardDisplays[0].effectSliders[0].value = playerCards[card].draw;
-        cardDisplays[0].effectSliders[1].value = playerCards[card].guard;
-        cardDisplays[0].effectSliders[2].value = playerCards[card].takeOut;
-        cardDisplays[0].effectSliders[3].value = playerCards[card].sweepStrength;
-        cardDisplays[0].effectSliders[4].value = playerCards[card].sweepEnduro;
-        cardDisplays[0].effectSliders[5].value = playerCards[card].sweepCohesion;
+        cardDisplays[4].effectSliders[0].value = playerCards[card].draw;
+        cardDisplays[4].effectSliders[1].value = playerCards[card].guard;
+        cardDisplays[4].effectSliders[2].value = playerCards[card].takeOut;
+        cardDisplays[4].effectSliders[3].value = playerCards[card].sweepStrength;
+        cardDisplays[4].effectSliders[4].value = playerCards[card].sweepEnduro;
+        cardDisplays[4].effectSliders[5].value = playerCards[card].sweepCohesion;
 
-        cardDisplays[0].effectSliders[6].value = playerCards[card].oppDraw;
-        cardDisplays[0].effectSliders[7].value = playerCards[card].oppGuard;
-        cardDisplays[0].effectSliders[8].value = playerCards[card].oppTakeOut;
-        cardDisplays[0].effectSliders[9].value = playerCards[card].oppStrength;
-        cardDisplays[0].effectSliders[10].value = playerCards[card].oppEnduro;
-        cardDisplays[0].effectSliders[11].value = playerCards[card].oppCohesion;
+        cardDisplays[4].effectSliders[6].value = playerCards[card].oppDraw;
+        cardDisplays[4].effectSliders[7].value = playerCards[card].oppGuard;
+        cardDisplays[4].effectSliders[8].value = playerCards[card].oppTakeOut;
+        cardDisplays[4].effectSliders[9].value = playerCards[card].oppStrength;
+        cardDisplays[4].effectSliders[10].value = playerCards[card].oppEnduro;
+        cardDisplays[4].effectSliders[11].value = playerCards[card].oppCohesion;
 
         ColorChanger(1, 0);
 
 
-        if (availCards[0].active)
+        for (int i = 5; i < cardGOs.Length; i++)
         {
-            cardDisplays[0].costPanel.SetActive(false);
-        }
-
-        for (int i = 1; i < cardGOs.Length; i++)
-        {
-            cardDisplays[i].name.text = availCards[i - 1].name;
-            cardDisplays[i].description.text = availCards[i - 1].description;
-            cardDisplays[i].cost.text = "$" + availCards[i - 1].cost.ToString("n0");
+            cardDisplays[i].name.text = availCards[i - 5].name + " - " + availCards[i - 5].length.ToString();
+            cardDisplays[i].description.text = availCards[i - 5].description;
+            cardDisplays[i].cost.text = "$" + availCards[i - 5].cost.ToString("n0");
             cardDisplays[i].costPanel.SetActive(true);
 
-            cardDisplays[i].effectSliders[0].value = availCards[i - 1].draw;
-            cardDisplays[i].effectSliders[1].value = availCards[i - 1].guard;
-            cardDisplays[i].effectSliders[2].value = availCards[i - 1].takeOut;
-            cardDisplays[i].effectSliders[3].value = availCards[i - 1].sweepStrength;
-            cardDisplays[i].effectSliders[4].value = availCards[i - 1].sweepEnduro;
-            cardDisplays[i].effectSliders[5].value = availCards[i - 1].sweepCohesion;
+            cardDisplays[i].effectSliders[0].value = availCards[i - 5].draw;
+            cardDisplays[i].effectSliders[1].value = availCards[i - 5].guard;
+            cardDisplays[i].effectSliders[2].value = availCards[i - 5].takeOut;
+            cardDisplays[i].effectSliders[3].value = availCards[i - 5].sweepStrength;
+            cardDisplays[i].effectSliders[4].value = availCards[i - 5].sweepEnduro;
+            cardDisplays[i].effectSliders[5].value = availCards[i - 5].sweepCohesion;
 
-            cardDisplays[i].effectSliders[6].value = availCards[i - 1].oppDraw;
-            cardDisplays[i].effectSliders[7].value = availCards[i - 1].oppGuard;
-            cardDisplays[i].effectSliders[8].value = availCards[i - 1].oppTakeOut;
-            cardDisplays[i].effectSliders[9].value = availCards[i - 1].oppStrength;
-            cardDisplays[i].effectSliders[10].value = availCards[i - 1].oppEnduro;
-            cardDisplays[i].effectSliders[11].value = availCards[i - 1].oppCohesion;
+            cardDisplays[i].effectSliders[6].value = availCards[i - 5].oppDraw;
+            cardDisplays[i].effectSliders[7].value = availCards[i - 5].oppGuard;
+            cardDisplays[i].effectSliders[8].value = availCards[i - 5].oppTakeOut;
+            cardDisplays[i].effectSliders[9].value = availCards[i - 5].oppStrength;
+            cardDisplays[i].effectSliders[10].value = availCards[i - 5].oppEnduro;
+            cardDisplays[i].effectSliders[11].value = availCards[i - 5].oppCohesion;
 
             ColorChanger(0, i);
         }
@@ -569,29 +562,32 @@ public class PowerUpManager : MonoBehaviour
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
-                if (cardDisplays[i].effectSliders[j].value < 0)
+                if (cardDisplays[i + 4].effectSliders[j].value < 0)
                 {
-                    cardDisplays[i].effectSliders[j].value *= -1f;
-                    cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
+                    cardDisplays[i + 4].effectSliders[j].value *= -1f;
+                    cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
                 }
                 else
                 {
                     if (j < 6)
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
+                        cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
                     else
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
+                        cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
                 }
             }
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
-                cardDisplays[i].effectSliders[j].minValue = 0f;
+                cardDisplays[i + 4].effectSliders[j].minValue = 0f;
             }
         }
     }
 
     public void BuyCard(int cardSelected, int card)
     {
+        viewPanel.SetActive(true);
+        replacePanel.SetActive(false);
+
         for (int i = 0; i < playerCards.Length; i++)
         {
             UnPreviewPoints(i);
@@ -606,9 +602,9 @@ public class PowerUpManager : MonoBehaviour
         Debug.Log("Player Card to be replaced is " + selectedPlayerCard);
         if (card == 0)
         { 
-            for (int i = 0; i < cardGOs.Length; i++)
+            for (int i = 0; i < (cardGOs.Length / 2); i++)
             {
-                cardDisplays[i].name.text = playerCards[i].name;
+                cardDisplays[i].name.text = playerCards[i].name + " - " + playerCards[i].length.ToString();
                 cardDisplays[i].description.text = playerCards[i].description;
                 cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
@@ -635,7 +631,7 @@ public class PowerUpManager : MonoBehaviour
         {
             costPerWeek = 0;
 
-            for (int i = 0; i < cardGOs.Length; i++)
+            for (int i = 0; i < (cardGOs.Length / 2); i++)
             {
                 if (i == selectedPlayerCard)
                 {
@@ -654,7 +650,7 @@ public class PowerUpManager : MonoBehaviour
                     }
                 }
 
-                cardDisplays[i].name.text = playerCards[i].name;
+                cardDisplays[i].name.text = playerCards[i].name + " - " + playerCards[i].length.ToString();
                 cardDisplays[i].description.text = playerCards[i].description;
                 cardDisplays[i].cost.text = "$" + playerCards[i].cost.ToString("n0");
 
