@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Card
+public class Card_Sponsor
 {
     public string name;
 
@@ -16,6 +16,7 @@ public class Card
     public bool played;
 
     public int duration;
+
     public int draw;
     public int guard;
     public int takeOut;
@@ -31,5 +32,7 @@ public class Card
     public int oppCohesion;
 
     public string[] effects;
+
+    //
 
 }

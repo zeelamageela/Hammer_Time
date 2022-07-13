@@ -1396,7 +1396,12 @@ public class TournySelector : MonoBehaviour
 
     public void Expand(Button expandButton)
     {
+        AudioManager am = FindObjectOfType<AudioManager>();
+
+        am.PlayBG(Random.Range(0, 4));
+
         Animator expandAnim = expandButton.GetComponent<Animator>();
+        
         //Animator panelAnim = tournyName.transform.parent.gameObject.GetComponent<Animator>();
 
         expandAnim.SetBool("Shrink", false);
@@ -1407,13 +1412,16 @@ public class TournySelector : MonoBehaviour
         {
             if (expandButton != menuButtons[i])
             {
+                menuButtons[i].gameObject.SetActive(true);
+                Image img = menuButtons[i].GetComponent<Image>();
+                img.color += new Color(img.color.r, img.color.g, img.color.b, 1f);
                 expandAnim = menuButtons[i].GetComponent<Animator>();
                 expandAnim.SetBool("Expand", false);
                 expandAnim.SetBool("Shrink", true);
             }
             else
             {
-                StartCoroutine(WaitForTime(0.45f, i, expandButton));
+                StartCoroutine(WaitForTime(0.1f, i, expandButton));
             }
         }
 
@@ -1424,23 +1432,31 @@ public class TournySelector : MonoBehaviour
         Profile(false);
         yield return new WaitForSeconds(waitTime);
 
-        expandButton.interactable = false;
+        //expandButton.interactable = false;
 
         for (int i = 0; i < menuButtons.Length; i++)
         {
             if (i == menuSelector)
             {
-                menuButtons[i].GetComponent<Image>().enabled = false;
+                //menuButtons[i].GetComponent<Image>().enabled = false;
+                //menuButtons[i].gameObject.SetActive(false);
             }
             else
             {
-                menuButtons[i].GetComponent<Image>().enabled = true;
-                menuButtons[i].gameObject.SetActive(true);
-                menuButtons[i].interactable = true;
                 menuButtons[i].transform.GetChild(0).gameObject.SetActive(true);
+                //menuButtons[i].GetComponent<Image>().enabled = true;
+                //menuButtons[i].gameObject.SetActive(true);
+                //menuButtons[i].interactable = true;
+                Image img = menuButtons[i].GetComponent<Image>();
+                img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
+                Debug.Log("img color is " + img.color);
             }
+
         }
 
+        yield return new WaitUntil(() => menuButtons[menuSelector].GetComponent<RectTransform>().sizeDelta.y == 800f);
+        
+        menuButtons[menuSelector].gameObject.SetActive(false);
         switch (menuSelector)
         {
             case 0:

@@ -105,14 +105,15 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Theme Flute 1
     clip: {fileID: 8300000, guid: f35fbdfa94ba04ae69e977d4938d4357, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 1
     source: {fileID: 0}
   - name: Theme Flute 2
     clip: {fileID: 8300000, guid: a9e2ba24770664dbba34839dd28a8154, type: 3}
-    volume: 1
+    volume: 0.65
     pitch: 1
     loop: 1
     source: {fileID: 0}
   maxVol: 0
+  fadeDuration: 0

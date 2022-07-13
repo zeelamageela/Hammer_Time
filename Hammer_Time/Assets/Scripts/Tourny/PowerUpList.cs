@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PowerUpList : MonoBehaviour
 {
-    public Card[] powerUps;
+    public Card[] sponsors;
 
+    public Card[] powerUps;
     public Card[] skillBoost;
     public Card[] negative;
 

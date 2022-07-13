@@ -54,6 +54,7 @@ public class CareerSettings : MonoBehaviour
 
     void Start()
     {
+        am = FindObjectOfType<AudioManager>();
         StartCoroutine(LoadFromFile());
         gradient = new Gradient();
 
@@ -78,7 +79,7 @@ public class CareerSettings : MonoBehaviour
         alphaKey[1].time = 1.0f;
 
         gradient.SetKeys(colorKey, alphaKey);
-        am = FindObjectOfType<AudioManager>();
+
         if (am != null)
             am.PlayBG(3);
     }

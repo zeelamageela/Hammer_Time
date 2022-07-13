@@ -269,11 +269,11 @@ public class TeamMenu : MonoBehaviour
         replaceMemberDisplay.photo.sprite = activePlayers[teamMember].image;
         replaceMemberDisplay.description.text = activePlayers[teamMember].description;
         if (teamMember == 0)
-            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Lead";
+            replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Lead";
         else if (teamMember == 1)
-            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Second";
+            replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Second";
         else
-            replaceMemberDisplay.charName.transform.parent.GetChild(5).GetComponent<Text>().text = "Third";
+            replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
 
         float moneyToSpend = cm.earnings;
 

@@ -3271,7 +3271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.4000244, y: 3.2999878}
+  m_AnchoredPosition: {x: 0.39990234, y: 3.2998047}
   m_SizeDelta: {x: -122.8, y: -119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1277635061
@@ -3772,6 +3772,7 @@ MonoBehaviour:
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerTeamIndex: 0
   earnings: 0
+  cash: 0
   record: {x: 0, y: 0}
   provQual: 0
   tourQual: 0
@@ -3859,6 +3860,9 @@ MonoBehaviour:
     sweepCohesion: 0
   skillPoints: 20
   cardIDList: 
+  activeCardIDList: 
+  usedCardIDList: 
+  activeCardLengthList: 
   inProgress: 0
   season: 0
   tournyResults: 
@@ -3894,6 +3898,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    BG: 0
+    crowdDensity: 0
   tournies: []
   tour: []
   prov: []
@@ -3906,6 +3912,8 @@ MonoBehaviour:
   helpDialogue: 
   strategyDialogue: 
   storyDialogue: 
+  costPerWeek: 0
+  teamPaid: 0
 --- !u!4 &1524077173
 Transform:
   m_ObjectHideFlags: 0
@@ -4978,6 +4986,71 @@ MonoBehaviour:
   m_EffectColor: {r: 0.050980397, g: 0.054901965, b: 0.06666667, a: 1}
   m_EffectDistance: {x: -15, y: -15}
   m_UseGraphicAlpha: 1
+--- !u!1001 &2083153086
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1221968833, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: maxVol
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1221968833, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: fadeDuration
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.990623
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.340668
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.7377102
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831181, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427282476303831182, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
+      propertyPath: m_Name
+      value: AudioManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cf8854f88a85c2444b2827286f844cf5, type: 3}
 --- !u!1 &2083261967
 GameObject:
   m_ObjectHideFlags: 0

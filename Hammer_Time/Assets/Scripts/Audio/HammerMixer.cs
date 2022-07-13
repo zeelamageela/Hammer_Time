@@ -113,6 +113,7 @@ public class HammerMixer : MonoBehaviour
         // FIXME
         for (int i = 0; i < AudioSamples.Length; i++)
         {
+            Debug.Log("AudioSamples i is " + i);
             if(LayerStates[i] == true){
                 StartCoroutine(StartFade(AudioSamples[i].source, fadeDuration, maxVol));
                 //AudioSamples[i].source.volume = 1.0f;
