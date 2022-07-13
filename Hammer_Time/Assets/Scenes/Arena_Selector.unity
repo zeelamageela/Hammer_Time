@@ -12824,7 +12824,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12840,7 +12840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12848,7 +12848,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12856,7 +12856,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 523517814079984192, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12892,7 +12892,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12900,7 +12900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 897129078339755726, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -12908,7 +12908,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12916,7 +12916,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12924,7 +12924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1039375653961893463, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -12952,7 +12952,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12964,7 +12964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12972,7 +12972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -12980,7 +12980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3226094228801527607, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13016,7 +13016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13024,7 +13024,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3845210855104905288, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13208,7 +13208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13216,7 +13216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13244,7 +13244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13252,7 +13252,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4871722892577624145, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -13260,7 +13260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13268,7 +13268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5363661212264160015, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13320,7 +13320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13328,7 +13328,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13336,11 +13336,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13348,7 +13348,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6758738139293208375, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13368,7 +13368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13388,7 +13388,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13396,7 +13396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7916801627208371061, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
@@ -13408,7 +13408,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13420,7 +13420,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13428,11 +13428,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13763,7 +13763,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13771,7 +13771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13779,7 +13779,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13787,7 +13787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 523517814079984192, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13823,7 +13823,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13831,11 +13831,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13843,7 +13843,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13851,7 +13851,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1812996714883037763, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13871,7 +13871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13879,7 +13879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13887,7 +13887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13895,7 +13895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3226094228801527607, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13931,7 +13931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -13939,7 +13939,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3845210855104905288, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14099,7 +14099,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14107,7 +14107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14123,7 +14123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14131,11 +14131,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14143,7 +14143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5363661212264160015, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14195,7 +14195,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14203,7 +14203,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14211,11 +14211,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14223,7 +14223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6758738139293208375, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14243,7 +14243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14251,7 +14251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14259,11 +14259,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14271,7 +14271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -14279,11 +14279,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -18065,249 +18065,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sponsors:
-  - name: Crypto Sponsorship
-    id: 5
-    description: The extra cash gets the adrenailne flowing - and annoys your opponents
-    cost: 1400
+  - name: Wanda's Cafe
+    id: 50
+    description: Your local coffee shop doesn't hesitate to throw some money your
+      way
+    cost: -100
     active: 0
     played: 0
-    length: 3
-    draw: 0
-    guard: 0
-    takeOut: 8
-    sweepStrength: 8
-    sweepEnduro: 0
-    sweepCohesion: 0
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: -6
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Takeout +1
-    - Opp Takeout +1
-  - name: New Haircuts
-    id: 7
-    description: Lookin good and playing with confidence! Your opponents can't help
-      but take notice
-    cost: 1200
-    active: 0
-    played: 0
-    length: 5
-    draw: 0
-    guard: 0
-    takeOut: 8
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: 0
-    oppDraw: -6
-    oppGuard: -6
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Take Out +1
-    - Opp Draw +1
-    - Opp Guard +1
-  - name: Private Yoga Sessions
-    id: 8
-    description: The flexibility gained pays dividends in your shotmaking
-    cost: 2100
-    active: 0
-    played: 0
-    length: 100
-    draw: 14
-    guard: 14
-    takeOut: 14
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: 0
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
-  - name: Purple Sports Drink
-    id: 9
-    description: The electrolytes flow through you, giving you an accuracy boost
-    cost: 2200
-    active: 0
-    played: 0
-    length: 1
-    draw: 12
-    guard: 12
-    takeOut: 12
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: 0
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
-  - name: Hotel Room Upgrades
-    id: 10
-    description: Upgraded hotel rooms improve every aspect of your team's game.
-    cost: 5200
-    active: 0
-    played: 0
-    length: 3
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 8
-    sweepEnduro: 8
-    sweepCohesion: 8
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - All Accuracy +2
-    - All Sweep +2
-    - 
-  - name: An Old, Smelly Hat
-    id: 11
-    description: The odour borders on unsportsmanlike, but something about it makes
-      draws a little easier.
-    cost: 250
-    active: 0
-    played: 0
-    length: 100
-    draw: 8
-    guard: 0
-    takeOut: 0
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: 0
-    oppDraw: -6
-    oppGuard: -6
-    oppTakeOut: -6
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Draw +2
-    - Opp Draw, Guard -1
-    - Opp Take Out -1
-  - name: Personal Trainer
-    id: 12
-    description: Take your sweeping up a level with a guided training regimen
-    cost: 4100
-    active: 0
-    played: 0
-    length: 100
+    duration: 3
     draw: 0
     guard: 0
     takeOut: 0
-    sweepStrength: 12
-    sweepEnduro: 12
-    sweepCohesion: 8
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - Strength +2
-    - Endurance +2
-    - Health +2
-  - name: Icemaker's Bar Tab
-    id: 13
-    description: A couple drinks with the icemaker leaves you a little tired, but
-      with a good understanding of the ice conditions
-    cost: 1100
-    active: 0
-    played: 0
-    length: 1
-    draw: 12
-    guard: 12
-    takeOut: 12
-    sweepStrength: -6
-    sweepEnduro: -6
-    sweepCohesion: 8
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
-  - name: Team Dental Care
-    id: 14
-    description: Comprehensive dental coverage leaves your team beaming
-    cost: 900
-    active: 0
-    played: 0
-    length: 100
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 8
-    sweepEnduro: 8
-    sweepCohesion: 8
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
-  - name: Shadowy Investor
-    id: 15
-    description: An angelic investment gives your teammates pause, but gets results
-    cost: -1000
-    active: 0
-    played: 0
-    length: 100
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: -8
-    oppDraw: 0
-    oppGuard: 0
-    oppTakeOut: 0
-    oppStrength: 0
-    oppEnduro: 0
-    oppCohesion: 0
-    effects:
-    - All Shot Accuracy +1
-    - Sweep Endurance -1
-    - Sweep Strength -1
-  - name: New Shoes
-    id: 16
-    description: Nothing beats a comfortable shoe!
-    cost: 250
-    active: 0
-    played: 0
-    length: 3
-    draw: 6
-    guard: 6
-    takeOut: 6
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18317,40 +18085,96 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
-  - name: Tractor Sponsorship
-    id: 17
-    description: The agricultural money is a welcome addition to the coffers
+    signCondition: None
+    signConditionValue: 0
+    bonusCondition: wins
+    bonusConditionValue: 3
+    bonus: 500
+    bonusStart: 
+  - name: Joe's Market
+    id: 51
+    description: Your local grocery store sees some potential in your career
+    cost: -200
+    active: 0
+    played: 0
+    duration: 0
+    draw: 0
+    guard: 0
+    takeOut: 8
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: None
+    signConditionValue: 0
+    bonusCondition: None
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 0
+  - name: Kira's Yoga
+    id: 52
+    description: A local yoga studio sponsorship increases your cashflow and your
+      flexibility
+    cost: -200
+    active: 0
+    played: 0
+    duration: 0
+    draw: 2
+    guard: 2
+    takeOut: 2
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: wins
+    signConditionValue: 5
+    bonusCondition: earnings
+    bonusConditionValue: 7
+    bonus: 2000
+    bonusStart: 
+  - name: Ally O'Malley's Irish Pub
+    id: 53
+    description: Nights discussing sponsorship at the local Irish pub brings your
+      team together
     cost: -250
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
     sweepStrength: 0
     sweepEnduro: 0
-    sweepCohesion: 0
+    sweepCohesion: 2
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
-  - name: Coffee Sponsorship
-    id: 18
-    description: The nation's favourite coffee chain wants to give you the big bucks!
-    cost: -750
+    signCondition: wins
+    signConditionValue: 5
+    bonusCondition: wins
+    bonusConditionValue: 3
+    bonus: 1000
+    bonusStart: 
+  - name: Robin Hood Motel
+    id: 54
+    description: Taking money from their customers, and giving it to you
+    cost: -275
     active: 0
     played: 0
-    length: 8
+    duration: 3
     draw: 0
     guard: 0
     takeOut: 0
@@ -18363,10 +18187,216 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    signCondition: wins
+    signConditionValue: 5
+    bonusCondition: earnings
+    bonusConditionValue: 1200
+    bonus: 1000
+    bonusStart: 
+  - name: Skidmark Bike Shop
+    id: 55
+    description: A little love for you, a little for the environment - sounds like
+      a win-win!
+    cost: -300
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: wins
+    signConditionValue: 5
+    bonusCondition: wins
+    bonusConditionValue: 7
+    bonus: 2500
+    bonusStart: 
+  - name: Hair by Cher
+    id: 56
+    description: Draws are made much easier with a little cash and some shorter bangs
+    cost: -350
+    active: 0
+    played: 0
+    duration: 3
+    draw: 2
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: wins
+    signConditionValue: 5
+    bonusCondition: wins
+    bonusConditionValue: 8
+    bonus: 2500
+    bonusStart: 
+  - name: Pyramid Crypto Exchange
+    id: 57
+    description: Your team mates may not agree with your web3 devotion, but you can
+      see the future
+    cost: -400
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: -4
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: earnings
+    signConditionValue: 500
+    bonusCondition: earnings
+    bonusConditionValue: 3000
+    bonus: 3000
+    bonusStart: 
+  - name: Jackal Tractors
+    id: 58
+    description: If there's one thing curlers love more than curling, it's a sturdy
+      tractor
+    cost: -1000
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 4
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: wins
+    signConditionValue: 15
+    bonusCondition: wins
+    bonusConditionValue: 10
+    bonus: 5000
+    bonusStart: 
+  - name: Shell Company Inc.
+    id: 59
+    description: When the money is this good, who cares where it comes from
+    cost: -1000
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: wins
+    signConditionValue: 15
+    bonusCondition: loss
+    bonusConditionValue: 3
+    bonus: 5000
+    bonusStart: 
+  - name: Silverline Sports Apparel
+    id: 60
+    description: This company knows it's stuff, and they pay well for results
+    cost: -1500
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: provQual
+    signConditionValue: true
+    bonusCondition: wins
+    bonusConditionValue: 10
+    bonus: 6500
+    bonusStart: 
+  - name: Tom Hootin's
+    id: 61
+    description: You've gotta be winning to gain the support of the nation's favourite
+      coffee chain
+    cost: -1500
+    active: 0
+    played: 0
+    duration: 3
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: provQual
+    signConditionValue: true
+    bonusCondition: wins
+    bonusConditionValue: 10
+    bonus: 5000
+    bonusStart: 
+  - name: Minty's
+    id: 62
+    description: Cold hard cash from the reigning kings of frozen chicken wings
+    cost: -1500
+    active: 0
+    played: 0
+    duration: 0
+    draw: 0
+    guard: 0
+    takeOut: 2
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    signCondition: provQual
+    signConditionValue: true
+    bonusCondition: earnings
+    bonusConditionValue: 10000
+    bonus: 10000
+    bonusStart: 
   powerUps:
   - name: Green Juice
     id: 0
@@ -18374,12 +18404,12 @@ MonoBehaviour:
     cost: 600
     active: 0
     played: 0
-    length: 1
+    duration: 1
     draw: 0
     guard: 0
     takeOut: 0
-    sweepStrength: 8
-    sweepEnduro: 8
+    sweepStrength: 2
+    sweepEnduro: 2
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -18397,15 +18427,15 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 1
+    duration: 1
     draw: 0
     guard: 0
     takeOut: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
-    oppDraw: -6
-    oppGuard: -6
+    oppDraw: -3
+    oppGuard: -3
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
@@ -18420,13 +18450,13 @@ MonoBehaviour:
     cost: 1500
     active: 0
     played: 0
-    length: 100
-    draw: 8
-    guard: 8
-    takeOut: 8
+    duration: 100
+    draw: 4
+    guard: 4
+    takeOut: 4
     sweepStrength: 0
     sweepEnduro: 0
-    sweepCohesion: 8
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18444,7 +18474,7 @@ MonoBehaviour:
     cost: 450
     active: 0
     played: 0
-    length: 4
+    duration: 3
     draw: 0
     guard: 0
     takeOut: 0
@@ -18454,8 +18484,8 @@ MonoBehaviour:
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
-    oppStrength: -6
-    oppEnduro: -6
+    oppStrength: -3
+    oppEnduro: -3
     oppCohesion: 0
     effects:
     - Opp Strength -1
@@ -18468,16 +18498,16 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 1
-    draw: 8
-    guard: 8
+    duration: 1
+    draw: 4
+    guard: 4
     takeOut: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
-    oppTakeOut: 6
+    oppTakeOut: 3
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -18485,22 +18515,22 @@ MonoBehaviour:
     - Draw +1
     - Guard +1
     - Opp Take Out +1
-  - name: Crypto Sponsorship
+  - name: NFT Investment
     id: 5
-    description: The extra cash gets the adrenailne flowing - and annoys your opponents
+    description: The gambling gets the adrenailne flowing - and annoys your opponents
     cost: 1400
     active: 0
     played: 0
-    length: 3
+    duration: 4
     draw: 0
     guard: 0
-    takeOut: 8
-    sweepStrength: 8
+    takeOut: 4
+    sweepStrength: 4
     sweepEnduro: 0
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
-    oppTakeOut: -6
+    oppTakeOut: -3
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -18508,17 +18538,17 @@ MonoBehaviour:
     - Sweep Strength +1
     - Takeout +1
     - Opp Takeout +1
-  - name: Alternative Milk Conversion
+  - name: Alternative Milk Subscription
     id: 6
     description: As you transition away from dairy, you mysteriously lose some accuracy
       on your take outs
     cost: 1100
     active: 0
     played: 0
-    length: 12
-    draw: 6
-    guard: 6
-    takeOut: -6
+    duration: 3
+    draw: 3
+    guard: 3
+    takeOut: -3
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18539,15 +18569,15 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 5
+    duration: 4
     draw: 0
     guard: 0
     takeOut: 8
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
-    oppDraw: -6
-    oppGuard: -6
+    oppDraw: -3
+    oppGuard: -3
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
@@ -18558,14 +18588,14 @@ MonoBehaviour:
     - Opp Guard +1
   - name: Private Yoga Sessions
     id: 8
-    description: The flexibility gained pays dividends in your shotmaking
+    description: The flexibility gained pays dividends in shotmaking
     cost: 2100
     active: 0
     played: 0
-    length: 100
-    draw: 14
-    guard: 14
-    takeOut: 14
+    duration: 100
+    draw: 5
+    guard: 5
+    takeOut: 5
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18581,14 +18611,15 @@ MonoBehaviour:
     - Take Out +2
   - name: Purple Sports Drink
     id: 9
-    description: The electrolytes flow through you, giving you an accuracy boost
-    cost: 2200
+    description: The electrolytes flow through you, giving your team an accuracy
+      boost
+    cost: 1000
     active: 0
     played: 0
-    length: 1
-    draw: 12
-    guard: 12
-    takeOut: 12
+    duration: 1
+    draw: 4
+    guard: 4
+    takeOut: 4
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18608,13 +18639,13 @@ MonoBehaviour:
     cost: 5200
     active: 0
     played: 0
-    length: 3
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 8
-    sweepEnduro: 8
-    sweepCohesion: 8
+    duration: 100
+    draw: 4
+    guard: 4
+    takeOut: 4
+    sweepStrength: 4
+    sweepEnduro: 4
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18632,16 +18663,16 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 100
-    draw: 8
+    duration: 100
+    draw: 4
     guard: 0
     takeOut: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
-    oppDraw: -6
-    oppGuard: -6
-    oppTakeOut: -6
+    oppDraw: -3
+    oppGuard: -3
+    oppTakeOut: -3
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -18655,13 +18686,13 @@ MonoBehaviour:
     cost: 4100
     active: 0
     played: 0
-    length: 100
+    duration: 100
     draw: 0
     guard: 0
     takeOut: 0
-    sweepStrength: 12
-    sweepEnduro: 12
-    sweepCohesion: 8
+    sweepStrength: 5
+    sweepEnduro: 5
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18679,13 +18710,13 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 1
-    draw: 12
-    guard: 12
-    takeOut: 12
-    sweepStrength: -6
-    sweepEnduro: -6
-    sweepCohesion: 8
+    duration: 1
+    draw: 5
+    guard: 5
+    takeOut: 5
+    sweepStrength: -3
+    sweepEnduro: -3
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18702,13 +18733,13 @@ MonoBehaviour:
     cost: 900
     active: 0
     played: 0
-    length: 100
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 8
-    sweepEnduro: 8
-    sweepCohesion: 8
+    duration: 100
+    draw: 4
+    guard: 4
+    takeOut: 4
+    sweepStrength: 4
+    sweepEnduro: 4
+    sweepCohesion: 4
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18719,19 +18750,20 @@ MonoBehaviour:
     - All Accuracy +1
     - Endurance -1
     - Strength -1
-  - name: Shadowy Investor
+  - name: Team Manager
     id: 15
-    description: An angelic investment gives your teammates pause, but gets results
-    cost: -1000
+    description: A little extra help lugging around gear gives you more time to focus
+      on your game
+    cost: 2500
     active: 0
     played: 0
-    length: 100
-    draw: 8
-    guard: 8
-    takeOut: 8
-    sweepStrength: 0
-    sweepEnduro: 0
-    sweepCohesion: -8
+    duration: 100
+    draw: 4
+    guard: 4
+    takeOut: 4
+    sweepStrength: 2
+    sweepEnduro: 2
+    sweepCohesion: 2
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18748,10 +18780,10 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 3
-    draw: 6
-    guard: 6
-    takeOut: 6
+    duration: 1
+    draw: 3
+    guard: 3
+    takeOut: 3
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18765,19 +18797,19 @@ MonoBehaviour:
     - Draw +1
     - Guard +1
     - Take Out +1
-  - name: Tractor Sponsorship
+  - name: Fancy French Dinner
     id: 17
-    description: The agricultural money is a welcome addition to the coffers
-    cost: -250
+    description: A sophisticated treat for you and your team
+    cost: 500
     active: 0
     played: 0
-    length: 8
-    draw: 0
-    guard: 0
-    takeOut: 0
+    duration: 1
+    draw: 3
+    guard: 3
+    takeOut: 3
     sweepStrength: 0
     sweepEnduro: 0
-    sweepCohesion: 0
+    sweepCohesion: 3
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -18788,18 +18820,18 @@ MonoBehaviour:
     - Draw +1
     - Guard +1
     - Take Out +1
-  - name: Coffee Sponsorship
+  - name: New Brooms
     id: 18
-    description: The nation's favourite coffee chain wants to give you the big bucks!
-    cost: -750
+    description: Upgraded broom technology takes your sweeping to the next level
+    cost: 750
     active: 0
     played: 0
-    length: 8
+    duration: 1
     draw: 0
     guard: 0
     takeOut: 0
-    sweepStrength: 0
-    sweepEnduro: 0
+    sweepStrength: 4
+    sweepEnduro: 4
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -18818,7 +18850,7 @@ MonoBehaviour:
     cost: 600
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -18841,7 +18873,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -18864,7 +18896,7 @@ MonoBehaviour:
     cost: 1500
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -18888,7 +18920,7 @@ MonoBehaviour:
     cost: 450
     active: 0
     played: 0
-    length: 4
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -18912,7 +18944,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 0
@@ -18935,7 +18967,7 @@ MonoBehaviour:
     cost: 1400
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -18959,7 +18991,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 12
+    duration: 0
     draw: 6
     guard: 6
     takeOut: -6
@@ -18983,7 +19015,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 5
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -19006,7 +19038,7 @@ MonoBehaviour:
     cost: 2100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 14
     guard: 14
     takeOut: 14
@@ -19029,7 +19061,7 @@ MonoBehaviour:
     cost: 2200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -19052,7 +19084,7 @@ MonoBehaviour:
     cost: 5200
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19076,7 +19108,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 0
     takeOut: 0
@@ -19099,7 +19131,7 @@ MonoBehaviour:
     cost: 4100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19123,7 +19155,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -19146,7 +19178,7 @@ MonoBehaviour:
     cost: 900
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19169,7 +19201,7 @@ MonoBehaviour:
     cost: -1000
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19192,7 +19224,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 6
     guard: 6
     takeOut: 6
@@ -19215,7 +19247,7 @@ MonoBehaviour:
     cost: -250
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19238,7 +19270,7 @@ MonoBehaviour:
     cost: -750
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19262,7 +19294,7 @@ MonoBehaviour:
     cost: 600
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19285,7 +19317,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19308,7 +19340,7 @@ MonoBehaviour:
     cost: 1500
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19332,7 +19364,7 @@ MonoBehaviour:
     cost: 450
     active: 0
     played: 0
-    length: 4
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19356,7 +19388,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 0
@@ -19379,7 +19411,7 @@ MonoBehaviour:
     cost: 1400
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -19403,7 +19435,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 12
+    duration: 0
     draw: 6
     guard: 6
     takeOut: -6
@@ -19427,7 +19459,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 5
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -19450,7 +19482,7 @@ MonoBehaviour:
     cost: 2100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 14
     guard: 14
     takeOut: 14
@@ -19473,7 +19505,7 @@ MonoBehaviour:
     cost: 2200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -19496,7 +19528,7 @@ MonoBehaviour:
     cost: 5200
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19520,7 +19552,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 0
     takeOut: 0
@@ -19543,7 +19575,7 @@ MonoBehaviour:
     cost: 4100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19567,7 +19599,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -19590,7 +19622,7 @@ MonoBehaviour:
     cost: 900
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19613,7 +19645,7 @@ MonoBehaviour:
     cost: -1000
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19636,7 +19668,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 6
     guard: 6
     takeOut: 6
@@ -19659,7 +19691,7 @@ MonoBehaviour:
     cost: -250
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19682,7 +19714,7 @@ MonoBehaviour:
     cost: -750
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19706,7 +19738,7 @@ MonoBehaviour:
     cost: 600
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19729,7 +19761,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19752,7 +19784,7 @@ MonoBehaviour:
     cost: 1500
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19776,7 +19808,7 @@ MonoBehaviour:
     cost: 450
     active: 0
     played: 0
-    length: 4
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -19800,7 +19832,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 0
@@ -19823,7 +19855,7 @@ MonoBehaviour:
     cost: 1400
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -19847,7 +19879,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 12
+    duration: 0
     draw: 6
     guard: 6
     takeOut: -6
@@ -19871,7 +19903,7 @@ MonoBehaviour:
     cost: 1200
     active: 0
     played: 0
-    length: 5
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 8
@@ -19894,7 +19926,7 @@ MonoBehaviour:
     cost: 2100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 14
     guard: 14
     takeOut: 14
@@ -19917,7 +19949,7 @@ MonoBehaviour:
     cost: 2200
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -19940,7 +19972,7 @@ MonoBehaviour:
     cost: 5200
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -19964,7 +19996,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 0
     takeOut: 0
@@ -19987,7 +20019,7 @@ MonoBehaviour:
     cost: 4100
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20011,7 +20043,7 @@ MonoBehaviour:
     cost: 1100
     active: 0
     played: 0
-    length: 1
+    duration: 0
     draw: 12
     guard: 12
     takeOut: 12
@@ -20034,7 +20066,7 @@ MonoBehaviour:
     cost: 900
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -20057,7 +20089,7 @@ MonoBehaviour:
     cost: -1000
     active: 0
     played: 0
-    length: 100
+    duration: 0
     draw: 8
     guard: 8
     takeOut: 8
@@ -20080,7 +20112,7 @@ MonoBehaviour:
     cost: 250
     active: 0
     played: 0
-    length: 3
+    duration: 0
     draw: 6
     guard: 6
     takeOut: 6
@@ -20103,7 +20135,7 @@ MonoBehaviour:
     cost: -250
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20126,7 +20158,7 @@ MonoBehaviour:
     cost: -750
     active: 0
     played: 0
-    length: 8
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20165,21 +20197,25 @@ MonoBehaviour:
   - {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   - {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
   - {r: 0.058823533, g: 0.058823533, b: 0.07058824, a: 1}
-  idList: 
+  idPUList: 
+  idSponsorList: 
   activeIdList: 
-  usedIdList: 
+  playedPUIdList: 
+  playedSponsorIdList: 
   activeLengthList: 
   usedLengthList: 
-  cards: []
-  availCards: []
-  playerCards:
+  cardsPU: []
+  cardsSponsor: []
+  availPUCards: []
+  availSponsorCards: []
+  activeCards:
   - name: 
     id: 0
     description: 
     cost: 0
     active: 0
     played: 0
-    length: 0
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20199,7 +20235,7 @@ MonoBehaviour:
     cost: 0
     active: 0
     played: 0
-    length: 0
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20219,7 +20255,7 @@ MonoBehaviour:
     cost: 0
     active: 0
     played: 0
-    length: 0
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20239,7 +20275,7 @@ MonoBehaviour:
     cost: 0
     active: 0
     played: 0
-    length: 0
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20253,7 +20289,8 @@ MonoBehaviour:
     oppEnduro: 0
     oppCohesion: 0
     effects: []
-  usedCards: []
+  playedPUCards: []
+  playedSponsorCards: []
   emptyCard:
     name: No Powerup Selected
     id: 99
@@ -20261,7 +20298,7 @@ MonoBehaviour:
     cost: 0
     active: 0
     played: 0
-    length: 0
+    duration: 0
     draw: 0
     guard: 0
     takeOut: 0
@@ -20702,7 +20739,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20718,7 +20755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20726,7 +20763,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20734,7 +20771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 523517814079984192, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20770,7 +20807,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20778,7 +20815,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 897129078339755726, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -20786,7 +20823,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20794,7 +20831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20802,7 +20839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1039375653961893463, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -20830,7 +20867,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20842,7 +20879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20850,7 +20887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20858,7 +20895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3226094228801527607, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20894,7 +20931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -20902,7 +20939,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3845210855104905288, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21086,7 +21123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21094,7 +21131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21122,7 +21159,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21130,7 +21167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4871722892577624145, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -21138,7 +21175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21146,7 +21183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5363661212264160015, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21198,7 +21235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21206,7 +21243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21214,11 +21251,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21226,7 +21263,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6758738139293208375, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21246,7 +21283,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21266,7 +21303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21274,7 +21311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7916801627208371061, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
@@ -21286,7 +21323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21298,7 +21335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -21306,11 +21343,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24838,7 +24875,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24854,7 +24891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24862,7 +24899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24870,7 +24907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 523517814079984192, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24906,7 +24943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24914,7 +24951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 897129078339755726, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -24922,7 +24959,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24930,7 +24967,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24938,7 +24975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1039375653961893463, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -24966,7 +25003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24978,7 +25015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24986,7 +25023,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -24994,7 +25031,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3226094228801527607, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25030,7 +25067,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25038,7 +25075,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3845210855104905288, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25222,7 +25259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25230,7 +25267,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25258,7 +25295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25266,7 +25303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4871722892577624145, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_Value
@@ -25274,7 +25311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25282,7 +25319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5363661212264160015, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25334,7 +25371,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25342,7 +25379,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25350,11 +25387,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25362,7 +25399,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6758738139293208375, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25382,7 +25419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25402,7 +25439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25410,7 +25447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7916801627208371061, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
@@ -25422,7 +25459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25434,7 +25471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25442,11 +25479,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -25590,7 +25627,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.5, y: -663.5221}
+  m_AnchoredPosition: {x: 913.0542, y: -663.5221}
   m_SizeDelta: {x: 1124, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1052130293
@@ -46767,7 +46804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  week: 0
+  week: 5
   seasonLength: 36
   playerName: Kate
   teamName: SaCutie
@@ -46804,9 +46841,11 @@ MonoBehaviour:
     sweepEndurance: 0
     sweepCohesion: 0
   skillPoints: 18
-  cardIDList: 
+  cardPUIDList: 
+  cardSponsorIDList: 
   activeCardIDList: 
-  usedCardIDList: 
+  playedCardPUIDList: 
+  playedCardSponsorIDList: 
   activeCardLengthList: 
   inProgress: 0
   season: 0
@@ -46853,7 +46892,7 @@ MonoBehaviour:
   coachDialogue: 
   qualDialogue: 
   reviewDialogue: 
-  introDialogue: 
+  introDialogue: 01010101010000000000
   helpDialogue: 
   strategyDialogue: 
   storyDialogue: 

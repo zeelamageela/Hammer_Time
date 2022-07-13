@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PowerUpList : MonoBehaviour
 {
-    public Card[] sponsors;
+    public Card_Sponsor[] sponsors;
 
     public Card[] powerUps;
     public Card[] skillBoost;

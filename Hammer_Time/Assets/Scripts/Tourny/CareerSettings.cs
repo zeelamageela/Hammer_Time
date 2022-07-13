@@ -148,13 +148,6 @@ public class CareerSettings : MonoBehaviour
 
             cm.xp = myFile.GetFloat("XP");
             cm.totalXp = myFile.GetFloat("Total XP");
-            cm.cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
-            cm.cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
-            cm.cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
-            cm.cStats.sweepStrength = myFile.GetInt("Sweep Strength");
-            cm.cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
-            cm.cStats.sweepCohesion = myFile.GetInt("Sweep Health");
-            cm.cardIDList = myFile.GetArray<int>("Card ID List");
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 

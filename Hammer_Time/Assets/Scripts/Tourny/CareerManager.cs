@@ -41,9 +41,11 @@ public class CareerManager : MonoBehaviour
 
     public int skillPoints;
 
-    public int[] cardIDList;
+    public int[] cardPUIDList;
+    public int[] cardSponsorIDList;
     public int[] activeCardIDList;
-    public int[] usedCardIDList;
+    public int[] playedCardPUIDList;
+    public int[] playedCardSponsorIDList;
     public int[] activeCardLengthList;
 
     public bool inProgress;
@@ -212,11 +214,13 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            cardIDList = myFile.GetArray<int>("Card ID List");
+            cardPUIDList = myFile.GetArray<int>("Card PowerUp ID List");
+            cardSponsorIDList = myFile.GetArray<int>("Card Sponsor ID List");
             activeCardIDList = myFile.GetArray<int>("Active Card ID List");
-            usedCardIDList = myFile.GetArray<int>("Used Card ID List");
+            playedCardPUIDList = myFile.GetArray<int>("Played Card PowerUp ID List");
+            playedCardSponsorIDList = myFile.GetArray<int>("Played Card Sponsor ID List");
             activeCardLengthList = myFile.GetArray<int>("Active Card Length List");
-            Debug.Log("cardIdList Length - " + cardIDList.Length);
+            Debug.Log("cardIdList Length - " + cardPUIDList.Length);
 
 
 
@@ -569,14 +573,19 @@ public class CareerManager : MonoBehaviour
 
         if (pUpM != null)
         {
-            Debug.Log("puUpM idList is " + pUpM.idList.Length + " long");
-            cardIDList = pUpM.idList;
+            Debug.Log("puUpM idList is " + pUpM.idPUList.Length + " long");
+            cardPUIDList = pUpM.idPUList; 
+            cardSponsorIDList = pUpM.idSponsorList;
             activeCardIDList = pUpM.activeIdList;
-            usedCardIDList = pUpM.usedIdList;
+            playedCardPUIDList = pUpM.playedPUIdList;
+            playedCardSponsorIDList = pUpM.playedSponsorIdList;
             activeCardLengthList = pUpM.activeLengthList;
-            myFile.Add("Card ID List", cardIDList);
+
+            myFile.Add("Card PowerUp ID List", cardPUIDList);
+            myFile.Add("Card Sponsor ID List", cardSponsorIDList);
             myFile.Add("Active Card ID List", activeCardIDList);
-            myFile.Add("Used Card ID List", usedCardIDList);
+            myFile.Add("Played Card PowerUp ID List", playedCardPUIDList);
+            myFile.Add("Played Card Sponsor ID List", playedCardSponsorIDList);
             myFile.Add("Active Card Length List", activeCardLengthList);
         }
 

@@ -31,8 +31,20 @@ public class Card_Sponsor
     public int oppEnduro;
     public int oppCohesion;
 
-    public string[] effects;
+    public string signCondition;
+    public string signConditionValue;
 
-    //
+    public string bonusCondition;
+    public string bonusConditionValue;
+
+    public float bonus;
+
+    public string bonusStart;
+    //signing condition
+    //the condition that this will become available, ie win threshold or qualification threshold
+
+    //bonus condition
+    //the condition for paying a bonus, ie won 3 games, won a tournament
+    
 
 }
