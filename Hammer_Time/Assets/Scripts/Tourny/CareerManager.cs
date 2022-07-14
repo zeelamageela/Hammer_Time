@@ -44,8 +44,7 @@ public class CareerManager : MonoBehaviour
     public int[] cardPUIDList;
     public int[] cardSponsorIDList;
     public int[] activeCardIDList;
-    public int[] playedCardPUIDList;
-    public int[] playedCardSponsorIDList;
+    public int[] playedCardIDList;
     public int[] activeCardLengthList;
 
     public bool inProgress;
@@ -186,6 +185,7 @@ public class CareerManager : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             playerTeamIndex = myFile.GetInt("Player Team Index");
             record = myFile.GetUnityVector2("Career Record");
+            cash = myFile.GetFloat("Career Cash");
             earnings = myFile.GetFloat("Career Earnings");
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
@@ -217,8 +217,7 @@ public class CareerManager : MonoBehaviour
             cardPUIDList = myFile.GetArray<int>("Card PowerUp ID List");
             cardSponsorIDList = myFile.GetArray<int>("Card Sponsor ID List");
             activeCardIDList = myFile.GetArray<int>("Active Card ID List");
-            playedCardPUIDList = myFile.GetArray<int>("Played Card PowerUp ID List");
-            playedCardSponsorIDList = myFile.GetArray<int>("Played Card Sponsor ID List");
+            playedCardIDList = myFile.GetArray<int>("Played Card ID List");
             activeCardLengthList = myFile.GetArray<int>("Active Card Length List");
             Debug.Log("cardIdList Length - " + cardPUIDList.Length);
 
@@ -525,6 +524,7 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Week", week);
         myFile.Add("Season", season);
         //myFile.Add("Career Record", record);
+        myFile.Add("Career Cash", cash);
         myFile.Add("Career Earnings", earnings);
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
@@ -577,15 +577,13 @@ public class CareerManager : MonoBehaviour
             cardPUIDList = pUpM.idPUList; 
             cardSponsorIDList = pUpM.idSponsorList;
             activeCardIDList = pUpM.activeIdList;
-            playedCardPUIDList = pUpM.playedPUIdList;
-            playedCardSponsorIDList = pUpM.playedSponsorIdList;
+            playedCardIDList = pUpM.playedIdList;
             activeCardLengthList = pUpM.activeLengthList;
 
             myFile.Add("Card PowerUp ID List", cardPUIDList);
             myFile.Add("Card Sponsor ID List", cardSponsorIDList);
             myFile.Add("Active Card ID List", activeCardIDList);
-            myFile.Add("Played Card PowerUp ID List", playedCardPUIDList);
-            myFile.Add("Played Card Sponsor ID List", playedCardSponsorIDList);
+            myFile.Add("Played Card ID List", playedCardIDList);
             myFile.Add("Active Card Length List", activeCardLengthList);
         }
 
@@ -1187,6 +1185,7 @@ public class CareerManager : MonoBehaviour
         teams[0].name = teamName;
         teams[0].player = true;
         teams[0].earnings = earnings;
+        cash = 1000f;
         playerTeamIndex = teams[0].id;
         gsp.playerTeamIndex = playerTeamIndex;
 

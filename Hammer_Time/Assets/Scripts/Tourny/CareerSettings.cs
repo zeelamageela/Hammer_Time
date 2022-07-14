@@ -282,8 +282,7 @@ public class CareerSettings : MonoBehaviour
         record = Vector2.zero;
         week = 0;
         season = 0;
-        earnings = 1000f;
-        cm.earnings = 1000f; 
+        cm.cash = 1000f;
         gsp.draw = 0;
         gsp.playoffRound = 0;
         gsp.inProgress = false;

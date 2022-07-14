@@ -56,7 +56,7 @@ public class XPManager : MonoBehaviour
     {
         skillPointsText.text = skillPoints.ToString();
         xpCostText.text = skillPointsTotal.ToString();
-        cash.text = "$" + cm.earnings.ToString("n0");
+        //cash.text = "$" + cm.earnings.ToString("n0");
         xpTotal.text = cm.totalXp.ToString();
 
         drawText.text = drawSlider.value.ToString();

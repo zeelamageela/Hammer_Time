@@ -232,16 +232,16 @@ RectTransform:
   m_Children:
   - {fileID: 560601360}
   - {fileID: 2024053843}
-  - {fileID: 556640674}
   - {fileID: 288163930}
-  - {fileID: 133583769}
+  - {fileID: 556640674}
   - {fileID: 676691832}
-  - {fileID: 306226385}
+  - {fileID: 133583769}
   - {fileID: 1828473825}
-  - {fileID: 1052130290}
+  - {fileID: 306226385}
   - {fileID: 1881337416}
-  - {fileID: 2242657541916133021}
+  - {fileID: 1052130290}
   - {fileID: 303548328}
+  - {fileID: 2242657541916133021}
   - {fileID: 1790301209}
   m_Father: {fileID: 1204469915}
   m_RootOrder: 2
@@ -3356,7 +3356,7 @@ RectTransform:
   - {fileID: 423844021}
   - {fileID: 865104989}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -4163,6 +4163,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 49.55
       objectReference: {fileID: 0}
+    - target: {fileID: 5415646138146640392, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ac60a1016a2a940b5a9c001f8c7a9122, type: 3}
     - target: {fileID: 5415646138146640393, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -6042,7 +6046,7 @@ RectTransform:
   m_Children:
   - {fileID: 1400696281}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6439,7 +6443,7 @@ RectTransform:
   m_Children:
   - {fileID: 1029030137}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -6594,11 +6598,11 @@ RectTransform:
   - {fileID: 680341461}
   - {fileID: 15386631}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.5, y: -569}
+  m_AnchoredPosition: {x: 562.5, y: -663.5221}
   m_SizeDelta: {x: 1124, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &306226387
@@ -9663,7 +9667,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 208442256823822403, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9671,7 +9675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 333090358419102781, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9679,7 +9683,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9687,7 +9691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 491264610279644369, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 523517814079984192, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9723,7 +9727,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9731,11 +9735,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 872188211161473595, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 935750369528158435, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9743,7 +9747,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9751,7 +9755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 955862068237139998, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1812996714883037763, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9771,7 +9775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1878744689872508317, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9779,7 +9783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2752996070937199591, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9787,7 +9791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9795,7 +9799,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2851943089283738396, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3226094228801527607, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9831,7 +9835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9839,7 +9843,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3414628832696811094, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3801651046811609448, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_SizeDelta.x
@@ -10079,7 +10083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4201807042298264619, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10087,7 +10091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4669827184890889556, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10103,7 +10107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10111,11 +10115,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4806454721201595388, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10123,7 +10127,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4974378212916511205, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5363661212264160015, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10187,7 +10191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6010885678397566132, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10195,7 +10199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10203,7 +10207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6500015619544388260, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6631496776531609537, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_IsActive
@@ -10211,7 +10215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10219,7 +10223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6723486892867669384, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6758738139293208375, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10239,7 +10243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6879808336812608290, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10247,7 +10251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10255,11 +10259,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7532737514459556618, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8089066903254939839, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10267,7 +10271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10275,11 +10279,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8416733122757321966, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.3846154
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8671339432795876816, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
@@ -11910,7 +11914,7 @@ RectTransform:
   - {fileID: 1767766670}
   - {fileID: 463914966}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -15575,7 +15579,7 @@ RectTransform:
   m_Children:
   - {fileID: 1938209512}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -18069,7 +18073,7 @@ MonoBehaviour:
     id: 50
     description: Your local coffee shop doesn't hesitate to throw some money your
       way
-    cost: -100
+    cost: -200
     active: 0
     played: 0
     duration: 3
@@ -18085,6 +18089,8 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: None
     signConditionValue: 0
     bonusCondition: wins
@@ -18097,7 +18103,7 @@ MonoBehaviour:
     cost: -200
     active: 0
     played: 0
-    duration: 0
+    duration: 5
     draw: 0
     guard: 0
     takeOut: 8
@@ -18110,6 +18116,8 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: None
     signConditionValue: 0
     bonusCondition: None
@@ -18123,7 +18131,7 @@ MonoBehaviour:
     cost: -200
     active: 0
     played: 0
-    duration: 0
+    duration: 3
     draw: 2
     guard: 2
     takeOut: 2
@@ -18136,10 +18144,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
-    signConditionValue: 5
+    signConditionValue: 2
     bonusCondition: earnings
-    bonusConditionValue: 7
+    bonusConditionValue: 2000
     bonus: 2000
     bonusStart: 
   - name: Ally O'Malley's Irish Pub
@@ -18149,7 +18159,7 @@ MonoBehaviour:
     cost: -250
     active: 0
     played: 0
-    duration: 0
+    duration: 3
     draw: 0
     guard: 0
     takeOut: 0
@@ -18162,10 +18172,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
-    signConditionValue: 5
+    signConditionValue: 3
     bonusCondition: wins
-    bonusConditionValue: 3
+    bonusConditionValue: 5
     bonus: 1000
     bonusStart: 
   - name: Robin Hood Motel
@@ -18187,10 +18199,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
     signConditionValue: 5
     bonusCondition: earnings
-    bonusConditionValue: 1200
+    bonusConditionValue: 1000
     bonus: 1000
     bonusStart: 
   - name: Skidmark Bike Shop
@@ -18213,10 +18227,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
     signConditionValue: 5
     bonusCondition: wins
-    bonusConditionValue: 7
+    bonusConditionValue: 0
     bonus: 2500
     bonusStart: 
   - name: Hair by Cher
@@ -18238,10 +18254,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
-    signConditionValue: 5
+    signConditionValue: 10
     bonusCondition: wins
-    bonusConditionValue: 8
+    bonusConditionValue: 0
     bonus: 2500
     bonusStart: 
   - name: Pyramid Crypto Exchange
@@ -18264,11 +18282,13 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: earnings
-    signConditionValue: 500
+    signConditionValue: 10000
     bonusCondition: earnings
-    bonusConditionValue: 3000
-    bonus: 3000
+    bonusConditionValue: 10000
+    bonus: 10000
     bonusStart: 
   - name: Jackal Tractors
     id: 58
@@ -18290,10 +18310,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
-    signConditionValue: 15
+    signConditionValue: 10
     bonusCondition: wins
-    bonusConditionValue: 10
+    bonusConditionValue: 6
     bonus: 5000
     bonusStart: 
   - name: Shell Company Inc.
@@ -18315,10 +18337,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: wins
     signConditionValue: 15
     bonusCondition: loss
-    bonusConditionValue: 3
+    bonusConditionValue: 6
     bonus: 5000
     bonusStart: 
   - name: Silverline Sports Apparel
@@ -18340,10 +18364,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: provQual
-    signConditionValue: true
+    signConditionValue: 1
     bonusCondition: wins
-    bonusConditionValue: 10
+    bonusConditionValue: 7
     bonus: 6500
     bonusStart: 
   - name: Tom Hootin's
@@ -18366,10 +18392,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: provQual
-    signConditionValue: true
+    signConditionValue: 1
     bonusCondition: wins
-    bonusConditionValue: 10
+    bonusConditionValue: 0
     bonus: 5000
     bonusStart: 
   - name: Minty's
@@ -18391,10 +18419,12 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
+    stats: 
+    oppStats: 
     signCondition: provQual
-    signConditionValue: true
+    signConditionValue: 1
     bonusCondition: earnings
-    bonusConditionValue: 10000
+    bonusConditionValue: 0
     bonus: 10000
     bonusStart: 
   powerUps:
@@ -18417,10 +18447,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Sweep Endurance +1
-    - Sweep Health +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Jerseys
     id: 1
     description: Your new uniforms have the desired effect - intimidation.
@@ -18440,10 +18474,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Opp Draw +1
-    - Opp Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Extra Ice Time
     id: 2
     description: The extra practice sessions yield improved accuracy for your team
@@ -18463,10 +18501,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Body Spray
     id: 3
     description: A bold new scent that you've adopted distracts opposing sweepers
@@ -18487,10 +18529,14 @@ MonoBehaviour:
     oppStrength: -3
     oppEnduro: -3
     oppCohesion: 0
-    effects:
-    - Opp Strength -1
-    - Opp Enduro -1
-    - Opp Health -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Old Curling Book
     id: 4
     description: The techniques learned in this book may not be pretty, but they
@@ -18511,10 +18557,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: NFT Investment
     id: 5
     description: The gambling gets the adrenailne flowing - and annoys your opponents
@@ -18534,10 +18584,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Takeout +1
-    - Opp Takeout +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Alternative Milk Subscription
     id: 6
     description: As you transition away from dairy, you mysteriously lose some accuracy
@@ -18558,10 +18612,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Haircuts
     id: 7
     description: Lookin good and playing with confidence! Your opponents can't help
@@ -18582,10 +18640,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Take Out +1
-    - Opp Draw +1
-    - Opp Guard +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Private Yoga Sessions
     id: 8
     description: The flexibility gained pays dividends in shotmaking
@@ -18605,10 +18667,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Purple Sports Drink
     id: 9
     description: The electrolytes flow through you, giving your team an accuracy
@@ -18629,10 +18695,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Hotel Room Upgrades
     id: 10
     description: Upgraded hotel rooms improve every aspect of your team's game.
@@ -18652,10 +18722,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +2
-    - All Sweep +2
-    - 
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: An Old, Smelly Hat
     id: 11
     description: The odour borders on unsportsmanlike, but something about it makes
@@ -18676,10 +18750,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Opp Draw, Guard -1
-    - Opp Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Personal Trainer
     id: 12
     description: Take your sweeping up a level with a guided training regimen
@@ -18699,10 +18777,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Strength +2
-    - Endurance +2
-    - Health +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Icemaker's Bar Tab
     id: 13
     description: A couple drinks with the icemaker leaves you a little tired, but
@@ -18723,10 +18805,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Team Dental Care
     id: 14
     description: Comprehensive dental coverage leaves your team beaming
@@ -18746,10 +18832,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Team Manager
     id: 15
     description: A little extra help lugging around gear gives you more time to focus
@@ -18770,10 +18860,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Shot Accuracy +1
-    - Sweep Endurance -1
-    - Sweep Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Shoes
     id: 16
     description: Nothing beats a comfortable shoe!
@@ -18793,10 +18887,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Fancy French Dinner
     id: 17
     description: A sophisticated treat for you and your team
@@ -18816,10 +18914,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Brooms
     id: 18
     description: Upgraded broom technology takes your sweeping to the next level
@@ -18839,10 +18941,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   skillBoost:
   - name: Green Juice
     id: 0
@@ -18863,10 +18969,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Sweep Endurance +1
-    - Sweep Health +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Jerseys
     id: 1
     description: Your new uniforms have the desired effect - intimidation.
@@ -18886,10 +18996,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Opp Draw +1
-    - Opp Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Extra Ice Time
     id: 2
     description: The extra practice sessions yield improved accuracy for your team
@@ -18909,10 +19023,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Body Spray
     id: 3
     description: A bold new scent that you've adopted distracts opposing sweepers
@@ -18933,10 +19051,14 @@ MonoBehaviour:
     oppStrength: -6
     oppEnduro: -6
     oppCohesion: 0
-    effects:
-    - Opp Strength -1
-    - Opp Enduro -1
-    - Opp Health -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Old Curling Book
     id: 4
     description: The techniques learned in this book may not be pretty, but they
@@ -18957,10 +19079,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Crypto Sponsorship
     id: 5
     description: The extra cash gets the adrenailne flowing - and annoys your opponents
@@ -18980,10 +19106,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Takeout +1
-    - Opp Takeout +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Alternative Milk Conversion
     id: 6
     description: As you transition away from dairy, you mysteriously lose some accuracy
@@ -19004,10 +19134,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Haircuts
     id: 7
     description: Lookin good and playing with confidence! Your opponents can't help
@@ -19028,10 +19162,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Take Out +1
-    - Opp Draw +1
-    - Opp Guard +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Private Yoga Sessions
     id: 8
     description: The flexibility gained pays dividends in your shotmaking
@@ -19051,10 +19189,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Purple Sports Drink
     id: 9
     description: The electrolytes flow through you, giving you an accuracy boost
@@ -19074,10 +19216,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Hotel Room Upgrades
     id: 10
     description: Upgraded hotel rooms improve every aspect of your team's game.
@@ -19097,10 +19243,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +2
-    - All Sweep +2
-    - 
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: An Old, Smelly Hat
     id: 11
     description: The odour borders on unsportsmanlike, but something about it makes
@@ -19121,10 +19271,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Opp Draw, Guard -1
-    - Opp Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Personal Trainer
     id: 12
     description: Take your sweeping up a level with a guided training regimen
@@ -19144,10 +19298,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Strength +2
-    - Endurance +2
-    - Health +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Icemaker's Bar Tab
     id: 13
     description: A couple drinks with the icemaker leaves you a little tired, but
@@ -19168,10 +19326,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Team Dental Care
     id: 14
     description: Comprehensive dental coverage leaves your team beaming
@@ -19191,10 +19353,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Shadowy Investor
     id: 15
     description: An angelic investment gives your teammates pause, but gets results
@@ -19214,10 +19380,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Shot Accuracy +1
-    - Sweep Endurance -1
-    - Sweep Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Shoes
     id: 16
     description: Nothing beats a comfortable shoe!
@@ -19237,10 +19407,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Tractor Sponsorship
     id: 17
     description: The agricultural money is a welcome addition to the coffers
@@ -19260,10 +19434,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Coffee Sponsorship
     id: 18
     description: The nation's favourite coffee chain wants to give you the big bucks!
@@ -19283,10 +19461,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   negative:
   - name: Green Juice
     id: 0
@@ -19307,10 +19489,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Sweep Endurance +1
-    - Sweep Health +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Jerseys
     id: 1
     description: Your new uniforms have the desired effect - intimidation.
@@ -19330,10 +19516,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Opp Draw +1
-    - Opp Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Extra Ice Time
     id: 2
     description: The extra practice sessions yield improved accuracy for your team
@@ -19353,10 +19543,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Body Spray
     id: 3
     description: A bold new scent that you've adopted distracts opposing sweepers
@@ -19377,10 +19571,14 @@ MonoBehaviour:
     oppStrength: -6
     oppEnduro: -6
     oppCohesion: 0
-    effects:
-    - Opp Strength -1
-    - Opp Enduro -1
-    - Opp Health -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Old Curling Book
     id: 4
     description: The techniques learned in this book may not be pretty, but they
@@ -19401,10 +19599,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Crypto Sponsorship
     id: 5
     description: The extra cash gets the adrenailne flowing - and annoys your opponents
@@ -19424,10 +19626,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Takeout +1
-    - Opp Takeout +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Alternative Milk Conversion
     id: 6
     description: As you transition away from dairy, you mysteriously lose some accuracy
@@ -19448,10 +19654,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Haircuts
     id: 7
     description: Lookin good and playing with confidence! Your opponents can't help
@@ -19472,10 +19682,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Take Out +1
-    - Opp Draw +1
-    - Opp Guard +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Private Yoga Sessions
     id: 8
     description: The flexibility gained pays dividends in your shotmaking
@@ -19495,10 +19709,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Purple Sports Drink
     id: 9
     description: The electrolytes flow through you, giving you an accuracy boost
@@ -19518,10 +19736,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Hotel Room Upgrades
     id: 10
     description: Upgraded hotel rooms improve every aspect of your team's game.
@@ -19541,10 +19763,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +2
-    - All Sweep +2
-    - 
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: An Old, Smelly Hat
     id: 11
     description: The odour borders on unsportsmanlike, but something about it makes
@@ -19565,10 +19791,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Opp Draw, Guard -1
-    - Opp Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Personal Trainer
     id: 12
     description: Take your sweeping up a level with a guided training regimen
@@ -19588,10 +19818,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Strength +2
-    - Endurance +2
-    - Health +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Icemaker's Bar Tab
     id: 13
     description: A couple drinks with the icemaker leaves you a little tired, but
@@ -19612,10 +19846,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Team Dental Care
     id: 14
     description: Comprehensive dental coverage leaves your team beaming
@@ -19635,10 +19873,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Shadowy Investor
     id: 15
     description: An angelic investment gives your teammates pause, but gets results
@@ -19658,10 +19900,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Shot Accuracy +1
-    - Sweep Endurance -1
-    - Sweep Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Shoes
     id: 16
     description: Nothing beats a comfortable shoe!
@@ -19681,10 +19927,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Tractor Sponsorship
     id: 17
     description: The agricultural money is a welcome addition to the coffers
@@ -19704,10 +19954,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Coffee Sponsorship
     id: 18
     description: The nation's favourite coffee chain wants to give you the big bucks!
@@ -19727,10 +19981,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   defense:
   - name: Green Juice
     id: 0
@@ -19751,10 +20009,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Sweep Endurance +1
-    - Sweep Health +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Jerseys
     id: 1
     description: Your new uniforms have the desired effect - intimidation.
@@ -19774,10 +20036,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Opp Draw +1
-    - Opp Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Extra Ice Time
     id: 2
     description: The extra practice sessions yield improved accuracy for your team
@@ -19797,10 +20063,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Body Spray
     id: 3
     description: A bold new scent that you've adopted distracts opposing sweepers
@@ -19821,10 +20091,14 @@ MonoBehaviour:
     oppStrength: -6
     oppEnduro: -6
     oppCohesion: 0
-    effects:
-    - Opp Strength -1
-    - Opp Enduro -1
-    - Opp Health -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Old Curling Book
     id: 4
     description: The techniques learned in this book may not be pretty, but they
@@ -19845,10 +20119,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Opp Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Crypto Sponsorship
     id: 5
     description: The extra cash gets the adrenailne flowing - and annoys your opponents
@@ -19868,10 +20146,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Sweep Strength +1
-    - Takeout +1
-    - Opp Takeout +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Alternative Milk Conversion
     id: 6
     description: As you transition away from dairy, you mysteriously lose some accuracy
@@ -19892,10 +20174,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Haircuts
     id: 7
     description: Lookin good and playing with confidence! Your opponents can't help
@@ -19916,10 +20202,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Take Out +1
-    - Opp Draw +1
-    - Opp Guard +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Private Yoga Sessions
     id: 8
     description: The flexibility gained pays dividends in your shotmaking
@@ -19939,10 +20229,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Purple Sports Drink
     id: 9
     description: The electrolytes flow through you, giving you an accuracy boost
@@ -19962,10 +20256,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Guard +2
-    - Take Out +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Hotel Room Upgrades
     id: 10
     description: Upgraded hotel rooms improve every aspect of your team's game.
@@ -19985,10 +20283,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +2
-    - All Sweep +2
-    - 
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: An Old, Smelly Hat
     id: 11
     description: The odour borders on unsportsmanlike, but something about it makes
@@ -20009,10 +20311,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +2
-    - Opp Draw, Guard -1
-    - Opp Take Out -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Personal Trainer
     id: 12
     description: Take your sweeping up a level with a guided training regimen
@@ -20032,10 +20338,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Strength +2
-    - Endurance +2
-    - Health +2
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Icemaker's Bar Tab
     id: 13
     description: A couple drinks with the icemaker leaves you a little tired, but
@@ -20056,10 +20366,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Team Dental Care
     id: 14
     description: Comprehensive dental coverage leaves your team beaming
@@ -20079,10 +20393,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Accuracy +1
-    - Endurance -1
-    - Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Shadowy Investor
     id: 15
     description: An angelic investment gives your teammates pause, but gets results
@@ -20102,10 +20420,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - All Shot Accuracy +1
-    - Sweep Endurance -1
-    - Sweep Strength -1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: New Shoes
     id: 16
     description: Nothing beats a comfortable shoe!
@@ -20125,10 +20447,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Tractor Sponsorship
     id: 17
     description: The agricultural money is a welcome addition to the coffers
@@ -20148,10 +20474,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: Coffee Sponsorship
     id: 18
     description: The nation's favourite coffee chain wants to give you the big bucks!
@@ -20171,10 +20501,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - Draw +1
-    - Guard +1
-    - Take Out +1
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
 --- !u!114 &794133087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20193,6 +20527,11 @@ MonoBehaviour:
   - {r: 0.85098046, g: 0.79215693, b: 0.46274513, a: 1}
   - {r: 0.058823533, g: 0.058823533, b: 0.07058824, a: 1}
   - {r: 0.35686275, g: 0.4039216, b: 0.8078432, a: 1}
+  - {r: 0.78823537, g: 0.4784314, b: 0.121568635, a: 1}
+  - {r: 0.3019608, g: 0.6039216, b: 0.5647059, a: 1}
+  - {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  - {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  - {r: 0.8980393, g: 0.8313726, b: 0.7490196, a: 1}
   textColors:
   - {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   - {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
@@ -20200,8 +20539,7 @@ MonoBehaviour:
   idPUList: 
   idSponsorList: 
   activeIdList: 
-  playedPUIdList: 
-  playedSponsorIdList: 
+  playedIdList: 
   activeLengthList: 
   usedLengthList: 
   cardsPU: []
@@ -20228,7 +20566,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects: []
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: 
     id: 0
     description: 
@@ -20248,7 +20593,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects: []
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: 
     id: 0
     description: 
@@ -20268,7 +20620,14 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects: []
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   - name: 
     id: 0
     description: 
@@ -20288,11 +20647,17 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects: []
-  playedPUCards: []
-  playedSponsorCards: []
-  emptyCard:
-    name: No Powerup Selected
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
+  playedCards: []
+  emptyPUCard:
+    name: EMPTY
     id: 99
     description: 
     cost: 0
@@ -20311,10 +20676,42 @@ MonoBehaviour:
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
-    effects:
-    - None
-    - None
-    - None
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
+  emptySponsorCard:
+    name: NO SPONSOR
+    id: 99
+    description: 
+    cost: 0
+    active: 0
+    played: 0
+    duration: 0
+    draw: 0
+    guard: 0
+    takeOut: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
+    oppDraw: 0
+    oppGuard: 0
+    oppTakeOut: 0
+    oppStrength: 0
+    oppEnduro: 0
+    oppCohesion: 0
+    stats: 
+    oppStats: 
+    signCondition: 
+    signConditionValue: 0
+    bonusCondition: 
+    bonusConditionValue: 0
+    bonus: 0
+    bonusStart: 
   cardDisplays:
   - name: {fileID: 621097788}
     description: {fileID: 621097787}
@@ -25623,11 +26020,11 @@ RectTransform:
   - {fileID: 1051802484}
   - {fileID: 1595246928}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 913.0542, y: -663.5221}
+  m_AnchoredPosition: {x: 562.5, y: -758.5221}
   m_SizeDelta: {x: 1124, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1052130293
@@ -39936,7 +40333,7 @@ RectTransform:
   m_Children:
   - {fileID: 262479742}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -40442,6 +40839,34 @@ PrefabInstance:
     - target: {fileID: 6005611956316943004, guid: d023725fed4804285a4d294f90eb4774, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: set_interactable
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: UnityEngine.UI.Selectable, UnityEngine.UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_BoolArgument
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d023725fed4804285a4d294f90eb4774, type: 3}
@@ -41254,7 +41679,7 @@ RectTransform:
   m_Children:
   - {fileID: 1236789129}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -45503,6 +45928,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 49.55
       objectReference: {fileID: 0}
+    - target: {fileID: 5415646138146640392, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ac60a1016a2a940b5a9c001f8c7a9122, type: 3}
     - target: {fileID: 5415646138146640393, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -46804,15 +47233,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  week: 5
+  week: 0
   seasonLength: 36
   playerName: Kate
   teamName: SaCutie
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerTeamIndex: 0
-  earnings: 3200
-  cash: 0
-  record: {x: 0, y: 0}
+  earnings: 1200
+  cash: 1000
+  record: {x: 3, y: 10}
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}
@@ -46844,8 +47273,7 @@ MonoBehaviour:
   cardPUIDList: 
   cardSponsorIDList: 
   activeCardIDList: 
-  playedCardPUIDList: 
-  playedCardSponsorIDList: 
+  playedCardIDList: 
   activeCardLengthList: 
   inProgress: 0
   season: 0
@@ -48658,7 +49086,7 @@ RectTransform:
   - {fileID: 6202220163679587574}
   - {fileID: 785226642}
   m_Father: {fileID: 5135489}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -50262,6 +50690,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 49.55
       objectReference: {fileID: 0}
+    - target: {fileID: 5415646138146640392, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ac60a1016a2a940b5a9c001f8c7a9122, type: 3}
     - target: {fileID: 5415646138146640393, guid: 2946525237d9146d4aa0a8ab0c4e5ccf, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

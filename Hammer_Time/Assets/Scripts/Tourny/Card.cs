@@ -30,6 +30,37 @@ public class Card
     public int oppEnduro;
     public int oppCohesion;
 
-    public string[] effects;
+    public int[] stats;
+    public int[] oppStats;
 
+    //signing condition
+    //the condition that this will become available, ie win threshold or qualification threshold
+    public string signCondition;
+    public int signConditionValue;
+
+    //bonus condition
+    //the condition for paying a bonus, ie won 3 games, won a tournament
+    public string bonusCondition;
+    public int bonusConditionValue;
+
+    public float bonus;
+
+    public string bonusStart;
+
+    void Update()
+    {
+        stats[0] = draw;
+        stats[1] = guard;
+        stats[2] = takeOut;
+        stats[3] = sweepStrength;
+        stats[4] = sweepEnduro;
+        stats[5] = sweepCohesion;
+
+        oppStats[0] = oppDraw;
+        oppStats[1] = oppGuard;
+        oppStats[2] = oppTakeOut;
+        oppStats[3] = oppStrength;
+        oppStats[4] = oppEnduro;
+        oppStats[5] = oppCohesion;
+    }
 }

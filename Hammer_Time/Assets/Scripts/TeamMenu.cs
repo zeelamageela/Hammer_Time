@@ -94,7 +94,7 @@ public class TeamMenu : MonoBehaviour
             oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
 
             xp = cm.xp;
-            cash = cm.earnings;
+            cash = cm.cash;
             xpText.text = xp.ToString();
             cashText.text = "$" + cash.ToString("n0");
             recordText.text = cm.record.x.ToString() + "-" + cm.record.y.ToString();
@@ -251,7 +251,12 @@ public class TeamMenu : MonoBehaviour
 
         for (int i = 0; i < teamDisplay.Length; i++)
         {
-            teamDisplay[i].charName.text = activePlayers[i].name;
+            if (i == 0)
+                teamDisplay[i].charName.text = "Lead - " + activePlayers[i].name;
+            if (i == 1)
+                teamDisplay[i].charName.text = "Second - " + activePlayers[i].name;
+            if (i == 2)
+                teamDisplay[i].charName.text = "Third - " + activePlayers[i].name;
             teamDisplay[i].cost.text = "$" + activePlayers[i].cost.ToString("N0");
             teamDisplay[i].photo.sprite = activePlayers[i].image;
             teamDisplay[i].description.text = activePlayers[i].description;
@@ -275,7 +280,8 @@ public class TeamMenu : MonoBehaviour
         else
             replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
 
-        float moneyToSpend = cm.earnings;
+        float moneyToSpend = cm.cash - pm.costPerWeek;
+        Debug.Log("Money to spend preTeam is " + moneyToSpend);
 
         for (int i = 0; i < activePlayers.Length; i++)
         {
@@ -284,7 +290,7 @@ public class TeamMenu : MonoBehaviour
                 moneyToSpend -= (activePlayers[i].cost);
             }
         }
-        Debug.Log("Money to Spend is " + moneyToSpend);
+        Debug.Log("Money to Spend postTeam is " + moneyToSpend);
         for (int i = 0; i < freeAgentDisplay.Length; i++)
         {
             freeAgentDisplay[i].charName.text = freeAgents[i].name;
@@ -361,7 +367,7 @@ public class TeamMenu : MonoBehaviour
 
         Debug.Log("Team Cost is " + teamCost);
 
-        cm.earnings -= cm.costPerWeek;
+        cm.cash -= cm.costPerWeek;
         cm.teamPaid = true;
         //teamMenu.SetActive(false);
         //agentMenu.SetActive(false);
