@@ -122,12 +122,12 @@ public class TeamMenu : MonoBehaviour
         myFile = new EasyFileSave("my_player_data");
 
         cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
-        cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
-        cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
-        cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
-        cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
-        cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
-        cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
+        //cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
+        //cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
+        //cm.introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
+        //cm.storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
+        //cm.helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
+        //cm.strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
 
         for (int i = 0; i < cm.coachDialogue.Length; i++)
             cm.coachDialogue[i] = false;
@@ -184,9 +184,9 @@ public class TeamMenu : MonoBehaviour
 
             Shuffle(playerPool);
 
-            dialogueGO.SetActive(true);
-            coachGreen.TriggerDialogue("Intro", 8);
-            cm.introDialogue[8] = true;
+            //dialogueGO.SetActive(true);
+            //coachGreen.TriggerDialogue("Intro", 8);
+            //cm.introDialogue[8] = true;
         }
 
         SelectFreeAgents();
@@ -415,19 +415,34 @@ public class TeamMenu : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         pm = FindObjectOfType<PowerUpManager>();
 
-        cm.modStats.drawAccuracy += activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
-        cm.modStats.guardAccuracy += activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
-        cm.modStats.takeOutAccuracy += activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
-        cm.modStats.sweepEndurance += activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
-        cm.modStats.sweepStrength += activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
-        cm.modStats.sweepCohesion += activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
-        cm.oppStats.drawAccuracy += activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
-        cm.oppStats.guardAccuracy += activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
-        cm.oppStats.takeOutAccuracy += activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
-        cm.oppStats.sweepEndurance += activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
-        cm.oppStats.sweepStrength += activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
-        cm.oppStats.sweepCohesion += activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
+        cm.modStats.drawAccuracy = activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
+        cm.modStats.guardAccuracy = activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
+        cm.modStats.takeOutAccuracy = activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
+        cm.modStats.sweepEndurance = activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
+        cm.modStats.sweepStrength = activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
+        cm.modStats.sweepCohesion = activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
+        cm.oppStats.drawAccuracy = activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
+        cm.oppStats.guardAccuracy = activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
+        cm.oppStats.takeOutAccuracy = activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
+        cm.oppStats.sweepEndurance = activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
+        cm.oppStats.sweepStrength = activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
+        cm.oppStats.sweepCohesion = activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
 
+        for (int i = 0; i < pm.activeCards.Length; i++)
+        {
+            cm.modStats.drawAccuracy += pm.activeCards[i].draw;
+            cm.modStats.guardAccuracy += pm.activeCards[i].guard;
+            cm.modStats.takeOutAccuracy += pm.activeCards[i].takeOut;
+            cm.modStats.sweepEndurance += pm.activeCards[i].sweepEnduro;
+            cm.modStats.sweepStrength += pm.activeCards[i].sweepStrength;
+            cm.modStats.sweepCohesion += pm.activeCards[i].sweepCohesion;
+            cm.oppStats.drawAccuracy += pm.activeCards[i].oppDraw;
+            cm.oppStats.guardAccuracy += pm.activeCards[i].oppGuard;
+            cm.oppStats.takeOutAccuracy += pm.activeCards[i].oppTakeOut;
+            cm.oppStats.sweepEndurance += pm.activeCards[i].oppEnduro;
+            cm.oppStats.sweepStrength += pm.activeCards[i].oppStrength;
+            cm.oppStats.sweepCohesion += pm.activeCards[i].oppCohesion;
+        }
     }
 
     public void UnPreviewPoints()
@@ -435,18 +450,20 @@ public class TeamMenu : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         pm = FindObjectOfType<PowerUpManager>();
 
-        cm.modStats.drawAccuracy -= activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
-        cm.modStats.guardAccuracy -= activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
-        cm.modStats.takeOutAccuracy -= activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
-        cm.modStats.sweepEndurance -= activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
-        cm.modStats.sweepStrength -= activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
-        cm.modStats.sweepCohesion -= activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
-        cm.oppStats.drawAccuracy -= activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
-        cm.oppStats.guardAccuracy -= activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
-        cm.oppStats.takeOutAccuracy -= activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
-        cm.oppStats.sweepEndurance -= activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
-        cm.oppStats.sweepStrength -= activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
-        cm.oppStats.sweepCohesion -= activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
-
+        for (int i = 0; i < pm.activeCards.Length; i++)
+        {
+            cm.modStats.drawAccuracy += pm.activeCards[i].draw;
+            cm.modStats.guardAccuracy += pm.activeCards[i].guard;
+            cm.modStats.takeOutAccuracy += pm.activeCards[i].takeOut;
+            cm.modStats.sweepEndurance += pm.activeCards[i].sweepEnduro;
+            cm.modStats.sweepStrength += pm.activeCards[i].sweepStrength;
+            cm.modStats.sweepCohesion += pm.activeCards[i].sweepCohesion;
+            cm.oppStats.drawAccuracy += pm.activeCards[i].oppDraw;
+            cm.oppStats.guardAccuracy += pm.activeCards[i].oppGuard;
+            cm.oppStats.takeOutAccuracy += pm.activeCards[i].oppTakeOut;
+            cm.oppStats.sweepEndurance += pm.activeCards[i].oppEnduro;
+            cm.oppStats.sweepStrength += pm.activeCards[i].oppStrength;
+            cm.oppStats.sweepCohesion += pm.activeCards[i].oppCohesion;
+        }
     }
 }

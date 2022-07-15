@@ -38,6 +38,7 @@ public class DialogueManager : MonoBehaviour
         sentenceCount = sentences.Count;
     }
 
+
     public void StartDialogue(Dialogue dialogue)
     {
         Debug.Log("Conversation with " + dialogue.name);

@@ -95,49 +95,53 @@ public class TournySelector : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
 
         PowerUpManager pm = FindObjectOfType<PowerUpManager>();
-
         xpm.SetSkillPoints();
 
         if (cm.week == 0)
+        {
             StartCoroutine(NewSeason());
+            pm.SetUp();
+            teamMenu.TeamMenuOpen();
+        }
         else
         {
             cm.LoadCareer();
+            pm.SetUp();
+            teamMenu.TeamMenuOpen();
+            //if (cm.cash < 0)
+            //{
+            //    menuButtons[3].gameObject.SetActive(false);
+            //    menuButtons[4].gameObject.SetActive(false);
+            //    //pm.profileButton.interactable = false;
+            //    dialogueGO.SetActive(true);
+            //    for (int i = 0; i < panelGOs.Length; i++)
+            //    {
+            //        panelGOs[i].SetActive(false);
+            //    }
+            //    //coachGreen.TriggerDialogue("Story", 0);
+            //    quitButton.SetActive(true);
+            //    cm.EndCareer();
+            //}
 
-            if (cm.cash < 0)
+            if (cm.week == 2)
             {
-                menuButtons[3].gameObject.SetActive(false);
-                menuButtons[4].gameObject.SetActive(false);
-                //pm.profileButton.interactable = false;
-                dialogueGO.SetActive(true);
-                for (int i = 0; i < panelGOs.Length; i++)
-                {
-                    panelGOs[i].SetActive(false);
-                }
-                coachGreen.TriggerDialogue("Story", 0);
-                quitButton.SetActive(true);
-                cm.EndCareer();
-            }
-
-            else if (cm.week == 2)
-            {
-                dialogueGO.SetActive(true);
-                for (int i = 0; i < cm.currentTournyTeams.Length; i++)
-                {
-                    if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
-                    {
-                        if (cm.currentTournyTeams[i].rank < 5)
-                        {
-                            coachGreen.TriggerDialogue("Intro", 1);
-                        }
-                        else
-                        {
-                            coachGreen.TriggerDialogue("Intro", 2);
-                        }
-                    }
-                }
-                cm.introDialogue[1] = true;
-                cm.introDialogue[2] = true;
+                //dialogueGO.SetActive(true);
+                //for (int i = 0; i < cm.currentTournyTeams.Length; i++)
+                //{
+                //    if (cm.currentTournyTeams[i].id == cm.playerTeamIndex)
+                //    {
+                //        if (cm.currentTournyTeams[i].rank < 5)
+                //        {
+                //            coachGreen.TriggerDialogue("Intro", 1);
+                //        }
+                //        else
+                //        {
+                //            coachGreen.TriggerDialogue("Intro", 2);
+                //        }
+                //    }
+                //}
+                //cm.introDialogue[1] = true;
+                //cm.introDialogue[2] = true;
             }
 
             else if (cm.week == 3)
@@ -150,45 +154,45 @@ public class TournySelector : MonoBehaviour
                 }
                 xpm.SetSkillPoints();
                 Debug.Log("cm.xp is " + cm.xp);
-                dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue("Intro", 3);
-                cm.introDialogue[3] = true;
+                //dialogueGO.SetActive(true);
+                //coachGreen.TriggerDialogue("Intro", 3);
+                //cm.introDialogue[3] = true;
             }
 
             else if (cm.week == 4)
             {
-                dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue("Intro", 4);
-                cm.introDialogue[4] = true;
+                //dialogueGO.SetActive(true);
+                //coachGreen.TriggerDialogue("Intro", 4);
+                //cm.introDialogue[4] = true;
             }
             else if (cm.week == 5)
             {
-                dialogueGO.SetActive(true);
-                coachGreen.TriggerDialogue("Intro", 5);
-                cm.introDialogue[5] = true;
+                //dialogueGO.SetActive(true);
+                //coachGreen.TriggerDialogue("Intro", 5);
+                //cm.introDialogue[5] = true;
             }
-            if (cm.provQual)
-            {
-                if (dialogueGO.activeSelf)
-                    StartCoroutine(WaitForDialogue());
-                else
-                {
-                    if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
-                    {
-                        dialogueGO.SetActive(true);
-                        if (cm.week < 10)
-                        {
-                            coachGreen.TriggerDialogue("Qualifiers", 3);
-                        }
-                        else
-                        {
-                            coachGreen.TriggerDialogue("Qualifiers", 2);
-                        }
-                        cm.qualDialogue[3] = true;
-                        cm.qualDialogue[2] = true;
-                    }
-                }
-            }
+            //if (cm.provQual)
+            //{
+            //    if (dialogueGO.activeSelf)
+            //        StartCoroutine(WaitForDialogue());
+            //    else
+            //    {
+            //        if (!cm.qualDialogue[2] | !cm.qualDialogue[3])
+            //        {
+            //            dialogueGO.SetActive(true);
+            //            if (cm.week < 10)
+            //            {
+            //                coachGreen.TriggerDialogue("Qualifiers", 3);
+            //            }
+            //            else
+            //            {
+            //                coachGreen.TriggerDialogue("Qualifiers", 2);
+            //            }
+            //            cm.qualDialogue[3] = true;
+            //            cm.qualDialogue[2] = true;
+            //        }
+            //    }
+            //}
         }
 
 
@@ -990,27 +994,27 @@ public class TournySelector : MonoBehaviour
                 if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
                 {
                     Debug.Log("Tour rank is" + (i + 1));
-                    if (i < 6)
-                    {
-                        cm.tourQual = true;
-                        if (!cm.qualDialogue[4])
-                        {
-                            dialogueGO.SetActive(true);
-                            coachGreen.TriggerDialogue("Qualifiers", 4);
-                            cm.qualDialogue[4] = true;
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Outside the top 6"); 
-                        if (!cm.qualDialogue[1])
-                        {
-                            dialogueGO.SetActive(true);
-                            coachGreen.TriggerDialogue("Qualifiers", 1);
-                            cm.qualDialogue[1] = true;
-                            cm.tourQual = false;
-                        }
-                    }
+                    //if (i < 6)
+                    //{
+                    //    cm.tourQual = true;
+                    //    if (!cm.qualDialogue[4])
+                    //    {
+                    //        dialogueGO.SetActive(true);
+                    //        coachGreen.TriggerDialogue("Qualifiers", 4);
+                    //        cm.qualDialogue[4] = true;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    Debug.Log("Outside the top 6"); 
+                    //    if (!cm.qualDialogue[1])
+                    //    {
+                    //        dialogueGO.SetActive(true);
+                    //        coachGreen.TriggerDialogue("Qualifiers", 1);
+                    //        cm.qualDialogue[1] = true;
+                    //        cm.tourQual = false;
+                    //    }
+                    //}
                 }
             }
         }
@@ -1040,10 +1044,10 @@ public class TournySelector : MonoBehaviour
         }
         else if (provChampionship.complete && !cm.reviewDialogue[0])
         {
-            dialogueGO.SetActive(true);
-            coachGreen.TriggerDialogue("Review", 0);
-            cm.reviewDialogue[0] = true;
-            quitButton.SetActive(true);
+            //dialogueGO.SetActive(true);
+            //coachGreen.TriggerDialogue("Review", 0);
+            //cm.reviewDialogue[0] = true;
+            //quitButton.SetActive(true);
             cm.EndCareer();
         }
         else
@@ -1093,14 +1097,14 @@ public class TournySelector : MonoBehaviour
 
     IEnumerator NewSeason()
     {
-        dialogueGO.SetActive(true);
-        coachGreen.TriggerDialogue("Intro", 0);
+        //dialogueGO.SetActive(true);
+        //coachGreen.TriggerDialogue("Intro", 0);
         //cm.introDialogue[7] = true;
         cm.NewSeason();
-        yield return new WaitUntil(() => !dialogueGO.activeSelf);
+        //yield return new WaitUntil(() => !dialogueGO.activeSelf);
         yield return new WaitForSeconds(0.75f);
-        teamMenu.TeamMenuOpen();
-        Expand(menuButtons[2]);
+        //teamMenu.TeamMenuOpen();
+        //Expand(menuButtons[2]);
     }
 
     public void EndOfGame()
@@ -1396,9 +1400,6 @@ public class TournySelector : MonoBehaviour
 
     public void Expand(Button expandButton)
     {
-        AudioManager am = FindObjectOfType<AudioManager>();
-
-        am.PlayBG(Random.Range(0, 4));
 
         Animator expandAnim = expandButton.GetComponent<Animator>();
         
@@ -1430,6 +1431,10 @@ public class TournySelector : MonoBehaviour
     IEnumerator WaitForTime(float waitTime, int menuSelector, Button expandButton)
     {
         Profile(false);
+
+        AudioManager am = FindObjectOfType<AudioManager>();
+        am.PlayBG(menuSelector);
+
         yield return new WaitForSeconds(waitTime);
 
         //expandButton.interactable = false;
@@ -1449,7 +1454,7 @@ public class TournySelector : MonoBehaviour
                 //menuButtons[i].interactable = true;
                 Image img = menuButtons[i].GetComponent<Image>();
                 img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
-                Debug.Log("img color is " + img.color);
+                //Debug.Log("img color is " + img.color);
             }
 
         }

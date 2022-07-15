@@ -16,6 +16,7 @@ public class CareerManager : MonoBehaviour
     CareerSettings cs;
     PowerUpManager pUpM;
     TeamMenu teamSel;
+    StorylineManager storyLine;
 
     public int week;
     public int seasonLength;
@@ -252,7 +253,7 @@ public class CareerManager : MonoBehaviour
                             prov[i] = tSel.provQual[j];
                     }
                     prov[i].complete = provCompleteList[i];
-                    Debug.Log("prov tourny " + i + " is " + prov[i].complete);
+                    //Debug.Log("prov tourny " + i + " is " + prov[i].complete);
                 }
                 for (int i = 0; i < tourIDList.Length; i++)
                 {
@@ -276,7 +277,7 @@ public class CareerManager : MonoBehaviour
                     }
 
                     tournies[i].complete = tourniesCompleteList[i];
-                    Debug.Log("Tourny " + tournies[i].id + " complete is " + tournies[i].complete);
+                    //Debug.Log("Tourny " + tournies[i].id + " complete is " + tournies[i].complete);
                 }
 
                 //for (int i = 0; i < activeTournies.Length; i++)
@@ -1119,34 +1120,35 @@ public class CareerManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         tSel = FindObjectOfType<TournySelector>();
         teamSel = FindObjectOfType<TeamMenu>();
+        storyLine = FindObjectOfType<StorylineManager>();
 
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
         coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
-        qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
-        reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
-        introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
-        storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
-        helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
-        strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
+        //qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
+        //reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
+        //introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
+        //storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
+        //helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
+        //strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
 
         for (int i = 0; i < coachDialogue.Length; i++)
             coachDialogue[i] = false;
-        for (int i = 0; i < qualDialogue.Length; i++)
-            qualDialogue[i] = false;
-        for (int i = 0; i < reviewDialogue.Length; i++)
-            reviewDialogue[i] = false;
-        for (int i = 0; i < introDialogue.Length; i++)
-            introDialogue[i] = false;
-        for (int i = 0; i < storyDialogue.Length; i++)
-            storyDialogue[i] = false;
-        for (int i = 0; i < helpDialogue.Length; i++)
-            helpDialogue[i] = false;
-        for (int i = 0; i < strategyDialogue.Length; i++)
-            strategyDialogue[i] = false;
+        //for (int i = 0; i < qualDialogue.Length; i++)
+        //    qualDialogue[i] = false;
+        //for (int i = 0; i < reviewDialogue.Length; i++)
+        //    reviewDialogue[i] = false;
+        //for (int i = 0; i < introDialogue.Length; i++)
+        //    introDialogue[i] = false;
+        //for (int i = 0; i < storyDialogue.Length; i++)
+        //    storyDialogue[i] = false;
+        //for (int i = 0; i < helpDialogue.Length; i++)
+        //    helpDialogue[i] = false;
+        //for (int i = 0; i < strategyDialogue.Length; i++)
+        //    strategyDialogue[i] = false;
 
-        coachDialogue[0] = true;
-        introDialogue[0] = true;
+        //coachDialogue[0] = true;
+        //introDialogue[0] = true;
 
         xp = 0f;
         totalXp = 0f;
@@ -1158,15 +1160,15 @@ public class CareerManager : MonoBehaviour
         cStats.sweepEndurance = 3;
         cStats.sweepCohesion = 3;
 
-        for (int i = 0; i < activePlayers.Length; i++)
-        {
-            modStats.drawAccuracy += activePlayers[i].draw;
-            modStats.takeOutAccuracy += activePlayers[i].takeOut;
-            modStats.guardAccuracy += activePlayers[i].guard;
-            modStats.sweepStrength += activePlayers[i].sweepStrength;
-            modStats.sweepEndurance += activePlayers[i].sweepEnduro;
-            modStats.sweepCohesion += activePlayers[i].sweepCohesion;
-        }
+        //for (int i = 0; i < activePlayers.Length; i++)
+        //{
+        //    modStats.drawAccuracy += activePlayers[i].draw;
+        //    modStats.takeOutAccuracy += activePlayers[i].takeOut;
+        //    modStats.guardAccuracy += activePlayers[i].guard;
+        //    modStats.sweepStrength += activePlayers[i].sweepStrength;
+        //    modStats.sweepEndurance += activePlayers[i].sweepEnduro;
+        //    modStats.sweepCohesion += activePlayers[i].sweepCohesion;
+        //}
 
         season++;
 
@@ -1222,7 +1224,7 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        introDialogue[0] = true;
+        //introDialogue[0] = true;
 
         
         week++;

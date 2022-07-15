@@ -7,7 +7,7 @@ public class PowerUpManager : MonoBehaviour
 {
     CareerManager cm;
     public TournySelector tSel;
-
+    public TeamMenu tm;
     public Color[] bgColors;
     public Color[] textColors;
 
@@ -79,7 +79,7 @@ public class PowerUpManager : MonoBehaviour
         clickCount = 0;
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
-        SetUp();
+        tm = FindObjectOfType<TeamMenu>();
     }
 
     private void Update()
@@ -180,7 +180,7 @@ public class PowerUpManager : MonoBehaviour
 
     }
 
-    void SetUp()
+    public void SetUp()
     {
         cardsPU = new Card[pUpList.powerUps.Length];
         cardsSponsor = new Card[pUpList.sponsors.Length];
@@ -404,10 +404,18 @@ public class PowerUpManager : MonoBehaviour
         {
             if (activeCards[i].duration > 0)
                 cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " weeks";
+            else if (activeCards[i].duration == 1)
+                cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " week";
+            else if (activeCards[i].duration > 50)
+                cardDisplays[i].name.text = activeCards[i].name + " - " + " ongoing";
             else
                 cardDisplays[i].name.text = "[" + activeCards[i].name + "]";
 
-            cardDisplays[i].description.text = activeCards[i].description;
+            if (activeCards[i].cost > 0)
+                cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+            else
+                cardDisplays[i].description.text = " ";
+
             cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
 
             cardDisplays[i].effectSliders[0].value = activeCards[i].draw;
@@ -449,7 +457,7 @@ public class PowerUpManager : MonoBehaviour
                     ColorChanger(5, 1, i);
             }
 
-            PreviewPoints(i);
+            tm.PreviewPoints();
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -472,7 +480,6 @@ public class PowerUpManager : MonoBehaviour
                 cardDisplays[i].effectSliders[j].minValue = 0f;
             }
 
-            cardDisplays[i].costPanel.SetActive(false);
         }
 
         for (int i = 0; i < cardsPU.Length; i++)
@@ -531,7 +538,7 @@ public class PowerUpManager : MonoBehaviour
 
         for (int i = 0; i < activeCards.Length; i++)
         {
-            UnPreviewPoints(i);
+            tm.UnPreviewPoints();
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -541,17 +548,18 @@ public class PowerUpManager : MonoBehaviour
 
         if (activeCards[card].duration > 0)
             cardDisplays[4].name.text = activeCards[card].name + " - " + activeCards[card].duration.ToString() + " weeks";
-
         else if (activeCards[card].duration == 1)
             cardDisplays[4].name.text = activeCards[card].name + " - " + activeCards[card].duration.ToString() + " week";
         else if (activeCards[card].duration > 50)
             cardDisplays[4].name.text = activeCards[card].name + " - " + " ongoing";
         else
             cardDisplays[4].name.text = activeCards[card].name;
-        cardDisplays[4].description.text = "$" + activeCards[card].cost.ToString("n0") + " - " + activeCards[card].description;
 
-        cardDisplays[4].name.text = activeCards[card].name + " - " + activeCards[card].duration.ToString() + " weeks";
-        cardDisplays[4].description.text = activeCards[card].description;
+        if (activeCards[card].cost == 0)
+            cardDisplays[4].description.text = "$" + activeCards[card].cost.ToString("n0") + " - " + activeCards[card].description;
+        else
+            cardDisplays[4].description.text = " ";
+
         cardDisplays[4].cost.text = "$" + activeCards[card].cost.ToString("n0");
 
         cardDisplays[4].effectSliders[0].transform.parent.gameObject.SetActive(true);
@@ -578,16 +586,22 @@ public class PowerUpManager : MonoBehaviour
 
             for (int i = 5; i < cardGOs.Length; i++)
             {
-                if (availPUCards[i - 5].duration > 0)
-                    cardDisplays[4].name.text = availPUCards[i - 5].name + " - " + availPUCards[i - 5].duration.ToString() + " weeks";
-                else if (availPUCards[i - 5].duration == 1)
-                    cardDisplays[4].name.text = availPUCards[i - 5].name + " - " + availPUCards[i - 5].duration.ToString() + " week";
-                else if (availPUCards[i - 5].duration > 50)
-                    cardDisplays[4].name.text = availPUCards[i - 5].name + " - " + " ongoing";
-                else
-                    cardDisplays[4].name.text = availPUCards[i - 5].name;
+                cardGOs[i].GetComponent<Button>().interactable = true;
 
-                cardDisplays[i].description.text = "$" + availPUCards[i - 5].cost.ToString("n0") + " - " + availPUCards[i - 5].description;
+                if (availPUCards[i - 5].duration > 0)
+                    cardDisplays[i].name.text = availPUCards[i - 5].name + " - " + availPUCards[i - 5].duration.ToString() + " weeks";
+                else if (availPUCards[i - 5].duration == 1)
+                    cardDisplays[i].name.text = availPUCards[i - 5].name + " - " + availPUCards[i - 5].duration.ToString() + " week";
+                else if (availPUCards[i - 5].duration > 50)
+                    cardDisplays[i].name.text = availPUCards[i - 5].name + " - " + " ongoing";
+                else
+                    cardDisplays[i].name.text = availPUCards[i - 5].name;
+
+                if (availPUCards[i - 5].cost == 0)
+                    cardDisplays[i].description.text = "$" + availPUCards[i - 5].cost.ToString("n0") + " - " + availPUCards[i - 5].description;
+                else
+                    cardDisplays[i].description.text = " ";
+
                 cardDisplays[i].cost.text = "$" + availPUCards[i - 5].cost.ToString("n0");
                 cardDisplays[i].costPanel.SetActive(true);
 
@@ -607,32 +621,38 @@ public class PowerUpManager : MonoBehaviour
                 cardDisplays[i].effectSliders[10].value = availPUCards[i - 5].oppEnduro;
                 cardDisplays[i].effectSliders[11].value = availPUCards[i - 5].oppCohesion;
 
-                if (availPUCards[i - 5].cost > 0)
+                if (availPUCards[i - 5].cost == 0f)
                 {
-                    ColorChanger(7, 0, i);
+                    ColorChanger(6, 1, i);
                 }
                 else
-                    ColorChanger(6, 1, i);
+                    ColorChanger(7, 0, i);
             }
         }
         else
         {
+            replaceHeading.text = "Sponsorships";
+
             for (int i = 5; i < cardGOs.Length; i++)
             {
-                replaceHeading.text = "Sponsorships";
+                cardGOs[i].GetComponent<Button>().interactable = true;
 
                 if (availSponsorCards.Count > i - 5)
                 {
                     if (availSponsorCards[i - 5].duration > 0)
                         cardDisplays[i].name.text = availSponsorCards[i - 5].name + " - " + availSponsorCards[i - 5].duration.ToString() + " weeks";
                     else if (availSponsorCards[i - 5].duration == 1)
-                        cardDisplays[4].name.text = availSponsorCards[i - 5].name + " - " + availSponsorCards[i - 5].duration.ToString() + " week";
+                        cardDisplays[i].name.text = availSponsorCards[i - 5].name + " - " + availSponsorCards[i - 5].duration.ToString() + " week";
                     else if (availSponsorCards[i - 5].duration > 50)
                         cardDisplays[i].name.text = availSponsorCards[i - 5].name + " - " + " ongoing";
                     else
                         cardDisplays[i].name.text = availSponsorCards[i - 5].name;
 
-                    cardDisplays[i].description.text = "$" + availSponsorCards[i - 5].cost.ToString("n0") + " - " + availSponsorCards[i - 5].description;
+                    if (availSponsorCards[i - 5].cost == 0)
+                        cardDisplays[i].description.text = "$" + availSponsorCards[i - 5].cost.ToString("n0") + " - " + availSponsorCards[i - 5].description;
+                    else
+                        cardDisplays[i].description.text = " ";
+
                     cardDisplays[i].cost.text = "$" + availSponsorCards[i - 5].cost.ToString("n0");
                     cardDisplays[i].costPanel.SetActive(true);
 
@@ -651,12 +671,19 @@ public class PowerUpManager : MonoBehaviour
                     cardDisplays[i].effectSliders[9].value = availSponsorCards[i - 5].oppStrength;
                     cardDisplays[i].effectSliders[10].value = availSponsorCards[i - 5].oppEnduro;
                     cardDisplays[i].effectSliders[11].value = availSponsorCards[i - 5].oppCohesion;
-                    ColorChanger(7, 0, i);
+
+                    if (availPUCards[i - 5].cost == 0f)
+                    {
+                        ColorChanger(6, 1, i);
+                    }
+                    else
+                        ColorChanger(7, 0, i);
                 }
                 else
                 {
-                    cardGOs[i].GetComponent<Button>().interactable = false;
-                    cardDisplays[i].name.text = " - ";
+                    cardGOs[i].GetComponent<Button>().interactable = false; 
+                    cardDisplays[i].costPanel.SetActive(false);
+                    cardDisplays[i].name.text = " ";
                     cardDisplays[i].description.text = " ";
                     cardDisplays[i].cost.text = " ";
                     ColorChanger(6, 1, i);
@@ -667,7 +694,7 @@ public class PowerUpManager : MonoBehaviour
 
         for (int i = 0; i < activeCards.Length; i++)
         {
-            PreviewPoints(i);
+            tm.PreviewPoints();
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -697,6 +724,17 @@ public class PowerUpManager : MonoBehaviour
     {
         viewPanel.SetActive(true);
         replacePanel.SetActive(false);
+
+        for (int i = 0; i < activeCards.Length; i++)
+        {
+            tm.UnPreviewPoints();
+
+            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
+            {
+                cardDisplays[i].effectSliders[j].minValue = -25f;
+            }
+        }
+
         if (card == 0)
         {
             for (int i = 0; i < (cardGOs.Length / 2); i++)
@@ -705,10 +743,14 @@ public class PowerUpManager : MonoBehaviour
                     cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " weeks";
                 else if (activeCards[i].duration > 50)
                     cardDisplays[i].name.text = activeCards[i].name + " - " + " ongoing";
-
                 else
                     cardDisplays[i].name.text = activeCards[i].name;
-                cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+
+                if (activeCards[i].cost == 0)
+                    cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+                else
+                    cardDisplays[i].description.text = " ";
+
                 cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
 
                 cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(true);
@@ -780,10 +822,18 @@ public class PowerUpManager : MonoBehaviour
 
                 if (activeCards[i].duration > 0)
                     cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " weeks";
+                else if (activeCards[i].duration == 1)
+                    cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " week";
+                else if (activeCards[i].duration > 50)
+                    cardDisplays[i].name.text = activeCards[i].name + " - " + " ongoing";
                 else
-                    cardDisplays[i].name.text = "[" + activeCards[i].name + "]";
+                    cardDisplays[i].name.text = activeCards[i].name;
 
-                cardDisplays[i].description.text = activeCards[i].description;
+                if (activeCards[i].cost == 0)
+                    cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+                else
+                    cardDisplays[i].description.text = " ";
+
                 cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
 
                 cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(true);
@@ -806,8 +856,43 @@ public class PowerUpManager : MonoBehaviour
                 activeLengthList[i] = activeCards[i].duration;
                 costPerWeek += activeCards[i].cost;
                 cardDisplays[i].costPanel.SetActive(false);
+
+                if (activeCards[i].id == 99)
+                {
+                    ColorChanger(6, 1, i);
+                    cardDisplays[i].costPanel.SetActive(true);
+                }
+                else if (i < 2)
+                    ColorChanger(4, 1, i);
+                else
+                    ColorChanger(5, 1, i);
             }
         }
 
+        for (int i = 0; i < activeCards.Length; i++)
+        {
+            tm.PreviewPoints();
+
+            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
+            {
+                if (cardDisplays[i].effectSliders[j].value < 0)
+                {
+                    cardDisplays[i].effectSliders[j].value *= -1f;
+                    cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
+                }
+                else
+                {
+                    if (j < 6)
+                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
+                    else
+                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
+                }
+            }
+
+            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
+            {
+                cardDisplays[i].effectSliders[j].minValue = 0f;
+            }
+        }
     }
 }

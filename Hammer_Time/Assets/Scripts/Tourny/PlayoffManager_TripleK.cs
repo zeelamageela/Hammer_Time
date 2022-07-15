@@ -5458,8 +5458,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public void TournyComplete()
 	{
 		CareerManager cm = FindObjectOfType<CareerManager>();
-		gsp.teams = teams;
+		gsp.teams = teams; 
+		float winnings = cm.cash + (gsp.earnings - cm.earnings);
 		cm.earnings = gsp.earnings;
+		cm.cash = winnings;
 		cm.record = gsp.record;
 		gsp.draw = 0;
 		gsp.playoffRound = 0;

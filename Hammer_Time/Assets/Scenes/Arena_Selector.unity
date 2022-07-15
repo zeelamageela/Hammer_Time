@@ -11918,7 +11918,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.5, y: -378.52213}
+  m_AnchoredPosition: {x: 913.0542, y: -473.52213}
   m_SizeDelta: {x: 1125, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556640676
@@ -20522,6 +20522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tSel: {fileID: 1497908066}
+  tm: {fileID: 0}
   bgColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.85098046, g: 0.79215693, b: 0.46274513, a: 1}
@@ -29818,7 +29819,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.024902344}
   m_SizeDelta: {x: 2182, y: -0.050049}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1271770294 stripped
@@ -30557,6 +30558,30 @@ PrefabInstance:
     - target: {fileID: 6899141913651481766, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 975
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899141913655496737, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 400
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
@@ -37956,6 +37981,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -12
       objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1497908066}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SelectTourny
+      objectReference: {fileID: 0}
+    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d023725fed4804285a4d294f90eb4774, type: 3}
 --- !u!224 &1719182470 stripped
@@ -40841,27 +40878,15 @@ PrefabInstance:
       value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1497908066}
     - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: set_interactable
-      objectReference: {fileID: 0}
-    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: UnityEngine.UI.Selectable, UnityEngine.UI
-      objectReference: {fileID: 0}
-    - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6005611957037794273, guid: d023725fed4804285a4d294f90eb4774, type: 3}
@@ -41154,6 +41179,7 @@ MonoBehaviour:
   firstName: 
   teamName: 
   earnings: 0
+  cash: 0
   record: {x: 0, y: 0}
   week: 0
   cStats:
@@ -42080,7 +42106,7 @@ PrefabInstance:
       objectReference: {fileID: 1333619051}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: dialogue.Array.size
-      value: 12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1998886941380219543, guid: 412a22302ed424cda980263793c6f1d0, type: 3}
       propertyPath: introDialogue.Array.size
@@ -43379,6 +43405,138 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1937450494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1937450496}
+  - component: {fileID: 1937450495}
+  m_Layer: 0
+  m_Name: StorylineManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1937450495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937450494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b02a6e220dd67a46852930f30c00919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dm: {fileID: 0}
+  dialogueGO: {fileID: 0}
+  skip: {fileID: 0}
+  announcer: {fileID: 0}
+  skipTrg: {fileID: 1671106720}
+  annTrg: {fileID: 0}
+  storyBlocks:
+  - name: Welcome
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Welcome the player to the game
+    triggers:
+    - name: Coach Green
+      sentences:
+      - Howdy xxxxx!
+      - Welcome to the pros!  No time to waste, we've got a busy schedule coming
+        up.
+      - Let's get Team TEAMNAME ready for our first tournament!
+  - name: Menu Description
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Describe to the player the different menus
+    triggers:
+    - name: Coach Green - Tourny Menu
+      sentences:
+      - SWIPE left and right to view available tournaments
+      - CLICK on the tournament's name to play!
+    - name: Coach Green - XP Menu
+      sentences:
+      - Here you can upgrade your STATS
+      - STATS improve your team's accuracy and sweeping.
+      - Gain XP by playing games...
+      - ...and earn SKILL POINTS to spend here!
+    - name: Coach Green - Team Menu
+      sentences:
+      - Click on any team member to see available replacements.
+      - You can shop for FREE AGENTS every week...
+      - ...but make sure you have enough CASH to pay them!
+    - name: Coach Green - PowerUp Menu
+      sentences:
+      - Select an empty slot to view available UPGRADES and SPONSORS
+      - UPGRADES need to be paid every week...
+      - ...SPONSORS pay YOU every week!
+      - Keep winning to gain better UPGRADES and SPONSORS!
+    - name: Coach Green - Standings Menu
+      sentences:
+      - Select an empty slot to view available UPGRADES and SPONSORS
+      - UPGRADES need to be paid every week...
+      - ...SPONSORS pay YOU every week!
+      - Keep winning to gain better UPGRADES and SPONSORS!
+  - name: Announcer Introductions
+    week: 1
+    earnings: 1000
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Introduces the announcer and what's happening in the game
+    triggers: []
+  - name: Your First Game
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: How to play your first game
+    triggers: []
+  - name: Tourny Menu
+    week: 2
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Tells the player what's on screen for the menu portion
+    triggers: []
+  - name: Week 2 Results
+    week: 2
+    earnings: 1000
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: The coach tells the player how well they did, and what to do next
+    triggers: []
+  blockIndex: 0
+--- !u!4 &1937450496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937450494}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.682471, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1938209511
 GameObject:
   m_ObjectHideFlags: 0
@@ -47241,7 +47399,7 @@ MonoBehaviour:
   playerTeamIndex: 0
   earnings: 1200
   cash: 1000
-  record: {x: 3, y: 10}
+  record: {x: 1, y: 10}
   provQual: 0
   tourQual: 0
   tourRecord: {x: 0, y: 0}

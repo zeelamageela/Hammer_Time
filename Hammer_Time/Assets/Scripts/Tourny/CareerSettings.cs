@@ -9,7 +9,7 @@ public class CareerSettings : MonoBehaviour
 {
     CareerManager cm;
     GameSettingsPersist gsp;
-    AudioManager am;
+    public AudioManager am;
 
     public string playerName;
     public string teamName;

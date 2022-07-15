@@ -43,6 +43,8 @@ public class GameSettingsPersist : MonoBehaviour
     public string firstName;
     public string teamName;
     public float earnings;
+    public float cash;
+
     public Vector2 record;
 
     public int week;
@@ -415,7 +417,7 @@ public class GameSettingsPersist : MonoBehaviour
             teamName = myFile.GetString("Team Name");
             teamColour = myFile.GetUnityColor("Team Colour");
 
-            //earnings = myFile.GetFloat("Career Earnings");
+            earnings = myFile.GetFloat("Career Earnings");
             record = myFile.GetUnityVector2("Career Record");
             inProgress = myFile.GetBool("Tourny In Progress");
             draw = myFile.GetInt("Draw");
