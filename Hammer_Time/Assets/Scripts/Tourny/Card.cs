@@ -11,6 +11,8 @@ public class Card
     [TextArea(3, 10)]
     public string description;
 
+    public Sprite image;
+
     public float cost;
     public bool active;
     public bool played;

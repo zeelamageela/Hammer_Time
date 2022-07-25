@@ -13,8 +13,8 @@ public class Debug_Random : MonoBehaviour
 
     public void DebugStart()
     {
-        gm.redButton.gameObject.SetActive(false);
-        gm.yellowButton.gameObject.SetActive(false);
+        //gm.redButton.gameObject.SetActive(false);
+        //gm.yellowButton.gameObject.SetActive(false);
 
         rockTotal = 8;
         gm.rockTotal = rockTotal;

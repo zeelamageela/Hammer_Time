@@ -104,7 +104,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		if (gsp.careerLoad)
 		{
 			Debug.Log("Career Load P3K");
-			gsp.LoadCareer();
+			//gsp.LoadCareer();
 			careerEarnings = gsp.earnings;
 
 			

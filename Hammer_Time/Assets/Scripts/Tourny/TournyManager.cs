@@ -71,7 +71,7 @@ public class TournyManager : MonoBehaviour
         if (gsp.careerLoad)
 		{
 			//cm.LoadCareer();
-			gsp.LoadCareer();
+			//gsp.LoadCareer();
             if (gsp.inProgress)
             {
                 Debug.Log("In Progress is True");
@@ -530,6 +530,7 @@ public class TournyManager : MonoBehaviour
 		gsp.TournySetup();
 		SceneManager.LoadScene("End_Menu_Tourny_1");
     }
+
 	public void Menu()
     {
 		//StartCoroutine(SaveCareer());

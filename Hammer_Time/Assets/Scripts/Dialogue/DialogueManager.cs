@@ -127,10 +127,11 @@ public class DialogueManager : MonoBehaviour
     }
     void EndDialogue()
     {
-
         dialogueCanvas.SetActive(false);
         skipHead.SetActive(false);
         announcerHead.SetActive(false);
+        if (Time.timeScale < 1f)
+            Time.timeScale = 1f;
         Debug.Log("End of conversation");
     }
 

@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     public Text dbText;
 
     public GameState state;
-
+    public bool redTurn;
     Rock_Info redRock;
     Rock_Info yellowRock;
 
@@ -82,8 +82,6 @@ public class GameManager : MonoBehaviour
     public GameObject targetPlayer;
     public GameObject targetStory;
 
-    public Button redButton;
-    public Button yellowButton;
     public GameObject db;
     public GameObject dbrandom;
 
@@ -355,10 +353,6 @@ public class GameManager : MonoBehaviour
             }
             //rockList.Sort();
         }
-
-
-        //scoreboard.SetActive(false);
-
     }
     IEnumerator ResetGame()
     {
@@ -427,7 +421,7 @@ public class GameManager : MonoBehaviour
 
         state = GameState.REDTURN;
         //Debug.Log("Red Turn");
-
+        redTurn = true;
         am.PlayBG(2);
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
@@ -552,6 +546,8 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.YELLOWTURN;
         Debug.Log("Yellow Turn");
+
+        redTurn = false;
 
         am.PlayBG(0);
 

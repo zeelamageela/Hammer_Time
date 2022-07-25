@@ -99,7 +99,7 @@ public class Sweep : MonoBehaviour
 
     public void OnWhoa()
     {
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
         StartCoroutine(Whoa());
     }
 
@@ -255,7 +255,7 @@ public class Sweep : MonoBehaviour
 
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
-        Time.timeScale = 1f;
+        //Time.timeScale = 1f;
         rb.drag = 0.38f;
         rb.angularDrag = 0.32f;
         //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);

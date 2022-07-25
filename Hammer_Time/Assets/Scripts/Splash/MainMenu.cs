@@ -30,6 +30,7 @@ public class MainMenu : MonoBehaviour
 
             allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
             allTimeNames.text = allTimeNamesList[0];
+
             myFile.Dispose();
         }
         else

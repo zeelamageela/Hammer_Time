@@ -67,7 +67,7 @@ public class ProvStandings : MonoBehaviour
 			{
 				if (cm.playerTeamIndex == provRankList[i].team.id)
 				{
-					scrollbar.value = (float)(i - provRankList.Count) / (1f - provRankList.Count);
+					scrollbar.value = (i - provRankList.Count) / (1f - provRankList.Count);
 					standDisplay[i].panel.enabled = true;
 				}
 				else
@@ -114,7 +114,7 @@ public class ProvStandings : MonoBehaviour
 			{
 				if (cm.playerTeamIndex == provRankList[i].team.id)
 				{
-					scrollbar.value = (float)(i - provRankList.Count) / (1f - provRankList.Count);
+					scrollbar.value = (i - provRankList.Count) / (1f - provRankList.Count);
 					standDisplay[i].panel.enabled = true;
 				}
 				else
@@ -123,7 +123,7 @@ public class ProvStandings : MonoBehaviour
 		}
 	}
 
-		IEnumerator RefreshPanel()
+	IEnumerator RefreshPanel()
 	{
 		for (int i = 0; i < standDisplay.Length; i++)
 		{

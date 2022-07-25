@@ -1,0 +1,169 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &993131275823948861
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 993131275823949763}
+  - component: {fileID: 993131275823948860}
+  m_Layer: 0
+  m_Name: StorylineManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &993131275823949763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993131275823948861}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.682471, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &993131275823948860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993131275823948861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b02a6e220dd67a46852930f30c00919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dm: {fileID: 0}
+  dialogueGO: {fileID: 0}
+  skip: {fileID: 0}
+  announcer: {fileID: 0}
+  skipTrg: {fileID: 0}
+  annTrg: {fileID: 0}
+  storyBlocks:
+  - name: Welcome
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Welcome the player to the game
+    triggers:
+    - name: Coach Green
+      sentences:
+      - Howdy xxxxx!
+      - Welcome to the pros!  No time to waste, we've got a busy schedule coming
+        up.
+      - Let's get Team TEAMNAME ready for our first tournament!
+  - name: Menu Description
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Describe to the player the different menus
+    triggers:
+    - name: Tourny Menu
+      sentences:
+      - SWIPE left and right to view available tournaments...
+      - ...CLICK on the tournament's name to play!
+    - name: XP Menu
+      sentences:
+      - Here you can upgrade your STATS
+      - STATS improve your team's accuracy and sweeping.
+      - Gain XP by playing games...
+      - ...and earn SKILL POINTS to spend here!
+    - name: Team Menu
+      sentences:
+      - Click on any team member to see available replacements.
+      - You can shop for FREE AGENTS every week...
+      - ...but make sure you have enough CASH to pay them!
+    - name: PowerUp Menu
+      sentences:
+      - Select an empty slot to view available UPGRADES and SPONSORS.
+      - UPGRADES need to be paid every week...
+      - ...SPONSORS pay YOU every week!
+      - Keep winning to gain better UPGRADES and SPONSORS!
+    - name: Standings Menu
+      sentences:
+      - These are the rankings of all the pros in the world!
+      - You're ranked based on your winnings from all tournaments.
+  - name: Announcer Introductions
+    week: 1
+    earnings: 1000
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: Introduces the announcer and what's happening in the game
+    triggers:
+    - name: Announcer
+      sentences:
+      - A new season brings a new crop of rookies...
+      - ...one that we have our eye on is xxxxx TEAMNAME.
+      - Let's get to the action, and see how Team TEAMNAME matches up with the other
+        rookies.
+  - name: Your First Game
+    week: 1
+    earnings: 0
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: How to play your first game
+    triggers:
+    - name: Turn Select
+      sentences:
+      - TAP the spinning rock to select which TURN you're throwing.
+      - An INTURN will give the rock a CLOCKWISE rotation...
+      - ...and an OUTTURN will rotate the rock COUNTER-CLOCKWISE.
+    - name: Shooting
+      sentences:
+      - PULL BACK on the shooter to aim your shot.
+    - name: Releasing
+      sentences:
+      - RELEASE to take the shot!
+    - name: Sweeping
+      sentences:
+      - TAP on the rock to sweep with both sweepers!
+      - Or TAP on each sweeper for directional sweeping.
+      - Sweep AGAINST the curl to straighten the shot...
+      - Sweep WITH the curl to help the rock curl more!
+    - name: Coach Green
+      sentences:
+      - Nice shot!  Looks like we have a chance to score!
+    - name: Coach Green
+      sentences:
+      - Not bad!  Hopefully we can get our next one in scoring position.
+    - name: Coach Green
+      sentences:
+      - Wide open, perfect for us to score!
+    - name: Coach Green
+      sentences:
+      - Well, well, well!  Nice work in taking the lead.  You've put the pressure
+        on our opponent!
+    - name: Coach Green
+      sentences:
+      - We've got a bit of work to do in the next end, but I'm not worried yet!
+  - name: Week 2 Results
+    week: 2
+    earnings: 1000
+    provQual: 0
+    tourQual: 0
+    xp: 0
+    description: The coach tells the player how well they did, and what to do next
+    triggers:
+    - name: Coach Green
+      sentences:
+      - Week 1 is in the rearview, and that went pretty dang well!
+    - name: Coach Green
+      sentences:
+      - Well, that didn't go quite as planned.
+  blockIndex: 0

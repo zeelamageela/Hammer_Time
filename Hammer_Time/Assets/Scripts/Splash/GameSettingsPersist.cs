@@ -423,6 +423,7 @@ public class GameSettingsPersist : MonoBehaviour
             draw = myFile.GetInt("Draw");
             //numberOfTeams = myFile.GetInt("Number Of Teams");
             week = myFile.GetInt("Week");
+            Debug.Log("GSP Load Career Week is " + week);
             myFile.Dispose();
         }
     }
@@ -548,7 +549,7 @@ public class GameSettingsPersist : MonoBehaviour
     {
         TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
         CareerManager cm = FindObjectOfType<CareerManager>();
-        cm.LoadCareer();
+        //cm.LoadCareer();
         PlayoffManager_TripleK pm3k = FindObjectOfType<PlayoffManager_TripleK>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");

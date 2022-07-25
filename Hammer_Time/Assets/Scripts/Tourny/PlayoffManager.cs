@@ -42,27 +42,31 @@ public class PlayoffManager : MonoBehaviour
 		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 
 		playoffs.SetActive(true);
-		if (gsp.careerLoad)
-		{
-            gsp.LoadCareer();
-            careerEarnings = gsp.earnings;
-			careerRecord = gsp.record;
-		}
-		else if(gsp.inProgress)
-        {
-            gsp.LoadTourny();
-            gsp.inProgress = false;
-			gsp.careerLoad = false;
-			Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
-			//gsp.playoffRound--;
-			Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
-		}
-		else
-		{
-			careerEarnings = tm.careerEarnings;
-			careerRecord = tm.careerRecord;
+		//if (gsp.careerLoad)
+		//{
+		//          gsp.LoadCareer();
+		//          careerEarnings = gsp.earnings;
+		//	careerRecord = gsp.record;
+		//}
+		//else if(gsp.inProgress)
+		//      {
+		//          gsp.LoadTourny();
+		//          gsp.inProgress = false;
+		//	gsp.careerLoad = false;
+		//	Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
+		//	//gsp.playoffRound--;
+		//	Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
+		//}
+		//else
+		//{
+		//	careerEarnings = tm.careerEarnings;
+		//	careerRecord = tm.careerRecord;
 
-		}
+		//}
+
+		careerEarnings = tm.careerEarnings;
+		careerRecord = tm.careerRecord;
+
 		playerTeam = tm.playerTeam;
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
