@@ -33651,6 +33651,46 @@ MonoBehaviour:
   - {fileID: 303548331}
   XPText: {fileID: 1213503449}
   playButton: {fileID: 1675557790}
+  locals:
+  - name: Club Night
+    id: 0
+    location: St John's, Newfoundland
+    teams: 8
+    prizeMoney: 500
+    entryFee: 0
+    format: Cash Game
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 1
+    crowdDensity: 1
+  - name: Outdoor Games
+    id: 1
+    location: St John's, Newfoundland
+    teams: 8
+    prizeMoney: 500
+    entryFee: 0
+    format: Cash Game
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 4
+    crowdDensity: 1
+  - name: Offshore Gambling Den
+    id: 2
+    location: Off the Coast of Japan
+    teams: 8
+    prizeMoney: 20000
+    entryFee: 0
+    format: Cash Game
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 5
+    crowdDensity: 9
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
@@ -33756,7 +33796,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
-  - name: The National
+  - name: Federal Bank Cup
     id: 8
     location: Swift Current, Saskatchewan
     teams: 12
@@ -33769,19 +33809,20 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
-  - name: Ken's Highly Legal Cash Game
+  - name: The Spring Ring
     id: 9
-    location: Off the coast of Japan
+    location: Spokane, Washington
     teams: 12
     prizeMoney: 27000
-    entryFee: 0
+    entryFee: 400
     format: King of the Sheet
     championship: 0
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 5
+    BG: 3
     crowdDensity: 8
+  tourQual: []
   tour:
   - name: World Tour - Hokkaido Curling Classic
     id: 1
@@ -33862,7 +33903,7 @@ MonoBehaviour:
     BG: 2
     crowdDensity: 10
   provQual:
-  - name: Championship Qualifier
+  - name: National Qualifier #1
     id: 0
     location: Kirkcaldy, Scotland
     teams: 8
@@ -33875,7 +33916,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 3
-  - name: Championship Qualifier
+  - name: National Qualifier #2
     id: 1
     location: St Petersburg, Russia
     teams: 8
@@ -33888,7 +33929,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
-  - name: Championship Qualifier
+  - name: National Qualifier #3
     id: 2
     location: Sherwood Park, Alberta
     teams: 8
@@ -33901,7 +33942,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 4
-  - name: Championship Qualifier
+  - name: Last Chance National Qualifier
     id: 3
     location: Karlstad, Sweden
     teams: 8
@@ -33914,14 +33955,67 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 7
+  majors:
+  - name: The US Open
+    id: 2
+    location: Vernon, California
+    teams: 16
+    prizeMoney: 12000
+    entryFee: 250
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 2
+    crowdDensity: 6
+  - name: The Player's Championship
+    id: 7
+    location: Drumheller, Alberta
+    teams: 12
+    prizeMoney: 15000
+    entryFee: 0
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 1
+    crowdDensity: 5
+  - name: The National
+    id: 8
+    location: Swift Current, Saskatchewan
+    teams: 12
+    prizeMoney: 16500
+    entryFee: 1000
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 3
+    crowdDensity: 8
+  - name: Ken's Highly Legal Cash Game
+    id: 9
+    location: Off the coast of Japan
+    teams: 12
+    prizeMoney: 27000
+    entryFee: 0
+    format: King of the Sheet
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 5
+    crowdDensity: 8
   tourChampionship:
-    name: World Tour Championship
+    name: The Tour Championship
     id: 0
     location: Dumfries, Scotland
     teams: 6
     prizeMoney: 250000
     entryFee: 0
-    format: 
+    format: Round Robin
     championship: 1
     qualifier: 0
     tour: 0
@@ -33929,7 +34023,7 @@ MonoBehaviour:
     BG: 2
     crowdDensity: 11
   provChampionship:
-    name: The Player's Championship
+    name: The National Championship
     id: 0
     location: Toronto, Ontario
     teams: 16
@@ -33940,8 +34034,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 2
-    crowdDensity: 11
+    BG: 3
+    crowdDensity: 9
   panel1Tournies: []
   panel2Tournies: []
   activeTournies:
@@ -47438,7 +47532,33 @@ MonoBehaviour:
   tournies: []
   tour: []
   prov: []
-  champ: []
+  champ:
+  - name: 
+    id: 0
+    location: 
+    teams: 0
+    prizeMoney: 0
+    entryFee: 0
+    format: 
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 0
+    crowdDensity: 0
+  - name: 
+    id: 0
+    location: 
+    teams: 0
+    prizeMoney: 0
+    entryFee: 0
+    format: 
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 0
+    crowdDensity: 0
   activeTournies: []
   coachDialogue: 
   qualDialogue: 

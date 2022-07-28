@@ -31,9 +31,12 @@ public class TournySelector : MonoBehaviour
     public Text XPText;
 
     public GameObject playButton;
+    public Tourny[] locals;
     public Tourny[] tournies;
+    public Tourny[] tourQual;
     public Tourny[] tour;
     public Tourny[] provQual;
+    public Tourny[] majors;
     public Tourny tourChampionship;
     public Tourny provChampionship;
 
@@ -233,10 +236,12 @@ public class TournySelector : MonoBehaviour
         int nextTourny = 0;
         int nextTour = 0;
         int nextProvQual = 0;
+        int nextTourny2 = 0;
 
         int[] rnd = new int[3] { 0, 1, 2 };
         Shuffle(null, rnd);
 
+        int tCount = 0;
         for (int i = 0; i < tournies.Length; i++)
         {
             if (tournies[i].complete)
@@ -245,10 +250,20 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                nextTourny = i;
-                Debug.Log("TSel nextTourny is " + nextTourny);
-                tourniesComplete = false;
-                break;
+                if (tCount == 1)
+                {
+                    nextTourny2 = i;
+                    Debug.Log("TSel nextTourny2 is " + nextTourny2);
+                    tourniesComplete = false;
+                    break;
+                }
+                else
+                {
+                    nextTourny = i;
+                    Debug.Log("TSel nextTourny is " + nextTourny);
+                    tourniesComplete = false;
+                    tCount = 1;
+                }
             }
         }
 
@@ -294,16 +309,35 @@ public class TournySelector : MonoBehaviour
         }
         else
         {
-            if (!tourniesComplete & !tourComplete & provQualComplete)
+            if (tourChampionship.complete & provChampionship.complete)
             {
-                tournies[nextTourny].complete = true;
-                tour[nextTour].complete = true;
-                activeTournies[rnd[0]] = tour[nextTour];
-                activeTournies[rnd[1]] = tournies[nextTourny];
-                if (cm.provQual)
+                EndOfSeason();
+            }
+            else if (tourniesComplete & tourComplete & provQualComplete)
+            {
+                if (cm.tourQual & !tourChampionship.complete)
+                    activeTournies[rnd[0]] = tourChampionship;
+                else
+                    activeTournies[rnd[0]] = emptyTourny;
+
+                activeTournies[rnd[1]] = emptyTourny;
+
+                if (cm.provQual & !provChampionship.complete)
                     activeTournies[rnd[2]] = provChampionship;
                 else
                     activeTournies[rnd[2]] = emptyTourny;
+            }
+            else if (!tourniesComplete & !tourComplete & provQualComplete)
+            {
+                tournies[nextTourny].complete = true;
+                tournies[nextTourny2].complete = true;
+                tour[nextTour].complete = true;
+                activeTournies[rnd[0]] = tour[nextTour];
+                activeTournies[rnd[1]] = tournies[nextTourny];
+                if (nextTourny2 == 0)
+                    activeTournies[rnd[2]] = emptyTourny;
+                else
+                    activeTournies[rnd[2]] = tournies[nextTourny2];
             }
             else if (tourniesComplete & !tourComplete & !provQualComplete)
             {
@@ -317,35 +351,31 @@ public class TournySelector : MonoBehaviour
             {
                 provQual[nextProvQual].complete = true;
                 tournies[nextTourny].complete = true;
+                tournies[nextTourny2].complete = true;
                 activeTournies[rnd[0]] = provQual[nextProvQual];
                 activeTournies[rnd[1]] = tournies[nextTourny];
-                activeTournies[rnd[2]] = tourChampionship;
-            }
-            else if (tourComplete & provQualComplete)
-            {
-                tournies[nextTourny].complete = true;
-                if (tourChampionship.complete)
-                    activeTournies[rnd[0]] = tourChampionship;
-                else
-                    activeTournies[rnd[0]] = emptyTourny;
-                if (tourniesComplete)
-                    activeTournies[rnd[1]] = emptyTourny;
-                else
-                    activeTournies[rnd[1]] = tournies[nextTourny];
-
-                if (cm.provQual)
-                    activeTournies[rnd[2]] = provChampionship;
-                else
-                    activeTournies[rnd[2]] = emptyTourny;
+                activeTournies[rnd[2]] = tournies[nextTourny2];
             }
             else
             {
-                provQual[nextProvQual].complete = true;
-                tournies[nextTourny].complete = true;
-                tour[nextTour].complete = true;
-                activeTournies[rnd[0]] = provQual[nextProvQual];
-                activeTournies[rnd[1]] = tournies[nextTourny];
-                activeTournies[rnd[2]] = tour[nextTour];
+                if (cm.week > 3)
+                {
+                    provQual[nextProvQual].complete = true;
+                    tournies[nextTourny].complete = true;
+                    tour[nextTour].complete = true;
+                    activeTournies[rnd[0]] = provQual[nextProvQual];
+                    activeTournies[rnd[1]] = tournies[nextTourny];
+                    activeTournies[rnd[2]] = tour[nextTour];
+                }
+                else
+                {
+                    provQual[nextProvQual].complete = true;
+                    tournies[nextTourny].complete = true;
+                    tournies[nextTourny2].complete = true;
+                    activeTournies[rnd[0]] = provQual[nextProvQual];
+                    activeTournies[rnd[1]] = tournies[nextTourny];
+                    activeTournies[rnd[2]] = tournies[nextTourny2];
+                }
             }
         }
 
@@ -1164,6 +1194,7 @@ public class TournySelector : MonoBehaviour
 
     public void EndOfSeason()
     {
+        cm.EndCareer();
         SceneManager.LoadScene("SplashMenu");
     }
 
@@ -1210,9 +1241,12 @@ public class TournySelector : MonoBehaviour
         {
             if (currentTourny.name == tourChampionship.name)
                 tourChampionship.complete = true;
-            else if (currentTourny.name == provChampionship.name)
+            if (currentTourny.name == provChampionship.name)
                 provChampionship.complete = true;
         }
+
+        Debug.Log("TSel Current Tourny Name is " + currentTourny.name);
+
         //else
         //{
         //    for (int i = 0; i < tournies.Length; i++)

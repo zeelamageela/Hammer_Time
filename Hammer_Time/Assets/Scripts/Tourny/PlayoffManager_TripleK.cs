@@ -87,9 +87,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
 		cm = FindObjectOfType<CareerManager>();
-		myFile = new EasyFileSave("my_player_data");
 
-		//StartCoroutine(LoadCareer());
+		StartCoroutine(LoadCareer());
 		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 
 		teams = new Team[16];
@@ -190,6 +189,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	void LoadPlayoffs()
 	{
 		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
+		myFile = new EasyFileSave("my_player_data");
 		if (myFile.Load())
 		{
 			Debug.Log("Load Playoffs - Round " + playoffRound);
@@ -1626,11 +1626,21 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		}
 		else
 		{
-			vsDisplayGO.SetActive(false);
-			if (playoffRound < 18)
+
+			if (playoffRound < 20)
 			{
+				vsDisplayGO.SetActive(false);
+				nextButton.gameObject.SetActive(false);
+				simButton.gameObject.SetActive(false);
+				contButton.gameObject.SetActive(false);
 				StartCoroutine(SimToFinals());
 			}
+			else
+			{
+				nextButton.gameObject.SetActive(true);
+				vsDisplayGO.SetActive(true);
+			}
+
 		}
 
 		for (int i = 0; i < teams.Length; i++)
@@ -3412,7 +3422,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						gameList[42].y = gameY[0].id;
 						gameY[0].wins++;
-						gameY[0].rank = 5;
+						gameX[0].rank = 5;
 						gameX[0].loss++;
 					}
 				}
@@ -3767,20 +3777,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						gameX[0].loss++;
 					}
 				}
-				if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
-				{
-					gameList[45].x = gameX[0].id;
-					gameX[0].wins++;
-					gameY[0].rank = 2;
-					gameY[0].loss++;
-				}
-				else
-				{
-					gameList[45].x = gameY[0].id;
-					gameY[0].wins++;
-					gameX[0].rank = 2;
-					gameX[0].loss++;
-				}
+				//if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
+				//{
+				//	gameList[45].x = gameX[0].id;
+				//	gameX[0].wins++;
+				//	gameY[0].rank = 2;
+				//	gameY[0].loss++;
+				//}
+				//else
+				//{
+				//	gameList[45].x = gameY[0].id;
+				//	gameY[0].wins++;
+				//	gameX[0].rank = 2;
+				//	gameX[0].loss++;
+				//}
 
 				for (int i = 0; i < gameX.Length; i++)
 				{
@@ -3814,6 +3824,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					gameList[45].x = gameX[0].id;
 					gameX[0].wins++;
+					gameX[0].rank = 1;
 					gameY[0].rank = 2;
 					gameY[0].loss++;
 				}
@@ -3821,6 +3832,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					gameList[45].x = gameY[0].id;
 					gameY[0].wins++;
+					gameY[0].rank = 1;
 					gameX[0].rank = 2;
 					gameX[0].loss++;
 				}
@@ -5500,9 +5512,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	IEnumerator SimToFinals()
 	{
 		
-		yield return new WaitForSeconds(0.05f);
+		yield return new WaitForSeconds(0.01f);
 		OnSim();
-		yield return new WaitForSeconds(0.05f);
+		yield return new WaitForSeconds(0.01f);
 		SetPlayoffs();
 		yield return new WaitForSeconds(0.05f);
 	}
@@ -5521,11 +5533,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		myFile.Add("Knockout Tourny", gsp.KO);
-		myFile.Add("Career Record", gsp.record);
+		//myFile.Add("Career Record", gsp.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 
 		myFile.Add("BG", gsp.bg);
-		myFile.Add("Career Earnings", gsp.earnings);
+		//myFile.Add("Career Earnings", gsp.earnings);
 		
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.inProgress = inProgress;

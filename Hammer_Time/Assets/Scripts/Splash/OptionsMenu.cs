@@ -29,5 +29,7 @@ public class OptionsMenu : MonoBehaviour
         myFile = new EasyFileSave("my_hiscore_data");
 
         myFile.Delete();
+
+        myFile.Dispose();
     }
 }

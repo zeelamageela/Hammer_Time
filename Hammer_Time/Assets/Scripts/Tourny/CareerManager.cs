@@ -232,7 +232,7 @@ public class CareerManager : MonoBehaviour
             Debug.Log("CM Load Career activeCardIDList Length is " + activeCardIDList.Length);
 
 
-            if (tSel)
+            if (tSel != null)
             {
                 int[] provIDList = myFile.GetArray<int>("Prov ID List");
                 bool[] provCompleteList = myFile.GetArray<bool>("Prov Complete List");
@@ -241,10 +241,10 @@ public class CareerManager : MonoBehaviour
                 int[] tourniesIDList = myFile.GetArray<int>("Tournies ID List");
                 bool[] tourniesCompleteList = myFile.GetArray<bool>("Tournies Complete List");
 
-                //prov = tSel.provQual;
-                //tour = tSel.tour;
-                //tournies = tSel.tournies;
-                //champ = new Tourny[2];
+                prov = tSel.provQual;
+                tour = tSel.tour;
+                tournies = tSel.tournies;
+                champ = new Tourny[2];
                 champ[0] = tSel.tourChampionship;
                 champ[1] = tSel.provChampionship;
                 champ[0].complete = myFile.GetBool("Tour Championship Complete");
@@ -449,7 +449,7 @@ public class CareerManager : MonoBehaviour
 
             for (int i = 0; i < allTimeEarnings.Length; i++)
             {
-                Team tempTeam = gsp.playerTeam;
+                Team tempTeam = new Team();
                 //tempTeam.wins = 0;
                 //tempTeam.loss = 0;
                 //tempTeam.earnings = 0;
@@ -504,8 +504,8 @@ public class CareerManager : MonoBehaviour
 
         myFile.Add("All Time Earnings", allTimeEarningsTemp);
         myFile.Add("All Time Names", allTimeNameTemp);
-        myFile.Append();
 
+        myFile.Append();
     }
 
     public void SaveCareer()
@@ -784,13 +784,13 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Tourny Team ID List", tournyIDList);
             myFile.Add("Tourny Earnings List", tournyEarningsList);
 
-            myFile.Append();
-            StartCoroutine(SaveHighScore());
         }
 
 
+        myFile.Append();
+        StartCoroutine(SaveHighScore());
         //activePlayers = teamSel.activePlayers;
-        
+
         //myFile.Add("Tourny Team ID List", tournyTeamIDList);
         //myFile.Add("Tourny Wins List", tournyWinsList);
         //myFile.Add("Tourny Loss List", tournyLossList);

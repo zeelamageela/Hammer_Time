@@ -42,6 +42,8 @@ public class MainMenu : MonoBehaviour
             allTimeEarnings.gameObject.SetActive(false);
 
             allTimeNames.text = "No High Score Set";
+
+            myFile.Dispose();
         }
 
         am.PlayBG(0);

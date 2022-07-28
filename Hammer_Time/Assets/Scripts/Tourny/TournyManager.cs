@@ -65,13 +65,14 @@ public class TournyManager : MonoBehaviour
 		Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
 		careerEarnings = gsp.earnings;
-		myFile = new EasyFileSave("my_player_data");
 
 		Debug.Log("Gsp In Progress is " + gsp.inProgress);
-        if (gsp.careerLoad)
+		Debug.Log("Gsp Career Load is " + gsp.careerLoad);
+
+		if (gsp.careerLoad)
 		{
 			//cm.LoadCareer();
-			//gsp.LoadCareer();
+			gsp.LoadCareer();
             if (gsp.inProgress)
             {
                 Debug.Log("In Progress is True");
@@ -106,7 +107,9 @@ public class TournyManager : MonoBehaviour
 	}
 
 	public void ClearMoney()
-    {
+	{
+		myFile = new EasyFileSave("my_player_data");
+
 		if (myFile.Load())
 		{
 			myFile.Dispose();
