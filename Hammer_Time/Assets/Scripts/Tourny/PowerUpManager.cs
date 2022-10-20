@@ -92,7 +92,7 @@ public class PowerUpManager : MonoBehaviour
         tSel = FindObjectOfType<TournySelector>();
 
         //yield return new WaitForSeconds(3f);
-        tSel.SetUp();
+        //tSel.SetUp();
         profileButton.interactable = true;
         gameObject.SetActive(false);
         yield return null;

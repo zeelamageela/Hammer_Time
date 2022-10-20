@@ -33903,7 +33903,7 @@ MonoBehaviour:
     BG: 2
     crowdDensity: 10
   provQual:
-  - name: National Qualifier #1
+  - name: Championship Qualifier #1
     id: 0
     location: Kirkcaldy, Scotland
     teams: 8
@@ -33916,7 +33916,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 3
-  - name: National Qualifier #2
+  - name: Championship Qualifier #2
     id: 1
     location: St Petersburg, Russia
     teams: 8
@@ -33929,7 +33929,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
-  - name: National Qualifier #3
+  - name: Championship Qualifier #3
     id: 2
     location: Sherwood Park, Alberta
     teams: 8

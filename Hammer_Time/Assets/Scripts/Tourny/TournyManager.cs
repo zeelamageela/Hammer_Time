@@ -555,7 +555,9 @@ public class TournyManager : MonoBehaviour
 		gsp.inProgress = false;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
+		
 		cm.TournyResults();
+		cm.SetUpCareer();
 		SceneManager.LoadScene("Arena_Selector");
     }
 

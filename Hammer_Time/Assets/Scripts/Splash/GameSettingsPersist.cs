@@ -267,7 +267,7 @@ public class GameSettingsPersist : MonoBehaviour
         playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
-        cm.LoadFromGSP();
+        cm.LoadFromGSP(this);
     }
 
     public void TournySetup()
@@ -432,7 +432,7 @@ public class GameSettingsPersist : MonoBehaviour
     {
         Debug.Log("Load Tourny GSP");
         CareerManager cm = FindObjectOfType<CareerManager>();
-        cm.LoadCareer();
+        //cm.LoadCareer(this);
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");

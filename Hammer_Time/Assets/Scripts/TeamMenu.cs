@@ -115,6 +115,7 @@ public class TeamMenu : MonoBehaviour
             cm = FindObjectOfType<CareerManager>();
             StartCoroutine(SetUpTeam());
         }
+        cm.SaveCareer();
     }
 
     IEnumerator SetUpTeam()

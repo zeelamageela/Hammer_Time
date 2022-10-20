@@ -148,6 +148,7 @@ public class StorylineManager: MonoBehaviour
             if (blockIndex == 3)
             {
                 gm = FindObjectOfType<GameManager>();
+                yield return new WaitUntil(() => gm != null);
                 yield return new WaitUntil(() => gm.redTurn == gm.aiTeamYellow);
 
                 FindDialogueParts();

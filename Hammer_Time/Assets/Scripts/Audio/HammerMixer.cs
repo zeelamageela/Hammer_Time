@@ -115,7 +115,7 @@ public class HammerMixer : MonoBehaviour
         {
             if(LayerStates[i] == true){
                 if(AudioSamples[i].source != null){
-                    Debug.Log("AudioSamples source name is " + AudioSamples[i].source.name);
+                    //Debug.Log("AudioSamples source name is " + AudioSamples[i].source.name);
                     StartCoroutine(StartFade(AudioSamples[i].source, fadeDuration, maxVol));
                     //AudioSamples[i].source.volume = 1.0f;
                 }

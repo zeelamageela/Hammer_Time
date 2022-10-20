@@ -6,17 +6,9 @@ using TigerForge;
 public class CareerManager : MonoBehaviour
 {
     public static CareerManager instance;
-    GameSettingsPersist gsp;
-    TournyManager tm;
-    PlayoffManager pm;
     TournySettings ts;
-    TournySelector tSel;
     EasyFileSave myFile;
-    TournyTeamList tTeamList;
     CareerSettings cs;
-    PowerUpManager pUpM;
-    TeamMenu teamSel;
-    StorylineManager storyLine;
 
     public int week;
     public int seasonLength;
@@ -106,17 +98,31 @@ public class CareerManager : MonoBehaviour
 
     private void Start()
     {
-        tm = FindObjectOfType<TournyManager>();
-        pm = FindObjectOfType<PlayoffManager>();
         tourRankList = new List<TourStandings_List>();
         provRankList = new List<Standings_List>();
         tournyResults = new List<int>();
-        //if (inProgress)
-        //{
-        //    LoadCareer();
-        //}
+
+        SetUpCareer();
+    }
+
+    public void SetUpCareer()
+    {
+        TournyManager tm = FindObjectOfType<TournyManager>();
+        PlayoffManager pm = FindObjectOfType<PlayoffManager>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        TournySelector tSel = FindObjectOfType<TournySelector>();
+        TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
+        StorylineManager slm = FindObjectOfType<StorylineManager>();
+        TeamMenu teamSel = FindObjectOfType<TeamMenu>();
+        PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
+
+
+        if (inProgress)
+        {
+            LoadCareer(gsp, tSel, tTeamList, slm, teamSel, pUpM);
+        }
         //else
-        //    NewSeason();
+        //    NewSeason(gsp, tSel, tTeamList);
     }
 
     public void LoadSettings()
@@ -136,17 +142,20 @@ public class CareerManager : MonoBehaviour
         provTeams = 16;
     }
 
-    public void LoadFromGSP()
+    public void LoadFromGSP(GameSettingsPersist gsp)
     {
-        gsp = FindObjectOfType<GameSettingsPersist>();
-
         earnings = gsp.earnings;
         record = gsp.record;
         SaveCareer();
         Debug.Log("Earnings - CM from GSP - " + earnings);
     }
 
-    public void LoadCareer()
+    public void LoadCareer(GameSettingsPersist gsp = null,
+        TournySelector tSel = null,
+        TournyTeamList tTeamList = null,
+        StorylineManager slm = null,
+        TeamMenu teamSel = null,
+        PowerUpManager pUpM = null)
     {
         Debug.Log("Loading in CM");
 
@@ -164,13 +173,8 @@ public class CareerManager : MonoBehaviour
 
         myFile = new EasyFileSave("my_player_data");
 
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        tSel = FindObjectOfType<TournySelector>();
-        tTeamList = FindObjectOfType<TournyTeamList>();
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
-        pUpM = FindObjectOfType<PowerUpManager>();
-        teamSel = FindObjectOfType<TeamMenu>();
 
         if (myFile.Load())
         {
@@ -182,8 +186,8 @@ public class CareerManager : MonoBehaviour
             strategyDialogue = myFile.GetArray<bool>("Strategy Dialogue Played List");
             storyDialogue = myFile.GetArray<bool>("Story Dialogue Played List");
 
-            StorylineManager slm = FindObjectOfType<StorylineManager>();
-            slm.blockIndex = myFile.GetInt("Story Block");
+            if (slm)
+                slm.blockIndex = myFile.GetInt("Story Block");
 
             week = myFile.GetInt("Week");
             Debug.Log("CM Load Career Week is " + week);
@@ -409,17 +413,26 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            if (provRankList != null)
-            {
-                for (int i = 0; i < teams.Length; i++)
-                {
-                    provRankList.Add(new Standings_List(teams[i]));
-                }
+            Debug.Log("Teams Length is " + teams.Length);
 
-                for (int i = 0; i < tourTeams.Length; i++)
-                {
-                    tourRankList.Add(new TourStandings_List(tourTeams[i]));
-                }
+            if (provRankList == null)
+            {
+                provRankList = new List<Standings_List>();
+            }
+
+            if (tourRankList == null)
+            {
+                tourRankList = new List<TourStandings_List>();
+            }
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                provRankList.Add(new Standings_List(teams[i]));
+            }
+
+            for (int i = 0; i < tourTeams.Length; i++)
+            {
+                tourRankList.Add(new TourStandings_List(tourTeams[i]));
             }
 
             for (int i = 0; i < teams.Length; i++)
@@ -432,6 +445,10 @@ public class CareerManager : MonoBehaviour
             }
 
             myFile.Dispose();
+        }
+        else
+        {
+            NewSeason();
         }
     }
 
@@ -510,11 +527,11 @@ public class CareerManager : MonoBehaviour
 
     public void SaveCareer()
     {
-        tSel = FindObjectOfType<TournySelector>();
-        tm = FindObjectOfType<TournyManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        pUpM = FindObjectOfType<PowerUpManager>();
-        teamSel = FindObjectOfType<TeamMenu>();
+        TournySelector tSel = FindObjectOfType<TournySelector>();
+        TournyManager tm = FindObjectOfType<TournyManager>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
+        TeamMenu teamSel = FindObjectOfType<TeamMenu>();
 
         Debug.Log("Saving Career - " + gsp.inProgress);
         myFile = new EasyFileSave("my_player_data");
@@ -586,18 +603,22 @@ public class CareerManager : MonoBehaviour
         int[] tourLossList = new int[tourTeams.Length];
         float[] tourPointsList = new float[tourTeams.Length];
 
-        for (int i = 0; i < tourTeamIDList.Length; i++)
-        {
-            tourTeamIDList[i] = tourTeams[i].id;
-            //Debug.Log("Id List - " + idList[i]);
-            tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
-            tourLossList[i] = (int)tourTeams[i].tourRecord.y;
-            tourPointsList[i] = tourTeams[i].tourPoints;
-            //Debug.Log("Tour Points Length - " + tourPointsList.Length);
-            //Debug.Log("Tour Points - " + i + " - " + tourPointsList[i]);
-        }
-
         Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
+        Debug.Log("Tour Teams length is " + tourTeams.Length);
+
+        if (tourTeams.Length > 0)
+        {
+            for (int i = 0; i < tourTeamIDList.Length; i++)
+            {
+                tourTeamIDList[i] = tourTeams[i].id;
+                //Debug.Log("Id List - " + idList[i]);
+                tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
+                tourLossList[i] = (int)tourTeams[i].tourRecord.y;
+                tourPointsList[i] = tourTeams[i].tourPoints;
+                //Debug.Log("Tour Points Length - " + tourPointsList.Length);
+                //Debug.Log("Tour Points - " + i + " - " + tourPointsList[i]);
+            }
+        }
 
         myFile.Add("Tour Team ID List", tourTeamIDList);
         myFile.Add("Tour Wins List", tourWinsList);
@@ -797,7 +818,7 @@ public class CareerManager : MonoBehaviour
 
     }
 
-    public void SetupTourny()
+    public void SetupTourny(TournySelector tSel, GameSettingsPersist gsp)
     {
         tSel = FindObjectOfType<TournySelector>();
         gsp = FindObjectOfType<GameSettingsPersist>();
@@ -874,8 +895,8 @@ public class CareerManager : MonoBehaviour
     public void TournyResults()
     {
         Debug.Log("Tourny Results in CM");
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        //TournyManager tm = FindObjectOfType<TournyManager>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
         //earnings = gsp.earnings;
         currentTournyTeams = gsp.teams;
@@ -998,8 +1019,8 @@ public class CareerManager : MonoBehaviour
 
         Debug.Log("Current Team List count is " + currentTournyTeams.Length);
 
-        Debug.Log("Rank List count is " + provRankList.Count);
-        Debug.Log("First Prov Team is " + provRankList[0].team.name);
+        //Debug.Log("Rank List count is " + provRankList.Count);
+        //Debug.Log("First Prov Team is " + provRankList[0].team.name);
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -1027,6 +1048,7 @@ public class CareerManager : MonoBehaviour
                 playerTeam = teams[i];
             }
         }
+
         xp += xpChange;
         totalXp += xpChange;
         Debug.Log("XP Change is " + xpChange);
@@ -1044,8 +1066,9 @@ public class CareerManager : MonoBehaviour
 
     public void PlayTourny()
     {
+
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         Debug.Log("CM Play Tourny");
-        gsp = FindObjectOfType<GameSettingsPersist>();
         inProgress = true;
 
         gsp.cStats = cStats;
@@ -1076,13 +1099,15 @@ public class CareerManager : MonoBehaviour
     {
         week++;
         SaveCareer();
-        tSel.SetActiveTournies();
+        //tSel.SetUp();
     }
 
     public void ContinueSeason()
     {
-        tTeamList = FindObjectOfType<TournyTeamList>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        Debug.Log("CM - Continue Season");
+
+        TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         season++;
 
         Shuffle(tTeamList.teams);
@@ -1104,11 +1129,9 @@ public class CareerManager : MonoBehaviour
 
     public void NewSeason()
     {
-        tTeamList = FindObjectOfType<TournyTeamList>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        tSel = FindObjectOfType<TournySelector>();
-        teamSel = FindObjectOfType<TeamMenu>();
-        storyLine = FindObjectOfType<StorylineManager>();
+        TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        TournySelector tSel = FindObjectOfType<TournySelector>();
 
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
@@ -1164,12 +1187,14 @@ public class CareerManager : MonoBehaviour
 
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
-        
+        Debug.Log("provRankList Count is " + provRankList.Count);
         for (int i = 0; i < totalTeams; i++)
         {
             teams[i] = tTeamList.teams[i];
             provRankList.Add(new Standings_List(teams[i]));
         }
+        provQual = false;
+        tourQual = false;
 
         earnings = 0f;
         teams[0].name = teamName;

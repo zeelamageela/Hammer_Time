@@ -62,20 +62,25 @@ public class ProvStandings : MonoBehaviour
 				standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
 				provRankList[i].team.rank = i + 1;
 			}
+			Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex);
 
 			for (int i = 0; i < provRankList.Count; i++)
 			{
 				if (cm.playerTeamIndex == provRankList[i].team.id)
 				{
+					Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
 					scrollbar.value = (i - provRankList.Count) / (1f - provRankList.Count);
+					Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + i);
 					standDisplay[i].panel.enabled = true;
 				}
 				else
 					standDisplay[i].panel.enabled = false;
 			}
+
 		}
 		else
-        {
+		{
+			Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex);
 			provRankList = new List<Standings_List>();
 			teams = cm.teams;
 			for (int i = 0; i < teams.Length; i++)
@@ -114,7 +119,9 @@ public class ProvStandings : MonoBehaviour
 			{
 				if (cm.playerTeamIndex == provRankList[i].team.id)
 				{
+					Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
 					scrollbar.value = (i - provRankList.Count) / (1f - provRankList.Count);
+					Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + i);
 					standDisplay[i].panel.enabled = true;
 				}
 				else
