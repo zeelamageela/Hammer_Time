@@ -26,8 +26,8 @@ public class DrawFormatList : MonoBehaviour
 
     public void DrawSelector(int numberOfTeams, int gameLength, int games)
     {
-        Debug.Log("Number of Teams is " + numberOfTeams);
-        Debug.Log("Games is " + games);
+        //Debug.Log("Number of Teams is " + numberOfTeams);
+        //Debug.Log("Games is " + games);
         DrawFormat[] shorterFormat;
         //DrawFormat[] shortestFormat;
 

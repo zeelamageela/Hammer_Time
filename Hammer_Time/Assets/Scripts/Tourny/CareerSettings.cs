@@ -140,10 +140,10 @@ public class CareerSettings : MonoBehaviour
             teamColour = myFile.GetUnityColor("Team Colour");
             cm.earnings = myFile.GetFloat("Career Earnings");
             earnings = cm.earnings;
-            Debug.Log("Earnings are " + earnings);
+            //Debug.Log("Earnings are " + earnings);
             record = myFile.GetUnityVector2("Career Record");
             gsp.inProgress = myFile.GetBool("Tourny In Progress");
-            Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
+            //Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
             tourRecord = myFile.GetUnityVector2("Tour Record");
@@ -170,14 +170,14 @@ public class CareerSettings : MonoBehaviour
             int[] playerOppEnduroList = myFile.GetArray<int>("Active Players Opp Endurance List");
             int[] playerOppCohesionList = myFile.GetArray<int>("Active Players Opp Cohesion List");
 
-            Debug.Log("Player Id List Length - " + activePlayersId.Length);
-            Debug.Log("Player Name 3 - " + activePlayersName[2]);
+            //Debug.Log("Player Id List Length - " + activePlayersId.Length);
+            //Debug.Log("Player Name 3 - " + activePlayersName[2]);
 
             //cm.activePlayers = new Player[3];
 
             for (int i = 0; i < cm.activePlayers.Length; i++)
             {
-                Debug.Log("Setting Active Player " + i);
+                //Debug.Log("Setting Active Player " + i);
                 cm.activePlayers[i].name = activePlayersName[i];
                 cm.activePlayers[i].id = activePlayersId[i];
 

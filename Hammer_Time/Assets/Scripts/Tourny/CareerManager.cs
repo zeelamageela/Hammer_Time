@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TigerForge;
+using System.Net.Security;
 
 public class CareerManager : MonoBehaviour
 {
@@ -116,11 +117,11 @@ public class CareerManager : MonoBehaviour
         TeamMenu teamSel = FindObjectOfType<TeamMenu>();
         PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
 
-
-        if (inProgress)
-        {
-            LoadCareer(gsp, tSel, tTeamList, slm, teamSel, pUpM);
-        }
+        LoadCareer(gsp, tSel, tTeamList, slm, teamSel, pUpM);
+        //inProgress
+        //if (inProgress)
+        //{
+        //}
         //else
         //    NewSeason(gsp, tSel, tTeamList);
     }
@@ -147,7 +148,7 @@ public class CareerManager : MonoBehaviour
         earnings = gsp.earnings;
         record = gsp.record;
         SaveCareer();
-        Debug.Log("Earnings - CM from GSP - " + earnings);
+        //Debug.Log("Earnings - CM from GSP - " + earnings);
     }
 
     public void LoadCareer(GameSettingsPersist gsp = null,
@@ -233,7 +234,7 @@ public class CareerManager : MonoBehaviour
             activeCardLengthList = myFile.GetArray<int>("Active Card Length List");
             //Debug.Log("cardIdList Length - " + cardPUIDList.Length);
 
-            Debug.Log("CM Load Career activeCardIDList Length is " + activeCardIDList.Length);
+            //Debug.Log("CM Load Career activeCardIDList Length is " + activeCardIDList.Length);
 
 
             if (tSel != null)
@@ -305,8 +306,8 @@ public class CareerManager : MonoBehaviour
             int[] lossList = myFile.GetArray<int>("Total Loss List");
             float[] earningsList = myFile.GetArray<float>("Total Earnings List");
 
-            Debug.Log("Total ID List Length is " + idList.Length);
-            Debug.Log("Total Teams List Length is " + teams.Length);
+            //Debug.Log("Total ID List Length is " + idList.Length);
+            //Debug.Log("Total Teams List Length is " + teams.Length);
 
             for (int i = 0; i < idList.Length; i++)
             {
@@ -413,7 +414,7 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            Debug.Log("Teams Length is " + teams.Length);
+            //Debug.Log("Teams Length is " + teams.Length);
 
             if (provRankList == null)
             {
@@ -440,16 +441,16 @@ public class CareerManager : MonoBehaviour
                 if (teams[i].player)
                 {
                     playerTeam = teams[i];
-                    Debug.Log("CM playerTeamIndex is " + teams[i].id);
+                    //Debug.Log("CM playerTeamIndex is " + teams[i].id);
                 }
             }
 
             myFile.Dispose();
         }
-        else
-        {
-            NewSeason();
-        }
+        //else
+        //{
+        //    NewSeason();
+        //}
     }
 
     IEnumerator SaveHighScore()
@@ -514,7 +515,7 @@ public class CareerManager : MonoBehaviour
             allTimeNameTemp[i] = allTimeList[i].team.name;
         }
 
-        Debug.Log("All Time List Length - " + allTimeList.Count);
+        //Debug.Log("All Time List Length - " + allTimeList.Count);
 
 
         myFile = new EasyFileSave("my_hiscore_data");
@@ -592,7 +593,7 @@ public class CareerManager : MonoBehaviour
 
         }
 
-        Debug.Log("Total Id List length is " + idList.Length);
+        //Debug.Log("Total Id List length is " + idList.Length);
         myFile.Add("Total ID List", idList);
         myFile.Add("Total Wins List", winsList);
         myFile.Add("Total Loss List", lossList);
@@ -603,8 +604,8 @@ public class CareerManager : MonoBehaviour
         int[] tourLossList = new int[tourTeams.Length];
         float[] tourPointsList = new float[tourTeams.Length];
 
-        Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
-        Debug.Log("Tour Teams length is " + tourTeams.Length);
+        //Debug.Log("Tour Record length is " + tourWinsList.Length + " - " + tourLossList.Length);
+        //Debug.Log("Tour Teams length is " + tourTeams.Length);
 
         if (tourTeams.Length > 0)
         {
@@ -645,7 +646,7 @@ public class CareerManager : MonoBehaviour
         for (int i = 0; i < playerIdList.Length; i++)
         {
             playerIdList[i] = activePlayers[i].id;
-            Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
+            //Debug.Log("CM SAVECAREER Active Player List " + i + " - " + playerIdList[i]);
             playerNameList[i] = activePlayers[i].name;
 
             playerDrawList[i] = activePlayers[i].draw;
@@ -820,8 +821,8 @@ public class CareerManager : MonoBehaviour
 
     public void SetupTourny(TournySelector tSel, GameSettingsPersist gsp)
     {
-        tSel = FindObjectOfType<TournySelector>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        //tSel = FindObjectOfType<TournySelector>();
+        //gsp = FindObjectOfType<GameSettingsPersist>();
         currentTourny = tSel.currentTourny;
         Shuffle(teams);
         currentTournyTeams = new Team[currentTourny.teams];
@@ -858,7 +859,21 @@ public class CareerManager : MonoBehaviour
         }
         else
         {
+            
             gsp.KO = false;
+            for (int i = 0; i < tSel.locals.Length; i++)
+            {
+                if (currentTourny.name == tSel.locals[i].name)
+                {
+                    gsp.cashGame = true;
+                    break;
+                }
+                else
+                {
+                    gsp.cashGame = false;
+                }
+            }
+
             for (int i = 0; i < currentTourny.teams; i++)
             {
                 currentTournyTeams[i] = teams[i];
@@ -1238,7 +1253,9 @@ public class CareerManager : MonoBehaviour
         }
 
         //introDialogue[0] = true;
-
+        activeCardIDList = null;
+        cardPUIDList = null;
+        cardSponsorIDList = null;
         
         week++;
 

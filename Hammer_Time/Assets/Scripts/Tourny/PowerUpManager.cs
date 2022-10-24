@@ -190,7 +190,7 @@ public class PowerUpManager : MonoBehaviour
         idSponsorList = new int[pUpList.sponsors.Length];
 
         //Check if there's a save file
-        if (cm.cardPUIDList.Length > 0)
+        if (cm.cardPUIDList != null && cm.cardPUIDList.Length > 0)
         {
             idPUList = cm.cardPUIDList;
             idSponsorList = cm.cardSponsorIDList;
@@ -215,7 +215,7 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        if (cm.activeCardIDList.Length > 0)
+        if (cm.activeCardIDList != null && cm.activeCardIDList.Length > 0)
         {
             activeIdList = cm.activeCardIDList;
             activeLengthList = cm.activeCardLengthList;

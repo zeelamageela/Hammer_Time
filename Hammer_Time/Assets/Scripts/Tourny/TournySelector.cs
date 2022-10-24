@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TigerForge;
+using MoreMountains.Tools;
 
 public class TournySelector : MonoBehaviour
 {
@@ -233,6 +234,7 @@ public class TournySelector : MonoBehaviour
         bool tourniesComplete = false;
         bool tourComplete = false;
         bool provQualComplete = false;
+
         int nextTourny = 0;
         int nextTour = 0;
         int nextProvQual = 0;
@@ -243,8 +245,10 @@ public class TournySelector : MonoBehaviour
 
         int tCount = 0;
 
+
         for (int i = 0; i < tournies.Length; i++)
         {
+            Debug.Log("tournies[" + i + "].complete = " + tournies[i].complete);
             if (tournies[i].complete)
             {
                 tourniesComplete = true;
@@ -298,15 +302,45 @@ public class TournySelector : MonoBehaviour
             }
         }
 
+        int localSelect = Random.Range(0, locals.Length);
+        Debug.Log("local Select is " + localSelect);
+
         if (cm.provQual)
             provQualComplete = true;
 
         if (cm.week == 1)
         {
-            tournies[0].complete = true;
-            activeTournies[0] = emptyTourny;
+            //tournies[0].complete = true;
+            activeTournies[0] = locals[localSelect];
             activeTournies[1] = tournies[0];
             activeTournies[2] = emptyTourny;
+        }
+        else if (cm.week == 2)
+        {
+            activeTournies[0] = emptyTourny;
+            activeTournies[1] = provQual[0];
+            activeTournies[2] = emptyTourny;
+        }
+        else if (cm.week == 3)
+        {
+            activeTournies[0] = emptyTourny;
+            activeTournies[1] = tour[0];
+            activeTournies[2] = emptyTourny;
+        }
+        else if (cm.week == 4)
+        {
+            activeTournies[0] = locals[localSelect];
+            activeTournies[1] = tournies[nextTourny];
+            activeTournies[2] = tournies[nextTourny2];
+        }
+        else if (cm.week == 5)
+        {
+            activeTournies[0] = locals[localSelect];
+            activeTournies[1] = tour[nextTour];
+            if (provQualComplete)
+                activeTournies[2] = emptyTourny;
+            else
+                activeTournies[2] = provQual[nextProvQual];
         }
         else
         {
@@ -320,7 +354,7 @@ public class TournySelector : MonoBehaviour
                 {
                     if (cm.playerTeam.id == cm.tourRankList[i].team.id)
                     {
-                        if (i > 6)
+                        if (i < 6)
                             cm.tourQual = true;
                     }
                 }
@@ -338,77 +372,75 @@ public class TournySelector : MonoBehaviour
             }
             else if (tourniesComplete & !tourComplete & provQualComplete)
             {
-                tour[nextTour].complete = true;
-                activeTournies[rnd[0]] = emptyTourny;
+                activeTournies[rnd[0]] = locals[localSelect];
                 activeTournies[rnd[1]] = emptyTourny;
                 activeTournies[rnd[2]] = tour[nextTour];
             }
             else if (!tourniesComplete & !tourComplete & provQualComplete)
             {
-                tournies[nextTourny].complete = true;
-                tournies[nextTourny2].complete = true;
-                tour[nextTour].complete = true;
                 activeTournies[rnd[0]] = tour[nextTour];
                 activeTournies[rnd[1]] = tournies[nextTourny];
                 if (nextTourny2 == 0)
-                    activeTournies[rnd[2]] = emptyTourny;
+                    activeTournies[rnd[2]] = locals[localSelect];
                 else
                     activeTournies[rnd[2]] = tournies[nextTourny2];
             }
             else if (tourniesComplete & !tourComplete & !provQualComplete)
             {
-                provQual[nextProvQual].complete = true;
-                tour[nextTour].complete = true;
                 activeTournies[rnd[0]] = provQual[nextProvQual];
-                activeTournies[rnd[1]] = emptyTourny;
+                activeTournies[rnd[1]] = locals[localSelect];
                 activeTournies[rnd[2]] = tour[nextTour];
             }
             else if (!tourniesComplete & tourComplete & !provQualComplete)
             {
-                provQual[nextProvQual].complete = true;
-                tournies[nextTourny].complete = true;
-                tournies[nextTourny2].complete = true;
                 activeTournies[rnd[0]] = provQual[nextProvQual];
                 activeTournies[rnd[1]] = tournies[nextTourny];
-                activeTournies[rnd[2]] = tournies[nextTourny2];
+                activeTournies[rnd[2]] = locals[localSelect];
             }
             else
             {
                 if (cm.week > 3)
                 {
-                    provQual[nextProvQual].complete = true;
-                    tournies[nextTourny].complete = true;
-                    tour[nextTour].complete = true;
                     if (nextTourny == 0)
                         activeTournies[rnd[1]] = tournies[nextTourny];
                     else
-                        activeTournies[rnd[1]] = emptyTourny;
+                        activeTournies[rnd[1]] = locals[localSelect];
 
                     activeTournies[rnd[0]] = provQual[nextProvQual];
                     activeTournies[rnd[2]] = tour[nextTour];
+
+                    for (int i = 0; i < activeTournies.Length; i++)
+                    {
+                        if (activeTournies[i].entryFee > cm.cash)
+                        {
+                            panelGOs[i].GetComponent<Image>().color = dimmed[0];
+                            panels[i].location.transform.parent.GetComponent<Image>().color = dimmed[0];
+                            panels[i].titleButton.interactable = false;
+                        }
+                    }
                 }
                 else
                 {
-                    provQual[nextProvQual].complete = true;
-                    tournies[nextTourny].complete = true;
-                    tournies[nextTourny2].complete = true;
                     activeTournies[rnd[0]] = provQual[nextProvQual];
 
-                    if (nextTourny == 0)
-                        activeTournies[rnd[1]] = tournies[nextTourny];
-                    else
-                        activeTournies[rnd[1]] = emptyTourny;
+                    activeTournies[rnd[1]] = tournies[nextTourny];
+                    activeTournies[rnd[2]] = locals[localSelect];
 
-                    if (nextTourny2 == 1)
-                        activeTournies[rnd[2]] = tournies[nextTourny2];
-                    else
-                        activeTournies[rnd[2]] = emptyTourny;
+                    //if (nextTourny == 0)
+                    //    activeTournies[rnd[1]] = tournies[nextTourny];
+                    //else
+                    //    activeTournies[rnd[1]] = emptyTourny;
+
+                    //if (nextTourny2 == 1)
+                    //    activeTournies[rnd[2]] = tournies[nextTourny2];
+                    //else
+                    //    activeTournies[rnd[2]] = emptyTourny;
                 }
             }
         }
 
         SetPanels();
-        cm.SaveCareer();
+        //cm.SaveCareer();
     }
 
     public void SSetActiveTournies()
@@ -1175,25 +1207,53 @@ public class TournySelector : MonoBehaviour
         //        panelGOs[i].SetActive(true);
         //}
 
-        if (activeTournies[2] == emptyTourny)
-        {
-            if (activeTournies[0] == emptyTourny)
-                hScroll.value = 0.5f;
-            else
-                hScroll.value = 0f;
-        }
-        else
-            hScroll.value = 1f;
+        //if (activeTournies[2] == emptyTourny)
+        //{
+        //    if (activeTournies[0] == emptyTourny)
+        //        hScroll.value = 0.5f;
+        //    else
+        //        hScroll.value = 0f;
+        //}
+        //else
+        //    hScroll.value = 1f;
             
         for (int i = 0; i < panels.Length; i++)
         {
-            panels[i].location.text = activeTournies[i].location;
-            panels[i].buttonText.text = activeTournies[i].name;
-            panels[i].teams.text = activeTournies[i].teams.ToString();
-            panels[i].format.text = activeTournies[i].format;
-            panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString("n0");
-            panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString("n0");
-            playButton.SetActive(false);
+            if (emptyTourny.name == activeTournies[i].name)
+            {
+                panelGOs[i].GetComponent<Image>().color = dimmed[0];
+                panels[i].location.text = "";
+                panels[i].location.transform.parent.GetComponent<Image>().color = dimmed[0];
+                panels[i].titleButton.interactable = false;
+                panels[i].buttonText.text = activeTournies[i].name;
+                panels[i].buttonText.color = dimmed[0];
+                panels[i].teams.text = "";
+                panels[i].format.text = "";
+                panels[i].purse.text = "";
+                panels[i].entry.text = "";
+                playButton.SetActive(false);
+            }
+            else
+            {
+                if (activeTournies[i].entryFee > cm.cash)
+                {
+                    panelGOs[i].GetComponent<Image>().color = dimmed[0];
+                    panels[i].location.transform.parent.GetComponent<Image>().color = dimmed[0];
+                    panels[i].titleButton.interactable = false;
+                }
+                else
+                {
+                    panelGOs[i].GetComponent<Image>().color = yellow[0];
+                    panels[i].titleButton.interactable = true;
+                }
+                panels[i].location.text = activeTournies[i].location;
+                panels[i].buttonText.text = activeTournies[i].name;
+                panels[i].teams.text = activeTournies[i].teams.ToString();
+                panels[i].format.text = activeTournies[i].format;
+                panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString("n0");
+                panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString("n0");
+                playButton.SetActive(false);
+            }
         }
 
 
@@ -1233,12 +1293,38 @@ public class TournySelector : MonoBehaviour
 
     public void PlayTourny()
     {
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        TeamMenu tm = FindObjectOfType<TeamMenu>();
-        XPManager xpm = FindObjectOfType<XPManager>();
+        for (int i = 0; i < tournies.Length; i++)
+        {
+            for (int j = 0; j < activeTournies.Length; j++)
+            {
+                if (activeTournies[j].id == tournies[i].id)
+                {
+                    tournies[i].complete = true;
+                }
+            }
+        }
 
-        gsp.LoadFromTournySelector();
-        
+        for (int i = 0; i < tour.Length; i++)
+        {
+            for (int j = 0; j < activeTournies.Length; j++)
+            {
+                if (activeTournies[j].id == tour[i].id)
+                {
+                    tour[i].complete = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < provQual.Length; i++)
+        {
+            for (int j = 0; j < activeTournies.Length; j++)
+            {
+                if (activeTournies[j].id == provQual[i].id)
+                {
+                    provQual[i].complete = true;
+                }
+            }
+        }
 
         if (currentTourny.championship)
         {
@@ -1247,6 +1333,12 @@ public class TournySelector : MonoBehaviour
             if (currentTourny.name == provChampionship.name)
                 provChampionship.complete = true;
         }
+
+        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        TeamMenu tm = FindObjectOfType<TeamMenu>();
+        XPManager xpm = FindObjectOfType<XPManager>();
+
+        gsp.LoadFromTournySelector();
 
         Debug.Log("TSel Current Tourny Name is " + currentTourny.name);
 

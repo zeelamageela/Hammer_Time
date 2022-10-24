@@ -174,13 +174,27 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		for (int i = 0; i < teams.Length; i++)
 		{
-			if (i % 2 == 0)
+			if (teams[i].player)
 			{
-				gameList[i / 2] = new Vector2(teams[i].id, teams[i + 1].id);
-				teams[i].strength = Random.Range(8, 10);
+				float strength = cm.cStats.drawAccuracy
+					+ cm.cStats.takeOutAccuracy
+					+ cm.cStats.guardAccuracy
+					+ cm.cStats.sweepStrength
+					+ cm.cStats.sweepEndurance
+					+ cm.cStats.sweepCohesion
+					+ cm.modStats.drawAccuracy
+					+ cm.modStats.takeOutAccuracy
+					+ cm.modStats.guardAccuracy
+					+ cm.modStats.sweepStrength
+					+ cm.modStats.sweepEndurance
+					+ cm.modStats.sweepCohesion;
+				teams[i].strength = Mathf.RoundToInt(strength / 24f);
+
 			}
 			else
-				teams[i].strength = Random.Range(0, 2);
+				teams[i].strength = Random.Range(0, 10);
+            if (i % 2 == 0)
+                gameList[i / 2] = new Vector2(teams[i].id, teams[i + 1].id);
 		}
 
 		SetPlayoffs();
@@ -290,12 +304,34 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (teams[i].player)
 					{
-						vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+						if (teams[i].loss == 2)
+						{
+							vsDisplay[0].rank.text = "XX";
+						}
+						if (teams[i].loss == 1)
+						{
+							vsDisplay[0].rank.text = "X";
+						}
+						if (teams[i].loss == 0)
+						{
+							vsDisplay[0].rank.text = "-";
+						}
 						vsDisplay[0].name.text = teams[i].name;
 					}
 					if (teams[i].id == oppTeam)
 					{
-						vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+						if (teams[i].loss == 2)
+						{
+							vsDisplay[1].rank.text = "XX";
+						}
+						if (teams[i].loss == 1)
+						{
+							vsDisplay[1].rank.text = "X";
+						}
+						if (teams[i].loss == 0)
+						{
+							vsDisplay[1].rank.text = "-";
+						}
 						vsDisplay[1].name.text = teams[i].name;
 					}
 				}
@@ -1638,6 +1674,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			else
 			{
 				nextButton.gameObject.SetActive(true);
+				simButton.gameObject.SetActive(false);
 				vsDisplayGO.SetActive(true);
 			}
 
@@ -1649,12 +1686,22 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			{
 				if (teams[i].player)
 				{
-					vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					if (teams[i].loss == 2)
+						vsDisplay[0].rank.text = "XX";
+					if (teams[i].loss == 1)
+						vsDisplay[0].rank.text = "X";
+					if (teams[i].loss == 0)
+						vsDisplay[0].rank.text = "-";
 					vsDisplay[0].name.text = teams[i].name;
 				}
 				if (teams[i].id == oppTeam)
 				{
-					vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					if (teams[i].loss == 2)
+						vsDisplay[1].rank.text = "XX";
+					if (teams[i].loss == 1)
+						vsDisplay[1].rank.text = "X";
+					if (teams[i].loss == 0)
+						vsDisplay[1].rank.text = "-";
 					vsDisplay[1].name.text = teams[i].name;
 				}
 			}
@@ -5444,12 +5491,37 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			{
 				if (teams[i].player)
 				{
-					vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					//vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					//vsDisplay[0].name.text = teams[i].name;
+
+					if (teams[i].loss == 2)
+					{
+						vsDisplay[0].rank.text = "XX";
+					}
+					if (teams[i].loss == 1)
+					{
+						vsDisplay[0].rank.text = "X";
+					}
+					if (teams[i].loss == 0)
+					{
+						vsDisplay[0].rank.text = "-";
+					}
 					vsDisplay[0].name.text = teams[i].name;
 				}
 				if (teams[i].id == oppTeam)
 				{
-					vsDisplay[1].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
+					if (teams[i].loss == 2)
+					{
+						vsDisplay[1].rank.text = "XX";
+					}
+					if (teams[i].loss == 1)
+					{
+						vsDisplay[1].rank.text = "X";
+					}
+					if (teams[i].loss == 0)
+					{
+						vsDisplay[1].rank.text = "-";
+					}
 					vsDisplay[1].name.text = teams[i].name;
 				}
 			}

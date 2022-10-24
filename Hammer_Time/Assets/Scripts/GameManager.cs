@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 {
     #region Variables
     AudioManager am;
-    public TutorialManager tm;
+    //public TutorialManager tm;
     public TeamManager teamM;
     public AIManager aim;
     public StoryManager storyM;
@@ -102,8 +102,6 @@ public class GameManager : MonoBehaviour
     {
         state = GameState.START;
 
-        //sweepButton.gameObject.SetActive(false);
-
         GameObject boards = GameObject.Find("BG/Boards_CREATED");
         boardCollider = boards.GetComponent<Collider2D>();
         myFile = new EasyFileSave("my_game_data");
@@ -117,7 +115,7 @@ public class GameManager : MonoBehaviour
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
         gsp = FindObjectOfType<GameSettingsPersist>();
-
+        Rock_Placement rp = FindObjectOfType<Rock_Placement>();
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
@@ -189,17 +187,40 @@ public class GameManager : MonoBehaviour
                 int tempRckCrnt = rockCurrent;
                 for (int i = 0; i < rockCurrent; i++)
                 {
-                    //cm.TopView();
-                    //Debug.Log("placed1 is " + rm.rrp.placed1);
                     rm.rrp.placed1 = false;
-                    //Debug.Log("placed1 is " + rm.rrp.placed1);
-                    if (gsp.aiRed)
+                    if (gsp.cashGame)
                     {
-                        rm.rrp.OnRockPlace(i, false);
+                        if (i == 4)
+                        {
+                            rp.OnPlace("Back Four Foot");
+                            rm.rrp.placed1 = true;
+                        }
+                        if (i == 5)
+                        {
+                            rp.OnPlace("Centre Guard");
+                            rm.rrp.placed1 = true;
+                        }
+                        else
+                        {
+                            rp.OnPlace("Out of Bounds");
+                            rm.rrp.placed1 = true;
+                        }
+
                     }
-                    else if (gsp.aiYellow)
+                    else
                     {
-                        rm.rrp.OnRockPlace(i, true);
+                        //cm.TopView();
+                        //Debug.Log("placed1 is " + rm.rrp.placed1);
+                        //Debug.Log("placed1 is " + rm.rrp.placed1);
+                        if (gsp.aiRed)
+                        {
+                            rm.rrp.OnRockPlace(i, false);
+                        }
+                        else if (gsp.aiYellow)
+                        {
+                            rm.rrp.OnRockPlace(i, true);
+                        }
+
                     }
 
                     if (i % 2 == 0)

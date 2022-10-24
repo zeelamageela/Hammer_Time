@@ -96,7 +96,7 @@ public class Rock_Placement : MonoBehaviour
         switch (rockPlacement)
         {
             case "Button":
-                rock.transform.position = new Vector2(Random.Range(button.x + drawAccu.x, button.x - drawAccu.x), Random.Range(button.y + drawAccu.y, button.y - drawAccu.y));
+                rock.transform.position = new Vector2(button.x, button.y);
                 Debug.Log(rock.transform.position.x + ", " + rock.transform.position.y);
                 break;
 
@@ -105,7 +105,7 @@ public class Rock_Placement : MonoBehaviour
                 break;
 
             case "Back Four Foot":
-                rock.transform.position = new Vector2(Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x), Random.Range(backFourFoot.y + drawAccu.y, backFourFoot.y - drawAccu.y));
+                rock.transform.position = new Vector2(backFourFoot.x, backFourFoot.y);
                 break;
 
             case "Top Four Foot":
@@ -141,11 +141,11 @@ public class Rock_Placement : MonoBehaviour
                 break;
 
             case "Centre Guard":
-                rock.transform.position = new Vector2(Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x), Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y));
+                rock.transform.position = new Vector2(centreGuard.x, centreGuard.y); 
                 break;
 
             case "High Centre Guard":
-                rock.transform.position = new Vector2(Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x), Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y));
+                rock.transform.position = new Vector2(highCentreGuard.x, highCentreGuard.y);
                 break;
 
             case "Right Corner Guard":
@@ -170,6 +170,10 @@ public class Rock_Placement : MonoBehaviour
 
             case "Left High Corner Guard":
                 rock.transform.position = new Vector2(Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x), Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y));
+                break;
+
+            case "Out of Bounds":
+                rock.transform.position = new Vector2(0f, 9f);
                 break;
         }
 

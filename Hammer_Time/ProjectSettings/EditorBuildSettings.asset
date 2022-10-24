@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tourny_Home_3K.unity
     guid: 1cb72c30b49d0c4439bc9d7797706ec9
+  - enabled: 1
+    path: Assets/Scenes/Tourny_Home_2.unity
+    guid: 3e33ed7aeba3e44308f6a4543a61233d
   m_configObjects: {}

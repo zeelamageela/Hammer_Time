@@ -291,7 +291,7 @@ public class PlayoffManager : MonoBehaviour
 		switch (playoffRound)
         {
 			case 1:
-
+                #region Case 1
                 switch (tm.teams[playerTeam].rank)
                 {
                     case 1:
@@ -334,8 +334,9 @@ public class PlayoffManager : MonoBehaviour
                 scrollBar.value = 0;
 				StartCoroutine(SaveCareer(true));
                 break;
-
+            #endregion
             case 2:
+                #region Case 2
                 heading.text = "Semifinals";
 
                 for (int i = 0; i < 7; i++)
@@ -392,9 +393,10 @@ public class PlayoffManager : MonoBehaviour
                 scrollBar.value = 0.5f;
 				StartCoroutine(SaveCareer(true));
 				break;
-
-			case 3:
-				heading.text = "Finals";
+            #endregion
+            case 3:
+                #region Case 3
+                heading.text = "Finals";
 
 				for (int i = 0; i < 8; i++)
 				{
@@ -436,8 +438,9 @@ public class PlayoffManager : MonoBehaviour
 				scrollBar.value = 1f;
 				StartCoroutine(SaveCareer(true));
 				break;
-
-			case 4:
+            #endregion
+            case 4:
+				#region Case 4
 				for (int i = 0; i < 9; i++)
 				{
 					brackDisplay[i].name.text = playoffTeams[i].name;
@@ -594,9 +597,9 @@ public class PlayoffManager : MonoBehaviour
 				scrollBar.value = 1;
 
 				break;
-
+                #endregion
         }
-	}
+    }
 
 	public void OnSim()
     {
@@ -796,7 +799,7 @@ public class PlayoffManager : MonoBehaviour
 		{
 			//Debug.Log("playoffID i is " + i);
 			playoffIDList[i] = playoffTeams[i].id;
-			Debug.Log("Playoff ID List - " + playoffIDList[i]);
+			//Debug.Log("Playoff ID List - " + playoffIDList[i]);
 		}
 
 		myFile.Add("Playoff ID List", playoffIDList);

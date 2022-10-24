@@ -35,6 +35,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public bool tourny;
     public bool KO;
+    public bool cashGame;
     public int games;
 
     public bool story;
@@ -210,7 +211,6 @@ public class GameSettingsPersist : MonoBehaviour
         TournySelector ts = FindObjectOfType<TournySelector>();
         CareerManager cm = FindObjectOfType<CareerManager>();
 
-
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         firstName = cm.playerName;
@@ -233,7 +233,9 @@ public class GameSettingsPersist : MonoBehaviour
                 playerTeam = cm.currentTournyTeams[i];
             }
         }
+
         Debug.Log("Player Team Index in GSP is " + playerTeamIndex);
+
         endCurrent = 0;
         numberOfTeams = ts.currentTourny.teams;
         prize = ts.currentTourny.prizeMoney;
@@ -246,9 +248,8 @@ public class GameSettingsPersist : MonoBehaviour
         //yellowScore = myFile.GetInt("Yellow Score");
     }
 
-    public void LoadTournySettings()
+    public void LoadTournySettings(TournySettings ts)
     {
-        TournySettings ts = GameObject.Find("TournySettings").GetComponent<TournySettings>();
 
         CareerManager cm = FindObjectOfType<CareerManager>();
 
@@ -258,7 +259,10 @@ public class GameSettingsPersist : MonoBehaviour
         //earnings = ts.earnings;
         week = cm.week;
         games = ts.games;
-        ends = ts.ends;
+        if (cashGame)
+            ends = 1;
+        else
+            ends = ts.ends;
         endCurrent = 0;
         rocks = ts.rocks;
         //numberOfTeams = ts.teams;
@@ -275,33 +279,50 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log("Tourny Setup GSP");
         TournyManager tm = FindObjectOfType<TournyManager>();
         PlayoffManager pm = FindObjectOfType<PlayoffManager>();
+        CashGames cg = FindObjectOfType<CashGames>();
         careerLoad = false;
-        tourny = true;
-        draw = tm.draw;
-        playoffRound = pm.playoffRound;
-
-        if (playoffRound > 1)
-            playerTeamIndex = pm.playerTeam;
-        else
-            playerTeamIndex = tm.playerTeam;
-
-        teamList = tm.teamList;
-        teams = tm.teams;
-        playerTeam = teams[playerTeamIndex];
-        endCurrent = 0;
-        redScore = 0;
-        yellowScore = 0;
-
-        //playerGO = tm.playerGO;
-        if (draw >= tm.drawFormat.Length)
+        if (cg != null)
         {
-            playoffTeams = new Team[9];
-            for (int i = 0; i < playoffTeams.Length; i++)
-            {
-                playoffTeams[i] = pm.playoffTeams[i];
-            }
-            //playoffTeams = pm.playoffTeams;
+            tourny = false;
+            draw = 0;
+            playoffRound = 0;
+            //playerTeam = teams[playerTeamIndex];
+            endCurrent = 0;
+            redScore = 0;
+            yellowScore = 0;
+
+            //playerGO = tm.playerGO;
         }
+        else
+        {
+            tourny = true;
+            draw = tm.draw;
+            playoffRound = pm.playoffRound;
+
+            if (playoffRound > 1)
+                playerTeamIndex = pm.playerTeam;
+            else
+                playerTeamIndex = tm.playerTeam;
+
+            teamList = tm.teamList;
+            teams = tm.teams;
+            playerTeam = teams[playerTeamIndex];
+            endCurrent = 0;
+            redScore = 0;
+            yellowScore = 0;
+
+            //playerGO = tm.playerGO;
+            if (draw >= tm.drawFormat.Length)
+            {
+                playoffTeams = new Team[9];
+                for (int i = 0; i < playoffTeams.Length; i++)
+                {
+                    playoffTeams[i] = pm.playoffTeams[i];
+                }
+                //playoffTeams = pm.playoffTeams;
+            }
+        }
+
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;

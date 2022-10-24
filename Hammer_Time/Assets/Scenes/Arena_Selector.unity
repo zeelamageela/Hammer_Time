@@ -6128,6 +6128,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1497908066}
+        m_TargetAssemblyTypeName: TournySelector, Assembly-CSharp
+        m_MethodName: SetActiveTournies
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &288163934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33652,11 +33664,11 @@ MonoBehaviour:
   XPText: {fileID: 1213503449}
   playButton: {fileID: 1675557790}
   locals:
-  - name: Club Night
+  - name: Outdoor Games
     id: 0
-    location: St John's, Newfoundland
-    teams: 8
-    prizeMoney: 500
+    location: Invermere, BC
+    teams: 4
+    prizeMoney: 100
     entryFee: 0
     format: Cash Game
     championship: 0
@@ -33665,24 +33677,24 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 1
-  - name: Outdoor Games
+  - name: Club Night
     id: 1
-    location: St John's, Newfoundland
-    teams: 8
-    prizeMoney: 500
+    location: St Thomas, Ontario
+    teams: 4
+    prizeMoney: 1000
     entryFee: 0
     format: Cash Game
     championship: 0
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 4
+    BG: 1
     crowdDensity: 1
-  - name: Offshore Gambling Den
+  - name: Undisclosed Location
     id: 2
-    location: Off the Coast of Japan
-    teams: 8
-    prizeMoney: 20000
+    location: International Waters
+    teams: 4
+    prizeMoney: 5000
     entryFee: 0
     format: Cash Game
     championship: 0
@@ -33825,7 +33837,7 @@ MonoBehaviour:
   tourQual: []
   tour:
   - name: World Tour - Hokkaido Curling Classic
-    id: 1
+    id: 0
     location: Sapporo, Japan
     teams: 16
     prizeMoney: 40000
@@ -33838,7 +33850,7 @@ MonoBehaviour:
     BG: 1
     crowdDensity: 4
   - name: World Tour - The Swiss Cup
-    id: 2
+    id: 1
     location: Basel, Switzerland
     teams: 16
     prizeMoney: 40000
@@ -33851,7 +33863,7 @@ MonoBehaviour:
     BG: 2
     crowdDensity: 5
   - name: World Tour - The Prague Classic
-    id: 5
+    id: 2
     location: Prague, Czechia
     teams: 16
     prizeMoney: 40000
@@ -33864,7 +33876,7 @@ MonoBehaviour:
     BG: 2
     crowdDensity: 4
   - name: World Tour - The Hat Classic
-    id: 0
+    id: 3
     location: Medicine Hat, Alberta
     teams: 16
     prizeMoney: 40000
@@ -33890,7 +33902,7 @@ MonoBehaviour:
     BG: 1
     crowdDensity: 5
   - name: World Tour - The Masters
-    id: 3
+    id: 5
     location: Oakville, Ontario
     teams: 16
     prizeMoney: 40000
@@ -41362,6 +41374,7 @@ MonoBehaviour:
   redScore: 0
   tourny: 0
   KO: 0
+  cashGame: 0
   games: 0
   story: 0
   third: 0

@@ -20,6 +20,7 @@ public class TournyManager : MonoBehaviour
 	public List<Team_List> teamList;
 	public DrawFormatList dfList;
 	CareerManager cm;
+	public bool cashGame;
 
 	public GameObject[] standDisplayTest;
 	public GameObject standings;
@@ -62,12 +63,12 @@ public class TournyManager : MonoBehaviour
 	{
 		cm = FindObjectOfType<CareerManager>();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
-		Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
+		//Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
 		careerEarnings = gsp.earnings;
 
-		Debug.Log("Gsp In Progress is " + gsp.inProgress);
-		Debug.Log("Gsp Career Load is " + gsp.careerLoad);
+		//Debug.Log("Gsp In Progress is " + gsp.inProgress);
+		//Debug.Log("Gsp Career Load is " + gsp.careerLoad);
 
 		if (gsp.careerLoad)
 		{
@@ -88,22 +89,29 @@ public class TournyManager : MonoBehaviour
             }
         }
 
+		if (cashGame)
+        {
+			CashGames cg = FindObjectOfType<CashGames>();
+			cg.SetUp();
+        }
+		else
+		{
+			numberOfTeams = gsp.numberOfTeams;
+			prize = gsp.prize;
+			careerEarningsText.text = "$ " + gsp.earnings.ToString();
 
-        numberOfTeams = gsp.numberOfTeams;
-		prize = gsp.prize;
-		careerEarningsText.text = "$ " + gsp.earnings.ToString();
+			teams = new Team[numberOfTeams];
 
-		teams = new Team[numberOfTeams];
+			teamList = new List<Team_List>();
 
-		teamList = new List<Team_List>();
+			standDisplay = new StandingDisplay[teams.Length];
 
-		standDisplay = new StandingDisplay[teams.Length];
+			StartCoroutine(SetupStandings());
 
-		StartCoroutine(SetupStandings());
+			//Debug.Log("Draw at top of start - " + gsp.draw);
 
-        Debug.Log("Draw at top of start - " + gsp.draw);
-		
-		//PrintRows(teams);
+			//PrintRows(teams);
+		}
 	}
 
 	public void ClearMoney()
@@ -132,6 +140,7 @@ public class TournyManager : MonoBehaviour
 			standDisplay[i].nextOpp.gameObject.transform.parent.GetComponent<ContentSizeFitter>().enabled = true;
 		}
 
+        //OnSim();
 		//for (int i = 0; i < vsDisplay.Length; i++)
 		//{
 		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
@@ -259,8 +268,15 @@ public class TournyManager : MonoBehaviour
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i].strength = Random.Range(0, 10);
-				if (teams[i].name == gsp.teamName)
+				if (teams[i].player)
 				{
+					float strength = cm.cStats.drawAccuracy
+						+ cm.cStats.takeOutAccuracy
+						+ cm.cStats.guardAccuracy
+						+ cm.cStats.sweepStrength
+						+ cm.cStats.sweepEndurance
+						+ cm.cStats.sweepCohesion;
+					teams[i].strength = Mathf.RoundToInt(strength / 6f);
 					playerTeam = i;
 				}
 				teamList.Add(new Team_List(teams[i]));
@@ -365,7 +381,7 @@ public class TournyManager : MonoBehaviour
     #region Set
     void SetDraw()
     {
-		Debug.Log("Setting Draw - " + draw);
+		//Debug.Log("Setting Draw - " + draw);
 		if (draw < drawFormat.Length)
 		{
 			for (int i = 0; i < drawFormat[draw].game.Length; i++)
@@ -501,17 +517,55 @@ public class TournyManager : MonoBehaviour
 			//Debug.Log("Final End");
 			heading.text = "End of Draws";
 			SetDraw();
-			playButton.gameObject.SetActive(false);
-			simButton.gameObject.SetActive(false);
-			contButton.gameObject.SetActive(true);
 			for (int i = 0; i < teams.Length; i++)
             {
 				teams[i].nextOpp = "-----";
             }
 
+			if (cm.currentTourny.qualifier)
+			{
+				vsTitle.text = "Results";
+				if (teams[playerTeam].rank <= 4)
+				{
+					heading.text = "Qualified!";
+					gsp.earnings += gsp.prize * 0.25f;
+					//tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
+
+					vs.SetActive(true);
+
+					vsVS.text = "wins";
+					vsDisplay[0].name.text = teams[playerTeam].name;
+					vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
+					vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
+					vsDisplay[1].rank.gameObject.SetActive(false);
+				}
+				else
+				{
+					heading.text = "Did Not Qualify";
+
+					vs.SetActive(true);
+
+					vsDisplay[0].name.text = teams[playerTeam].name;
+					vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
+					vsDisplay[1].name.text = "$0";
+					vsDisplay[1].rank.gameObject.SetActive(false);
+				}
+				contButton.gameObject.SetActive(false);
+				pm.nextButton.gameObject.SetActive(true);
+			}
+			else
+            {
+
+				contButton.gameObject.SetActive(true);
+				pm.nextButton.gameObject.SetActive(false);
+			}
+
+			playButton.gameObject.SetActive(false);
+			simButton.gameObject.SetActive(false);
 		}
 		else
 			heading.text = "End of Round Robin";
+
 	}
 	#endregion
 
@@ -546,9 +600,16 @@ public class TournyManager : MonoBehaviour
 		CareerManager cm = FindObjectOfType<CareerManager>();
 
 		gsp.teams = teams;
-		float winnings = cm.cash + (gsp.earnings - cm.earnings);
-        cm.earnings = gsp.earnings;
-		cm.cash = winnings;
+		float winnings;
+		if (gsp.cashGame)
+        {
+			winnings = gsp.cash;
+        }
+		else
+			winnings = cm.cash + (gsp.earnings - cm.earnings);
+
+		cm.earnings = gsp.earnings;
+		cm.cash += winnings;
         cm.record = gsp.record;
         gsp.draw = 0;
 		gsp.playoffRound = 0;

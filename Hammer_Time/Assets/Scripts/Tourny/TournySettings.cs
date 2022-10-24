@@ -44,11 +44,25 @@ public class TournySettings : MonoBehaviour
         rockSlider.interactable = false;
         if (cm)
         {
-            StartCoroutine(LoadCareer());
+            gsp.earnings = cm.earnings;
+
+            teams = cm.currentTournyTeams.Length;
+            entryFee = cm.currentTourny.entryFee;
+            prize = cm.currentTourny.prizeMoney;
             Settings();
         }
-        else
-            StartCoroutine(LoadFromFile());
+
+        if (gsp.cashGame)
+        {
+            endSlider.value = gsp.ends;
+            rockSlider.value = 2;
+            gameSlider.value = 1;
+            endSlider.transform.parent.gameObject.SetActive(false);
+            rockSlider.interactable = false;
+            gameSlider.transform.parent.gameObject.SetActive(false);
+        }
+        //else
+        //    StartCoroutine(LoadFromFile());
 
     }
 
@@ -66,19 +80,6 @@ public class TournySettings : MonoBehaviour
             gameText.text = games.ToString();
 
         }
-    }
-
-
-    IEnumerator LoadCareer()
-    {
-        gsp.earnings = cm.earnings;
-        
-        teams = cm.currentTournyTeams.Length;
-        entryFee = cm.currentTourny.entryFee;
-        prize = cm.currentTourny.prizeMoney;
-
-        //settings.SetActive(true);
-        yield break;
     }
 
     IEnumerator LoadFromFile()
@@ -109,7 +110,7 @@ public class TournySettings : MonoBehaviour
 
     public void LoadToGSP()
     {
-        gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
         for (int i = 0; i < gsp.teams.Length; i++)
@@ -117,7 +118,7 @@ public class TournySettings : MonoBehaviour
             gsp.teams[i].earnings -= entryFee;
         }
         //Debug.Log("Career Earnings after Fee - $" + earnings);
-        gsp.LoadTournySettings();
+        gsp.LoadTournySettings(this);
 
         //myFile = new EasyFileSave("my_player_data");
 
@@ -130,6 +131,8 @@ public class TournySettings : MonoBehaviour
         //myFile.Save();
         if (gsp.KO)
             SceneManager.LoadScene("Tourny_Home_3K");
+        else if (gsp.cashGame)
+            SceneManager.LoadScene("Tourny_Home_2");
         else
             SceneManager.LoadScene("Tourny_Home_1");
     }
