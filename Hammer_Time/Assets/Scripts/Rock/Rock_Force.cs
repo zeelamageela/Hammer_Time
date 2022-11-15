@@ -42,9 +42,10 @@ public class Rock_Force : MonoBehaviour
     public void Release()
     {
         if (flipAxis)
-        {
             dirMult = -1;
-        }
+        else
+            dirMult = 1;
+        Debug.Log("flipAxis is " + flipAxis);
 
         GetComponent<SpriteRenderer>().enabled = true;
         turnStart = true;

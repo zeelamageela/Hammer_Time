@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Feedbacks;
 using Lofelt.NiceVibrations;
+using Photon.Realtime;
 
 public class RandomRockPlacerment : MonoBehaviour
 {
@@ -44,13 +45,14 @@ public class RandomRockPlacerment : MonoBehaviour
         HapticController.Play();
     }
 
-    public void OnRockPlace(int rockCrnt, bool redTeam)
+    public void OnRockPlace(int rockCrnt, bool redTeam, bool mixed = false)
     {
         placed = false;
         rockCurrent = rockCrnt;
 
         //StartCoroutine(RandomRockPlace());
-        StartCoroutine(StratSelect(redTeam, true));
+        
+            StartCoroutine(StratSelect(redTeam, true));
 
         #region Strategic Selection
         //if (redTeam)
@@ -323,14 +325,14 @@ public class RandomRockPlacerment : MonoBehaviour
         //if (rockCurrent == 8 | rockCurrent == 12)
         //    round++;
         if (rockCurrent < gm.rockCurrent + 1)
-            yield return StartCoroutine(Placement(redTeam, aiTurn));
+            yield return StartCoroutine(Placement(redTeam));
         else
             playerStratGO.SetActive(false);
 
         yield return new WaitForEndOfFrame();
     }
 
-    IEnumerator Placement(bool redTeam, bool aiTurn)
+    IEnumerator Placement(bool redTeam)
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         Debug.Log("RedTeam is " + redTeam);
@@ -1663,7 +1665,28 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
         }
 
-        ShotSelector(shotSelector, takeOutSelector, shooter, activeCharStats, otherCharStats);
+        if (gsp.cashGame)
+        {
+            if (rockCurrent == 11)
+            {
+                playerSelection = 1;
+                ShotSelector(7, 99);
+            }
+            else if (rockCurrent == 10)
+            {
+                playerSelection = 2;
+                ShotSelector(7, 99);
+            }
+            else
+            {
+                playerSelection = 3;
+                ShotSelector(7, 99);
+            }
+
+            Debug.Log("Player Selection - " + playerSelection);
+        }
+        else
+            ShotSelector(shotSelector, takeOutSelector, activeCharStats, otherCharStats);
 
         //Debug.Log("Team Yellow TakeOut Accuracy " + tm.teamYellow[shooter].charStats.takeOutAccuracy.GetValue());
 
@@ -1673,10 +1696,94 @@ public class RandomRockPlacerment : MonoBehaviour
 
         yield return new WaitUntil(() => placed = true);
 
+        StartCoroutine(CompletePlacement());
         
+        //for (int i = 0; i < rockCurrent + 1; i++)
+        //{
+            
+        //    gm.rockList[i].rockInfo.placed = true;
+        //}
+
+
+        //for (int i = 0; i < rockCurrent + 1; i++)
+        //{
+        //    gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
+        //    gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = false;
+        //    gm.rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
+        //    gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
+        //    gm.rockList[i].rock.transform.parent = null;
+        //    //rm.rb.DeadRock(i);
+        //    //yield return new WaitForEndOfFrame();
+        //    //Debug.Log("Rock Position " + i + " " + rockPos[i]);
+        //    gm.rockList[i].rock.transform.position = rockPos[i];
+
+        //    gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
+        //    gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
+        //    gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
+        //    gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
+
+        //    //yield return new WaitForEndOfFrame();
+
+        //    if (rockPos[i].y > 8f)
+        //    {
+        //        gm.rockList[i].rockInfo.inPlay = false;
+        //        gm.rockList[i].rockInfo.outOfPlay = true;
+        //        gm.rockList[i].rock.SetActive(false);
+        //    }
+        //    else
+        //    {
+        //        gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
+        //        gm.rockList[i].rockInfo.inPlay = true;
+        //        gm.rockList[i].rockInfo.outOfPlay = false;
+        //    }
+        //    gm.rockList[i].rockInfo.moving = false;
+        //    gm.rockList[i].rockInfo.shotTaken = true;
+        //    gm.rockList[i].rockInfo.released = true;
+        //    gm.rockList[i].rockInfo.stopped = true;
+        //    gm.rockList[i].rockInfo.rest = true;
+        //    //Debug.Log("i is equal to " + i);
+        //    //Handheld.Vibrate();
+        //    //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
+        //    yield return new WaitForEndOfFrame();
+
+            
+        //}
+
+        //gm.houseList.Clear();
+        //gm.gList.Clear();
+        //int counter = 0;
+        //foreach (Rock_List rock in gm.rockList)
+        //{
+        //    if (rock.rockInfo.inPlay == true && rock.rockInfo.inHouse)
+        //    {
+        //        counter++;
+        //        gm.houseList.Add(new House_List(rock.rock, rock.rockInfo));
+        //        Debug.Log("Adding House " + counter + " - " + rock.rockInfo.teamName + rock.rockInfo.rockNumber);
+        //    }
+        //    if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
+        //    {
+        //        gm.gList.Add(new Guard_List(rockCurrent, rock.rockInfo.freeGuard, rock.rock.transform));
+        //        Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+        //    }
+        //}
+        //if (gm.houseList.Count > 0)
+        //{
+        //    Debug.Log("houseList shot rock - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
+        //    gm.houseList.Sort();
+        //    Debug.Log("Sorted houseList - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
+        //}
+        //fltText.TargetTransform = gm.rockList[rockCurrent].rock.transform;
+        //fltText.Play(rockPos[rockCurrent]);
+        ////gm.rockCurrent = rockCurrent - 1;
+        ////gm.rockCurrent--;
+        //placed1 = true;
+    }
+
+    IEnumerator CompletePlacement()
+    {
         for (int i = 0; i < rockCurrent + 1; i++)
         {
-            
+
             gm.rockList[i].rockInfo.placed = true;
         }
 
@@ -1722,7 +1829,7 @@ public class RandomRockPlacerment : MonoBehaviour
             //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
             yield return new WaitForEndOfFrame();
 
-            
+
         }
 
         gm.houseList.Clear();
@@ -1755,7 +1862,7 @@ public class RandomRockPlacerment : MonoBehaviour
         placed1 = true;
     }
 
-    void ShotSelector(int shotSelector, int takeOutSelector, int shooter, CharacterStats activeCharStats, CharacterStats otherCharStats)
+    void ShotSelector(int shotSelector, int takeOutSelector, CharacterStats activeCharStats = null, CharacterStats otherCharStats = null)
     {
         Random.InitState((int)System.DateTime.Now.Ticks);
         //placed = false;
@@ -1796,7 +1903,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 rockPos[rockCurrent] = placePos[placeSelector] + (Random.insideUnitCircle * 0.5f);
                 Debug.Log("case 2 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
-            #endregion
+                #endregion
             case 3:
                 #region AutoGuard
                 Debug.Log("Case 3 - Guard");
@@ -1841,7 +1948,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     + (Random.insideUnitCircle
                     * Random.Range(0f, 1.5f - (0.1f * activeCharStats.guardAccuracy.GetValue())));
                 break;
-            #endregion
+                #endregion
             case 4:
                 #region Takeout
                 //takeOut check
@@ -1920,7 +2027,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     Debug.Log("Opponent Freeze Check - FAIL");
                 }
                 break;
-            #endregion
+                #endregion
             case 6:
                 #region Manual Guard
                 Debug.Log("Case 6 - Guard");
@@ -1949,6 +2056,33 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             #endregion
 
+            case 7:
+                #region Mixed Setup
+                Debug.Log("Case 7 - MixedSetup");
+
+                switch (playerSelection)
+                {
+                    case 1:
+                        placeSelector = 9;
+                        rockPos[rockCurrent] = placePos[placeSelector] + new Vector2(0f, 0.5f);
+                        break;
+                    case 2:
+                        placeSelector = 7;
+                        rockPos[rockCurrent] = placePos[placeSelector];
+                        break;
+                    case 3:
+                        placeSelector = 10;
+                        rockPos[rockCurrent] = placePos[placeSelector];
+                        break;
+                    default:
+                        placeSelector = 10;
+                        break;
+                }
+
+                Debug.Log("case 7 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                StartCoroutine(CompletePlacement());
+                break;
+                #endregion
             default:
                 #region Out
                 Debug.Log("Default - Out - " + rockCurrent);
@@ -1964,6 +2098,8 @@ public class RandomRockPlacerment : MonoBehaviour
         //playerStratGO.SetActive(false);
         Debug.Log("Rock " + rockCurrent + " is placed");
         placed = true;
+
+        StartCoroutine(CompletePlacement());
     }
 
     void TakeOutTarget(string activeTeamName, string otherTeamName, string targetRange, out bool hit, out int takeOutSelector)

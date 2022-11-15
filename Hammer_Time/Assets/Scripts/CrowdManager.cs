@@ -837,7 +837,7 @@ public class CrowdManager : MonoBehaviour
             int clipIndex = Random.Range(0, tempCrowdClips.Length);
 
             aoc["Crowd1A"] = tempCrowdClips[clipIndex];
-            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 1f, 0.75f, 0.75f, 0.5f, 0.5f);
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 0.25f, 0.75f, 0.75f, 0.5f, 1f);
 
             //float randomIdleStart = Random.Range(0, animator.GetCurrentAnimatorStateInfo(0).length); //Set a random part of the animation to start from
             //string randomName = aoc["Crowd1A"].name;

@@ -301,33 +301,37 @@ public class CareerManager : MonoBehaviour
                 tSel.provChampionship = champ[1];
             }
 
-            int[] idList = myFile.GetArray<int>("Total ID List");
-            int[] winsList = myFile.GetArray<int>("Total Wins List");
-            int[] lossList = myFile.GetArray<int>("Total Loss List");
-            float[] earningsList = myFile.GetArray<float>("Total Earnings List");
-
-            //Debug.Log("Total ID List Length is " + idList.Length);
-            //Debug.Log("Total Teams List Length is " + teams.Length);
-
-            for (int i = 0; i < idList.Length; i++)
+            if (tTeamList != null)
             {
-                for (int j = 0; j < tTeamList.teams.Length; j++)
+                int[] idList = myFile.GetArray<int>("Total ID List");
+                int[] winsList = myFile.GetArray<int>("Total Wins List");
+                int[] lossList = myFile.GetArray<int>("Total Loss List");
+                float[] earningsList = myFile.GetArray<float>("Total Earnings List");
+
+                //Debug.Log("Total ID List Length is " + idList.Length);
+                //Debug.Log("Total Teams List Length is " + teams.Length);
+
+                for (int i = 0; i < idList.Length; i++)
                 {
-                    if (idList[i] == tTeamList.teams[j].id)
-                        teams[i] = tTeamList.teams[j];
+                    for (int j = 0; j < tTeamList.teams.Length; j++)
+                    {
+                        if (idList[i] == tTeamList.teams[j].id)
+                            teams[i] = tTeamList.teams[j];
+                    }
+
+                    teams[i].wins = winsList[i];
+                    teams[i].loss = lossList[i];
+                    teams[i].earnings = earningsList[i];
+
+                    if (teams[i].id == playerTeamIndex)
+                    {
+                        teams[i].name = teamName;
+                        earnings = earningsList[i];
+                        Debug.Log("Earnings - CM from EarningsList - " + earnings);
+                        teams[i].player = true;
+                    }
                 }
 
-                teams[i].wins = winsList[i];
-                teams[i].loss = lossList[i];
-                teams[i].earnings = earningsList[i];
-
-                if (teams[i].id == playerTeamIndex)
-                {
-                    teams[i].name = teamName;
-                    earnings = earningsList[i];
-                    Debug.Log("Earnings - CM from EarningsList - " + earnings);
-                    teams[i].player = true;
-                }
             }
 
             if (pUpM)
@@ -426,22 +430,25 @@ public class CareerManager : MonoBehaviour
                 tourRankList = new List<TourStandings_List>();
             }
 
-            for (int i = 0; i < teams.Length; i++)
+            if (tTeamList != null)
             {
-                provRankList.Add(new Standings_List(teams[i]));
-            }
-
-            for (int i = 0; i < tourTeams.Length; i++)
-            {
-                tourRankList.Add(new TourStandings_List(tourTeams[i]));
-            }
-
-            for (int i = 0; i < teams.Length; i++)
-            {
-                if (teams[i].player)
+                for (int i = 0; i < teams.Length; i++)
                 {
-                    playerTeam = teams[i];
-                    //Debug.Log("CM playerTeamIndex is " + teams[i].id);
+                    provRankList.Add(new Standings_List(teams[i]));
+                }
+
+                for (int i = 0; i < tourTeams.Length; i++)
+                {
+                    tourRankList.Add(new TourStandings_List(tourTeams[i]));
+                }
+
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].player)
+                    {
+                        playerTeam = teams[i];
+                        //Debug.Log("CM playerTeamIndex is " + teams[i].id);
+                    }
                 }
             }
 
@@ -914,21 +921,26 @@ public class CareerManager : MonoBehaviour
         TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
         //earnings = gsp.earnings;
-        currentTournyTeams = gsp.teams;
+
 
         float xpChange = 0f;
-        for (int i = 0; i < currentTournyTeams.Length; i++)
+        if (!gsp.cashGame)
         {
-            if (playerTeamIndex == currentTournyTeams[i].id)
-            {
-                tournyResults.Add(currentTournyTeams[i].rank);
-                xpChange = currentTournyTeams.Length - currentTournyTeams[i].rank;
-                xpChange += currentTournyTeams[i].wins * 3f;
-                xpChange += currentTournyTeams[i].loss;
+            currentTournyTeams = gsp.teams;
 
-                if (currentTournyTeams[i].rank < 5)
+            for (int i = 0; i < currentTournyTeams.Length; i++)
+            {
+                if (playerTeamIndex == currentTournyTeams[i].id)
                 {
-                    xpChange += 5f;
+                    tournyResults.Add(currentTournyTeams[i].rank);
+                    xpChange = currentTournyTeams.Length - currentTournyTeams[i].rank;
+                    xpChange += currentTournyTeams[i].wins * 3f;
+                    xpChange += currentTournyTeams[i].loss;
+
+                    if (currentTournyTeams[i].rank < 5)
+                    {
+                        xpChange += 5f;
+                    }
                 }
             }
         }

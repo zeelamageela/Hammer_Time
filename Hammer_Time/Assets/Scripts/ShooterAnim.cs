@@ -94,8 +94,6 @@ public class ShooterAnim : MonoBehaviour
             
         }
 
-        
-
         if (isPressed == false && springReleased == true)
         {
             throwDistance = rock.transform.position.y;
@@ -127,7 +125,7 @@ public class ShooterAnim : MonoBehaviour
                 rock.GetComponent<SpriteRenderer>().enabled = true;
                 rj.enabled = false;
 
-                if (slowdownTimer <= 10)
+                if (gameObject.activeSelf == true && slowdownTimer <= 10)
                 {
                     StartCoroutine(Slowdown());
                 }

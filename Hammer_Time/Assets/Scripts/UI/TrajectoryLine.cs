@@ -256,7 +256,7 @@ public class TrajectoryLine : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         float dotStat = (gsp.cStats.drawAccuracy + gsp.cStats.takeOutAccuracy + gsp.cStats.guardAccuracy) / 6.5f;
 
-        Debug.Log("Dotstat is " + dotStat);
+        //Debug.Log("Dotstat is " + dotStat);
 
         for (int i = 1; i < dotCount; i++)
         {

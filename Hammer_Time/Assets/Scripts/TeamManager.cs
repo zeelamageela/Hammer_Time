@@ -37,11 +37,11 @@ public class TeamManager : MonoBehaviour
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
 
-            if (gsp.week < 5)
-                aiStats = 5;
-            else if (gsp.week < 10)
-                aiStats = 7;
-            else
+            //if (gsp.week < 5)
+            //    aiStats = 5;
+            //else if (gsp.week < 10)
+            //    aiStats = 7;
+            //else
                 aiStats = 10;
             Debug.Log("Ai Stats are " + aiStats + " in Week " + gsp.week);
 

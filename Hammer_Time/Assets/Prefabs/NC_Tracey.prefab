@@ -403,17 +403,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Tracey
   drawAccuracy:
-    baseValue: 5
+    baseValue: 10
   takeOutAccuracy:
-    baseValue: 5
+    baseValue: 10
   guardAccuracy:
-    baseValue: 5
+    baseValue: 10
   sweepStrength:
-    baseValue: 5
+    baseValue: 10
   sweepEndurance:
-    baseValue: 5
+    baseValue: 10
   sweepCohesion:
-    baseValue: 5
+    baseValue: 10
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

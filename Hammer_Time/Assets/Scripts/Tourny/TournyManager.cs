@@ -77,7 +77,7 @@ public class TournyManager : MonoBehaviour
             if (gsp.inProgress)
             {
                 Debug.Log("In Progress is True");
-                gsp.LoadTourny();
+                //gsp.LoadTourny();
                 playoffRound--;
 				Debug.Log("Playoff Round is " + playoffRound);
             }
@@ -92,6 +92,13 @@ public class TournyManager : MonoBehaviour
 		if (cashGame)
         {
 			CashGames cg = FindObjectOfType<CashGames>();
+			numberOfTeams = gsp.numberOfTeams;
+			prize = gsp.prize;
+			careerEarningsText.text = "$ " + gsp.earnings.ToString();
+
+			teams = new Team[numberOfTeams];
+
+			teamList = new List<Team_List>();
 			cg.SetUp();
         }
 		else
@@ -632,8 +639,8 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("First Name", gsp.firstName);
 		//myFile.Add("Team Name", gsp.teamName);
 		//myFile.Add("Team Colour", cm.teamColour);
-		myFile.Add("Career Earnings", gsp.earnings);
-		Debug.Log("TM Career Earnings - " + gsp.earnings);
+		//myFile.Add("Career Earnings", gsp.earnings);
+		//Debug.Log("TM Career Earnings - " + gsp.earnings);
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("Tourny In Progress", true);
 		myFile.Add("Draw", draw);

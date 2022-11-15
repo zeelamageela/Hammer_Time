@@ -48,10 +48,10 @@ public class AIManager : MonoBehaviour
 
     }
 
-    private void Start()
-    {
-        story = gm.gsp.story;
-    }
+    //private void Start()
+    //{
+    //    story = gm.gsp.story;
+    //}
     // Update is called once per frame
     void Update()
     {
@@ -173,10 +173,7 @@ public class AIManager : MonoBehaviour
 
         }
 
-        if (!story)
-        {
-            aiStrat.OnShot(rockCurrent);
-        }
+        aiStrat.OnShot(rockCurrent);
     }
 
 }

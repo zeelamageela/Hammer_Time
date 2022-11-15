@@ -106,7 +106,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			//gsp.LoadCareer();
 			careerEarnings = gsp.earnings;
 
-			
             if (cm)
             {
                 playerTeam = cm.playerTeamIndex;
@@ -1549,7 +1548,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 19
 			case 19:
-				heading.text = "Finals - Draw 19";
+				heading.text = "Final Bracket - Draw 19";
 
 				for (int i = 0; i < finalsDisplay19.Length; i++)
 				{
@@ -1619,7 +1618,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			#endregion
 			#region Round 20
 			case 20:
-				heading.text = "F - Round 20";
+				heading.text = "Finals";
 
 				for (int j = 0; j < teams.Length; j++)
 				{
@@ -5584,9 +5583,17 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	IEnumerator SimToFinals()
 	{
 		
-		yield return new WaitForSeconds(0.01f);
+		yield return new WaitForSeconds(0.02f * playoffRound);
+		vsDisplayGO.SetActive(false);
+		nextButton.gameObject.SetActive(false);
+		simButton.gameObject.SetActive(false);
+		contButton.gameObject.SetActive(false);
 		OnSim();
-		yield return new WaitForSeconds(0.01f);
+		yield return new WaitForSeconds(0.05f * playoffRound);
+		vsDisplayGO.SetActive(false);
+		nextButton.gameObject.SetActive(false);
+		simButton.gameObject.SetActive(false);
+		contButton.gameObject.SetActive(false);
 		SetPlayoffs();
 		yield return new WaitForSeconds(0.05f);
 	}

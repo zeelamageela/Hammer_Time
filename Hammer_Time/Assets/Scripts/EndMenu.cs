@@ -24,7 +24,8 @@ public class EndMenu : MonoBehaviour
     public Image redTeamPanel;
     public Text yellowTeamName;
     public Image yellowTeamPanel;
-
+    public Image redTeamColor;
+    public Image yellowTeamColor;
 
     public Button contButton;
     public Button endButton;
@@ -49,6 +50,11 @@ public class EndMenu : MonoBehaviour
         if (gsp)
         {
             ends = gsp.ends;
+
+            if (gsp.cashGame)
+            {
+                end.text = "Cash Game";
+            }
             if (gsp.endCurrent == 0)
             {
                 contButton.gameObject.SetActive(true);
@@ -65,33 +71,89 @@ public class EndMenu : MonoBehaviour
                     yellowHammerPNG.SetActive(true);
                     info.text = gsp.yellowTeamName + " has the hammer";
                 }
+                end.text = "End " + (gsp.endCurrent + 1).ToString() + "/" + ends;
+                draw.text = "Draw " + (gsp.draw + 1).ToString();
+                if (gsp.cashGame)
+                {
+                    draw.text = "Cash Game";
+                }
             }
             else if (gsp.endCurrent >= ends)
             {
                 if (gsp.redScore != gsp.yellowScore)
                 {
                     if (gsp.redScore > gsp.yellowScore)
-                        info.text = gsp.redTeamName + " Wins!";
+                    {
+                        info.text = "Team " + gsp.redTeamName + " Wins";
+                    }
                     else
-                        info.text = gsp.yellowTeamName + " Wins!";
+                    {
+                        info.text = "Team " + gsp.yellowTeamName + " Wins";
+                    }
 
                     contButton.gameObject.SetActive(false);
                     endButton.gameObject.SetActive(true);
                     contButton.transform.GetComponentInChildren<Text>().text = "Tourny Home>";
+
+                    draw.text = "Draw " + (gsp.draw + 1).ToString();
+                    end.text = " ";
+
+                    if (gsp.cashGame)
+                    {
+                        if (gsp.aiYellow)
+                        {
+                            if (gsp.redScore > gsp.yellowScore)
+                            {
+                                info.text = "You Win";
+                                draw.text = "$" + gsp.prize * 2f;
+                            }
+                            else
+                            {
+                                info.text = "You Lose";
+                                draw.text = " ";
+                            }
+                        }
+                        else
+                        {
+                            if (gsp.yellowScore > gsp.redScore)
+                            {
+                                info.text = "You Win";
+                                draw.text = "$" + gsp.prize * 2f;
+                            }
+                            else
+                            {
+                                info.text = "You Lose";
+                                draw.text = " ";
+                            }
+                        }
+                        contButton.transform.GetComponentInChildren<Text>().text = "Next Week>";
+                    }
                 }
                 else
                 {
-                    info.text = "Extra End";
+                    info.text = "Tie Game!";
                     ends++;
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
+
+                    int extraEnd = gsp.endCurrent - ends + 1;
+                    end.text = "Extra End " + extraEnd.ToString();
+
+                    draw.text = "Draw " + (gsp.draw + 1).ToString();
+
+                    if (gsp.cashGame)
+                    {
+                        draw.text = "Cash Game";
+                    }
                 }
+
             }
             else
             {
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
                 contButton.transform.GetComponentInChildren<Text>().text = "Next End>";
+
                 if (gsp.redHammer)
                 {
                     redHammerPNG.SetActive(true);
@@ -102,6 +164,14 @@ public class EndMenu : MonoBehaviour
                     yellowHammerPNG.SetActive(true);
                     info.text = gsp.yellowTeamName + " has the hammer";
                 }
+
+                draw.text = "Draw " + (gsp.draw + 1).ToString();
+                end.text = "End " + (gsp.endCurrent + 1).ToString() + "/" + ends;
+
+                if (gsp.cashGame)
+                {
+                    draw.text = "Cash Game";
+                }
             }
 
             if (gsp.playoffRound > 0)
@@ -109,19 +179,30 @@ public class EndMenu : MonoBehaviour
                 if (gsp.KO)
                     draw.text = "Round " + gsp.playoffRound.ToString();
                 else
+                {
                     draw.text = "Playoff Round " + gsp.playoffRound.ToString();
+                    if (gsp.playoffRound == 1)
+                        draw.text = "Quarterfinals";
+                    if (gsp.playoffRound == 2)
+                        draw.text = "Semifinals";
+                    if (gsp.playoffRound == 3)
+                        draw.text = "Finals";
+                }
             }
-            else
-            {
-                draw.text = "Draw " + (gsp.draw + 1).ToString();
-            }
+            //else
+            //{
+            //    draw.text = "Draw " + (gsp.draw + 1).ToString();
+            //}
 
-            tournyName.text = cm.currentTourny.name;
-            end.text = "End " + (gsp.endCurrent + 1).ToString();
+
+            if (cm != null)
+                tournyName.text = cm.currentTourny.name;
+
+
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
-            //redTeamPanel.color = gsp.redTeamColour;
-            //yellowTeamPanel.color = gsp.yellowTeamColour;
+            redTeamColor.color = gsp.redTeamColour;
+            yellowTeamColor.color = gsp.yellowTeamColour;
             redTotalScore.text = gsp.redScore.ToString();
             yellowTotalScore.text = gsp.yellowScore.ToString();
 
@@ -136,7 +217,6 @@ public class EndMenu : MonoBehaviour
                 yellowSpinnerAI.SetActive(false);
             }
 
-
             for (int i = 0; i < ends; i++)
             {
                 scoreCols[i].SetActive(true);
@@ -145,7 +225,7 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
                 Debug.Log("I IS " + i);
-                if (i < (gsp.endCurrent))
+                if (i < gsp.endCurrent)
                 {
                     scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
                     scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
@@ -174,9 +254,6 @@ public class EndMenu : MonoBehaviour
                 }
             }
         }
-
-        
-        
     }
 
     public void Menu()
@@ -189,7 +266,6 @@ public class EndMenu : MonoBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
-
 
     public void Continue()
     {
@@ -209,7 +285,31 @@ public class EndMenu : MonoBehaviour
         else
             gsp.draw++;
 
-        if (gsp.KO)
+        if (gsp.cashGame)
+        {
+            float winnings;
+
+            gsp.inProgress = false;
+            Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
+            Debug.Log("CM earnings are " + cm.earnings);
+
+            cm.TournyResults();
+            cm.SetUpCareer();
+            if (gsp.skinsGame)
+            {
+                winnings = gsp.skins * 2f;
+            }
+            else
+            {
+                winnings = gsp.prize * 2f;
+            }
+
+            gsp.cash += winnings;
+            cm.cash += gsp.cash;
+
+            SceneManager.LoadScene("Arena_Selector");
+        }
+        else if (gsp.KO)
             SceneManager.LoadScene("Tourny_Home_3K");
         else
             SceneManager.LoadScene("Tourny_Home_1");

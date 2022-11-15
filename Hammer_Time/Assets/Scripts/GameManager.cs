@@ -170,10 +170,10 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(LoadGame());
         }
-        else if (gsp.story)
-        {
-            StartCoroutine(StoryLoad());
-        }
+        //else if (gsp.story)
+        //{
+        //    StartCoroutine(StoryLoad());
+        //}
         else
         {
             yield return StartCoroutine(SetupRocks());
@@ -190,22 +190,16 @@ public class GameManager : MonoBehaviour
                     rm.rrp.placed1 = false;
                     if (gsp.cashGame)
                     {
-                        if (i == 4)
+                        if (gsp.aiRed)
                         {
-                            rp.OnPlace("Back Four Foot");
-                            rm.rrp.placed1 = true;
+                            rm.rrp.OnRockPlace(i, false, true);
                         }
-                        if (i == 5)
+                        else if (gsp.aiYellow)
                         {
-                            rp.OnPlace("Centre Guard");
-                            rm.rrp.placed1 = true;
-                        }
-                        else
-                        {
-                            rp.OnPlace("Out of Bounds");
-                            rm.rrp.placed1 = true;
+                            rm.rrp.OnRockPlace(i, true, true);
                         }
 
+                        rm.rrp.placed1 = true;
                     }
                     else
                     {
@@ -740,7 +734,7 @@ public class GameManager : MonoBehaviour
         Destroy(shooterGO);
         cm.HouseView();
 
-        Debug.Log("Rock List is " + rockList.Count);
+        //Debug.Log("Rock List is " + rockList.Count);
         foreach (Rock_List rock in rockList)
         {
             if (rock.rockInfo.inHouse == true && rock.rockInfo.inPlay)
@@ -948,7 +942,9 @@ public class GameManager : MonoBehaviour
 
             if (gsp.score.Length < 1)
                 gsp.score = new Vector2Int[endTotal + 1];
-            
+
+            if (gsp.skinsGame)
+                houseScore = (int)gsp.skinValue[endCurrent];
 
             if (winningTeamName == redTeamName)
             {
@@ -1084,7 +1080,7 @@ public class GameManager : MonoBehaviour
         myFile.Add("Ai Yellow", aiTeamYellow);
         myFile.Add("Team", target);
         myFile.Add("Debug", debug);
-        Debug.Log("endTotal is " + endTotal);
+        //Debug.Log("endTotal is " + endTotal);
 
         myFile.Add("End " + endCurrent + " Score", new Vector2Int(redScore, yellowScore));
 

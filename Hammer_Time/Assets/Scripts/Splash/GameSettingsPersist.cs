@@ -38,9 +38,6 @@ public class GameSettingsPersist : MonoBehaviour
     public bool cashGame;
     public int games;
 
-    public bool story;
-    public bool third;
-    public bool skip;
     public string firstName;
     public string teamName;
     public float earnings;
@@ -71,6 +68,10 @@ public class GameSettingsPersist : MonoBehaviour
     public Team[] playoffTeams;
     public int playerTeamIndex;
     public Vector2Int[] score;
+
+    public bool skinsGame;
+    public int skins;
+    public float[] skinValue;
 
     public Team playerTeam;
     public Color teamColour;
@@ -127,7 +128,7 @@ public class GameSettingsPersist : MonoBehaviour
         aiYellow = gs.aiYellow;
         aiRed = gs.aiRed;
         mixed = gs.mixed;
-        skip = gs.team;
+        //skip = gs.team;
         debug = gs.debug;
         yellowTeamName = gs.yellowTeamName;
         redTeamName = gs.redTeamName;
@@ -162,7 +163,7 @@ public class GameSettingsPersist : MonoBehaviour
             aiRed = myFile.GetBool("Ai Red");
             aiYellow = myFile.GetBool("Ai Yellow");
             mixed = myFile.GetBool("Mixed");
-            skip = myFile.GetBool("Team");
+            //skip = myFile.GetBool("Team");
             debug = myFile.GetBool("Debug");
 
             redScore = myFile.GetInt("Red Score");
@@ -198,8 +199,10 @@ public class GameSettingsPersist : MonoBehaviour
         redHammer = gm.redHammer;
         aiYellow = gm.aiTeamYellow;
         aiRed = gm.aiTeamRed;
-        third = gm.target;
-        skip = gm.target;
+
+        
+        //third = gm.target;
+        //skip = gm.target;
 
         //score[endCurrent] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
@@ -216,7 +219,8 @@ public class GameSettingsPersist : MonoBehaviour
         firstName = cm.playerName;
         teamName = cm.teamName;
         teamColour = cm.teamColour;
-        earnings = cm.earnings;
+        earnings = 0;
+        cash = 0;
         bg = cm.currentTourny.BG;
         crowdDensity = cm.currentTourny.crowdDensity;
         //if (cm.currentTourny.championship)
@@ -274,7 +278,7 @@ public class GameSettingsPersist : MonoBehaviour
         cm.LoadFromGSP(this);
     }
 
-    public void TournySetup()
+    public void TournySetup(int btn = 0)
     {
         Debug.Log("Tourny Setup GSP");
         TournyManager tm = FindObjectOfType<TournyManager>();
@@ -283,10 +287,17 @@ public class GameSettingsPersist : MonoBehaviour
         careerLoad = false;
         if (cg != null)
         {
+
             tourny = false;
             draw = 0;
             playoffRound = 0;
             //playerTeam = teams[playerTeamIndex];
+            endCurrent = 0;
+            redScore = 0;
+            yellowScore = 0;
+
+            playerTeam = teams[0];
+            playerTeam.nextOpp = teams[btn + 1].name;
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
@@ -660,7 +671,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void StoryGame()
     {
-        story = true;
+        //story = true;
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
 
         Debug.Log("Loading to GSP");
@@ -675,8 +686,8 @@ public class GameSettingsPersist : MonoBehaviour
         redHammer = sm.redHammer;
         aiYellow = sm.aiYellow;
         aiRed = sm.aiRed;
-        third = sm.third;
-        skip = sm.skip;
+        //third = sm.third;
+        //skip = sm.skip;
 
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");

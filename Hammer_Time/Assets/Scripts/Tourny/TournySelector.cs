@@ -245,7 +245,6 @@ public class TournySelector : MonoBehaviour
 
         int tCount = 0;
 
-
         for (int i = 0; i < tournies.Length; i++)
         {
             Debug.Log("tournies[" + i + "].complete = " + tournies[i].complete);
@@ -317,9 +316,9 @@ public class TournySelector : MonoBehaviour
         }
         else if (cm.week == 2)
         {
-            activeTournies[0] = emptyTourny;
-            activeTournies[1] = provQual[0];
-            activeTournies[2] = emptyTourny;
+            activeTournies[0] = locals[localSelect];
+            activeTournies[1] = tournies[nextTourny];
+            activeTournies[2] = tournies[nextTourny2];
         }
         else if (cm.week == 3)
         {
@@ -329,21 +328,23 @@ public class TournySelector : MonoBehaviour
         }
         else if (cm.week == 4)
         {
-            activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tournies[nextTourny];
+            activeTournies[0] = provQual[0];
+            activeTournies[1] = emptyTourny;
             activeTournies[2] = tournies[nextTourny2];
         }
         else if (cm.week == 5)
         {
             activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tour[nextTour];
+            activeTournies[1] = tour[1];
             if (provQualComplete)
-                activeTournies[2] = emptyTourny;
+                activeTournies[2] = tournies[nextTourny];
             else
                 activeTournies[2] = provQual[nextProvQual];
         }
         else
         {
+            Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
+
             if (tourChampionship.complete & provChampionship.complete)
             {
                 EndOfSeason();
@@ -370,71 +371,79 @@ public class TournySelector : MonoBehaviour
                 else
                     activeTournies[rnd[2]] = emptyTourny;
             }
+            else if (!tourniesComplete & tourComplete & provQualComplete)
+            {
+                activeTournies[rnd[0]] = emptyTourny;
+
+                activeTournies[rnd[1]] = tournies[nextTourny];
+
+                if (nextTourny2 == 0)
+                    activeTournies[rnd[2]] = emptyTourny;
+                else
+                    activeTournies[rnd[2]] = tournies[nextTourny2];
+            }
             else if (tourniesComplete & !tourComplete & provQualComplete)
             {
-                activeTournies[rnd[0]] = locals[localSelect];
+                activeTournies[rnd[0]] = emptyTourny;
                 activeTournies[rnd[1]] = emptyTourny;
-                activeTournies[rnd[2]] = tour[nextTour];
+                if (cm.week % 2 == 0)
+                    activeTournies[rnd[2]] = emptyTourny;
+                else
+                    activeTournies[rnd[2]] = tour[nextTour];
             }
             else if (!tourniesComplete & !tourComplete & provQualComplete)
             {
-                activeTournies[rnd[0]] = tour[nextTour];
+                if (cm.week % 2 == 0)
+                    activeTournies[rnd[0]] = emptyTourny;
+                else
+                    activeTournies[rnd[0]] = tour[nextTour];
+
                 activeTournies[rnd[1]] = tournies[nextTourny];
+
                 if (nextTourny2 == 0)
-                    activeTournies[rnd[2]] = locals[localSelect];
+                    activeTournies[rnd[2]] = emptyTourny;
                 else
                     activeTournies[rnd[2]] = tournies[nextTourny2];
             }
             else if (tourniesComplete & !tourComplete & !provQualComplete)
             {
                 activeTournies[rnd[0]] = provQual[nextProvQual];
-                activeTournies[rnd[1]] = locals[localSelect];
-                activeTournies[rnd[2]] = tour[nextTour];
+                activeTournies[rnd[1]] = emptyTourny;
+
+                if (cm.week % 2 == 0)
+                    activeTournies[rnd[2]] = emptyTourny;
+                else
+                    activeTournies[rnd[2]] = tour[nextTour];
             }
             else if (!tourniesComplete & tourComplete & !provQualComplete)
             {
                 activeTournies[rnd[0]] = provQual[nextProvQual];
                 activeTournies[rnd[1]] = tournies[nextTourny];
-                activeTournies[rnd[2]] = locals[localSelect];
+                activeTournies[rnd[2]] = emptyTourny;
             }
             else
             {
-                if (cm.week > 3)
+
+                activeTournies[rnd[0]] = provQual[nextProvQual];
+                activeTournies[rnd[1]] = tournies[nextTourny];
+                if (cm.week % 2 == 0)
                 {
-                    if (nextTourny == 0)
-                        activeTournies[rnd[1]] = tournies[nextTourny];
+                    if (nextTourny2 == 0)
+                        activeTournies[rnd[2]] = emptyTourny;
                     else
-                        activeTournies[rnd[1]] = locals[localSelect];
-
-                    activeTournies[rnd[0]] = provQual[nextProvQual];
-                    activeTournies[rnd[2]] = tour[nextTour];
-
-                    for (int i = 0; i < activeTournies.Length; i++)
-                    {
-                        if (activeTournies[i].entryFee > cm.cash)
-                        {
-                            panelGOs[i].GetComponent<Image>().color = dimmed[0];
-                            panels[i].location.transform.parent.GetComponent<Image>().color = dimmed[0];
-                            panels[i].titleButton.interactable = false;
-                        }
-                    }
+                        activeTournies[rnd[2]] = tournies[nextTourny2];
                 }
                 else
+                    activeTournies[rnd[2]] = tour[nextTour];
+
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (activeTournies[i].name == emptyTourny.name)
                 {
-                    activeTournies[rnd[0]] = provQual[nextProvQual];
-
-                    activeTournies[rnd[1]] = tournies[nextTourny];
-                    activeTournies[rnd[2]] = locals[localSelect];
-
-                    //if (nextTourny == 0)
-                    //    activeTournies[rnd[1]] = tournies[nextTourny];
-                    //else
-                    //    activeTournies[rnd[1]] = emptyTourny;
-
-                    //if (nextTourny2 == 1)
-                    //    activeTournies[rnd[2]] = tournies[nextTourny2];
-                    //else
-                    //    activeTournies[rnd[2]] = emptyTourny;
+                    activeTournies[i] = locals[localSelect];
+                    break;
                 }
             }
         }
