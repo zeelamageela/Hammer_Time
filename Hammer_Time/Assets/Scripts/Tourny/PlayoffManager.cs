@@ -39,7 +39,7 @@ public class PlayoffManager : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		//StartCoroutine(LoadCareer());
-		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 
 		playoffs.SetActive(true);
 		//if (gsp.careerLoad)
@@ -71,7 +71,7 @@ public class PlayoffManager : MonoBehaviour
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
 
-		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 
 		if (playoffRound > 0)
 			LoadPlayoffs();
@@ -582,7 +582,7 @@ public class PlayoffManager : MonoBehaviour
 					//tm.teamList[i].team.earnings += prizePayout;
 
 				}
-                Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
+                Debug.Log("GSP Earnings after calculation - " + gsp.earnings.ToString());
 				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
 				
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
@@ -746,7 +746,7 @@ public class PlayoffManager : MonoBehaviour
 		//myFile.Add("Player Name", gsp.firstName);
 		//myFile.Add("Team Name", gsp.teamName);
 		//myFile.Add("Team Colour", gsp.teamColour);
-		myFile.Add("Career Earnings", gsp.earnings);
+		//myFile.Add("Career Earnings", gsp.earnings);
 
 		//if (!inProgress)
 		//      {

@@ -440,24 +440,18 @@ public class GameSettingsPersist : MonoBehaviour
     public void LoadCareer()
     {
         Debug.Log("Load Career GSP");
+        CareerManager cm = FindObjectOfType<CareerManager>();
         //teamList = new List<Team_List>();
-        myFile = new EasyFileSave("my_player_data");
-        
-        if (myFile.Load())
-        {
-            firstName = myFile.GetString("First Name");
-            teamName = myFile.GetString("Team Name");
-            teamColour = myFile.GetUnityColor("Team Colour");
+        firstName = cm.name;
+        teamName = cm.teamName;
+        teamColour = cm.teamColour;
 
-            earnings = myFile.GetFloat("Career Earnings");
-            record = myFile.GetUnityVector2("Career Record");
-            inProgress = myFile.GetBool("Tourny In Progress");
-            draw = myFile.GetInt("Draw");
-            //numberOfTeams = myFile.GetInt("Number Of Teams");
-            week = myFile.GetInt("Week");
-            Debug.Log("GSP Load Career Week is " + week);
-            myFile.Dispose();
-        }
+        //earnings = myFile.GetFloat("Career Earnings");
+        //record = myFile.GetUnityVector2("Career Record");
+        inProgress = cm.inProgress;
+
+        //numberOfTeams = myFile.GetInt("Number Of Teams");
+        week = cm.week;
     }
 
     public void LoadTourny()

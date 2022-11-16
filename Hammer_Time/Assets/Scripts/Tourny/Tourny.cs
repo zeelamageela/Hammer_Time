@@ -21,4 +21,7 @@ public class Tourny
 
     public int BG;
     public int crowdDensity;
+
+    public bool trophyWon;
+    public Sprite image;
 }

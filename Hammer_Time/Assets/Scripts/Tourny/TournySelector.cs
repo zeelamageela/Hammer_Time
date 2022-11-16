@@ -311,7 +311,7 @@ public class TournySelector : MonoBehaviour
         {
             //tournies[0].complete = true;
             activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tournies[0];
+            activeTournies[1] = tour[nextTour];
             activeTournies[2] = emptyTourny;
         }
         else if (cm.week == 2)
@@ -323,19 +323,19 @@ public class TournySelector : MonoBehaviour
         else if (cm.week == 3)
         {
             activeTournies[0] = emptyTourny;
-            activeTournies[1] = tour[0];
+            activeTournies[1] = tour[nextTour];
             activeTournies[2] = emptyTourny;
         }
         else if (cm.week == 4)
         {
-            activeTournies[0] = provQual[0];
-            activeTournies[1] = emptyTourny;
-            activeTournies[2] = tournies[nextTourny2];
+            activeTournies[0] = locals[localSelect];
+            activeTournies[1] = provQual[nextProvQual];
+            activeTournies[2] = tournies[nextTourny];
         }
         else if (cm.week == 5)
         {
             activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tour[1];
+            activeTournies[1] = tour[nextTour];
             if (provQualComplete)
                 activeTournies[2] = tournies[nextTourny];
             else

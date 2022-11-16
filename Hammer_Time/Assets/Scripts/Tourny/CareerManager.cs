@@ -80,6 +80,7 @@ public class CareerManager : MonoBehaviour
     public float costPerWeek;
     public bool teamPaid;
     List<Standings_List> allTimeList;
+    public bool[] allTimeTrophyList;
 
     private void Awake()
     {
@@ -102,7 +103,7 @@ public class CareerManager : MonoBehaviour
         tourRankList = new List<TourStandings_List>();
         provRankList = new List<Standings_List>();
         tournyResults = new List<int>();
-
+        
         SetUpCareer();
     }
 
@@ -145,8 +146,8 @@ public class CareerManager : MonoBehaviour
 
     public void LoadFromGSP(GameSettingsPersist gsp)
     {
-        earnings = gsp.earnings;
-        record = gsp.record;
+        //earnings = gsp.earnings;
+        //record = gsp.record;
         SaveCareer();
         //Debug.Log("Earnings - CM from GSP - " + earnings);
     }
@@ -464,15 +465,18 @@ public class CareerManager : MonoBehaviour
     {
         myFile = new EasyFileSave("my_hiscore_data");
         allTimeList = new List<Standings_List>();
+        allTimeTrophyList = new bool[18];
+
 
         if (myFile.Load())
         {
             float[] allTimeEarnings = myFile.GetArray<float>("All Time Earnings");
             string[] allTimeName = myFile.GetArray<string>("All Time Names");
+            allTimeTrophyList = myFile.GetArray<bool>("All Time Trophies Won");
 
             Debug.Log("All Time Earnings length is " + allTimeEarnings.Length);
 
-            for (int i = 0; i < allTimeEarnings.Length; i++)
+            for (int j = 0; j < allTimeEarnings.Length; j++)
             {
                 Team tempTeam = new Team();
                 //tempTeam.wins = 0;
@@ -480,9 +484,9 @@ public class CareerManager : MonoBehaviour
                 //tempTeam.earnings = 0;
                 //tempTeam.name = "";
 
-                tempTeam.name = allTimeName[i];
+                tempTeam.name = allTimeName[j];
                 //tempTeam.wins = Mathf.RoundToInt(allTimeEarnings[i]);
-                tempTeam.earnings = allTimeEarnings[i];
+                tempTeam.earnings = allTimeEarnings[j];
                 allTimeList.Add(new Standings_List(tempTeam));
             }
 
@@ -523,12 +527,13 @@ public class CareerManager : MonoBehaviour
         }
 
         //Debug.Log("All Time List Length - " + allTimeList.Count);
-
+        myFile.Dispose();
 
         myFile = new EasyFileSave("my_hiscore_data");
 
         myFile.Add("All Time Earnings", allTimeEarningsTemp);
         myFile.Add("All Time Names", allTimeNameTemp);
+        myFile.Add("All Time Trophies Won", allTimeTrophyList);
 
         myFile.Append();
     }
@@ -591,12 +596,12 @@ public class CareerManager : MonoBehaviour
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
 
-            if (playerTeamIndex == teams[i].id)
-            {
-                earningsList[i] = earnings;
-                teams[i].earnings = earnings;
-                Debug.Log("Earnings - CM - " + earnings);
-            }
+            //if (playerTeamIndex == teams[i].id)
+            //{
+            //    //earningsList[i] = earnings;
+            //    //teams[i].earnings = earnings;
+            //    Debug.Log("Earnings - CM - " + earnings);
+            //}
 
         }
 
@@ -777,30 +782,30 @@ public class CareerManager : MonoBehaviour
             myFile.Add("OppTeam", tm.oppTeam);
             myFile.Add("Playoff Round", tm.playoffRound);
 
-            string[] tournyNameList = new string[teams.Length];
-            int[] tournyWinsList = new int[teams.Length];
-            int[] tournyLossList = new int[teams.Length];
-            int[] tournyRankList = new int[teams.Length];
-            string[] tournyNextOppList = new string[teams.Length];
-            int[] tournyStrengthList = new int[teams.Length];
-            int[] tournyIDList = new int[teams.Length];
-            float[] tournyEarningsList = new float[teams.Length];
+            string[] tournyNameList = new string[currentTournyTeams.Length];
+            int[] tournyWinsList = new int[currentTournyTeams.Length];
+            int[] tournyLossList = new int[currentTournyTeams.Length];
+            int[] tournyRankList = new int[currentTournyTeams.Length];
+            string[] tournyNextOppList = new string[currentTournyTeams.Length];
+            int[] tournyStrengthList = new int[currentTournyTeams.Length];
+            int[] tournyIDList = new int[currentTournyTeams.Length];
+            float[] tournyEarningsList = new float[currentTournyTeams.Length];
             //int[] tournyTourTeamIDList = new int[teams.Length];
             //int[] tournyTourWinsList = new int[teams.Length];
             //int[] tournyTourLossList = new int[teams.Length];
-            float[] tournyTourPointsList = new float[teams.Length];
+            float[] tournyTourPointsList = new float[currentTournyTeams.Length];
 
-            for (int i = 0; i < teams.Length; i++)
+            for (int i = 0; i < currentTournyTeams.Length; i++)
             {
-                tournyNameList[i] = teams[i].name;
-                tournyWinsList[i] = teams[i].wins;
-                tournyLossList[i] = teams[i].loss;
-                tournyRankList[i] = teams[i].rank;
-                tournyNextOppList[i] = teams[i].nextOpp;
-                tournyStrengthList[i] = teams[i].strength;
-                tournyIDList[i] = teams[i].id;
-                tournyEarningsList[i] = teams[i].earnings;
-                tournyTourPointsList[i] = teams[i].tourPoints;
+                tournyNameList[i] = currentTournyTeams[i].name;
+                tournyWinsList[i] = currentTournyTeams[i].wins;
+                tournyLossList[i] = currentTournyTeams[i].loss;
+                tournyRankList[i] = currentTournyTeams[i].rank;
+                tournyNextOppList[i] = currentTournyTeams[i].nextOpp;
+                tournyStrengthList[i] = currentTournyTeams[i].strength;
+                tournyIDList[i] = currentTournyTeams[i].id;
+                tournyEarningsList[i] = currentTournyTeams[i].earnings;
+                tournyTourPointsList[i] = currentTournyTeams[i].tourPoints;
                 //Debug.Log("Tourny Id List - " + idList[i]);
             }
 
@@ -920,7 +925,7 @@ public class CareerManager : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         TournyManager tm = FindObjectOfType<TournyManager>();
         record = gsp.record;
-        //earnings = gsp.earnings;
+        earnings += gsp.earnings;
 
 
         float xpChange = 0f;
@@ -937,6 +942,10 @@ public class CareerManager : MonoBehaviour
                     xpChange += currentTournyTeams[i].wins * 3f;
                     xpChange += currentTournyTeams[i].loss;
 
+                    if (currentTournyTeams[i].rank == 1)
+                    {
+                        currentTourny.trophyWon = true;
+                    }
                     if (currentTournyTeams[i].rank < 5)
                     {
                         xpChange += 5f;
@@ -964,10 +973,11 @@ public class CareerManager : MonoBehaviour
         {
             for (int i = 0; i < currentTournyTeams.Length; i++)
             {
-                switch(currentTournyTeams[i].rank)
+                switch (currentTournyTeams[i].rank)
                 {
                     case 1:
                         currentTournyTeams[i].tourPoints = 25f;
+                        currentTourny.trophyWon = true;
                         break;
                     case 2:
                         currentTournyTeams[i].tourPoints = 18f;
@@ -1074,6 +1084,31 @@ public class CareerManager : MonoBehaviour
             {
                 playerTeam = teams[i];
             }
+        }
+
+        for (int i = 0; i < tournies.Length; i++)
+        {
+            if (tournies[i].trophyWon)
+                allTimeTrophyList[i] = true;
+        }
+
+        int rangeLo = tournies.Length;
+        int rangeHi = tournies.Length + tour.Length;
+        for (int i = 0; i < tour.Length; i++)
+        {
+            if (tour[i].trophyWon)
+                allTimeTrophyList[i + rangeLo] = true;
+        }
+
+        rangeLo = tournies.Length + tour.Length;
+        rangeHi = tournies.Length + tour.Length + champ.Length;
+
+        for (int i = 0; i < champ.Length; i++)
+        {
+            if (champ[i].trophyWon)
+                allTimeTrophyList[i + rangeLo] = true;
+            else
+                allTimeTrophyList[i + rangeLo] = false;
         }
 
         xp += xpChange;

@@ -83,6 +83,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public float careerEarnings;
 	public Vector2 careerRecord;
 
+	bool simInProgress;
+
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
@@ -347,9 +349,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-				playButton.gameObject.SetActive(true);
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				//StartCoroutine(SaveCareer(true));
 				break;
@@ -411,9 +410,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.56f;
 				//StartCoroutine(SaveCareer(true));
@@ -474,9 +470,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -543,9 +536,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.74f;
 				//StartCoroutine(SaveCareer(true));
@@ -611,9 +601,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.33f;
 				//StartCoroutine(SaveCareer(true));
@@ -679,9 +666,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.3f;
 				//StartCoroutine(SaveCareer(true));
@@ -747,9 +731,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.35f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -815,9 +796,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
 				vertScrollBar.value = 0.77f;
 				//StartCoroutine(SaveCareer(true));
@@ -883,9 +861,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.63f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -952,9 +927,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
 				vertScrollBar.value = 0.76f;
 				//StartCoroutine(SaveCareer(true));
@@ -1020,9 +992,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.61f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -1085,9 +1054,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.75f;
 				vertScrollBar.value = 0.76f;
 				//StartCoroutine(SaveCareer(true));
@@ -1150,9 +1116,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.93f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -1215,9 +1178,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(false);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.93f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -1302,9 +1262,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(true);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.9f;
 				//StartCoroutine(SaveCareer(true));
@@ -1386,9 +1343,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(true);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.92f;
 				//StartCoroutine(SaveCareer(true));
@@ -1470,8 +1424,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
+				//simButton.gameObject.SetActive(true);
+				//contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.3f;
 				vertScrollBar.value = 0.9f;
 				//StartCoroutine(SaveCareer(true));
@@ -1538,9 +1492,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(true);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.61f;
 				vertScrollBar.value = 0.95f;
 				//StartCoroutine(SaveCareer(true));
@@ -1608,9 +1559,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				finalsBracket.SetActive(true);
 
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.92f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -1644,9 +1592,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
 				horizScrollBar.value = 0.95f;
 				vertScrollBar.value = 0.96f;
 				//StartCoroutine(SaveCareer(true));
@@ -1656,8 +1601,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		if (playerGame)
 		{
+			simInProgress = false;
 			vsDisplayGO.SetActive(true);
 			playButton.gameObject.SetActive(true);
+			simButton.gameObject.SetActive(true);
+			contButton.gameObject.SetActive(false);
+			nextButton.gameObject.SetActive(false);
 		}
 		else
 		{
@@ -1672,7 +1621,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			}
 			else
 			{
-				nextButton.gameObject.SetActive(true);
+                nextButton.gameObject.SetActive(true);
 				simButton.gameObject.SetActive(false);
 				vsDisplayGO.SetActive(true);
 			}
@@ -1857,8 +1806,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				//playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
             #endregion
@@ -1937,9 +1884,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2075,8 +2019,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2212,8 +2154,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2349,8 +2289,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2486,8 +2424,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2624,8 +2560,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2761,8 +2695,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -2898,8 +2830,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3035,8 +2965,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3172,8 +3100,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					}
 				}
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3247,8 +3173,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3322,8 +3246,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3397,8 +3319,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3526,8 +3446,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3601,8 +3519,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3675,8 +3591,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3750,8 +3664,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3845,8 +3757,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3884,8 +3794,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 
 				StartCoroutine(RefreshPlayoffPanel());
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				SimResults();
 				break;
 			#endregion
@@ -3895,6 +3803,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		}
 		yield break;
+
 	}
 
 	public void SimResults()
@@ -3960,8 +3869,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				losersBracket2.SetActive(false);
 				finalsBracket.SetActive(false);
 				playoffRound++;
-                simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 1;
 				//StartCoroutine(SaveCareer(true));
@@ -4029,9 +3936,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				StartCoroutine(RefreshPlayoffPanel());
 
 				playoffRound++;
-				playButton.gameObject.SetActive(false);
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.56f;
 				//StartCoroutine(SaveCareer(true));
@@ -4117,8 +4021,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				playoffRound++;
 
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0.35f;
 				vertScrollBar.value = 1f;
 				//StartCoroutine(SaveCareer(true));
@@ -4203,9 +4105,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0.3f;
 				vertScrollBar.value = 0.77f;
 				//StartCoroutine(SaveCareer(true));
@@ -4295,9 +4194,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0;
 				vertScrollBar.value = 0.33f;
 				//StartCoroutine(SaveCareer(true));
@@ -4383,9 +4279,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0.3f;
 				vertScrollBar.value = 0.27f;
 				//StartCoroutine(SaveCareer(true));
@@ -4472,9 +4365,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
-
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				horizScrollBar.value = 0.75f;
 				vertScrollBar.value = 0.76f;
 				//StartCoroutine(SaveCareer(true));
@@ -5434,12 +5324,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 					}
 
+					Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 					teams[i].earnings += prizePayout;
 
 					//Debug.Log("Prize Payout multiplier is " + prizePayout);
 					if (teams[i].player)
 					{
-						gsp.earnings = teams[i].earnings;
+						//gsp.earnings = teams[i].earnings;
+						gsp.earnings = prizePayout;
+						gsp.cash = prizePayout;
 						vsDisplayGO.SetActive(true);
 
 						vsDisplayTitle.text = "Results";
@@ -5479,13 +5372,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				//StartCoroutine(SaveCareer(true));
 				contButton.gameObject.SetActive(false);
 				playButton.gameObject.SetActive(false);
-				nextButton.gameObject.SetActive(true);
+				//if (playerGame)
+				//	nextButton.gameObject.SetActive(true);
 				break;
 			#endregion
 		}
 
 		if (playoffRound < 19)
 		{
+			
 			for (int i = 0; i < teams.Length; i++)
 			{
 				if (teams[i].player)
@@ -5524,6 +5419,17 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					vsDisplay[1].name.text = teams[i].name;
 				}
 			}
+
+			if (simInProgress)
+			{
+				simButton.gameObject.SetActive(false);
+				contButton.gameObject.SetActive(false);
+			}
+			else
+			{
+				simButton.gameObject.SetActive(false);
+				contButton.gameObject.SetActive(true);
+			}
 		}
 
         //if (playoffRound < 15)
@@ -5542,9 +5448,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	{
 		CareerManager cm = FindObjectOfType<CareerManager>();
 		gsp.teams = teams; 
-		float winnings = cm.cash + (gsp.earnings - cm.earnings);
-		cm.earnings = gsp.earnings;
-		cm.cash = winnings;
+		float winnings = gsp.earnings;
+		cm.earnings += gsp.earnings;
+		cm.cash += gsp.cash;
 		cm.record = gsp.record;
 		gsp.draw = 0;
 		gsp.playoffRound = 0;
@@ -5582,14 +5488,14 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 	IEnumerator SimToFinals()
 	{
-		
-		yield return new WaitForSeconds(0.02f * playoffRound);
+		simInProgress = true;
+		yield return new WaitForSeconds(0.001f);
 		vsDisplayGO.SetActive(false);
 		nextButton.gameObject.SetActive(false);
 		simButton.gameObject.SetActive(false);
 		contButton.gameObject.SetActive(false);
 		OnSim();
-		yield return new WaitForSeconds(0.05f * playoffRound);
+		yield return new WaitForSeconds(0.001f);
 		vsDisplayGO.SetActive(false);
 		nextButton.gameObject.SetActive(false);
 		simButton.gameObject.SetActive(false);

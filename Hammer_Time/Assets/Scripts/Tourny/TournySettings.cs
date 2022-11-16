@@ -44,7 +44,7 @@ public class TournySettings : MonoBehaviour
         rockSlider.interactable = false;
         if (cm)
         {
-            gsp.earnings = cm.earnings;
+            gsp.earnings = 0;
 
             teams = cm.currentTournyTeams.Length;
             entryFee = cm.currentTourny.entryFee;
@@ -87,7 +87,7 @@ public class TournySettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         myFile = new EasyFileSave("my_player_data");
 
-        gsp.earnings = cm.earnings;
+        //gsp.earnings = cm.earnings;
 
         if (myFile.Load())
         {
@@ -113,10 +113,13 @@ public class TournySettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
-        for (int i = 0; i < gsp.teams.Length; i++)
-        {
-            gsp.teams[i].earnings -= entryFee;
-        }
+
+        gsp.cash -= entryFee;
+
+        //for (int i = 0; i < gsp.teams.Length; i++)
+        //{
+        //    gsp.teams[i].earnings -= entryFee;
+        //}
         //Debug.Log("Career Earnings after Fee - $" + earnings);
         gsp.LoadTournySettings(this);
 

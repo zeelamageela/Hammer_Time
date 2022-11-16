@@ -10392,14 +10392,14 @@ MonoBehaviour:
     m_HighlightedSprite: {fileID: 21300000, guid: ac60a1016a2a940b5a9c001f8c7a9122, type: 3}
     m_PressedSprite: {fileID: 21300000, guid: 8f7afaf15f0904657b354889085435c2, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: 8f7afaf15f0904657b354889085435c2, type: 3}
-    m_DisabledSprite: {fileID: 21300000, guid: 8f7afaf15f0904657b354889085435c2, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: ac60a1016a2a940b5a9c001f8c7a9122, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 515252678}
   m_OnClick:
     m_PersistentCalls:
@@ -32236,24 +32236,25 @@ MonoBehaviour:
   XPText: {fileID: 1213503449}
   playButton: {fileID: 1675557790}
   locals:
-  - name: Outdoor Games
-    id: 0
+  - name: Out on the Pond
+    id: 50
     location: Invermere, BC
     teams: 4
-    prizeMoney: 100
+    prizeMoney: 0
     entryFee: 0
     format: Cash Game
     championship: 0
     qualifier: 0
     tour: 0
     complete: 0
-    BG: 1
+    BG: 4
     crowdDensity: 1
+    image: {fileID: 0}
   - name: Club Night
-    id: 1
+    id: 51
     location: St Thomas, Ontario
     teams: 4
-    prizeMoney: 1000
+    prizeMoney: 0
     entryFee: 0
     format: Cash Game
     championship: 0
@@ -32262,11 +32263,12 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 1
-  - name: Undisclosed Location
-    id: 2
-    location: International Waters
+    image: {fileID: 0}
+  - name: Underground Gambling Den
+    id: 52
+    location: Undisclosed Location
     teams: 4
-    prizeMoney: 5000
+    prizeMoney: 0
     entryFee: 0
     format: Cash Game
     championship: 0
@@ -32275,6 +32277,7 @@ MonoBehaviour:
     complete: 0
     BG: 5
     crowdDensity: 9
+    image: {fileID: 0}
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
@@ -32289,6 +32292,7 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 1
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Jim Jumbo Memorial Spiel
     id: 1
     location: Victoria, British Columbia
@@ -32302,12 +32306,13 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 2
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The LA Open
     id: 2
     location: Vernon, California
     teams: 16
     prizeMoney: 12000
-    entryFee: 250
+    entryFee: 100
     format: Round Robin
     championship: 0
     qualifier: 0
@@ -32315,6 +32320,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Tallinn International Challenger
     id: 3
     location: Tallinn, Estonia
@@ -32328,6 +32334,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Big Ben's Big Cash $piel
     id: 4
     location: Las Vegas, Nevada
@@ -32341,6 +32348,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Match Town Trophy
     id: 5
     location: Jonkoping, Sweden
@@ -32354,9 +32362,10 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 4
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Tony's Pizza Cup
     id: 6
-    location: Montreal, Quebec
+    location: Laval, Quebec
     teams: 12
     prizeMoney: 6500
     entryFee: 100
@@ -32367,12 +32376,13 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 3
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: T. Rox Jurassic Classic
     id: 7
     location: Drumheller, Alberta
     teams: 12
     prizeMoney: 15000
-    entryFee: 0
+    entryFee: 250
     format: Round Robin
     championship: 0
     qualifier: 0
@@ -32380,10 +32390,11 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Federal Bank Cup
     id: 8
     location: Swift Current, Saskatchewan
-    teams: 12
+    teams: 8
     prizeMoney: 16500
     entryFee: 1000
     format: Round Robin
@@ -32393,6 +32404,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Spring Ring
     id: 9
     location: Spokane, Washington
@@ -32406,10 +32418,39 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  - name: The Easter Spiel
+    id: 10
+    location: Kenora, Ontario
+    teams: 8
+    prizeMoney: 27000
+    entryFee: 400
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 2
+    crowdDensity: 5
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  - name: The Festival Cup
+    id: 10
+    location: Okinawa, Japan
+    teams: 16
+    prizeMoney: 45000
+    entryFee: 500
+    format: Round Robin
+    championship: 0
+    qualifier: 0
+    tour: 0
+    complete: 0
+    BG: 4
+    crowdDensity: 9
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   tourQual: []
   tour:
   - name: World Tour - Hokkaido Curling Classic
-    id: 10
+    id: 20
     location: Sapporo, Japan
     teams: 16
     prizeMoney: 40000
@@ -32421,8 +32462,9 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 4
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Swiss Cup
-    id: 11
+    id: 21
     location: Basel, Switzerland
     teams: 16
     prizeMoney: 40000
@@ -32434,8 +32476,9 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 5
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Prague Classic
-    id: 12
+    id: 22
     location: Prague, Czechia
     teams: 16
     prizeMoney: 40000
@@ -32447,8 +32490,9 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 4
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Hat Classic
-    id: 13
+    id: 23
     location: Medicine Hat, Alberta
     teams: 16
     prizeMoney: 40000
@@ -32460,8 +32504,9 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 8
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The US Open
-    id: 14
+    id: 24
     location: Blaine, Minnesota
     teams: 16
     prizeMoney: 40000
@@ -32473,8 +32518,9 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Masters
-    id: 15
+    id: 25
     location: Oakville, Ontario
     teams: 16
     prizeMoney: 40000
@@ -32486,6 +32532,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 10
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   provQual:
   - name: Championship Qualifier #1
     id: 20
@@ -32500,6 +32547,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 3
+    image: {fileID: 0}
   - name: Championship Qualifier #2
     id: 21
     location: St Petersburg, Russia
@@ -32513,6 +32561,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
+    image: {fileID: 0}
   - name: Championship Qualifier #3
     id: 22
     location: Sherwood Park, Alberta
@@ -32526,6 +32575,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 4
+    image: {fileID: 0}
   - name: Last Chance National Qualifier
     id: 23
     location: Karlstad, Sweden
@@ -32539,6 +32589,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 7
+    image: {fileID: 0}
   majors:
   - name: The US Open
     id: 2
@@ -32553,6 +32604,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    image: {fileID: 0}
   - name: The Player's Championship
     id: 7
     location: Drumheller, Alberta
@@ -32566,6 +32618,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    image: {fileID: 0}
   - name: The National
     id: 8
     location: Swift Current, Saskatchewan
@@ -32579,6 +32632,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    image: {fileID: 0}
   - name: Ken's Highly Legal Cash Game
     id: 9
     location: Off the coast of Japan
@@ -32592,6 +32646,7 @@ MonoBehaviour:
     complete: 0
     BG: 5
     crowdDensity: 8
+    image: {fileID: 0}
   tourChampionship:
     name: The Tour Championship
     id: 100
@@ -32606,6 +32661,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 11
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   provChampionship:
     name: The National Championship
     id: 101
@@ -32620,6 +32676,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 9
+    image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   panel1Tournies: []
   panel2Tournies: []
   activeTournies:
@@ -32636,6 +32693,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -32649,6 +32707,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -32662,6 +32721,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   panelGOs:
   - {fileID: 1705527687}
   - {fileID: 1369229442}
@@ -32680,6 +32740,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   currentTourny:
     name: 
     id: 0
@@ -32694,6 +32755,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   green:
   - {r: 0.12941177, g: 0.29803923, b: 0.12941177, a: 1}
   - {r: 0.5254902, g: 0.94509804, b: 0.25490198, a: 1}
@@ -45226,6 +45288,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   tournies: []
   tour: []
   prov: []
@@ -45243,6 +45306,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -45256,6 +45320,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    image: {fileID: 0}
   activeTournies: []
   coachDialogue: 
   qualDialogue: 

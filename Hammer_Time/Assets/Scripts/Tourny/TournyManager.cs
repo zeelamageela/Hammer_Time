@@ -130,7 +130,7 @@ public class TournyManager : MonoBehaviour
 			myFile.Dispose();
 		}
 		careerEarnings = 0;
-		myFile.Add("Career Earnings", gsp.earnings);
+		//myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Save();
 		careerEarningsText.text = "$ " + gsp.earnings.ToString();
 	}
@@ -613,7 +613,7 @@ public class TournyManager : MonoBehaviour
 			winnings = gsp.cash;
         }
 		else
-			winnings = cm.cash + (gsp.earnings - cm.earnings);
+			winnings = gsp.earnings;
 
 		cm.earnings = gsp.earnings;
 		cm.cash += winnings;

@@ -15,6 +15,9 @@ public class MainMenu : MonoBehaviour
     public Text allTimeEarnings;
     public Text allTimeNames;
 
+    public Image[] trophyImgList;
+    public bool[] trophyWon;
+
     void Start()
     {
 
@@ -22,12 +25,15 @@ public class MainMenu : MonoBehaviour
 
         float[] allTimeEarningsList;
         string[] allTimeNamesList;
+        trophyWon = new bool[trophyImgList.Length];
+
+
         if (myFile.Load())
         {
             Debug.Log("All Time Load");
             allTimeEarningsList = myFile.GetArray<float>("All Time Earnings");
             allTimeNamesList = myFile.GetArray<string>("All Time Names");
-
+            trophyWon = myFile.GetArray<bool>("All Time Trophies Won");
             allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
             allTimeNames.text = allTimeNamesList[0];
 
@@ -38,13 +44,23 @@ public class MainMenu : MonoBehaviour
             Debug.Log("No Hi Score data");
             allTimeEarningsList = new float[1];
             allTimeNamesList = new string[1];
-
             allTimeEarnings.gameObject.SetActive(false);
 
             allTimeNames.text = "No High Score Set";
 
             myFile.Dispose();
         }
+
+        for (int i = 0; i < trophyWon.Length; i++)
+        {
+            if (trophyWon[i])
+                trophyImgList[i].color += new Color(0f, 0f, 0f, 0.5f);
+            else
+
+                trophyImgList[i].color -= new Color(0f, 0f, 0f, 0.5f);
+
+        }
+
 
         am.PlayBG(0);
         //if (myFile.Load())
