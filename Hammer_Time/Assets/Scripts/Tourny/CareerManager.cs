@@ -80,7 +80,8 @@ public class CareerManager : MonoBehaviour
     public float costPerWeek;
     public bool teamPaid;
     List<Standings_List> allTimeList;
-    public bool[] allTimeTrophyList;
+    public List<bool> allTimeTrophyList;
+    public List<bool> currentTrophyList;
 
     private void Awake()
     {
@@ -385,6 +386,7 @@ public class CareerManager : MonoBehaviour
                 currentTourny.BG = myFile.GetInt("Current Tourny BG");
                 currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
 
+                string[] tournyNameList = myFile.GetArray<string>("Tourny Name List");
                 int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
@@ -410,12 +412,10 @@ public class CareerManager : MonoBehaviour
                         //currentTournyTeams[i].earnings = earnings;
                     }
 
+                    currentTournyTeams[i].name = tournyNameList[i];
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
                     currentTournyTeams[i].earnings = tournyEarningsList[i];
-
-                    if (currentTournyTeams[i].player)
-                        Debug.Log("Player Team is " + currentTournyTeams[i].name);
                 }
             }
 
@@ -465,16 +465,19 @@ public class CareerManager : MonoBehaviour
     {
         myFile = new EasyFileSave("my_hiscore_data");
         allTimeList = new List<Standings_List>();
-        allTimeTrophyList = new bool[18];
-
 
         if (myFile.Load())
         {
             float[] allTimeEarnings = myFile.GetArray<float>("All Time Earnings");
             string[] allTimeName = myFile.GetArray<string>("All Time Names");
-            allTimeTrophyList = myFile.GetArray<bool>("All Time Trophies Won");
+            allTimeTrophyList = myFile.GetList<bool>("All Time Trophies Won");
 
+            if (allTimeTrophyList.Count <= 0)
+            {
+                allTimeTrophyList.AddRange(currentTrophyList);
+            }
             Debug.Log("All Time Earnings length is " + allTimeEarnings.Length);
+
 
             for (int j = 0; j < allTimeEarnings.Length; j++)
             {
@@ -525,6 +528,18 @@ public class CareerManager : MonoBehaviour
             allTimeEarningsTemp[i] = allTimeList[i].team.earnings;
             allTimeNameTemp[i] = allTimeList[i].team.name;
         }
+
+        Debug.Log("All Time Trophy List Count - " + allTimeTrophyList.Count);
+
+        if (currentTrophyList.Count > 0)
+        {
+            for (int i = 0; i < allTimeTrophyList.Count; i++)
+            {
+                if (allTimeTrophyList[i] == false && currentTrophyList[i] == true)
+                    allTimeTrophyList[i] = true;
+            }
+        }
+        
 
         //Debug.Log("All Time List Length - " + allTimeList.Count);
         myFile.Dispose();
@@ -698,7 +713,6 @@ public class CareerManager : MonoBehaviour
             
         }
 
-
         myFile.Add("Current Tourny Name", currentTourny.name);
         myFile.Add("Current Tourny ID", currentTourny.id);
         myFile.Add("Current Tourny Tour", currentTourny.tour);
@@ -707,7 +721,7 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Prize Money", currentTourny.prizeMoney);
         myFile.Add("Current Tourny BG", currentTourny.BG);
         myFile.Add("Current Tourny Crowd Density", currentTourny.crowdDensity);
-
+        
         if (tSel)
         {
             Debug.Log("pUpM idList is " + pUpM.idPUList.Length + " long");
@@ -944,8 +958,40 @@ public class CareerManager : MonoBehaviour
 
                     if (currentTournyTeams[i].rank == 1)
                     {
+                        if (currentTourny.tour)
+                        {
+                            for (int j = 0; j < tour.Length; j++)
+                            {
+                                if (currentTourny.id == tour[j].id)
+                                {
+                                    tour[j].trophyWon = true;
+                                }
+                            }
+                        }
+                        else if (currentTourny.championship)
+                        {
+                            for (int j = 0; j < champ.Length; j++)
+                            {
+                                if (currentTourny.id == champ[j].id)
+                                {
+                                    tournies[j].trophyWon = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int j = 0; j < tournies.Length; j++)
+                            {
+                                if (currentTourny.id == tournies[j].id)
+                                {
+                                    tournies[j].trophyWon = true;
+                                }
+                            }
+                        }
+
                         currentTourny.trophyWon = true;
                     }
+
                     if (currentTournyTeams[i].rank < 5)
                     {
                         xpChange += 5f;
@@ -1086,41 +1132,46 @@ public class CareerManager : MonoBehaviour
             }
         }
 
+        currentTrophyList = new List<bool>();
+
         for (int i = 0; i < tournies.Length; i++)
         {
             if (tournies[i].trophyWon)
-                allTimeTrophyList[i] = true;
+                currentTrophyList.Add(true);
+            else
+                currentTrophyList.Add(false);
         }
 
-        int rangeLo = tournies.Length;
-        int rangeHi = tournies.Length + tour.Length;
         for (int i = 0; i < tour.Length; i++)
         {
             if (tour[i].trophyWon)
-                allTimeTrophyList[i + rangeLo] = true;
+                currentTrophyList.Add(true);
+            else
+                currentTrophyList.Add(false);
         }
-
-        rangeLo = tournies.Length + tour.Length;
-        rangeHi = tournies.Length + tour.Length + champ.Length;
 
         for (int i = 0; i < champ.Length; i++)
         {
             if (champ[i].trophyWon)
-                allTimeTrophyList[i + rangeLo] = true;
+                currentTrophyList.Add(true);
             else
-                allTimeTrophyList[i + rangeLo] = false;
+                currentTrophyList.Add(false);
         }
 
+        //if (allTimeTrophyList.Count <= 0)
+        //    allTimeTrophyList = new List<bool>();
+
+        Debug.Log("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
         totalXp += xpChange;
-        Debug.Log("XP Change is " + xpChange);
-        Debug.Log("Rank List count is " + provRankList.Count);
+        //Debug.Log("XP Change is " + xpChange);
+        //Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();
-        Debug.Log("Top Ranked Team is " + provRankList[0].team.name);
-        Debug.Log("Second Place Team is " + provRankList[1].team.name);
-        Debug.Log("Third Place Team is " + provRankList[2].team.name);
-        //record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
-        Debug.Log("Record is " + record.x + " - " + record.y);
+        //Debug.Log("Top Ranked Team is " + provRankList[0].team.name);
+        //Debug.Log("Second Place Team is " + provRankList[1].team.name);
+        //Debug.Log("Third Place Team is " + provRankList[2].team.name);
+        ////record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
+        //Debug.Log("Record is " + record.x + " - " + record.y);
         week++;
         Debug.Log("CM Tourny Results week is " + week);
         SaveCareer();
@@ -1128,7 +1179,6 @@ public class CareerManager : MonoBehaviour
 
     public void PlayTourny()
     {
-
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         Debug.Log("CM Play Tourny");
         inProgress = true;

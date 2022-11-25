@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
 
     public Image[] trophyImgList;
     public bool[] trophyWon;
+    public List<bool> trophyWon2;
 
     void Start()
     {
@@ -25,7 +26,8 @@ public class MainMenu : MonoBehaviour
 
         float[] allTimeEarningsList;
         string[] allTimeNamesList;
-        trophyWon = new bool[trophyImgList.Length];
+        //if (trophyWon.Length < 18)
+        //    trophyWon = new bool[trophyImgList.Length];
 
 
         if (myFile.Load())
@@ -33,7 +35,14 @@ public class MainMenu : MonoBehaviour
             Debug.Log("All Time Load");
             allTimeEarningsList = myFile.GetArray<float>("All Time Earnings");
             allTimeNamesList = myFile.GetArray<string>("All Time Names");
-            trophyWon = myFile.GetArray<bool>("All Time Trophies Won");
+            trophyWon2 = myFile.GetList<bool>("All Time Trophies Won");
+            if (trophyWon2.Count <= 0)
+            {
+                for (int i = 0; i < 18; i++)
+                {
+                    trophyWon2.Add(trophyWon[i]);
+                }
+            }
             allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
             allTimeNames.text = allTimeNamesList[0];
 
@@ -53,7 +62,7 @@ public class MainMenu : MonoBehaviour
 
         for (int i = 0; i < trophyWon.Length; i++)
         {
-            if (trophyWon[i])
+            if (trophyWon2[i])
                 trophyImgList[i].color += new Color(0f, 0f, 0f, 0.5f);
             else
 

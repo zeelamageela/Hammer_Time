@@ -28645,7 +28645,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.024963379}
+  m_AnchoredPosition: {x: 0, y: -0.024902344}
   m_SizeDelta: {x: 2182, y: -0.050049}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1271770294 stripped
@@ -32249,7 +32249,8 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 1
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   - name: Club Night
     id: 51
     location: St Thomas, Ontario
@@ -32263,7 +32264,8 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 1
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   - name: Underground Gambling Den
     id: 52
     location: Undisclosed Location
@@ -32277,7 +32279,8 @@ MonoBehaviour:
     complete: 0
     BG: 5
     crowdDensity: 9
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
@@ -32292,6 +32295,7 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 1
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Jim Jumbo Memorial Spiel
     id: 1
@@ -32306,6 +32310,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 2
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The LA Open
     id: 2
@@ -32320,6 +32325,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Tallinn International Challenger
     id: 3
@@ -32334,6 +32340,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Big Ben's Big Cash $piel
     id: 4
@@ -32348,6 +32355,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Match Town Trophy
     id: 5
@@ -32362,6 +32370,7 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 4
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Tony's Pizza Cup
     id: 6
@@ -32376,6 +32385,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 3
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: T. Rox Jurassic Classic
     id: 7
@@ -32390,6 +32400,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: Federal Bank Cup
     id: 8
@@ -32404,6 +32415,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Spring Ring
     id: 9
@@ -32418,6 +32430,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Easter Spiel
     id: 10
@@ -32432,9 +32445,10 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 5
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: The Festival Cup
-    id: 10
+    id: 11
     location: Okinawa, Japan
     teams: 16
     prizeMoney: 45000
@@ -32446,6 +32460,7 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 9
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   tourQual: []
   tour:
@@ -32462,6 +32477,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 4
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Swiss Cup
     id: 21
@@ -32476,6 +32492,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 5
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Prague Classic
     id: 22
@@ -32490,6 +32507,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 4
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Hat Classic
     id: 23
@@ -32504,6 +32522,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 8
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The US Open
     id: 24
@@ -32518,6 +32537,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   - name: World Tour - The Masters
     id: 25
@@ -32532,10 +32552,11 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 10
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   provQual:
   - name: Championship Qualifier #1
-    id: 20
+    id: 50
     location: Kirkcaldy, Scotland
     teams: 8
     prizeMoney: 2500
@@ -32547,9 +32568,10 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 3
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   - name: Championship Qualifier #2
-    id: 21
+    id: 51
     location: St Petersburg, Russia
     teams: 8
     prizeMoney: 2500
@@ -32561,9 +32583,10 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 2
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   - name: Championship Qualifier #3
-    id: 22
+    id: 52
     location: Sherwood Park, Alberta
     teams: 8
     prizeMoney: 2500
@@ -32575,9 +32598,10 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 4
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   - name: Last Chance National Qualifier
-    id: 23
+    id: 53
     location: Karlstad, Sweden
     teams: 8
     prizeMoney: 2500
@@ -32589,7 +32613,8 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 7
-    image: {fileID: 0}
+    trophyWon: 0
+    image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   majors:
   - name: The US Open
     id: 2
@@ -32604,6 +32629,7 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 6
+    trophyWon: 0
     image: {fileID: 0}
   - name: The Player's Championship
     id: 7
@@ -32618,6 +32644,7 @@ MonoBehaviour:
     complete: 0
     BG: 1
     crowdDensity: 5
+    trophyWon: 0
     image: {fileID: 0}
   - name: The National
     id: 8
@@ -32632,6 +32659,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 8
+    trophyWon: 0
     image: {fileID: 0}
   - name: Ken's Highly Legal Cash Game
     id: 9
@@ -32646,6 +32674,7 @@ MonoBehaviour:
     complete: 0
     BG: 5
     crowdDensity: 8
+    trophyWon: 0
     image: {fileID: 0}
   tourChampionship:
     name: The Tour Championship
@@ -32661,9 +32690,10 @@ MonoBehaviour:
     complete: 0
     BG: 2
     crowdDensity: 11
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   provChampionship:
-    name: The National Championship
+    name: The World Championship
     id: 101
     location: Toronto, Ontario
     teams: 16
@@ -32676,6 +32706,7 @@ MonoBehaviour:
     complete: 0
     BG: 3
     crowdDensity: 9
+    trophyWon: 0
     image: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
   panel1Tournies: []
   panel2Tournies: []
@@ -32693,6 +32724,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   - name: 
     id: 0
@@ -32707,6 +32739,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   - name: 
     id: 0
@@ -32721,6 +32754,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   panelGOs:
   - {fileID: 1705527687}
@@ -32740,6 +32774,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   currentTourny:
     name: 
@@ -32755,6 +32790,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   green:
   - {r: 0.12941177, g: 0.29803923, b: 0.12941177, a: 1}
@@ -32774,6 +32810,7 @@ MonoBehaviour:
     format: {fileID: 1865550998}
     purse: {fileID: 897442820}
     entry: {fileID: 1723336350}
+    sprite: {fileID: 6005611955840383765}
   - location: {fileID: 1526033267}
     titleButton: {fileID: 1302658563}
     buttonText: {fileID: 300258570}
@@ -32781,6 +32818,7 @@ MonoBehaviour:
     format: {fileID: 796922650}
     purse: {fileID: 2045362358}
     entry: {fileID: 604509143}
+    sprite: {fileID: 1852298706}
   - location: {fileID: 667748151}
     titleButton: {fileID: 897288754}
     buttonText: {fileID: 437123565}
@@ -32788,6 +32826,7 @@ MonoBehaviour:
     format: {fileID: 1165227502}
     purse: {fileID: 1173822881}
     entry: {fileID: 178738940}
+    sprite: {fileID: 1719182471}
   quitButton: {fileID: 463914965}
   mainMenuGO: {fileID: 556640673}
   profPanelGO: {fileID: 560601359}
@@ -36329,6 +36368,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6005611956316943004, guid: d023725fed4804285a4d294f90eb4774, type: 3}
   m_PrefabInstance: {fileID: 1719182469}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1719182471 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5847331965620480674, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+  m_PrefabInstance: {fileID: 1719182469}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1719771029
 GameObject:
   m_ObjectHideFlags: 0
@@ -36894,7 +36944,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1110232603}
   m_HandleRect: {fileID: 1110232602}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -39113,6 +39163,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6005611956316943004, guid: d023725fed4804285a4d294f90eb4774, type: 3}
   m_PrefabInstance: {fileID: 1852298704}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1852298706 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5847331965620480674, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+  m_PrefabInstance: {fileID: 1852298704}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1855620404
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42801,7 +42862,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.5, y: -704.67676}
+  m_AnchoredPosition: {x: 562.5, y: -79}
   m_SizeDelta: {x: 1125, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &2024053844
@@ -45288,6 +45349,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   tournies: []
   tour: []
@@ -45306,6 +45368,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   - name: 
     id: 0
@@ -45320,6 +45383,7 @@ MonoBehaviour:
     complete: 0
     BG: 0
     crowdDensity: 0
+    trophyWon: 0
     image: {fileID: 0}
   activeTournies: []
   coachDialogue: 
@@ -45331,6 +45395,8 @@ MonoBehaviour:
   storyDialogue: 
   costPerWeek: 0
   teamPaid: 0
+  allTimeTrophyList: 
+  currentTrophyList: 
 --- !u!1 &2116167309
 GameObject:
   m_ObjectHideFlags: 0
@@ -48021,6 +48087,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+--- !u!114 &6005611955840383765 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5847331965620480674, guid: d023725fed4804285a4d294f90eb4774, type: 3}
+  m_PrefabInstance: {fileID: 6005611955840383764}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &6202220163679587574
 RectTransform:
   m_ObjectHideFlags: 0
