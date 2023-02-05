@@ -310,8 +310,8 @@ public class TournySelector : MonoBehaviour
         if (cm.week == 1)
         {
             //tournies[0].complete = true;
-            activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tour[nextTour];
+            activeTournies[0] = emptyTourny;
+            activeTournies[1] = tournies[nextTourny];
             activeTournies[2] = emptyTourny;
         }
         else if (cm.week == 2)
@@ -1240,6 +1240,7 @@ public class TournySelector : MonoBehaviour
                 panels[i].format.text = "";
                 panels[i].purse.text = "";
                 panels[i].entry.text = "";
+                panels[i].sprite.enabled = false;
                 playButton.SetActive(false);
             }
             else
@@ -1261,6 +1262,8 @@ public class TournySelector : MonoBehaviour
                 panels[i].format.text = activeTournies[i].format;
                 panels[i].purse.text = "$" + activeTournies[i].prizeMoney.ToString("n0");
                 panels[i].entry.text = "$" + activeTournies[i].entryFee.ToString("n0");
+                panels[i].sprite.enabled = true;
+                panels[i].sprite.sprite = activeTournies[i].image;
                 playButton.SetActive(false);
             }
         }

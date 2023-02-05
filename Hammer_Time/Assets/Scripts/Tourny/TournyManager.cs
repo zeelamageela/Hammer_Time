@@ -163,6 +163,7 @@ public class TournyManager : MonoBehaviour
 		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
 		Debug.Log("Setup Stand Team Length is " + teams.Length);
+		yield return new WaitUntil(() => teams.Length > 0);
 		dfList.DrawSelector(teams.Length, 1, gsp.games);
 
 		yield return new WaitForEndOfFrame();

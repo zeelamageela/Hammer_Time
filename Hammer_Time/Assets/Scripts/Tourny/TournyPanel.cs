@@ -13,4 +13,6 @@ public class TournyPanel
     public Text format;
     public Text purse;
     public Text entry;
+
+    public Image sprite;
 }

@@ -5356,6 +5356,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay20[0].name.text = teams[j].name;
 						finalsDisplay20[0].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+						if (teams[j].player)
+						{
+							nextButton.gameObject.SetActive(true);
+							simButton.gameObject.SetActive(false);
+						}
 						break;
 					}
 				}
@@ -5372,8 +5377,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				//StartCoroutine(SaveCareer(true));
 				contButton.gameObject.SetActive(false);
 				playButton.gameObject.SetActive(false);
-				//if (playerGame)
-				//	nextButton.gameObject.SetActive(true);
 				break;
 			#endregion
 		}
