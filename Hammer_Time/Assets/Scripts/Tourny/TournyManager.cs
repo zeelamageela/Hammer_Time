@@ -77,7 +77,7 @@ public class TournyManager : MonoBehaviour
             if (gsp.inProgress)
             {
                 Debug.Log("In Progress is True");
-                //gsp.LoadTourny();
+                gsp.LoadTourny();
                 playoffRound--;
 				Debug.Log("Playoff Round is " + playoffRound);
             }
@@ -107,7 +107,10 @@ public class TournyManager : MonoBehaviour
 			prize = gsp.prize;
 			careerEarningsText.text = "$ " + gsp.earnings.ToString();
 
-			teams = new Team[numberOfTeams];
+			if (numberOfTeams > 0)
+				teams = new Team[numberOfTeams];
+			else
+				teams = new Team[cm.currentTournyTeams.Length];
 
 			teamList = new List<Team_List>();
 
@@ -263,6 +266,9 @@ public class TournyManager : MonoBehaviour
 		}
 		else
         {
+			if (gsp.teams.Length <= 0)
+				gsp.teams = cm.currentTournyTeams;
+
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i] = gsp.teams[i];
@@ -662,6 +668,7 @@ public class TournyManager : MonoBehaviour
         int[] strengthList = new int[teams.Length];
         int[] idList = new int[teams.Length];
 		bool[] playerList = new bool[teams.Length];
+		float[] earningsList = new float[teams.Length];
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -673,6 +680,7 @@ public class TournyManager : MonoBehaviour
             strengthList[i] = teams[i].strength;
             idList[i] = teams[i].id;
 			playerList[i] = teams[i].player;
+			earningsList[i] = teams[i].earnings;
 			//Debug.Log("Tourny Id List - " + idList[i]);
         }
 
@@ -683,6 +691,7 @@ public class TournyManager : MonoBehaviour
         myFile.Add("Tourny NextOpp List", nextOppList);
         myFile.Add("Tourny Strength List", strengthList);
         myFile.Add("Tourny Team ID List", idList);
+		myFile.Add("Tourny Earnings List", earningsList);
 		myFile.Add("Tourny Player List", playerList);
         //yield return myFile.TestDataSaveLoad();
         yield return myFile.Append();

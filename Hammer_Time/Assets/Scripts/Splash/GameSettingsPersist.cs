@@ -458,6 +458,10 @@ public class GameSettingsPersist : MonoBehaviour
     {
         Debug.Log("Load Tourny GSP");
         CareerManager cm = FindObjectOfType<CareerManager>();
+        bg = cm.currentTourny.BG;
+        crowdDensity = cm.currentTourny.crowdDensity;
+        prize = cm.currentTourny.prizeMoney;
+        numberOfTeams = cm.currentTourny.teams;
         //cm.LoadCareer(this);
         TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
@@ -465,10 +469,6 @@ public class GameSettingsPersist : MonoBehaviour
         //inProgress = true;
         if (myFile.Load())
         {
-            //inProgress = myFile.GetBool("Tourny In Progress");
-            bg = myFile.GetInt("Current Tourny BG");
-            crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
-            prize = myFile.GetInt("Prize Money");
             draw = myFile.GetInt("Draw");
             ends = myFile.GetInt("Ends");
             games = myFile.GetInt("Games");
@@ -503,22 +503,24 @@ public class GameSettingsPersist : MonoBehaviour
 
             for (int i = 0; i < numberOfTeams; i++)
             {
-                //Debug.Log("Name List is " + nameList[i]);
-                for (int j = 0; j < tm.tTeamList.teams.Length; j++)
-                {
-                    if (idList[i] == tm.tTeamList.teams[j].id)
-                    {
-                        teams[i] = tm.tTeamList.teams[j];
-                    }
-                }
-                teams[i].wins = winsList[i];
-                //Debug.Log("Wins List is " + winsList[i]);
-                teams[i].loss = lossList[i];
-                //Debug.Log("Loss List is " + lossList[i]);
-                teams[i].rank = rankList[i];
-                teams[i].nextOpp = nextOppList[i];
-                teams[i].strength = strengthList[i];
-                teams[i].player = playerList[i];
+                ////Debug.Log("Name List is " + nameList[i]);
+                //for (int j = 0; j < tm.tTeamList.teams.Length; j++)
+                //{
+                //    if (idList[i] == tm.tTeamList.teams[j].id)
+                //    {
+                //        teams[i] = tm.tTeamList.teams[j];
+                //    }
+                //}
+                //teams[i].wins = winsList[i];
+                ////Debug.Log("Wins List is " + winsList[i]);
+                //teams[i].loss = lossList[i];
+                ////Debug.Log("Loss List is " + lossList[i]);
+                //teams[i].rank = rankList[i];
+                //teams[i].nextOpp = nextOppList[i];
+                //teams[i].strength = strengthList[i];
+                //teams[i].player = playerList[i];
+
+                teams[i] = cm.currentTournyTeams[i];
 
                 if (teams[i].player)
                 {
@@ -616,23 +618,25 @@ public class GameSettingsPersist : MonoBehaviour
             for (int i = 0; i < numberOfTeams; i++)
             {
                 //Debug.Log("Name List is " + nameList[i]);
-                for (int j = 0; j < tTeamList.teams.Length; j++)
-                {
-                    if (idList[i] == tTeamList.teams[j].id)
-                    {
-                        teams[i] = tTeamList.teams[j];
-                    }
-                }
-            }
-            for (int i = 0; i < teams.Length; i++)
-            {
-                //teams[i].wins = winsList[i];
-                //Debug.Log("Wins List is " + winsList[i]);
-                //teams[i].loss = lossList[i];
-                //Debug.Log("Loss List is " + lossList[i]);
-                //teams[i].rank = rankList[i];
-                //teams[i].nextOpp = nextOppList[i];
-                //teams[i].strength = strengthList[i];
+                //    for (int j = 0; j < tTeamList.teams.Length; j++)
+                //    {
+                //        if (idList[i] == tTeamList.teams[j].id)
+                //        {
+                //            teams[i] = tTeamList.teams[j];
+                //        }
+                //    }
+                //}
+                //for (int i = 0; i < teams.Length; i++)
+                //{
+                //    //teams[i].wins = winsList[i];
+                //    //Debug.Log("Wins List is " + winsList[i]);
+                //    //teams[i].loss = lossList[i];
+                //    //Debug.Log("Loss List is " + lossList[i]);
+                //    //teams[i].rank = rankList[i];
+                //    //teams[i].nextOpp = nextOppList[i];
+                //    //teams[i].strength = strengthList[i];
+
+                teams[i] = cm.currentTournyTeams[i];
 
                 if (teams[i].id == cm.playerTeamIndex)
                 {
