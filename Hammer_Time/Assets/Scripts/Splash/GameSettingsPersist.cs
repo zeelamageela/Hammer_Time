@@ -448,7 +448,7 @@ public class GameSettingsPersist : MonoBehaviour
 
         //earnings = myFile.GetFloat("Career Earnings");
         //record = myFile.GetUnityVector2("Career Record");
-        inProgress = cm.inProgress;
+        //inProgress = cm.inProgress;
 
         //numberOfTeams = myFile.GetInt("Number Of Teams");
         week = cm.week;
@@ -499,7 +499,7 @@ public class GameSettingsPersist : MonoBehaviour
             //StartCoroutine(Wait());
             Debug.Log("nameList Count is " + nameList.Length);
 
-            teams = new Team[idList.Length];
+            teams = new Team[numberOfTeams];
 
             for (int i = 0; i < numberOfTeams; i++)
             {
@@ -613,7 +613,7 @@ public class GameSettingsPersist : MonoBehaviour
             //StartCoroutine(Wait());
             Debug.Log("nameList Count is " + nameList.Length);
 
-            teams = new Team[idList.Length];
+            teams = new Team[numberOfTeams];
 
             for (int i = 0; i < numberOfTeams; i++)
             {

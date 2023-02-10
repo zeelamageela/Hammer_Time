@@ -628,6 +628,7 @@ public class TournyManager : MonoBehaviour
         gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.inProgress = false;
+		gsp.playoffTeams = null;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
 		
