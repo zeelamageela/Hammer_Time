@@ -118,8 +118,9 @@ public class CareerManager : MonoBehaviour
         StorylineManager slm = FindObjectOfType<StorylineManager>();
         TeamMenu teamSel = FindObjectOfType<TeamMenu>();
         PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
+        GameManager gm = FindObjectOfType<GameManager>();
 
-        LoadCareer(gsp, tSel, tTeamList, slm, teamSel, pUpM);
+        LoadCareer(gsp, tSel, tTeamList, slm, teamSel, pUpM, gm);
         //inProgress
         //if (inProgress)
         //{
@@ -158,7 +159,8 @@ public class CareerManager : MonoBehaviour
         TournyTeamList tTeamList = null,
         StorylineManager slm = null,
         TeamMenu teamSel = null,
-        PowerUpManager pUpM = null)
+        PowerUpManager pUpM = null,
+        GameManager gm = null)
     {
         Debug.Log("Loading in CM");
 
@@ -176,7 +178,6 @@ public class CareerManager : MonoBehaviour
 
         myFile = new EasyFileSave("my_player_data");
 
-        teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
 
         if (myFile.Load())
@@ -191,6 +192,8 @@ public class CareerManager : MonoBehaviour
 
             if (slm)
                 slm.blockIndex = myFile.GetInt("Story Block");
+
+            gsp.loadGame = myFile.GetBool("Game Load");
 
             week = myFile.GetInt("Week");
             Debug.Log("CM Load Career Week is " + week);
@@ -305,6 +308,8 @@ public class CareerManager : MonoBehaviour
 
             if (tTeamList != null)
             {
+                teams = new Team[totalTeams];
+
                 int[] idList = myFile.GetArray<int>("Total ID List");
                 int[] winsList = myFile.GetArray<int>("Total Wins List");
                 int[] lossList = myFile.GetArray<int>("Total Loss List");
@@ -377,10 +382,11 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            gsp.inProgress = myFile.GetBool("Tourny In Progress");
-            Debug.Log("gsp.inProgress is " + gsp.inProgress);
+            gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
+            gsp.gameInProgress = myFile.GetBool("Game In Progress");
+            Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 
-            if (gsp.inProgress)
+            if (gsp.tournyInProgress)
             {
                 currentTourny.name = myFile.GetString("Current Tourny Name");
                 currentTourny.id = myFile.GetInt("Current Tourny ID");
@@ -391,13 +397,18 @@ public class CareerManager : MonoBehaviour
                 currentTourny.BG = myFile.GetInt("Current Tourny BG");
                 currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
 
+                gsp.draw = myFile.GetInt("Current Tourny Draw");
+                gsp.playoffRound = myFile.GetInt("Current Tourny Playoff Round");
+
                 string[] tournyNameList = myFile.GetArray<string>("Tourny Name List");
                 int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
                 int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
                 int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
+                string[] tournyNextOppList = myFile.GetArray<string>("Tourny NextOpp List");
                 float[] tournyEarningsList = myFile.GetArray<float>("Tourny Earnings List");
                 bool[] tournyPlayerList = myFile.GetArray<bool>("Tourny Player List");
                 Debug.Log("Tourny Earnings List length is " + tournyEarningsList.Length);
+
 
                 if (currentTournyTeams.Length <= 0)
                     currentTournyTeams = new Team[tournyIDList.Length];
@@ -407,6 +418,7 @@ public class CareerManager : MonoBehaviour
                     currentTournyTeams[i] = new Team();
                     currentTournyTeams[i].id = tournyIDList[i];
                     currentTournyTeams[i].player = tournyPlayerList[i];
+                    currentTournyTeams[i].nextOpp = tournyNextOppList[i];
 
                     for (int j = 0; j < teams.Length; j++)
                     {
@@ -463,6 +475,43 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
+            if (gsp)
+            {
+                gsp.tourny = myFile.GetBool("Tourny Game");
+                gsp.ends = myFile.GetInt("Game Ends");
+                gsp.endCurrent = myFile.GetInt("Game Active End");
+                gsp.rocks = myFile.GetInt("Game Rocks");
+                gsp.rockCurrent = myFile.GetInt("Game Rock Current");
+                gsp.redHammer = myFile.GetBool("Game Red Hammer");
+                gsp.aiYellow = myFile.GetBool("Game AI Yellow");
+                gsp.aiRed = myFile.GetBool("Game AI Red");
+                gsp.yellowScore = myFile.GetInt("Game Yellow Score");
+                gsp.redScore = myFile.GetInt("Game Red Score");
+                gsp.yellowTeamName = myFile.GetString("Game Yellow Team Name");
+                gsp.redTeamName = myFile.GetString("Game Red Team Name");
+
+                float[] rockPosX = myFile.GetArray<float>("Game Rock Position X List");
+                float[] rockPosY = myFile.GetArray<float>("Game Rock Position Y List");
+                bool[] rockInPlay = myFile.GetArray<bool>("Game Rock In Play List");
+                gsp.rockPos = new Vector2[rockPosX.Length];
+                gsp.rockInPlay = new bool[rockInPlay.Length];
+                for (int i = 0; i < rockPosX.Length; i++)
+                {
+                    gsp.rockPos[i] = new Vector2(rockPosX[i], rockPosY[i]);
+                    gsp.rockInPlay[i] = rockInPlay[i];
+                }
+
+                int[] redScoreList = myFile.GetArray<int>("Game Red Score List");
+                int[] yellowScoreList = myFile.GetArray<int>("Game Yellow Score List");
+                Debug.Log("gsp.ends is " + gsp.ends);
+                gsp.score = new Vector2Int[gsp.ends];
+                for (int i = 0; i < gsp.score.Length; i++)
+                {
+                     gsp.score[i].x = redScoreList[i];
+                     gsp.score[i].y = yellowScoreList[i];
+                }
+
+            }
             myFile.Dispose();
         }
         //else
@@ -570,8 +619,9 @@ public class CareerManager : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
         TeamMenu teamSel = FindObjectOfType<TeamMenu>();
+        GameManager gm = FindObjectOfType<GameManager>();
 
-        Debug.Log("Saving Career - " + gsp.inProgress);
+        Debug.Log("Saving Career - " + gsp.tournyInProgress);
         myFile = new EasyFileSave("my_player_data");
 
         myFile.Add("Story Block", storyBlock);
@@ -583,7 +633,9 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Strategy Dialogue Played List", strategyDialogue);
         myFile.Add("Story Dialogue Played List", storyDialogue);
 
-        myFile.Add("Tourny In Progress", gsp.inProgress);
+        myFile.Add("Tourny In Progress", gsp.tournyInProgress);
+        myFile.Add("Game In Progress", gsp.gameInProgress);
+        myFile.Add("Game Load", gsp.loadGame);
         myFile.Add("Knockout Tourny", false);
         myFile.Add("Player Name", playerName);
         myFile.Add("Team Name", teamName);
@@ -621,12 +673,10 @@ public class CareerManager : MonoBehaviour
             lossList[i] = teams[i].loss;
             earningsList[i] = teams[i].earnings;
 
-            //if (playerTeamIndex == teams[i].id)
-            //{
-            //    //earningsList[i] = earnings;
-            //    //teams[i].earnings = earnings;
-            //    Debug.Log("Earnings - CM - " + earnings);
-            //}
+            if (playerTeamIndex == teams[i].id)
+            {
+                myFile.Add("Career Record", new Vector2(teams[i].wins, teams[i].loss));
+            }
 
         }
 
@@ -798,7 +848,7 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Saving Career and TM active, tour is " + currentTourny.tour);
             //myFile.Add("Tourny In Progress", true);
             myFile.Add("Career Record", gsp.record);
-            myFile.Add("In Progress", true);
+            myFile.Add("Tourny In Progress", true);
             myFile.Add("Draw", tm.draw);
             myFile.Add("Number Of Teams", tm.numberOfTeams);
             myFile.Add("Prize", tm.prize);
@@ -846,7 +896,49 @@ public class CareerManager : MonoBehaviour
 
         }
 
+        if (gm)
+        {
+            myFile.Add("Tourny Game", gsp.tourny);
+            myFile.Add("Game Ends", gm.endTotal);
+            myFile.Add("Game Active End", gm.endCurrent);
+            myFile.Add("Game Rocks", gm.rocksPerTeam);
+            myFile.Add("Game Rock Current", gm.rockCurrent);
+            myFile.Add("Game Red Hammer", gm.redHammer);
+            myFile.Add("Game AI Yellow", gm.aiTeamYellow);
+            myFile.Add("Game AI Red", gm.aiTeamRed);
+            myFile.Add("Game Yellow Score", gm.yellowScore);
+            myFile.Add("Game Red Score", gm.redScore);
+            myFile.Add("Game Yellow Team Name", gm.yellowTeamName);
+            myFile.Add("Game Red Team Name", gm.redTeamName);
+            //myFile.Add("Game Yellow Team Colour")
+        }
 
+        if (gsp)
+        {
+
+            float[] rockPosX = new float[gsp.rockPos.Length];
+            float[] rockPosY = new float[gsp.rockPos.Length];
+            for (int i = 0; i < gsp.rockPos.Length; i++)
+            {
+                rockPosX[i] = gsp.rockPos[i].x;
+                rockPosY[i] = gsp.rockPos[i].y;
+            }
+            myFile.Add("Game Rock Position X List", rockPosX);
+            myFile.Add("Game Rock Position Y List", rockPosY);
+            myFile.Add("Game Rock In Play List", gsp.rockInPlay);
+
+            int[] redScoreList = new int[gsp.score.Length];
+            int[] yellowScoreList = new int[gsp.score.Length];
+
+            for (int i = 0; i < gsp.score.Length; i++)
+            {
+                redScoreList[i] = gsp.score[i].x;
+                yellowScoreList[i] = gsp.score[i].y;
+            }
+            myFile.Add("Game Red Score List", redScoreList);
+            myFile.Add("Game Yellow Score List", yellowScoreList);
+
+        }
         myFile.Append();
         StartCoroutine(SaveHighScore());
         //activePlayers = teamSel.activePlayers;
@@ -1259,7 +1351,7 @@ public class CareerManager : MonoBehaviour
 
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
-        coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
+        //coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
         //qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
         //reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
         //introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
@@ -1267,8 +1359,8 @@ public class CareerManager : MonoBehaviour
         //helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
         //strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
 
-        for (int i = 0; i < coachDialogue.Length; i++)
-            coachDialogue[i] = false;
+        //for (int i = 0; i < coachDialogue.Length; i++)
+        //    coachDialogue[i] = false;
         //for (int i = 0; i < qualDialogue.Length; i++)
         //    qualDialogue[i] = false;
         //for (int i = 0; i < reviewDialogue.Length; i++)

@@ -113,26 +113,6 @@ public class CareerSettings : MonoBehaviour
         myFile = new EasyFileSave("my_player_data");
         myFileGame = new EasyFileSave("my_game_data");
 
-        //if (myFileGame.Load())
-        //{
-        //    ginProg = myFileGame.GetBool("In Progress");
-        //    if (ginProg)
-        //    {
-        //        int currentEnd = myFileGame.GetInt("Current End");
-        //        int endTotal = myFileGame.GetInt("End Total");
-
-        //        gameInProg.SetActive(true);
-        //        gameStats.text = "End " + currentEnd.ToString() + "/" + endTotal.ToString();
-        //    }
-        //    else
-        //        gameInProg.SetActive(false);
-
-        //    myFileGame.Dispose();
-        //}
-        //else
-        //    gameInProg.SetActive(false);
-
-
         if (myFile.Load())
         {
             playerName = myFile.GetString("Player Name");
@@ -142,7 +122,7 @@ public class CareerSettings : MonoBehaviour
             earnings = cm.earnings;
             //Debug.Log("Earnings are " + earnings);
             record = myFile.GetUnityVector2("Career Record");
-            gsp.inProgress = myFile.GetBool("Tourny In Progress");
+            gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
             //Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
@@ -197,7 +177,7 @@ public class CareerSettings : MonoBehaviour
                 cm.activePlayers[i].oppCohesion = playerOppCohesionList[i];
             }
 
-            if (gsp.inProgress)
+            if (gsp.tournyInProgress)
             {
                 tournyInProg.SetActive(true);
                 gsp.KO = myFile.GetBool("Knockout Tourny");
@@ -235,12 +215,13 @@ public class CareerSettings : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         cm.LoadSettings();
+        ginProg = gsp.loadGame;
 
-        if (gsp.inProgress)
+        if (gsp.tournyInProgress)
         {
             if (ginProg)
             {
-                SceneManager.LoadScene("End_Menu_Tourny_1");
+                SceneManager.LoadScene("TournyGame");
             }
             else
             {
@@ -287,14 +268,17 @@ public class CareerSettings : MonoBehaviour
         cm.cash = 1000f;
         gsp.draw = 0;
         gsp.playoffRound = 0;
-        gsp.inProgress = false;
+        gsp.tournyInProgress = false;
         cm.inProgress = false;
 
         load.SetActive(false);
         player.SetActive(true);
         nextButton.text = "Start>";
 
-        NameGenerator();
+        playerNameInput.text = cm.playerName;
+        teamNameInput.text = cm.teamName;
+
+        //NameGenerator();
     }
     public void MainMenu()
     {
@@ -306,13 +290,17 @@ public class CareerSettings : MonoBehaviour
         cm.inProgress = false;
         myFile = new EasyFileSave("my_player_data");
         if (myFile.Load())
+        {
+            cm.playerName = myFile.GetString("Player Name");
+            cm.teamName = myFile.GetString("Team Name");
             myFile.Delete();
+        }
     }
 
-    void NameGenerator()
+    public void NameGenerator()
     {
-        int first = Random.Range(0, 10);
-        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greecy", "Treep", "Cherp", "Glimp", "Jam", "Cray", "Stint" };
+        int first = Random.Range(0, 11);
+        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greezy", "Treep", "Cherp", "Glimp", "Jam", "Cray", "Stint", "Arugala" };
 
         int syllables = Random.Range(0, 3);
 
@@ -320,10 +308,10 @@ public class CareerSettings : MonoBehaviour
         string[] name2a = { "Griff", "Stamp", "Gloob", "Frist", "Jum", "Stoff", "Well", "Trink", "Gust", "Stoob" };
 
         int lastb = Random.Range(0, 10);
-        string[] name2b = { "", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
+        string[] name2b = { "ty", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
 
         int lastc = Random.Range(0, 10);
-        string[] name2c = { "", "sen", "rov", "witz", "vich", "ter", "vun", "brun", "son", "bing" };
+        string[] name2c = { "ty", "sen", "rov", "werk", "lova", "ter", "vun", "brun", "son", "bing" };
 
         if (syllables == 0)
         {

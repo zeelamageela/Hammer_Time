@@ -49,6 +49,7 @@ public class EndMenu : MonoBehaviour
 
         if (gsp)
         {
+            gsp.loadGame = false;
             ends = gsp.ends;
 
             if (gsp.cashGame)
@@ -127,6 +128,7 @@ public class EndMenu : MonoBehaviour
                             }
                         }
                         contButton.transform.GetComponentInChildren<Text>().text = "Next Week>";
+                        ends++;
                     }
                 }
                 else
@@ -136,8 +138,8 @@ public class EndMenu : MonoBehaviour
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
 
-                    int extraEnd = gsp.endCurrent - ends + 1;
-                    end.text = "Extra End " + extraEnd.ToString();
+                    int extraEnd = ends - gsp.endCurrent + 1;
+                    end.text = "Extra End";
 
                     draw.text = "Draw " + (gsp.draw + 1).ToString();
 
@@ -201,8 +203,6 @@ public class EndMenu : MonoBehaviour
 
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
-            redTeamColor.color = gsp.redTeamColour;
-            yellowTeamColor.color = gsp.yellowTeamColour;
             redTotalScore.text = gsp.redScore.ToString();
             yellowTotalScore.text = gsp.yellowScore.ToString();
 
@@ -210,11 +210,15 @@ public class EndMenu : MonoBehaviour
             {
                 yellowSpinner.SetActive(false);
                 yellowSpinnerAI.SetActive(true);
+                redTeamColor.color = white;
+                yellowTeamColor.color = dimmed;
             }
             else
             {
                 yellowSpinner.SetActive(true);
                 yellowSpinnerAI.SetActive(false);
+                redTeamColor.color = dimmed;
+                yellowTeamColor.color = white;
             }
 
             for (int i = 0; i < ends; i++)
@@ -225,6 +229,28 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
                 Debug.Log("I IS " + i);
+
+                if (gsp.endCurrent - 1 > gsp.score.Length)
+                {
+                    Vector2Int[] tempScore = new Vector2Int[gsp.endCurrent];
+                    for (int j = 0; j < gsp.endCurrent; j++)
+                    {
+                        if (j <= gsp.score.Length)
+                            tempScore[j] = gsp.score[j];
+                        else
+                        {
+                            tempScore[j].x = gsp.redScore;
+                            tempScore[j].y = gsp.yellowScore;
+                        }
+                    }
+
+                    gsp.score = new Vector2Int[tempScore.Length];
+                    for (int j = 0; j < gsp.score.Length; j++)
+                    {
+                        gsp.score[j] = tempScore[j];
+                    }
+                }
+
                 if (i < gsp.endCurrent)
                 {
                     scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
@@ -277,19 +303,43 @@ public class EndMenu : MonoBehaviour
 
     public void EndGame()
     {
-        if (gsp.playoffRound > 0)
+        if (gsp.tourny)
         {
-            gsp.playoffRound++;
-            Debug.Log("Play off Round - " + gsp.playoffRound);
+            //if (gsp.aiRed)
+            //{
+            //    if (gsp.redScore > gsp.yellowScore)
+            //        gsp.record.y += 1;
+
+            //    if (gsp.redScore < gsp.yellowScore)
+            //        gsp.record.x += 1;
+            //}
+            //if (gsp.aiYellow)
+            //{
+            //    if (gsp.redScore > gsp.yellowScore)
+            //        gsp.record.x += 1;
+
+            //    if (gsp.redScore < gsp.yellowScore)
+            //        gsp.record.y += 1;
+            //}
+
+            if (gsp.playoffRound > 0)
+            {
+                //gsp.playoffRound++;
+                Debug.Log("Play off Round - " + gsp.playoffRound);
+            }
+            else
+                gsp.draw++;
+            //gsp.tournyInProgress = false;
+            //gsp.gameInProgress = false;
+            cm.SaveCareer();
+            SceneManager.LoadScene("Tourny_Home_1");
         }
-        else
-            gsp.draw++;
 
         if (gsp.cashGame)
         {
             float winnings;
 
-            gsp.inProgress = false;
+            gsp.tournyInProgress = false;
             Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
             Debug.Log("CM earnings are " + cm.earnings);
 

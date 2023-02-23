@@ -57,7 +57,7 @@ public class SweeperSelector : MonoBehaviour
 
             if (moveDirection != Vector2.zero)
             {
-                if (Mathf.Abs(moveDirection.x) > 0.02f | Mathf.Abs(moveDirection.y) > 0.02f)
+                if (Mathf.Abs(moveDirection.x) > 0.02f | Mathf.Abs(moveDirection.y) > 0.005f)
                 {
                     float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
                     transform.rotation = Quaternion.AngleAxis((angle - 90f), Vector3.forward);
@@ -67,7 +67,7 @@ public class SweeperSelector : MonoBehaviour
                         sweeperL.yOffset = 1.2f;
                         sweeperR.yOffset = 0.6f;
                     }
-                    else if (transform.rotation.z < -30f)
+                    if (transform.rotation.z < -30f)
                     {
                         sweeperL.yOffset = 0.6f;
                         sweeperR.yOffset = 1.2f;

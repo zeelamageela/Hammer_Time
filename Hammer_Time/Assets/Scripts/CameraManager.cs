@@ -112,13 +112,15 @@ public class CameraManager : MonoBehaviour
     }
     public void ZoomOutTrack(float dist)
     {
-        vcam.m_Lens.OrthographicSize = ((8.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
+        vcam.m_Lens.OrthographicSize = ((8.5f - 3.5f) * ((dist) / 3.5f)) + 3.5f;
 
     }
     public void InPlayZoom(float dist)
     {
-        vcam.m_Lens.OrthographicSize = ((8.5f - 3.5f) * ((dist) / 6.5f)) + 3.5f;
-
+        vcam.m_Lens.OrthographicSize = ((8.5f - 4.5f) * ((dist) / 12.5f)) + 4.5f;
+        CinemachineFramingTransposer vcam_follow = FindObjectOfType<CinemachineFramingTransposer>();
+        vcam_follow.m_ScreenY = (0.85f - 0.75f) * ((dist) / 12.5f) + 0.75f;
+        //Debug.Log("vcam_follow.m_ScreenY is " + vcam_follow.m_ScreenY);
     }
 
     public void HouseView()

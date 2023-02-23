@@ -282,10 +282,10 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
     m_FontSize: 250
-    m_FontStyle: 0
+    m_FontStyle: 2
     m_BestFit: 1
     m_MinSize: 1
-    m_MaxSize: 300
+    m_MaxSize: 250
     m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -425,7 +425,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
     m_FontSize: 250
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 1
     m_MinSize: 1
     m_MaxSize: 300
@@ -882,6 +882,8 @@ MonoBehaviour:
   endCurrent: 3
   yellowScore: 6
   redScore: 1
+  rockPos: []
+  rockInPlay: 
   tourny: 0
   KO: 0
   cashGame: 1
@@ -917,7 +919,8 @@ MonoBehaviour:
   numberOfTeams: 0
   prize: 100
   careerLoad: 0
-  inProgress: 0
+  tournyInProgress: 0
+  gameInProgress: 0
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -928,6 +931,9 @@ MonoBehaviour:
   - {x: 2, y: 0}
   - {x: 0, y: 0}
   - {x: 0, y: 0}
+  skinsGame: 0
+  skins: 0
+  skinValue: []
   playerTeam:
     name: 
     wins: 0
@@ -1290,7 +1296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  m_Color: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1299,11 +1305,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
-    m_FontSize: 200
+    m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 1
-    m_MaxSize: 300
+    m_MaxSize: 100
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1

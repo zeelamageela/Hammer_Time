@@ -27,6 +27,7 @@ public class StorylineManager: MonoBehaviour
 
     public int blockIndex;
 
+    public bool skipTutorials;
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -44,6 +45,7 @@ public class StorylineManager: MonoBehaviour
     private void Start()
     {
         cm = FindObjectOfType<CareerManager>();
+        skipTutorials = cm.inProgress;
         StartCoroutine(FirstFiveWeeks());
     }
 
@@ -52,7 +54,7 @@ public class StorylineManager: MonoBehaviour
         if (cm != null)
             cm.storyBlock = blockIndex;
     }
-    void FindDialogueParts(int trgSwitch = 0)
+    void FindDialogueObjects(string character = "Skip")
     {
         dm = FindObjectOfType<DialogueManager>();
         dialogueGO = dm.dialogueCanvas;
@@ -64,19 +66,24 @@ public class StorylineManager: MonoBehaviour
         announcer = dm.announcerHead;
         annTrg = GameObject.Find("DialogueTriggers").transform.GetChild(1).gameObject.GetComponent<DialogueTrigger>();
 
-        if (trgSwitch == 1)
+        switch (character)
         {
-            skip.SetActive(false);
-            skipTrg.gameObject.SetActive(false);
-            announcer.SetActive(true);
-            annTrg.gameObject.SetActive(true);
-        }
-        else
-        {
-            skip.SetActive(true);
-            skipTrg.gameObject.SetActive(true);
-            announcer.SetActive(false);
-            annTrg.gameObject.SetActive(false);
+            case "Skip":
+                skip.SetActive(true);
+                skipTrg.gameObject.SetActive(true);
+                announcer.SetActive(false);
+                annTrg.gameObject.SetActive(false);
+                break;
+
+            case "Announcer":
+                skip.SetActive(false);
+                skipTrg.gameObject.SetActive(false);
+                announcer.SetActive(true);
+                annTrg.gameObject.SetActive(true);
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -90,13 +97,14 @@ public class StorylineManager: MonoBehaviour
 
     IEnumerator FirstFiveWeeks()
     {
-        if (cm.week <= 1)
+        if (cm.week <= 1 && !skipTutorials)
         {
+            
             if (blockIndex == 0)
             {
                 //First Week
                 yield return new WaitUntil(() => cm.week == 1);
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers);
                 yield return new WaitForSeconds(0.5f);
                 blockIndex++;
@@ -116,7 +124,7 @@ public class StorylineManager: MonoBehaviour
                         //Debug.Log("tSel.menuBut_Select is " + tSel.menuBut_Select);
                         if (playedDialogue[tSel.menuBut_Select] == false)
                         {
-                            FindDialogueParts();
+                            FindDialogueObjects();
                             TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, tSel.menuBut_Select);
                             playedDialogue[tSel.menuBut_Select] = true;
                         }
@@ -138,7 +146,7 @@ public class StorylineManager: MonoBehaviour
                 yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "TournyGame");
                 gm = FindObjectOfType<GameManager>();
 
-                FindDialogueParts(1);
+                FindDialogueObjects("Announcer");
                 TriggerDialogue(announcer, annTrg, storyBlocks[blockIndex].triggers);
 
                 yield return new WaitUntil(() => dm.dialogueCanvas.activeSelf);
@@ -151,18 +159,18 @@ public class StorylineManager: MonoBehaviour
                 yield return new WaitUntil(() => gm != null);
                 yield return new WaitUntil(() => gm.redTurn == gm.aiTeamYellow);
 
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers);
 
                 yield return new WaitUntil(() => dm.dialogueCanvas.activeSelf);
 
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 1);
 
                 yield return new WaitUntil(() => dm.dialogueCanvas.activeSelf);
-
+                yield return new WaitUntil(() => gm.rockList.Count > gm.rockCurrent);
                 yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>().isPressed == true);
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 2);
 
                 yield return new WaitForSeconds(3f);
@@ -172,7 +180,7 @@ public class StorylineManager: MonoBehaviour
 
 
                 yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.released == true);
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 3);
                 Time.timeScale = 0.1f;
 
@@ -203,19 +211,19 @@ public class StorylineManager: MonoBehaviour
 
                     if (winningTeamName == gm.gsp.teamName)
                     {
-                        FindDialogueParts();
+                        FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 4);
                     }
                     else
                     {
-                        FindDialogueParts();
+                        FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 5);
                     }
                 }
                 // if the house is empty move along to next turn
                 else if (gm.houseList.Count == 0)
                 {
-                    FindDialogueParts();
+                    FindDialogueObjects();
                     TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 6);
                 }
 
@@ -247,19 +255,19 @@ public class StorylineManager: MonoBehaviour
 
                     if (winningTeamName == gm.gsp.teamName)
                     {
-                        FindDialogueParts();
+                        FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 7);
                     }
                     else
                     {
-                        FindDialogueParts();
+                        FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 8);
                     }
                 }
                 // if the house is empty move along to next turn
                 else if (gm.houseList.Count == 0)
                 {
-                    FindDialogueParts();
+                    FindDialogueObjects();
                     TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 8);
                 }
 
@@ -283,7 +291,7 @@ public class StorylineManager: MonoBehaviour
             {
                 yield return new WaitUntil(() => cm.week == 2);
 
-                FindDialogueParts();
+                FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers);
                 blockIndex++;
             }

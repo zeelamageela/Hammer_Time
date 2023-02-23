@@ -714,7 +714,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: <Back
+  m_Text: <
 --- !u!222 &24856087
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4093,7 +4093,6 @@ MonoBehaviour:
   redScore: 0
   yellowTeamName: 
   yellowScore: 0
-  score: []
   lg: {fileID: 197219302}
   gHUD: {fileID: 949738591}
   rockBar: {fileID: 558889064}
@@ -8221,6 +8220,8 @@ MonoBehaviour:
   endCurrent: 0
   yellowScore: 5
   redScore: 6
+  rockPos: []
+  rockInPlay: 
   tourny: 1
   KO: 0
   cashGame: 1
@@ -8288,7 +8289,8 @@ MonoBehaviour:
   numberOfTeams: 0
   prize: 0
   careerLoad: 0
-  inProgress: 0
+  tournyInProgress: 0
+  gameInProgress: 0
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -9304,7 +9306,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 8.5
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -9328,7 +9330,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -21.25, z: -10}
+  m_LocalPosition: {x: -0.001226902, y: -20.62584, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -9807,8 +9809,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -772}
-  m_SizeDelta: {x: 350, y: 200}
+  m_AnchoredPosition: {x: -347, y: -772}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &531943187
 MonoBehaviour:
@@ -9907,7 +9909,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 1.75
 --- !u!222 &531943189
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16912,8 +16914,8 @@ Camera:
   far clip plane: 1000
   field of view: 1
   orthographic: 1
-  orthographic size: 10
-  m_Depth: 0
+  orthographic size: 11
+  m_Depth: 12
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -16936,7 +16938,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 913926330}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.01, y: 5.5, z: -307.63373}
+  m_LocalPosition: {x: -0.01, y: 4.5, z: -307.63373}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -22333,7 +22335,7 @@ MonoBehaviour:
   m_Follow: {fileID: 2563391621767102984}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 7.5
+    OrthographicSize: 8.5
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -22354,7 +22356,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1171837316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -21.25, z: -10}
+  m_LocalPosition: {x: 0, y: -20.75, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1385325366}
@@ -26859,7 +26861,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 8.3, y: 7.4}
+  m_AnchoredPosition: {x: 8.299988, y: 7.399994}
   m_SizeDelta: {x: 48.2071, y: 44.9152}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1432492692
@@ -28561,11 +28563,11 @@ RectTransform:
   m_Father: {fileID: 558889063}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 558.5, y: 1356}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -75, y: 1075}
   m_SizeDelta: {x: 110, y: 110}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1548873873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31778,6 +31780,8 @@ MonoBehaviour:
     complete: 0
     BG: 4
     crowdDensity: 8
+    trophyWon: 0
+    image: {fileID: 0}
   tournies: []
   tour: []
   prov: []
@@ -31792,6 +31796,8 @@ MonoBehaviour:
   storyDialogue: 
   costPerWeek: 0
   teamPaid: 0
+  allTimeTrophyList: 
+  currentTrophyList: 
 --- !u!1 &1715475618
 GameObject:
   m_ObjectHideFlags: 0
@@ -41717,6 +41723,10 @@ PrefabInstance:
       propertyPath: launcher
       value: 
       objectReference: {fileID: 2563391621767102984}
+    - target: {fileID: 3216628108032816961, guid: e1d7877ea36f47e44a7b9373f5de7fd6, type: 3}
+      propertyPath: houseClick
+      value: 
+      objectReference: {fileID: 906856446}
     - target: {fileID: 3216628108032816961, guid: e1d7877ea36f47e44a7b9373f5de7fd6, type: 3}
       propertyPath: trajTarget
       value: 

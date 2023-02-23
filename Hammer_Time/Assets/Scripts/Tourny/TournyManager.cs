@@ -74,12 +74,12 @@ public class TournyManager : MonoBehaviour
 		{
 			//cm.LoadCareer();
 			gsp.LoadCareer();
-            if (gsp.inProgress)
+            if (gsp.tournyInProgress)
             {
-                Debug.Log("In Progress is True");
+				//gsp.gameInProgress = false;
                 gsp.LoadTourny();
-                playoffRound--;
-				Debug.Log("Playoff Round is " + playoffRound);
+                //playoffRound--;
+				Debug.Log("Playoff Round is " + gsp.playoffRound);
             }
             else
             {
@@ -151,13 +151,13 @@ public class TournyManager : MonoBehaviour
 		}
 
         //OnSim();
-		//for (int i = 0; i < vsDisplay.Length; i++)
-		//{
-		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
+        //for (int i = 0; i < vsDisplay.Length; i++)
+        //{
+        //    vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = false;
 
-		//	yield return new WaitForEndOfFrame();
-		//	vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
-		//}
+        //    yield return new WaitForEndOfFrame();
+        //    vsDisplay[i].name.gameObject.GetComponent<ContentSizeFitter>().enabled = true;
+        //}
     }
 
 	IEnumerator SetupStandings()
@@ -201,11 +201,63 @@ public class TournyManager : MonoBehaviour
 				pm.enabled = true;
 				standings.SetActive(false);
 			}
-			else if (gsp.inProgress)
+			else if (gsp.gameInProgress)
 			{
+				gsp.tournyInProgress = true;
+				gsp.gameInProgress = false;
+				draw--;
+				for (int i = 0; i < teams.Length; i++)
+				{
+					if (teams[i].player)
+						playerTeam = i;
+				}
+				for (int i = 0; i < teams.Length; i++)
+				{
+					if (teams[i].name == teams[playerTeam].nextOpp)
+						oppTeam = i;
+				}
+				Debug.Log("PlayerTeam is " + playerTeam);
+				Debug.Log("OppTeam is " + oppTeam);
+
+				if (teams[playerTeam].name == gsp.redTeamName)
+				{
+					if (gsp.redScore > gsp.yellowScore)
+					{
+						teams[oppTeam].loss++;
+						teams[playerTeam].wins++;
+						gsp.record.x++;
+					}
+					else
+					{
+						teams[oppTeam].wins++;
+						teams[playerTeam].loss++;
+						gsp.record.y++;
+					}
+				}
+				else
+				{
+					if (gsp.redScore < gsp.yellowScore)
+					{
+						teams[oppTeam].loss++;
+						teams[playerTeam].wins++;
+						gsp.record.x++;
+					}
+					else
+					{
+						teams[oppTeam].wins++;
+						teams[playerTeam].loss++;
+						gsp.record.y++;
+					}
+				}
+				Debug.Log(teams[oppTeam].name + " " + teams[oppTeam].wins + " Wins");
+				StartCoroutine(SimRestDraw());
+			}
+			else if (gsp.tournyInProgress)
+			{
+				gsp.careerLoad = false;
 				Debug.Log("Setup Stand inProgress is " + true);
-                //playerTeam = gsp.playerTeamIndex;
-                for (int i = 0; i < teams.Length; i++)
+				//playerTeam = gsp.playerTeamIndex;
+				for (int i = 0; i < teams.Length; i++)
                 {
                     if (teams[i].name == gsp.playerTeam.nextOpp)
                         oppTeam = i;
@@ -218,6 +270,7 @@ public class TournyManager : MonoBehaviour
             }
 			else
 			{
+				gsp.tournyInProgress = true;
 				draw--;
 				for (int i = 0; i < teams.Length; i++)
 				{
@@ -491,6 +544,7 @@ public class TournyManager : MonoBehaviour
         {
 			if (i % 2 == 0)
 			{
+				Debug.Log("Player Team is " + playerTeam);
 				//Debug.Log("Settling Game - " + games[i].name);
 				if (games[i].name == teams[playerTeam].name | games[i].name == teams[oppTeam].name)
                 {
@@ -536,6 +590,7 @@ public class TournyManager : MonoBehaviour
 				teams[i].nextOpp = "-----";
             }
 
+			//SetDraw();
 			if (cm.currentTourny.qualifier)
 			{
 				vsTitle.text = "Results";
@@ -627,7 +682,7 @@ public class TournyManager : MonoBehaviour
         cm.record = gsp.record;
         gsp.draw = 0;
 		gsp.playoffRound = 0;
-		gsp.inProgress = false;
+		gsp.tournyInProgress = false;
 		gsp.playoffTeams = null;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
@@ -649,8 +704,12 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("Team Colour", cm.teamColour);
 		//myFile.Add("Career Earnings", gsp.earnings);
 		//Debug.Log("TM Career Earnings - " + gsp.earnings);
+		gsp.loadGame = false;
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("Tourny In Progress", true);
+		gsp.gameInProgress = false;
+		myFile.Add("Game Load", false);
+		myFile.Add("Game In Progress", false);
 		myFile.Add("Draw", draw);
 		myFile.Add("Number Of Teams", numberOfTeams);
 		myFile.Add("Prize", prize);

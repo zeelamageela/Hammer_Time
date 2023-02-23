@@ -44,8 +44,7 @@ public class RockManager : MonoBehaviour
                 //    cm.InPlayZoom(rock.transform.position.y);
                 //    cm.top.depth = -1;
                 //}
-
-                if (rockInfo.inPlay)
+                if (rock.transform.position.y >= -6f)
                 {
                     //Debug.Log("in House");
                     float dist = Vector2.Distance(rock.transform.position, house.position);

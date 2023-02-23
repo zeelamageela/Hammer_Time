@@ -23,6 +23,7 @@ public class GameSettingsPersist : MonoBehaviour
     public float volume;
     public bool tutorial;
     public bool loadGame;
+
     public bool aiYellow;
     public bool aiRed;
     public bool debug;
@@ -31,7 +32,8 @@ public class GameSettingsPersist : MonoBehaviour
     public int endCurrent;
     public int yellowScore;
     public int redScore;
-
+    public Vector2[] rockPos;
+    public bool[] rockInPlay;
 
     public bool tourny;
     public bool KO;
@@ -61,7 +63,8 @@ public class GameSettingsPersist : MonoBehaviour
     public int numberOfTeams;
     public int prize;
     public bool careerLoad;
-    public bool inProgress;
+    public bool tournyInProgress;
+    public bool gameInProgress;
 
     public List<Team_List> teamList;
     public Team[] teams;
@@ -200,7 +203,6 @@ public class GameSettingsPersist : MonoBehaviour
         aiYellow = gm.aiTeamYellow;
         aiRed = gm.aiTeamRed;
 
-        
         //third = gm.target;
         //skip = gm.target;
 
@@ -287,7 +289,6 @@ public class GameSettingsPersist : MonoBehaviour
         careerLoad = false;
         if (cg != null)
         {
-
             tourny = false;
             draw = 0;
             playoffRound = 0;
@@ -301,7 +302,7 @@ public class GameSettingsPersist : MonoBehaviour
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
-
+            gameInProgress = true;
             //playerGO = tm.playerGO;
         }
         else
@@ -321,7 +322,7 @@ public class GameSettingsPersist : MonoBehaviour
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
-
+            tournyInProgress = true;
             //playerGO = tm.playerGO;
             if (draw >= tm.drawFormat.Length)
             {
@@ -477,67 +478,29 @@ public class GameSettingsPersist : MonoBehaviour
             playoffRound = myFile.GetInt("Playoff Round");
             playerTeamIndex = myFile.GetInt("Player Team");
 
-            string[] nameList = new string[numberOfTeams];
-            int[] winsList = new int[numberOfTeams];
-            int[] lossList = new int[numberOfTeams];
-            int[] rankList = new int[numberOfTeams];
-            string[] nextOppList = new string[numberOfTeams];
-            int[] strengthList = new int[numberOfTeams];
-            int[] idList = new int[numberOfTeams];
-            bool[] playerList = new bool[numberOfTeams];
-
-            //Debug.Log("nameList Count is " + nameList.Length);
-            //nameList = myFile.GetArray<string>("Tourny Name List");
-            Debug.Log("nameList Item 1 is " + nameList[0]);
-            winsList = myFile.GetArray<int>("Tourny Wins List");
-            lossList = myFile.GetArray<int>("Tourny Loss List");
-            rankList = myFile.GetArray<int>("Tourny Rank List");
-            nextOppList = myFile.GetArray<string>("Tourny NextOpp List");
-            strengthList = myFile.GetArray<int>("Tourny Strength List");
-            idList = myFile.GetArray<int>("Tourny Team ID List");
-            playerList = myFile.GetArray<bool>("Tourny Player List");
-            //StartCoroutine(Wait());
-            Debug.Log("nameList Count is " + nameList.Length);
-
             teams = new Team[numberOfTeams];
 
             for (int i = 0; i < numberOfTeams; i++)
             {
-                ////Debug.Log("Name List is " + nameList[i]);
-                //for (int j = 0; j < tm.tTeamList.teams.Length; j++)
-                //{
-                //    if (idList[i] == tm.tTeamList.teams[j].id)
-                //    {
-                //        teams[i] = tm.tTeamList.teams[j];
-                //    }
-                //}
-                //teams[i].wins = winsList[i];
-                ////Debug.Log("Wins List is " + winsList[i]);
-                //teams[i].loss = lossList[i];
-                ////Debug.Log("Loss List is " + lossList[i]);
-                //teams[i].rank = rankList[i];
-                //teams[i].nextOpp = nextOppList[i];
-                //teams[i].strength = strengthList[i];
-                //teams[i].player = playerList[i];
-
                 teams[i] = cm.currentTournyTeams[i];
 
                 if (teams[i].player)
                 {
-                    Debug.Log("i == playerTeamIndex - i is " + i);
+                    Debug.Log("i == playerTeamIndex is " + playerTeamIndex);
                     teams[i].name = teamName;
                     playerTeam = teams[i];
                     Debug.Log("Player Team id is " + teams[i].id);
                 }
             }
-            //StartCoroutine(Wait());
-            //playerTeam = teams[playerTeamIndex];
+            //record = new Vector2(playerTeam.wins, playerTeam.loss);
             for (int i = 0; i < numberOfTeams; i++)
             {
                 teamList.Add(new Team_List(teams[i]));
             }
 
             int[] playoffIDList = myFile.GetArray<int>("Playoff ID List");
+            int[] playoffRankList = myFile.GetArray<int>("Playoff Rank List");
+
             playoffTeams = new Team[playoffIDList.Length];
 
             for (int i = 0; i < playoffIDList.Length; i++)
@@ -549,6 +512,7 @@ public class GameSettingsPersist : MonoBehaviour
                         if (playoffIDList[i] == teams[j].id)
                         {
                             playoffTeams[i] = teams[j];
+                            playoffTeams[i].rank = playoffRankList[i];
                         }
                     }
                 }
@@ -557,7 +521,7 @@ public class GameSettingsPersist : MonoBehaviour
             }
             Debug.Log("teamList Count is " + teamList.Count);
 
-            score = new Vector2Int[ends + 1];
+            //score = new Vector2Int[ends + 1];
 
             //int[] redScoreList = myFile.GetArray<int>("Red Score List");
             //int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
@@ -617,25 +581,6 @@ public class GameSettingsPersist : MonoBehaviour
 
             for (int i = 0; i < numberOfTeams; i++)
             {
-                //Debug.Log("Name List is " + nameList[i]);
-                //    for (int j = 0; j < tTeamList.teams.Length; j++)
-                //    {
-                //        if (idList[i] == tTeamList.teams[j].id)
-                //        {
-                //            teams[i] = tTeamList.teams[j];
-                //        }
-                //    }
-                //}
-                //for (int i = 0; i < teams.Length; i++)
-                //{
-                //    //teams[i].wins = winsList[i];
-                //    //Debug.Log("Wins List is " + winsList[i]);
-                //    //teams[i].loss = lossList[i];
-                //    //Debug.Log("Loss List is " + lossList[i]);
-                //    //teams[i].rank = rankList[i];
-                //    //teams[i].nextOpp = nextOppList[i];
-                //    //teams[i].strength = strengthList[i];
-
                 teams[i] = cm.currentTournyTeams[i];
 
                 if (teams[i].id == cm.playerTeamIndex)
@@ -651,7 +596,7 @@ public class GameSettingsPersist : MonoBehaviour
                 teamList.Add(new Team_List(teams[i]));
             }
 
-            score = new Vector2Int[ends + 1];
+            //score = new Vector2Int[ends + 1];
 
             //int[] gameListX = myFile.GetArray<int>("Tourny Game X List");
             //int[] gameListY = myFile.GetArray<int>("Tourny Game Y List");
@@ -693,15 +638,8 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void AutoSave()
     {
-        //GameData data = SaveSystem.LoadPlayer();
-        //ends = data.endTotal;
-        //endCurrent = data.endCurrent;
-        //rocks = data.rocks;
-        //rockCurrent = data.rockCurrent;
-        //redHammer = data.redHammer;
-        //aiYellow = data.aiYellow;
-        //yellowScore = data.yellowScore;
-        //redScore = data.redScore;
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        cm.SaveCareer();
     }
 
     private void Update()
@@ -712,7 +650,7 @@ public class GameSettingsPersist : MonoBehaviour
             rocks = gs.rocks;
             aiYellow = gs.aiYellow;
             aiRed = gs.aiRed;
-            loadGame = false;
+            //loadGame = false;
         }
 
     }

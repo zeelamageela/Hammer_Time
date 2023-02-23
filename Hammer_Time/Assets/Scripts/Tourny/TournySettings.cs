@@ -91,7 +91,7 @@ public class TournySettings : MonoBehaviour
 
         if (myFile.Load())
         {
-            if (gsp.inProgress)
+            if (gsp.tournyInProgress)
             {
                 prize = myFile.GetInt("Prize");
                 teams = myFile.GetInt("Number Of Teams");

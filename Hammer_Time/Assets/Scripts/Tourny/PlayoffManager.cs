@@ -36,33 +36,7 @@ public class PlayoffManager : MonoBehaviour
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
 
-		myFile = new EasyFileSave("my_player_data");
-
-		//StartCoroutine(LoadCareer());
-		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
-
 		playoffs.SetActive(true);
-		//if (gsp.careerLoad)
-		//{
-		//          gsp.LoadCareer();
-		//          careerEarnings = gsp.earnings;
-		//	careerRecord = gsp.record;
-		//}
-		//else if(gsp.inProgress)
-		//      {
-		//          gsp.LoadTourny();
-		//          gsp.inProgress = false;
-		//	gsp.careerLoad = false;
-		//	Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
-		//	//gsp.playoffRound--;
-		//	Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
-		//}
-		//else
-		//{
-		//	careerEarnings = tm.careerEarnings;
-		//	careerRecord = tm.careerRecord;
-
-		//}
 
 		careerEarnings = tm.careerEarnings;
 		careerRecord = tm.careerRecord;
@@ -72,9 +46,10 @@ public class PlayoffManager : MonoBehaviour
 		playoffTeams = new Team[9];
 
 		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
-
-		if (playoffRound > 0)
+		if (gsp.careerLoad)
 			LoadPlayoffs();
+		else if (playoffRound > 0)
+			LoadAndAdvancePlayoffs();
 		else
 			SetSeeding(tm.teams.Length);
 	}
@@ -123,9 +98,11 @@ public class PlayoffManager : MonoBehaviour
 		//}
 	}
 
-	void LoadPlayoffs()
+	void LoadAndAdvancePlayoffs()
 	{
+		//playoffRound--;
 		Debug.Log("Load Playoffs - Round " + playoffRound);
+		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
 		for (int i = 0; i < playoffTeams.Length; i++)
         {
 			playoffTeams[i] = gsp.playoffTeams[i];
@@ -136,10 +113,12 @@ public class PlayoffManager : MonoBehaviour
 		{
 			if (tm.teams[i].player)
 				playerTeam = i;
-			if (tm.teams[i].name == gsp.playerTeam.nextOpp)
+		}
+		for (int i = 0; i < tm.teams.Length; i++)
+		{
+			if (tm.teams[i].name == tm.teams[playerTeam].nextOpp)
 				oppTeam = i;
 		}
-
 		Debug.Log("OppTeam is " + oppTeam);
 		switch (playoffRound)
         {
@@ -280,6 +259,72 @@ public class PlayoffManager : MonoBehaviour
 		SetPlayoffs();
 	}
 
+	void LoadPlayoffs()
+	{
+		gsp.careerLoad = false;
+		//playoffRound--;
+		Debug.Log("Load Playoffs - Round " + playoffRound);
+		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
+		for (int i = 0; i < playoffTeams.Length; i++)
+		{
+			if (i < 4)
+			{
+				gsp.playoffTeams[i].rank = i + 1;
+			}
+			playoffTeams[i] = gsp.playoffTeams[i];
+			
+		}
+		//playoffTeams = gsp.playoffTeams;
+
+		for (int i = 0; i < gsp.teams.Length; i++)
+		{
+			if (gsp.teams[i].player)
+				playerTeam = i;
+		}
+		for (int i = 0; i < tm.teams.Length; i++)
+		{
+			if (gsp.teams[i].name == gsp.teams[playerTeam].nextOpp)
+				oppTeam = i;
+		}
+		Debug.Log("OppTeam is " + oppTeam);
+
+		for (int i = 0; i < playoffTeams.Length; i++)
+		{
+			if (playoffRound == 1 && i < 4)
+			{
+				brackDisplay[i].name.text = playoffTeams[i].name;
+				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				heading.text = "Loaded...Page Playoff";
+			}
+			else if (playoffRound == 2 && i < 7)
+			{
+				brackDisplay[i].name.text = playoffTeams[i].name;
+				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				heading.text = "Loaded...Semifinals";
+			}
+			else if (playoffRound == 3 && i < 8)
+			{
+				brackDisplay[i].name.text = playoffTeams[i].name;
+				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				heading.text = "Loaded...Finals";
+			}
+			else if (playoffRound == 4)
+			{
+				brackDisplay[i].name.text = playoffTeams[i].name;
+				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
+				heading.text = "Loaded...Tourny Over";
+			}
+			else
+			{
+				playoffTeams[i] = tm.tTeamList.nullTeam;
+			}
+		}
+		tm.playoffRound = playoffRound;
+
+
+		SetPlayoffs();
+	}
+
 	public void SetPlayoffs()
 	{
 		if (playoffRound < 1)
@@ -319,8 +364,7 @@ public class PlayoffManager : MonoBehaviour
 						tm.teams[tm.playerTeam].nextOpp = playoffTeams[2].name;
 						break;
 					default:
-                        playButton.gameObject.SetActive(false);
-                        tm.vs.SetActive(false);
+						tm.vsDisplay[1].name.text = "Knocked Out!";
                         playButton.gameObject.SetActive(false);
                         break;
                 }
@@ -739,7 +783,7 @@ public class PlayoffManager : MonoBehaviour
 
 		myFile = new EasyFileSave("my_player_data");
 
-		myFile.Add("Career Record", gsp.record);
+		//myFile.Add("Career Record", gsp.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 		myFile.Add("BG", gsp.bg);
 		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
@@ -756,10 +800,10 @@ public class PlayoffManager : MonoBehaviour
 
 		//      }
 		myFile.Add("Tourny In Progress", inProgress);
-		gsp.inProgress = inProgress;
-		myFile.Add("Draw", gsp.draw);
+		gsp.tournyInProgress = inProgress;
+		//myFile.Add("Draw", gsp.draw);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
-		myFile.Add("Player Team", playerTeam);
+		//myFile.Add("Player Team", gsp.playerTeamIndex);
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
 
@@ -794,15 +838,18 @@ public class PlayoffManager : MonoBehaviour
 		myFile.Add("Tourny Earnings List", earningsList);
 
 		int[] playoffIDList = new int[playoffTeams.Length];
+		int[] playoffRankList = new int[playoffTeams.Length];
 
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
 			//Debug.Log("playoffID i is " + i);
 			playoffIDList[i] = playoffTeams[i].id;
+			playoffRankList[i] = playoffTeams[i].rank;
 			//Debug.Log("Playoff ID List - " + playoffIDList[i]);
 		}
 
 		myFile.Add("Playoff ID List", playoffIDList);
+		myFile.Add("Playoff Rank List", playoffRankList);
 		//yield return myFile.TestDataSaveLoad();
 		yield return myFile.Append();
 	}

@@ -69,7 +69,7 @@ public class CashGames : MonoBehaviour
 
         Debug.Log("GSP teams " + gsp.teams.Length);
 
-        if (gsp.inProgress)
+        if (gsp.tournyInProgress)
         {
             budgetDisplay[1].name.text = gsp.teams[1].name;
             budgetDisplay[1].rank.text = gsp.teams[1].rank.ToString();

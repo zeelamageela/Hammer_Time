@@ -81,6 +81,7 @@ public class GameHUD : MonoBehaviour
 
 
         float waitTime = 2f;
+
         StartCoroutine(MainDisplayTimer(waitTime));
     }
     IEnumerator MainDisplayTimer(float waitTime)
