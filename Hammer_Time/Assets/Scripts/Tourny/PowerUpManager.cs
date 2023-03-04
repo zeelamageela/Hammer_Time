@@ -177,7 +177,6 @@ public class PowerUpManager : MonoBehaviour
         cardDisplays[card].name.color = textColors[textColor];
         cardDisplays[card].description.color = textColors[textColor];
         cardGOs[card].GetComponent<Image>().color = bgColors[bgColor];
-
     }
 
     public void SetUp()

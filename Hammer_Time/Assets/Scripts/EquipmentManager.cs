@@ -31,6 +31,8 @@ public class EquipmentManager : MonoBehaviour
     public EquipUI[] forSaleUIs;
     public EquipUI forSaleHeader;
 
+    public Text confirmText;
+
     Equipment origEquip;
     Equipment newEquip;
 
@@ -108,7 +110,6 @@ public class EquipmentManager : MonoBehaviour
         {
             forSaleUIs[i].name.text = tempEquip[i].name;
             forSaleUIs[i].cost.text = "$" + tempEquip[i].cost.ToString("n0");
-            forSaleUIs[i].text.text = tempEquip[i].text;
             forSaleUIs[i].image.sprite = tempEquip[i].img;
         }
     }
@@ -125,12 +126,93 @@ public class EquipmentManager : MonoBehaviour
         forSaleHeader.cost.text = "$" + newEquip.cost.ToString("n0");
         forSaleHeader.text.text = newEquip.text;
         forSaleHeader.image.sprite = newEquip.img;
+
+        confirmText.text = "Buy this card for $" + newEquip.cost.ToString("n0");
+    }
+
+    public void Confirm(bool buy)
+    {
+        confirmMenu.SetActive(false);
+
+        if (buy)
+        {
+            mainMenu.SetActive(true);
+            buyMenu.SetActive(false);
+
+            for (int i = 0; i < equipUIs.Length; i++)
+            {
+                if (activeEquip[i].name == origEquip.name)
+                {
+                    activeEquip[i] = newEquip;
+                }
+                equipUIs[i].name.text = activeEquip[i].name;
+                equipUIs[i].cost.text = "$" + activeEquip[i].cost.ToString("n0");
+                equipUIs[i].text.text = activeEquip[i].text;
+                equipUIs[i].image.sprite = activeEquip[i].img;
+            }
+        }
+        else
+        {
+            mainMenu.SetActive(false);
+            buyMenu.SetActive(true);
+
+            forSaleHeader.name.text = origEquip.name;
+            forSaleHeader.cost.text = "$" + origEquip.cost.ToString("n0");
+            forSaleHeader.text.text = origEquip.text;
+            forSaleHeader.image.sprite = origEquip.img;
+
+            for (int i = 0; i < equipUIs.Length; i++)
+            {
+                equipUIs[i].name.text = activeEquip[i].name;
+                equipUIs[i].cost.text = "$" + activeEquip[i].cost.ToString("n0");
+                equipUIs[i].text.text = activeEquip[i].text;
+                equipUIs[i].image.sprite = activeEquip[i].img;
+            }
+        }
     }
 
     public void GenerateItems(Equipment[]equipList)
     {
         Equipment[] temp = new Equipment[10 * equipList.Length];
 
+
+    }
+
+    public void SetPoints(int card)
+    {
+        CareerManager cm = FindObjectOfType<CareerManager>();
+
+        cm.modStats.drawAccuracy += activeEquip[card].draw;
+        cm.modStats.guardAccuracy += activeEquip[card].guard;
+        cm.modStats.takeOutAccuracy += activeEquip[card].takeOut;
+        cm.modStats.sweepEndurance += activeEquip[card].sweepEnduro;
+        cm.modStats.sweepStrength += activeEquip[card].sweepStrength;
+        cm.modStats.sweepCohesion += activeEquip[card].sweepCohesion;
+        cm.oppStats.drawAccuracy += activeEquip[card].oppDraw;
+        cm.oppStats.guardAccuracy += activeEquip[card].oppGuard;
+        cm.oppStats.takeOutAccuracy += activeEquip[card].oppTakeOut;
+        cm.oppStats.sweepEndurance += activeEquip[card].oppEnduro;
+        cm.oppStats.sweepStrength += activeEquip[card].oppStrength;
+        cm.oppStats.sweepCohesion += activeEquip[card].oppCohesion;
+
+    }
+
+    public void ResetPoints(int card)
+    {
+        CareerManager cm = FindObjectOfType<CareerManager>();
+
+        cm.modStats.drawAccuracy -= activeEquip[card].draw;
+        cm.modStats.guardAccuracy -= activeEquip[card].guard;
+        cm.modStats.takeOutAccuracy -= activeEquip[card].takeOut;
+        cm.modStats.sweepEndurance -= activeEquip[card].sweepEnduro;
+        cm.modStats.sweepStrength -= activeEquip[card].sweepStrength;
+        cm.modStats.sweepCohesion -= activeEquip[card].sweepCohesion;
+        cm.oppStats.drawAccuracy -= activeEquip[card].oppDraw;
+        cm.oppStats.guardAccuracy -= activeEquip[card].oppGuard;
+        cm.oppStats.takeOutAccuracy -= activeEquip[card].oppTakeOut;
+        cm.oppStats.sweepEndurance -= activeEquip[card].oppEnduro;
+        cm.oppStats.sweepStrength -= activeEquip[card].oppStrength;
+        cm.oppStats.sweepCohesion -= activeEquip[card].oppCohesion;
 
     }
 }
