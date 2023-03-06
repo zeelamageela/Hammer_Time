@@ -61,6 +61,11 @@ public class EquipmentManager : MonoBehaviour
             equipUIs[i].text.text = activeEquip[i].text;
             equipUIs[i].image.sprite = activeEquip[i].img;
         }
+
+        for (int i = 0; i < activeEquip.Length; i++)
+        {
+            SetPoints(i);
+        }
     }
 
     public void BuyMenu(int n)
@@ -101,6 +106,7 @@ public class EquipmentManager : MonoBehaviour
         }
 
         origEquip = activeEquip[n];
+
         forSaleHeader.name.text = activeEquip[n].name;
         forSaleHeader.cost.text = "$" + activeEquip[n].cost.ToString("n0");
         forSaleHeader.text.text = activeEquip[n].text;
@@ -127,7 +133,7 @@ public class EquipmentManager : MonoBehaviour
         forSaleHeader.text.text = newEquip.text;
         forSaleHeader.image.sprite = newEquip.img;
 
-        confirmText.text = "Buy this card for $" + newEquip.cost.ToString("n0");
+        confirmText.text = "Buy this card for $" + newEquip.cost.ToString("n0") + "?";
     }
 
     public void Confirm(bool buy)
