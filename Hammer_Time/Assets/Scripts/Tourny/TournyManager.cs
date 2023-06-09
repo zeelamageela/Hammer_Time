@@ -165,7 +165,7 @@ public class TournyManager : MonoBehaviour
 		cm = FindObjectOfType<CareerManager>();
 		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
-		Debug.Log("Setup Stand Team Length is " + teams.Length);
+		//Debug.Log("Setup Stand Team Length is " + teams.Length);
 		yield return new WaitUntil(() => teams.Length > 0);
 		dfList.DrawSelector(teams.Length, 1, gsp.games);
 
@@ -204,6 +204,7 @@ public class TournyManager : MonoBehaviour
 			else if (gsp.gameInProgress)
 			{
 				gsp.tournyInProgress = true;
+				Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 				gsp.gameInProgress = false;
 				draw--;
 				for (int i = 0; i < teams.Length; i++)
@@ -271,6 +272,7 @@ public class TournyManager : MonoBehaviour
 			else
 			{
 				gsp.tournyInProgress = true;
+				Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 				draw--;
 				for (int i = 0; i < teams.Length; i++)
 				{
@@ -667,7 +669,7 @@ public class TournyManager : MonoBehaviour
 	public void TournyComplete()
     {
 		CareerManager cm = FindObjectOfType<CareerManager>();
-
+		gsp = FindObjectOfType<GameSettingsPersist>();
 		gsp.teams = teams;
 		float winnings;
 		if (gsp.cashGame)
@@ -683,6 +685,7 @@ public class TournyManager : MonoBehaviour
         gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
+		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 		gsp.playoffTeams = null;
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
@@ -707,6 +710,7 @@ public class TournyManager : MonoBehaviour
 		gsp.loadGame = false;
 		myFile.Add("Career Record", gsp.record);
 		myFile.Add("Tourny In Progress", true);
+		gsp.tournyInProgress = true;
 		gsp.gameInProgress = false;
 		myFile.Add("Game Load", false);
 		myFile.Add("Game In Progress", false);

@@ -12,12 +12,14 @@ public class Equipment
     public bool head;
     public bool handle;
 
+    public int id;
+
     public Sprite img;
     public float cost;
     public string text;
 
     public bool active;
-    public bool played;
+    public bool owned;
 
     public int duration;
     public int draw;

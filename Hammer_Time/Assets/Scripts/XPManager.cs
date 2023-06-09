@@ -105,7 +105,7 @@ public class XPManager : MonoBehaviour
         float exponent = 1.2f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
         skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 47.59f);
-        Debug.Log("Skill Points Total is " + skillPointsTotal);
+        //Debug.Log("Skill Points Total is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy
                     - cStats.takeOutAccuracy
@@ -195,7 +195,7 @@ public class XPManager : MonoBehaviour
         cm.cStats.sweepEndurance = (int)endurSlider.value;
         cm.cStats.sweepCohesion = (int)healthSlider.value;
 
-        resetButton.interactable = false;
+        //resetButton.interactable = false;
         //this.gameObject.SetActive(false);
     }
 

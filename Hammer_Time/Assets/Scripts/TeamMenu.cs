@@ -145,7 +145,7 @@ public class TeamMenu : MonoBehaviour
         for (int i = 0; i < cm.strategyDialogue.Length; i++)
             cm.strategyDialogue[i] = false;
 
-        Debug.Log("TeamMenu Earnings are " + cm.earnings);
+        //Debug.Log("TeamMenu Earnings are " + cm.earnings);
         if (cm.week > 1)
         {
             //cm.LoadCareer();
@@ -155,7 +155,7 @@ public class TeamMenu : MonoBehaviour
 
                 for (int i = 0; i < activePlayers.Length; i++)
                 {
-                    Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
+                    //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
                     for (int j = 0; j < playerPool.Length; j++)
                     {
                         if (activePlayerIdList[i] == playerPool[j].id)

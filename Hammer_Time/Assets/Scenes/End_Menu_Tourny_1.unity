@@ -847,7 +847,7 @@ GameObject:
   - component: {fileID: 1008780141}
   - component: {fileID: 1008780140}
   m_Layer: 0
-  m_Name: GSP
+  m_Name: GameSettingsPersist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

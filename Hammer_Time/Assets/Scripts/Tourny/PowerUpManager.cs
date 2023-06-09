@@ -231,7 +231,7 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        Debug.Log("activeList Length is " + activeIdList.Length);
+        //Debug.Log("activeList Length is " + activeIdList.Length);
 
         if (cm.playedCardIDList.Length > 0)
         {
@@ -480,7 +480,7 @@ public class PowerUpManager : MonoBehaviour
             costPerWeek += activeCards[i].cost;
         }
 
-        Debug.Log("costPerWeek is " + costPerWeek);
+        //Debug.Log("costPerWeek is " + costPerWeek);
 
         for (int i = 0; i < activeCards.Length; i++)
         {

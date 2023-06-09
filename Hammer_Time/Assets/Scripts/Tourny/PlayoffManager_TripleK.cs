@@ -117,10 +117,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			{
 				gsp.LoadKOTourny();
 				gsp.tournyInProgress = false;
+				Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 				gsp.careerLoad = false;
-				Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
+				//Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
 				//gsp.playoffRound--;
-				Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
+				//Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
 				LoadPlayoffs();
 			}
 		}
@@ -5458,6 +5459,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
+		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
 		Debug.Log("CM earnings are " + cm.earnings);
 		cm.TournyResults();
@@ -5528,6 +5530,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		//myFile.Add("Career Earnings", gsp.earnings);
 		
 		myFile.Add("Tourny In Progress", inProgress);
+		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 		gsp.tournyInProgress = inProgress;
 		myFile.Add("Number Of Teams", 16);
 		myFile.Add("Player Team", playerTeam);

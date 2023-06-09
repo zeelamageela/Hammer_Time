@@ -123,7 +123,7 @@ public class CareerSettings : MonoBehaviour
             //Debug.Log("Earnings are " + earnings);
             record = myFile.GetUnityVector2("Career Record");
             gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
-            //Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
+            Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
             week = myFile.GetInt("Week");
             season = myFile.GetInt("Season");
             tourRecord = myFile.GetUnityVector2("Tour Record");
@@ -270,6 +270,9 @@ public class CareerSettings : MonoBehaviour
         gsp.playoffRound = 0;
         gsp.tournyInProgress = false;
         cm.inProgress = false;
+
+        cm.activeEquipID = null;
+        cm.inventoryID = null;
 
         load.SetActive(false);
         player.SetActive(true);

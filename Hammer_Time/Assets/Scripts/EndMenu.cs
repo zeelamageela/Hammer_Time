@@ -340,6 +340,7 @@ public class EndMenu : MonoBehaviour
             float winnings;
 
             gsp.tournyInProgress = false;
+            Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
             Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
             Debug.Log("CM earnings are " + cm.earnings);
 

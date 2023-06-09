@@ -116,7 +116,7 @@ public class TourStandings : MonoBehaviour
 				{
 					scrollbar.value = (i - tourRankList.Count) / (1f - tourRankList.Count);
 					standDisplay[i].panel.enabled = true;
-					Debug.Log("Scrollbar Value is " + scrollbar.value);
+					//Debug.Log("Scrollbar Value is " + scrollbar.value);
 				}
 				else
 					standDisplay[i].panel.enabled = false;

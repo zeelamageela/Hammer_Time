@@ -755,6 +755,7 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
 					row[i].SetActive(true);
 				}
+
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
 				simButton.gameObject.SetActive(false);
@@ -801,6 +802,7 @@ public class PlayoffManager : MonoBehaviour
 		//      }
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.tournyInProgress = inProgress;
+		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
 		//myFile.Add("Draw", gsp.draw);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
 		//myFile.Add("Player Team", gsp.playerTeamIndex);

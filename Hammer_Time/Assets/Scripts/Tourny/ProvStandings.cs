@@ -119,9 +119,9 @@ public class ProvStandings : MonoBehaviour
 			{
 				if (cm.playerTeamIndex == provRankList[i].team.id)
 				{
-					Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
+					//Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
 					scrollbar.value = (i - provRankList.Count) / (1f - provRankList.Count);
-					Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + i);
+					//Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + i);
 					standDisplay[i].panel.enabled = true;
 				}
 				else

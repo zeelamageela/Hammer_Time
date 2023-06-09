@@ -4,6 +4,8 @@ using UnityEngine;
 using MoreMountains.Feedbacks;
 using Lofelt.NiceVibrations;
 using Photon.Realtime;
+using System;
+using Random = UnityEngine.Random;
 
 public class RandomRockPlacerment : MonoBehaviour
 {
@@ -53,43 +55,6 @@ public class RandomRockPlacerment : MonoBehaviour
         //StartCoroutine(RandomRockPlace());
         
             StartCoroutine(StratSelect(redTeam, true));
-
-        #region Strategic Selection
-        //if (redTeam)
-        //{
-        //    if (gm.redHammer)
-        //    {
-        //        if (rockCurrent % 2 == 0)
-        //            StartCoroutine(StratSelect(redTeam, true));
-        //        else
-        //            StartCoroutine(StratSelect(redTeam, false));
-        //    }
-        //    else
-        //    {
-        //        if (rockCurrent % 2 == 0)
-        //            StartCoroutine(StratSelect(redTeam, false));
-        //        else
-        //            StartCoroutine(StratSelect(redTeam, true));
-        //    }
-        //}
-        //else
-        //{
-        //    if (gm.redHammer)
-        //    {
-        //        if (rockCurrent % 2 == 0)
-        //            StartCoroutine(StratSelect(redTeam, false));
-        //        else
-        //            StartCoroutine(StratSelect(redTeam, true));
-        //    }
-        //    else
-        //    {
-        //        if (rockCurrent % 2 == 0)
-        //            StartCoroutine(StratSelect(redTeam, true));
-        //        else
-        //            StartCoroutine(StratSelect(redTeam, false));
-        //    }
-        //}
-        #endregion
     }
 
     public void Help()
@@ -252,7 +217,8 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rockInfo.placed = true;
         }
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
+        yield return null;
 
         for (int i = 0; i < rockCurrent + 1; i++)
         {
@@ -262,7 +228,8 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             gm.rockList[i].rock.transform.parent = null;
             //rm.rb.DeadRock(i);
-            yield return new WaitForEndOfFrame();
+            //yield return new WaitForEndOfFrame();
+            yield return null;
             Debug.Log("Rock Position " + i + " " + rockPos[i].x + ", " + rockPos[i].y);
             gm.rockList[i].rock.GetComponent<Rigidbody2D>().position = rockPos[i];
 
@@ -270,7 +237,8 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
-            yield return new WaitForEndOfFrame();
+            //yield return new WaitForEndOfFrame();
+            yield return null;
             if (rockPos[i].y > 8f)
             {
                 gm.rockList[i].rockInfo.inPlay = false;
@@ -291,15 +259,18 @@ public class RandomRockPlacerment : MonoBehaviour
             Debug.Log("i is equal to " + i);
 
             //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
-            yield return new WaitForEndOfFrame();
+            //yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
+        yield return null;
 
         //rocksPlaced = true;
         gm.rockCurrent = rockCurrent - 1;
         gm.rockTotal = 16;
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
+        yield return null;
         //placed = true;
     }
 
@@ -313,7 +284,8 @@ public class RandomRockPlacerment : MonoBehaviour
 
         gm.rockBar.EndUpdate(gsp.yellowScore, gsp.redScore);
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
+        yield return null;
 
         if (aiTurn && redTeam)
         //tm.SetCharacter(rockCurrent, true);
@@ -329,7 +301,8 @@ public class RandomRockPlacerment : MonoBehaviour
         else
             playerStratGO.SetActive(false);
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
+        yield return null;
     }
 
     IEnumerator Placement(bool redTeam)
@@ -1827,8 +1800,8 @@ public class RandomRockPlacerment : MonoBehaviour
             //Debug.Log("i is equal to " + i);
             //Handheld.Vibrate();
             //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
-            yield return new WaitForEndOfFrame();
-
+            //yield return new WaitForEndOfFrame();
+            yield return null;
 
         }
 

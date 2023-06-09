@@ -239,7 +239,7 @@ public class GameManager : MonoBehaviour
 
                     yield return new WaitUntil(() => rm.rrp.placed1);
 
-                    yield return new WaitForSeconds(0.25f);
+                    //yield return new WaitForSeconds(0.25f);
 
                     gHUD.MainDisplayOff();
                     //yield return StartCoroutine(CheckScore());
@@ -249,12 +249,6 @@ public class GameManager : MonoBehaviour
                 rockCurrent--;
 
                 rockBar.EndUpdate(yellowScore, redScore);
-                //rockBar.ResetBar(redHammer);
-                //rockBar.EndUpdate(yellowScore, redScore);
-                //yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
-                //yield return new WaitUntil(() => rm.rrp.placed1);
-                //Debug.Log("Checking Score");
-                //StartCoroutine(CheckScore());
                 StartCoroutine(CheckScore());
             }
             else
@@ -327,7 +321,10 @@ public class GameManager : MonoBehaviour
                 yellowRock_go.GetComponent<Rock_Force>().enabled = false;
                 yellowRock_go.GetComponent<CircleCollider2D>().enabled = false;
                 rockList.Add(new Rock_List(yellowRock_go, yellowRock_info));
-                yield return new WaitForSeconds(0.025f);
+                if (gsp.debug)
+                    yield return new WaitForSeconds(0.025f);
+                else
+                    yield return null;
             }
             if (i % 2 == hammer)
             {
@@ -365,7 +362,10 @@ public class GameManager : MonoBehaviour
                 redRock_go.GetComponent<Rock_Release>().enabled = false;
                 redRock_go.GetComponent<Rock_Force>().enabled = false;
                 rockList.Add(new Rock_List(redRock_go, redRock_info));
-                yield return new WaitForSeconds(0.025f);
+                if (gsp.debug)
+                    yield return new WaitForSeconds(0.025f);
+                else
+                    yield return null;
             }
             //rockList.Sort();
         }

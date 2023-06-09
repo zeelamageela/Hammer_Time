@@ -323,6 +323,9 @@ public class GameSettingsPersist : MonoBehaviour
             redScore = 0;
             yellowScore = 0;
             tournyInProgress = true;
+
+            Debug.Log("gsp.inProgress is " + tournyInProgress);
+
             //playerGO = tm.playerGO;
             if (draw >= tm.drawFormat.Length)
             {

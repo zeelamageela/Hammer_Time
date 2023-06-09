@@ -66,7 +66,7 @@ public class AudioManager : MonoBehaviour
     {
         hm = GetComponent<HammerMixer>();
 
-        Debug.Log("BG Scenario is " + scenario);
+        //Debug.Log("BG Scenario is " + scenario);
         switch(scenario)
         {
             case 0:
