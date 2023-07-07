@@ -76,12 +76,12 @@ MonoBehaviour:
       sentences:
       - SWIPE left and right to view available tournaments...
       - ...CLICK on the tournament's name to play!
-    - name: XP Menu
+    - name: Player Menu
       sentences:
-      - Here you can upgrade your STATS
-      - STATS improve your team's accuracy and sweeping.
-      - Gain XP by playing games...
-      - ...and earn SKILL POINTS to spend here!
+      - Here you can upgrade your Gear!
+      - Gear improves your team's accuracy and sweeping.
+      - Hit the arrow to view your SKILL POINTS...
+      - ...and and assign earned SKILL POINTS to improve your sweeping and accuracy!
     - name: Team Menu
       sentences:
       - Click on any team member to see available replacements.
@@ -167,3 +167,4 @@ MonoBehaviour:
       sentences:
       - Well, that didn't go quite as planned.
   blockIndex: 0
+  skipTutorials: 0

@@ -56,7 +56,7 @@ public class ProvStandings : MonoBehaviour
 			for (int i = 0; i < provRankList.Count; i++)
 			{
 				//Debug.Log("Counting to provRankLimit - " + i);
-				standDisplay[i].name.text = provRankList[i].team.name;
+				standDisplay[i].name.text = (i + 1) + " - " + provRankList[i].team.name;
 				standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
 				standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
 				standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
@@ -108,7 +108,7 @@ public class ProvStandings : MonoBehaviour
 			for (int i = 0; i < provRankList.Count; i++)
 			{
 				//Debug.Log("Counting to provRankLimit - " + i);
-				standDisplay[i].name.text = provRankList[i].team.name;
+				standDisplay[i].name.text = (i + 1) + " - " + provRankList[i].team.name;
 				standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
 				standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
 				standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");

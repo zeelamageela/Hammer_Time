@@ -155,7 +155,7 @@ RectTransform:
   m_Children:
   - {fileID: 1936309875}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -848,7 +848,7 @@ GameObject:
   - component: {fileID: 87324900}
   - component: {fileID: 87324899}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: FestivalCup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 88c8027b28f46425db57c8c27fe85a09, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1581,7 +1581,7 @@ GameObject:
   - component: {fileID: 169925292}
   - component: {fileID: 169925291}
   m_Layer: 5
-  m_Name: Image (7)
+  m_Name: JurassicClassic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1626,7 +1626,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2e1d4969a9b9946c19b0d9c910b7a773, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1656,7 +1656,7 @@ GameObject:
   - component: {fileID: 187801490}
   - component: {fileID: 187801489}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: LAOpen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1701,7 +1701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4c09d9b15d3d34f998b847e7cf7e040e, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1806,7 +1806,7 @@ GameObject:
   - component: {fileID: 230567372}
   - component: {fileID: 230567371}
   m_Layer: 5
-  m_Name: Image
+  m_Name: RookieCup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1851,7 +1851,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 72b4b1869a73c4c308673e96736873af, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1917,7 +1917,7 @@ GameObject:
   - component: {fileID: 276949800}
   - component: {fileID: 276949799}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: Tour1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1962,7 +1962,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 09b0d24f22d8e444eba1c97fe80aeffb, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2366,7 +2366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce049ef1f65514869af722cb123ba768, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -2740,7 +2740,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d4a80d2e2f9a440ffbdd2ec569681d52, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3154,7 +3154,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11.975, y: -59}
+  m_AnchoredPosition: {x: 11.975, y: 36.249992}
   m_SizeDelta: {x: 1100, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &491061952
@@ -3195,7 +3195,7 @@ GameObject:
   - component: {fileID: 510963747}
   - component: {fileID: 510963746}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: JimJumbo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3240,7 +3240,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f54650d5d08e043fba8adab150ffd60e, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3289,13 +3289,14 @@ RectTransform:
   m_Children:
   - {fileID: 1229147820}
   - {fileID: 491061951}
+  - {fileID: 1696628672}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1124, y: 327}
+  m_SizeDelta: {x: 1124, y: 541}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &528929741
 MonoBehaviour:
@@ -3580,21 +3581,21 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 528929740}
   - {fileID: 1888311683}
   - {fileID: 1078135570}
   - {fileID: 1384168747}
   - {fileID: 2085348677}
   - {fileID: 11644339}
   - {fileID: 1287290535}
-  - {fileID: 528929740}
   - {fileID: 1557818475}
   m_Father: {fileID: 1204469915}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.011559, y: -152.7}
-  m_SizeDelta: {x: 1125, y: 1344.9}
+  m_AnchoredPosition: {x: -0.011559, y: -19.5}
+  m_SizeDelta: {x: 1125, y: 1611.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556640675
 MonoBehaviour:
@@ -3632,7 +3633,9 @@ MonoBehaviour:
   - {fileID: 1601101340}
   - {fileID: 1292832547}
   - {fileID: 2135156379}
-  trophyWon: 000100000000000000000000000100000000
+  - {fileID: 1458625453}
+  - {fileID: 1772260294}
+  trophyWon: 0001000000000000000000000001000000000000
 --- !u!114 &556640676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4864,7 +4867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 607156c430dbd4a758813693106e4c57, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -5425,7 +5428,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 32cf04c85935b466baa61d00e2d08554, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -5811,7 +5814,7 @@ GameObject:
   - component: {fileID: 1043657200}
   - component: {fileID: 1043657199}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: Tour2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5856,7 +5859,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 15e77c87378ad473db5afb025de146d9, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -6213,7 +6216,7 @@ RectTransform:
   m_Children:
   - {fileID: 127105059}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -6395,7 +6398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b27633245ad274ee4b3c8c4a6ad84e12, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -7029,7 +7032,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11.975, y: 76.749985}
+  m_AnchoredPosition: {x: 11.975, y: 172}
   m_SizeDelta: {x: 1100, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1229147821
@@ -7375,7 +7378,7 @@ RectTransform:
   m_Children:
   - {fileID: 2047432378}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7503,7 +7506,7 @@ GameObject:
   - component: {fileID: 1292832548}
   - component: {fileID: 1292832547}
   m_Layer: 5
-  m_Name: Image (7)
+  m_Name: Tour5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7548,7 +7551,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 15e1f242e99de4f23b724bd280852357, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -7915,7 +7918,7 @@ RectTransform:
   m_Children:
   - {fileID: 743446434}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8111,6 +8114,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1444171769}
+  m_CullTransparentMesh: 1
+--- !u!1 &1458625451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1458625452}
+  - component: {fileID: 1458625454}
+  - component: {fileID: 1458625453}
+  m_Layer: 5
+  m_Name: TourChampionship
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1458625452
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458625451}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1696628672}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 190.6, y: 190.6}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1458625453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458625451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 41015e0142a1b411fba68e02a0aad37f, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1458625454
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458625451}
   m_CullTransparentMesh: 1
 --- !u!1 &1461290686
 GameObject:
@@ -8451,7 +8529,7 @@ GameObject:
   - component: {fileID: 1518288223}
   - component: {fileID: 1518288222}
   m_Layer: 5
-  m_Name: Image (6)
+  m_Name: PizzaCup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8496,7 +8574,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7e6ce9392961d4cfdae852046741f05c, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -8808,7 +8886,7 @@ GameObject:
   - component: {fileID: 1575348070}
   - component: {fileID: 1575348069}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: BigCash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8853,7 +8931,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 83597c05776474aa498c7dcb31bfd182, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9274,7 +9352,7 @@ GameObject:
   - component: {fileID: 1601101341}
   - component: {fileID: 1601101340}
   m_Layer: 5
-  m_Name: Image (6)
+  m_Name: Tour4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9319,7 +9397,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f8db048751b754f4cb5ba6f317000690, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9548,7 +9626,7 @@ GameObject:
   - component: {fileID: 1686836429}
   - component: {fileID: 1686836428}
   m_Layer: 5
-  m_Name: Image (5)
+  m_Name: Tour3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9593,7 +9671,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d169872e45ba54ec7a4e6fea70c3eab7, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9690,6 +9768,70 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1689632424}
   m_CullTransparentMesh: 1
+--- !u!1 &1696628671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1696628672}
+  - component: {fileID: 1696628673}
+  m_Layer: 5
+  m_Name: Row3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1696628672
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696628671}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1458625452}
+  - {fileID: 1772260293}
+  m_Father: {fileID: 528929740}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 11.975, y: -124.7}
+  m_SizeDelta: {x: 1100, y: 248.9}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1696628673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696628671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &1712350039
 GameObject:
   m_ObjectHideFlags: 0
@@ -10042,6 +10184,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769172779}
   m_CullTransparentMesh: 1
+--- !u!1 &1772260292
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1772260293}
+  - component: {fileID: 1772260295}
+  - component: {fileID: 1772260294}
+  m_Layer: 5
+  m_Name: WorldChampionship
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1772260293
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772260292}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1696628672}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 190.6, y: 190.6}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1772260294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772260292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 68a8362e0b33044809af6b49f27c9747, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1772260295
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772260292}
+  m_CullTransparentMesh: 1
 --- !u!1 &1794381311
 GameObject:
   m_ObjectHideFlags: 0
@@ -10315,6 +10532,8 @@ MonoBehaviour:
   endCurrent: 0
   yellowScore: 0
   redScore: 0
+  rockPos: []
+  rockInPlay: 
   tourny: 0
   KO: 0
   cashGame: 0
@@ -10350,7 +10569,8 @@ MonoBehaviour:
   numberOfTeams: 0
   prize: 0
   careerLoad: 0
-  inProgress: 0
+  tournyInProgress: 0
+  gameInProgress: 0
   teams: []
   playoffTeams: []
   playerTeamIndex: 0
@@ -10604,7 +10824,7 @@ RectTransform:
   - {fileID: 168086850}
   - {fileID: 1931965914}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -11670,7 +11890,7 @@ RectTransform:
   m_Children:
   - {fileID: 1044034914}
   m_Father: {fileID: 556640674}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -12080,7 +12300,7 @@ GameObject:
   - component: {fileID: 2135156380}
   - component: {fileID: 2135156379}
   m_Layer: 5
-  m_Name: Image (8)
+  m_Name: Tour6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12125,7 +12345,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 54a10281cf4c04784ba91498918c2c5d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7970555c681a74e769c97ad31b7bd01b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class PowerUpList : MonoBehaviour
 {
-    public Card[] sponsors;
+    public Card[] internationalSponsors;
+    public Card[] nationalSponsors;
 
-    public Card[] powerUps;
-    public Card[] skillBoost;
-    public Card[] negative;
-
-    public Card[] defense;
+    public Card[] localSponsors;
 
     // Start is called before the first frame update
     void Start()

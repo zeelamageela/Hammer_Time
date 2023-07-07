@@ -120,7 +120,7 @@ public class CareerManager : MonoBehaviour
         TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
         StorylineManager slm = FindObjectOfType<StorylineManager>();
         TeamMenu teamSel = FindObjectOfType<TeamMenu>();
-        PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
+        SponsorManager pUpM = FindObjectOfType<SponsorManager>();
         GameManager gm = FindObjectOfType<GameManager>();
         EquipmentManager em = FindObjectOfType<EquipmentManager>();
 
@@ -163,7 +163,7 @@ public class CareerManager : MonoBehaviour
         TournyTeamList tTeamList = null,
         StorylineManager slm = null,
         TeamMenu teamSel = null,
-        PowerUpManager pUpM = null,
+        SponsorManager pUpM = null,
         GameManager gm = null,
         EquipmentManager em = null)
     {
@@ -358,11 +358,128 @@ public class CareerManager : MonoBehaviour
             }
 
             inventoryID = myFile.GetArray<int>("Inventory ID List");
+
             activeEquipID = myFile.GetArray<int>("Active Equip ID List");
 
 
             if (em != null)
             {
+                int[] tempID = myFile.GetArray<int>("Total Item ID List");
+                float[] tempCost = myFile.GetArray<float>("Total Item Cost List");
+                float[] tempColorX = myFile.GetArray<float>("Total Item Color X List");
+                float[] tempColorY = myFile.GetArray<float>("Total Item Color Y List");
+                float[] tempColorZ = myFile.GetArray<float>("Total Item Color Z List");
+                float[] tempColorA = myFile.GetArray<float>("Total Item Color A List");
+                Vector4[] tempColor = new Vector4[tempColorX.Length];
+                for (int i = 0; i < tempColor.Length; i++)
+                    tempColor[i] = new Vector4(tempColorX[i], tempColorY[i], tempColorZ[i], tempColorA[i]);
+
+                int[] tempDuration = myFile.GetArray<int>("Total Item Duration List");
+                int[] tempStats0 = myFile.GetArray<int>("Total Item Draw List");
+                int[] tempStats1 = myFile.GetArray<int>("Total Item Guard List");
+                int[] tempStats2 = myFile.GetArray<int>("Total Item Takeout List");
+                int[] tempStats3 = myFile.GetArray<int>("Total Item Strength List");
+                int[] tempStats4 = myFile.GetArray<int>("Total Item Endurance List");
+                int[] tempStats5 = myFile.GetArray<int>("Total Item Cohesion List");
+
+                int[] tempOppStats0 = myFile.GetArray<int>("Total Item Opp Draw List");
+                int[] tempOppStats1 = myFile.GetArray<int>("Total Item Opp Guard List");
+                int[] tempOppStats2 = myFile.GetArray<int>("Total Item Opp Takeout List");
+                int[] tempOppStats3 = myFile.GetArray<int>("Total Item Opp Strength List");
+                int[] tempOppStats4 = myFile.GetArray<int>("Total Item Opp Endurance List");
+                int[] tempOppStats5 = myFile.GetArray<int>("Total Item Opp Cohesion List");
+
+                em.handles = new Equipment[30];
+                em.heads = new Equipment[30];
+                em.footwear = new Equipment[20];
+                em.apparel = new Equipment[20];
+                for (int i = 0; i < tempID.Length; i++)
+                {
+                    if (tempID[i] < 30)
+                    {
+                        em.handles[i] = new Equipment();
+                        em.handles[i].id = tempID[i];
+                        em.handles[i].cost = tempCost[i];
+                        em.handles[i].color = new Color(tempColorX[i], tempColorY[i], tempColorZ[i], tempColorA[i]);
+                        em.handles[i].duration = tempDuration[i];
+                        em.handles[i].stats[0] = tempStats0[i];
+                        em.handles[i].stats[1] = tempStats1[i];
+                        em.handles[i].stats[2] = tempStats2[i];
+                        em.handles[i].stats[3] = tempStats3[i];
+                        em.handles[i].stats[4] = tempStats4[i];
+                        em.handles[i].stats[5] = tempStats5[i];
+                        em.handles[i].oppStats[0] = tempOppStats0[i];
+                        em.handles[i].oppStats[1] = tempOppStats1[i];
+                        em.handles[i].oppStats[2] = tempOppStats2[i];
+                        em.handles[i].oppStats[3] = tempOppStats3[i];
+                        em.handles[i].oppStats[4] = tempOppStats4[i];
+                        em.handles[i].oppStats[5] = tempOppStats5[i];
+                    }
+                    else if (tempID[i] < 60)
+                    {
+                        int j = i - 30;
+                        Debug.Log("j is " + j);
+                        em.heads[j] = new Equipment();
+                        em.heads[j].id = tempID[i];
+                        em.heads[j].cost = tempCost[i];
+                        em.heads[j].color = new Color(tempColorX[i], tempColorY[i], tempColorZ[i], tempColorA[i]);
+                        em.heads[j].duration = tempDuration[i];
+                        em.heads[j].stats[0] = tempStats0[i];
+                        em.heads[j].stats[1] = tempStats1[i];
+                        em.heads[j].stats[2] = tempStats2[i];
+                        em.heads[j].stats[3] = tempStats3[i];
+                        em.heads[j].stats[4] = tempStats4[i];
+                        em.heads[j].stats[5] = tempStats5[i];
+                        em.heads[j].oppStats[0] = tempOppStats0[i];
+                        em.heads[j].oppStats[1] = tempOppStats1[i];
+                        em.heads[j].oppStats[2] = tempOppStats2[i];
+                        em.heads[j].oppStats[3] = tempOppStats3[i];
+                        em.heads[j].oppStats[4] = tempOppStats4[i];
+                        em.heads[j].oppStats[5] = tempOppStats5[i];
+                    }
+                    else if (tempID[i] < 80)
+                    {
+                        int j = i - 60;
+                        em.footwear[j] = new Equipment();
+                        em.footwear[j].id = tempID[i];
+                        em.footwear[j].cost = tempCost[i];
+                        em.footwear[j].color = new Color(tempColorX[i], tempColorY[i], tempColorZ[i], tempColorA[i]);
+                        em.footwear[j].duration = tempDuration[i];
+                        em.footwear[j].stats[0] = tempStats0[i];
+                        em.footwear[j].stats[1] = tempStats1[i];
+                        em.footwear[j].stats[2] = tempStats2[i];
+                        em.footwear[j].stats[3] = tempStats3[i];
+                        em.footwear[j].stats[4] = tempStats4[i];
+                        em.footwear[j].stats[5] = tempStats5[i];
+                        em.footwear[j].oppStats[0] = tempOppStats0[i];
+                        em.footwear[j].oppStats[1] = tempOppStats1[i];
+                        em.footwear[j].oppStats[2] = tempOppStats2[i];
+                        em.footwear[j].oppStats[3] = tempOppStats3[i];
+                        em.footwear[j].oppStats[4] = tempOppStats4[i];
+                        em.footwear[j].oppStats[5] = tempOppStats5[i];
+                    }
+                    else
+                    {
+                        int j = i - 80;
+                        em.apparel[j] = new Equipment();
+                        em.apparel[j].id = tempID[i];
+                        em.apparel[j].cost = tempCost[i];
+                        em.apparel[j].color = new Color(tempColorX[i], tempColorY[i], tempColorZ[i], tempColorA[i]);
+                        em.apparel[j].duration = tempDuration[i];
+                        em.apparel[j].stats[0] = tempStats0[i];
+                        em.apparel[j].stats[1] = tempStats1[i];
+                        em.apparel[j].stats[2] = tempStats2[i];
+                        em.apparel[j].stats[3] = tempStats3[i];
+                        em.apparel[j].stats[4] = tempStats4[i];
+                        em.apparel[j].stats[5] = tempStats5[i];
+                        em.apparel[j].oppStats[0] = tempOppStats0[i];
+                        em.apparel[j].oppStats[1] = tempOppStats1[i];
+                        em.apparel[j].oppStats[2] = tempOppStats2[i];
+                        em.apparel[j].oppStats[3] = tempOppStats3[i];
+                        em.apparel[j].oppStats[4] = tempOppStats4[i];
+                        em.apparel[j].oppStats[5] = tempOppStats5[i];
+                    }
+                }
             }
 
             int[] tourTeamsIDList = myFile.GetArray<int>("Tour Team ID List");
@@ -631,9 +748,10 @@ public class CareerManager : MonoBehaviour
         TournySelector tSel = FindObjectOfType<TournySelector>();
         TournyManager tm = FindObjectOfType<TournyManager>();
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        PowerUpManager pUpM = FindObjectOfType<PowerUpManager>();
+        SponsorManager pUpM = FindObjectOfType<SponsorManager>();
         TeamMenu teamSel = FindObjectOfType<TeamMenu>();
         GameManager gm = FindObjectOfType<GameManager>();
+        EquipmentManager em = FindObjectOfType<EquipmentManager>();
 
         Debug.Log("Saving Career - " + gsp.tournyInProgress);
         myFile = new EasyFileSave("my_player_data");
@@ -799,7 +917,150 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Prize Money", currentTourny.prizeMoney);
         myFile.Add("Current Tourny BG", currentTourny.BG);
         myFile.Add("Current Tourny Crowd Density", currentTourny.crowdDensity);
-        
+
+        if (em != null)
+        {
+            int[] tempID = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            float[] tempCost = new float[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            float[] tempColorX = new float[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            float[] tempColorY = new float[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            float[] tempColorZ = new float[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            float[] tempColorA = new float[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempDuration = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats0 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats1 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats2 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats3 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats4 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempStats5 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+
+            int[] tempOppStats0 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempOppStats1 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempOppStats2 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempOppStats3 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempOppStats4 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+            int[] tempOppStats5 = new int[em.handles.Length + em.heads.Length + em.footwear.Length + em.apparel.Length];
+
+            for (int i = 0; i < em.handles.Length; i++)
+            {
+                tempID[i] = em.handles[i].id;
+                tempCost[i] = em.handles[i].cost;
+                tempColorX[i] = em.handles[i].color.r;
+                tempColorY[i] = em.handles[i].color.g;
+                tempColorZ[i] = em.handles[i].color.b;
+                tempColorA[i] = em.handles[i].color.a;
+                tempDuration[i] = em.handles[i].duration;
+                tempStats0[i] = em.handles[i].stats[0];
+                tempStats1[i] = em.handles[i].stats[1];
+                tempStats2[i] = em.handles[i].stats[2];
+                tempStats3[i] = em.handles[i].stats[3];
+                tempStats4[i] = em.handles[i].stats[4];
+                tempStats5[i] = em.handles[i].stats[5];
+                tempOppStats0[i] = em.handles[i].oppStats[0];
+                tempOppStats1[i] = em.handles[i].oppStats[1];
+                tempOppStats2[i] = em.handles[i].oppStats[2];
+                tempOppStats3[i] = em.handles[i].oppStats[3];
+                tempOppStats4[i] = em.handles[i].oppStats[4];
+                tempOppStats5[i] = em.handles[i].oppStats[5];
+            }
+
+            int j = em.heads[0].id;
+            for (int i = 0; i < em.heads.Length; i++)
+            {
+                tempID[j] = em.heads[i].id;
+                tempCost[j] = em.heads[i].cost;
+                tempColorX[j] = em.heads[i].color.r;
+                tempColorY[j] = em.heads[i].color.g;
+                tempColorZ[j] = em.heads[i].color.b;
+                tempColorA[j] = em.heads[i].color.a;
+                tempDuration[j] = em.heads[i].duration;
+                tempStats0[j] = em.heads[i].stats[0];
+                tempStats1[j] = em.heads[i].stats[1];
+                tempStats2[j] = em.heads[i].stats[2];
+                tempStats3[j] = em.heads[i].stats[3];
+                tempStats4[j] = em.heads[i].stats[4];
+                tempStats5[j] = em.heads[i].stats[5];
+                tempOppStats0[j] = em.heads[i].oppStats[0];
+                tempOppStats1[j] = em.heads[i].oppStats[1];
+                tempOppStats2[j] = em.heads[i].oppStats[2];
+                tempOppStats3[j] = em.heads[i].oppStats[3];
+                tempOppStats4[j] = em.heads[i].oppStats[4];
+                tempOppStats5[j] = em.heads[i].oppStats[5];
+                j++;
+            }
+            j = em.footwear[0].id;
+            for (int i = 0; i < em.footwear.Length; i++)
+            {
+                tempID[j] = em.footwear[i].id;
+                tempCost[j] = em.footwear[i].cost;
+                tempColorX[j] = em.footwear[i].color.r;
+                tempColorY[j] = em.footwear[i].color.g;
+                tempColorZ[j] = em.footwear[i].color.b;
+                tempColorA[j] = em.footwear[i].color.a;
+                tempDuration[j] = em.footwear[i].duration;
+                tempStats0[j] = em.footwear[i].stats[0];
+                tempStats1[j] = em.footwear[i].stats[1];
+                tempStats2[j] = em.footwear[i].stats[2];
+                tempStats3[j] = em.footwear[i].stats[3];
+                tempStats4[j] = em.footwear[i].stats[4];
+                tempStats5[j] = em.footwear[i].stats[5];
+                tempOppStats0[j] = em.footwear[i].oppStats[0];
+                tempOppStats1[j] = em.footwear[i].oppStats[1];
+                tempOppStats2[j] = em.footwear[i].oppStats[2];
+                tempOppStats3[j] = em.footwear[i].oppStats[3];
+                tempOppStats4[j] = em.footwear[i].oppStats[4];
+                tempOppStats5[j] = em.footwear[i].oppStats[5];
+                j++;
+            }
+            j = em.apparel[0].id;
+            for (int i = 0; i < em.apparel.Length; i++)
+            {
+                tempID[j] = em.apparel[i].id;
+                tempCost[j] = em.apparel[i].cost;
+                tempColorX[j] = em.apparel[i].color.r;
+                tempColorY[j] = em.apparel[i].color.g;
+                tempColorZ[j] = em.apparel[i].color.b;
+                tempColorA[j] = em.apparel[i].color.a;
+                tempDuration[j] = em.apparel[i].duration;
+                tempStats0[j] = em.apparel[i].stats[0];
+                tempStats1[j] = em.apparel[i].stats[1];
+                tempStats2[j] = em.apparel[i].stats[2];
+                tempStats3[j] = em.apparel[i].stats[3];
+                tempStats4[j] = em.apparel[i].stats[4];
+                tempStats5[j] = em.apparel[i].stats[5];
+                tempOppStats0[j] = em.apparel[i].oppStats[0];
+                tempOppStats1[j] = em.apparel[i].oppStats[1];
+                tempOppStats2[j] = em.apparel[i].oppStats[2];
+                tempOppStats3[j] = em.apparel[i].oppStats[3];
+                tempOppStats4[j] = em.apparel[i].oppStats[4];
+                tempOppStats5[j] = em.apparel[i].oppStats[5];
+                j++;
+            }
+
+            myFile.Add("Total Item ID List", tempID);
+            myFile.Add("Total Item Cost List", tempCost);
+            myFile.Add("Total Item Color X List", tempColorX);
+            myFile.Add("Total Item Color Y List", tempColorY);
+            myFile.Add("Total Item Color Z List", tempColorZ);
+            myFile.Add("Total Item Color A List", tempColorA);
+
+            myFile.Add("Total Item Duration List", tempDuration);
+            myFile.Add("Total Item Draw List", tempStats0);
+            myFile.Add("Total Item Guard List", tempStats1);
+            myFile.Add("Total Item Takeout List", tempStats2);
+            myFile.Add("Total Item Strength List", tempStats3);
+            myFile.Add("Total Item Endurance List", tempStats4);
+            myFile.Add("Total Item Cohesion List", tempStats5);
+
+            myFile.Add("Total Item Opp Draw List", tempOppStats0);
+            myFile.Add("Total Item Opp Guard List", tempOppStats1);
+            myFile.Add("Total Item Opp Takeout List", tempOppStats2);
+            myFile.Add("Total Item Opp Strength List", tempOppStats3);
+            myFile.Add("Total Item Opp Endurance List", tempOppStats4);
+            myFile.Add("Total Item Opp Cohesion List", tempOppStats5);
+
+        }
+
         if (tSel)
         {
             Debug.Log("pUpM idList is " + pUpM.idPUList.Length + " long");
@@ -1100,7 +1361,7 @@ public class CareerManager : MonoBehaviour
                             {
                                 if (currentTourny.id == champ[j].id)
                                 {
-                                    tournies[j].trophyWon = true;
+                                    champ[j].trophyWon = true;
                                 }
                             }
                         }

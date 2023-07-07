@@ -105,7 +105,7 @@ public class TournySelector : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        PowerUpManager pm = FindObjectOfType<PowerUpManager>();
+        SponsorManager pm = FindObjectOfType<SponsorManager>();
         xpm.SetSkillPoints();
 
         Debug.Log("TSel cm.week is " + cm.week);
@@ -122,11 +122,11 @@ public class TournySelector : MonoBehaviour
         teamMenu.TeamMenuOpen();
         pm.SetUp();
 
-        em.SetInventory();
         provStandings.PrintRows();
         tourStandings.PrintRows();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
+        em.SetInventory();
     }
 
     IEnumerator WaitForDialogue()
@@ -832,7 +832,7 @@ public class TournySelector : MonoBehaviour
 
     public void Sponsors(bool on)
     {
-        teamNameText.text = "Team " + cm.teamName + "Sponsors";
+        teamNameText.text = "Sponsors";
         if (on)
         {
             mainMenuGO.SetActive(false);
@@ -868,7 +868,7 @@ public class TournySelector : MonoBehaviour
 
     public void PlayerEquip(bool on)
     {
-        teamNameText.text = "Team " + cm.teamName + " Equipment";
+        teamNameText.text = "Gear";
         if (on)
         {
             mainMenuGO.SetActive(false);
@@ -905,7 +905,7 @@ public class TournySelector : MonoBehaviour
 
     public void TeamWindow(bool on)
     {
-        teamNameText.text = "Team " + cm.teamName + " Members";
+        teamNameText.text = "Team " + cm.teamName;
         if (on)
         {
             mainMenuGO.SetActive(false);

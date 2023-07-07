@@ -7,7 +7,7 @@ using TigerForge;
 public class TeamMenu : MonoBehaviour
 {
     CareerManager cm;
-    public PowerUpManager pm;
+    public SponsorManager pm;
     public TournySelector tSel;
 
     public GameObject teamMenu;
@@ -62,7 +62,7 @@ public class TeamMenu : MonoBehaviour
     void Start()
     {
         cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<PowerUpManager>();
+        pm = FindObjectOfType<SponsorManager>();
         //Shuffle(playerPool);
         callCount = false;
     }
@@ -414,7 +414,7 @@ public class TeamMenu : MonoBehaviour
     public void PreviewPoints()
     {
         cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<PowerUpManager>();
+        pm = FindObjectOfType<SponsorManager>();
 
         cm.modStats.drawAccuracy = activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
         cm.modStats.guardAccuracy = activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
@@ -449,7 +449,7 @@ public class TeamMenu : MonoBehaviour
     public void UnPreviewPoints()
     {
         cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<PowerUpManager>();
+        pm = FindObjectOfType<SponsorManager>();
 
         for (int i = 0; i < pm.activeCards.Length; i++)
         {

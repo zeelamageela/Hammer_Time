@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Card_Select : MonoBehaviour
 {
-    public PowerUpManager pm;
+    public SponsorManager pm;
     public RectTransform cardSize;
     public Image image;
     public HorizontalLayoutGroup hlg;
@@ -28,7 +28,7 @@ public class Card_Select : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pm = FindObjectOfType<PowerUpManager>();
+        pm = FindObjectOfType<SponsorManager>();
         initialScale = cardSize.localScale;
         maxScale = cardSize.localScale * 2f;
     }

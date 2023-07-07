@@ -10,7 +10,7 @@ public class StorylineManager: MonoBehaviour
     CareerManager cm;
     TournySelector tSel;
     TeamMenu tMenu;
-    PowerUpManager pm;
+    SponsorManager pm;
     TournySettings ts;
     GameManager gm;
 
