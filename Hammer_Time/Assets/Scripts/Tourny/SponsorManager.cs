@@ -375,7 +375,20 @@ public class SponsorManager : MonoBehaviour
                 cardDisplays[i].name.text = "[" + activeCards[i].name + "]";
 
             if (activeCards[i].cost > 0)
-                cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+            {
+                if (activeCards[i].duration == 1)
+                    cardDisplays[i].description.text = "$"
+                        + activeCards[i].cost.ToString("n0") + " - "
+                        + activeCards[i].description + " - "
+                        + activeCards[i].duration.ToString()
+                        + " week remaining";
+                else if (activeCards[i].duration > 0)
+                    cardDisplays[i].description.text = "$"
+                        + activeCards[i].cost.ToString("n0") + " - "
+                        + activeCards[i].description + " - "
+                        + activeCards[i].duration.ToString()
+                        + " weeks remaining";
+            }
             else
                 cardDisplays[i].description.text = " ";
 
@@ -663,7 +676,19 @@ public class SponsorManager : MonoBehaviour
                 else
                     cardDisplays[i].name.text = activeCards[i].name;
 
-                cardDisplays[i].description.text = "$" + activeCards[i].cost.ToString("n0") + " - " + activeCards[i].description;
+
+                if (activeCards[i].duration == 1)
+                    cardDisplays[i].description.text = "$"
+                        + activeCards[i].cost.ToString("n0") + " - "
+                        + activeCards[i].description + " - "
+                        + activeCards[i].duration.ToString()
+                        + " week remaining";
+                else if (activeCards[i].duration > 0)
+                    cardDisplays[i].description.text = "$"
+                        + activeCards[i].cost.ToString("n0") + " - "
+                        + activeCards[i].description + " - "
+                        + activeCards[i].duration.ToString()
+                        + " weeks remaining";
 
                 cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
                 cardDisplays[i].image.sprite = activeCards[i].image;

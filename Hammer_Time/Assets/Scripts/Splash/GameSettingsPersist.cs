@@ -69,6 +69,7 @@ public class GameSettingsPersist : MonoBehaviour
     public List<Team_List> teamList;
     public Team[] teams;
     public Team[] playoffTeams;
+    public CashGamePlayers[] cgp;
     public int playerTeamIndex;
     public Vector2Int[] score;
 

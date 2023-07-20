@@ -61,7 +61,9 @@ public class CareerManager : MonoBehaviour
     public Team[] tourTeams;
     public Team[] currentTournyTeams;
     public Tourny currentTourny;
-    
+
+    public CashGamePlayers[] cgp;
+
     public List<Standings_List> provRankList;
     public List<TourStandings_List> tourRankList;
 
