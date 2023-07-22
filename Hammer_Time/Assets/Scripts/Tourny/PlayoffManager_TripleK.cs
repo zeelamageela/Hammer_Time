@@ -5455,7 +5455,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		float winnings = gsp.earnings;
 		cm.earnings += gsp.earnings;
 		cm.cash += gsp.cash;
-		cm.record = gsp.record;
+		cm.record += gsp.record;
 		gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
@@ -5523,7 +5523,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		myFile.Add("Knockout Tourny", gsp.KO);
-		//myFile.Add("Career Record", gsp.record);
+		myFile.Add("Career Record", cm.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 
 		myFile.Add("BG", gsp.bg);

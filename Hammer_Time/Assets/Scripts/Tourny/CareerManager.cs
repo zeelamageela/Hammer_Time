@@ -185,7 +185,6 @@ public class CareerManager : MonoBehaviour
 
         myFile = new EasyFileSave("my_player_data");
 
-        tourTeams = new Team[totalTourTeams];
 
         if (myFile.Load())
         {

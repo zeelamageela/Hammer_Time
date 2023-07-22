@@ -681,7 +681,7 @@ public class TournyManager : MonoBehaviour
 
 		cm.earnings = gsp.earnings;
 		cm.cash += winnings;
-        cm.record = gsp.record;
+        cm.record += gsp.record;
         gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
@@ -708,7 +708,8 @@ public class TournyManager : MonoBehaviour
 		//myFile.Add("Career Earnings", gsp.earnings);
 		//Debug.Log("TM Career Earnings - " + gsp.earnings);
 		gsp.loadGame = false;
-		myFile.Add("Career Record", gsp.record);
+		myFile.Add("Tourny Record", gsp.record);
+		myFile.Add("Career Record", cm.record);
 		myFile.Add("Tourny In Progress", true);
 		gsp.tournyInProgress = true;
 		gsp.gameInProgress = false;

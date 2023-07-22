@@ -10,7 +10,9 @@ public class CameraManager : MonoBehaviour
     public Camera ui;
     public Camera top;
     public Camera persp;
+    public Camera aim;
 
+    public Transform aimMover;
     public Transform trajTarget;
     public Transform launcher;
     public GameManager gm;
@@ -52,7 +54,9 @@ public class CameraManager : MonoBehaviour
         house.depth = -1;
         ui.depth = 3;
         top.depth = 2;
+        aim.depth = -1;
 
+        main.rect = new Rect(new Vector2(0f, 0f), new Vector2(1f, 1f));
         vcam_ft.m_SoftZoneWidth = 0f;
         vcam.LookAt = launcher;
         vcam.Follow = launcher;
@@ -61,14 +65,38 @@ public class CameraManager : MonoBehaviour
 
     public void Trajectory()
     {
-        Debug.Log("Trajectory");
+        //Debug.Log("Trajectory");
         main.depth = 1;
         house.depth = -1;
         ui.depth = 3;
 
-        vcam.LookAt = trajTarget;
-        vcam.Follow = trajTarget;
-        vcam.enabled = true;
+        if (trajTarget.position.y > 4.5f)
+        {
+            aim.orthographicSize = 3.5f;
+            aim.depth = 3;
+            aimMover.position = new Vector3(0f, 4.5f, 0f);
+        }
+        else if (trajTarget.position.y > 3.5f)
+        {
+            aim.orthographicSize = 3.5f;
+            aim.depth = 3;
+            aimMover.position = new Vector3(0f, trajTarget.position.y, 0f);
+        }
+        else if (trajTarget.position.y > 0f)
+        {
+            aim.orthographicSize = 3.5f;
+            aim.depth = 3;
+            aimMover.position = new Vector3(0f, 3.5f, 0f);
+        }
+        else
+        {
+            aim.orthographicSize = 3.5f;
+            aim.depth = -1;
+            aimMover.position = new Vector3(0f, 3.5f, 0f);
+        }
+        //vcam.LookAt = trajTarget;
+        //vcam.Follow = trajTarget;
+        //vcam.enabled = true;
     }
 
     public void Perspective()
@@ -87,7 +115,7 @@ public class CameraManager : MonoBehaviour
     {
         Debug.Log("Rock Follow");
         vcam_ft.m_SoftZoneWidth = 2f;
-
+        aim.depth = -1;
         main.depth = 1;
         house.depth = -1;
         top.depth = -1;

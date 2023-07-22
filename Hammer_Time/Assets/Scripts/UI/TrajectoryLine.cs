@@ -254,7 +254,8 @@ public class TrajectoryLine : MonoBehaviour
 
         int counter = lr.positionCount / dotCount;
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        float dotStat = (gsp.cStats.drawAccuracy + gsp.cStats.takeOutAccuracy + gsp.cStats.guardAccuracy) / 6.5f;
+        //float dotStat = (gsp.cStats.drawAccuracy + gsp.cStats.takeOutAccuracy + gsp.cStats.guardAccuracy) / 6.5f;
+        float dotStat = 8f;
 
         //Debug.Log("Dotstat is " + dotStat);
 
@@ -292,6 +293,8 @@ public class TrajectoryLine : MonoBehaviour
         aimCircle.transform.position = lr.GetPosition(lr.positionCount - 1);
         aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
+        CameraManager camManager = FindObjectOfType<CameraManager>();
+        camManager.Trajectory();
         //lr.SetPositions(lr.GetPositions());
         //DrawQuadraticBezierCurve(hogLinePoint, curlPoint, targetPoint);
         //edgeCol.SetPoints(pos2D);

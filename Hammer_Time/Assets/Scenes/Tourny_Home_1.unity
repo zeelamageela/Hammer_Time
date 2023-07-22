@@ -2410,6 +2410,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 0}
   colour3: {r: 0.35686275, g: 0.4039216, b: 0.8078432, a: 0}
   main: {fileID: 1647858099}
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &529946902 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7314925629284362212, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
@@ -2828,6 +2830,8 @@ MonoBehaviour:
   colour2: {r: 0.35686275, g: 0.4039216, b: 0.8078432, a: 1}
   colour3: {r: 0.8470589, g: 0.81568635, b: 0.77647066, a: 1}
   main: {fileID: 865813232}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &629813630
 GameObject:
   m_ObjectHideFlags: 0
@@ -5310,6 +5314,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8470589, g: 0.81568635, b: 0.77647066, a: 1}
   main: {fileID: 2039145549}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1069689489
 GameObject:
   m_ObjectHideFlags: 0
@@ -6282,6 +6288,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1440258398}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1440258399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6337,6 +6355,8 @@ MonoBehaviour:
   colour2: {r: 0.965, g: 0.832267, b: 0.027020054, a: 1}
   colour3: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
   main: {fileID: 355926021}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1470254294
 GameObject:
   m_ObjectHideFlags: 0
@@ -8099,6 +8119,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1932200739}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1932200740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8154,6 +8186,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8470589, g: 0.81568635, b: 0.77647066, a: 1}
   main: {fileID: 2008338232}
+  orderNo: 0
+  writeOn: 0
 --- !u!1001 &1979009601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9435,7 +9469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00048828125
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y

@@ -14,6 +14,8 @@ public class ShootingKnob : MonoBehaviour
     public GameObject aimCircle;
     public GameObject target;
     float distColor;
+
+    public CameraManager cm;
     
     Gradient gradient;
     GradientColorKey[] colorKey;
@@ -75,6 +77,9 @@ public class ShootingKnob : MonoBehaviour
             lr.startWidth = Mathf.Lerp(0f, 0.3f, distance / 3.25f);
             lr.endWidth = Mathf.Lerp(0f, 0.1f, distance / 3.25f);
 
+
+            if (cm.aim.enabled)
+                cm.aim.orthographicSize = Mathf.Lerp(1.75f, 2f, distColor / 5f);
 
             if (distColor > 10f)
             {

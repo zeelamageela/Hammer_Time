@@ -491,6 +491,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8782597855082003640, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
   m_PrefabInstance: {fileID: 8782597855336133247}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &288345802 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+  m_PrefabInstance: {fileID: 8782597855336133247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288345798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &290112165
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,6 +704,8 @@ MonoBehaviour:
   colour2: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   colour3: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   main: {fileID: 1264052898}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &450587697
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,6 +793,7 @@ MonoBehaviour:
   gameInProgress: 0
   teams: []
   playoffTeams: []
+  cgp: []
   playerTeamIndex: 0
   score: []
   skinsGame: 0
@@ -1478,6 +1492,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 596576776}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Selectable, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &596576777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1533,6 +1559,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   main: {fileID: 2026262493}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &687884725
 GameObject:
   m_ObjectHideFlags: 0
@@ -1764,6 +1792,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   main: {fileID: 931171623}
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &740194624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4158,6 +4188,7 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+  cgp: []
   tournies: []
   tour: []
   prov: []
@@ -5398,10 +5429,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 929893587}
     m_Modifications:
+    - target: {fileID: 8782597855082003635, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: writeOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 929893588}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 288345802}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: set_interactable
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: UnityEngine.UI.Selectable, UnityEngine.UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8782597855082003640, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

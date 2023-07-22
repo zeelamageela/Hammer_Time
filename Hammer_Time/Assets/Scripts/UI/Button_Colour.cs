@@ -23,15 +23,43 @@ public class Button_Colour : MonoBehaviour
     Vector2 mainPos2;
     Vector2 shadowPos;
 
+    public int orderNo;
+    public bool writeOn;
+
     private void Awake()
     {
+        button = GetComponent<Button>();
         _selectableStateInfo = typeof(Selectable).GetProperty("currentSelectionState", BindingFlags.NonPublic | BindingFlags.Instance);
+        button.interactable = false;
+
+        // TODO: add optional delay when to start
+        if (writeOn)
+        {
+            string story = main.text;
+            main.text = "";
+            StartCoroutine(PlayText(story));
+        }
+
+        button.interactable = true;
+
     }
+
+    IEnumerator PlayText(string story)
+    {
+        yield return new WaitForSeconds(0.125f * orderNo);
+
+        foreach (char c in story)
+        {
+            main.text += c;
+            yield return new WaitForSeconds(0.75f / story.Length);
+        }
+        yield return new WaitForSeconds(0.125f);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         am = FindObjectOfType<AudioManager>();
-        button = GetComponent<Button>();
         button.image.color = colour1;
 
         mainPos1 = main.rectTransform.anchoredPosition;
@@ -90,6 +118,7 @@ public class Button_Colour : MonoBehaviour
             main.rectTransform.anchoredPosition = mainPos2;
             main.color = colour2;
             main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
+            button.interactable = false;
         }
     }
 

@@ -8034,8 +8034,9 @@ MonoBehaviour:
   AnySelectable: {fileID: 1384168748}
   colour1: {r: 0.90196085, g: 0.8352942, b: 0.75294125, a: 1}
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
-  colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
+  colour3: {r: 1, g: 0.7960785, b: 0.23529413, a: 1}
   main: {fileID: 743446435}
+  orderNo: 0
 --- !u!1 &1444171769
 GameObject:
   m_ObjectHideFlags: 0
@@ -10573,6 +10574,7 @@ MonoBehaviour:
   gameInProgress: 0
   teams: []
   playoffTeams: []
+  cgp: []
   playerTeamIndex: 0
   score: []
   skinsGame: 0
@@ -12018,8 +12020,9 @@ MonoBehaviour:
   AnySelectable: {fileID: 2085348678}
   colour1: {r: 0.90196085, g: 0.8352942, b: 0.75294125, a: 1}
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
-  colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
+  colour3: {r: 1, g: 0.79607844, b: 0.23529412, a: 1}
   main: {fileID: 1044034915}
+  orderNo: 1
 --- !u!1 &2090455185
 GameObject:
   m_ObjectHideFlags: 0
