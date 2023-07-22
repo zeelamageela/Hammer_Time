@@ -11942,6 +11942,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.2901961, g: 0.2901961, b: 0.31764707, a: 1}
   main: {fileID: 1870025939}
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &463914968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39641,6 +39643,8 @@ MonoBehaviour:
   colour2: {r: 0.70199996, g: 0.61390585, b: 0.0055058817, a: 1}
   colour3: {r: 0.7019608, g: 0.6156863, b: 0, a: 1}
   main: {fileID: 1217079764}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1405154449
 GameObject:
   m_ObjectHideFlags: 0
@@ -45141,6 +45145,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.2901961, g: 0.2901961, b: 0.31764707, a: 1}
   main: {fileID: 2098938237}
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &1586103060 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4871722892577624145, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
@@ -49161,6 +49167,8 @@ MonoBehaviour:
   colour2: {r: 0.9529412, g: 0.20964709, b: 0.8946438, a: 1}
   colour3: {r: 0.95294124, g: 0.20392159, b: 0.89019614, a: 1}
   main: {fileID: 540753445}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1729286429
 GameObject:
   m_ObjectHideFlags: 0
@@ -50264,6 +50272,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.2901961, g: 0.2901961, b: 0.31764707, a: 1}
   main: {fileID: 1431755392}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1775326833
 GameObject:
   m_ObjectHideFlags: 0
@@ -57296,6 +57306,8 @@ MonoBehaviour:
   colour2: {r: 0.11471369, g: 0.18704017, b: 0.80784315, a: 1}
   colour3: {r: 0.1137255, g: 0.18823531, b: 0.8078432, a: 1}
   main: {fileID: 745935345}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &1993280119
 GameObject:
   m_ObjectHideFlags: 0
@@ -57869,6 +57881,8 @@ MonoBehaviour:
   colour2: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   colour3: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 0}
   main: {fileID: 36874530}
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &2024053846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66533,6 +66547,8 @@ MonoBehaviour:
   colour2: {r: 0.468, g: 0.468, b: 0.468, a: 1}
   colour3: {r: 0.2901961, g: 0.2901961, b: 0.31764707, a: 1}
   main: {fileID: 3895292122989464113}
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &3895292123318024087
 GameObject:
   m_ObjectHideFlags: 0

@@ -41,7 +41,7 @@ public class Button_Colour : MonoBehaviour
         }
 
         button.interactable = true;
-
+        Debug.Log("button is interactable? - " + button.interactable);
     }
 
     IEnumerator PlayText(string story)
@@ -118,8 +118,22 @@ public class Button_Colour : MonoBehaviour
             main.rectTransform.anchoredPosition = mainPos2;
             main.color = colour2;
             main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
-            button.interactable = false;
         }
+
+        if (!button.isActiveAndEnabled)
+            button.gameObject.SetActive(true);
+        button.interactable = false;
+
+        if (button.isActiveAndEnabled)
+            StartCoroutine(ButtonWait());
+        else
+            button.interactable = true;
+    }
+
+    IEnumerator ButtonWait()
+    {
+        yield return new WaitForSeconds(1f);
+        button.interactable = true;
     }
 
     
