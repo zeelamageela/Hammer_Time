@@ -23,6 +23,7 @@ public class Button_Colour : MonoBehaviour
     Vector2 mainPos2;
     Vector2 shadowPos;
 
+    public float waitTime;
     public int orderNo;
     public bool writeOn;
 
@@ -120,8 +121,8 @@ public class Button_Colour : MonoBehaviour
             main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
         }
 
-        if (!button.isActiveAndEnabled)
-            button.gameObject.SetActive(true);
+        //if (!button.isActiveAndEnabled)
+        //    button.gameObject.SetActive(true);
         button.interactable = false;
 
         if (button.isActiveAndEnabled)
@@ -132,7 +133,7 @@ public class Button_Colour : MonoBehaviour
 
     IEnumerator ButtonWait()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(waitTime);
         button.interactable = true;
     }
 

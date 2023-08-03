@@ -185,6 +185,7 @@ public class CareerManager : MonoBehaviour
 
         myFile = new EasyFileSave("my_player_data");
 
+        tourTeams = new Team[totalTourTeams];
 
         if (myFile.Load())
         {
@@ -419,7 +420,7 @@ public class CareerManager : MonoBehaviour
                     else if (tempID[i] < 60)
                     {
                         int j = i - 30;
-                        Debug.Log("j is " + j);
+                        //Debug.Log("j is " + j);
                         em.heads[j] = new Equipment();
                         em.heads[j].id = tempID[i];
                         em.heads[j].cost = tempCost[i];
@@ -1131,7 +1132,7 @@ public class CareerManager : MonoBehaviour
         {
             //Debug.Log("Saving Career and TM active, tour is " + currentTourny.tour);
             //myFile.Add("Tourny In Progress", true);
-            myFile.Add("Career Record", gsp.record);
+            //myFile.Add("Tourny Record", gsp.record);
             myFile.Add("Tourny In Progress", gsp.tournyInProgress);
             myFile.Add("Draw", tm.draw);
             myFile.Add("Number Of Teams", tm.numberOfTeams);
@@ -1235,8 +1236,6 @@ public class CareerManager : MonoBehaviour
 
     public void SetupTourny(TournySelector tSel, GameSettingsPersist gsp)
     {
-        //tSel = FindObjectOfType<TournySelector>();
-        //gsp = FindObjectOfType<GameSettingsPersist>();
         currentTourny = tSel.currentTourny;
         Shuffle(teams);
         currentTournyTeams = new Team[currentTourny.teams];
@@ -1410,82 +1409,54 @@ public class CareerManager : MonoBehaviour
                 switch (currentTournyTeams[i].rank)
                 {
                     case 1:
-                        currentTournyTeams[i].tourPoints = 25f;
+                        currentTournyTeams[i].tourPoints += 25f;
                         currentTourny.trophyWon = true;
                         break;
                     case 2:
-                        currentTournyTeams[i].tourPoints = 18f;
+                        currentTournyTeams[i].tourPoints += 18f;
                         break;
                     case 3:
-                        currentTournyTeams[i].tourPoints = 15f;
+                        currentTournyTeams[i].tourPoints += 15f;
                         break;
                     case 4:
-                        currentTournyTeams[i].tourPoints = 12f;
+                        currentTournyTeams[i].tourPoints += 12f;
                         break;
                     case 5:
-                        currentTournyTeams[i].tourPoints = 10f;
+                        currentTournyTeams[i].tourPoints += 10f;
                         break;
                     case 6:
-                        currentTournyTeams[i].tourPoints = 8f;
+                        currentTournyTeams[i].tourPoints += 8f;
                         break;
                     case 7:
-                        currentTournyTeams[i].tourPoints = 6f;
+                        currentTournyTeams[i].tourPoints += 6f;
                         break;
                     case 9:
-                        currentTournyTeams[i].tourPoints = 4f;
+                        currentTournyTeams[i].tourPoints += 4f;
                         break;
                     case 11:
-                        currentTournyTeams[i].tourPoints = 2f;
+                        currentTournyTeams[i].tourPoints += 2f;
                         break;
                     case 13:
-                        currentTournyTeams[i].tourPoints = 1f;
+                        currentTournyTeams[i].tourPoints += 1f;
                         break;
                 }
-
-                for (int j = 0; j < tourTeams.Length; j++)
-                {
-                    if (currentTournyTeams[i].id == tourTeams[j].id)
-                    {
-                        tourTeams[j].tourRecord.x += currentTournyTeams[i].wins;
-                        tourTeams[j].tourRecord.y += currentTournyTeams[i].loss;
-                        tourTeams[j].tourPoints += currentTournyTeams[i].tourPoints;
-                    }
-                }
-                for (int j = 0; j < teams.Length; j++)
-                {
-                    if (currentTournyTeams[i].id == teams[j].id)
-                    {
-                        teams[i].wins += currentTournyTeams[i].wins;
-                        teams[i].loss += currentTournyTeams[i].loss;
-                        teams[i].earnings = currentTournyTeams[i].earnings;
-                    }
-                }
             }
+            //for (int i = 0; i < tourTeams.Length; i++)
+            //{
+            //    //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " before TourRecordVector4");
+            //    for (int j = 0; j < tourRecords.Length; j++)
+            //    {
+            //        if (tourTeams[i].id == tourRecords[j].w)
+            //        {
+            //            tourTeams[i].tourRecord.x += tourRecords[j].x;
+            //            tourTeams[i].tourRecord.y += tourRecords[j].y;
+            //            tourTeams[i].tourPoints += tourRecords[j].z;
+            //        }
+            //    }
+            //    //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " AFTER TourRecordVector4");
+            //}
 
-            for (int i = 0; i < totalTourTeams; i++)
-            {
-                if (playerTeamIndex == currentTournyTeams[i].id)
-                {
-                    tourRecord.x += currentTournyTeams[i].wins;
-                    tourRecord.y += currentTournyTeams[i].loss;
-                }
-                //if (playerTeamIndex == currentTournyTeams[i].id)
-            }
-
-            for (int i = 0; i < tourTeams.Length; i++)
-            {
-                //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " before TourRecordVector4");
-                for (int j = 0; j < tourRecords.Length; j++)
-                {
-                    if (tourTeams[i].id == tourRecords[j].w)
-                    {
-                        tourTeams[i].tourRecord.x += tourRecords[j].x;
-                        tourTeams[i].tourRecord.y += tourRecords[j].y;
-                        tourTeams[i].tourPoints += tourRecords[j].z;
-                    }
-                }
-                //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " AFTER TourRecordVector4");
-            }
+            Debug.Log("Team Record - " + teams[0].name + " - " + teamRecords[0]);
         }
 
         //Debug.Log("Current Team List count is " + currentTournyTeams.Length);
@@ -1493,24 +1464,24 @@ public class CareerManager : MonoBehaviour
         //Debug.Log("Rank List count is " + provRankList.Count);
         //Debug.Log("First Prov Team is " + provRankList[0].team.name);
 
-        for (int i = 0; i < teams.Length; i++)
-        {
-            for (int j = 0; j < teamRecords.Length; j++)
-            {
-                for (int k = 0; k < currentTournyTeams.Length; k++)
-                {
-                    if (currentTournyTeams[k].id == teams[i].id)
-                    {
-                        if (teams[i].id == teamRecords[j].w)
-                        {
-                            teams[i].wins += (int)teamRecords[j].x;
-                            teams[i].loss += (int)teamRecords[j].y;
-                            teams[i].earnings += teamRecords[j].z;
-                        }
-                    }
-                }
-            }
-        }
+        //for (int i = 0; i < teams.Length; i++)
+        //{
+        //    for (int j = 0; j < teamRecords.Length; j++)
+        //    {
+        //        for (int k = 0; k < currentTournyTeams.Length; k++)
+        //        {
+        //            if (currentTournyTeams[k].id == teams[i].id)
+        //            {
+        //                if (teams[i].id == teamRecords[j].w)
+        //                {
+        //                    teams[i].wins += (int)teamRecords[j].x;
+        //                    teams[i].loss += (int)teamRecords[j].y;
+        //                    teams[i].earnings += teamRecords[j].z;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -1590,7 +1561,9 @@ public class CareerManager : MonoBehaviour
             teamRecords[i].z = teams[i].earnings;
             teamRecords[i].w = teams[i].id;
         }
-        
+
+        Debug.Log("Tour Record is " + tourRecords + " - Team Record is " + teamRecords);
+
         //earnings = gsp.earnings;
         SaveCareer();
     }
@@ -1635,34 +1608,12 @@ public class CareerManager : MonoBehaviour
 
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
-        //coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
-        //qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
-        //reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
-        //introDialogue = new bool[tSel.coachGreen.introDialogue.Length];
-        //storyDialogue = new bool[tSel.coachGreen.storyDialogue.Length];
-        //helpDialogue = new bool[tSel.coachGreen.helpDialogue.Length];
-        //strategyDialogue = new bool[tSel.coachGreen.strategyDialogue.Length];
-
-        //for (int i = 0; i < coachDialogue.Length; i++)
-        //    coachDialogue[i] = false;
-        //for (int i = 0; i < qualDialogue.Length; i++)
-        //    qualDialogue[i] = false;
-        //for (int i = 0; i < reviewDialogue.Length; i++)
-        //    reviewDialogue[i] = false;
-        //for (int i = 0; i < introDialogue.Length; i++)
-        //    introDialogue[i] = false;
-        //for (int i = 0; i < storyDialogue.Length; i++)
-        //    storyDialogue[i] = false;
-        //for (int i = 0; i < helpDialogue.Length; i++)
-        //    helpDialogue[i] = false;
-        //for (int i = 0; i < strategyDialogue.Length; i++)
-        //    strategyDialogue[i] = false;
-
-        //coachDialogue[0] = true;
-        //introDialogue[0] = true;
 
         xp = 0f;
         totalXp = 0f;
+
+        record = new Vector2(0f, 0f);
+        tourRecord = new Vector2(0f, 0f);
 
         cStats.drawAccuracy = 3;
         cStats.guardAccuracy = 3;

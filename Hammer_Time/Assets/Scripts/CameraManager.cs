@@ -70,27 +70,25 @@ public class CameraManager : MonoBehaviour
         house.depth = -1;
         ui.depth = 3;
 
-        if (trajTarget.position.y > 4.5f)
+        aim.orthographicSize = Mathf.Lerp(3.5f, 5f, (trajTarget.position.y) / 10f);
+
+        if (trajTarget.position.y > 5.75f)
         {
-            aim.orthographicSize = 3.5f;
             aim.depth = 3;
-            aimMover.position = new Vector3(0f, 4.5f, 0f);
+            aimMover.position = new Vector3(0f, 5.75f, 0f);
         }
         else if (trajTarget.position.y > 3.5f)
         {
-            aim.orthographicSize = 3.5f;
             aim.depth = 3;
             aimMover.position = new Vector3(0f, trajTarget.position.y, 0f);
         }
         else if (trajTarget.position.y > 0f)
         {
-            aim.orthographicSize = 3.5f;
             aim.depth = 3;
             aimMover.position = new Vector3(0f, 3.5f, 0f);
         }
         else
         {
-            aim.orthographicSize = 3.5f;
             aim.depth = -1;
             aimMover.position = new Vector3(0f, 3.5f, 0f);
         }

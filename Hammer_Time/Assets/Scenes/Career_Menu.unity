@@ -704,7 +704,8 @@ MonoBehaviour:
   colour2: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   colour3: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   main: {fileID: 1264052898}
-  orderNo: 0
+  waitTime: 0.5
+  orderNo: 2
   writeOn: 0
 --- !u!1 &450587697
 GameObject:
@@ -1547,7 +1548,8 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   main: {fileID: 2026262493}
-  orderNo: 0
+  waitTime: 1
+  orderNo: 1
   writeOn: 0
 --- !u!1 &687884725
 GameObject:
@@ -1780,6 +1782,7 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   main: {fileID: 931171623}
+  waitTime: 0
   orderNo: 0
   writeOn: 0
 --- !u!114 &740194624
@@ -5419,7 +5422,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8782597855082003635, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
       propertyPath: writeOn
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8782597855082003635, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
+      propertyPath: waitTime
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 8782597855082003639, guid: bf188ec45ef9945528c85e90de801a17, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -265,15 +265,35 @@ public class PlayoffManager : MonoBehaviour
 		//playoffRound--;
 		Debug.Log("Load Playoffs - Round " + playoffRound);
 		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
-		for (int i = 0; i < playoffTeams.Length; i++)
+
+		if (gsp.playoffTeams.Length > 0)
 		{
-			if (i < 4)
+			for (int i = 0; i < gsp.playoffTeams.Length; i++)
 			{
-				gsp.playoffTeams[i].rank = i + 1;
+				if (i < 4)
+				{
+					gsp.playoffTeams[i].rank = i + 1;
+				}
+				playoffTeams[i] = gsp.playoffTeams[i];
 			}
-			playoffTeams[i] = gsp.playoffTeams[i];
-			
 		}
+		else
+        {
+			List<Team_List> teamList = new List<Team_List>();
+
+
+			for (int i = 0; i < tm.teams.Length; i++)
+            {
+				teamList.Add(new Team_List(tm.teams[i]));
+            }
+			teamList.Sort();
+
+			for (int i = 0; i < gsp.playoffTeams.Length; i++)
+            {
+				playoffTeams[i] = teamList[i].team;
+				gsp.playoffTeams[i] = teamList[i].team;
+            }
+        }
 		//playoffTeams = gsp.playoffTeams;
 
 		for (int i = 0; i < gsp.teams.Length; i++)
@@ -785,7 +805,7 @@ public class PlayoffManager : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		//myFile.Add("Career Record", gsp.record);
-		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
+		Debug.Log("gsp.record is " + tm.teams[tm.playerTeam].wins + " - " + tm.teams[tm.playerTeam].loss);
 		myFile.Add("BG", gsp.bg);
 		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		//myFile.Add("Player Name", gsp.firstName);

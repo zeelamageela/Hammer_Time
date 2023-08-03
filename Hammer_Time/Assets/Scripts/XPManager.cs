@@ -48,7 +48,7 @@ public class XPManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         cStats = cm.cStats;
-        SetSkillPoints();
+        SetSliders();
     }
 
     // Update is called once per frame
@@ -95,7 +95,7 @@ public class XPManager : MonoBehaviour
         strengthSlider.value = cStats.sweepStrength;
         endurSlider.value = cStats.sweepEndurance;
         healthSlider.value = cStats.sweepCohesion;
-
+        SetSkillPoints();
     }
 
     public void SetSkillPoints()
@@ -106,6 +106,7 @@ public class XPManager : MonoBehaviour
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
         skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 47.59f);
         //Debug.Log("Skill Points Total is " + skillPointsTotal);
+        Debug.Log("SkillPointsTotal pre-calc is " + skillPointsTotal);
         skillPoints = skillPointsTotal
                     - cStats.drawAccuracy
                     - cStats.takeOutAccuracy
@@ -113,6 +114,7 @@ public class XPManager : MonoBehaviour
                     - cStats.sweepStrength
                     - cStats.sweepEndurance
                     - cStats.sweepCohesion;
+        Debug.Log("SkillPoints post-calc is " + skillPoints);
     }
 
     public void ButtonAdd(int skill)

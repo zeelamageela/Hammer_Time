@@ -43,6 +43,8 @@ public class DialogueManager : MonoBehaviour
     {
         Debug.Log("Conversation with " + dialogue.name);
         nameText.text = dialogue.name;
+        contButton.SetActive(true);
+        contButton.GetComponent<Button>().interactable = true;
 
         sentences.Clear();
 

@@ -17,6 +17,7 @@ public class Team
 
     public float earnings;
 
+    public Vector2 record;
     public Vector2 tourRecord;
     public float tourPoints;
 

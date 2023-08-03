@@ -125,8 +125,7 @@ public class TournySelector : MonoBehaviour
         teamMenu.TeamMenuOpen();
         pm.SetUp();
 
-        provStandings.PrintRows();
-        tourStandings.PrintRows();
+        provStandings.SetUp();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
         em.SetInventory();
@@ -625,6 +624,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
 
@@ -641,6 +641,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
 
@@ -790,13 +791,14 @@ public class TournySelector : MonoBehaviour
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(true);
-            provStandings.PrintRows();
+            provStandings.SetUp();
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
             xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(false);
+
             //tournyBtn.SetActive(false);
             //playerBtn.SetActive(false);
             //teamBtn.SetActive(false);
@@ -833,6 +835,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(true);
             playerMenu.SetActive(false);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(false);
@@ -850,6 +853,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);
@@ -912,6 +916,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(true);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);
@@ -929,6 +934,7 @@ public class TournySelector : MonoBehaviour
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
+            xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);

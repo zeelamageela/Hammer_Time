@@ -149,13 +149,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		playoffRound++;
 
+		gsp.record = new Vector2(0f, 0f);
+
 		if (gsp.teams.Length > 0)
 		{
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i] = gsp.teams[i];
-				teams[i].wins = 0;
-				teams[i].loss = 0;
 			}
 		}
 		else
@@ -171,6 +171,31 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 			}
 		}
+
+		cm.teamRecords = new Vector4[teams.Length];
+		cm.tourRecords = new Vector4[teams.Length];
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			cm.teamRecords[i].x = teams[i].wins;
+			cm.teamRecords[i].y = teams[i].loss;
+			cm.teamRecords[i].z = teams[i].earnings;
+			cm.teamRecords[i].w = teams[i].id;
+
+			cm.tourRecords[i].x = teams[i].tourRecord.x;
+			cm.tourRecords[i].y = teams[i].tourRecord.y;
+			cm.tourRecords[i].z = teams[i].tourPoints;
+			cm.tourRecords[i].w = teams[i].id;
+
+			teams[i].wins = 0;
+			teams[i].loss = 0;
+			teams[i].earnings = 0;
+			teams[i].tourPoints = 0;
+			teams[i].tourRecord = Vector2.zero;
+		}
+
+		Debug.Log("Tour Record - " + teams[0].name + " - " + cm.tourRecords[0]);
+
 		//teams[0].name = gsp.teamName;
 		gsp.teams = teams;
 
@@ -191,7 +216,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					+ cm.modStats.sweepEndurance
 					+ cm.modStats.sweepCohesion;
 				teams[i].strength = Mathf.RoundToInt(strength / 24f);
-
 			}
 			else
 				teams[i].strength = Random.Range(0, 10);
@@ -5440,6 +5464,16 @@ public class PlayoffManager_TripleK : MonoBehaviour
         //{
         //    StartCoroutine(SimToFinals());
         //}
+		for (int i = 0; i < teams.Length; i++)
+        {
+			teams[i].tourRecord.x = teams[i].wins;
+			teams[i].tourRecord.y = teams[i].loss;
+
+			//if (teams[i].id == playerTeam)
+   //         {
+			//	gsp.record = new Vector2(teams[i].wins, teams[i].loss);
+   //         }
+        }
     }
 
 	public void PlayRound()
@@ -5451,11 +5485,34 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public void TournyComplete()
 	{
 		CareerManager cm = FindObjectOfType<CareerManager>();
-		gsp.teams = teams; 
+		gsp.teams = teams;
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			teams[i].wins += (int)cm.teamRecords[i].x;
+			teams[i].loss += (int)cm.teamRecords[i].y;
+			teams[i].earnings += cm.teamRecords[i].z;
+			teams[i].id = (int)cm.teamRecords[i].w;
+
+			teams[i].tourRecord.x += cm.tourRecords[i].x;
+			teams[i].tourRecord.y += cm.tourRecords[i].y;
+			teams[i].tourPoints += cm.tourRecords[i].z;
+			teams[i].id = (int)cm.tourRecords[i].w;
+		}
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (teams[i].id == playerTeam)
+			{
+				gsp.earnings = teams[i].earnings;
+				gsp.record = new Vector2(teams[i].wins, teams[i].loss);
+			}
+		}
+
 		float winnings = gsp.earnings;
-		cm.earnings += gsp.earnings;
+		cm.earnings += winnings;
 		cm.cash += gsp.cash;
-		cm.record += gsp.record;
+		cm.record = gsp.record;
 		gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
@@ -5523,7 +5580,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		myFile = new EasyFileSave("my_player_data");
 
 		myFile.Add("Knockout Tourny", gsp.KO);
-		myFile.Add("Career Record", cm.record);
+		//myFile.Add("Career Record", cm.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 
 		myFile.Add("BG", gsp.bg);
