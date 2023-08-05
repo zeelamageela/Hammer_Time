@@ -403,17 +403,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Pierre
   drawAccuracy:
-    baseValue: 2
+    baseValue: 4
   takeOutAccuracy:
-    baseValue: 3
+    baseValue: 4
   guardAccuracy:
-    baseValue: 3
+    baseValue: 2
   sweepStrength:
-    baseValue: 3
-  sweepEndurance:
-    baseValue: 3
-  sweepCohesion:
     baseValue: 1
+  sweepEndurance:
+    baseValue: 1
+  sweepCohesion:
+    baseValue: 3
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

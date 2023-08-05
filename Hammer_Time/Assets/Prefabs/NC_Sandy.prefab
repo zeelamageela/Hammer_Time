@@ -403,17 +403,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Sandy
   drawAccuracy:
-    baseValue: 4
-  takeOutAccuracy:
-    baseValue: 4
-  guardAccuracy:
     baseValue: 2
-  sweepStrength:
-    baseValue: 1
-  sweepEndurance:
-    baseValue: 1
-  sweepCohesion:
+  takeOutAccuracy:
     baseValue: 3
+  guardAccuracy:
+    baseValue: 3
+  sweepStrength:
+    baseValue: 3
+  sweepEndurance:
+    baseValue: 3
+  sweepCohesion:
+    baseValue: 1
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

@@ -465,7 +465,7 @@ MonoBehaviour:
   drawAccuracy:
     baseValue: 3
   takeOutAccuracy:
-    baseValue: 2
+    baseValue: 3
   guardAccuracy:
     baseValue: 3
   sweepStrength:
@@ -473,7 +473,7 @@ MonoBehaviour:
   sweepEndurance:
     baseValue: 3
   sweepCohesion:
-    baseValue: 1
+    baseValue: 3
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0
