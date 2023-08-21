@@ -666,6 +666,8 @@ public class TournyManager : MonoBehaviour
 
 		if (gsp.cashGame == false)
 		{
+			Debug.Log("cm.teamRecords Length is " + cm.teamRecords.Length);
+
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i].wins += (int)cm.teamRecords[i].x;
@@ -673,11 +675,12 @@ public class TournyManager : MonoBehaviour
 				teams[i].earnings += cm.teamRecords[i].z;
 				teams[i].id = (int)cm.teamRecords[i].w;
 			}
+
+			gsp.earnings = teams[playerTeam].earnings;
+			gsp.record = new Vector2(teams[playerTeam].wins, teams[playerTeam].loss);
 		}
 
 		//Debug.Log("PlayerTeam name is " + teams[playerTeam].name);
-		gsp.earnings = teams[playerTeam].earnings;
-		gsp.record = new Vector2(teams[playerTeam].wins, teams[playerTeam].loss);
 		Debug.Log("PlayerTeam record is " + gsp.record.x + " - " + gsp.record.y);
 
 		cm.earnings = gsp.earnings;
@@ -759,8 +762,27 @@ public class TournyManager : MonoBehaviour
         myFile.Add("Tourny Team ID List", idList);
 		myFile.Add("Tourny Earnings List", earningsList);
 		myFile.Add("Tourny Player List", playerList);
-        //yield return myFile.TestDataSaveLoad();
-        yield return myFile.Append();
+		//yield return myFile.TestDataSaveLoad();
+
+
+		int[] tempTRX = new int[cm.teamRecords.Length];
+		int[] tempTRY = new int[cm.teamRecords.Length];
+		float[] tempTRZ = new float[cm.teamRecords.Length];
+		int[] tempTRW = new int[cm.teamRecords.Length];
+
+		for (int i = 0; i < cm.teamRecords.Length; i++)
+		{
+			tempTRX[i] = (int)cm.teamRecords[i].x;
+			tempTRY[i] = (int)cm.teamRecords[i].y;
+			tempTRZ[i] = cm.teamRecords[i].z;
+			tempTRW[i] = (int)cm.teamRecords[i].w;
+		}
+		myFile.Add("Team Records X", tempTRX);
+		myFile.Add("Team Records Y", tempTRY);
+		myFile.Add("Team Records Z", tempTRZ);
+		myFile.Add("Team Records W", tempTRW);
+
+		yield return myFile.Append();
 
 
 		//cm.SaveCareer();

@@ -82,7 +82,7 @@ public class Sweeper : MonoBehaviour
         whoa = true;
         sweep = false;
         hard = false;
-        if (anim.isActiveAndEnabled)
+        if (anim != null && anim.isActiveAndEnabled)
         {
             anim.SetBool("Sweep", false);
             anim.SetBool("Hard", false);

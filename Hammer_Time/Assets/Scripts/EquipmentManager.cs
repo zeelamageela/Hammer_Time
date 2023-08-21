@@ -520,6 +520,7 @@ public class EquipmentManager : MonoBehaviour
         forSaleHeader.cost.text = "$" + newEquip.cost.ToString("n0");
         forSaleHeader.text.text = newEquip.text;
         forSaleHeader.image.sprite = newEquip.img;
+        forSaleHeader.image.color = newEquip.color;
 
         confirmText.text = "Buy this card for $" + newEquip.cost.ToString("n0") + "?";
         if (newEquip != null)

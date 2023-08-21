@@ -288,7 +288,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			playerTeam = gsp.playerTeamIndex;
 			Debug.Log("We are returning from a game");
 			cont = true;
-			playoffRound--;
+			//playoffRound--;
 			StartCoroutine(ResetBrackets(gsp.playoffRound));
 			//StartCoroutine(SimPlayoff());
 		}
@@ -1659,6 +1659,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			{
 				if (teams[i].player)
 				{
+					if (teams[i].loss == 3)
+					{
+						vsDisplayTitle.text = "XXX";
+						vsDisplay[0].rank.text = "KO";
+						vsDisplay[0].name.text = teams[i].name;
+						vsDisplayVS.text = "Is";
+						vsDisplay[1].rank.text = "-";
+						vsDisplay[1].name.text = "Knocked Out!";
+					}
 					if (teams[i].loss == 2)
 						vsDisplay[0].rank.text = "XX";
 					if (teams[i].loss == 1)
@@ -1669,6 +1678,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				if (teams[i].id == oppTeam)
 				{
+					if (teams[i].loss == 3)
+					{
+					}
 					if (teams[i].loss == 2)
 						vsDisplay[1].rank.text = "XX";
 					if (teams[i].loss == 1)
@@ -5330,7 +5342,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					float p = 1.4f;
 					float totalTeams = teams.Length - 5f;
-					float prizePayout = ((Mathf.Pow(p, totalTeams - (i + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
+					float prizePayout = ((Mathf.Pow(p, totalTeams - ((teams[i].rank - 1) + 1))) / (Mathf.Pow(p, totalTeams) - 1f)) * (gsp.prize * 0.15f) * (p - 1);
 
 					if (teams[i].rank == 1)
 					{
@@ -5381,11 +5393,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay20[0].name.text = teams[j].name;
 						finalsDisplay20[0].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						if (teams[j].player)
-						{
-							nextButton.gameObject.SetActive(true);
-							simButton.gameObject.SetActive(false);
-						}
+
+						nextButton.gameObject.SetActive(true);
+						simButton.gameObject.SetActive(false);
+
 						break;
 					}
 				}
@@ -5647,7 +5658,43 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		myFile.Add("Tourny Game X List", gameListX);
 		myFile.Add("Tourny Game Y List", gameListY);
+
 		//yield return myFile.TestDataSaveLoad();
+		int[] tempTRX = new int[cm.teamRecords.Length];
+		int[] tempTRY = new int[cm.teamRecords.Length];
+		float[] tempTRZ = new float[cm.teamRecords.Length];
+		int[] tempTRW = new int[cm.teamRecords.Length];
+
+		int[] tempTourTRX = new int[cm.tourRecords.Length];
+		int[] tempTourTRY = new int[cm.tourRecords.Length];
+		float[] tempTourTRZ = new float[cm.tourRecords.Length];
+		int[] tempTourTRW = new int[cm.tourRecords.Length];
+
+		for (int i = 0; i < cm.teamRecords.Length; i++)
+		{
+			tempTRX[i] = (int)cm.teamRecords[i].x;
+			tempTRY[i] = (int)cm.teamRecords[i].y;
+			tempTRZ[i] = cm.teamRecords[i].z;
+			tempTRW[i] = (int)cm.teamRecords[i].w;
+		}
+
+		for (int i = 0; i < cm.tourRecords.Length; i++)
+		{
+			tempTourTRX[i] = (int)cm.tourRecords[i].x;
+			tempTourTRY[i] = (int)cm.tourRecords[i].y;
+			tempTourTRZ[i] = cm.tourRecords[i].z;
+			tempTourTRW[i] = (int)cm.tourRecords[i].w;
+		}
+
+		myFile.Add("Team Records X", tempTRX);
+		myFile.Add("Team Records Y", tempTRY);
+		myFile.Add("Team Records Z", tempTRZ);
+		myFile.Add("Team Records W", tempTRW);
+
+		myFile.Add("Tour Records X", tempTourTRX);
+		myFile.Add("Tour Records Y", tempTourTRY);
+		myFile.Add("Tour Records Z", tempTourTRZ);
+		myFile.Add("Tour Records W", tempTourTRW);
 
 		yield return myFile.Append();
 	}

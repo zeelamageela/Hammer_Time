@@ -47,11 +47,20 @@ public class PlayoffManager : MonoBehaviour
 
 		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 		if (gsp.careerLoad)
+		{
+			Debug.Log("LOADING HERE");
 			LoadPlayoffs();
+		}
 		else if (playoffRound > 0)
+		{
+			Debug.Log("LOADING HERE");
 			LoadAndAdvancePlayoffs();
+		}
 		else
+		{
+			Debug.Log("LOADING HERE");
 			SetSeeding(tm.teams.Length);
+		}
 	}
 
 	public void SetSeeding(int numberOfTeams)
@@ -266,7 +275,7 @@ public class PlayoffManager : MonoBehaviour
 		Debug.Log("Load Playoffs - Round " + playoffRound);
 		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
 
-		if (gsp.playoffTeams.Length > 0)
+		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
 		{
 			for (int i = 0; i < gsp.playoffTeams.Length; i++)
 			{
@@ -287,12 +296,14 @@ public class PlayoffManager : MonoBehaviour
 				teamList.Add(new Team_List(tm.teams[i]));
             }
 			teamList.Sort();
+			gsp.playoffTeams = new Team[playoffTeams.Length];
+			Debug.Log("gsp.playoffTeams Length is " + gsp.playoffTeams.Length);
 
-			for (int i = 0; i < gsp.playoffTeams.Length; i++)
-            {
+			for (int i = 0; i < 4; i++)
+			{
 				playoffTeams[i] = teamList[i].team;
 				gsp.playoffTeams[i] = teamList[i].team;
-            }
+			}
         }
 		//playoffTeams = gsp.playoffTeams;
 
@@ -310,7 +321,7 @@ public class PlayoffManager : MonoBehaviour
 
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
-			if (playoffRound == 1 && i < 4)
+			if (playoffRound <= 1 && i < 4)
 			{
 				brackDisplay[i].name.text = playoffTeams[i].name;
 				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
@@ -384,6 +395,7 @@ public class PlayoffManager : MonoBehaviour
 						tm.teams[tm.playerTeam].nextOpp = playoffTeams[2].name;
 						break;
 					default:
+						tm.vsDisplay[1].rank.text = "-";
 						tm.vsDisplay[1].name.text = "Knocked Out!";
                         playButton.gameObject.SetActive(false);
                         break;
@@ -641,7 +653,7 @@ public class PlayoffManager : MonoBehaviour
 						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
 					}
 					
-					Debug.Log("Prize Payout multiplier is " + prizePayout);
+					Debug.Log("Prize Payout is " + prizePayout);
 					//prizePayout = Mathf.RoundToInt(prizePayout);
 					//tm.teamList[i].team.earnings += prizePayout;
 

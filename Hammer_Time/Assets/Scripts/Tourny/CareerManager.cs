@@ -530,6 +530,7 @@ public class CareerManager : MonoBehaviour
                 currentTourny.BG = myFile.GetInt("Current Tourny BG");
                 currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
 
+                gsp.KO = currentTourny.tour;
                 gsp.draw = myFile.GetInt("Current Tourny Draw");
                 gsp.playoffRound = myFile.GetInt("Current Tourny Playoff Round");
 
@@ -571,10 +572,56 @@ public class CareerManager : MonoBehaviour
                     currentTournyTeams[i].wins = tournyWinsList[i];
                     currentTournyTeams[i].loss = tournyLossList[i];
                     currentTournyTeams[i].earnings = tournyEarningsList[i];
+
                 }
+
+                //teamRecords = new Vector4[currentTourny.teams];
+
+                //int[] tempTRX = myFile.GetArray<int>("Team Records X");
+                //int[] tempTRY = myFile.GetArray<int>("Team Records Y");
+                //float[] tempTRZ = myFile.GetArray<float>("Team Records Z");
+                //int[] tempTRW = myFile.GetArray<int>("Team Records W");
+
+                //for (int i = 0; i < teamRecords.Length; i++)
+                //{
+                //    teamRecords[i].x = tempTRX[i];
+                //    teamRecords[i].y = tempTRY[i];
+                //    teamRecords[i].z = tempTRZ[i];
+                //    teamRecords[i].w = tempTRW[i];
+                //}
             }
 
-            //Debug.Log("Teams Length is " + teams.Length);
+
+            int[] tempTRX = myFile.GetArray<int>("Team Records X");
+            int[] tempTRY = myFile.GetArray<int>("Team Records Y");
+            float[] tempTRZ = myFile.GetArray<float>("Team Records Z");
+            int[] tempTRW = myFile.GetArray<int>("Team Records W");
+
+            int[] tempTourTRX = myFile.GetArray<int>("Tour Records X");
+            int[] tempTourTRY = myFile.GetArray<int>("Tour Records Y");
+            float[] tempTourTRZ = myFile.GetArray<float>("Tour Records Z");
+            int[] tempTourTRW = myFile.GetArray<int>("Tour Records W");
+
+            teamRecords = new Vector4[tempTRX.Length];
+            tourRecords = new Vector4[tempTourTRX.Length];
+
+            for (int i = 0; i < teamRecords.Length; i++)
+            {
+                teamRecords[i].x = tempTRX[i];
+                teamRecords[i].y = tempTRY[i];
+                teamRecords[i].z = tempTRZ[i];
+                teamRecords[i].w = tempTRW[i];
+            }
+
+            for (int i = 0; i < tourRecords.Length; i++)
+            {
+                tourRecords[i].x = tempTourTRX[i];
+                tourRecords[i].y = tempTourTRY[i];
+                tourRecords[i].z = tempTourTRZ[i];
+                tourRecords[i].w = tempTourTRW[i];
+            }
+
+            Debug.Log("Team Records Length is " + teamRecords.Length);
 
             if (provRankList == null)
             {
@@ -1197,6 +1244,42 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Game Red Team Name", gm.redTeamName);
             //myFile.Add("Game Yellow Team Colour")
         }
+
+        int[] tempTRX = new int[teamRecords.Length];
+        int[] tempTRY = new int[teamRecords.Length];
+        float[] tempTRZ = new float[teamRecords.Length];
+        int[] tempTRW = new int[teamRecords.Length];
+
+        int[] tempTourTRX = new int[tourRecords.Length];
+        int[] tempTourTRY = new int[tourRecords.Length];
+        float[] tempTourTRZ = new float[tourRecords.Length];
+        int[] tempTourTRW = new int[tourRecords.Length];
+
+        for (int i = 0; i < teamRecords.Length; i++)
+        {
+            tempTRX[i] = (int)teamRecords[i].x;
+            tempTRY[i] = (int)teamRecords[i].y;
+            tempTRZ[i] = teamRecords[i].z;
+            tempTRW[i] = (int)teamRecords[i].w;
+        }
+
+        for (int i = 0; i < tourRecords.Length; i++)
+        {
+            tempTourTRX[i] = (int)tourRecords[i].x;
+            tempTourTRY[i] = (int)tourRecords[i].y;
+            tempTourTRZ[i] = tourRecords[i].z;
+            tempTourTRW[i] = (int)tourRecords[i].w;
+        }
+
+        myFile.Add("Team Records X", tempTRX);
+        myFile.Add("Team Records Y", tempTRY);
+        myFile.Add("Team Records Z", tempTRZ);
+        myFile.Add("Team Records W", tempTRW);
+
+        myFile.Add("Tour Records X", tempTourTRX);
+        myFile.Add("Tour Records Y", tempTourTRY);
+        myFile.Add("Tour Records Z", tempTourTRZ);
+        myFile.Add("Tour Records W", tempTourTRW);
 
         if (gsp)
         {
