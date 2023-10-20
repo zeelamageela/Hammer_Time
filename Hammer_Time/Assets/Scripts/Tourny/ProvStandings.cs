@@ -23,10 +23,16 @@ public class ProvStandings : MonoBehaviour
 	public GameObject standTextRow;
 
 	public bool tour;
+
+	public GameObject tourButton;
 	// Start is called before the first frame update
 	private void Start()
     {
 		tour = false;
+		if (FindObjectOfType<CareerManager>().provQual)
+			tourButton.SetActive(true);
+		else
+			tourButton.SetActive(false);
 	}
 
 	public void SetUp()

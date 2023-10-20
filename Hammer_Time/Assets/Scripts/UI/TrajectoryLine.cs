@@ -34,6 +34,7 @@ public class TrajectoryLine : MonoBehaviour
     Color knobColour;
 
     public int lookAheadCount;
+    int lkAhd;
     List<GameObject> dots;
     List<Vector2> points;
 
@@ -49,6 +50,8 @@ public class TrajectoryLine : MonoBehaviour
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
 
         lr.enabled = false;
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        lkAhd = Mathf.RoundToInt(lookAheadCount * cm.cStats.sweepEndurance);
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -108,78 +111,66 @@ public class TrajectoryLine : MonoBehaviour
 
         if (rock != null && rockInfo != null && rockInfo.released && !aiTurn)
         {
-            float cohesion;
-            if (gm.redHammer)
-            {
-                cohesion = 0;
-                if (gm.rockCurrent % 2 == 0)
-                {
-                    for (int i = 0; i > tm.teamYellow.Length; i++)
-                    {
-                        cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
-                        Debug.Log("Cohesion is " + cohesion);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i > tm.teamRed.Length; i++)
-                    {
-                        cohesion += tm.teamRed[i].charStats.sweepCohesion.GetValue();
-                    }
-                }
-            }
-            else
-            {
-                cohesion = 0;
-                if (gm.rockCurrent % 2 == 0)
-                {
-                    for (int i = 0; i > tm.teamRed.Length; i++)
-                    {
-                        cohesion += tm.teamRed[i].charStats.sweepCohesion.GetValue();
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i > tm.teamYellow.Length; i++)
-                    {
-                        cohesion += tm.teamYellow[i].charStats.sweepCohesion.GetValue();
-                    }
-                }
-                //Debug.Log("Cohesion is " + cohesion);
-            }
-
-
-            //lr.enabled = true;
-            int counter = 0;
+            lr.enabled = true;
+            float cohesion = FindObjectOfType<CareerManager>().cStats.sweepCohesion;
+            
             List<Vector2> tempPoints = new List<Vector2>();
-
             if (points != null && points.Count > 0)
             {
                 foreach (Vector2 point in points)
                 {
-                    if (point.y > rock.transform.position.y | point.y > rock.transform.position.y + (cohesion / 40f))
+                    if (point.y > rock.transform.position.y - 2f && point.y < rock.transform.position.y + (cohesion / 2f))
+                    {
                         tempPoints.Add(point);
-                    //else
-                    //    lr.SetPosition(counter, new Vector3(point.x, point.y, 0f));
 
+                    }
+                }
+
+                float distance = Mathf.Infinity;
+
+                foreach (Vector2 point in tempPoints)
+                {
+                    Vector2 directionToTarget = point - new Vector2(rock.transform.position.x, rock.transform.position.y);
+                    float dSqrToTarget = directionToTarget.sqrMagnitude;
+                    if (dSqrToTarget < distance)
+                    {
+                        distance = dSqrToTarget;
+                    }
+                }
+
+
+                //foreach (Vector2 point in tempPoints)
+                //{
+                //    float tempDist1 = Vector2.Distance(point, rock.transform.position);
+
+                //    if (tempDist1 > distance)
+                //    {
+                //        distance = tempDist1;
+                //    }
+                //}
+
+                Debug.Log("Distance is " + distance);
+                float normDist = (((distance - 0.00f) / (0.075f - 0.00f)));
+                //float normDist = Mathf.Round(tempDist) / 10f;
+
+                Debug.Log("NormDist is " + normDist);
+
+                lr.startWidth = 0.05f;
+                lr.endWidth = 0.02f;
+                lr.startColor = Vector4.Lerp(Color.green, Color.red, normDist);
+                lr.endColor = Vector4.Lerp(Color.green, Color.red, normDist);
+
+                if (normDist > 0.3f)
+                {
+                    lr.startColor = Vector4.Lerp(Color.red, new Vector4(Color.red.r, Color.red.g, Color.red.b, 0f), normDist - 0.3f);
+                    lr.endColor = Vector4.Lerp(Color.red, new Vector4(Color.red.r, Color.red.g, Color.red.b, 0f), normDist - 0.3f);
                 }
             }
-
-            if (tempPoints.Count > lookAheadCount)
-                lr.positionCount = lookAheadCount;
-            else
-                lr.positionCount = tempPoints.Count;
-            //else
-            //    lr.positionCount = 6;
+            lr.positionCount = tempPoints.Count;
 
             for (int i = 0; i < lr.positionCount; i++)
             {
                 lr.SetPosition(i, new Vector3(tempPoints[i].x, tempPoints[i].y, 0f));
-            }
-            foreach (Vector2 point in tempPoints)
-            {
-                if (counter <= lr.positionCount)
-                counter++;
             }
         }
 

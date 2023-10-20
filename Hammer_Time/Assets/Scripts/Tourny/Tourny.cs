@@ -19,6 +19,8 @@ public class Tourny
     public bool tour;
     public bool complete;
 
+    public bool ko3;
+    public bool ko1;
     public int BG;
     public int crowdDensity;
 

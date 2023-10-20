@@ -635,6 +635,9 @@ MonoBehaviour:
   colour2: {r: 0.654902, g: 0.47450984, b: 0.86274517, a: 1}
   colour3: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   main: {fileID: 1814256203}
+  waitTime: 0
+  orderNo: 0
+  writeOn: 0
 --- !u!114 &330285607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1150,6 +1153,9 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   main: {fileID: 1264052898}
+  waitTime: 0
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &450587697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,6 +1186,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bg: 0
+  crowdDensity: 0
+  tournyType: 0
   redHammer: 0
   ends: 0
   rocks: 0
@@ -1194,15 +1202,17 @@ MonoBehaviour:
   endCurrent: 0
   yellowScore: 0
   redScore: 0
+  rockPos: []
+  rockInPlay: 
   tourny: 0
-  KO: 0
+  KO3: 0
+  KO1: 0
+  cashGame: 0
   games: 0
-  story: 0
-  third: 0
-  skip: 0
   firstName: 
   teamName: 
   earnings: 0
+  cash: 0
   record: {x: 0, y: 0}
   week: 0
   cStats:
@@ -1211,14 +1221,14 @@ MonoBehaviour:
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   oppStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
     guardAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
-    sweepHealth: 0
+    sweepCohesion: 0
   redTeamName: 
   redTeamColour: {r: 0.8962264, g: 0.26633143, b: 0.26633143, a: 1}
   redTeam: []
@@ -1230,13 +1240,18 @@ MonoBehaviour:
   numberOfTeams: 0
   prize: 0
   careerLoad: 1
-  inProgress: 0
+  tournyInProgress: 0
+  gameInProgress: 0
   teams: []
   playoffTeams: []
+  cgp: []
   playerTeamIndex: 0
   score:
   - {x: 0, y: 0}
   - {x: 0, y: 0}
+  skinsGame: 0
+  skins: 0
+  skinValue: []
   playerTeam:
     name: 
     wins: 0
@@ -1246,6 +1261,7 @@ MonoBehaviour:
     strength: 0
     id: 0
     earnings: 0
+    record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
@@ -1781,6 +1797,9 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   main: {fileID: 2026262493}
+  waitTime: 0
+  orderNo: 0
+  writeOn: 0
 --- !u!1 &605727713
 GameObject:
   m_ObjectHideFlags: 0
@@ -3684,6 +3703,9 @@ MonoBehaviour:
   colour2: {r: 0.8588236, g: 0.8000001, b: 0.4431373, a: 1}
   colour3: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
   main: {fileID: 924796484}
+  waitTime: 0
+  orderNo: 0
+  writeOn: 0
 --- !u!1001 &1494375011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4137,7 +4159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.5, y: -66.659996}
+  m_AnchoredPosition: {x: 562.5, y: -66.66}
   m_SizeDelta: {x: 812.9, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1642232575
@@ -5643,7 +5665,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 13.2, y: -141.6}
+  m_AnchoredPosition: {x: 13.2, y: -141.60004}
   m_SizeDelta: {x: 981.4, y: 258}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2083261969
@@ -5798,9 +5820,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133373, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: colour1.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133373, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: colour2.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133373, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: colour3.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4157614953566133373, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4157614953566133374, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 929893588}
+    - target: {fileID: 4157614953566133375, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a27ddd9d0062a47feb49512f4b69986e, type: 3}

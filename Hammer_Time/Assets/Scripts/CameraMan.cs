@@ -26,7 +26,7 @@ public class CameraMan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gm.rockList.Count != 0)
+        if (gm.rockList.Count != 0 && gm.rockList.Count > gm.rockCurrent + 1)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
@@ -38,10 +38,11 @@ public class CameraMan : MonoBehaviour
                 anim.SetBool("Active", true);
             else
                 anim.SetBool("Active", false);
+            anim.Play(clipName, 0, distance);
         }
         //distance = Mathf.Clamp(distance, 0f, 1f);
 
-
-        anim.Play(clipName, 0, distance);
+        if (distance < 0)
+            distance = 0;
     }
 }

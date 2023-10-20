@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4241899863138473124}
   - component: {fileID: 4707575426861846247}
   - component: {fileID: -4976030450507188189}
+  - component: {fileID: 6015363738420382763}
   m_Layer: 3
   m_Name: Red_Shooter
   m_TagString: Rock
@@ -131,7 +132,7 @@ SpringJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 1
-  m_Distance: 0.005
+  m_Distance: 0.01
   m_DampingRatio: 0.2
   m_Frequency: 1.5
 --- !u!58 &5983643169443896924
@@ -546,3 +547,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &6015363738420382763
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857868563430731881}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 888cc6d1bfc1f0948a15d8abf093662c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

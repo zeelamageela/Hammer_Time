@@ -630,7 +630,7 @@ public class TournyManager : MonoBehaviour
 	public void OnSim()
 	{
 		//playoffRound = pm.playoffRound;
-		if (playoffRound > 0)
+		if (pm != null && pm.playoffRound > 0)
 		{
 			pm.OnSim();
 		}

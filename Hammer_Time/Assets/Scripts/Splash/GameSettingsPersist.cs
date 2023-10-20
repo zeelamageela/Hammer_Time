@@ -36,7 +36,8 @@ public class GameSettingsPersist : MonoBehaviour
     public bool[] rockInPlay;
 
     public bool tourny;
-    public bool KO;
+    public bool KO3;
+    public bool KO1;
     public bool cashGame;
     public int games;
 
@@ -308,18 +309,32 @@ public class GameSettingsPersist : MonoBehaviour
         }
         else
         {
-            tourny = true;
-            draw = tm.draw;
-            playoffRound = pm.playoffRound;
+            if (pm != null)
+            {
+                tourny = true;
+                draw = tm.draw;
+                playoffRound = pm.playoffRound;
 
-            if (playoffRound > 1)
-                playerTeamIndex = pm.playerTeam;
+                if (playoffRound > 1)
+                    playerTeamIndex = pm.playerTeam;
+                else
+                    playerTeamIndex = tm.playerTeam;
+            }
             else
-                playerTeamIndex = tm.playerTeam;
-
+            {
+                PlayoffManager_SingleK pm1k = FindObjectOfType<PlayoffManager_SingleK>();
+                playoffRound = pm1k.playoffRound;
+                KO1 = true;
+            }
             teamList = tm.teamList;
             teams = tm.teams;
-            playerTeam = teams[playerTeamIndex];
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].id == playerTeamIndex)
+                {
+                    playerTeam = teams[i];
+                }
+            }
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
@@ -328,14 +343,17 @@ public class GameSettingsPersist : MonoBehaviour
             Debug.Log("gsp.inProgress is " + tournyInProgress);
 
             //playerGO = tm.playerGO;
-            if (draw >= tm.drawFormat.Length)
+            if (pm != null)
             {
-                playoffTeams = new Team[9];
-                for (int i = 0; i < playoffTeams.Length; i++)
+                if (draw >= tm.drawFormat.Length)
                 {
-                    playoffTeams[i] = pm.playoffTeams[i];
+                    playoffTeams = new Team[9];
+                    for (int i = 0; i < playoffTeams.Length; i++)
+                    {
+                        playoffTeams[i] = pm.playoffTeams[i];
+                    }
+                    //playoffTeams = pm.playoffTeams;
                 }
-                //playoffTeams = pm.playoffTeams;
             }
         }
 
@@ -384,7 +402,7 @@ public class GameSettingsPersist : MonoBehaviour
         tourny = true;
         draw = 0;
         playoffRound = pm.playoffRound;
-        KO = true;
+        KO3 = true;
         playerTeamIndex = pm.playerTeam;
         
         teams = pm.teams;

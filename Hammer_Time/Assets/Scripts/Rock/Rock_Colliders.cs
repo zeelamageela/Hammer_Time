@@ -103,8 +103,10 @@ public class Rock_Colliders : MonoBehaviour
                 }
             }
         }
-        yield return new WaitForSeconds(0.5f);
 
+        gameObject.GetComponent<Animator>().enabled = true;
+
+        yield return new WaitForSeconds(0.5f);
         body.velocity = Vector2.zero;
         gameObject.SetActive(false);
     }

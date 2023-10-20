@@ -132,8 +132,10 @@ public class TournySettings : MonoBehaviour
         //myFile.Add("Career Record", new Vector2(0, 0));
 
         //myFile.Save();
-        if (gsp.KO)
+        if (gsp.KO3)
             SceneManager.LoadScene("Tourny_Home_3K");
+        else if (gsp.KO1)
+            SceneManager.LoadScene("Tourny_Home_SingleK");
         else if (gsp.cashGame)
             SceneManager.LoadScene("Tourny_Home_2");
         else
@@ -156,7 +158,7 @@ public class TournySettings : MonoBehaviour
         //    //Help();
         //}
 
-        if (gsp.KO)
+        if (gsp.KO3)
         {
             gameText.gameObject.SetActive(false);
             gameSlider.gameObject.SetActive(false);
@@ -235,6 +237,48 @@ public class TournySettings : MonoBehaviour
     }
     public void Back()
     {
+        cm.cash += cm.costPerWeek;
+        for (int i = 0; i < cm.activeTournies.Length; i++)
+        {
+            cm.activeTournies[i].complete = false;
+
+            if (cm.activeTournies[i].tour)
+            {
+                for (int j = 0; j < cm.tour.Length; j++)
+                {
+                    if (cm.activeTournies[i].id == cm.tour[j].id)
+                        cm.tour[j].complete = false;
+                }
+            }
+            else if (cm.activeTournies[i].qualifier)
+            {
+                for (int j = 0; j < cm.prov.Length; j++)
+                {
+                    if (cm.activeTournies[i].id == cm.prov[j].id)
+                        cm.prov[j].complete = false;
+                }
+            }
+            else if (cm.activeTournies[i].championship)
+            {
+                for (int j = 0; j < cm.champ.Length; j++)
+                {
+                    if (cm.activeTournies[i].id == cm.champ[j].id)
+                        cm.champ[j].complete = false;
+                }
+            }
+            else
+            {
+                for (int j = 0; j < cm.tournies.Length; j++)
+                {
+                    if (cm.activeTournies[i].id == cm.tournies[j].id)
+                        cm.tournies[j].complete = false;
+                }
+            }
+        }
+
+        cm.currentTourny.complete = false;
+        
+        cm.SaveCareer();
         SceneManager.LoadScene("Arena_Selector");
     }
     public void MainMenu()

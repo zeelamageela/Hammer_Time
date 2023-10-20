@@ -151,6 +151,11 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.1f, 0.2f, 0.5f, 0.55f, 0.75f, 1f);
+        }
+
         if (crowdDensity < 6)
             AssignAnimations("Clapping");
         else
@@ -249,6 +254,11 @@ public class CrowdManager : MonoBehaviour
                 int beerIndex = Random.Range(0, beerSnacks.Length);
                 beerGO.GetComponent<SpriteRenderer>().sprite = beerSnacks[beerIndex];
             }
+        }
+
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 0.5f, 0.6f, 0.65f, 0.75f, 1f);
         }
 
         if (crowdDensity < 6)
@@ -373,6 +383,11 @@ public class CrowdManager : MonoBehaviour
                 int beerIndex = Random.Range(0, beerSnacks.Length);
                 beerGO.GetComponent<SpriteRenderer>().sprite = beerSnacks[beerIndex];
             }
+        }
+
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.25f, 0.45f, 0.25f, 1f, 0.85f, 1f);
         }
 
         if (crowdDensity < 7)
@@ -570,6 +585,10 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 1f, 0.25f, 1f, 0.5f, 1f);
+        }
 
         AssignAnimations("No Nuns");
     }
@@ -629,6 +648,11 @@ public class CrowdManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.55f, 0.65f, 0.25f, 1f, 0.85f, 1f);
         }
 
         AssignAnimations("No Nuns");
@@ -768,6 +792,11 @@ public class CrowdManager : MonoBehaviour
             }
         }
 
+        foreach (GameObject go in activeCrowd)
+        {
+            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0.85f, 0.95f, 0.75f, 1f, 0.5f, 1f);
+        }
+
         if (crowdDensity < 7)
             AssignAnimations("Clapping");
         else
@@ -837,7 +866,6 @@ public class CrowdManager : MonoBehaviour
             int clipIndex = Random.Range(0, tempCrowdClips.Length);
 
             aoc["Crowd1A"] = tempCrowdClips[clipIndex];
-            go.GetComponent<SpriteRenderer>().color = Random.ColorHSV(0f, 0.25f, 0.75f, 0.75f, 0.5f, 1f);
 
             //float randomIdleStart = Random.Range(0, animator.GetCurrentAnimatorStateInfo(0).length); //Set a random part of the animation to start from
             //string randomName = aoc["Crowd1A"].name;

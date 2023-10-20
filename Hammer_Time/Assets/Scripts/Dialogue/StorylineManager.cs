@@ -46,7 +46,6 @@ public class StorylineManager: MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         skipTutorials = cm.inProgress;
-        StartCoroutine(FirstFiveWeeks());
     }
 
     private void Update()
@@ -95,8 +94,14 @@ public class StorylineManager: MonoBehaviour
         dlg.TriggerDialogue();
     }
 
+    public void Beginning()
+    {
+
+    }
+
     IEnumerator FirstFiveWeeks()
     {
+        cm = FindObjectOfType<CareerManager>();
         if (cm.week <= 1 && !skipTutorials)
         {
             
@@ -137,7 +142,7 @@ public class StorylineManager: MonoBehaviour
                 }
                 blockIndex++;
 
-                yield return new WaitUntil(() => SceneManager.GetActiveScene().name == "Tourny_Menu_1");
+                yield break;
 
             }
 
@@ -151,6 +156,8 @@ public class StorylineManager: MonoBehaviour
 
                 yield return new WaitUntil(() => dm.dialogueCanvas.activeSelf);
                 blockIndex++;
+
+                yield break;
             }
 
             if (blockIndex == 3)
@@ -272,6 +279,7 @@ public class StorylineManager: MonoBehaviour
                 }
 
                 blockIndex++;
+                yield break;
             }
 
 
@@ -294,6 +302,7 @@ public class StorylineManager: MonoBehaviour
                 FindDialogueObjects();
                 TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers);
                 blockIndex++;
+                yield break;
             }
         }
 
@@ -303,4 +312,15 @@ public class StorylineManager: MonoBehaviour
         yield break;
     }
 
+    public void FirstFiveTrigger()
+    {
+        StartCoroutine(FirstFiveWeeks());
+    }
+
+    public void EndOfGame(int endScenario)
+    {
+        blockIndex = 5;
+        FindDialogueObjects();
+        TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, endScenario);
+    }
 }

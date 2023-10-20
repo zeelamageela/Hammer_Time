@@ -88,6 +88,8 @@ public class CareerManager : MonoBehaviour
     public List<bool> allTimeTrophyList;
     public List<bool> currentTrophyList;
 
+    public bool gameOver = false;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -530,7 +532,7 @@ public class CareerManager : MonoBehaviour
                 currentTourny.BG = myFile.GetInt("Current Tourny BG");
                 currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
 
-                gsp.KO = currentTourny.tour;
+                gsp.KO3 = currentTourny.tour;
                 gsp.draw = myFile.GetInt("Current Tourny Draw");
                 gsp.playoffRound = myFile.GetInt("Current Tourny Playoff Round");
 
@@ -830,6 +832,7 @@ public class CareerManager : MonoBehaviour
         //myFile.Add("Career Record", record);
         myFile.Add("Career Cash", cash);
         myFile.Add("Career Earnings", earnings);
+        myFile.Add("Game Over", gameOver);
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
         myFile.Add("Tour Record", tourRecord);
@@ -1175,6 +1178,54 @@ public class CareerManager : MonoBehaviour
             //Debug.Log("Number of Teams in CM Save - " + currentTourny.teams);
         }
 
+        if (tournies.Length > 0)
+        {
+            int[] provIDList = new int[prov.Length];
+            bool[] provCompleteList = new bool[prov.Length];
+            int[] tourIDList = new int[tour.Length];
+            bool[] tourCompleteList = new bool[tour.Length];
+            int[] tourniesIDList = new int[tournies.Length];
+            bool[] tourniesCompleteList = new bool[tournies.Length];
+
+            if (inventoryID.Length > 0)
+            {
+                myFile.Add("Inventory ID List", inventoryID);
+                myFile.Add("Active Equip ID List", activeEquipID);
+            }
+
+            Debug.Log("Tournies Complete list is " + tourCompleteList.Length + " long");
+            for (int i = 0; i < prov.Length; i++)
+            {
+                provIDList[i] = prov[i].id;
+                provCompleteList[i] = prov[i].complete;
+                //Debug.Log("provComplete " + i + " - " + provCompleteList[i]);
+            }
+
+            for (int i = 0; i < tour.Length; i++)
+            {
+                tourIDList[i] = tour[i].id;
+                tourCompleteList[i] = tour[i].complete;
+                //Debug.Log("tourComplete " + i + " - " + tourCompleteList[i]);
+            }
+
+            for (int i = 0; i < tournies.Length; i++)
+            {
+                tourniesIDList[i] = tournies[i].id;
+                tourniesCompleteList[i] = tournies[i].complete;
+                //Debug.Log("tourniesComplete " + i + " - " + tourniesCompleteList[i]);
+            }
+
+            myFile.Add("Tour Championship Complete", champ[0].complete);
+            myFile.Add("Prov Championship Complete", champ[1].complete);
+            myFile.Add("Prov ID List", provIDList);
+            myFile.Add("Prov Complete List", provCompleteList);
+            myFile.Add("Tour ID List", tourIDList);
+            myFile.Add("Tour Complete List", tourCompleteList);
+            myFile.Add("Tournies ID List", tourniesIDList);
+            myFile.Add("Tournies Complete List", tourniesCompleteList);
+            myFile.Add("Number Of Teams", currentTourny.teams);
+        }
+
         if (tm)
         {
             //Debug.Log("Saving Career and TM active, tour is " + currentTourny.tour);
@@ -1326,7 +1377,7 @@ public class CareerManager : MonoBehaviour
         bool inList = false;
         if (currentTourny.tour)
         {
-            gsp.KO = true;
+            gsp.KO3 = true;
             for (int i = 0; i < currentTourny.teams; i++)
             {
                 currentTournyTeams[i] = tourTeams[i];
@@ -1355,8 +1406,11 @@ public class CareerManager : MonoBehaviour
         }
         else
         {
-            
-            gsp.KO = false;
+            if (currentTourny.ko1)
+                gsp.KO1 = true;
+            else
+                gsp.KO1 = false;
+            gsp.KO3 = false;
             for (int i = 0; i < tSel.locals.Length; i++)
             {
                 if (currentTourny.name == tSel.locals[i].name)
@@ -1784,6 +1838,8 @@ public class CareerManager : MonoBehaviour
     public void EndCareer()
     {
         Debug.Log("Ending Career");
+        gameOver = true;
+        SaveCareer();
         StartCoroutine(SaveHighScore());
     }
 

@@ -9,10 +9,13 @@ public class TeamMenu : MonoBehaviour
     CareerManager cm;
     public SponsorManager pm;
     public TournySelector tSel;
+    public XPManager xpm;
 
     public GameObject teamMenu;
     public GameObject agentMenu;
     public GameObject setTeamButton;
+    public GameObject skillMenu;
+    public GameObject navMenu;
 
     public Player[] activePlayers;
     public Player[] freeAgents;
@@ -26,6 +29,7 @@ public class TeamMenu : MonoBehaviour
 
     public PlayerDisplay replaceMemberDisplay;
     public PlayerDisplay[] freeAgentDisplay;
+    public PlayerDisplay skillDisplay;
 
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
@@ -51,6 +55,8 @@ public class TeamMenu : MonoBehaviour
     public Text cashText;
     public Text costPerWeekText;
     public Text recordText;
+
+    public int playerSelect;
 
     int oppStatBase;
 
@@ -86,12 +92,12 @@ public class TeamMenu : MonoBehaviour
             strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
             healthSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
 
-            oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
-            oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
-            oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
-            oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
-            oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
-            oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
+            //oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
+            //oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
+            //oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
+            //oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
+            //oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
+            //oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
 
             xp = cm.xp;
             cash = cm.cash;
@@ -234,6 +240,13 @@ public class TeamMenu : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < teamDisplay.Length; i++)
+        {
+            teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
+        }
+
+        navMenu.SetActive(false);
+        skillMenu.SetActive(false);
         teamMenu.SetActive(true);
         setTeamButton.SetActive(true);
         agentMenu.SetActive(false);
@@ -265,18 +278,18 @@ public class TeamMenu : MonoBehaviour
 
     }
 
-    public void ViewFreeAgents(int teamMember)
+    public void ViewFreeAgents()
     {
         agentMenu.SetActive(true);
         teamMenu.SetActive(false);
 
-        replaceMemberDisplay.charName.text = activePlayers[teamMember].name;
-        replaceMemberDisplay.cost.text = "$" + activePlayers[teamMember].cost.ToString("N0");
-        replaceMemberDisplay.photo.sprite = activePlayers[teamMember].image;
-        replaceMemberDisplay.description.text = activePlayers[teamMember].description;
-        if (teamMember == 0)
+        replaceMemberDisplay.charName.text = activePlayers[playerSelect].name;
+        replaceMemberDisplay.cost.text = "$" + activePlayers[playerSelect].cost.ToString("N0");
+        replaceMemberDisplay.photo.sprite = activePlayers[playerSelect].image;
+        replaceMemberDisplay.description.text = activePlayers[playerSelect].description;
+        if (playerSelect == 0)
             replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Lead";
-        else if (teamMember == 1)
+        else if (playerSelect == 1)
             replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Second";
         else
             replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
@@ -286,7 +299,7 @@ public class TeamMenu : MonoBehaviour
 
         for (int i = 0; i < activePlayers.Length; i++)
         {
-            if (i != teamMember)
+            if (i != playerSelect)
             {
                 moneyToSpend -= (activePlayers[i].cost);
             }
@@ -393,6 +406,52 @@ public class TeamMenu : MonoBehaviour
         //pm.SetUp();
     }
 
+    public void NavMenu(int player)
+    {
+        navMenu.transform.SetSiblingIndex(player);
+        for (int i = 0; i < teamDisplay.Length; i++)
+        {
+            if (i == player)
+                teamDisplay[i].charName.transform.parent.gameObject.SetActive(false);
+            else
+                teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
+        }
+        navMenu.SetActive(true);
+        playerSelect = player;
+
+    }
+
+    public void SkillMenu()
+    {
+        if (playerSelect == 3)
+        {
+            skillDisplay.charName.text = cm.playerName + " " + cm.teamName;
+            skillDisplay.cost.text = " ";
+            skillDisplay.photo.enabled = false;
+            skillDisplay.description.text = "Your stats.";
+        }
+        else
+        {
+            skillDisplay.charName.text = activePlayers[playerSelect].name;
+            skillDisplay.cost.text = "$" + activePlayers[playerSelect].cost.ToString("N0");
+            skillDisplay.photo.enabled = true;
+            skillDisplay.photo.sprite = activePlayers[playerSelect].image;
+            skillDisplay.description.text = activePlayers[playerSelect].description;
+            if (playerSelect == 0)
+                skillDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Lead";
+            else if (playerSelect == 1)
+                skillDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Second";
+            else
+                skillDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
+        }
+
+        skillMenu.SetActive(true);
+        navMenu.SetActive(false);
+        teamMenu.SetActive(false);
+        setTeamButton.SetActive(false);
+        agentMenu.SetActive(false);
+    }
+
     void Shuffle(Player[] a)
     {
         Debug.Log("Shuffling");
@@ -428,22 +487,6 @@ public class TeamMenu : MonoBehaviour
         cm.oppStats.sweepEndurance = activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
         cm.oppStats.sweepStrength = activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
         cm.oppStats.sweepCohesion = activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
-
-        for (int i = 0; i < pm.activeCards.Length; i++)
-        {
-            cm.modStats.drawAccuracy += pm.activeCards[i].draw;
-            cm.modStats.guardAccuracy += pm.activeCards[i].guard;
-            cm.modStats.takeOutAccuracy += pm.activeCards[i].takeOut;
-            cm.modStats.sweepEndurance += pm.activeCards[i].sweepEnduro;
-            cm.modStats.sweepStrength += pm.activeCards[i].sweepStrength;
-            cm.modStats.sweepCohesion += pm.activeCards[i].sweepCohesion;
-            cm.oppStats.drawAccuracy += pm.activeCards[i].oppDraw;
-            cm.oppStats.guardAccuracy += pm.activeCards[i].oppGuard;
-            cm.oppStats.takeOutAccuracy += pm.activeCards[i].oppTakeOut;
-            cm.oppStats.sweepEndurance += pm.activeCards[i].oppEnduro;
-            cm.oppStats.sweepStrength += pm.activeCards[i].oppStrength;
-            cm.oppStats.sweepCohesion += pm.activeCards[i].oppCohesion;
-        }
     }
 
     public void UnPreviewPoints()

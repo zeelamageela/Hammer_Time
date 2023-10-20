@@ -30,6 +30,7 @@ public class SweeperSelector : MonoBehaviour
     bool aiTurn;
 
     public Vector2 moveDirection;
+    public Vector2 moveDirection2;
 
     private void Update()
     {
@@ -37,6 +38,13 @@ public class SweeperSelector : MonoBehaviour
         {
             Vector3 followSpot = new Vector3((rockRB.position.x), (rockRB.position.y), 0f);
             transform.position = followSpot;
+
+            if (rock2RB != null)
+            {
+            Vector3 followSpot2 = new Vector3((rock2RB.position.x), (rock2RB.position.y), 0f);
+            tSweepParent.transform.position = followSpot2;
+
+            }
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
@@ -74,7 +82,31 @@ public class SweeperSelector : MonoBehaviour
                     }
                 }
             }
+            if (rock2RB != null)
+            {
+            moveDirection2 = rock2RB.velocity;
 
+            if (moveDirection != Vector2.zero)
+            {
+                if (Mathf.Abs(moveDirection2.x) > 0.02f | Mathf.Abs(moveDirection2.y) > 0.005f)
+                {
+                    float angle = Mathf.Atan2(moveDirection2.y, moveDirection2.x) * Mathf.Rad2Deg;
+                    tSweepParent.transform.rotation = Quaternion.AngleAxis((angle - 90f), Vector3.forward);
+                    //Debug.Log("Angle is " + angle);
+                    if (tSweepParent.transform.rotation.z > 30f)
+                    {
+                        sweeperRedTee.yOffset = 0.6f;
+                        sweeperYellowTee.yOffset = 0.6f;
+                    }
+                    if (tSweepParent.transform.rotation.z < -30f)
+                    {
+                        sweeperL.yOffset = 0.6f;
+                        sweeperR.yOffset = 1.2f;
+                    }
+                }
+            }
+
+            }
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
@@ -157,6 +189,10 @@ public class SweeperSelector : MonoBehaviour
         sweeperL = sm.sweeperL;
         sweeperLCol = sweeperL.GetComponent<BoxCollider2D>();
         sweeperR = sm.sweeperR;
-        sweeperRCol = sweeperR.GetComponent<BoxCollider2D>();
+        sweeperRCol = sweeperR.GetComponent<BoxCollider2D>(); 
+        sweeperRedTee = sm.sweeperRedTee;
+        sweeperRCol = sweeperRedTee.GetComponent<BoxCollider2D>();
+        sweeperYellowTee = sm.sweeperYellowTee;
+        sweeperRCol = sweeperYellowTee.GetComponent<BoxCollider2D>();
     }
 }

@@ -178,7 +178,7 @@ public class EndMenu : MonoBehaviour
 
             if (gsp.playoffRound > 0)
             {
-                if (gsp.KO)
+                if (gsp.KO3)
                     draw.text = "Round " + gsp.playoffRound.ToString();
                 else
                 {
@@ -303,6 +303,37 @@ public class EndMenu : MonoBehaviour
 
     public void EndGame()
     {
+
+        if (gsp.cashGame)
+        {
+            float winnings;
+
+            gsp.tournyInProgress = false;
+            Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+            Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
+            Debug.Log("CM earnings are " + cm.earnings);
+
+            cm.TournyResults();
+            cm.SetUpCareer();
+            if (gsp.skinsGame)
+            {
+                winnings = gsp.skins * 2f;
+            }
+            else
+            {
+                winnings = gsp.prize * 2f;
+            }
+
+            gsp.cash += winnings;
+            cm.cash += gsp.cash;
+
+            SceneManager.LoadScene("Arena_Selector");
+        }
+        if (gsp.KO3)
+            SceneManager.LoadScene("Tourny_Home_3K");
+        if(gsp.KO1)
+            SceneManager.LoadScene("Tourny_Home_SingleK");
+
         if (gsp.tourny)
         {
             //if (gsp.aiRed)
@@ -334,35 +365,5 @@ public class EndMenu : MonoBehaviour
             cm.SaveCareer();
             SceneManager.LoadScene("Tourny_Home_1");
         }
-
-        if (gsp.cashGame)
-        {
-            float winnings;
-
-            gsp.tournyInProgress = false;
-            Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
-            Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
-            Debug.Log("CM earnings are " + cm.earnings);
-
-            cm.TournyResults();
-            cm.SetUpCareer();
-            if (gsp.skinsGame)
-            {
-                winnings = gsp.skins * 2f;
-            }
-            else
-            {
-                winnings = gsp.prize * 2f;
-            }
-
-            gsp.cash += winnings;
-            cm.cash += gsp.cash;
-
-            SceneManager.LoadScene("Arena_Selector");
-        }
-        else if (gsp.KO)
-            SceneManager.LoadScene("Tourny_Home_3K");
-        else
-            SceneManager.LoadScene("Tourny_Home_1");
     }
 }

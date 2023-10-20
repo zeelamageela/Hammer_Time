@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_Sprite: {fileID: 483403220167210870, guid: ce513aadd9df1034bb765652cd713621, type: 3}
-  m_Color: {r: 0.6509804, g: 0.47450984, b: 0.854902, a: 1}
+  m_Color: {r: 0.6415094, g: 0.5036657, b: 0.015129937, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0.6509804, g: 0.47450984, b: 0.854902, a: 1}
+  colour1: {r: 0.6415094, g: 0.5036657, b: 0.015129937, a: 0}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -403,17 +403,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Sandy
   drawAccuracy:
-    baseValue: 2
+    baseValue: 10
   takeOutAccuracy:
-    baseValue: 3
+    baseValue: 10
   guardAccuracy:
-    baseValue: 3
+    baseValue: 10
   sweepStrength:
-    baseValue: 3
+    baseValue: 10
   sweepEndurance:
-    baseValue: 3
+    baseValue: 10
   sweepCohesion:
-    baseValue: 1
+    baseValue: 10
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

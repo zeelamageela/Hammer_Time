@@ -756,7 +756,8 @@ MonoBehaviour:
   rockPos: []
   rockInPlay: 
   tourny: 0
-  KO: 0
+  KO3: 0
+  KO1: 0
   cashGame: 0
   games: 0
   firstName: 
@@ -809,6 +810,7 @@ MonoBehaviour:
     strength: 0
     id: 0
     earnings: 0
+    record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
@@ -4157,6 +4159,7 @@ MonoBehaviour:
     strength: 0
     id: 0
     earnings: 0
+    record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
@@ -4175,6 +4178,8 @@ MonoBehaviour:
     qualifier: 0
     tour: 0
     complete: 0
+    ko3: 0
+    ko1: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0

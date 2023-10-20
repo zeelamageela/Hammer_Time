@@ -5358,7 +5358,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						prizePayout = gsp.prize * 0.038f;
 					else
 					{
-						Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
+						Debug.Log("Rank " + teams[i].rank + " - " + teams[i].name + " Payout is $" + prizePayout);
 					}
 
 					Debug.Log("Position " + (i + 1) + " Payout is $" + prizePayout);
@@ -5427,17 +5427,21 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					//vsDisplay[0].rank.text = teams[i].wins.ToString() + "-" + teams[i].loss.ToString();
 					//vsDisplay[0].name.text = teams[i].name;
 
+					if (teams[i].loss == 3)
+					{
+						vsDisplay[0].rank.text = "XXX";
+					}
 					if (teams[i].loss == 2)
 					{
-						vsDisplay[0].rank.text = "XX";
+						vsDisplay[0].rank.text = "OXX";
 					}
 					if (teams[i].loss == 1)
 					{
-						vsDisplay[0].rank.text = "X";
+						vsDisplay[0].rank.text = "OOX";
 					}
 					if (teams[i].loss == 0)
 					{
-						vsDisplay[0].rank.text = "-";
+						vsDisplay[0].rank.text = "OOO";
 					}
 					vsDisplay[0].name.text = teams[i].name;
 				}
@@ -5445,15 +5449,15 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				{
 					if (teams[i].loss == 2)
 					{
-						vsDisplay[1].rank.text = "XX";
+						vsDisplay[1].rank.text = "OXX";
 					}
 					if (teams[i].loss == 1)
 					{
-						vsDisplay[1].rank.text = "X";
+						vsDisplay[1].rank.text = "OOX";
 					}
 					if (teams[i].loss == 0)
 					{
-						vsDisplay[1].rank.text = "-";
+						vsDisplay[1].rank.text = "OOO";
 					}
 					vsDisplay[1].name.text = teams[i].name;
 				}
@@ -5590,7 +5594,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		myFile = new EasyFileSave("my_player_data");
 
-		myFile.Add("Knockout Tourny", gsp.KO);
+		myFile.Add("Triple Knockout Tourny", true);
 		//myFile.Add("Career Record", cm.record);
 		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
 

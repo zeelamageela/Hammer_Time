@@ -176,21 +176,30 @@ public class CareerSettings : MonoBehaviour
                 cm.activePlayers[i].oppEnduro = playerOppEnduroList[i];
                 cm.activePlayers[i].oppCohesion = playerOppCohesionList[i];
             }
-
             if (gsp.tournyInProgress)
             {
                 tournyInProg.SetActive(true);
-                gsp.KO = myFile.GetBool("Knockout Tourny");
+                gsp.KO3 = myFile.GetBool("Triple Knockout Tourny");
+                gsp.KO1 = myFile.GetBool("Single Knockout Tourny");
+                gsp.cashGame = myFile.GetBool("Cash Game");
                 tournyNameLoad.text = myFile.GetString("Current Tourny Name");
                 int draw = 1 + myFile.GetInt("Draw");
                 int playoffRound = myFile.GetInt("Playoff Round");
-                if (playoffRound > 0)
-                    drawLoad.text = "Playoff Round " + playoffRound;
+
+                if (gsp.KO3)
+                    drawLoad.text = "Triple KO - Round " + playoffRound;
+                else if (gsp.KO1)
+                    drawLoad.text = "Single KO - Round " + playoffRound;
+                else if (playoffRound > 0)
+                    drawLoad.text = "Playoffs - Round " + playoffRound;
                 else
                     drawLoad.text = "Draw " + draw;
             }
             else
                 tournyInProg.SetActive(false);
+
+            cm.gameOver = myFile.GetBool("Game Over");
+            
 
             myFile.Dispose();
             yield return new WaitForEndOfFrame();
@@ -202,8 +211,13 @@ public class CareerSettings : MonoBehaviour
             earningsLoad.text = "$" + cm.earnings.ToString("n0");
             recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
             load.SetActive(true);
-            player.SetActive(false);
-            
+
+            player.SetActive(false); if (cm.gameOver)
+            {
+                weekLoad.text = "Game Over!";
+                nextButton.transform.parent.gameObject.SetActive(false);
+            }
+
         }
         else
         {
@@ -225,8 +239,10 @@ public class CareerSettings : MonoBehaviour
             }
             else
             {
-                if (gsp.KO)
+                if (gsp.KO3)
                     SceneManager.LoadScene("Tourny_Home_3K");
+                else if (gsp.KO1)
+                    SceneManager.LoadScene("Tourny_Home_SingleK");
                 else
                     SceneManager.LoadScene("Tourny_Home_1");
             }
@@ -260,7 +276,10 @@ public class CareerSettings : MonoBehaviour
         ClearPlayer();
         cm = FindObjectOfType<CareerManager>();
         gsp = FindObjectOfType<GameSettingsPersist>();
-        
+
+        cm.gameOver = false;
+        nextButton.transform.parent.gameObject.SetActive(true);
+
         gsp.careerLoad = false;
         record = Vector2.zero;
         week = 0;
