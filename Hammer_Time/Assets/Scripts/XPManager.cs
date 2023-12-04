@@ -7,6 +7,7 @@ public class XPManager : MonoBehaviour
 {
     CareerManager cm;
     public CareerStats[] cStats;
+    public CareerStats modStats;
     GameSettingsPersist gsp;
 
     public int activePlayer;
@@ -70,6 +71,12 @@ public class XPManager : MonoBehaviour
                 cStats[i].sweepEndurance = cm.activePlayers[i].sweepEnduro;
                 cStats[i].sweepCohesion = cm.activePlayers[i].sweepCohesion;
             }
+            modStats.drawAccuracy += cStats[i].drawAccuracy;
+            modStats.takeOutAccuracy += cStats[i].takeOutAccuracy;
+            modStats.guardAccuracy += cStats[i].guardAccuracy;
+            modStats.sweepStrength += cStats[i].sweepStrength;
+            modStats.sweepEndurance += cStats[i].sweepEndurance;
+            modStats.sweepCohesion += cStats[i].sweepCohesion;
         }
         activePlayer = 3;
         SetSliders(3);
@@ -127,36 +134,34 @@ public class XPManager : MonoBehaviour
     {
         float exponent = 1.2f;
         float xpMult = Mathf.Pow(cm.totalXp, exponent);
-        skillPointsTotal = 20 + Mathf.FloorToInt(xpMult / 47.59f);
-        //Debug.Log("Skill Points Total is " + skillPointsTotal);
-        Debug.Log("SkillPointsTotal pre-calc is " + skillPointsTotal);
-        skillPoints = (skillPointsTotal * 4)
-                    - cStats[3].drawAccuracy
-                    - cStats[3].takeOutAccuracy
-                    - cStats[3].guardAccuracy
-                    - cStats[3].sweepStrength
-                    - cStats[3].sweepEndurance
-                    - cStats[3].sweepCohesion
-                    -cStats[2].drawAccuracy
-                    - cStats[2].takeOutAccuracy
-                    - cStats[2].guardAccuracy
-                    - cStats[2].sweepStrength
-                    - cStats[2].sweepEndurance
-                    - cStats[2].sweepCohesion
-                    - cStats[1].drawAccuracy
-                    - cStats[1].takeOutAccuracy
-                    - cStats[1].guardAccuracy
-                    - cStats[1].sweepStrength
-                    - cStats[1].sweepEndurance
-                    - cStats[1].sweepCohesion
-                    -cStats[0].drawAccuracy
-                    - cStats[0].takeOutAccuracy
-                    - cStats[0].guardAccuracy
-                    - cStats[0].sweepStrength
-                    - cStats[0].sweepEndurance
-                    - cStats[0].sweepCohesion;
+        skillPointsTotal = 63 + Mathf.FloorToInt(xpMult / 47.59f);
+
+        Debug.Log("SkillPoints pre-calc is " + skillPointsTotal);
+
+        int modPoints = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            modPoints += cStats[i].drawAccuracy;
+            modPoints += cStats[i].takeOutAccuracy;
+            modPoints += cStats[i].guardAccuracy;
+            modPoints += cStats[i].sweepStrength;
+            modPoints += cStats[i].sweepEndurance;
+            modPoints += cStats[i].sweepCohesion;
+        }
+
+        skillPoints = skillPointsTotal - modPoints;
 
         Debug.Log("SkillPoints post-calc is " + skillPoints);
+
+        if (skillPoints < 0)
+            skillPoints = 0;
+    }
+
+    public void SetSkillPoints2(int select)
+    {
+        float exponent = 1.2f;
+        float xpMult = Mathf.Pow(cm.totalXp, exponent);
+        skillPointsTotal = 4 + Mathf.FloorToInt(xpMult / 47.59f);
     }
 
     public void ButtonAdd(int skill)
@@ -232,23 +237,30 @@ public class XPManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
+        cStats[activePlayer].drawAccuracy = (int)drawSlider.value;
+        cStats[activePlayer].takeOutAccuracy = (int)takeOutSlider.value;
+        cStats[activePlayer].guardAccuracy = (int)guardSlider.value;
+        cStats[activePlayer].sweepStrength = (int)strengthSlider.value;
+        cStats[activePlayer].sweepEndurance = (int)endurSlider.value;
+        cStats[activePlayer].sweepCohesion = (int)healthSlider.value;
+
         if (activePlayer == 3)
         {
-            cm.cStats.drawAccuracy = (int)drawSlider.value;
-            cm.cStats.takeOutAccuracy = (int)takeOutSlider.value;
-            cm.cStats.guardAccuracy = (int)guardSlider.value;
-            cm.cStats.sweepStrength = (int)strengthSlider.value;
-            cm.cStats.sweepEndurance = (int)endurSlider.value;
-            cm.cStats.sweepCohesion = (int)healthSlider.value;
+            cm.cStats.drawAccuracy = cStats[activePlayer].drawAccuracy;
+            cm.cStats.takeOutAccuracy = cStats[activePlayer].takeOutAccuracy;
+            cm.cStats.guardAccuracy = cStats[activePlayer].guardAccuracy;
+            cm.cStats.sweepStrength = cStats[activePlayer].sweepStrength;
+            cm.cStats.sweepEndurance = cStats[activePlayer].sweepEndurance;
+            cm.cStats.sweepCohesion = cStats[activePlayer].sweepCohesion;
         }
         else
         {
-            cm.activePlayers[activePlayer].draw = (int)drawSlider.value;
-            cm.activePlayers[activePlayer].takeOut = (int)takeOutSlider.value;
-            cm.activePlayers[activePlayer].guard = (int)guardSlider.value;
-            cm.activePlayers[activePlayer].sweepStrength = (int)strengthSlider.value;
-            cm.activePlayers[activePlayer].sweepEnduro = (int)endurSlider.value;
-            cm.activePlayers[activePlayer].sweepCohesion = (int)healthSlider.value;
+            cm.activePlayers[activePlayer].draw = cStats[activePlayer].drawAccuracy;
+            cm.activePlayers[activePlayer].takeOut = cStats[activePlayer].takeOutAccuracy;
+            cm.activePlayers[activePlayer].guard = cStats[activePlayer].guardAccuracy;
+            cm.activePlayers[activePlayer].sweepStrength = cStats[activePlayer].sweepStrength;
+            cm.activePlayers[activePlayer].sweepEnduro = cStats[activePlayer].sweepEndurance;
+            cm.activePlayers[activePlayer].sweepCohesion = cStats[activePlayer].sweepCohesion;
         }
 
         //resetButton.interactable = false;

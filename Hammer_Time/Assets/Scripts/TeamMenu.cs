@@ -53,7 +53,8 @@ public class TeamMenu : MonoBehaviour
     //public float costPerWeek;
     public Text xpText;
     public Text cashText;
-    public Text costPerWeekText;
+    public Text costText;
+    public Text incomeText;
     public Text recordText;
 
     public int playerSelect;
@@ -108,7 +109,12 @@ public class TeamMenu : MonoBehaviour
             if (cm.activePlayers.Length > 0 && pm)
             {
                 cm.costPerWeek = cm.activePlayers[0].cost + cm.activePlayers[1].cost + cm.activePlayers[2].cost + pm.costPerWeek;
-                costPerWeekText.text = "$" + cm.costPerWeek.ToString("n0");
+
+                float cost = cm.activePlayers[0].cost + cm.activePlayers[1].cost + cm.activePlayers[2].cost;
+                float income = pm.costPerWeek;
+
+                incomeText.text = "$" + income.ToString("n0");
+                costText.text = "$" + cost.ToString("n0");
             }
         }
     }
@@ -157,16 +163,18 @@ public class TeamMenu : MonoBehaviour
             //cm.LoadCareer();
             if (myFile.Load())
             {
-                int[] activePlayerIdList = myFile.GetArray<int>("Active Players ID List");
-
                 for (int i = 0; i < activePlayers.Length; i++)
                 {
                     //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
                     for (int j = 0; j < playerPool.Length; j++)
                     {
-                        if (activePlayerIdList[i] == playerPool[j].id)
+                        if (activePlayers[i].id == playerPool[j].id)
                         {
-                            activePlayers[i] = playerPool[j];
+                            activePlayers[i].name = playerPool[j].name;
+                            activePlayers[i].description = playerPool[j].description;
+                            activePlayers[i].cost = playerPool[j].cost;
+                            activePlayers[i].image = playerPool[j].image;
+                            activePlayers[i].view = playerPool[j].view;
                             activePlayers[i].active = true;
                             playerPool[j].active = true;
                         }

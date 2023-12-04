@@ -149,11 +149,11 @@ public class TrajectoryLine : MonoBehaviour
                 //    }
                 //}
 
-                Debug.Log("Distance is " + distance);
+                //Debug.Log("Distance is " + distance);
                 float normDist = (((distance - 0.00f) / (0.075f - 0.00f)));
                 //float normDist = Mathf.Round(tempDist) / 10f;
 
-                Debug.Log("NormDist is " + normDist);
+                //Debug.Log("NormDist is " + normDist);
 
                 lr.startWidth = 0.05f;
                 lr.endWidth = 0.02f;

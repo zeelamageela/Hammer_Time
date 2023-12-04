@@ -322,30 +322,46 @@ public class CareerSettings : MonoBehaviour
     public void NameGenerator()
     {
         int first = Random.Range(0, 11);
-        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greezy", "Treep", "Cherp", "Glimp", "Jam", "Cray", "Stint", "Arugala" };
+        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greezy", "Treep", "Cherp", "Glimp", "Jam", "Craw", "Stint", "Arugula" };
 
         int syllables = Random.Range(0, 3);
 
-        int lasta = Random.Range(0, 10);
-        string[] name2a = { "Griff", "Stamp", "Gloob", "Frist", "Jum", "Stoff", "Well", "Trink", "Gust", "Stoob" };
+        int pref = Random.Range(0, 14);
+        string[] name2pref = { "O'", "de ", "de la ", "Mc" };
 
-        int lastb = Random.Range(0, 10);
-        string[] name2b = { "ty", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
+        int lasta = Random.Range(0, 14);
+        string[] name2a = { "Griff", "Stamp", "Gloob", "Frist", "Jum", "Stoff", "Wel", "Tank", "Gus", "Stoob", "Lol", "Sen", "Thun", "Hel", "Cleev" };
 
-        int lastc = Random.Range(0, 10);
-        string[] name2c = { "ty", "sen", "rov", "werk", "lova", "ter", "vun", "brun", "son", "bing" };
+        int lastb = Random.Range(0, 11);
+        string[] name2b = { "il", "ity", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
+
+        int lastc = Random.Range(0, 13);
+        string[] name2c = { "", "ty", "sen", "rov", "werk", "lova", "ter", "vun", "brun", "son", "bing", "ich", "eux" };
+
+        Debug.Log("Syllables" + syllables + " - pref " + pref);
 
         if (syllables == 0)
         {
-            lastb = 0;
-            lastc = 0;
+            if (pref <= 3)
+                teamNameInput.text = name2pref[pref] + name2a[lasta];
+            else 
+                teamNameInput.text = name2a[lasta];
         }
         else if (syllables == 1)
         {
-            lastc = 0;
+            if (pref <= 3)
+                teamNameInput.text = name2pref[pref] + name2a[lasta] + name2b[lastb];
+            else
+                teamNameInput.text = name2a[lasta] + name2b[lastb];
+        }
+        else if (syllables == 2)
+        {
+            if (pref <= 3)
+                teamNameInput.text = name2pref[pref] + name2a[lasta] + name2b[lastb] + name2c[lastc];
+            else
+                teamNameInput.text = name2a[lasta] + name2b[lastb] + name2c[lastc];
         }
 
         playerNameInput.text = name1[first];
-        teamNameInput.text = name2a[lasta] + name2b[lastb] + name2c[lastc];
     }
 }

@@ -3067,7 +3067,8 @@ MonoBehaviour:
   rockPos: []
   rockInPlay: 
   tourny: 1
-  KO: 0
+  KO3: 0
+  KO1: 0
   cashGame: 0
   games: 0
   firstName: 
@@ -16812,11 +16813,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.0002746582
+      value: 65.111725
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0.000030517578
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657540818956691, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540841667980, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.x
@@ -16866,6 +16871,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -54.14
       objectReference: {fileID: 0}
+    - target: {fileID: 2242657541354954970, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 432
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657541354954970, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -19.07
+      objectReference: {fileID: 0}
     - target: {fileID: 2242657541365257966, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -16880,6 +16893,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541365257966, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657541365257966, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541385738348, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}

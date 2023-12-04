@@ -235,12 +235,24 @@ public class CareerManager : MonoBehaviour
             if (teamSel)
             {
                 int[] playersIdList = myFile.GetArray<int>("Active Players ID List");
+                int[] playersDrawList = myFile.GetArray<int>("Active Players Draw List");
+                int[] playersGuardList = myFile.GetArray<int>("Active Players Guard List");
+                int[] playersTakeOutList = myFile.GetArray<int>("Active Players Takeout List");
+                int[] playersStrengthList = myFile.GetArray<int>("Active Players Strength List");
+                int[] playersEnduroList = myFile.GetArray<int>("Active Players Endurance List");
+                int[] playersCohesionList = myFile.GetArray<int>("Active Players Cohesion List");
                 //Debug.Log("Players Id Length - " + playersIdList.Length);
 
                 for (int i = 0; i < playersIdList.Length; i++)
                 {
                     //Debug.Log("CM LOADCAREER - Active Players Id - " + i + " - " + playersIdList[i]);
                     teamSel.activePlayers[i].id = playersIdList[i];
+                    teamSel.activePlayers[i].draw = playersDrawList[i];
+                    teamSel.activePlayers[i].guard = playersGuardList[i];
+                    teamSel.activePlayers[i].takeOut = playersTakeOutList[i];
+                    teamSel.activePlayers[i].sweepStrength = playersStrengthList[i];
+                    teamSel.activePlayers[i].sweepEnduro = playersEnduroList[i];
+                    teamSel.activePlayers[i].sweepCohesion = playersCohesionList[i];
                 }
             }
 

@@ -121,6 +121,8 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		}
 
 		tm.playoffRound = playoffRound;
+		gsp.playoffTeams = playoffTeams;
+
 		SetPlayoffs();
 	}
 
@@ -193,11 +195,18 @@ public class PlayoffManager_SingleK : MonoBehaviour
 			if (playoffTeams[i].player)
 				playerTeam = i;
 		}
-		for (int i = 0; i < tm.teams.Length; i++)
-		{
-			if (tm.teams[i].name == tm.teams[playerTeam].nextOpp)
-				oppTeam = i;
-		}
+		//for (int i = 0; i < gsp.playoffTeams.Length; i++)
+		//{
+		//	if (gsp.teams[playerTeam].name == gsp.playoffTeams[i].name)
+		//		if (i % 2 == 0)
+  //              {
+		//			oppTeam = i + 1;
+  //              }
+		//		else
+		//		{
+		//			oppTeam = i - 1;
+		//		}
+		//}
 		Debug.Log("OppTeam is " + oppTeam);
 		switch (playoffRound)
         {
@@ -469,7 +478,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 			gsp.playoffTeams = new Team[playoffTeams.Length];
 			Debug.Log("gsp.playoffTeams Length is " + gsp.playoffTeams.Length);
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < playoffTeams.Length; i++)
 			{
 				playoffTeams[i] = teamList[i].team;
 				gsp.playoffTeams[i] = teamList[i].team;
@@ -1528,34 +1537,31 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		myFile.Add("OppTeam", oppTeam);
 		myFile.Add("Playoff Round", playoffRound);
 
-		string[] nameList = new string[tm.teams.Length];
-		int[] winsList = new int[tm.teams.Length];
-		int[] lossList = new int[tm.teams.Length];
-		int[] rankList = new int[tm.teams.Length];
-		string[] nextOppList = new string[tm.teams.Length];
-		int[] strengthList = new int[tm.teams.Length];
-		int[] idList = new int[tm.teams.Length];
-		float[] earningsList = new float[tm.teams.Length];
-		bool[] playerList = new bool[tm.teams.Length];
+		string[] nameList = new string[gsp.teams.Length];
+		int[] winsList = new int[gsp.teams.Length];
+		int[] lossList = new int[gsp.teams.Length];
+		int[] rankList = new int[gsp.teams.Length];
+		int[] strengthList = new int[gsp.teams.Length];
+		int[] idList = new int[gsp.teams.Length];
+		float[] earningsList = new float[gsp.teams.Length];
+		bool[] playerList = new bool[gsp.teams.Length];
 
-		for (int i = 0; i < tm.teams.Length; i++)
+		for (int i = 0; i < gsp.teams.Length; i++)
 		{
-			nameList[i] = tm.teams[i].name;
-			winsList[i] = tm.teams[i].wins;
-			lossList[i] = tm.teams[i].loss;
-			rankList[i] = tm.teams[i].rank;
-			nextOppList[i] = tm.teams[i].nextOpp;
-			strengthList[i] = tm.teams[i].strength;
-			idList[i] = tm.teams[i].id;
-			earningsList[i] = tm.teams[i].earnings;
-			playerList[i] = tm.teams[i].player;
+			nameList[i] = gsp.teams[i].name;
+			winsList[i] = gsp.teams[i].wins;
+			lossList[i] = gsp.teams[i].loss;
+			rankList[i] = gsp.teams[i].rank;
+			strengthList[i] = gsp.teams[i].strength;
+			idList[i] = gsp.teams[i].id;
+			earningsList[i] = gsp.teams[i].earnings;
+			playerList[i] = gsp.teams[i].player;
 		}
 
 		myFile.Add("Tourny Name List", nameList);
 		myFile.Add("Tourny Wins List", winsList);
 		myFile.Add("Tourny Loss List", lossList);
 		myFile.Add("Tourny Rank List", rankList);
-		myFile.Add("Tourny NextOpp List", nextOppList);
 		myFile.Add("Tourny Strength List", strengthList);
 		myFile.Add("Tourny Team ID List", idList);
 		myFile.Add("Tourny Earnings List", earningsList);
