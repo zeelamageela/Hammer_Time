@@ -18,6 +18,7 @@ public class SweeperSelector : MonoBehaviour
     public Collider2D sweeperLCol;
     public Collider2D sweeperRCol;
     public Collider2D sweepZoneCol;
+    public Collider2D sweeperTeeCol;
 
     public GameObject panel;
     public RockManager rm;
@@ -191,8 +192,7 @@ public class SweeperSelector : MonoBehaviour
         sweeperR = sm.sweeperR;
         sweeperRCol = sweeperR.GetComponent<BoxCollider2D>(); 
         sweeperRedTee = sm.sweeperRedTee;
-        sweeperRCol = sweeperRedTee.GetComponent<BoxCollider2D>();
         sweeperYellowTee = sm.sweeperYellowTee;
-        sweeperRCol = sweeperYellowTee.GetComponent<BoxCollider2D>();
+        sweeperTeeCol = sweeperRedTee.GetComponent<BoxCollider2D>();
     }
 }

@@ -26,8 +26,8 @@ public class RandomRockPlacerment : MonoBehaviour
     int playerSelection;
     public int round;
 
-    public MMFeedback fltFdbk;
-    public MMFeedbackFloatingText fltText;
+    public MMF_Player fltFdbk;
+    public MMF_FloatingText fltText;
 
     public HapticClip drawHap;
     public HapticClip hitHap;
@@ -1760,7 +1760,6 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rockInfo.placed = true;
         }
 
-
         for (int i = 0; i < rockCurrent + 1; i++)
         {
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
@@ -1828,8 +1827,11 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.houseList.Sort();
             Debug.Log("Sorted houseList - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
         }
-        fltText.TargetTransform = gm.rockList[rockCurrent].rock.transform;
-        fltText.Play(rockPos[rockCurrent]);
+
+
+        if (gm.gsp.debug)
+            fltFdbk.PlayFeedbacks(gm.rockList[rockCurrent].rock.transform.position, 1f);
+        //fltText.Play(rockPos[rockCurrent]);
         //gm.rockCurrent = rockCurrent - 1;
         //gm.rockCurrent--;
         placed1 = true;
@@ -2161,6 +2163,7 @@ public class RandomRockPlacerment : MonoBehaviour
     int SkillCheck(string shot, int skill)
     {
         int shotSelector;
+
         switch (shot)
         {
             case "Guard":
@@ -2168,7 +2171,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     shotSelector = 3;
                     Debug.Log("Guard Check - SUCCESS");
-                    fltText.Value = "Guard Check - SUCCESS";
+                    //fltText.Value = "Guard Check - SUCCESS";
                 }
                 else
                 {
@@ -2177,13 +2180,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 0;
                         Debug.Log("Guard Check - long - FAIL");
-                        fltText.Value = "Guard Check - long - FAIL";
+                        //fltText.Value = "Guard Check - long - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Guard Check - short - FAIL");
-                        fltText.Value = "Guard Check - short - FAIL";
+                        //fltText.Value = "Guard Check - short - FAIL";
                     }
                 }
                 break;
@@ -2193,7 +2196,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     shotSelector = 0;
                     Debug.Log("Draw Check - SUCCESS");
-                    fltText.Value = "Draw Check - SUCCESS";
+                    //fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
                 {
@@ -2202,13 +2205,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Draw Check - short - FAIL");
-                        fltText.Value = "Draw Check - short - FAIL";
+                        //fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Draw Check - long - FAIL");
-                        fltText.Value = "Draw Check - long - FAIL";
+                        //fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
                 break;
@@ -2218,7 +2221,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     shotSelector = 2;
                     Debug.Log("Draw Check - SUCCESS");
-                    fltText.Value = "Draw Check - SUCCESS";
+                    //fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
                 {
@@ -2227,13 +2230,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Draw Check - short - FAIL");
-                        fltText.Value = "Draw Check - short - FAIL";
+                        //fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Draw Check - long - FAIL");
-                        fltText.Value = "Draw Check - long - FAIL";
+                        //fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
                 break;
@@ -2244,7 +2247,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     shotSelector = 4;
                     Debug.Log("Takeout Check - SUCCESS");
-                    fltText.Value = "Takeout Check - SUCCESS";
+                    //fltText.Value = "Takeout Check - SUCCESS";
                 }
                 //SKILL check - fail
                 else
@@ -2254,14 +2257,14 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 99;
                         Debug.Log("Takeout Check - crash - FAIL");
-                        fltText.Value = "Takeout Check - crash - FAIL";
+                        //fltText.Value = "Takeout Check - crash - FAIL";
                     }
                     //crash check - out
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Takeout Check - out - FAIL");
-                        fltText.Value = "Takeout Check - out - FAIL";
+                        //fltText.Value = "Takeout Check - out - FAIL";
                     }
                 }
                 break;
@@ -2272,7 +2275,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     shotSelector = 5;
                     Debug.Log("Freeze Check - SUCCESS");
-                    fltText.Value = "Freeze Check - SUCCESS";
+                    //fltText.Value = "Freeze Check - SUCCESS";
                 }
                 //SKILL check - fail
                 else
@@ -2282,20 +2285,20 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Freeze Check - short - FAIL");
-                        fltText.Value = "Freeze Check - short - FAIL";
+                        //fltText.Value = "Freeze Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Freeze Check - long - FAIL");
-                        fltText.Value = "Freeze Check - long - FAIL";
+                        //fltText.Value = "Freeze Check - long - FAIL";
                     }
                 }
                 break;
             default:
                 shotSelector = 1;
                 Debug.Log("Skill Check Default - FAIL");
-                fltText.Value = "Skill Check Default - FAIL";
+                //fltText.Value = "Skill Check Default - FAIL";
                 break;
         }
 

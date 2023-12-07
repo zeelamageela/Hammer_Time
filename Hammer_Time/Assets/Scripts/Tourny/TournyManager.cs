@@ -76,10 +76,11 @@ public class TournyManager : MonoBehaviour
 			gsp.LoadCareer();
             if (gsp.tournyInProgress)
             {
-				//gsp.gameInProgress = false;
+                //gsp.gameInProgress = false;
                 gsp.LoadTourny();
+
                 //playoffRound--;
-				Debug.Log("Playoff Round is " + gsp.playoffRound);
+                Debug.Log("Playoff Round is " + gsp.playoffRound);
             }
             else
             {

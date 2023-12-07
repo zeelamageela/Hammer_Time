@@ -47,9 +47,9 @@ public class PlayoffManager : MonoBehaviour
 
 		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
 		if (gsp.careerLoad)
-		{
-			Debug.Log("LOADING HERE");
-			LoadPlayoffs();
+        {
+            Debug.Log("LOADING HERE");
+            LoadPlayoffs();
 		}
 		else if (playoffRound > 0)
 		{
@@ -269,10 +269,15 @@ public class PlayoffManager : MonoBehaviour
 	}
 
 	void LoadPlayoffs()
-	{
-		gsp.careerLoad = false;
-		//playoffRound--;
-		Debug.Log("Load Playoffs - Round " + playoffRound);
+    {
+        gsp.careerLoad = false;
+
+        if (gsp.gameInProgress)
+		{
+			playoffRound++;
+		}
+        //playoffRound--;
+        Debug.Log("Load Playoffs - Round " + playoffRound);
 		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
 
 		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
