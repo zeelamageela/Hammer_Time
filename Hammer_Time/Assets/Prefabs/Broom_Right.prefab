@@ -346,7 +346,7 @@ MonoBehaviour:
   hard: 0
   whoa: 0
   xOffset: 0.775
-  yOffset: 0.6
+  yOffset: 0.5
 --- !u!114 &7872151543816972997
 MonoBehaviour:
   m_ObjectHideFlags: 0

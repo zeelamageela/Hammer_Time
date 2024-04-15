@@ -23,6 +23,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (GameIsPaused)
         {
+            AudioManager am = FindObjectOfType<AudioManager>();
             volume = volumeSlider.value;
             am.Volume(volume);
             
@@ -59,7 +60,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(true);
         GameIsPaused = true;
         gHUD.scoreCheck = true;
-        AudioManager am = FindObjectOfType<AudioManager>();
+        volumeSlider.value = am.maxVol;
         am.PlayBG(3);
     }
 

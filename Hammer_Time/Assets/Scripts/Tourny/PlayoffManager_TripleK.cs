@@ -3726,6 +3726,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					if (gsp.redScore < gsp.yellowScore)
 					{
 						gameList[45].x = gameX[0].id;
+						gameX[0].rank = 1;
 						gameX[0].wins++;
 						gameY[0].rank = 2;
 						gameY[0].loss++;
@@ -3733,6 +3734,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					else
 					{
 						gameList[45].x = gameY[0].id;
+						gameY[0].rank = 1;
 						gameY[0].wins++;
 						gameX[0].rank = 2;
 						gameX[0].loss++;
@@ -3743,6 +3745,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					if (gsp.redScore > gsp.yellowScore)
 					{
 						gameList[45].x = gameX[0].id;
+						gameX[0].rank = 1;
 						gameX[0].wins++;
 						gameY[0].rank = 2;
 						gameY[0].loss++;
@@ -3750,6 +3753,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					else
 					{
 						gameList[45].x = gameY[0].id;
+						gameY[0].rank = 1;
 						gameY[0].wins++;
 						gameX[0].rank = 2;
 						gameX[0].loss++;
@@ -3760,6 +3764,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					if (Random.Range(0, gameX[0].strength) > Random.Range(0, gameY[0].strength))
 					{
 						gameList[45].x = gameX[0].id;
+						gameX[0].rank = 1;
 						gameX[0].wins++;
 						gameY[0].rank = 2;
 						gameY[0].loss++;
@@ -3767,6 +3772,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					else
 					{
 						gameList[45].x = gameY[0].id;
+						gameY[0].rank = 1;
 						gameY[0].wins++;
 						gameX[0].rank = 2;
 						gameX[0].loss++;

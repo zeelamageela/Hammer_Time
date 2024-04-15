@@ -114,12 +114,12 @@ public class AudioManager : MonoBehaviour
         foreach (Sound s in sounds)
         {
             float volRatio = s.volume / 1f;
-            s.source.volume *= volume * volRatio;
+            s.source.volume = volume * volRatio;
         }
 
         foreach (Sound s in hm.AudioSamples)
         {
-            s.source.volume *= volume;
+            s.source.volume = volume;
         }
     }
 

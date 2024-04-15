@@ -288,7 +288,7 @@ public class SponsorManager : MonoBehaviour
             {
                 for (int j = 0; j < cardsSponsor.Length; j++)
                 {
-                    Debug.Log("activeIDList Length is " + activeIdList.Length);
+                    //Debug.Log("activeIDList Length is " + activeIdList.Length);
                     if (cardsSponsor[j].id == activeIdList[i])
                     {
                         cardsSponsor[j].duration = activeLengthList[i];

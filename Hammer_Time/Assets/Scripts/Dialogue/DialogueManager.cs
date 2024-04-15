@@ -88,7 +88,7 @@ public class DialogueManager : MonoBehaviour
                 if (cm.playerTeamIndex == cm.provRankList[i].team.id)
                 {
                     provRank = cm.provRankList[i].team.rank;
-                    earnings = cm.provRankList[i].team.earnings;
+                    earnings = cm.earnings;
                 }
             }
 
@@ -121,7 +121,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        sentence = sentence.Replace("EARNINGS", "$" + earnings.ToString("n0"));
+        sentence = sentence.Replace("EARNINGS", "$" + cm.earnings.ToString("n0"));
         sentence = sentence.Replace("TOURPOINTS", tourPoints.ToString());
 
         sentence = sentence.Replace("TEAMNAME", cm.teamName);

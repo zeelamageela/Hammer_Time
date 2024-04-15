@@ -73,13 +73,13 @@ public class SweeperSelector : MonoBehaviour
                     //Debug.Log("Angle is " + angle);
                     if (transform.rotation.z > 30f)
                     {
-                        sweeperL.yOffset = 1.2f;
-                        sweeperR.yOffset = 0.6f;
+                        sweeperL.yOffset = 1f;
+                        sweeperR.yOffset = 0.5f;
                     }
                     if (transform.rotation.z < -30f)
                     {
-                        sweeperL.yOffset = 0.6f;
-                        sweeperR.yOffset = 1.2f;
+                        sweeperL.yOffset = 0.5f;
+                        sweeperR.yOffset = 1f;
                     }
                 }
             }
@@ -101,8 +101,8 @@ public class SweeperSelector : MonoBehaviour
                     }
                     if (tSweepParent.transform.rotation.z < -30f)
                     {
-                        sweeperL.yOffset = 0.6f;
-                        sweeperR.yOffset = 1.2f;
+                        sweeperL.yOffset = 0.5f;
+                        sweeperR.yOffset = 1f;
                     }
                 }
             }

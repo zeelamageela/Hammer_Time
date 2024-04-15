@@ -94,6 +94,9 @@ public class GameManager : MonoBehaviour
     public List<House_List> houseList;
     public List<Guard_List> gList;
 
+    public Animator tournyIntro;
+    public GameObject tournyIntroGO;
+
     EasyFileSave myFile;
     #endregion
 
@@ -113,6 +116,8 @@ public class GameManager : MonoBehaviour
     {
         //gHUD.SetHUD(redRock);
         Debug.Log("Game Start");
+
+
         gsp = FindObjectOfType<GameSettingsPersist>();
         Rock_Placement rp = FindObjectOfType<Rock_Placement>();
         endCurrent = gsp.endCurrent;
@@ -180,6 +185,9 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(SetupRocks());
 
             yield return new WaitUntil(() => rockList.Count == 16);
+
+            if (endCurrent == 0)
+                yield return StartCoroutine(TournyIntro());
 
             if (rockCurrent > 0)
             {
@@ -1076,21 +1084,11 @@ public class GameManager : MonoBehaviour
         
         yield return new WaitForSeconds(2f);
 
-        if (gsp.tourny)
-        {
-            endCurrent++;
+        endCurrent++;
 
-            gsp.LoadFromGM();
-            gsp.loadGame = false;
-            SceneManager.LoadScene("End_Menu_Tourny_1");
-        }
-        else
-        {
-            endCurrent++;
-            gsp.LoadFromGM();
-            gsp.loadGame = false;
-            SceneManager.LoadScene("End_Menu_1");
-        }
+        gsp.LoadFromGM();
+        gsp.loadGame = false;
+        SceneManager.LoadScene("End_Menu_Tourny_1");
     }
     #endregion
 
@@ -1169,6 +1167,8 @@ public class GameManager : MonoBehaviour
         //yield return StartCoroutine(WaitForClick());
         //gsp.loadGame = false;
         yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+
+        yield return StartCoroutine(TournyIntro());
 
         if (rockCurrent > 0)
         {
@@ -1338,5 +1338,33 @@ public class GameManager : MonoBehaviour
 
     }
 
+    IEnumerator TournyIntro()
+    {
+        CareerManager careerM = FindObjectOfType<CareerManager>();
+
+        Debug.Log("ID is " + careerM.currentTourny.id);
+
+        tournyIntroGO.SetActive(true);
+
+        if (careerM.currentTourny.id < 50 | careerM.currentTourny.id == 100 | careerM.currentTourny.id == 101)
+        {
+            tournyIntro.SetInteger("Tourny", careerM.currentTourny.id);
+
+            yield return new WaitForEndOfFrame();
+
+            //tournyIntroGO.SetActive(true);
+        }
+        else if (careerM.currentTourny.id >= 50 & careerM.currentTourny.id < 54)
+        {
+            tournyIntro.SetInteger("Tourny", 50);
+            yield return new WaitForEndOfFrame();
+        }
+        else
+            tournyIntroGO.SetActive(false);
+
+        yield return new WaitForSeconds(6f);
+
+        tournyIntroGO.SetActive(false);
+    }
     #endregion
 }

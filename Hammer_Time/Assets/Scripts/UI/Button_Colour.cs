@@ -70,6 +70,12 @@ public class Button_Colour : MonoBehaviour
 
     private void Update()
     {
+        
+    }
+
+    public void ClickButton ()
+    {
+
         int selectableState = (int)_selectableStateInfo.GetValue(button);
         switch (selectableState)
         {
@@ -92,7 +98,7 @@ public class Button_Colour : MonoBehaviour
                 main.rectTransform.anchoredPosition = mainPos2;
                 main.color = colour2;
                 main.gameObject.GetComponent<Shadow>().effectDistance = Vector2.zero;
-                HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection); 
+                HapticPatterns.PlayPreset(HapticPatterns.PresetType.Selection);
                 if (am != null)
                     am.Play("Button");
                 break;
@@ -109,10 +115,21 @@ public class Button_Colour : MonoBehaviour
                 main.gameObject.GetComponent<Shadow>().effectDistance = shadowPos;
                 break;
         }
+
+        if (isActiveAndEnabled)
+            StartCoroutine(EnableButtonAfterDelay(1f));
+    }
+
+    IEnumerator EnableButtonAfterDelay(float delay)
+    {
+        button.interactable = false;
+        yield return new WaitForSeconds(delay);
+        button.interactable = true;
     }
 
     public void ChangeColour()
     {
+        ClickButton();
         if (button.image.color == colour1)
         {
             button.image.color = colour2;

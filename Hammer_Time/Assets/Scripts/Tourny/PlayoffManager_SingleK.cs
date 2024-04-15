@@ -480,8 +480,14 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 			for (int i = 0; i < playoffTeams.Length; i++)
 			{
-				playoffTeams[i] = teamList[i].team;
-				gsp.playoffTeams[i] = teamList[i].team;
+				for (int j = 0; j < teamList.Count; j++)
+                {
+					if (playoffTeams[i].id == teamList[j].team.id)
+                    {
+						playoffTeams[i] = teamList[j].team;
+                    }
+                }
+				gsp.playoffTeams[i] = playoffTeams[i];
 			}
         }
 		//playoffTeams = gsp.playoffTeams;
@@ -1006,48 +1012,69 @@ public class PlayoffManager_SingleK : MonoBehaviour
 				tm.vsVS.text = " ";
 				tm.vs.SetActive(true);
 
-				if (playoffTeams[30].player)
-				{
-					heading.text = "You Win!";
+				for (int i = 24; i < playoffTeams.Length; i++)
+                {
+                    if (i == 30)
+                    {
+                        playoffTeams[i].earnings = gsp.prize * 0.5f;
+                        playoffTeams[i].rank = 1;
 
-					gsp.earnings += gsp.prize * 0.5f;
-					//playoffTeams[30].earnings = gsp.prize * 0.5f;
-					playoffTeams[30].rank = 1;
-					tm.vs.SetActive(true);
+                        if (playoffTeams[i].player)
+                        {
+							heading.text = "You Win!";
+							gsp.earnings += gsp.prize * 0.5f;
 
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString("n0");
-					tm.vsDisplay[0].name.text = playoffTeams[30].name;
-					tm.vsDisplay[0].rank.text = playoffTeams[30].rank.ToString() + "st";
-					tm.vsDisplay[1].rank.gameObject.SetActive(false);
-				}
-				else if (playoffTeams[29].player | playoffTeams[28].player)
-				{
-					heading.text = "Runner-up";
-					gsp.earnings += gsp.prize * 0.25f;
-					//playoffTeams[i].earnings = gsp.prize * 0.25f;
-					tm.vs.SetActive(true);
+							tm.vs.SetActive(true);
 
-					for (int i = 28; i < 29; i++)
-					{
-						tm.vsDisplay[0].name.text = playoffTeams[i].name;
-						tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "nd";
-						tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
-						tm.vsDisplay[1].rank.gameObject.SetActive(false);
-					}
-				}
-				else if (playoffTeams[27].player | playoffTeams[26].player | playoffTeams[25].player | playoffTeams[24].player)
-				{
-					heading.text = "3rd Place";
-					gsp.earnings += gsp.prize * 0.125f;
-					//tm.teams[playerTeam].earnings = gsp.prize * 0.15f;
-					tm.teams[playerTeam].rank = 3;
-					tm.vs.SetActive(true);
+							tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString("n0");
+							tm.vsDisplay[0].name.text = playoffTeams[30].name;
+							tm.vsDisplay[0].rank.text = playoffTeams[30].rank.ToString() + "st";
+							tm.vsDisplay[1].rank.gameObject.SetActive(false);
+						}
+                    }
+                    else if (i == 28 | i == 29)
+                    {
+						if (playoffTeams[i].id != playoffTeams[30].id)
+						{
+							playoffTeams[i].earnings = gsp.prize * 0.25f;
+                            playoffTeams[i].rank = 2;
 
-					tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
-					tm.vsDisplay[0].rank.text = tm.teams[playerTeam].rank.ToString();
-					tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.15f).ToString("n0");
-					tm.vsDisplay[1].rank.gameObject.SetActive(false);
-				}
+                            if (playoffTeams[i].player)
+							{
+								heading.text = "Runner-up";
+								gsp.earnings += gsp.prize * 0.25f;
+
+								tm.vs.SetActive(true);
+
+								tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
+								tm.vsDisplay[0].name.text = playoffTeams[i].name;
+								tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
+								tm.vsDisplay[1].rank.gameObject.SetActive(false);
+							}
+						}
+                    }
+					else
+                    {
+						if (playoffTeams[i].id != playoffTeams[28].id | playoffTeams[i].id != playoffTeams[29].id)
+						{
+							playoffTeams[i].earnings = gsp.prize * 0.125f;
+                            playoffTeams[i].rank = 3;
+
+                            if (playoffTeams[i].player)
+							{
+								heading.text = "3rd Place";
+								gsp.earnings += gsp.prize * 0.125f;
+
+								tm.vs.SetActive(true);
+
+								tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.125f).ToString("n0");
+								tm.vsDisplay[0].name.text = playoffTeams[i].name;
+								tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
+								tm.vsDisplay[1].rank.gameObject.SetActive(false);
+							}
+						}
+                    }
+                }
 
                 Debug.Log("GSP Earnings after calculation - " + gsp.earnings.ToString());
 				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");

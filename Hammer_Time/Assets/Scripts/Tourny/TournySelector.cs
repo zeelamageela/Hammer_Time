@@ -90,8 +90,6 @@ public class TournySelector : MonoBehaviour
     private void Start()
     {
         cm = FindObjectOfType<CareerManager>();
-
-        
         //if (cm.inProgress)
         //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
@@ -106,7 +104,6 @@ public class TournySelector : MonoBehaviour
 
     public void SetUp()
     {
-        cm = FindObjectOfType<CareerManager>();
 
         SponsorManager pm = FindObjectOfType<SponsorManager>();
         xpm.SetSkillPoints(0);
@@ -410,6 +407,7 @@ public class TournySelector : MonoBehaviour
                         }
                     }
                 }
+                else tourChampionship.complete = true;
 
                 bool champQual = false;
                 for (int i = 0; i < provStandings.teams.Length; i++)
@@ -431,7 +429,7 @@ public class TournySelector : MonoBehaviour
                     tourChampionship.complete = true;
 
                 if (champQual)
-                    tourChampionship.complete = false;
+                    provChampionship.complete = false;
                 else
                     tourChampionship.complete = true;
 
