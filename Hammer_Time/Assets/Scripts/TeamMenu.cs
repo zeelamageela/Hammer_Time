@@ -28,6 +28,7 @@ public class TeamMenu : MonoBehaviour
     public PlayerDisplay[] teamDisplay;
 
     public PlayerDisplay replaceMemberDisplay;
+    public PlayerDisplay navDisplay;
     public PlayerDisplay[] freeAgentDisplay;
     public PlayerDisplay skillDisplay;
 
@@ -40,6 +41,12 @@ public class TeamMenu : MonoBehaviour
     public Slider strengthSlider;
     public Slider enduranceSlider;
     public Slider healthSlider;
+    public Slider drawModSlider;
+    public Slider guardModSlider;
+    public Slider takeOutModSlider;
+    public Slider strengthModSlider;
+    public Slider enduranceModSlider;
+    public Slider healthModSlider;
 
     public Slider oppDrawSlider;
     public Slider oppGuardSlider;
@@ -51,8 +58,12 @@ public class TeamMenu : MonoBehaviour
     public float xp;
     public float cash;
     //public float costPerWeek;
+    public Text title;
     public Text xpText;
     public Text cashText;
+    public Text cashDeltaText;
+    public Text expenseDeltaText;
+    public Text incomeDeltaText;
     public Text costText;
     public Text incomeText;
     public Text recordText;
@@ -64,6 +75,7 @@ public class TeamMenu : MonoBehaviour
     EasyFileSave myFile;
 
     bool callCount;
+    int cdCount;
 
     // Start is called before the first frame update
     void Start()
@@ -72,6 +84,8 @@ public class TeamMenu : MonoBehaviour
         pm = FindObjectOfType<SponsorManager>();
         //Shuffle(playerPool);
         callCount = false;
+        cdCount = 0;
+        CashDeltaText(cm.cashDelta);
     }
 
     // Update is called once per frame
@@ -86,13 +100,19 @@ public class TeamMenu : MonoBehaviour
             else
                 oppStatBase = 10;
 
-            drawSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
-            guardSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
-            takeOutSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
-            enduranceSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
-            strengthSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
-            healthSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
+            drawSlider.value = cm.cStats.drawAccuracy;
+            guardSlider.value = cm.cStats.guardAccuracy;
+            takeOutSlider.value = cm.cStats.takeOutAccuracy;
+            enduranceSlider.value = cm.cStats.sweepEndurance;
+            strengthSlider.value = cm.cStats.sweepStrength;
+            healthSlider.value = cm.cStats.sweepCohesion;
 
+            drawModSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
+            guardModSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
+            takeOutModSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
+            enduranceModSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
+            strengthModSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
+            healthModSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
             //oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
             //oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
             //oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
@@ -119,10 +139,81 @@ public class TeamMenu : MonoBehaviour
         }
     }
 
+    public void CashDeltaText(float cashDeltaIn)
+    {
+        Debug.Log("Cash Delta Text is pressed");
+        Animator textAnim = cashDeltaText.GetComponent<Animator>();
+        if (cashDeltaIn != 0)
+        {
+            if (cashDeltaIn < 0)
+            {
+                cashDeltaIn = -cashDeltaIn;
+                cashDeltaText.text = "- $" + cashDeltaIn.ToString("n0");
+                textAnim.SetBool("Add", false);
+            }
+            else
+            {
+                cashDeltaText.text = "+ $" + cashDeltaIn.ToString("n0");
+                textAnim.SetBool("Add", true);
+            }
+
+            textAnim.SetTrigger("Pop");
+        }
+
+        cdCount++;
+    }
+    public void ExpenseDeltaText(float deltaIn)
+    {
+        Debug.Log("Expense Delta Text is pressed");
+        Animator textAnim = expenseDeltaText.GetComponent<Animator>();
+        if (cdCount > 0 && deltaIn != 0)
+        {
+            if (deltaIn < 0)
+            {
+                deltaIn = -deltaIn;
+                expenseDeltaText.text = "- $" + deltaIn.ToString("n0");
+                textAnim.SetBool("Add", false);
+            }
+            else
+            {
+                expenseDeltaText.text = "+ $" + deltaIn.ToString("n0");
+                textAnim.SetBool("Add", true);
+            }
+            textAnim.SetTrigger("Pop");
+        }
+        
+        cdCount++;
+    }
+    public void IncomeDeltaText(float deltaIn)
+    {
+        Debug.Log("Income Delta Text is pressed");
+        Animator textAnim = incomeDeltaText.GetComponent<Animator>();
+        if (cdCount > 0 && deltaIn != 0)
+        {
+            if (deltaIn < 0)
+            {
+                deltaIn = -deltaIn;
+                incomeDeltaText.text = "- $" + deltaIn.ToString("n0");
+                textAnim.SetBool("Add", false);
+            }
+            else
+            {
+                incomeDeltaText.text = "+ $" + deltaIn.ToString("n0");
+                textAnim.SetBool("Add", true);
+            }
+            textAnim.SetTrigger("Pop");
+        }
+        if (cdCount > 0)
+        {
+        }
+        cdCount++;
+    }
+
     public void TeamMenuOpen()
     {
         if (!callCount)
         {
+            title.text = "Team";
             callCount = true;
             cm = FindObjectOfType<CareerManager>();
             StartCoroutine(SetUpTeam());
@@ -160,31 +251,35 @@ public class TeamMenu : MonoBehaviour
         //Debug.Log("TeamMenu Earnings are " + cm.earnings);
         if (cm.week > 1)
         {
-            //cm.LoadCareer();
-            if (myFile.Load())
+            for (int i = 0; i < activePlayers.Length; i++)
             {
-                for (int i = 0; i < activePlayers.Length; i++)
+                //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
+                for (int j = 0; j < playerPool.Length; j++)
                 {
-                    //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
-                    for (int j = 0; j < playerPool.Length; j++)
+                    if (activePlayers[i].id == playerPool[j].id)
                     {
-                        if (activePlayers[i].id == playerPool[j].id)
-                        {
-                            activePlayers[i].name = playerPool[j].name;
-                            activePlayers[i].description = playerPool[j].description;
-                            activePlayers[i].cost = playerPool[j].cost;
-                            activePlayers[i].image = playerPool[j].image;
-                            activePlayers[i].view = playerPool[j].view;
-                            activePlayers[i].active = true;
-                            playerPool[j].active = true;
-                        }
+                        activePlayers[i].name = playerPool[j].name;
+                        activePlayers[i].description = playerPool[j].description;
+                        activePlayers[i].cost = playerPool[j].cost;
+                        activePlayers[i].image = playerPool[j].image;
+                        activePlayers[i].view = playerPool[j].view;
+                        activePlayers[i].active = true;
+                        playerPool[j].active = true;
+                        // Copy stats and scale
+                        activePlayers[i].draw = playerPool[j].draw;
+                        activePlayers[i].takeOut = playerPool[j].takeOut;
+                        activePlayers[i].guard = playerPool[j].guard;
+                        activePlayers[i].sweepStrength = playerPool[j].sweepStrength;
+                        activePlayers[i].sweepEnduro = playerPool[j].sweepEnduro;
+                        activePlayers[i].sweepCohesion = playerPool[j].sweepCohesion;
+                        activePlayers[i].ScaleStatsToTotal();
                     }
                 }
+            }
 
-                if (cm.week == 2)
-                {
-                    Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
-                }
+            if (cm.week == 2)
+            {
+                Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
             }
             cm.teamPaid = false;
 
@@ -195,13 +290,10 @@ public class TeamMenu : MonoBehaviour
             for (int i = 0; i < activePlayers.Length; i++)
             {
                 activePlayers[i] = playerPool[i];
+                activePlayers[i].ScaleStatsToTotal();
             }
 
             Shuffle(playerPool);
-
-            //dialogueGO.SetActive(true);
-            //coachGreen.TriggerDialogue("Intro", 8);
-            //cm.introDialogue[8] = true;
         }
 
         SelectFreeAgents();
@@ -252,7 +344,7 @@ public class TeamMenu : MonoBehaviour
         {
             teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
         }
-
+        title.text = "Team";
         navMenu.SetActive(false);
         skillMenu.SetActive(false);
         teamMenu.SetActive(true);
@@ -276,20 +368,21 @@ public class TeamMenu : MonoBehaviour
             if (i == 0)
                 teamDisplay[i].charName.text = "Lead - " + activePlayers[i].name;
             if (i == 1)
-                teamDisplay[i].charName.text = "Second - " + activePlayers[i].name;
+                teamDisplay[i].charName.text = "2nd - " + activePlayers[i].name;
             if (i == 2)
-                teamDisplay[i].charName.text = "Third - " + activePlayers[i].name;
+                teamDisplay[i].charName.text = "3rd - " + activePlayers[i].name;
             teamDisplay[i].cost.text = "$" + activePlayers[i].cost.ToString("N0");
             teamDisplay[i].photo.sprite = activePlayers[i].image;
             teamDisplay[i].description.text = activePlayers[i].description;
         }
-
     }
 
     public void ViewFreeAgents()
     {
+        title.text = "Free Agents";
         agentMenu.SetActive(true);
         teamMenu.SetActive(false);
+        navMenu.SetActive(false);
 
         replaceMemberDisplay.charName.text = activePlayers[playerSelect].name;
         replaceMemberDisplay.cost.text = "$" + activePlayers[playerSelect].cost.ToString("N0");
@@ -344,6 +437,7 @@ public class TeamMenu : MonoBehaviour
                 if (playerPool[j].active && !stop)
                 {
                     activePlayers[i] = playerPool[j];
+                    activePlayers[i].ScaleStatsToTotal();
                     stop = true;
                 }
             }
@@ -371,10 +465,11 @@ public class TeamMenu : MonoBehaviour
             {
                 playerPool[i].active = true;
                 activePlayers[playerToReplace] = playerPool[i];
+                activePlayers[playerToReplace].ScaleStatsToTotal();
             }
         }
         freeAgents[freeAgent] = tempPlayer;
-
+        ExpenseDeltaText(activePlayers[playerToReplace].cost - tempPlayer.cost);
         ViewTeam();
     }
 
@@ -388,8 +483,9 @@ public class TeamMenu : MonoBehaviour
         }
 
         Debug.Log("Team Cost is " + teamCost);
-
+        cm.cash -= cm.currentTourny.entryFee;
         cm.cash -= cm.costPerWeek;
+        CashDeltaText(-(cm.costPerWeek + cm.currentTourny.entryFee));
         cm.teamPaid = true;
         //teamMenu.SetActive(false);
         //agentMenu.SetActive(false);
@@ -416,14 +512,28 @@ public class TeamMenu : MonoBehaviour
 
     public void NavMenu(int player)
     {
-        navMenu.transform.SetSiblingIndex(player);
-        for (int i = 0; i < teamDisplay.Length; i++)
-        {
-            if (i == player)
-                teamDisplay[i].charName.transform.parent.gameObject.SetActive(false);
-            else
-                teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
-        }
+        //navMenu.transform.SetSiblingIndex(player);
+        //for (int i = 0; i < teamDisplay.Length; i++)
+        //{
+        //    if (i == player)
+        //        teamDisplay[i].charName.transform.parent.gameObject.SetActive(false);
+        //    else
+        //        teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
+        //}
+        title.text = "Team Member";
+        navDisplay.charName.text = activePlayers[player].name;
+        navDisplay.cost.text = "$" + activePlayers[player].cost.ToString("N0");
+        navDisplay.photo.sprite = activePlayers[player].image;
+        navDisplay.description.text = activePlayers[player].description;
+
+        if (playerSelect == 0)
+            navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Lead";
+        else if (playerSelect == 1)
+            navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Second";
+        else
+            navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Third";
+
+        teamMenu.SetActive(false);
         navMenu.SetActive(true);
         playerSelect = player;
 
@@ -453,11 +563,16 @@ public class TeamMenu : MonoBehaviour
                 skillDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
         }
 
+        title.text = "Skill Points";
         skillMenu.SetActive(true);
         navMenu.SetActive(false);
         teamMenu.SetActive(false);
         setTeamButton.SetActive(false);
         agentMenu.SetActive(false);
+
+        XPManager xpm = FindObjectOfType<XPManager>();
+        xpm.activePlayer = playerSelect;
+        xpm.SetPlayer();
     }
 
     void Shuffle(Player[] a)

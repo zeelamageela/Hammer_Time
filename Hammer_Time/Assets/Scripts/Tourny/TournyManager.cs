@@ -65,7 +65,7 @@ public class TournyManager : MonoBehaviour
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 		//Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
-		careerEarnings = gsp.earnings;
+		careerEarnings = cm.earnings;
 
 		//Debug.Log("Gsp In Progress is " + gsp.inProgress);
 		//Debug.Log("Gsp Career Load is " + gsp.careerLoad);
@@ -95,7 +95,7 @@ public class TournyManager : MonoBehaviour
 			CashGames cg = FindObjectOfType<CashGames>();
 			numberOfTeams = gsp.numberOfTeams;
 			prize = gsp.prize;
-			careerEarningsText.text = "$ " + gsp.earnings.ToString();
+			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 
 			teams = new Team[numberOfTeams];
 
@@ -106,7 +106,7 @@ public class TournyManager : MonoBehaviour
 		{
 			numberOfTeams = gsp.numberOfTeams;
 			prize = gsp.prize;
-			careerEarningsText.text = "$ " + gsp.earnings.ToString();
+			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 
 			if (numberOfTeams > 0)
 				teams = new Team[numberOfTeams];
@@ -136,7 +136,7 @@ public class TournyManager : MonoBehaviour
 		careerEarnings = 0;
 		//myFile.Add("Career Earnings", gsp.earnings);
 		myFile.Save();
-		careerEarningsText.text = "$ " + gsp.earnings.ToString();
+		careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 	}
 
 	IEnumerator RefreshPanel()
@@ -349,8 +349,14 @@ public class TournyManager : MonoBehaviour
 						+ cm.cStats.guardAccuracy
 						+ cm.cStats.sweepStrength
 						+ cm.cStats.sweepEndurance
-						+ cm.cStats.sweepCohesion;
-					teams[i].strength = Mathf.RoundToInt(strength / 6f);
+						+ cm.cStats.sweepCohesion
+						+ cm.modStats.drawAccuracy
+						+ cm.modStats.takeOutAccuracy
+						+ cm.modStats.guardAccuracy
+						+ cm.modStats.sweepStrength
+						+ cm.modStats.sweepEndurance;
+
+                    teams[i].strength = Mathf.RoundToInt(strength / 6f);
 					playerTeam = i;
 				}
 				teamList.Add(new Team_List(teams[i]));
@@ -359,7 +365,8 @@ public class TournyManager : MonoBehaviour
 			//teamList[playerTeam].team.name = gsp.teamName;
 			teamList.Sort();
 			yield return new WaitForEndOfFrame();
-			SetDraw();
+			if (!gsp.KO1) 
+				SetDraw();
 		}
 		yield return new WaitForEndOfFrame();
 	}
@@ -585,7 +592,7 @@ public class TournyManager : MonoBehaviour
 				if (teams[playerTeam].rank <= 4)
 				{
 					heading.text = "Qualified!";
-					gsp.earnings += gsp.prize * 0.25f;
+					gsp.tournyEarnings += gsp.prize * 0.25f;
 					//tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
 
 					vs.SetActive(true);
@@ -659,11 +666,10 @@ public class TournyManager : MonoBehaviour
 		CareerManager cm = FindObjectOfType<CareerManager>();
 		gsp = FindObjectOfType<GameSettingsPersist>();
 		gsp.teams = teams;
-		float winnings;
 		if (gsp.cashGame)
-			winnings = gsp.cash;
+			gsp.tournyEarnings = cm.cash;
 		else
-			winnings = teams[playerTeam].earnings;
+			gsp.tournyEarnings = teams[playerTeam].earnings;
 
 		if (gsp.cashGame == false)
 		{
@@ -676,17 +682,11 @@ public class TournyManager : MonoBehaviour
 				teams[i].earnings += cm.teamRecords[i].z;
 				teams[i].id = (int)cm.teamRecords[i].w;
 			}
-
-			gsp.earnings = teams[playerTeam].earnings;
-			gsp.record = new Vector2(teams[playerTeam].wins, teams[playerTeam].loss);
 		}
 
 		//Debug.Log("PlayerTeam name is " + teams[playerTeam].name);
-		Debug.Log("PlayerTeam record is " + gsp.record.x + " - " + gsp.record.y);
+		Debug.Log("PlayerTeam record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
 
-		cm.earnings = gsp.earnings;
-		cm.cash += winnings;
-        cm.record = gsp.record;
         gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
@@ -786,6 +786,6 @@ public class TournyManager : MonoBehaviour
 		yield return myFile.Append();
 
 
-		//cm.SaveCareer();
+		cm.SaveCareer();
 	}
 }

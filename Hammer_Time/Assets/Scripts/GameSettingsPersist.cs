@@ -41,23 +41,20 @@ public class GameSettingsPersist : MonoBehaviour
     public bool cashGame;
     public int games;
 
-    public string firstName;
-    public string teamName;
-    public float earnings;
-    public float cash;
+    public float tournyEarnings;
+    public float tournyCash;
 
-    public Vector2 record;
+    public Vector2 tournyRecord;
 
-    public int week;
     public CareerStats cStats;
     public CareerStats oppStats;
 
     public string redTeamName;
     public Color redTeamColour;
-    public TeamMember[] redTeam;
+    public Team redTeam;
     public string yellowTeamName;
     public Color yellowTeamColour;
-    public TeamMember[] yellowTeam;
+    public Team yellowTeam;
 
     public int draw;
     public int playoffRound;
@@ -211,6 +208,101 @@ public class GameSettingsPersist : MonoBehaviour
         //score[endCurrent] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
+        if (ends <= endCurrent)
+        {
+            if (redScore > yellowScore)
+            {
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].name == redTeamName)
+                    {
+                        teams[i].wins++;
+                        if (KO3)
+                            teams[i].tourRecord.x++;
+                    }
+                    if (teams[i].name == yellowTeamName)
+                    {
+                        teams[i].loss++;
+                        if (KO3)
+                            teams[i].tourRecord.y++;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].name == yellowTeamName)
+                    {
+                        teams[i].wins++;
+                        if (KO3)
+                            teams[i].tourRecord.x++;
+                    }
+                    if (teams[i].name == redTeamName)
+                    {
+                        teams[i].loss++;
+                        if (KO3)
+                            teams[i].tourRecord.y++;
+                    }
+                }
+            }
+        }
+        
+    }
+
+    public void LoadFromEndMenu()
+    {
+        Debug.Log("Load From EM  GSP");
+
+        Debug.Log("Loading to GSP");
+        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
+        
+        //third = gm.target;
+        //skip = gm.target;
+
+        //score[endCurrent] = new Vector2Int(redScore, yellowScore);
+        //redScore = myFile.GetInt("Red Score");
+        //yellowScore = myFile.GetInt("Yellow Score");
+        if (ends <= endCurrent)
+        {
+            if (redScore > yellowScore)
+            {
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].name == redTeamName)
+                    {
+                        teams[i].wins++;
+                        if (KO3)
+                            teams[i].tourRecord.x++;
+                    }
+                    if (teams[i].name == yellowTeamName)
+                    {
+                        teams[i].loss++;
+                        if (KO3)
+                            teams[i].tourRecord.y++;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].name == yellowTeamName)
+                    {
+                        teams[i].wins++;
+                        if (KO3)
+                            teams[i].tourRecord.x++;
+                    }
+                    if (teams[i].name == redTeamName)
+                    {
+                        teams[i].loss++;
+                        if (KO3)
+                            teams[i].tourRecord.y++;
+                    }
+                }
+            }
+        }
+
     }
 
     public void LoadFromTournySelector()
@@ -220,11 +312,9 @@ public class GameSettingsPersist : MonoBehaviour
 
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
-        firstName = cm.playerName;
-        teamName = cm.teamName;
         teamColour = cm.teamColour;
-        earnings = 0;
-        cash = 0;
+        tournyEarnings = 0;
+        tournyCash = 0;
         bg = cm.currentTourny.BG;
         crowdDensity = cm.currentTourny.crowdDensity;
         //if (cm.currentTourny.championship)
@@ -265,7 +355,6 @@ public class GameSettingsPersist : MonoBehaviour
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         teamColour = cm.teamColour;
         //earnings = ts.earnings;
-        week = cm.week;
         games = ts.games;
         if (cashGame)
             ends = 1;
@@ -287,6 +376,8 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log("Tourny Setup GSP");
         TournyManager tm = FindObjectOfType<TournyManager>();
         PlayoffManager pm = FindObjectOfType<PlayoffManager>();
+        PlayoffManager_SingleK pm1k = FindObjectOfType<PlayoffManager_SingleK>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
         CashGames cg = FindObjectOfType<CashGames>();
         careerLoad = false;
         if (cg != null)
@@ -320,9 +411,8 @@ public class GameSettingsPersist : MonoBehaviour
                 else
                     playerTeamIndex = tm.playerTeam;
             }
-            else
+            else if (pm1k != null)
             {
-                PlayoffManager_SingleK pm1k = FindObjectOfType<PlayoffManager_SingleK>();
                 playoffRound = pm1k.playoffRound;
                 KO1 = true;
             }
@@ -330,7 +420,7 @@ public class GameSettingsPersist : MonoBehaviour
             teams = tm.teams;
             for (int i = 0; i < teams.Length; i++)
             {
-                if (teams[i].id == playerTeamIndex)
+                if (teams[i].player)
                 {
                     playerTeam = teams[i];
                 }
@@ -362,26 +452,51 @@ public class GameSettingsPersist : MonoBehaviour
             aiYellow = true;
             aiRed = false;
 
-            yellowTeamName = playerTeam.nextOpp;
-            redTeamName = playerTeam.name;
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].player)
+                    redTeam = teams[i];
+            }
             redTeamColour = teamColour;
+            redTeamName = redTeam.name;
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (redTeam.nextOpp == teams[i].name)
+                    yellowTeam = teams[i];
+            }
+
+            yellowTeamName = yellowTeam.name;
             yellowTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f));
+
         }
         else
         {
             aiRed = true;
             aiYellow = false;
 
-            yellowTeamName = playerTeam.name;
-            redTeamName = playerTeam.nextOpp;
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].player)
+                    yellowTeam = teams[i]; 
+            }
             yellowTeamColour = teamColour;
+            yellowTeamName = yellowTeam.name;
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (yellowTeam.nextOpp == teams[i].name)
+                    redTeam = teams[i];
+            }
+            redTeamName = redTeam.name;
             redTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
-                Random.Range(0f, 1f));
+                Random.Range(0f, 1f)); 
+            
         }
 
         if (Random.Range(0f, 1f) < 0.5f)
@@ -429,9 +544,20 @@ public class GameSettingsPersist : MonoBehaviour
             aiYellow = true;
             aiRed = false;
 
-            yellowTeamName = playerTeam.nextOpp;
-            redTeamName = playerTeam.name;
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].player)
+                    redTeam = teams[i];
+            }
             redTeamColour = teamColour;
+            redTeamName = redTeam.name;
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (redTeam.nextOpp == teams[i].name)
+                    yellowTeam = teams[i];
+            }
+            yellowTeamName = yellowTeam.name;
             yellowTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
@@ -441,9 +567,21 @@ public class GameSettingsPersist : MonoBehaviour
         {
             aiRed = true;
             aiYellow = false;
-            yellowTeamName = playerTeam.name;
-            redTeamName = playerTeam.nextOpp;
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].player)
+                    yellowTeam = teams[i];
+            }
             yellowTeamColour = teamColour;
+            yellowTeamName = yellowTeam.name;
+
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (yellowTeam.nextOpp == teams[i].name)
+                    redTeam = teams[i];
+            }
+            redTeamName = redTeam.name;
             redTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
@@ -465,8 +603,6 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log("Load Career GSP");
         CareerManager cm = FindObjectOfType<CareerManager>();
         //teamList = new List<Team_List>();
-        firstName = cm.name;
-        teamName = cm.teamName;
         teamColour = cm.teamColour;
 
         //earnings = myFile.GetFloat("Career Earnings");
@@ -474,7 +610,6 @@ public class GameSettingsPersist : MonoBehaviour
         //inProgress = cm.inProgress;
 
         //numberOfTeams = myFile.GetInt("Number Of Teams");
-        week = cm.week;
     }
 
     public void LoadTourny()
@@ -509,7 +644,6 @@ public class GameSettingsPersist : MonoBehaviour
                 if (teams[i].player)
                 {
                     Debug.Log("i == playerTeamIndex is " + playerTeamIndex);
-                    teams[i].name = teamName;
                     playerTeam = teams[i];
                     Debug.Log("Player Team id is " + teams[i].id);
                 }
@@ -607,7 +741,6 @@ public class GameSettingsPersist : MonoBehaviour
 
                 if (teams[i].id == cm.playerTeamIndex)
                 {
-                    teams[i].name = teamName;
                     playerTeam = teams[i];
                 }
             }

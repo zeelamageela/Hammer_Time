@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Random = UnityEngine.Random;
+using ExitGames.Client.Photon;
+using System.Linq;
 
 [System.Serializable]
 public class EquipUI
@@ -44,6 +46,7 @@ public class EquipmentManager : MonoBehaviour
 
     public Text confirmText;
     public Text sellText;
+    public Text title;
 
     Equipment origEquip;
     Equipment newEquip;
@@ -52,10 +55,11 @@ public class EquipmentManager : MonoBehaviour
 
     public Color buttonDisabledColor;
     public Color buttonEnabledColor;
-
+    public TeamMenu teamMenu;
     // Start is called before the first frame update
     void Start()
     {
+        
         //SetInventory();
         //MainMenu();
     }
@@ -132,7 +136,7 @@ public class EquipmentManager : MonoBehaviour
         ////DELETE THIS WHEN NOT IN ARENA SELECTOR
         //cm.inventoryID = null;
 
-        if (cm.inventoryID == null)
+        if (cm.inventoryID == null | cm.week == 1)
         {
             Debug.Log("cm.inventoryID is null");
             cm.inventoryID = new int[inventory.Count];
@@ -245,6 +249,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void MainMenu()
     {
+        title.text = "Equipment";
         mainMenu.SetActive(true);
         buyMenu.SetActive(false);
         confirmMenu.SetActive(false);
@@ -262,6 +267,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void InventoryMenu(int n)
     {
+        title.text = "Inventory";
         mainMenu.SetActive(false);
         buyMenu.SetActive(false);
         confirmMenu.SetActive(false);
@@ -400,6 +406,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void BuyMenu(int n)
     {
+        title.text = "Buy";
         mainMenu.SetActive(false);
         buyMenu.SetActive(true);
         confirmMenu.SetActive(false);
@@ -508,6 +515,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void BuyItem(int n)
     {
+        title.text = "Confirm";
         mainMenu.SetActive(false);
         buyMenu.SetActive(true);
         confirmMenu.SetActive(true);
@@ -533,6 +541,7 @@ public class EquipmentManager : MonoBehaviour
 
         if (buy)
         {
+            title.text = "Inventory";
             mainMenu.SetActive(true);
             buyMenu.SetActive(false);
 
@@ -551,7 +560,7 @@ public class EquipmentManager : MonoBehaviour
 
             CareerManager cm = FindObjectOfType<CareerManager>();
             cm.cash -= newEquip.cost;
-
+            teamMenu.CashDeltaText(-newEquip.cost);
             origEquip.active = false;
             newEquip.active = true;
             inventory.Add(new Inventory_List(newEquip));
@@ -596,6 +605,7 @@ public class EquipmentManager : MonoBehaviour
         }
         else
         {
+            title.text = "Buy";
             mainMenu.SetActive(false);
             buyMenu.SetActive(true);
 
@@ -862,8 +872,18 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[30];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = equipList[i];
-                        temp[i].cost = equipList[i].cost;
+                        //Debug.Log("index is " + i);
+
+                        if (i < equipList.Length)
+                        {
+                            temp[i] = equipList[i];
+                            temp[i].cost = equipList[i].cost;
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(500f, 15000f);
+                        }
 
                         temp[i].handle = true;
 
@@ -900,8 +920,17 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[30];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = equipList[i];
-                        temp[i].cost = equipList[i].cost;
+                        if (i < equipList.Length)
+                        {
+                            temp[i] = equipList[i];
+                            temp[i].cost = equipList[i].cost;
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(500f, 15000f);
+                        }
+
                         temp[i].head = true;
 
                         if (temp[i].cost < 500)
@@ -937,8 +966,16 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[20];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = equipList[i];
-                        temp[i].cost = equipList[i].cost;
+                        if (i < equipList.Length)
+                        {
+                            temp[i] = equipList[i];
+                            temp[i].cost = equipList[i].cost;
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(500f, 15000f);
+                        }
 
                         temp[i].footwear = true;
 
@@ -978,8 +1015,16 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[20];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = equipList[i];
-                        temp[i].cost = equipList[i].cost;
+                        if (i < equipList.Length)
+                        {
+                            temp[i] = equipList[i];
+                            temp[i].cost = equipList[i].cost;
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(500f, 15000f);
+                        }
 
                         temp[i].apparel = true;
 

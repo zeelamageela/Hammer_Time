@@ -216,7 +216,7 @@ public class StorylineManager: MonoBehaviour
                         }
                     }
 
-                    if (winningTeamName == gm.gsp.teamName)
+                    if (winningTeamName == cm.teamName)
                     {
                         FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 4);
@@ -260,7 +260,7 @@ public class StorylineManager: MonoBehaviour
                         }
                     }
 
-                    if (winningTeamName == gm.gsp.teamName)
+                    if (winningTeamName == cm.teamName)
                     {
                         FindDialogueObjects();
                         TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, 7);
@@ -312,6 +312,10 @@ public class StorylineManager: MonoBehaviour
         yield break;
     }
 
+    IEnumerator WeekOne()
+    {
+        yield return new WaitUntil(() => cm.week == 1);
+    }
     public void FirstFiveTrigger()
     {
         StartCoroutine(FirstFiveWeeks());

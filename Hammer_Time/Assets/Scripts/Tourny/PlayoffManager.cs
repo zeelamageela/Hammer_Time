@@ -410,7 +410,7 @@ public class PlayoffManager : MonoBehaviour
 
                 playoffs.SetActive(true);
 
-                simButton.gameObject.SetActive(true);
+                //simButton.gameObject.SetActive(true);
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0;
 				StartCoroutine(SaveCareer(true));
@@ -468,8 +468,10 @@ public class PlayoffManager : MonoBehaviour
 
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
-
-                simButton.gameObject.SetActive(true);
+				if (brackDisplay[4].name.text == tm.teams[playerTeam].name)
+				{
+					simButton.gameObject.SetActive(true);
+				}
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0.5f;
 				StartCoroutine(SaveCareer(true));
@@ -514,7 +516,7 @@ public class PlayoffManager : MonoBehaviour
 				playoffs.SetActive(true);
 				StartCoroutine(RefreshPlayoffPanel());
 
-				simButton.gameObject.SetActive(true);
+				//simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				scrollBar.value = 1f;
 				StartCoroutine(SaveCareer(true));
@@ -541,7 +543,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					heading.text = "You Win!";
 
-					gsp.earnings += gsp.prize * 0.5f;
+					gsp.tournyEarnings += gsp.prize * 0.5f;
 					//tm.teams[playerTeam].earnings = gsp.prize * 0.5f;
 					tm.teams[playerTeam].rank = 1;
 					tm.vs.SetActive(true);
@@ -554,7 +556,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[4].name | tm.teams[playerTeam].name == playoffTeams[7].name)
 				{
 					heading.text = "Runner-up";
-					gsp.earnings += gsp.prize * 0.25f;
+					gsp.tournyEarnings += gsp.prize * 0.25f;
 					//tm.teams[playerTeam].earnings = gsp.prize * 0.25f;
 					tm.teams[playerTeam].rank = 2;
 					tm.vs.SetActive(true);
@@ -567,7 +569,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[5].name | tm.teams[playerTeam].name == playoffTeams[6].name)
 				{
 					heading.text = "3rd Place";
-					gsp.earnings += gsp.prize * 0.15f;
+					gsp.tournyEarnings += gsp.prize * 0.15f;
 					//tm.teams[playerTeam].earnings = gsp.prize * 0.15f;
 					tm.teams[playerTeam].rank = 3;
 					tm.vs.SetActive(true);
@@ -580,7 +582,7 @@ public class PlayoffManager : MonoBehaviour
 				else if (tm.teams[playerTeam].name == playoffTeams[2].name | tm.teams[playerTeam].name == playoffTeams[3].name)
 				{
 					heading.text = "4th Place";
-					gsp.earnings += gsp.prize * 0.075f;
+					gsp.tournyEarnings += gsp.prize * 0.075f;
 					//tm.teams[playerTeam].earnings = gsp.prize * 0.075f;
 					tm.teams[playerTeam].rank = 4;
 
@@ -614,7 +616,7 @@ public class PlayoffManager : MonoBehaviour
 
 							Debug.Log("Prize Payout is " + prizePayout);
 							prizePayout = Mathf.RoundToInt(prizePayout);
-							gsp.earnings += prizePayout; 
+							gsp.tournyEarnings += prizePayout; 
 							
 							tm.vs.SetActive(true);
 							tm.vsDisplay[0].name.text = tm.teams[playerTeam].name;
@@ -663,8 +665,8 @@ public class PlayoffManager : MonoBehaviour
 					//tm.teamList[i].team.earnings += prizePayout;
 
 				}
-                Debug.Log("GSP Earnings after calculation - " + gsp.earnings.ToString());
-				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
+                Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
+				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 				
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 
@@ -812,7 +814,7 @@ public class PlayoffManager : MonoBehaviour
 	{
 		gsp.LoadCareer();
 
-		yield return careerEarningsText.text = "$ " + gsp.earnings.ToString();
+		yield return careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 	}
 
 	IEnumerator SaveCareer(bool inProgress)

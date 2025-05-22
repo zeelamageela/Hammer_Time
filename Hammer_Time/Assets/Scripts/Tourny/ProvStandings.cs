@@ -28,14 +28,17 @@ public class ProvStandings : MonoBehaviour
 	// Start is called before the first frame update
 	private void Start()
     {
+		Debug.Log("XX----------ProvStandings--XX");
 		tour = false;
 		if (FindObjectOfType<CareerManager>().provQual)
 			tourButton.SetActive(true);
 		else
 			tourButton.SetActive(false);
-	}
 
-	public void SetUp()
+        PrintRows();
+    }
+
+    public void SetUp()
     {
 		tour = false;
 		PrintRows();
@@ -95,21 +98,6 @@ public class ProvStandings : MonoBehaviour
 					standDisplay[i].nextOpp.text = tourRankList[i].team.tourPoints.ToString();
 					tourRankList[i].team.rank = i + 1;
 				}
-
-				int tempRank = 0;
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					if (cm.playerTeamIndex == tourRankList[i].team.id)
-					{
-						tempRank = i;
-						//scrollbar.value = (i - tourRankList.Count) / (1f - tourRankList.Count);
-						standDisplay[i].panel.enabled = true;
-					}
-					else
-						standDisplay[i].panel.enabled = false;
-				}
-				scrollbar.value = (tempRank - tourRankList.Count) / (1f - tourRankList.Count);
-				Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
 			}
 			else
 			{
@@ -147,21 +135,31 @@ public class ProvStandings : MonoBehaviour
 					tourRankList[i].team.rank = i + 1;
 				}
 
-				int tempRank = 0;
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					if (cm.playerTeamIndex == tourRankList[i].team.id)
-					{
-						tempRank = i;
-						standDisplay[i].panel.enabled = true;
-						//Debug.Log("Scrollbar Value is " + scrollbar.value);
-					}
-					else
-						standDisplay[i].panel.enabled = false;
-				}
-				scrollbar.value = (tempRank - tourRankList.Count) / (1f - tourRankList.Count);
-				Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
+            }
+
+            int tempRank = 0;
+            for (int i = 0; i < tourRankList.Count; i++)
+            {
+                if (cm.playerTeamIndex == tourRankList[i].team.id)
+                {
+                    tempRank = i;
+                    standDisplay[i].panel.enabled = true;
+                    //Debug.Log("Scrollbar Value is " + scrollbar.value);
+                }
+                else
+                    standDisplay[i].panel.enabled = false;
+            }
+            scrollbar.value = 1f - ((float)tempRank / (tourRankList.Count - 1));
+            if (scrollbar.value < 0f)
+            {
+                scrollbar.value = 0f;
+            }
+            else if (scrollbar.value > 1f)
+            {
+                scrollbar.value = 1f;
 			}
+			Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
+
 			tour = false;
         }
 		else
@@ -211,21 +209,6 @@ public class ProvStandings : MonoBehaviour
 				}
 				Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex);
 
-				int tempRank = 0;
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					if (cm.playerTeamIndex == provRankList[i].team.id)
-					{
-						Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
-						tempRank = i;
-						standDisplay[i].panel.enabled = true;
-					}
-					else
-						standDisplay[i].panel.enabled = false;
-				}
-				scrollbar.value = (tempRank - provRankList.Count) / (1f - provRankList.Count);
-				Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
-
 			}
 			else
 			{
@@ -263,23 +246,34 @@ public class ProvStandings : MonoBehaviour
 					standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
 					provRankList[i].team.rank = i + 1;
 				}
-
-				int tempRank = 0;
-
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					if (cm.playerTeamIndex == provRankList[i].team.id)
-					{
-						tempRank = i;
-						standDisplay[i].panel.enabled = true;
-					}
-					else
-						standDisplay[i].panel.enabled = false;
-				}
-				scrollbar.value = (tempRank - provRankList.Count) / (1f - provRankList.Count);
-				Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
 			}
-			tour = true;
+
+            int tempRank = 0;
+            for (int i = 0; i < provRankList.Count; i++)
+            {
+                if (cm.playerTeamIndex == provRankList[i].team.id)
+                {
+                    Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
+                    tempRank = i;
+                    standDisplay[i].panel.enabled = true;
+                }
+                else
+                    standDisplay[i].panel.enabled = false;
+            }
+
+            scrollbar.value = 1f - ((float)tempRank / (provRankList.Count - 1));
+            if (scrollbar.value < 0f)
+            {
+                scrollbar.value = 0f;
+            }
+            else if (scrollbar.value > 1f)
+            {
+                scrollbar.value = 1f;
+            }
+            //scrollbar.value = (1f - (float)tempRank) / (provRankList.Count - 1f);
+            Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
+
+            tour = true;
 		}
 
 

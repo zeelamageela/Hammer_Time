@@ -173,7 +173,8 @@ public class AIManager : MonoBehaviour
 
         }
 
-        aiStrat.OnShot(rockCurrent);
+        aiStrat.SimpleAIShoot(rockCurrent);
+        //aiStrat.OnShot(rockCurrent);
     }
 
 }

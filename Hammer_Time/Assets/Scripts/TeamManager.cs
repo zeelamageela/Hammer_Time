@@ -43,7 +43,7 @@ public class TeamManager : MonoBehaviour
             //    aiStats = 7;
             //else
                 aiStats = 10;
-            Debug.Log("Ai Stats are " + aiStats + " in Week " + gsp.week);
+            Debug.Log("Ai Stats are " + aiStats + " in Week " + cm.week);
 
         }
         else
@@ -241,7 +241,7 @@ public class TeamManager : MonoBehaviour
             {
                 teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
             }
-            if (gsp.redTeamName == gsp.teamName)
+            if (gsp.redTeamName == cm.teamName)
             {
                 for (int j = 0; j < teamRed.Length; j++)
                 {
@@ -256,12 +256,12 @@ public class TeamManager : MonoBehaviour
                     }
                     else
                     {
-                        teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                        teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                        teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                        teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                        teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                        teamRed[j].charStats.drawAccuracy.SetBaseValue(cm.cStats.drawAccuracy);
+                        teamRed[j].charStats.takeOutAccuracy.SetBaseValue(cm.cStats.takeOutAccuracy);
+                        teamRed[j].charStats.guardAccuracy.SetBaseValue(cm.cStats.guardAccuracy);
+                        teamRed[j].charStats.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
+                        teamRed[j].charStats.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
+                        teamRed[j].charStats.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
                     }
                     //Debug.Log("Red Turn PLAYER stats " + j + " - "
                     //+ teamRed[j].charStats.guardAccuracy.GetValue());
@@ -288,7 +288,7 @@ public class TeamManager : MonoBehaviour
             {
                 teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
             }
-            if (gsp.yellowTeamName == gsp.teamName)
+            if (gsp.yellowTeamName == cm.teamName)
             {
                 for (int j = 0; j < teamYellow.Length; j++)
                 {
@@ -303,12 +303,12 @@ public class TeamManager : MonoBehaviour
                     }
                     else
                     {
-                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.cStats.drawAccuracy);
-                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.cStats.takeOutAccuracy);
-                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.cStats.guardAccuracy);
-                        teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.cStats.sweepStrength);
-                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.cStats.sweepEndurance);
-                        teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.cStats.sweepCohesion);
+                        teamYellow[j].charStats.drawAccuracy.SetBaseValue(cm.cStats.drawAccuracy);
+                        teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(cm.cStats.takeOutAccuracy);
+                        teamYellow[j].charStats.guardAccuracy.SetBaseValue(cm.cStats.guardAccuracy);
+                        teamYellow[j].charStats.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
+                        teamYellow[j].charStats.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
+                        teamYellow[j].charStats.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
                     }
                     //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
                     //+ teamYellow[j].charStats.guardAccuracy.GetValue());

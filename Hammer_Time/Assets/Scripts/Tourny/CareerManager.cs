@@ -11,6 +11,7 @@ public class CareerManager : MonoBehaviour
     EasyFileSave myFile;
     CareerSettings cs;
 
+    public string debug = "blank";
     public int week;
     public int seasonLength;
     public string playerName;
@@ -19,6 +20,7 @@ public class CareerManager : MonoBehaviour
     public int playerTeamIndex;
     public float earnings;
     public float cash;
+    public float cashDelta;
     public Vector2 record;
     public bool provQual;
     public bool tourQual;
@@ -29,7 +31,7 @@ public class CareerManager : MonoBehaviour
     public Player[] activePlayers;
 
     public float xp;
-    public float totalXp;
+    public int level;
 
     public CareerStats cStats;
     public CareerStats oppStats;
@@ -221,7 +223,6 @@ public class CareerManager : MonoBehaviour
             provQual = myFile.GetBool("Prov Qual");
             tourQual = myFile.GetBool("Tour Qual");
             xp = myFile.GetFloat("XP");
-            totalXp = myFile.GetFloat("Total XP");
 
             cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
             cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
@@ -229,7 +230,6 @@ public class CareerManager : MonoBehaviour
             cStats.sweepStrength = myFile.GetInt("Sweep Strength");
             cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
             cStats.sweepCohesion = myFile.GetInt("Sweep Cohesion");
-            gsp.cStats = cStats;
             //tourRecord = myFile.GetUnityVector2("Tour Record");
 
             if (teamSel)
@@ -738,6 +738,7 @@ public class CareerManager : MonoBehaviour
             LoadSponsorManager(pUpM);
             LoadEquipment(em);
             LoadTourTeamData();
+            LoadTeamsFromSave();
             UpdateCurrentTourny(gsp);
             LoadGameSettings(gsp);
 
@@ -789,7 +790,7 @@ public class CareerManager : MonoBehaviour
         gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
         gsp.gameInProgress = myFile.GetBool("Game In Progress");
         Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
-
+        debug = myFile.GetString("Mode");
         week = myFile.GetInt("Week");
         Debug.Log("CM Load Career Week is " + week);
         season = myFile.GetInt("Season");
@@ -803,7 +804,8 @@ public class CareerManager : MonoBehaviour
         provQual = myFile.GetBool("Prov Qual");
         tourQual = myFile.GetBool("Tour Qual");
         xp = myFile.GetFloat("XP");
-        totalXp = myFile.GetFloat("Total XP");
+        skillPoints = myFile.GetInt("Skillpoints");
+        level = myFile.GetInt("Level");
 
         cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
         cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
@@ -811,7 +813,6 @@ public class CareerManager : MonoBehaviour
         cStats.sweepStrength = myFile.GetInt("Sweep Strength");
         cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
         cStats.sweepCohesion = myFile.GetInt("Sweep Cohesion");
-        gsp.cStats = cStats;
         gsp.loadGame = myFile.GetBool("Game Load");
     }
 
@@ -991,6 +992,65 @@ public class CareerManager : MonoBehaviour
             Debug.Log("tTeamList = null");
     }
 
+    public void LoadTeamsFromSave()
+    {
+        myFile = new EasyFileSave("my_player_data");
+        if (!myFile.Load())
+        {
+            Debug.LogWarning("No save file found for teams.");
+            return;
+        }
+
+        int teamCount = myFile.GetInt("Team Count", 0);
+        if (teamCount == 0)
+        {
+            Debug.LogWarning("No teams found in save file.");
+            return;
+        }
+
+        teams = new Team[teamCount];
+
+        for (int i = 0; i < teamCount; i++)
+        {
+            Team team = new Team();
+            team.id = myFile.GetInt($"Team_{i}_Id");
+            team.name = myFile.GetString($"Team_{i}_Name");
+            team.wins = myFile.GetInt($"Team_{i}_Wins");
+            team.loss = myFile.GetInt($"Team_{i}_Loss");
+            team.earnings = myFile.GetFloat($"Team_{i}_Earnings");
+            team.player = myFile.GetBool($"Team_{i}_Player");
+            team.rank = myFile.GetInt($"Team_{i}_Rank");
+            team.nextOpp = myFile.GetString($"Team_{i}_NextOpp");
+            team.draw = myFile.GetInt($"Team_{i}_Draw");
+            team.takeOut = myFile.GetInt($"Team_{i}_TakeOut");
+            team.guard = myFile.GetInt($"Team_{i}_Guard");
+            team.sweepStrength = myFile.GetInt($"Team_{i}_SweepStrength");
+            team.sweepEnduro = myFile.GetInt($"Team_{i}_SweepEnduro");
+            team.sweepCohesion = myFile.GetInt($"Team_{i}_SweepCohesion");
+
+            int playerCount = myFile.GetInt($"Team_{i}_PlayerCount", 0);
+            team.players = new List<Player>();
+            for (int j = 0; j < playerCount; j++)
+            {
+                Player p = new Player();
+                p.id = myFile.GetInt($"Team_{i}_Player_{j}_Id");
+                p.name = myFile.GetString($"Team_{i}_Player_{j}_Name");
+                p.draw = myFile.GetInt($"Team_{i}_Player_{j}_Draw");
+                p.takeOut = myFile.GetInt($"Team_{i}_Player_{j}_TakeOut");
+                p.guard = myFile.GetInt($"Team_{i}_Player_{j}_Guard");
+                p.sweepStrength = myFile.GetInt($"Team_{i}_Player_{j}_SweepStrength");
+                p.sweepEnduro = myFile.GetInt($"Team_{i}_Player_{j}_SweepEnduro");
+                p.sweepCohesion = myFile.GetInt($"Team_{i}_Player_{j}_SweepCohesion");
+                // Add other player fields as needed
+                team.players.Add(p);
+            }
+
+            teams[i] = team;
+        }
+
+        Debug.Log("Teams and players loaded from save.");
+    }
+
     private void LoadEquipment(EquipmentManager em)
     {
         inventoryID = myFile.GetArray<int>("Inventory ID List");
@@ -1164,7 +1224,6 @@ public class CareerManager : MonoBehaviour
 
     private void UpdateCurrentTourny(GameSettingsPersist gsp)
     {
-        gsp.cStats = cStats;
 
         if (gsp.tournyInProgress)
         {
@@ -1389,6 +1448,7 @@ public class CareerManager : MonoBehaviour
         Debug.Log("Saving Career - " + gsp.tournyInProgress);
         myFile = new EasyFileSave("my_player_data");
 
+        myFile.Add("Mode", debug);
         myFile.Add("Story Block", storyBlock);
         myFile.Add("Coach Dialogue Played List", coachDialogue);
         myFile.Add("Qualifying Dialogue Played List", qualDialogue);
@@ -1418,8 +1478,9 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Prov Qual", provQual);
         myFile.Add("Tour Qual", tourQual);
         myFile.Add("Tour Record", tourRecord);
-        myFile.Add("Total XP", totalXp);
-        myFile.Add("XP", xp);
+        myFile.Add("XP", xp); 
+        myFile.Add("Skillpoints", skillPoints);
+        myFile.Add("Level", level);
         myFile.Add("Draw Accuracy", cStats.drawAccuracy);
         myFile.Add("Take Out Accuracy", cStats.takeOutAccuracy);
         myFile.Add("Guard Accuracy", cStats.guardAccuracy);
@@ -1941,6 +2002,52 @@ public class CareerManager : MonoBehaviour
             myFile.Add("Game Yellow Score List", yellowScoreList);
 
         }
+        
+        // Only run if teams list is populated
+        if (teams != null || teams.Length != 0)
+        {
+            int teamCount = teams.Length;
+            myFile.Add("Team Count", teamCount);
+
+            for (int i = 0; i < teamCount; i++)
+            {
+                Team team = teams[i];
+                // Save team core info
+                myFile.Add($"Team_{i}_Id", team.id);
+                myFile.Add($"Team_{i}_Name", team.name);
+                myFile.Add($"Team_{i}_Wins", team.wins);
+                myFile.Add($"Team_{i}_Loss", team.loss);
+                myFile.Add($"Team_{i}_Earnings", team.earnings);
+                myFile.Add($"Team_{i}_Player", team.player);
+                myFile.Add($"Team_{i}_Rank", team.rank);
+                myFile.Add($"Team_{i}_NextOpp", team.nextOpp);
+                myFile.Add($"Team_{i}_Draw", team.draw);
+                myFile.Add($"Team_{i}_TakeOut", team.takeOut);
+                myFile.Add($"Team_{i}_Guard", team.guard);
+                myFile.Add($"Team_{i}_SweepStrength", team.sweepStrength);
+                myFile.Add($"Team_{i}_SweepEnduro", team.sweepEnduro);
+                myFile.Add($"Team_{i}_SweepCohesion", team.sweepCohesion);
+
+                // Save team players
+                int playerCount = team.players != null ? team.players.Count : 0;
+                myFile.Add($"Team_{i}_PlayerCount", playerCount);
+                for (int j = 0; j < playerCount; j++)
+                {
+                    Player p = team.players[j];
+                    myFile.Add($"Team_{i}_Player_{j}_Id", p.id);
+                    myFile.Add($"Team_{i}_Player_{j}_Name", p.name);
+                    myFile.Add($"Team_{i}_Player_{j}_Draw", p.draw);
+                    myFile.Add($"Team_{i}_Player_{j}_TakeOut", p.takeOut);
+                    myFile.Add($"Team_{i}_Player_{j}_Guard", p.guard);
+                    myFile.Add($"Team_{i}_Player_{j}_SweepStrength", p.sweepStrength);
+                    myFile.Add($"Team_{i}_Player_{j}_SweepEnduro", p.sweepEnduro);
+                    myFile.Add($"Team_{i}_Player_{j}_SweepCohesion", p.sweepCohesion);
+                    // Add other player fields as needed
+                }
+            }
+            Debug.LogWarning("SaveCareer aborted: teams list is not populated.");
+            return;
+        }
         myFile.Append();
         StartCoroutine(SaveHighScore());
         //activePlayers = teamSel.activePlayers;
@@ -2045,14 +2152,35 @@ public class CareerManager : MonoBehaviour
         Debug.Log("Tourny Results in CM");
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         TournyManager tm = FindObjectOfType<TournyManager>();
-        record = gsp.record;
-        earnings += gsp.earnings;
 
+        cashDelta = gsp.tournyEarnings;
+        cash += cashDelta;
+        earnings += cashDelta;
 
         float xpChange = 0f;
         if (!gsp.cashGame)
         {
             currentTournyTeams = gsp.teams;
+
+            for (int i = 0; i < teamRecords.Length; i++)
+            {
+                if (teamRecords[i].w == gsp.playerTeamIndex)
+                {
+                    record.x += teamRecords[i].x;
+                    record.y += teamRecords[i].y;
+                    earnings += teamRecords[i].z;
+                }
+            }
+
+            for (int i = 0; i < tourRecords.Length; i++)
+            {
+                if (tourRecords[i].w == gsp.playerTeamIndex)
+                {
+                    record.x += tourRecords[i].x;
+                    record.y += tourRecords[i].y;
+                    earnings += tourRecords[i].z;
+                }
+            }
 
             for (int i = 0; i < currentTournyTeams.Length; i++)
             {
@@ -2161,47 +2289,9 @@ public class CareerManager : MonoBehaviour
                         break;
                 }
             }
-            //for (int i = 0; i < tourTeams.Length; i++)
-            //{
-            //    //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " before TourRecordVector4");
-            //    for (int j = 0; j < tourRecords.Length; j++)
-            //    {
-            //        if (tourTeams[i].id == tourRecords[j].w)
-            //        {
-            //            tourTeams[i].tourRecord.x += tourRecords[j].x;
-            //            tourTeams[i].tourRecord.y += tourRecords[j].y;
-            //            tourTeams[i].tourPoints += tourRecords[j].z;
-            //        }
-            //    }
-            //    //Debug.Log(tourTeams[i].name + " - " + tourTeams[i].tourPoints + " AFTER TourRecordVector4");
-            //}
 
             Debug.Log("Team Record - " + teams[0].name + " - " + teamRecords[0]);
         }
-
-        //Debug.Log("Current Team List count is " + currentTournyTeams.Length);
-
-        //Debug.Log("Rank List count is " + provRankList.Count);
-        //Debug.Log("First Prov Team is " + provRankList[0].team.name);
-
-        //for (int i = 0; i < teams.Length; i++)
-        //{
-        //    for (int j = 0; j < teamRecords.Length; j++)
-        //    {
-        //        for (int k = 0; k < currentTournyTeams.Length; k++)
-        //        {
-        //            if (currentTournyTeams[k].id == teams[i].id)
-        //            {
-        //                if (teams[i].id == teamRecords[j].w)
-        //                {
-        //                    teams[i].wins += (int)teamRecords[j].x;
-        //                    teams[i].loss += (int)teamRecords[j].y;
-        //                    teams[i].earnings += teamRecords[j].z;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
 
         for (int i = 0; i < teams.Length; i++)
         {
@@ -2237,20 +2327,69 @@ public class CareerManager : MonoBehaviour
                 currentTrophyList.Add(false);
         }
 
+        if (currentTourny.tour)
+        {
+            // Tour event
+            if (playerTeamIndex == GetPlayerRankedTeamId())
+            {
+                if (GetPlayerRank() == 1)
+                    xpChange += 100f; // Winner
+                else if (GetPlayerRank() <= 4)
+                    xpChange += 60f; // Top 4
+                else
+                    xpChange += 30f; // Participation
+            }
+        }
+        else if (currentTourny.championship)
+        {
+            // Championship event
+            if (playerTeamIndex == GetPlayerRankedTeamId())
+            {
+                if (GetPlayerRank() == 1)
+                    xpChange += 200f;
+                else if (GetPlayerRank() <= 4)
+                    xpChange += 120f;
+                else
+                    xpChange += 60f;
+            }
+        }
+        else if (currentTourny.qualifier)
+        {
+            // Qualifier event
+            if (playerTeamIndex == GetPlayerRankedTeamId())
+            {
+                if (GetPlayerRank() < 5)
+                    xpChange += 50f;
+                else
+                    xpChange += 20f;
+            }
+        }
+        else
+        {
+            // Local or regular tournament
+            if (playerTeamIndex == GetPlayerRankedTeamId())
+            {
+                if (GetPlayerRank() == 1)
+                    xpChange += 40f;
+                else if (GetPlayerRank() <= 4)
+                    xpChange += 20f;
+                else
+                    xpChange += 10f;
+            }
+        }
+
+        // Optionally, add XP for wins/losses
+        if (playerTeamIndex == GetPlayerRankedTeamId())
+        {
+            xpChange += GetPlayerWins() * 3f;
+            xpChange += GetPlayerLosses() * 1f;
+        }
         //if (allTimeTrophyList.Count <= 0)
         //    allTimeTrophyList = new List<bool>();
 
         Debug.Log("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
-        totalXp += xpChange;
-        //Debug.Log("XP Change is " + xpChange);
-        //Debug.Log("Rank List count is " + provRankList.Count);
         provRankList.Sort();
-        //Debug.Log("Top Ranked Team is " + provRankList[0].team.name);
-        //Debug.Log("Second Place Team is " + provRankList[1].team.name);
-        //Debug.Log("Third Place Team is " + provRankList[2].team.name);
-        ////record += new Vector2(gsp.playerTeam.wins, gsp.playerTeam.loss);
-        //Debug.Log("Record is " + record.x + " - " + record.y);
         week++;
         Debug.Log("CM Tourny Results week is " + week);
         SaveCareer();
@@ -2262,7 +2401,6 @@ public class CareerManager : MonoBehaviour
         Debug.Log("CM Play Tourny");
         inProgress = true;
 
-        gsp.cStats = cStats;
         teamRecords = new Vector4[totalTeams];
         tourRecords = new Vector4[totalTourTeams];
 
@@ -2330,27 +2468,18 @@ public class CareerManager : MonoBehaviour
         tourRankList = new List<TourStandings_List>();
 
         xp = 0f;
-        totalXp = 0f;
+        skillPoints = 0;
+        level = 0;
 
         record = new Vector2(0f, 0f);
         tourRecord = new Vector2(0f, 0f);
 
-        cStats.drawAccuracy = 3;
-        cStats.guardAccuracy = 3;
-        cStats.takeOutAccuracy = 3;
-        cStats.sweepStrength = 3;
-        cStats.sweepEndurance = 3;
-        cStats.sweepCohesion = 3;
-
-        //for (int i = 0; i < activePlayers.Length; i++)
-        //{
-        //    modStats.drawAccuracy += activePlayers[i].draw;
-        //    modStats.takeOutAccuracy += activePlayers[i].takeOut;
-        //    modStats.guardAccuracy += activePlayers[i].guard;
-        //    modStats.sweepStrength += activePlayers[i].sweepStrength;
-        //    modStats.sweepEndurance += activePlayers[i].sweepEnduro;
-        //    modStats.sweepCohesion += activePlayers[i].sweepCohesion;
-        //}
+        cStats.drawAccuracy = 45;
+        cStats.guardAccuracy = 45;
+        cStats.takeOutAccuracy = 45;
+        cStats.sweepStrength = 45;
+        cStats.sweepEndurance = 45;
+        cStats.sweepCohesion = 45;
 
         season++;
 
@@ -2359,11 +2488,72 @@ public class CareerManager : MonoBehaviour
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
         Debug.Log("provRankList Count is " + provRankList.Count);
+
+        string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron" };
+        string[] lastNames = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King" };
+
+        int playersPerTeam = 4;
+        int statTotal = 300;
+        System.Random rand = new System.Random();
+
+        // Define weights for each role: [draw, takeOut, guard, sweepStrength, sweepEnduro, sweepCohesion]
+        float[][] roleWeights = new float[][]
+        {
+        // Lead: heavy sweeping
+        new float[] { 0.10f, 0.10f, 0.10f, 0.23f, 0.23f, 0.24f },
+        // Second: balanced, but still sweeping focused
+        new float[] { 0.13f, 0.13f, 0.13f, 0.20f, 0.20f, 0.21f },
+        // Third: shooting focused, but still good at sweeping
+        new float[] { 0.18f, 0.18f, 0.18f, 0.15f, 0.15f, 0.16f },
+        // Skip: captain, best shooter
+        new float[] { 0.22f, 0.22f, 0.22f, 0.11f, 0.11f, 0.12f }
+        };
+
         for (int i = 0; i < totalTeams; i++)
         {
             teams[i] = tTeamList.teams[i];
+            teams[i].players = new List<Player>();
+
+            for (int p = 0; p < playersPerTeam; p++)
+            {
+                Player player = new Player();
+                string firstName = firstNames[rand.Next(firstNames.Length)];
+                string lastName = (p == 3) ? teams[i].name : lastNames[rand.Next(lastNames.Length)];
+                player.name = firstName + " " + lastName;
+                player.id = p;
+
+                float[] weights = roleWeights[p];
+                int[] stats = new int[6];
+                int assigned = 0;
+
+                // Assign stats based on weights, rounding down
+                for (int s = 0; s < 6; s++)
+                {
+                    stats[s] = (int)(statTotal * weights[s]);
+                    assigned += stats[s];
+                }
+                // Distribute any remaining points randomly
+                int remaining = statTotal - assigned;
+                for (int r = 0; r < remaining; r++)
+                {
+                    int idx = rand.Next(6);
+                    stats[idx]++;
+                }
+
+                player.draw = stats[0];
+                player.takeOut = stats[1];
+                player.guard = stats[2];
+                player.sweepStrength = stats[3];
+                player.sweepEnduro = stats[4];
+                player.sweepCohesion = stats[5];
+
+                teams[i].players.Add(player);
+            }
+
+            teams[i].UpdateTeamSkillsFromPlayers();
             provRankList.Add(new Standings_List(teams[i]));
         }
+
         provQual = false;
         tourQual = false;
 
@@ -2408,14 +2598,11 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        //introDialogue[0] = true;
         activeCardIDList = null;
         cardPUIDList = null;
         cardSponsorIDList = null;
-        
-        week++;
 
-        //tSel.Expand(tSel.menuButtons[2]);
+        week++;
     }
 
     public void EndCareer()
@@ -2441,5 +2628,37 @@ public class CareerManager : MonoBehaviour
             a[i] = a[rnd];
             a[rnd] = temp;
         }
+    }
+
+    int GetPlayerRankedTeamId()
+    {
+        foreach (var team in currentTournyTeams)
+            if (team.id == playerTeamIndex)
+                return team.id;
+        return -1;
+    }
+
+    int GetPlayerRank()
+    {
+        foreach (var team in currentTournyTeams)
+            if (team.id == playerTeamIndex)
+                return team.rank;
+        return -1;
+    }
+
+    int GetPlayerWins()
+    {
+        foreach (var team in currentTournyTeams)
+            if (team.id == playerTeamIndex)
+                return team.wins;
+        return 0;
+    }
+
+    int GetPlayerLosses()
+    {
+        foreach (var team in currentTournyTeams)
+            if (team.id == playerTeamIndex)
+                return team.loss;
+        return 0;
     }
 }

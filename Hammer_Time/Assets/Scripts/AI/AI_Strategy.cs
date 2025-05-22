@@ -46,6 +46,53 @@ public class AI_Strategy : MonoBehaviour
         lCornGuard = aiTarg.lCornGuard;
         rCornGuard = aiTarg.rCornGuard;
     }
+    public void SimpleAIShoot(int rockCurrent)
+    {
+        int valuableRockIndex = GetMostValuableOpponentRockIndex(activeTeamName);
+
+        if (valuableRockIndex >= 0)
+        {
+            // Conservative: Only take out if the rock is in scoring position (e.g., inside the 8-foot circle)
+            float distanceToButton = Vector2.Distance(
+                gm.houseList[valuableRockIndex].rock.transform.position,
+                new Vector2(0f, 6.5f)
+            );
+            if (distanceToButton < 1.22f) // 8-foot radius in meters
+            {
+                aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[valuableRockIndex].rockInfo.rockIndex);
+                return;
+            }
+        }
+
+        // If no high-value takeout, play a guard if few guards, else draw to button
+        int guardsInPlay = gm.gList.Count;
+        if (guardsInPlay < 2)
+            aiShoot.OnShot("Centre Guard", rockCurrent);
+        else
+            aiShoot.OnShot("Button", rockCurrent);
+    }
+
+    private int GetMostValuableOpponentRockIndex(string myTeam)
+    {
+        int bestIndex = -1;
+        float bestValue = float.MinValue;
+        for (int i = 0; i < gm.houseList.Count; i++)
+        {
+            var info = gm.houseList[i].rockInfo;
+            // Only consider opponent rocks
+            if (info.teamName != myTeam)
+            {
+                // Example: Value = closer to button is better
+                float value = 10f - Vector2.Distance(gm.houseList[i].rock.transform.position, new Vector2(0f, 6.5f));
+                if (value > bestValue)
+                {
+                    bestValue = value;
+                    bestIndex = i;
+                }
+            }
+        }
+        return bestIndex;
+    }
 
     public void OnShot(int rockCurrent)
     {

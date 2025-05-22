@@ -3216,10 +3216,34 @@ MonoBehaviour:
     sweepCohesion: 0
   redTeamName: 
   redTeamColour: {r: 0, g: 0, b: 0, a: 0}
-  redTeam: []
+  redTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    record: {x: 0, y: 0}
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+    player: 0
   yellowTeamName: 
   yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
-  yellowTeam: []
+  yellowTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    record: {x: 0, y: 0}
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+    player: 0
   draw: 0
   playoffRound: 0
   numberOfTeams: 16
@@ -4422,7 +4446,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1482499007}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.7332121
+  m_Size: 0.7332112
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7155,7 +7179,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
+    m_Font: {fileID: 12800000, guid: 8a2b9e2a607dd2143b58c44bc32410b4, type: 3}
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 1
@@ -16334,7 +16358,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
+    m_Font: {fileID: 12800000, guid: 8a2b9e2a607dd2143b58c44bc32410b4, type: 3}
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 1

@@ -423,6 +423,7 @@ public class SponsorManager : MonoBehaviour
         for (int i = 0; i < activeCards.Length; i++)
         {
             costPerWeek -= activeCards[i].cost;
+            //tm.IncomeDeltaText(activeCards[i].cost);
         }
 
         //Debug.Log("costPerWeek is " + costPerWeek);
@@ -523,7 +524,7 @@ public class SponsorManager : MonoBehaviour
             cardDisplays[4].name.text = activeCards[card].name + " - " + " ongoing";
         else if (activeCards[card].duration == 1)
             cardDisplays[4].name.text = activeCards[card].name + " - " + activeCards[card].duration.ToString() + " week";
-        else if (activeCards[card].duration > 0)
+        else if (activeCards[card].duration > 1)
             cardDisplays[4].name.text = activeCards[card].name + " - " + activeCards[card].duration.ToString() + " weeks";
         else
             cardDisplays[4].name.text = activeCards[card].name;
@@ -746,11 +747,14 @@ public class SponsorManager : MonoBehaviour
                     {
                         if (!stopReplace & availSponsorCards[j].id == cardSelected)
                         {
+                            tm.IncomeDeltaText(availSponsorCards[j].cost - activeCards[i].cost);
+
                             activeCards[i] = availSponsorCards[j];
                             availSponsorCards[j].active = true;
                             availSponsorCards[j].played = true;
                             cardsSponsor[j] = availSponsorCards[j];
                             availSponsorCards[j] = tempCard;
+
                             stopReplace = true;
                         }
                     }

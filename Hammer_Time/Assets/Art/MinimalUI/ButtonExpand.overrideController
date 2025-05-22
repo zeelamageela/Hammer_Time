@@ -9,7 +9,7 @@ AnimatorOverrideController:
   m_Name: ButtonExpand
   m_Controller: {fileID: 9100000, guid: 4ed19fbfd53154be18b59e09f9b1ff62, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: d40ca0800cef446d2bb3180d958fcbfb, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: 7cd017a66100efe4fa4eacb1ed5be7ee, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: e77507dad5228694b9a16cc456de3d1a, type: 2}
     m_OverrideClip: {fileID: 7400000, guid: e77507dad5228694b9a16cc456de3d1a, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7cd017a66100efe4fa4eacb1ed5be7ee, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7cd017a66100efe4fa4eacb1ed5be7ee, type: 2}

@@ -182,31 +182,30 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 		int playerGame;
 		int roundLength;
-		bool plus = false;
 
 		for (int i = 0; i < playoffTeams.Length; i++)
         {
 			playoffTeams[i] = gsp.playoffTeams[i];
         }
-		//playoffTeams = gsp.playoffTeams;
+        //playoffTeams = gsp.playoffTeams;
 
-		for (int i = 0; i < playoffTeams.Length; i++)
-		{
+        for (int i = playoffTeams.Length - 1; i >= 0; i--)
+        {
 			if (playoffTeams[i].player)
 				playerTeam = i;
 		}
-		//for (int i = 0; i < gsp.playoffTeams.Length; i++)
-		//{
-		//	if (gsp.teams[playerTeam].name == gsp.playoffTeams[i].name)
-		//		if (i % 2 == 0)
-  //              {
-		//			oppTeam = i + 1;
-  //              }
-		//		else
-		//		{
-		//			oppTeam = i - 1;
-		//		}
-		//}
+		for (int i = playoffTeams.Length - 1; i >= 0; i--)
+		{
+			if (gsp.playoffTeams[i].player)
+				if (i % 2 == 0)
+				{
+					oppTeam = i + 1;
+				}
+				else
+				{
+					oppTeam = i - 1;
+				}
+		}
 		Debug.Log("OppTeam is " + oppTeam);
 		switch (playoffRound)
         {
@@ -223,12 +222,10 @@ public class PlayoffManager_SingleK : MonoBehaviour
 						if (i % 2 == 0)
 						{
 							playerGame = i / 2;
-							oppTeam = i + 1;
 						}
 						else
 						{
 							playerGame = (i - 1) / 2;
-							oppTeam = i - 1;
 						}
 					}
 				}
@@ -297,13 +294,13 @@ public class PlayoffManager_SingleK : MonoBehaviour
 					if (gsp.redScore > gsp.yellowScore)
 					{
 						Debug.Log("Player Red beat Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
+						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
 						playoffTeams[oppTeam].rank = 5;
 					}
 					else
 					{
 						Debug.Log("Yellow beat Player Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
+						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
 						playoffTeams[playerTeam].rank = 5;
 					}
 				}
@@ -312,13 +309,13 @@ public class PlayoffManager_SingleK : MonoBehaviour
 					if (gsp.redScore < gsp.yellowScore)
 					{
 						Debug.Log("Player Yellow beat Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
+						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
 						playoffTeams[oppTeam].rank = 5;
 					}
 					else
 					{
 						Debug.Log("Red beat Player Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
+						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
 						playoffTeams[playerTeam].rank = 5;
 					}
 				}
@@ -448,7 +445,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 				#endregion
 		}
 
-		SetPlayoffs();
+		//SetPlayoffs();
 	}
 
 	void LoadPlayoffs()
@@ -808,13 +805,15 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 						if (i % 2 == 0)
 						{
-							tm.vsDisplay[1].name.text = playoffTeams[i + 1].name;
+							playoffTeams[i].nextOpp = playoffTeams[i + 1].name;
+                            tm.vsDisplay[1].name.text = playoffTeams[i + 1].name;
 							tm.vsDisplay[1].rank.text = playoffTeams[i + 1].rank.ToString();
 							playoffTeams[i].nextOpp = playoffTeams[1 + 1].name;
 						}
 						else
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[i - 1].name;
+                        {
+                            playoffTeams[i].nextOpp = playoffTeams[i - 1].name;
+                            tm.vsDisplay[1].name.text = playoffTeams[i - 1].name;
 							tm.vsDisplay[1].rank.text = playoffTeams[i - 1].rank.ToString();
 							playoffTeams[i].nextOpp = playoffTeams[1 - 1].name;
 						}
@@ -866,10 +865,14 @@ public class PlayoffManager_SingleK : MonoBehaviour
 						ko = false;
 					}
 				}
+				playButton.gameObject.SetActive(true);
+                simButton.gameObject.SetActive(true);
+                contButton.gameObject.SetActive(false);
+                if (ko)
+                {
+                    playButton.gameObject.SetActive(false);
 
-				if (ko)
-				{
-					for (int i = 0; i < playoffTeams.Length; i++)
+                    for (int i = 0; i < playoffTeams.Length; i++)
 					{
 						if (playoffTeams[i].player)
 						{
@@ -883,8 +886,6 @@ public class PlayoffManager_SingleK : MonoBehaviour
 				playoffs.SetActive(true);
                 //StartCoroutine(RefreshPlayoffPanel());
 
-                simButton.gameObject.SetActive(true);
-                contButton.gameObject.SetActive(false);
                 scrollBar.value = 0.25f;
 				StartCoroutine(SaveCareer(true));
 				break;
@@ -1022,7 +1023,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
                         if (playoffTeams[i].player)
                         {
 							heading.text = "You Win!";
-							gsp.earnings += gsp.prize * 0.5f;
+							gsp.tournyEarnings += gsp.prize * 0.5f;
 
 							tm.vs.SetActive(true);
 
@@ -1042,7 +1043,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
                             if (playoffTeams[i].player)
 							{
 								heading.text = "Runner-up";
-								gsp.earnings += gsp.prize * 0.25f;
+								gsp.tournyEarnings += gsp.prize * 0.25f;
 
 								tm.vs.SetActive(true);
 
@@ -1063,7 +1064,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
                             if (playoffTeams[i].player)
 							{
 								heading.text = "3rd Place";
-								gsp.earnings += gsp.prize * 0.125f;
+								gsp.tournyEarnings += gsp.prize * 0.125f;
 
 								tm.vs.SetActive(true);
 
@@ -1076,8 +1077,8 @@ public class PlayoffManager_SingleK : MonoBehaviour
                     }
                 }
 
-                Debug.Log("GSP Earnings after calculation - " + gsp.earnings.ToString());
-				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
+                Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
+				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 				
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 
@@ -1279,7 +1280,8 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 				for (int i = 0; i < semisDisplay.Length; i++)
 				{
-					semisDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
+					Debug.Log("playoffTeams Length is " + playoffTeams.Length + " - playoffTeams range is " + (roundOf16Display.Length + quartersDisplay.Length + i));
+                    semisDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
 					semisDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].name;
 					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
 					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(true);
@@ -1529,7 +1531,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 	{
 		gsp.LoadCareer();
 
-		yield return careerEarningsText.text = "$ " + gsp.earnings.ToString();
+		yield return careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 	}
 
 	IEnumerator SaveCareer(bool inProgress)

@@ -11,6 +11,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	public CareerManager cm;
 	public Team[] teams;
 
+	public float waitTime;
 	public GameObject winnersBracket;
 	public GameObject losersBracket1;
 	public GameObject losersBracket2;
@@ -91,7 +92,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		cm = FindObjectOfType<CareerManager>();
 
 		StartCoroutine(LoadCareer());
-		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+		Debug.Log("Career Earnings before playoffs - $ " + gsp.tournyEarnings.ToString());
 
 		teams = new Team[16];
 		gameList = new Vector2[46];
@@ -106,7 +107,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			Debug.Log("Career Load P3K");
 			//gsp.LoadCareer();
-			careerEarnings = gsp.earnings;
+			careerEarnings = gsp.tournyEarnings;
 
             if (cm)
             {
@@ -131,7 +132,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			playoffRound = gsp.playoffRound;
 		}
 
-		Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
+		Debug.Log("Career Earnings before playoffs - $ " + gsp.tournyEarnings.ToString());
 
 		if (playoffRound > 0)
 			LoadPlayoffs();
@@ -146,10 +147,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
 		//teams = new Team[9];
 		heading.text = "No Game Data";
-
+		Debug.Log("-->playoffRound is " + playoffRound);
 		playoffRound++;
 
-		gsp.record = new Vector2(0f, 0f);
+		gsp.tournyRecord = new Vector2(0f, 0f);
 
 		if (gsp.teams.Length > 0)
 		{
@@ -163,12 +164,6 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			for (int i = 0; i < teams.Length; i++)
 			{
 				teams[i] = tTeamList.teams[i];
-				if (teams[i].player)
-				{
-					teams[i].name = gsp.teamName;
-					//teams[i].id = 69;
-					//playerTeam = 69;
-				}
 			}
 		}
 
@@ -289,11 +284,10 @@ public class PlayoffManager_TripleK : MonoBehaviour
 			Debug.Log("We are returning from a game");
 			cont = true;
 			//playoffRound--;
-			StartCoroutine(ResetBrackets(gsp.playoffRound));
+			//StartCoroutine(ResetBrackets(gsp.playoffRound));
 			//StartCoroutine(SimPlayoff());
 		}
-		else 
-			StartCoroutine(ResetBrackets(gsp.playoffRound));
+		StartCoroutine(ResetBrackets(gsp.playoffRound));
 		//SetPlayoffs();
 	}
 
@@ -332,33 +326,33 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						if (teams[i].loss == 2)
 						{
-							vsDisplay[0].rank.text = "XX";
+							vsDisplay[0].rank.text = "OXX";
 						}
 						if (teams[i].loss == 1)
 						{
-							vsDisplay[0].rank.text = "X";
+							vsDisplay[0].rank.text = "00X";
 						}
 						if (teams[i].loss == 0)
 						{
-							vsDisplay[0].rank.text = "-";
+							vsDisplay[0].rank.text = "000";
 						}
 						vsDisplay[0].name.text = teams[i].name;
 					}
 					if (teams[i].id == oppTeam)
 					{
-						if (teams[i].loss == 2)
-						{
-							vsDisplay[1].rank.text = "XX";
-						}
-						if (teams[i].loss == 1)
-						{
-							vsDisplay[1].rank.text = "X";
-						}
-						if (teams[i].loss == 0)
-						{
-							vsDisplay[1].rank.text = "-";
-						}
-						vsDisplay[1].name.text = teams[i].name;
+                        if (teams[i].loss == 2)
+                        {
+                            vsDisplay[0].rank.text = "OXX";
+                        }
+                        if (teams[i].loss == 1)
+                        {
+                            vsDisplay[0].rank.text = "00X";
+                        }
+                        if (teams[i].loss == 0)
+                        {
+                            vsDisplay[0].rank.text = "000";
+                        }
+                        vsDisplay[1].name.text = teams[i].name;
 					}
 				}
 
@@ -398,8 +392,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 8].x + " - " + teams[j].name);
 								losersDisplayA2[i].name.text = teams[j].name;
-								losersDisplayA2[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA2[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA2[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA2[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 						else
@@ -414,8 +419,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 8].y + " - " + teams[j].name);
 								losersDisplayA2[i].name.text = teams[j].name;
-								losersDisplayA2[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA2[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA2[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA2[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -460,8 +476,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[(i / 2) + 12].x + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
-								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-							}
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay3[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay3[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay3[i].rank.text = "000";
+                                }
+                            }
 						}
 						else
 						{
@@ -475,8 +502,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Winners Bracket Y-" + gameList[((i - 1) / 2) + 12].x + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
-								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-							}
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay3[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay3[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay3[i].rank.text = "000";
+                                }
+                            }
 						}
 					}
 				}
@@ -521,8 +559,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 16].x + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
-								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA4[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA4[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA4[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -540,8 +589,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 16].y + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
-								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA4[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA4[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA4[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -586,8 +646,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 20].x + " - " + teams[j].name);
 								losersDisplayB5[i].name.text = teams[j].name;
-								losersDisplayB5[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB5[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB5[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB5[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -605,8 +677,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 20].y + " - " + teams[j].name);
 								losersDisplayB5[i].name.text = teams[j].name;
-								losersDisplayB5[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB5[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB5[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB5[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -651,7 +735,18 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 24].x + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
-								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB6[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB6[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB6[i].rank.text = "000";
+                                }
 								break;
 							}
 						}
@@ -670,8 +765,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 24].y + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
-								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB6[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB6[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB6[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -716,8 +822,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[(i / 2) + 26].x + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
-								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay7[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay7[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay7[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -735,8 +852,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Winners Bracket Y-" + gameList[((i - 1) / 2) + 26].y + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
-								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay7[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay7[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay7[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -781,8 +909,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 28].x + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
-								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA8[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA8[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA8[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -800,8 +939,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 28].y + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
-								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA8[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA8[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA8[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -846,8 +996,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 30].x + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
-								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA9[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA9[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA9[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -865,8 +1026,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 30].y + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
-								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA9[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA9[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA9[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -912,8 +1084,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 32].x + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
-								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB10[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB10[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB10[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -931,8 +1114,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 32].y + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
-								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB10[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB10[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB10[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -977,8 +1171,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 34].x + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
-								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB11[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB11[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB11[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -996,8 +1201,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 34].y + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
-								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB11[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB11[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB11[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1042,8 +1258,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Winners Bracket X-" + gameList[36].x + " - " + teams[j].name);
 								winnersDisplay12[i].name.text = teams[j].name;
-								winnersDisplay12[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay12[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay12[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay12[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1104,8 +1331,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A X-" + gameList[37].x + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
-								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA13[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA13[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA13[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1123,8 +1361,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[37].y + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
-								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA13[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA13[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA13[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1166,8 +1415,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B X-" + gameList[38].x + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB14[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB14[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB14[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1185,8 +1445,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB14[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB14[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB14[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1228,8 +1499,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay15[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay15[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay15[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1247,8 +1529,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay15[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay15[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay15[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1266,8 +1559,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay15[i].name.text = teams[j].name;
-								finalsDisplay15[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay15[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay15[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay15[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1314,8 +1618,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay16[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay16[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay16[i].rank.text = "000";
+                                }
+                                break;
 							}
 							if (teams[j].id == gameList[42].y && i == 2)
 							{
@@ -1327,8 +1642,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay16[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay16[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay16[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1346,8 +1672,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay16[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay16[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay16[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1395,8 +1732,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay17[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay17[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay17[i].rank.text = "000";
+                                }
+                                break;
 							}
 							if (i == 2 && teams[j].id == gameList[42].y)
 							{
@@ -1408,8 +1756,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay17[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay17[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay17[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1427,8 +1786,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay17[i].name.text = teams[j].name;
-								finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay17[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay17[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay17[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1477,8 +1847,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
-								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay18[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay18[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay18[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1496,8 +1877,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
-								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay18[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay18[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay18[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1544,8 +1936,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
-								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay19[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay19[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay19[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1563,8 +1966,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								}
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
-								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay19[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay19[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay19[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -1599,8 +2013,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay20[0].name.text = teams[j].name;
-						finalsDisplay20[0].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            finalsDisplay20[0].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            finalsDisplay20[0].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            finalsDisplay20[0].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 
@@ -1669,11 +2094,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						vsDisplay[1].name.text = "Knocked Out!";
 					}
 					if (teams[i].loss == 2)
-						vsDisplay[0].rank.text = "XX";
+						vsDisplay[0].rank.text = "OXX";
 					if (teams[i].loss == 1)
-						vsDisplay[0].rank.text = "X";
+						vsDisplay[0].rank.text = "OOX";
 					if (teams[i].loss == 0)
-						vsDisplay[0].rank.text = "-";
+						vsDisplay[0].rank.text = "000";
 					vsDisplay[0].name.text = teams[i].name;
 				}
 				if (teams[i].id == oppTeam)
@@ -1682,11 +2107,11 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 					}
 					if (teams[i].loss == 2)
-						vsDisplay[1].rank.text = "XX";
+						vsDisplay[1].rank.text = "OXX";
 					if (teams[i].loss == 1)
-						vsDisplay[1].rank.text = "X";
+						vsDisplay[1].rank.text = "OOX";
 					if (teams[i].loss == 0)
-						vsDisplay[1].rank.text = "-";
+						vsDisplay[1].rank.text = "OOO";
 					vsDisplay[1].name.text = teams[i].name;
 				}
 			}
@@ -3869,8 +4294,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket X-" + teams[j].id + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
-								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-							}
+								if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay3[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay3[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay3[i].rank.text = "000";
+                                }
+                            }
 						}
 						else
 						{
@@ -3878,8 +4314,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								winnersDisplay3[i].name.text = teams[j].name;
-								winnersDisplay3[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-							}
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay3[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay3[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay3[i].rank.text = "000";
+                                }
+                            }
 						}
 					}
 				}
@@ -3936,8 +4383,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 8].y + " - " + teams[j].name);
 								losersDisplayA4[i].name.text = teams[j].name;
-								losersDisplayA4[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA4[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA4[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA4[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4032,8 +4490,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket X-" + gameList[(i / 2) + 26].x + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
-								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay7[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay7[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay7[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4045,8 +4514,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket Y-" + gameList[((i - 1) / 2) + 26].y + " - " + teams[j].name);
 								winnersDisplay7[i].name.text = teams[j].name;
-								winnersDisplay7[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay7[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay7[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay7[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4114,8 +4594,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 28].x + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
-								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA8[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA8[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA8[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4127,8 +4618,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 28].y + " - " + teams[j].name);
 								losersDisplayA8[i].name.text = teams[j].name;
-								losersDisplayA8[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA8[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA8[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA8[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4208,8 +4710,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 24].x + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
-								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB6[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB6[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB6[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4221,8 +4734,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 24].y + " - " + teams[j].name);
 								losersDisplayB6[i].name.text = teams[j].name;
-								losersDisplayB6[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB6[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB6[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB6[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4300,8 +4824,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 32].y + " - " + teams[j].name);
 								losersDisplayB10[i].name.text = teams[j].name;
-								losersDisplayB10[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								losersDisplayB10[i].panel.GetComponent<Image>().color = yellow;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB10[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB10[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB10[i].rank.text = "000";
+                                }
+                                losersDisplayB10[i].panel.GetComponent<Image>().color = yellow;
 								break;
 							}
 						}
@@ -4372,8 +4907,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket X-" + gameList[36].x + " - " + teams[j].name);
 								winnersDisplay12[i].name.text = teams[j].name;
-								winnersDisplay12[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay12[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay12[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay12[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4385,8 +4931,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Winners Bracket Y-" + gameList[36].y + " - " + teams[j].name);
 								winnersDisplay12[i].name.text = teams[j].name;
-								winnersDisplay12[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    winnersDisplay12[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    winnersDisplay12[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    winnersDisplay12[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4457,8 +5014,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A X-" + gameList[(i / 2) + 30].x + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
-								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA9[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA9[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA9[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4470,8 +5038,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[((i - 1) / 2) + 30].y + " - " + teams[j].name);
 								losersDisplayA9[i].name.text = teams[j].name;
-								losersDisplayA9[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA9[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA9[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA9[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4541,9 +5120,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A X-" + gameList[37].x + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
-								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA13[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA13[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA13[i].rank.text = "000";
+                                }
 
-								if (teams[j].player)
+                                if (teams[j].player)
 									losersDisplayA13[i].bg.GetComponent<Image>().color = yellow;
 							}
 						}
@@ -4556,9 +5146,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket A Y-" + gameList[37].y + " - " + teams[j].name);
 								losersDisplayA13[i].name.text = teams[j].name;
-								losersDisplayA13[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayA13[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayA13[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayA13[i].rank.text = "000";
+                                }
 
-								if (teams[j].player)
+                                if (teams[j].player)
 									losersDisplayA13[i].bg.GetComponent<Image>().color = yellow;
 							}
 						}
@@ -4636,8 +5237,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B X-" + gameList[(i / 2) + 34].x + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
-								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB11[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB11[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB11[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4649,8 +5261,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[((i - 1) / 2) + 34].y + " - " + teams[j].name);
 								losersDisplayB11[i].name.text = teams[j].name;
-								losersDisplayB11[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB11[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB11[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB11[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4725,8 +5348,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B X-" + gameList[38].x + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB14[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB14[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB14[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4738,8 +5372,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
 								losersDisplayB14[i].name.text = teams[j].name;
-								losersDisplayB14[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    losersDisplayB14[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    losersDisplayB14[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    losersDisplayB14[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -4803,8 +5448,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						winnersDisplay12[2].panel.transform.parent.gameObject.SetActive(true);
 						winnersDisplay12[2].name.text = teams[j].name;
-						winnersDisplay12[2].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            winnersDisplay12[2].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            winnersDisplay12[2].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            winnersDisplay12[2].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 				for (int i = 0; i < winnersBracket.transform.childCount; i++)
@@ -4860,8 +5516,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Losers Bracket A Y-" + gameList[40].y + " - " + teams[j].name);
 						losersDisplayA13[2].panel.transform.parent.gameObject.SetActive(true);
 						losersDisplayA13[2].name.text = teams[j].name;
-						losersDisplayA13[2].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            losersDisplayA13[2].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            losersDisplayA13[2].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            losersDisplayA13[2].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 				for (int i = 0; i < losersBracket1.transform.childCount; i++)
@@ -4922,13 +5589,24 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				}
 				for (int j = 0; j < teams.Length; j++)
 				{
-					if (teams[j].id == gameList[39].y)
+					if (teams[j].id == gameList[38].y)
 					{
 						Debug.Log("Setting Losers Bracket B Y-" + gameList[38].y + " - " + teams[j].name);
 						losersDisplayB14[2].panel.transform.parent.gameObject.SetActive(true);
 						losersDisplayB14[2].name.text = teams[j].name;
-						losersDisplayB14[2].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            losersDisplayB14[2].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            losersDisplayB14[2].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            losersDisplayB14[2].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 				for (int i = 0; i < losersBracket2.transform.childCount; i++)
@@ -5016,8 +5694,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
 								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay16[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay16[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay16[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -5030,8 +5719,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay16[i].panel.transform.parent.gameObject.SetActive(true);
 								finalsDisplay16[i].name.text = teams[j].name;
-								finalsDisplay16[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay16[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay16[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay16[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -5043,8 +5743,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay17[1].panel.transform.parent.gameObject.SetActive(true);
 						finalsDisplay17[1].name.text = teams[j].name;
-						finalsDisplay17[1].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            finalsDisplay17[1].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            finalsDisplay17[1].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            finalsDisplay17[1].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 				finalsDisplay17[0].panel.transform.parent.gameObject.SetActive(false);
@@ -5109,8 +5820,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 							finalsDisplay17[i].panel.transform.parent.gameObject.SetActive(true);
 							finalsDisplay17[i].name.text = teams[j].name;
-							finalsDisplay17[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-							break;
+                            if (teams[j].loss == 2)
+                            {
+                                finalsDisplay17[i].rank.text = "OXX";
+                            }
+                            if (teams[j].loss == 1)
+                            {
+                                finalsDisplay17[i].rank.text = "00X";
+                            }
+                            if (teams[j].loss == 0)
+                            {
+                                finalsDisplay17[i].rank.text = "000";
+                            }
+                            break;
 						}
 					}
 				}
@@ -5123,8 +5845,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay18[0].panel.transform.parent.gameObject.SetActive(true);
 						finalsDisplay18[0].name.text = teams[j].name;
-						finalsDisplay18[0].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-						break;
+                        if (teams[j].loss == 2)
+                        {
+                            finalsDisplay18[0].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            finalsDisplay18[0].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            finalsDisplay18[0].rank.text = "000";
+                        }
+                        break;
 					}
 				}
 				finalsDisplay18[1].panel.transform.parent.gameObject.SetActive(false);
@@ -5194,8 +5927,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
-								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay18[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay18[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay18[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -5207,8 +5951,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay18[i].name.text = teams[j].name;
-								finalsDisplay18[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								break;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay18[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay18[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay18[i].rank.text = "000";
+                                }
+                                break;
 							}
 						}
 					}
@@ -5282,8 +6037,19 @@ public class PlayoffManager_TripleK : MonoBehaviour
 							{
 								Debug.Log("Setting Finals Bracket Y-" + teams[j].id + " - " + teams[j].name);
 								finalsDisplay19[i].name.text = teams[j].name;
-								finalsDisplay19[i].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
-								finalsDisplay19[i].panel.GetComponent<Image>().color = yellow;
+                                if (teams[j].loss == 2)
+                                {
+                                    finalsDisplay19[i].rank.text = "OXX";
+                                }
+                                if (teams[j].loss == 1)
+                                {
+                                    finalsDisplay19[i].rank.text = "00X";
+                                }
+                                if (teams[j].loss == 0)
+                                {
+                                    finalsDisplay19[i].rank.text = "000";
+                                }
+                                finalsDisplay19[i].panel.GetComponent<Image>().color = yellow;
 								break;
 							}
 						}
@@ -5374,8 +6140,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					if (teams[i].player)
 					{
 						//gsp.earnings = teams[i].earnings;
-						gsp.earnings = prizePayout;
-						gsp.cash = prizePayout;
+						gsp.tournyEarnings = prizePayout;
+						gsp.tournyCash = prizePayout;
 						vsDisplayGO.SetActive(true);
 
 						vsDisplayTitle.text = "Results";
@@ -5389,8 +6155,8 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					//tm.teamList[i].team.earnings += prizePayout;
 
 				}
-				Debug.Log("Career Earnings after calculation - " + gsp.earnings.ToString());
-				careerEarningsText.text = "$ " + gsp.earnings.ToString("n0");
+				Debug.Log("Career Earnings after calculation - " + gsp.tournyEarnings.ToString());
+				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 
 				for (int j = 0; j < teams.Length; j++)
 				{
@@ -5398,9 +6164,20 @@ public class PlayoffManager_TripleK : MonoBehaviour
 					{
 						Debug.Log("Setting Finals Bracket X-" + teams[j].id + " - " + teams[j].name);
 						finalsDisplay20[0].name.text = teams[j].name;
-						finalsDisplay20[0].rank.text = teams[j].wins.ToString() + "-" + teams[j].loss.ToString();
+                        if (teams[j].loss == 2)
+                        {
+                            finalsDisplay20[0].rank.text = "OXX";
+                        }
+                        if (teams[j].loss == 1)
+                        {
+                            finalsDisplay20[0].rank.text = "00X";
+                        }
+                        if (teams[j].loss == 0)
+                        {
+                            finalsDisplay20[0].rank.text = "000";
+                        }
 
-						nextButton.gameObject.SetActive(true);
+                        nextButton.gameObject.SetActive(true);
 						simButton.gameObject.SetActive(false);
 
 						break;
@@ -5525,16 +6302,12 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		{
 			if (teams[i].id == playerTeam)
 			{
-				gsp.earnings = teams[i].earnings;
-				gsp.record = new Vector2(teams[i].wins, teams[i].loss);
+				gsp.tournyEarnings = teams[i].earnings;
+				gsp.tournyRecord = new Vector2(teams[i].wins, teams[i].loss);
 			}
 		}
-
-		float winnings = gsp.earnings;
-		cm.earnings += winnings;
-		cm.cash += gsp.cash;
-		cm.record = gsp.record;
-		gsp.draw = 0;
+		
+        gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
 		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
@@ -5557,11 +6330,14 @@ public class PlayoffManager_TripleK : MonoBehaviour
             
             yield return new WaitForSeconds(0.01f);
 			SimResults();
-			playoffRound--;
+			if (playoffRound > 1)
+				playoffRound--;
+			else
+				playoffRound = 1;
 			yield return new WaitForSeconds(0.01f);
 			Debug.Log("Playoff Round in Reset is " + playoffRound + " and i is " + i);
 		}
-		yield return new WaitForSeconds(0.01f);
+		yield return new WaitForSeconds(waitTime);
 		playoffs.SetActive(true);
 		playButton.transform.parent.gameObject.SetActive(true);
 		if (cont)
@@ -5591,7 +6367,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 	{
 		gsp.LoadCareer();
 
-		yield return careerEarningsText.text = "$ " + gsp.earnings.ToString();
+		yield return careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 	}
 
 	IEnumerator SaveCareer(bool inProgress)
@@ -5602,7 +6378,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		myFile.Add("Triple Knockout Tourny", true);
 		//myFile.Add("Career Record", cm.record);
-		Debug.Log("gsp.record is " + gsp.record.x + " - " + gsp.record.y);
+		Debug.Log("gsp.record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
 
 		myFile.Add("BG", gsp.bg);
 		//myFile.Add("Career Earnings", gsp.earnings);

@@ -110,6 +110,7 @@ public class SweeperManager : MonoBehaviour
         //sweeperYellowL.gameObject.SetActive(false);
         //sweeperYellowR.gameObject.SetActive(false);
         GameManager gm = FindObjectOfType<GameManager>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
         if (redTurn)
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
@@ -119,7 +120,7 @@ public class SweeperManager : MonoBehaviour
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
-            if (gsp.redTeamName == gsp.teamName)
+            if (gsp.redTeamName == cm.teamName)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
@@ -137,7 +138,7 @@ public class SweeperManager : MonoBehaviour
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
 
-            if (gsp.redTeamName != gsp.teamName)
+            if (gsp.redTeamName != cm.teamName)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperRedTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }

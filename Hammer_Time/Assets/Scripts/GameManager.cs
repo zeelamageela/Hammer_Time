@@ -217,11 +217,11 @@ public class GameManager : MonoBehaviour
                         //Debug.Log("placed1 is " + rm.rrp.placed1);
                         if (gsp.aiRed)
                         {
-                            rm.rrp.OnRockPlace(i, false);
+                            yield return rm.rrp.OnRockPlace(i, false);
                         }
                         else if (gsp.aiYellow)
                         {
-                            rm.rrp.OnRockPlace(i, true);
+                            yield return rm.rrp.OnRockPlace(i, true);
                         }
 
                     }
@@ -1061,19 +1061,18 @@ public class GameManager : MonoBehaviour
             state = GameState.RESET;
 
             rockCurrent = gsp.rockCurrent;
-            gsp.LoadFromGM();
             endCurrent++;
             gsp.endCurrent = endCurrent;
+            gsp.LoadFromGM();
             SaveGame();
             //yield return StartCoroutine(SaveGame());
             yield return new WaitForEndOfFrame();
-            SceneManager.LoadScene("End_menu_Tourny_1");
+            SceneManager.LoadScene("End_Menu_Tourny_1");
             //StartCoroutine(ResetGame());
         }
         else if (endCurrent >= endTotal)
         {
             state = GameState.END;
-            SaveGame();
             StartCoroutine(EndOfGame());
         }
     }
@@ -1088,6 +1087,7 @@ public class GameManager : MonoBehaviour
 
         gsp.LoadFromGM();
         gsp.loadGame = false;
+        SaveGame();
         SceneManager.LoadScene("End_Menu_Tourny_1");
     }
     #endregion
@@ -1168,7 +1168,8 @@ public class GameManager : MonoBehaviour
         //gsp.loadGame = false;
         yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
 
-        yield return StartCoroutine(TournyIntro());
+        if (gsp.playoffRound < 2)
+            yield return StartCoroutine(TournyIntro());
 
         if (rockCurrent > 0)
         {

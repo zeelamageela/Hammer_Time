@@ -8,6 +8,8 @@ using MoreMountains.Tools;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
+using Lofelt.NiceVibrations;
+using System;
 
 public class TournySelector : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class TournySelector : MonoBehaviour
     public EquipmentManager em;
     public GameObject dialogueGO;
     public DialogueTrigger coachGreen;
+
+    public string mode;
 
     public Sprite buttonOutline_pressed;
     public Sprite buttonFilled_pressed;
@@ -45,6 +49,8 @@ public class TournySelector : MonoBehaviour
     public Tourny[] tour;
     public Tourny[] provQual;
     public Tourny[] majors;
+    public Tourny[] singleKOs;
+
     public Tourny tourChampionship;
     public Tourny provChampionship;
 
@@ -86,6 +92,8 @@ public class TournySelector : MonoBehaviour
     EasyFileSave myFile;
     public bool teamPaid;
 
+    private bool isFirstRun = true; // Add this field to track the first run 
+    private int lastExpandedIndex = -1;
 
     private void Start()
     {
@@ -106,7 +114,6 @@ public class TournySelector : MonoBehaviour
     {
 
         SponsorManager pm = FindObjectOfType<SponsorManager>();
-        xpm.SetSkillPoints(0);
 
         Debug.Log("TSel cm.week is " + cm.week);
 
@@ -122,7 +129,7 @@ public class TournySelector : MonoBehaviour
         teamMenu.TeamMenuOpen();
         pm.SetUp();
 
-        provStandings.SetUp();
+        //provStandings.SetUp();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
         em.SetInventory();
@@ -203,9 +210,9 @@ public class TournySelector : MonoBehaviour
             for (int i = a.Length - 1; i > 0; i--)
             {
                 // Randomize a number between 0 and i (so that the range decreases each time)
-                int rnd = Random.Range(0, i);
+                int rnd = UnityEngine.Random.Range(0, i);
 
-                // Save the value of the current i, otherwise it'll overright when we swap the values
+                // Save the value of the current i, otherwise it'll overwrite when we swap the values
                 Tourny temp = a[i];
 
                 // Swap the new and old values
@@ -214,16 +221,15 @@ public class TournySelector : MonoBehaviour
             }
         }
 
-
         if (b != null)
         {
             // Loops through array
             for (int i = b.Length - 1; i > 0; i--)
             {
                 // Randomize a number between 0 and i (so that the range decreases each time)
-                int rnd = Random.Range(0, i);
+                int rnd = UnityEngine.Random.Range(0, i);
 
-                // Save the value of the current i, otherwise it'll overright when we swap the values
+                // Save the value of the current i, otherwise it'll overwrite when we swap the values
                 int temp = b[i];
 
                 // Swap the new and old values
@@ -236,16 +242,19 @@ public class TournySelector : MonoBehaviour
     public void SetActiveTournies()
     {
         weekText.text = "Week " + cm.week.ToString();
+        mode = cm.debug;
 
         bool tourniesComplete = false;
         bool tourComplete = false;
         bool provQualComplete = false;
+        bool skoComplete = false;
 
         int nextTourny = 0;
         int nextTour = 0;
         int nextProvQual = 0;
         int nextTourny2 = 0;
         int nextTourny3 = 0;
+        int nextSKO = 0;
 
         int[] rnd = new int[3] { 0, 1, 2 };
         Shuffle(null, rnd);
@@ -300,6 +309,21 @@ public class TournySelector : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < singleKOs.Length; i++)
+        {
+            if (singleKOs[i].complete)
+            {
+                skoComplete = true;
+            }
+            else
+            {
+                nextSKO = i;
+                //Debug.Log("TSel nextTour is " + nextTour);
+                skoComplete = false;
+                break;
+            }
+        }
+
         for (int i = 0; i < provQual.Length; i++)
         {
             if (provQual[i].complete)
@@ -317,199 +341,310 @@ public class TournySelector : MonoBehaviour
 
         StorylineManager slm = FindObjectOfType<StorylineManager>();
 
-        int localSelect = Random.Range(0, locals.Length);
+        int localSelect = UnityEngine.Random.Range(0, locals.Length);
         //Debug.Log("local Select is " + localSelect);
 
         if (cm.provQual)
             provQualComplete = true;
+        switch (mode)
+        {
 
-        if (cm.week == 1)
-        {
-            slm.FirstFiveTrigger();
-            //tournies[0].complete = true;
-            activeTournies[0] = emptyTourny;
-            activeTournies[1] = tournies[nextTourny];
-            activeTournies[2] = emptyTourny;
-
-        }
-        else if (cm.week == 2)
-        {
-            slm.FirstFiveTrigger();
-            activeTournies[0] = emptyTourny;
-            activeTournies[1] = provQual[nextProvQual];
-            activeTournies[2] = tournies[nextTourny];
-        }
-        else if (cm.week == 3)
-        {
-            slm.FirstFiveTrigger();
-            activeTournies[0] = emptyTourny;
-            if (provQualComplete)
-                activeTournies[1] = tournies[nextTourny];
-            else
-                activeTournies[1] = provQual[nextProvQual];
-            activeTournies[2] = emptyTourny;
-        }
-        else if (cm.week == 4)
-        {
-            slm.FirstFiveTrigger();
-            activeTournies[0] = locals[localSelect];
-            if (provQualComplete)
-                activeTournies[1] = tournies[nextTourny2];
-            else
-                activeTournies[1] = provQual[nextProvQual];
-            activeTournies[2] = tournies[nextTourny];
-        }
-        else if (cm.week == 5)
-        {
-            slm.FirstFiveTrigger();
-            activeTournies[0] = locals[localSelect];
-            activeTournies[1] = tournies[nextTourny];
-            if (provQualComplete)
-                activeTournies[2] = tournies[nextTourny2];
-            else
-                activeTournies[2] = provQual[nextProvQual];
-        }
-        else if (cm.week == 6)
-        {
-            slm.FirstFiveTrigger();
-            activeTournies[0] = locals[localSelect];
-            if (cm.provQual)
-                activeTournies[1] = tour[nextTour];
-            else
-                activeTournies[1] = tournies[nextTourny];
-            if (cm.provQual)
-                activeTournies[2] = emptyTourny;
-            else
-                activeTournies[2] = tournies[nextTourny2];
-        }
-        else
-        {
-            Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
-            if (!cm.provQual)
-                tourComplete = true;
-
-            if (tourChampionship.complete & provChampionship.complete)
-            {
-                slm.EndOfGame(4);
-                cm.gameOver = true;
-                StartCoroutine(EndOfSeason());
-            }
-            else if (tourniesComplete && tourComplete)
-            {
-                if (cm.provQual)
+            case "tour":
+                #region Tour
+                if (cm.week == 1)
                 {
-                    for (int i = 0; i < cm.tourRankList.Count; i++)
-                    {
-                        if (cm.playerTeam.id == cm.tourRankList[i].team.id)
-                        {
-                            if (i < 6)
-                                cm.tourQual = true;
-                        }
-                    }
+                    cm.cash = 100000;
+                    slm.skipTutorials = true;
+                    slm.FirstFiveTrigger();
                 }
-                else tourChampionship.complete = true;
-
-                bool champQual = false;
-                for (int i = 0; i < provStandings.teams.Length; i++)
+                //tournies[0].complete = true;
+                if (!tourComplete)
                 {
-                    if (provStandings.teams[i].player)
-                    {
-                        if (i < 16)
-                        {
-                            champQual = true;
-                            break;
-                        }
-
-                    }
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = tour[nextTour];
+                    activeTournies[2] = emptyTourny;
                 }
-
-                if (cm.tourQual)
-                    tourChampionship.complete = false;
                 else
-                    tourChampionship.complete = true;
-
-                if (champQual)
-                    provChampionship.complete = false;
-                else
-                    tourChampionship.complete = true;
-
-                if (tourChampionship.complete & provChampionship.complete)
                 {
-                    if (!cm.tourQual && !champQual && !cm.provQual)
-                        slm.EndOfGame(0);
-                    else if (!cm.tourQual && !champQual)
-                        slm.EndOfGame(1);
-                    else if (cm.tourQual && !champQual)
-                        slm.EndOfGame(2);
-                    else if (!cm.tourQual && champQual)
-                        slm.EndOfGame(3);
-                    else if (cm.tourQual && champQual)
-                        slm.EndOfGame(4);
+                    slm.EndOfGame(6);
                     cm.gameOver = true;
+
                     StartCoroutine(EndOfSeason());
                 }
+                #endregion
+                break;
 
-                if (!tourChampionship.complete)
-                    activeTournies[rnd[0]] = tourChampionship;
-                else
-                    activeTournies[rnd[0]] = emptyTourny;
-
-                activeTournies[rnd[1]] = emptyTourny;
-
-                if (!provChampionship.complete)
-                    activeTournies[rnd[2]] = provChampionship;
-                else
-                    activeTournies[rnd[2]] = emptyTourny;
-            }
-            else if (tourniesComplete && !tourComplete)
-            {
-                activeTournies[rnd[0]] = emptyTourny;
-                activeTournies[rnd[1]] = tour[nextTour];
-                activeTournies[rnd[2]] = emptyTourny;
-            }
-            else if (!tourniesComplete && tourComplete)
-            {
-                activeTournies[rnd[0]] = emptyTourny;
-                activeTournies[rnd[1]] = tournies[nextTourny];
-                if (nextTourny2 == 0)
-                    activeTournies[rnd[2]] = emptyTourny;
-                else
-                    activeTournies[rnd[2]] = tournies[nextTourny2];
-            }
-            else
-            {
-                if (week%2 == 0)
+            case "singleKO":
+                #region SingleKO
+                if (cm.week == 1)
                 {
-                    activeTournies[0] = tournies[nextTourny];
-                    activeTournies[1] = tour[nextTour];
+                    cm.cash = 100000;
+                    slm.skipTutorials = true;
+                    slm.FirstFiveTrigger();
+                }
+                //tournies[0].complete = true;
+                if (!skoComplete)
+                {
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = singleKOs[nextSKO];
+                    activeTournies[2] = emptyTourny;
+                }
+                else
+                {
+                    slm.EndOfGame(7);
+                    cm.gameOver = true;
+
+                    StartCoroutine(EndOfSeason());
+                }
+                #endregion
+                break;
+            case "tournies":
+                #region Tournies
+                if (cm.week == 1)
+                {
+                    cm.cash = 100000;
+                    slm.skipTutorials = true;
+                    slm.FirstFiveTrigger();
+                }
+                //tournies[0].complete = true;
+                if (!tourniesComplete)
+                {
+                    activeTournies[1] = tournies[nextTourny];
                     if (nextTourny2 == 0)
+                        activeTournies[0] = emptyTourny;
+                    else
+                        activeTournies[0] = tournies[nextTourny2];
+                    if (nextTourny3 == 0)
+                        activeTournies[2] = emptyTourny;
+                    else
+                        activeTournies[2] = tournies[nextTourny3];
+                }
+                else
+                {
+                    slm.EndOfGame(8);
+                    cm.gameOver = true;
+
+                    StartCoroutine(EndOfSeason());
+                }
+                #endregion
+                break;
+
+            case "provQual":
+                #region Tournies
+                if (cm.week == 1)
+                {
+                    cm.cash = 100000;
+                    slm.skipTutorials = true;
+                    slm.FirstFiveTrigger();
+                }
+                //tournies[0].complete = true;
+                if (!provQualComplete)
+                {
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = emptyTourny;
+                }
+                else
+                {
+                    slm.EndOfGame(9);
+                    cm.gameOver = true;
+
+                    StartCoroutine(EndOfSeason());
+                }
+                #endregion
+                break;
+            default:
+                #region Regular
+                if (cm.week == 1)
+                {
+                    slm.FirstFiveTrigger();
+                    //tournies[0].complete = true;
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = tournies[nextTourny];
+                    activeTournies[2] = emptyTourny;
+
+                }
+                else if (cm.week == 2)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = tournies[nextTourny];
+                }
+                else if (cm.week == 3)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = emptyTourny;
+                    if (provQualComplete)
+                        activeTournies[1] = tournies[nextTourny];
+                    else
+                        activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = emptyTourny;
+                }
+                else if (cm.week == 4)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    if (provQualComplete)
+                        activeTournies[1] = tournies[nextTourny2];
+                    else
+                        activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = tournies[nextTourny];
+                }
+                else if (cm.week == 5)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    activeTournies[1] = tournies[nextTourny];
+                    if (provQualComplete)
+                        activeTournies[2] = tournies[nextTourny2];
+                    else
+                        activeTournies[2] = provQual[nextProvQual];
+                }
+                else if (cm.week == 6)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    if (cm.provQual)
+                        activeTournies[1] = tour[nextTour];
+                    else
+                        activeTournies[1] = tournies[nextTourny];
+                    if (cm.provQual)
                         activeTournies[2] = emptyTourny;
                     else
                         activeTournies[2] = tournies[nextTourny2];
                 }
                 else
                 {
-                    activeTournies[0] = emptyTourny;
-                    activeTournies[1] = tour[nextTour];
-                    activeTournies[2] = tournies[nextTourny];
+                    Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
+                    if (!cm.provQual)
+                        tourComplete = true;
+
+                    if (tourChampionship.complete & provChampionship.complete)
+                    {
+                        slm.EndOfGame(4);
+                        cm.gameOver = true;
+                        StartCoroutine(EndOfSeason());
+                    }
+                    else if (tourniesComplete && tourComplete)
+                    {
+                        if (cm.provQual)
+                        {
+                            for (int i = 0; i < cm.tourRankList.Count; i++)
+                            {
+                                if (cm.playerTeam.id == cm.tourRankList[i].team.id)
+                                {
+                                    if (i < 6)
+                                        cm.tourQual = true;
+                                }
+                            }
+                        }
+                        else tourChampionship.complete = true;
+
+                        bool champQual = false;
+                        for (int i = 0; i < provStandings.teams.Length; i++)
+                        {
+                            if (provStandings.teams[i].player)
+                            {
+                                if (i < 16)
+                                {
+                                    champQual = true;
+                                    break;
+                                }
+
+                            }
+                        }
+
+                        if (cm.tourQual)
+                            tourChampionship.complete = false;
+                        else
+                            tourChampionship.complete = true;
+
+                        if (champQual)
+                            provChampionship.complete = false;
+                        else
+                            tourChampionship.complete = true;
+
+                        if (tourChampionship.complete & provChampionship.complete)
+                        {
+                            if (!cm.tourQual && !champQual && !cm.provQual)
+                                slm.EndOfGame(0);
+                            else if (!cm.tourQual && !champQual)
+                                slm.EndOfGame(1);
+                            else if (cm.tourQual && !champQual)
+                                slm.EndOfGame(2);
+                            else if (!cm.tourQual && champQual)
+                                slm.EndOfGame(3);
+                            else if (cm.tourQual && champQual)
+                                slm.EndOfGame(4);
+                            cm.gameOver = true;
+                            StartCoroutine(EndOfSeason());
+                        }
+
+                        if (!tourChampionship.complete)
+                            activeTournies[rnd[0]] = tourChampionship;
+                        else
+                            activeTournies[rnd[0]] = emptyTourny;
+
+                        activeTournies[rnd[1]] = emptyTourny;
+
+                        if (!provChampionship.complete)
+                            activeTournies[rnd[2]] = provChampionship;
+                        else
+                            activeTournies[rnd[2]] = emptyTourny;
+                    }
+                    else if (tourniesComplete && !tourComplete)
+                    {
+                        activeTournies[rnd[0]] = emptyTourny;
+                        activeTournies[rnd[1]] = tour[nextTour];
+                        activeTournies[rnd[2]] = emptyTourny;
+                    }
+                    else if (!tourniesComplete && tourComplete)
+                    {
+                        activeTournies[rnd[0]] = emptyTourny;
+                        activeTournies[rnd[1]] = tournies[nextTourny];
+                        if (nextTourny2 == 0)
+                            activeTournies[rnd[2]] = emptyTourny;
+                        else
+                            activeTournies[rnd[2]] = tournies[nextTourny2];
+                    }
+                    else
+                    {
+                        if (week % 2 == 0)
+                        {
+                            activeTournies[0] = tournies[nextTourny];
+                            activeTournies[1] = tour[nextTour];
+                            if (nextTourny2 == 0)
+                                activeTournies[2] = emptyTourny;
+                            else
+                                activeTournies[2] = tournies[nextTourny2];
+                        }
+                        else
+                        {
+                            activeTournies[0] = emptyTourny;
+                            activeTournies[1] = tour[nextTour];
+                            activeTournies[2] = tournies[nextTourny];
+                        }
+                    }
+
+
+                    if (activeTournies[1].name == emptyTourny.name)
+                        activeTournies[1] = locals[localSelect];
+                    else if (activeTournies[0].name == emptyTourny.name)
+                        activeTournies[0] = locals[localSelect];
+                    else if (activeTournies[2].name == emptyTourny.name)
+                        activeTournies[2] = locals[localSelect];
                 }
-            }
 
+                if (cm.cash < cm.costPerWeek)
+                {
+                    slm.EndOfGame(5);
+                    cm.gameOver = true;
 
-            if (activeTournies[1].name == emptyTourny.name)
-                activeTournies[1] = locals[localSelect];
-            else if (activeTournies[0].name == emptyTourny.name)
-                activeTournies[0] = locals[localSelect];
-            else if (activeTournies[2].name == emptyTourny.name)
-                activeTournies[2] = locals[localSelect];
-        }
-
-        if (cm.cash < cm.costPerWeek)
-        {
-            slm.EndOfGame(5);
-            cm.gameOver = true;
-            
-            StartCoroutine(EndOfSeason());
+                    StartCoroutine(EndOfSeason());
+                }
+                #endregion
+                break;
         }
 
         SetPanels();
@@ -635,6 +770,17 @@ public class TournySelector : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < singleKOs.Length; i++)
+        {
+            for (int j = 0; j < activeTournies.Length; j++)
+            {
+                if (activeTournies[j].id == singleKOs[i].id)
+                {
+                    singleKOs[i].complete = true;
+                }
+            }
+        }
+
         if (currentTourny.championship)
         {
             if (currentTourny.name == tourChampionship.name)
@@ -659,8 +805,16 @@ public class TournySelector : MonoBehaviour
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
         tm.SetTeam();
-        xpm.SetSkillPoints(0);
+        xpm.SaveToCareerManager(cm);
         cm.SaveCareer();
+
+        SceneManager.LoadScene("Tourny_Menu_1");
+        //StartCoroutine(TournyMenuLoad());
+    }
+
+    IEnumerator TournyMenuLoad()
+    {
+        yield return new WaitForSeconds(2f);
         SceneManager.LoadScene("Tourny_Menu_1");
     }
 
@@ -676,9 +830,9 @@ public class TournySelector : MonoBehaviour
 
     public void TournyWindow(bool on)
     {
-        teamNameText.text = "Team " + cm.teamName + " Members";
         if (on)
         {
+            teamNameText.text = "Team " + cm.teamName + " Members";
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -720,7 +874,7 @@ public class TournySelector : MonoBehaviour
         if (profPanelGO.activeSelf)
             on = false;
         else
-            on =true;
+            on = true;
 
         if (cm.provRankList.Count > 0)
         {
@@ -804,7 +958,7 @@ public class TournySelector : MonoBehaviour
                     }
                 }
             }
-            
+
         }
         else
         {
@@ -837,33 +991,26 @@ public class TournySelector : MonoBehaviour
         options.SetActive(true);
     }
 
-	public void QuitToMenu()
-	{
+    public void QuitToMenu()
+    {
         SceneManager.LoadScene("SplashMenu");
     }
 
-	public void Standings(bool on)
+    public void Standings(bool on)
     {
-        teamNameText.text = cm.playerName + " " + cm.teamName;
 
         if (on)
         {
+            teamNameText.text = "Overall Standings";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(true);
-            provStandings.SetUp();
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
             xpWindow.SetActive(false);
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(false);
-
-            //tournyBtn.SetActive(false);
-            //playerBtn.SetActive(false);
-            //teamBtn.SetActive(false);
-            //sponsorBtn.SetActive(false);
-            //standingsBtn.SetActive(false);
         }
         else
         {
@@ -876,20 +1023,14 @@ public class TournySelector : MonoBehaviour
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);
-
-            //tournyBtn.SetActive(true);
-            //playerBtn.SetActive(true);
-            //teamBtn.SetActive(true);
-            //sponsorBtn.SetActive(true);
-            //standingsBtn.SetActive(true);
         }
     }
 
     public void TourStandings(bool on)
     {
-        teamNameText.text = cm.playerName + " " + cm.teamName;
         if (on)
         {
+            teamNameText.text = "Tour Standings";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -899,12 +1040,6 @@ public class TournySelector : MonoBehaviour
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(false);
-
-            //tournyBtn.SetActive(false);
-            //playerBtn.SetActive(false);
-            //teamBtn.SetActive(false);
-            //sponsorBtn.SetActive(false);
-            //standingsBtn.SetActive(false);
         }
         else
         {
@@ -917,20 +1052,14 @@ public class TournySelector : MonoBehaviour
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);
-
-            //tournyBtn.SetActive(true);
-            //playerBtn.SetActive(true);
-            //teamBtn.SetActive(true);
-            //sponsorBtn.SetActive(true);
-            //standingsBtn.SetActive(true);
         }
     }
 
     public void Sponsors(bool on)
     {
-        teamNameText.text = "Sponsors";
         if (on)
         {
+            teamNameText.text = "Sponsors";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -968,9 +1097,10 @@ public class TournySelector : MonoBehaviour
 
     public void PlayerEquip(bool on)
     {
-        teamNameText.text = "Gear";
+        em.MainMenu();
         if (on)
         {
+            teamNameText.text = "Gear";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -1009,9 +1139,9 @@ public class TournySelector : MonoBehaviour
 
     public void XP(bool on)
     {
-        teamNameText.text = "SkillPoints";
         if (on)
         {
+            teamNameText.text = "SkillPoints";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -1048,9 +1178,9 @@ public class TournySelector : MonoBehaviour
 
     public void TeamWindow(bool on)
     {
-        teamNameText.text = "Team " + cm.teamName;
         if (on)
         {
+            teamNameText.text = "Team";
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
@@ -1091,58 +1221,83 @@ public class TournySelector : MonoBehaviour
     {
         Animator expandAnim = expandButton.GetComponent<Animator>();
 
-        //Animator panelAnim = tournyName.transform.parent.gameObject.GetComponent<Animator>();
+        // Turn off all panels initially  
+        TournyWindow(false);
+        PlayerEquip(false);
+        TeamWindow(false);
+        Sponsors(false);
+        Standings(false);
 
+        // Identify the selected button  
         for (int i = 0; i < menuButtons.Length; i++)
         {
-            if (expandButton != menuButtons[i])
-            {
-                menuButtons[i].gameObject.SetActive(true);
-            }
-            else
+            menuButtons[i].gameObject.SetActive(true);
+
+            if (expandButton == menuButtons[i])
             {
                 menuBut_Select = i;
-                StartCoroutine(WaitForTime(0.1f, i, expandButton));
             }
         }
+        int previousExpanded = lastExpandedIndex;
+        menuBut_Select = Array.IndexOf(menuButtons, expandButton);
+        lastExpandedIndex = menuBut_Select;
 
-        if (expandAnim != null)
-        {
-            expandAnim.SetBool("Shrink", false);
-            expandAnim.SetBool("Expand", true);
-            expandButton.transform.GetChild(0).gameObject.SetActive(false);
-
-            for (int i = 0; i < menuButtons.Length; i++)
-            {
-                if (expandButton != menuButtons[i])
-                {
-                    expandAnim = menuButtons[i].GetComponent<Animator>();
-                    expandAnim.SetBool("Expand", false);
-                    expandAnim.SetBool("Shrink", true);
-                }
-            }
-        }
-
-
+        // Start the expand/shrink process  
+        StartCoroutine(HandleExpandShrink(0.01f, menuBut_Select, expandButton, previousExpanded));
     }
 
-    IEnumerator WaitForTime(float waitTime, int menuSelector, Button expandButton)
+    IEnumerator HandleExpandShrink(float waitTime, int menuSelector, Button expandButton, int previousExpanded)
     {
-        //Profile(false);
-
         AudioManager am = FindObjectOfType<AudioManager>();
         am.PlayBG(menuSelector);
 
         yield return new WaitForSeconds(waitTime);
 
-        //expandButton.interactable = false;
+        Animator expandAnim = expandButton.GetComponent<Animator>();
+        if (!isFirstRun && previousExpanded != -1 && previousExpanded != menuSelector)
+        {
+            Animator shrinkAnim = menuButtons[previousExpanded].GetComponent<Animator>();
+            shrinkAnim.SetBool("Expand", false);
+            shrinkAnim.SetBool("Shrink", true);
+            StartCoroutine(ResetShrink(shrinkAnim, 0.5f));
+        }
+        else
+        {
+            isFirstRun = false;
+        }
+        // Shrink previously expanded button only  
+        if (!isFirstRun)
+        {
+            for (int i = 0; i < menuButtons.Length; i++)
+            {
+                if (i != menuSelector && menuButtons[i].GetComponent<Animator>().GetBool("Expand"))
+                {
+                    Debug.Log("shrinking button is " + menuButtons[i].name);
 
+                    Animator shrinkAnim = menuButtons[i].GetComponent<Animator>();
+
+                    shrinkAnim.SetBool("Expand", false);
+                    shrinkAnim.SetBool("Shrink", true);
+                    // After setting shrinkAnim.SetBool("Shrink", true);
+                    StartCoroutine(ResetShrink(shrinkAnim, 0.5f)); // 0.5f = duration of shrink animation
+                }
+            }
+        }
+        else
+        {
+            isFirstRun = false; // Set to false after the first run  
+        }
+
+        // Expand the selected button  
+        expandAnim.SetBool("Shrink", false);
+        expandAnim.SetBool("Expand", true);
+        expandButton.transform.GetChild(0).gameObject.SetActive(false);
+
+        // Update button visuals  
         for (int i = 0; i < menuButtons.Length; i++)
         {
             if (i == menuSelector)
             {
-                //menuButtons[i].GetComponent<Image>().enabled = false;
-                //menuButtons[i].gameObject.SetActive(false);
                 menuButtons[i].GetComponent<Image>().color = btnBlk;
                 menuButtons[i].transform.GetChild(0).GetComponent<Text>().color = btnBlk;
             }
@@ -1151,44 +1306,23 @@ public class TournySelector : MonoBehaviour
                 menuButtons[i].transform.GetChild(0).gameObject.SetActive(true);
                 menuButtons[i].GetComponent<Image>().enabled = true;
                 menuButtons[i].GetComponent<Image>().color = new Color(btnBlk.r, btnBlk.g, btnBlk.b, 1f);
-                //menuButtons[i].GetComponent<Image>().color = btnBlk;
                 menuButtons[i].transform.GetChild(0).GetComponent<Text>().color = btnWht;
-                //Image img = menuButtons[i].GetComponent<Image>();
-                //Color tempBG = new Color(img.color.r, img.color.g, img.color.b, 1f);
-                //Text txt = menuButtons[i].transform.GetChild(0).gameObject.GetComponent<Text>();
-                //Color tempText = new Color(txt.color.r, txt.color.g, txt.color.b, 1f);
-
-                //Debug.Log("Button is " + menuButtons[i] + " / TempBG is " + tempBG + " / TempText is " + tempText);
-
-                //txt.color = tempBG;
-                //img.color = new Color(tempText.r, tempText.g, tempText.b, tempText.a);
-
-                //menuButtons[i].GetComponent<Image>().color = tempText;
-
-                //menuButtons[i].GetComponent<Image>().enabled = true;
-                //menuButtons[i].gameObject.SetActive(true);
-                //menuButtons[i].interactable = true;
-                //Image img = menuButtons[i].GetComponent<Image>();
-                //img.color = new Color(img.color.r, img.color.g, img.color.b, 1f);
-                //Debug.Log("img color is " + img.color);
             }
         }
 
-        yield return new WaitUntil(() => menuButtons[menuSelector].GetComponent<RectTransform>().sizeDelta.y == 800f);
+        // Wait for the expand animation to complete  
+        yield return new WaitUntil(() => menuButtons[menuSelector].GetComponent<RectTransform>().sizeDelta.y >= 799f);
 
+        // Turn off the expanded button and activate the corresponding panel  
         menuButtons[menuSelector].gameObject.SetActive(false);
         switch (menuSelector)
         {
-            //Main Tourny Window
             case 0:
                 TournyWindow(true);
-                teamNameText.text = "Tournies";
-                //SetActiveTournies();
                 break;
             case 1:
                 PlayerEquip(true);
                 em.MainMenu();
-                //xpm.SetSkillPoints();
                 break;
             case 2:
                 TeamWindow(true);
@@ -1203,4 +1337,13 @@ public class TournySelector : MonoBehaviour
                 break;
         }
     }
-}
+
+
+    IEnumerator ResetShrink(Animator anim, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            anim.SetBool("Shrink", false);
+        }
+
+    }
+

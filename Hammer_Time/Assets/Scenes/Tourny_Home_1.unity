@@ -3071,12 +3071,9 @@ MonoBehaviour:
   KO1: 0
   cashGame: 0
   games: 0
-  firstName: 
-  teamName: BingBangBoomBaby
-  earnings: 0
-  cash: 0
-  record: {x: 0, y: 0}
-  week: 0
+  tournyEarnings: 0
+  tournyCash: 0
+  tournyRecord: {x: 0, y: 0}
   cStats:
     drawAccuracy: 0
     takeOutAccuracy: 0
@@ -3093,10 +3090,34 @@ MonoBehaviour:
     sweepCohesion: 0
   redTeamName: 
   redTeamColour: {r: 0, g: 0, b: 0, a: 0}
-  redTeam: []
+  redTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    record: {x: 0, y: 0}
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+    player: 0
   yellowTeamName: 
   yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
-  yellowTeam: []
+  yellowTeam:
+    name: 
+    wins: 0
+    loss: 0
+    rank: 0
+    nextOpp: 
+    strength: 0
+    id: 0
+    earnings: 0
+    record: {x: 0, y: 0}
+    tourRecord: {x: 0, y: 0}
+    tourPoints: 0
+    player: 0
   draw: 0
   playoffRound: 0
   numberOfTeams: 16
@@ -4002,7 +4023,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 180, y: -878}
+  m_AnchoredPosition: {x: 0, y: -878}
   m_SizeDelta: {x: 350, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &609418975
@@ -4213,8 +4234,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1482499008}
   m_HandleRect: {fileID: 1482499007}
   m_Direction: 0
-  m_Value: -0.25918275
-  m_Size: 0.6304688
+  m_Value: -0.000055486507
+  m_Size: 0.66406524
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4972,7 +4993,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.6228368, y: 1}
+  m_AnchorMax: {x: 0.65082306, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7304,7 +7325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -8389,7 +8410,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 267.23224, y: -0.000030517578}
+  m_AnchoredPosition: {x: 176.01952, y: -0.000030517578}
   m_SizeDelta: {x: 1319.4, y: 859.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1031829766
@@ -9679,7 +9700,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 284.7041, y: -0.000030517578}
+  m_AnchoredPosition: {x: 176.00476, y: -0.000030517578}
   m_SizeDelta: {x: 1319.4, y: 859.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1181757050
@@ -11614,7 +11635,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1440258397
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11830,7 +11851,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.6304688, y: 1}
+  m_AnchorMax: {x: 0.66406524, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -12463,8 +12484,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 690531717}
   m_HandleRect: {fileID: 690531716}
   m_Direction: 0
-  m_Value: -0.30881876
-  m_Size: 0.6228368
+  m_Value: -0.000013698236
+  m_Size: 0.65082306
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13740,7 +13761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -14848,7 +14869,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16199,6 +16220,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VsPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 75633025257483254, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 75633025257483258, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -16579,7 +16604,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16813,7 +16838,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 65.111725
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16833,6 +16858,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540841667980, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242657541059700752, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2242657541233592568, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}

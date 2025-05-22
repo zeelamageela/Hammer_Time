@@ -249,74 +249,6 @@ public class CashGames : MonoBehaviour
 
     }
 
-
-    //public void OffsetText(int select, bool on)
-    //{
-    //    Vector2 offset = new Vector2(75f, 75f);
-
-    //    if (on)
-    //    {
-    //        if (select == 0)
-    //        {
-    //            budgetDisplay[0].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            budgetDisplay[1].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            budgetDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition -= offset;
-
-    //            budgetVS.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            budgetTitle.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            //selectTitle.text = budgetTitle.text;
-
-
-    //        }
-    //        if (select == 1)
-    //        {
-    //            highRollDisplay[0].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            highRollDisplay[1].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            highRollDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition -= offset;
-
-    //            highRollVS.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            highRollTitle.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            //selectTitle.text = highRollTitle.text;
-    //        }
-    //        if (select == 2)
-    //        {
-    //            skinsDisplay[0].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            skinsDisplay[1].name.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            skinsDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition -= offset;
-
-    //            skinsVS.GetComponent<RectTransform>().anchoredPosition -= offset;
-    //            skinsTitle.GetComponent<RectTransform>().anchoredPosition -= offset;
-
-    //            //selectTitle.text = skinsTitle.text;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        budgetDisplay[0].name.GetComponent<RectTransform>().anchoredPosition = name0Pos;
-    //        budgetDisplay[1].name.GetComponent<RectTransform>().anchoredPosition = name1Pos;
-    //        budgetDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition = rank1Pos;
-
-    //        budgetVS.GetComponent<RectTransform>().anchoredPosition = vsPos;
-    //        budgetTitle.GetComponent<RectTransform>().anchoredPosition = titlePos;
-
-    //        highRollDisplay[0].name.GetComponent<RectTransform>().anchoredPosition = name0Pos;
-    //        highRollDisplay[1].name.GetComponent<RectTransform>().anchoredPosition = name1Pos;
-    //        highRollDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition = rank1Pos;
-
-    //        highRollVS.GetComponent<RectTransform>().anchoredPosition = vsPos;
-    //        highRollTitle.GetComponent<RectTransform>().anchoredPosition = titlePos;
-
-    //        skinsDisplay[0].name.GetComponent<RectTransform>().anchoredPosition = name0Pos;
-    //        skinsDisplay[1].name.GetComponent<RectTransform>().anchoredPosition = name1Pos;
-    //        skinsDisplay[1].rank.GetComponent<RectTransform>().anchoredPosition = rank1Pos;
-
-    //        skinsVS.GetComponent<RectTransform>().anchoredPosition = vsPos;
-    //        skinsTitle.GetComponent<RectTransform>().anchoredPosition = titlePos;
-
-    //    }
-
-    //}
-
     public void OnSelectGame(int select)
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
@@ -325,7 +257,7 @@ public class CashGames : MonoBehaviour
         //Vector2 offset = new Vector2(75f, 75f);
         //OffsetText(0, false);
 
-        cm.cash -= gsp.cash;
+        cm.cash -= gsp.tournyCash;
 
         if (select == 0)
         {
@@ -336,7 +268,7 @@ public class CashGames : MonoBehaviour
             gsp.prize = budgetGames[0].prizeMoney;
 
             selectDisplay[0].topBar.text = "$" + budgetGames[0].prizeMoney.ToString() + " Cash Game";
-            selectDisplay[0].btnText.text = gsp.teamName;
+            selectDisplay[0].btnText.text = cm.teamName;
             selectDisplay[0].oppName.text = budgetDisplay[0].oppName.text;
             selectDisplay[0].rank.text = "VS";
 
@@ -351,7 +283,7 @@ public class CashGames : MonoBehaviour
             gsp.prize = highRollGames[0].prizeMoney;
 
             selectDisplay[0].topBar.text = "$" + highRollGames[0].prizeMoney.ToString() + " Cash Game";
-            selectDisplay[0].btnText.text = gsp.teamName;
+            selectDisplay[0].btnText.text = cm.teamName;
             selectDisplay[0].oppName.text = highRollDisplay[0].oppName.text;
             selectDisplay[0].rank.text = "VS";
 
@@ -369,16 +301,16 @@ public class CashGames : MonoBehaviour
             gsp.skinValue = new float[3] { gsp.prize * 0.5f, gsp.prize * 0.5f, gsp.prize };
 
             selectDisplay[0].topBar.text = "$" + skinsGames[0].prizeMoney.ToString("n0") + " Skins Game";
-            selectDisplay[0].btnText.text = gsp.teamName;
+            selectDisplay[0].btnText.text = cm.teamName;
             selectDisplay[0].oppName.text = skinsDisplay[0].oppName.text;
             selectDisplay[0].rank.text = "VS";
 
             //selectTitle.text = skinsTitle.text;
         }
 
-        gsp.cash = -gsp.prize;
+        gsp.tournyCash = -gsp.prize;
         //OffsetText(select, true);
-        cm.cash += gsp.cash;
+        cm.cash += gsp.tournyCash;
         xp.text = cm.xp.ToString();
         costPerWeek.text = "$" + cm.costPerWeek.ToString();
         cash.text = "$" + cm.cash.ToString("n0");
@@ -392,7 +324,7 @@ public class CashGames : MonoBehaviour
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
 
-        gsp.cash -= gsp.prize;
+        gsp.tournyCash -= gsp.prize;
         gsp.TournySetup(btnSelect);
         SceneManager.LoadScene("End_Menu_Tourny_1");
     }
@@ -410,50 +342,29 @@ public class CashGames : MonoBehaviour
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         //SetDraw();
 
-        gsp.cash -= gsp.prize;
+        gsp.tournyCash -= gsp.prize;
 
-        float strength = cm.cStats.drawAccuracy
-            + cm.cStats.takeOutAccuracy
-            + cm.cStats.guardAccuracy
-            + cm.cStats.sweepStrength
-            + cm.cStats.sweepEndurance
-            + cm.cStats.sweepCohesion
-            + cm.modStats.drawAccuracy
-            + cm.modStats.takeOutAccuracy
-            + cm.modStats.guardAccuracy
-            + cm.modStats.sweepStrength
-            + cm.modStats.sweepEndurance
-            + cm.modStats.sweepCohesion;
-        gsp.playerTeam.strength = Mathf.RoundToInt(strength / 12f);
-
-        float oppStrength = cm.oppStats.drawAccuracy
-            + cm.oppStats.takeOutAccuracy
-            + cm.oppStats.guardAccuracy
-            + cm.oppStats.sweepStrength
-            + cm.oppStats.sweepEndurance
-            + cm.oppStats.sweepCohesion;
-        oppStrength = Mathf.RoundToInt(oppStrength / 6f);
+        float oppStrength = 10f;
 
         if (Random.Range(0, gsp.playerTeam.strength) < Random.Range(0, oppStrength))
         {
-            gsp.playerTeam.loss++;
-            gsp.record.y++;
+            gsp.tournyRecord.y++;
             GameScoring(false);
         }
         else
         {
-            gsp.playerTeam.wins++;
-            gsp.record.x++;
+            gsp.tournyRecord.x++;
             GameScoring(true);
         }
 
-        Debug.Log("Career Record is " + gsp.record.x + " - " + gsp.record.y);
+        Debug.Log("Tourny Record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
         //yield return new WaitForEndOfFrame();
     }
 
     void GameScoring(bool win)
     {
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        CareerManager cm = FindObjectOfType<CareerManager>();
         TournyManager tm = GetComponent<TournyManager>();
         //Debug.Log("Final End");
 
@@ -493,7 +404,7 @@ public class CashGames : MonoBehaviour
             selectDisplay[0].btnText.text = gsp.teams[tm.playerTeam].name;
             selectDisplay[0].oppName.text = "$" + winnings.ToString("n0");
 
-            gsp.cash = winnings;
+            gsp.tournyCash = winnings;
         }
         else
         {
@@ -520,7 +431,7 @@ public class CashGames : MonoBehaviour
             // Randomize a number between 0 and i (so that the range decreases each time)
             int rnd = Random.Range(0, i);
 
-            // Save the value of the current i, otherwise it'll overright when we swap the values
+            // Save the value of the current i, otherwise it'll overwrite when we swap the values
             CashGamePlayers temp = a[i];
 
             // Swap the new and old values

@@ -129,7 +129,6 @@ public class CareerSettings : MonoBehaviour
             tourRecord = myFile.GetUnityVector2("Tour Record");
 
             cm.xp = myFile.GetFloat("XP");
-            cm.totalXp = myFile.GetFloat("Total XP");
             //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
             //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
 

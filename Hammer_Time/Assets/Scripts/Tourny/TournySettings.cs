@@ -44,7 +44,7 @@ public class TournySettings : MonoBehaviour
         rockSlider.interactable = false;
         if (cm)
         {
-            gsp.earnings = 0;
+            gsp.tournyEarnings = 0;
 
             teams = cm.currentTournyTeams.Length;
             entryFee = cm.currentTourny.entryFee;
@@ -114,7 +114,7 @@ public class TournySettings : MonoBehaviour
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
 
-        gsp.cash -= entryFee;
+        cm.cash -= entryFee;
 
         //for (int i = 0; i < gsp.teams.Length; i++)
         //{
