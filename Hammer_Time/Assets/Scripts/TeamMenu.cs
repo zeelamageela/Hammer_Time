@@ -23,7 +23,7 @@ public class TeamMenu : MonoBehaviour
     public Color buttonDisabledColor;
     public Color buttonEnabledColor;
 
-    public Player[] playerPool;
+    //public Player[] playerPool;
 
     public PlayerDisplay[] teamDisplay;
 
@@ -254,24 +254,24 @@ public class TeamMenu : MonoBehaviour
             for (int i = 0; i < activePlayers.Length; i++)
             {
                 //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
-                for (int j = 0; j < playerPool.Length; j++)
+                for (int j = 0; j < cm.playerPool.Length; j++)
                 {
-                    if (activePlayers[i].id == playerPool[j].id)
+                    if (activePlayers[i].id == cm.playerPool[j].id)
                     {
-                        activePlayers[i].name = playerPool[j].name;
-                        activePlayers[i].description = playerPool[j].description;
-                        activePlayers[i].cost = playerPool[j].cost;
-                        activePlayers[i].image = playerPool[j].image;
-                        activePlayers[i].view = playerPool[j].view;
+                        activePlayers[i].name = cm.playerPool[j].name;
+                        activePlayers[i].description = cm.playerPool[j].description;
+                        activePlayers[i].cost = cm.playerPool[j].cost;
+                        activePlayers[i].image = cm.playerPool[j].image;
+                        activePlayers[i].view = cm.playerPool[j].view;
                         activePlayers[i].active = true;
-                        playerPool[j].active = true;
+                        cm.playerPool[j].active = true;
                         // Copy stats and scale
-                        activePlayers[i].draw = playerPool[j].draw;
-                        activePlayers[i].takeOut = playerPool[j].takeOut;
-                        activePlayers[i].guard = playerPool[j].guard;
-                        activePlayers[i].sweepStrength = playerPool[j].sweepStrength;
-                        activePlayers[i].sweepEnduro = playerPool[j].sweepEnduro;
-                        activePlayers[i].sweepCohesion = playerPool[j].sweepCohesion;
+                        activePlayers[i].draw = cm.playerPool[j].draw;
+                        activePlayers[i].takeOut = cm.playerPool[j].takeOut;
+                        activePlayers[i].guard = cm.playerPool[j].guard;
+                        activePlayers[i].sweepStrength = cm.playerPool[j].sweepStrength;
+                        activePlayers[i].sweepEnduro = cm.playerPool[j].sweepEnduro;
+                        activePlayers[i].sweepCohesion = cm.playerPool[j].sweepCohesion;
                         activePlayers[i].ScaleStatsToTotal();
                     }
                 }
@@ -283,17 +283,17 @@ public class TeamMenu : MonoBehaviour
             }
             cm.teamPaid = false;
 
-            Shuffle(playerPool);
+            Shuffle(cm.playerPool);
         }
         else
         {
             for (int i = 0; i < activePlayers.Length; i++)
             {
-                activePlayers[i] = playerPool[i];
+                activePlayers[i] = cm.playerPool[i];
                 activePlayers[i].ScaleStatsToTotal();
             }
 
-            Shuffle(playerPool);
+            Shuffle(cm.playerPool);
         }
 
         SelectFreeAgents();
@@ -311,12 +311,12 @@ public class TeamMenu : MonoBehaviour
         for (int i = 0; i < freeAgents.Length; i++)
         {
             bool stop = false;
-            for (int j = 0; j < playerPool.Length; j++)
+            for (int j = 0; j < cm.playerPool.Length; j++)
             {
-                if (!playerPool[j].active && !playerPool[j].view && !stop)
+                if (!cm.playerPool[j].active && !cm.playerPool[j].view && !stop)
                 {
-                    playerPool[j].view = true;
-                    freeAgents[i] = playerPool[j];
+                    cm.playerPool[j].view = true;
+                    freeAgents[i] = cm.playerPool[j];
                     stop = true;
                 }
             }
@@ -353,14 +353,14 @@ public class TeamMenu : MonoBehaviour
         //pm.nextWeekButton.gameObject.SetActive(false);
         PreviewPoints();
 
-        for (int i = 0; i < playerPool.Length; i++)
+        for (int i = 0; i < cm.playerPool.Length; i++)
         {
-            playerPool[i].view = false;
+            cm.playerPool[i].view = false;
 
-            if (playerPool[i].id == activePlayers[0].id | playerPool[i].id == activePlayers[1].id | playerPool[i].id == activePlayers[2].id)
-                playerPool[i].active = true;
+            if (cm.playerPool[i].id == activePlayers[0].id | cm.playerPool[i].id == activePlayers[1].id | cm.playerPool[i].id == activePlayers[2].id)
+                cm.playerPool[i].active = true;
             else
-                playerPool[i].active = false;
+                cm.playerPool[i].active = false;
         }
 
         for (int i = 0; i < teamDisplay.Length; i++)
@@ -432,11 +432,11 @@ public class TeamMenu : MonoBehaviour
         for (int i = 0; i < activePlayers.Length; i++)
         {
             bool stop = false;
-            for (int j = 0; j < playerPool.Length; j++)
+            for (int j = 0; j < cm.playerPool.Length; j++)
             {
-                if (playerPool[j].active && !stop)
+                if (cm.playerPool[j].active && !stop)
                 {
-                    activePlayers[i] = playerPool[j];
+                    activePlayers[i] = cm.playerPool[j];
                     activePlayers[i].ScaleStatsToTotal();
                     stop = true;
                 }
@@ -459,12 +459,12 @@ public class TeamMenu : MonoBehaviour
 
         Player tempPlayer = activePlayers[playerToReplace];
 
-        for (int i = 0; i < playerPool.Length; i++)
+        for (int i = 0; i < cm.playerPool.Length; i++)
         {
-            if (freeAgents[freeAgent].id == playerPool[i].id)
+            if (freeAgents[freeAgent].id == cm.playerPool[i].id)
             {
-                playerPool[i].active = true;
-                activePlayers[playerToReplace] = playerPool[i];
+                cm.playerPool[i].active = true;
+                activePlayers[playerToReplace] = cm.playerPool[i];
                 activePlayers[playerToReplace].ScaleStatsToTotal();
             }
         }

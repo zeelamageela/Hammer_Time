@@ -123,7 +123,7 @@ public class TournySelector : MonoBehaviour
         }
         else
         {
-            cm.SetUpCareer();
+            cm.LoadCareer();
         }
 
         teamMenu.TeamMenuOpen();

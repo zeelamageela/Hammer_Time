@@ -80,6 +80,7 @@ public class SponsorManager : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TeamMenu>();
+
     }
 
     private void Update()
@@ -479,6 +480,8 @@ public class SponsorManager : MonoBehaviour
                     playedCards.Add(cardsSponsor[i]);
             }
         }
+
+        cm.SaveCareer();
     }
 
     public void CardClick(int card)

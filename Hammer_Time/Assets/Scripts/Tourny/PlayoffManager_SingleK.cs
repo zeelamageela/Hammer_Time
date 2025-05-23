@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TigerForge;
+using static Photon.Pun.UtilityScripts.PunTeams;
 
 public class PlayoffManager_SingleK : MonoBehaviour
 {
@@ -30,8 +31,9 @@ public class PlayoffManager_SingleK : MonoBehaviour
 	public Color light;
 
 	GameSettingsPersist gsp;
+    CareerManager cm;
 
-	EasyFileSave myFile;
+    EasyFileSave myFile;
 	//int pTeams;
 	public int playerTeam;
 	public int oppTeam;
@@ -43,8 +45,8 @@ public class PlayoffManager_SingleK : MonoBehaviour
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
-
-		playoffs.SetActive(true);
+		cm = FindObjectOfType<CareerManager>();
+        playoffs.SetActive(true);
 
 		careerEarnings = tm.careerEarnings;
 		careerRecord = tm.careerRecord;
@@ -71,62 +73,40 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		}
 	}
 
-	public void SetSeeding(int numberOfTeams)
+    public void SetSeeding(int numberOfTeams)
     {
+        playoffTeams = new Team[31];
+        tm.teams = new Team[16];
+        heading.text = "Single Elimination";
 
-		//pTeams = 4;
-		playoffTeams = new Team[31];
-		tm.teams = new Team[16];
-		heading.text = "Single Elimination";
+        playoffRound++;
 
-		playoffRound++;
-		if (FindObjectOfType<CareerManager>())
-		{
-			CareerManager cm = FindObjectOfType<CareerManager>();
+        // Use the teams from the tournament manager (should be set up before this)
+        for (int i = 0; i < playoffTeams.Length; i++)
+        {
+            if (i < tm.teams.Length)
+            {
+                tm.teams[i].rank = 0;
+                playoffTeams[i] = tm.teams[i];
+                if (i < roundOf16Display.Length)
+                {
+                    roundOf16Display[i].name.text = playoffTeams[i].name;
+                    roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
+                }
+            }
+            else
+            {
+                playoffTeams[i] = tm.tTeamList.nullTeam;
+            }
+        }
 
-			for (int i = 0; i < playoffTeams.Length; i++)
-			{
-				if (i < cm.currentTournyTeams.Length)
-				{
-					cm.currentTournyTeams[i].rank = 0;
-					tm.teams[i] = cm.currentTournyTeams[i];
-					playoffTeams[i] = cm.currentTournyTeams[i];
-					//playoffTeams[i].rank = 0;
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-				}
-				else
-				{
-					playoffTeams[i] = tm.tTeamList.nullTeam;
-				}
-			}
-		}
-		else
-		{
-			TournyTeamList tournyTL = FindObjectOfType<TournyTeamList>();
+        tm.playoffRound = playoffRound;
+        gsp.playoffTeams = playoffTeams;
 
-			for (int i = 0; i < playoffTeams.Length; i++)
-			{
-				if (i < roundOf16Display.Length)
-				{
-					playoffTeams[i] = tournyTL.teams[i];
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-				}
-				else
-				{
-					playoffTeams[i] = tm.tTeamList.nullTeam;
-				}
-			}
-		}
+        SetPlayoffs();
+    }
 
-		tm.playoffRound = playoffRound;
-		gsp.playoffTeams = playoffTeams;
-
-		SetPlayoffs();
-	}
-
-	IEnumerator RefreshPlayoffPanel()
+    IEnumerator RefreshPlayoffPanel()
 	{
 		for (int i = 0; i < roundOf16Display.Length; i++)
 		{
@@ -831,7 +811,6 @@ public class PlayoffManager_SingleK : MonoBehaviour
                 {
 					tm.teams[i] = playoffTeams[i];
                 }
-				StartCoroutine(SaveCareer(true));
                 break;
             #endregion
             case 2:
@@ -887,8 +866,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
                 //StartCoroutine(RefreshPlayoffPanel());
 
                 scrollBar.value = 0.25f;
-				StartCoroutine(SaveCareer(true));
-				break;
+                break;
             #endregion
             case 3:
                 #region Case 3
@@ -940,8 +918,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				scrollBar.value = 0.5f;
-				StartCoroutine(SaveCareer(true));
-				break;
+                break;
 			#endregion
 			case 4:
 				#region Case 4
@@ -993,8 +970,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 				simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				scrollBar.value = 0.75f;
-				StartCoroutine(SaveCareer(true));
-				break;
+                break;
 			#endregion
 			case 5:
 				#region Case 5
@@ -1079,13 +1055,12 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
                 Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
 				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
-				
-				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 
-				StartCoroutine(SaveCareer(false));
-				//heading.text = "So Close!";
-				
-				playButton.gameObject.SetActive(false);
+                //gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
+
+                //heading.text = "So Close!";
+
+                playButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
 				nextButton.gameObject.SetActive(true);
@@ -1093,7 +1068,9 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 				break;
                 #endregion
+
         }
+		cm.SaveCareer();
     }
 
 	public void OnSim()
@@ -1533,8 +1510,13 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 		yield return careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 	}
+    public void SavePlayoff()
+    {
+        if (cm != null)
+            cm.SaveTournyState(this);
+    }
 
-	IEnumerator SaveCareer(bool inProgress)
+    IEnumerator SaveCareer(bool inProgress)
 	{
 		Debug.Log("Saving in PlayoffManager, inProgress is " + inProgress);
 

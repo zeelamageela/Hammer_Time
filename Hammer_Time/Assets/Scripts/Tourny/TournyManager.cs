@@ -430,8 +430,8 @@ public class TournyManager : MonoBehaviour
 		standScrollBar.value = (teams[playerTeam].rank - numberOfTeams) / (1f - numberOfTeams);
 		StartCoroutine(RefreshPanel());
 
-		//cm.SaveCareer();
-		StartCoroutine(SaveCareer());
+		cm.SaveTournyState(this);
+		//StartCoroutine(SaveCareer());
     }
 
     #region Set
@@ -696,7 +696,7 @@ public class TournyManager : MonoBehaviour
 		Debug.Log("CM earnings are " + cm.earnings);
 		
 		cm.TournyResults();
-		cm.SetUpCareer();
+		cm.LoadCareer();
 		SceneManager.LoadScene("Arena_Selector");
     }
 

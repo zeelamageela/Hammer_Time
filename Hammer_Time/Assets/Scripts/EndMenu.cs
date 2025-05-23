@@ -750,7 +750,7 @@ public class EndMenu : MonoBehaviour
             Debug.Log("CM earnings are " + cm.earnings);
 
             cm.TournyResults();
-            cm.SetUpCareer();
+            cm.LoadCareer();
             if (gsp.skinsGame)
             {
                 winnings = gsp.skins * 2f;

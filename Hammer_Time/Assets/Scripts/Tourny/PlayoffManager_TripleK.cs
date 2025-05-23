@@ -123,7 +123,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 				//Debug.Log("Playoff Round BEFORE the minus - " + gsp.playoffRound);
 				//gsp.playoffRound--;
 				//Debug.Log("Playoff Round AFTER the minus - " + gsp.playoffRound);
-				LoadPlayoffs();
+				LoadPlayoff();
 			}
 		}
 		else
@@ -135,93 +135,78 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		Debug.Log("Career Earnings before playoffs - $ " + gsp.tournyEarnings.ToString());
 
 		if (playoffRound > 0)
-			LoadPlayoffs();
+			LoadPlayoff();
 		else
 			SetSeeding();
 
 		//SetBrackets();
 	}
 
-	public void SetSeeding()
-	{
-		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
-		//teams = new Team[9];
-		heading.text = "No Game Data";
-		Debug.Log("-->playoffRound is " + playoffRound);
-		playoffRound++;
-
-		gsp.tournyRecord = new Vector2(0f, 0f);
-
-		if (gsp.teams.Length > 0)
-		{
-			for (int i = 0; i < teams.Length; i++)
-			{
-				teams[i] = gsp.teams[i];
-			}
-		}
-		else
+    public void SetSeeding()
+    {
+        // If loading a tournament in progress, use saved teams
+        if (gsp.teams != null && gsp.teams.Length == teams.Length)
         {
-			for (int i = 0; i < teams.Length; i++)
-			{
-				teams[i] = tTeamList.teams[i];
-			}
-		}
+            for (int i = 0; i < teams.Length; i++)
+            {
+                teams[i] = gsp.teams[i];
+            }
+        }
+        else
+        {
+            // Otherwise, seed from CareerManager's teamPool
+            for (int i = 0; i < teams.Length; i++)
+            {
+                teams[i] = cm.teamPool[i];
+            }
+        }
 
-		cm.teamRecords = new Vector4[teams.Length];
-		cm.tourRecords = new Vector4[teams.Length];
+        heading.text = "No Game Data";
+        Debug.Log("-->playoffRound is " + playoffRound);
+        playoffRound++;
 
-		for (int i = 0; i < teams.Length; i++)
-		{
-			cm.teamRecords[i].x = teams[i].wins;
-			cm.teamRecords[i].y = teams[i].loss;
-			cm.teamRecords[i].z = teams[i].earnings;
-			cm.teamRecords[i].w = teams[i].id;
+        gsp.tournyRecord = new Vector2(0f, 0f);
 
-			cm.tourRecords[i].x = teams[i].tourRecord.x;
-			cm.tourRecords[i].y = teams[i].tourRecord.y;
-			cm.tourRecords[i].z = teams[i].tourPoints;
-			cm.tourRecords[i].w = teams[i].id;
+        cm.teamRecords = new Vector4[teams.Length];
+        cm.tourRecords = new Vector4[teams.Length];
 
-			teams[i].wins = 0;
-			teams[i].loss = 0;
-			teams[i].earnings = 0;
-			teams[i].tourPoints = 0;
-			teams[i].tourRecord = Vector2.zero;
-		}
+        for (int i = 0; i < teams.Length; i++)
+        {
+            cm.teamRecords[i].x = teams[i].wins;
+            cm.teamRecords[i].y = teams[i].loss;
+            cm.teamRecords[i].z = teams[i].earnings;
+            cm.teamRecords[i].w = teams[i].id;
 
-		Debug.Log("Tour Record - " + teams[0].name + " - " + cm.tourRecords[0]);
+            cm.tourRecords[i].x = teams[i].tourRecord.x;
+            cm.tourRecords[i].y = teams[i].tourRecord.y;
+            cm.tourRecords[i].z = teams[i].tourPoints;
+            cm.tourRecords[i].w = teams[i].id;
 
-		//teams[0].name = gsp.teamName;
-		gsp.teams = teams;
+            teams[i].wins = 0;
+            teams[i].loss = 0;
+            teams[i].earnings = 0;
+            teams[i].tourPoints = 0;
+            teams[i].tourRecord = Vector2.zero;
+        }
 
-		for (int i = 0; i < teams.Length; i++)
-		{
-			if (teams[i].player)
-			{
-				float strength = cm.cStats.drawAccuracy
-					+ cm.cStats.takeOutAccuracy
-					+ cm.cStats.guardAccuracy
-					+ cm.cStats.sweepStrength
-					+ cm.cStats.sweepEndurance
-					+ cm.cStats.sweepCohesion
-					+ cm.modStats.drawAccuracy
-					+ cm.modStats.takeOutAccuracy
-					+ cm.modStats.guardAccuracy
-					+ cm.modStats.sweepStrength
-					+ cm.modStats.sweepEndurance
-					+ cm.modStats.sweepCohesion;
-				teams[i].strength = Mathf.RoundToInt(strength / 24f);
-			}
-			else
-				teams[i].strength = Random.Range(0, 10);
-            if (i % 2 == 0)
+        Debug.Log("Tour Record - " + teams[0].name + " - " + cm.tourRecords[0]);
+
+        gsp.teams = teams;
+
+        for (int i = 0; i < teams.Length; i++)
+        {
+            // Use the team's existing strength property
+            if (!teams[i].player)
+                teams[i].strength = Random.Range(0, 10);
+
+            if (i % 2 == 0 && i + 1 < teams.Length)
                 gameList[i / 2] = new Vector2(teams[i].id, teams[i + 1].id);
-		}
+        }
 
-		SetPlayoffs();
-	}
+        SetPlayoffs();
+    }
 
-	void LoadPlayoffs()
+    void LoadPlayoffs()
 	{
 		TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
 		myFile = new EasyFileSave("my_player_data");
@@ -290,8 +275,31 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		StartCoroutine(ResetBrackets(gsp.playoffRound));
 		//SetPlayoffs();
 	}
+    
+    public void LoadPlayoff()
+    {
+        if (cm != null)
+        {
+            Team[] loadedTeams;
+            int loadedRound;
+            Vector2[] loadedGameList;
+            cm.LoadPlayoffState(out loadedTeams, out loadedRound, out loadedGameList);
 
-	public void SetPlayoffs()
+            if (loadedTeams != null)
+            {
+                teams = loadedTeams;
+                playoffRound = loadedRound;
+                gameList = loadedGameList;
+            }
+        }
+    }
+    public void SavePlayoff()
+    {
+        if (cm != null)
+            cm.SavePlayoffState(teams, playoffRound, gameList);
+    }
+
+    public void SetPlayoffs()
 	{
 		Debug.Log("Set Playoffs 3K - Round " + playoffRound);
 		bool playerGame = false;
@@ -2119,13 +2127,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
 
 		StartCoroutine(RefreshPlayoffPanel());
 
-		if (playoffRound > 0)
-        {
-			StartCoroutine(SaveCareer(true));
-		}
-		else if (playoffRound > 18)
-			StartCoroutine(SaveCareer(false));
-	}
+		cm.SaveTournyState();
+
+    }
 
 	public void OnSim()
 	{
@@ -6559,9 +6563,9 @@ public class PlayoffManager_TripleK : MonoBehaviour
     }
 
 	public void Menu()
-	{
-		StartCoroutine(SaveCareer(true));
+    {
+		cm.SaveTournyState();
 
-		SceneManager.LoadScene("SplashMenu");
+        SceneManager.LoadScene("SplashMenu");
 	}
 }

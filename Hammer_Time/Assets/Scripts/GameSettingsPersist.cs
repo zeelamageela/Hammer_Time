@@ -604,7 +604,7 @@ public class GameSettingsPersist : MonoBehaviour
         CareerManager cm = FindObjectOfType<CareerManager>();
         //teamList = new List<Team_List>();
         teamColour = cm.teamColour;
-
+        cm.LoadCareer(this);
         //earnings = myFile.GetFloat("Career Earnings");
         //record = myFile.GetUnityVector2("Career Record");
         //inProgress = cm.inProgress;
@@ -616,6 +616,8 @@ public class GameSettingsPersist : MonoBehaviour
     {
         Debug.Log("Load Tourny GSP");
         CareerManager cm = FindObjectOfType<CareerManager>();
+
+        cm.LoadCareer(this);
         bg = cm.currentTourny.BG;
         crowdDensity = cm.currentTourny.crowdDensity;
         prize = cm.currentTourny.prizeMoney;
@@ -625,77 +627,13 @@ public class GameSettingsPersist : MonoBehaviour
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
         //inProgress = true;
-        if (myFile.Load())
-        {
-            draw = myFile.GetInt("Draw");
-            ends = myFile.GetInt("Ends");
-            games = myFile.GetInt("Games");
-            rocks = myFile.GetInt("Rocks");
-            numberOfTeams = myFile.GetInt("Number Of Teams");
-            playoffRound = myFile.GetInt("Playoff Round");
-            playerTeamIndex = myFile.GetInt("Player Team");
-
-            teams = new Team[numberOfTeams];
-
-            for (int i = 0; i < numberOfTeams; i++)
-            {
-                teams[i] = cm.currentTournyTeams[i];
-
-                if (teams[i].player)
-                {
-                    Debug.Log("i == playerTeamIndex is " + playerTeamIndex);
-                    playerTeam = teams[i];
-                    Debug.Log("Player Team id is " + teams[i].id);
-                }
-            }
-            //record = new Vector2(playerTeam.wins, playerTeam.loss);
-            for (int i = 0; i < numberOfTeams; i++)
-            {
-                teamList.Add(new Team_List(teams[i]));
-            }
-
-            int[] playoffIDList = myFile.GetArray<int>("Playoff ID List");
-            int[] playoffRankList = myFile.GetArray<int>("Playoff Rank List");
-
-            playoffTeams = new Team[playoffIDList.Length];
-
-            for (int i = 0; i < playoffIDList.Length; i++)
-            {
-                if (playoffIDList[i] < 99)
-                {
-                    for (int j = 0; j < teams.Length; j++)
-                    {
-                        if (playoffIDList[i] == teams[j].id)
-                        {
-                            playoffTeams[i] = teams[j];
-                            playoffTeams[i].rank = playoffRankList[i];
-                        }
-                    }
-                }
-                else
-                    playoffTeams[i] = tm.tTeamList.nullTeam;
-            }
-            Debug.Log("teamList Count is " + teamList.Count);
-
-            //score = new Vector2Int[ends + 1];
-
-            //int[] redScoreList = myFile.GetArray<int>("Red Score List");
-            //int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
-
-            //Debug.Log("Red Score List is " + redScoreList.Length + " long");
-            //for (int i = 0; i < score.Length; i++)
-            //{
-            //    score[i].x = redScoreList[i];
-            //    score[i].y = yellowScoreList[i];
-            //}
-
-            myFile.Dispose();
-        }
+        cm.LoadTournyState();
+        
+        Debug.Log("teamList Count is " + teamList.Count);
     }
 
     public void LoadKOTourny()
     {
-        TournyTeamList tTeamList = FindObjectOfType<TournyTeamList>();
         CareerManager cm = FindObjectOfType<CareerManager>();
         //cm.LoadCareer();
         PlayoffManager_TripleK pm3k = FindObjectOfType<PlayoffManager_TripleK>();

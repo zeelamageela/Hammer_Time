@@ -83,7 +83,7 @@ public class CareerSettings : MonoBehaviour
         if (am != null)
             am.PlayBG(3);
 
-        cm.SetUpCareer();
+        cm.LoadCareer();
     }
     // Update is called once per frame
     void Update()
