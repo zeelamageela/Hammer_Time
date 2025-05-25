@@ -73,7 +73,7 @@ public class TournyManager : MonoBehaviour
 		if (gsp.careerLoad)
 		{
 			//cm.LoadCareer();
-			gsp.LoadCareer();
+			//gsp.LoadCareer();
             if (gsp.tournyInProgress)
             {
                 //gsp.gameInProgress = false;
@@ -786,6 +786,6 @@ public class TournyManager : MonoBehaviour
 		yield return myFile.Append();
 
 
-		cm.SaveCareer();
+		//cm.SaveCareer();
 	}
 }

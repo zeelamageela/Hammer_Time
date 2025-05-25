@@ -3096,13 +3096,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   yellowTeamName: 
   yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
   yellowTeam:
@@ -3111,13 +3117,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   draw: 0
   playoffRound: 0
   numberOfTeams: 16
@@ -3139,13 +3151,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerGO: []
 --- !u!4 &450587699
@@ -4598,61 +4616,91 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   - name: 
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   - name: 
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   - name: 
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   - name: 
     wins: 0
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   dfList: {fileID: 4849789560157747718}
   cashGame: 0
   standDisplayTest: []
@@ -4993,7 +5041,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.65082306, y: 1}
+  m_AnchorMax: {x: 0.7332121, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7325,7 +7373,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -9700,7 +9748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 176.00476, y: -0.000030517578}
+  m_AnchoredPosition: {x: 175.99994, y: -0.000030517578}
   m_SizeDelta: {x: 1319.4, y: 859.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1181757050
@@ -11653,7 +11701,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -180, y: -878}
+  m_AnchoredPosition: {x: -0.000015259, y: -670}
   m_SizeDelta: {x: 350, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1440258398
@@ -12484,8 +12532,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 690531717}
   m_HandleRect: {fileID: 690531716}
   m_Direction: 0
-  m_Value: -0.000013698236
-  m_Size: 0.65082306
+  m_Value: 0
+  m_Size: 0.7332121
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13761,7 +13809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -14869,7 +14917,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16604,7 +16652,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 3314340373926307900, guid: 884273d4f0f330f4eb14cb7dc2f372d8, type: 3}
       propertyPath: m_AnchoredPosition.y

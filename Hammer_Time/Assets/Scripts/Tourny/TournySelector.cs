@@ -132,7 +132,7 @@ public class TournySelector : MonoBehaviour
         //provStandings.SetUp();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
-        em.SetInventory();
+        //em.SetInventory();
     }
 
     IEnumerator WaitForDialogue()
@@ -806,7 +806,7 @@ public class TournySelector : MonoBehaviour
         cm.activeTournies = activeTournies;
         tm.SetTeam();
         xpm.SaveToCareerManager(cm);
-        cm.SaveCareer();
+        //cm.SaveCareer();
 
         SceneManager.LoadScene("Tourny_Menu_1");
         //StartCoroutine(TournyMenuLoad());
@@ -1322,7 +1322,6 @@ public class TournySelector : MonoBehaviour
                 break;
             case 1:
                 PlayerEquip(true);
-                em.MainMenu();
                 break;
             case 2:
                 TeamWindow(true);

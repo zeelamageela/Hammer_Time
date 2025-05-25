@@ -211,14 +211,14 @@ public class SponsorManager : MonoBehaviour
                 else if ((i - pUpList.localSponsors.Length) < pUpList.nationalSponsors.Length)
                 {
                     int tempCount = i - pUpList.localSponsors.Length;
-                    Debug.Log("i - pUpList.localSponsors.Length is " + tempCount);
+                    //Debug.Log("i - pUpList.localSponsors.Length is " + tempCount);
                     idSponsorList[i] = pUpList.nationalSponsors[i - pUpList.localSponsors.Length].id;
                     cardsSponsor[i] = pUpList.nationalSponsors[i - pUpList.localSponsors.Length];
                 }
                 else
                 {
                     int tempCount = i - pUpList.localSponsors.Length - pUpList.nationalSponsors.Length;
-                    Debug.Log("i - pUpList.localSponsors.Length is " + tempCount);
+                    //Debug.Log("i - pUpList.localSponsors.Length is " + tempCount);
                     idSponsorList[i] = pUpList.internationalSponsors[i - pUpList.localSponsors.Length - pUpList.nationalSponsors.Length].id;
                     cardsSponsor[i] = pUpList.internationalSponsors[i - pUpList.localSponsors.Length - pUpList.nationalSponsors.Length];
                 }
@@ -481,7 +481,7 @@ public class SponsorManager : MonoBehaviour
             }
         }
 
-        cm.SaveCareer();
+        //cm.SaveCareer();
     }
 
     public void CardClick(int card)

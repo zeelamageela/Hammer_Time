@@ -60,7 +60,7 @@ public class EquipmentManager : MonoBehaviour
     void Start()
     {
         
-        //SetInventory();
+        SetInventory();
         //MainMenu();
     }
 
@@ -69,181 +69,136 @@ public class EquipmentManager : MonoBehaviour
     {
         
     }
-
     public void SetInventory()
     {
-
         CareerManager cm = FindObjectOfType<CareerManager>();
 
-        if (cm.activeEquipID == null)
+        // Use LoadItems if loaded from save, otherwise GenerateItems
+        if (cm.loadedFromSave)
         {
-            Debug.Log("cm.activeEquipID is null");
-            cm.activeEquipID = new int[activeEquip.Length];
-            for (int i = 0; i < activeEquip.Length; i++)
-            {
-                cm.activeEquipID[i] = activeEquip[i].id;
-            }
+            // Handles
+            if (handles == null || handles.All(h => h == null))
+                handles = GenerateItems(new Equipment[0], "handle");
+            handles = LoadItems(handles, "handle");
+
+            // Heads
+            if (heads == null || heads.All(h => h == null))
+                heads = GenerateItems(new Equipment[0], "head");
+            heads = LoadItems(heads, "head");
+
+            // Footwear
+            if (footwear == null || footwear.All(f => f == null))
+                footwear = GenerateItems(new Equipment[0], "footwear");
+            footwear = LoadItems(footwear, "footwear");
+
+            // Apparel
+            if (apparel == null || apparel.All(a => a == null))
+                apparel = GenerateItems(new Equipment[0], "apparel");
+            apparel = LoadItems(apparel, "apparel");
+
+            Debug.Log("Set Inventory - Loaded items from save: " + cm.activeEquipID.Length);
         }
         else
         {
-            Debug.Log("cm.activeEquipID is not null");
-            for (int i = 0; i < cm.activeEquipID.Length; i++)
-            {
-                if (cm.activeEquipID[i] < 30)
-                {
-                    for (int j = 0; j < handles.Length; j++)
-                    {
-                        if (handles[j].id == cm.activeEquipID[i])
-                            handles[j].active = true;
-                        else
-                            handles[j].active = false;
-                    }
-                }
-                if (cm.activeEquipID[i] >= 30 && cm.activeEquipID[i] < 60)
-                {
-                    for (int j = 0; j < heads.Length; j++)
-                    {
-                        if (heads[j].id == cm.activeEquipID[i])
-                            heads[j].active = true;
-                        else
-                            heads[j].active = false;
-                    }
-                }
-
-                if (cm.activeEquipID[i] >= 60 && cm.activeEquipID[i] < 80)
-                {
-                    for (int j = 0; j < footwear.Length; j++)
-                    {
-                        if (footwear[j].id == cm.activeEquipID[i])
-                            footwear[j].active = true;
-                        else
-                            footwear[j].active = false;
-                    }
-                }
-
-                if (cm.activeEquipID[i] >= 80)
-                {
-                    for (int j = 0; j < apparel.Length; j++)
-                    {
-                        if (apparel[j].id == cm.activeEquipID[i])
-                            apparel[j].active = true;
-                        else
-                            apparel[j].active = false;
-                    }
-                }
-            }
-        }
-        ////DELETE THIS WHEN NOT IN ARENA SELECTOR
-        //cm.inventoryID = null;
-
-        if (cm.inventoryID == null | cm.week == 1)
-        {
-            Debug.Log("cm.inventoryID is null");
-            cm.inventoryID = new int[inventory.Count];
-            for (int i = 0; i < inventory.Count; i++)
-            {
-                cm.inventoryID[i] = inventory[i].equipment.id;
-            }
-
             handles = GenerateItems(handles, "handle");
             heads = GenerateItems(heads, "head");
             footwear = GenerateItems(footwear, "footwear");
             apparel = GenerateItems(apparel, "apparel");
         }
+
+        // After handles, heads, footwear, apparel are set
+        if (activeEquip == null || activeEquip.Length != 4)
+            activeEquip = new Equipment[4];
+
+        if (inventory == null)
+            inventory = new List<Inventory_List>();
         else
-        {
-            handles = LoadItems(handles, "handle");
-            heads = LoadItems(heads, "head");
-            footwear = LoadItems(footwear, "footwear");
-            apparel = LoadItems(apparel, "apparel");
+            inventory.Clear();
 
-            Debug.Log("cm.inventoryID is not null");
-            for (int i = 0; i < cm.inventoryID.Length; i++)
+        foreach (var arr in new[] { handles, heads, footwear, apparel })
+        {
+            foreach (var eq in arr)
             {
-                for (int j = 0; j < handles.Length; j++)
+                if (eq != null && eq.owned)
+                    inventory.Add(new Inventory_List(eq));
+            }
+        }
+
+        if (cm.inventoryID != null)
+        {
+            foreach (var arr in new[] { handles, heads, footwear, apparel })
+            {
+                foreach (var eq in arr)
                 {
-                    if (handles[j].id == cm.inventoryID[i])
-                        handles[j].owned = true;
-                }
-                for (int j = 0; j < heads.Length; j++)
-                {
-                    if (heads[j].id == cm.inventoryID[i])
-                        heads[j].owned = true;
-                }
-                for (int j = 0; j < footwear.Length; j++)
-                {
-                    if (footwear[j].id == cm.inventoryID[i])
-                        footwear[j].owned = true;
-                }
-                for (int j = 0; j < apparel.Length; j++)
-                {
-                    if (apparel[j].id == cm.inventoryID[i])
-                        apparel[j].owned = true;
+                    if (eq != null)
+                        eq.owned = cm.inventoryID.Contains(eq.id);
                 }
             }
         }
 
-        for (int i = 0; i < handles.Length; i++)
+        // If this is the first run (no save), set activeEquip to the first owned of each type
+        if (cm.activeEquipID == null)
         {
-            if (handles[i].owned)
-            {
-                inventory.Add(new Inventory_List(handles[i]));
-            }
-        }
-        for (int i = 0; i < heads.Length; i++)
-        {
-            if (heads[i].owned)
-            {
-                inventory.Add(new Inventory_List(heads[i]));
-            }
-        }
-        for (int i = 0; i < footwear.Length; i++)
-        {
-            if (footwear[i].owned)
-            {
-                inventory.Add(new Inventory_List(footwear[i]));
-            }
-        }
-        for (int i = 0; i < apparel.Length; i++)
-        {
-            if (apparel[i].owned)
-            {
-                inventory.Add(new Inventory_List(apparel[i]));
-            }
+            Debug.Log("Set Inventory - cm.activeEquipID is null");
+            // 0: handle, 1: head, 2: footwear, 3: apparel
+            activeEquip[0] = handles.FirstOrDefault(e => e != null && e.owned) ?? handles[0];
+            activeEquip[1] = heads.FirstOrDefault(e => e != null && e.owned) ?? heads[0];
+            activeEquip[2] = footwear.FirstOrDefault(e => e != null && e.owned) ?? footwear[0];
+            activeEquip[3] = apparel.FirstOrDefault(e => e != null && e.owned) ?? apparel[0];
+
+            for (int i = 0; i < activeEquip.Length; i++)
+                if (activeEquip[i] != null)
+                    activeEquip[i].active = true;
+
+            cm.activeEquipID = new int[activeEquip.Length];
+            for (int i = 0; i < activeEquip.Length; i++)
+                cm.activeEquipID[i] = activeEquip[i]?.id ?? -1;
+            Debug.Log("Set Inventory - cm.activeEquip is ");
         }
 
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            if (inventory[i].equipment.active)
-            {
-                if (inventory[i].equipment.handle)
-                    activeEquip[0] = inventory[i].equipment;
-                if (inventory[i].equipment.head)
-                    activeEquip[1] = inventory[i].equipment;
-                if (inventory[i].equipment.footwear)
-                    activeEquip[2] = inventory[i].equipment;
-                if (inventory[i].equipment.apparel)
-                    activeEquip[3] = inventory[i].equipment;
-            }
-        }
+        LoadActiveEquipFromCareerManager(cm);
 
-        //inventory.Sort();
+        cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
+        cm.activeEquipID = activeEquip.Select(eq => eq.id).ToArray();
+        
+        foreach (var eq in activeEquip)
+            SetPoints(eq);
+        cm.SaveCareer();
+    }
 
-        cm.inventoryID = new int[inventory.Count];
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            cm.inventoryID[i] = inventory[i].equipment.id;
-        }
+    public void LoadActiveEquipFromCareerManager(CareerManager cm)
+    {
+        if (cm == null || cm.activeEquipID == null)
+            return;
 
-        cm.activeEquipID = new int[activeEquip.Length];
-        for (int i = 0; i < activeEquip.Length; i++)
-        {
-            cm.activeEquipID[i] = activeEquip[i].id;
-        }
+        // Build a lookup for all equipment by ID, filtering out duplicates
+        var allEquipment = new List<Equipment>();
+        if (handles != null) allEquipment.AddRange(handles.Where(e => e != null));
+        if (heads != null) allEquipment.AddRange(heads.Where(e => e != null));
+        if (footwear != null) allEquipment.AddRange(footwear.Where(e => e != null));
+        if (apparel != null) allEquipment.AddRange(apparel.Where(e => e != null));
 
-        for (int i = 0; i < activeEquip.Length; i++)
+        var equipDict = allEquipment
+            .GroupBy(e => e.id)
+            .Select(g => g.First())
+            .ToDictionary(e => e.id, e => e);
+
+        var duplicateIds = allEquipment.GroupBy(e => e.id)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToList();
+
+        if (duplicateIds.Count > 0)
+            Debug.LogWarning("Duplicate Equipment IDs found: " + string.Join(", ", duplicateIds));
+
+        // Assign activeEquip from IDs
+        activeEquip = new Equipment[cm.activeEquipID.Length];
+        for (int i = 0; i < cm.activeEquipID.Length; i++)
         {
-            SetPoints(activeEquip[i]);
+            if (equipDict.TryGetValue(cm.activeEquipID[i], out var eq))
+                activeEquip[i] = eq;
+            else
+                activeEquip[i] = null;
         }
     }
 
@@ -869,7 +824,8 @@ public class EquipmentManager : MonoBehaviour
         {
             case "handle":
                 {
-                    temp = new Equipment[30];
+                    temp = new Equipment[30]; 
+                    
                     for (int i = 0; i < temp.Length; i++)
                     {
                         //Debug.Log("index is " + i);
@@ -884,6 +840,11 @@ public class EquipmentManager : MonoBehaviour
                             temp[i] = new Equipment();
                             temp[i].cost = Random.Range(500f, 15000f);
                         }
+
+                        if (temp[i].stats == null || temp[i].stats.Length != 6)
+                            temp[i].stats = new int[6];
+                        if (temp[i].oppStats == null || temp[i].oppStats.Length != 6)
+                            temp[i].oppStats = new int[6];
 
                         temp[i].handle = true;
 
@@ -1122,5 +1083,50 @@ public class EquipmentManager : MonoBehaviour
         cm.oppStats.sweepStrength -= equip.oppStats[4];
         cm.oppStats.sweepCohesion -= equip.oppStats[5];
 
+    }
+
+    public void LoadAllEquipmentFromSave(
+    int[] ids, float[] costs, float[] colorX, float[] colorY, float[] colorZ, float[] colorA,
+    int[] durations,
+    int[] stats0, int[] stats1, int[] stats2, int[] stats3, int[] stats4, int[] stats5,
+    int[] oppStats0, int[] oppStats1, int[] oppStats2, int[] oppStats3, int[] oppStats4, int[] oppStats5,
+    int handlesCount, int headsCount, int footwearCount, int apparelCount)
+    {
+        int idx = 0;
+
+        handles = new Equipment[handlesCount];
+        heads = new Equipment[headsCount];
+        footwear = new Equipment[footwearCount];
+        apparel = new Equipment[apparelCount];
+
+        // Helper to fill an array
+        void FillArray(Equipment[] arr, int typeOffset)
+        {
+            for (int i = 0; i < arr.Length; i++, idx++)
+            {
+                if (ids[idx] == -1)
+                {
+                    arr[i] = null;
+                    continue;
+                }
+                Equipment eq = new Equipment();
+                eq.id = ids[idx];
+                eq.cost = costs[idx];
+                eq.color = new Color(colorX[idx], colorY[idx], colorZ[idx], colorA[idx]);
+                eq.duration = durations[idx];
+                eq.stats = new int[6] { stats0[idx], stats1[idx], stats2[idx], stats3[idx], stats4[idx], stats5[idx] };
+                eq.oppStats = new int[6] { oppStats0[idx], oppStats1[idx], oppStats2[idx], oppStats3[idx], oppStats4[idx], oppStats5[idx] };
+                eq.handle = (typeOffset == 0);
+                eq.head = (typeOffset == 1);
+                eq.footwear = (typeOffset == 2);
+                eq.apparel = (typeOffset == 3);
+                arr[i] = eq;
+            }
+        }
+
+        FillArray(handles, 0);
+        FillArray(heads, 1);
+        FillArray(footwear, 2);
+        FillArray(apparel, 3);
     }
 }

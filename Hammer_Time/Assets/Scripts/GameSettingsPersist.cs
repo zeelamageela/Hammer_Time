@@ -368,7 +368,7 @@ public class GameSettingsPersist : MonoBehaviour
         playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
-        cm.LoadFromGSP(this);
+        //cm.SaveCareer(this);
     }
 
     public void TournySetup(int btn = 0)
@@ -623,9 +623,7 @@ public class GameSettingsPersist : MonoBehaviour
         prize = cm.currentTourny.prizeMoney;
         numberOfTeams = cm.currentTourny.teams;
         //cm.LoadCareer(this);
-        TournyManager tm = FindObjectOfType<TournyManager>();
         teamList = new List<Team_List>();
-        myFile = new EasyFileSave("my_player_data");
         //inProgress = true;
         cm.LoadTournyState();
         

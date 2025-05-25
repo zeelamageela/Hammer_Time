@@ -51,6 +51,7 @@ public class CareerManager : MonoBehaviour
 
     public bool inProgress;
     public int season;
+    public bool loadedFromSave;
     public List<int> tournyResults;
 
     [SerializeField]
@@ -140,14 +141,6 @@ public class CareerManager : MonoBehaviour
         provTeams = 16;
     }
 
-    public void LoadFromGSP(GameSettingsPersist gsp)
-    {
-        //earnings = gsp.earnings;
-        //record = gsp.record;
-        SaveCareer();
-        //Debug.Log("Earnings - CM from GSP - " + earnings);
-    }
-
     public void LoadCareer(
     GameSettingsPersist gsp = null,
     TournySelector tSel = null,
@@ -190,6 +183,7 @@ public class CareerManager : MonoBehaviour
 
             LoadTournyState();
             LoadCurrentGameState(gsp);
+            loadedFromSave = true;
             myFile.Dispose();
         }
         // Additional logic if needed...
@@ -505,11 +499,13 @@ public class CareerManager : MonoBehaviour
 
     private void LoadEquipment(EquipmentManager em)
     {
-        inventoryID = myFile.GetArray<int>("Inventory ID List");
-        activeEquipID = myFile.GetArray<int>("Active Equip ID List");
-
         if (em != null)
         {
+            inventoryID = myFile.GetArray<int>("Inventory ID List");
+            activeEquipID = myFile.GetArray<int>("Active Equip ID List");
+
+            Debug.Log("Loading Equipment - activeId Length is " + activeEquipID.Length);
+
             int[] tempID = myFile.GetArray<int>("Total Item ID List");
             float[] tempCost = myFile.GetArray<float>("Total Item Cost List");
             float[] tempColorX = myFile.GetArray<float>("Total Item Color X List");
@@ -537,6 +533,9 @@ public class CareerManager : MonoBehaviour
 
             int handleIdx = 0, headIdx = 0, footIdx = 0, apparelIdx = 0;
 
+            // Build all equipment and a lookup dictionary
+            var equipDict = new Dictionary<int, Equipment>();
+
             for (int i = 0; i < tempID.Length; i++)
             {
                 if (tempID[i] == -1)
@@ -547,6 +546,8 @@ public class CareerManager : MonoBehaviour
                     else apparelIdx++;
                     continue;
                 }
+
+                Debug.Log("Loading Equipment - tempId Length is " + tempID.Length);
 
                 Equipment eq = new Equipment();
                 eq.id = tempID[i];
@@ -567,6 +568,8 @@ public class CareerManager : MonoBehaviour
                 eq.oppStats[3] = tempOppStats3[i];
                 eq.oppStats[4] = tempOppStats4[i];
                 eq.oppStats[5] = tempOppStats5[i];
+
+                equipDict[eq.id] = eq;
 
                 if (i < 30)
                 {
@@ -597,9 +600,11 @@ public class CareerManager : MonoBehaviour
                         Debug.LogWarning("Apparel index out of range while loading equipment.");
                 }
             }
+
+            // Set activeEquip from saved IDs
+            //em.LoadActiveEquipFromCareerManager(this);
         }
     }
-
 
     private void LoadTourTeamData()
     {
@@ -1315,6 +1320,7 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Total Loss List", lossList);
         myFile.Add("Total Earnings List", earningsList);
 
+
         // Tour teams
         int[] tourTeamsIDList = new int[tourTeams.Length];
         int[] tourWinsList = new int[tourTeams.Length];
@@ -1323,10 +1329,21 @@ public class CareerManager : MonoBehaviour
 
         for (int i = 0; i < tourTeams.Length; i++)
         {
-            tourTeamsIDList[i] = tourTeams[i].id;
-            tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
-            tourLossList[i] = (int)tourTeams[i].tourRecord.y;
-            tourPointsList[i] = tourTeams[i].tourPoints;
+            if (tourTeams[i] != null)
+            {
+                tourTeamsIDList[i] = tourTeams[i].id;
+                tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
+                tourLossList[i] = (int)tourTeams[i].tourRecord.y;
+                tourPointsList[i] = tourTeams[i].tourPoints;
+            }
+            else
+            {
+                tourTeamsIDList[i] = -1;
+                tourWinsList[i] = 0;
+                tourLossList[i] = 0;
+                tourPointsList[i] = 0f;
+                Debug.LogWarning($"tourTeams[{i}] is null in SaveTeamDetails.");
+            }
         }
 
         myFile.Add("Tour Team ID List", tourTeamsIDList);
@@ -1337,109 +1354,136 @@ public class CareerManager : MonoBehaviour
 
     private void SaveEquipment(EquipmentManager em)
     {
-        if (em != null)
+        if (em == null)
+            return;
+
+        // Ensure arrays are not null
+        Equipment[] handles = em.handles ?? new Equipment[0];
+        Equipment[] heads = em.heads ?? new Equipment[0];
+        Equipment[] footwear = em.footwear ?? new Equipment[0];
+        Equipment[] apparel = em.apparel ?? new Equipment[0];
+        
+        int handlesCount = handles.Length;
+        int headsCount = heads.Length;
+        int footwearCount = footwear.Length;
+        int apparelCount = apparel.Length;
+        int total = handlesCount + headsCount + footwearCount + apparelCount;
+
+        // Save counts for robust loading
+        myFile.Add("HandlesCount", handlesCount);
+        myFile.Add("HeadsCount", headsCount);
+        myFile.Add("FootwearCount", footwearCount);
+        myFile.Add("ApparelCount", apparelCount);
+
+        Debug.Log("Saving Equipment - Handle Count - " + handlesCount);
+
+        // Prepare flat arrays for all equipment data
+        int[] tempID = new int[total];
+        float[] tempCost = new float[total];
+        float[] tempColorX = new float[total];
+        float[] tempColorY = new float[total];
+        float[] tempColorZ = new float[total];
+        float[] tempColorA = new float[total];
+        int[] tempDuration = new int[total];
+        int[] tempStats0 = new int[total];
+        int[] tempStats1 = new int[total];
+        int[] tempStats2 = new int[total];
+        int[] tempStats3 = new int[total];
+        int[] tempStats4 = new int[total];
+        int[] tempStats5 = new int[total];
+        int[] tempOppStats0 = new int[total];
+        int[] tempOppStats1 = new int[total];
+        int[] tempOppStats2 = new int[total];
+        int[] tempOppStats3 = new int[total];
+        int[] tempOppStats4 = new int[total];
+        int[] tempOppStats5 = new int[total];
+
+        int idx = 0;
+        Equipment[][] all = { handles, heads, footwear, apparel };
+        foreach (var arr in all)
         {
-            // Save all slots, including nulls, so the order and count always match
-            Equipment[][] all = { em.handles, em.heads, em.footwear, em.apparel };
-            int total = 0;
-            foreach (var arr in all)
-                total += arr.Length;
-
-            int[] tempID = new int[total];
-            float[] tempCost = new float[total];
-            float[] tempColorX = new float[total];
-            float[] tempColorY = new float[total];
-            float[] tempColorZ = new float[total];
-            float[] tempColorA = new float[total];
-            int[] tempDuration = new int[total];
-            int[] tempStats0 = new int[total];
-            int[] tempStats1 = new int[total];
-            int[] tempStats2 = new int[total];
-            int[] tempStats3 = new int[total];
-            int[] tempStats4 = new int[total];
-            int[] tempStats5 = new int[total];
-            int[] tempOppStats0 = new int[total];
-            int[] tempOppStats1 = new int[total];
-            int[] tempOppStats2 = new int[total];
-            int[] tempOppStats3 = new int[total];
-            int[] tempOppStats4 = new int[total];
-            int[] tempOppStats5 = new int[total];
-
-            int idx = 0;
-            foreach (var arr in all)
+            foreach (var eq in arr)
             {
-                foreach (var eq in arr)
+                if (eq != null)
                 {
-                    if (eq != null)
-                    {
-                        tempID[idx] = eq.id;
-                        tempCost[idx] = eq.cost;
-                        tempColorX[idx] = eq.color.r;
-                        tempColorY[idx] = eq.color.g;
-                        tempColorZ[idx] = eq.color.b;
-                        tempColorA[idx] = eq.color.a;
-                        tempDuration[idx] = eq.duration;
-                        tempStats0[idx] = eq.stats[0];
-                        tempStats1[idx] = eq.stats[1];
-                        tempStats2[idx] = eq.stats[2];
-                        tempStats3[idx] = eq.stats[3];
-                        tempStats4[idx] = eq.stats[4];
-                        tempStats5[idx] = eq.stats[5];
-                        tempOppStats0[idx] = eq.oppStats[0];
-                        tempOppStats1[idx] = eq.oppStats[1];
-                        tempOppStats2[idx] = eq.oppStats[2];
-                        tempOppStats3[idx] = eq.oppStats[3];
-                        tempOppStats4[idx] = eq.oppStats[4];
-                        tempOppStats5[idx] = eq.oppStats[5];
-                    }
-                    else
-                    {
-                        tempID[idx] = -1; // Use -1 or another sentinel value for nulls
-                        tempCost[idx] = 0f;
-                        tempColorX[idx] = 0f;
-                        tempColorY[idx] = 0f;
-                        tempColorZ[idx] = 0f;
-                        tempColorA[idx] = 0f;
-                        tempDuration[idx] = 0;
-                        tempStats0[idx] = 0;
-                        tempStats1[idx] = 0;
-                        tempStats2[idx] = 0;
-                        tempStats3[idx] = 0;
-                        tempStats4[idx] = 0;
-                        tempStats5[idx] = 0;
-                        tempOppStats0[idx] = 0;
-                        tempOppStats1[idx] = 0;
-                        tempOppStats2[idx] = 0;
-                        tempOppStats3[idx] = 0;
-                        tempOppStats4[idx] = 0;
-                        tempOppStats5[idx] = 0;
-                    }
-                    idx++;
+                    tempID[idx] = eq.id;
+                    tempCost[idx] = eq.cost;
+                    tempColorX[idx] = eq.color.r;
+                    tempColorY[idx] = eq.color.g;
+                    tempColorZ[idx] = eq.color.b;
+                    tempColorA[idx] = eq.color.a;
+                    tempDuration[idx] = eq.duration;
+                    tempStats0[idx] = eq.stats != null && eq.stats.Length > 0 ? eq.stats[0] : 0;
+                    tempStats1[idx] = eq.stats != null && eq.stats.Length > 1 ? eq.stats[1] : 0;
+                    tempStats2[idx] = eq.stats != null && eq.stats.Length > 2 ? eq.stats[2] : 0;
+                    tempStats3[idx] = eq.stats != null && eq.stats.Length > 3 ? eq.stats[3] : 0;
+                    tempStats4[idx] = eq.stats != null && eq.stats.Length > 4 ? eq.stats[4] : 0;
+                    tempStats5[idx] = eq.stats != null && eq.stats.Length > 5 ? eq.stats[5] : 0;
+                    tempOppStats0[idx] = eq.oppStats != null && eq.oppStats.Length > 0 ? eq.oppStats[0] : 0;
+                    tempOppStats1[idx] = eq.oppStats != null && eq.oppStats.Length > 1 ? eq.oppStats[1] : 0;
+                    tempOppStats2[idx] = eq.oppStats != null && eq.oppStats.Length > 2 ? eq.oppStats[2] : 0;
+                    tempOppStats3[idx] = eq.oppStats != null && eq.oppStats.Length > 3 ? eq.oppStats[3] : 0;
+                    tempOppStats4[idx] = eq.oppStats != null && eq.oppStats.Length > 4 ? eq.oppStats[4] : 0;
+                    tempOppStats5[idx] = eq.oppStats != null && eq.oppStats.Length > 5 ? eq.oppStats[5] : 0;
                 }
+                else
+                {
+                    tempID[idx] = -1;
+                    tempCost[idx] = 0f;
+                    tempColorX[idx] = 0f;
+                    tempColorY[idx] = 0f;
+                    tempColorZ[idx] = 0f;
+                    tempColorA[idx] = 0f;
+                    tempDuration[idx] = 0;
+                    tempStats0[idx] = 0;
+                    tempStats1[idx] = 0;
+                    tempStats2[idx] = 0;
+                    tempStats3[idx] = 0;
+                    tempStats4[idx] = 0;
+                    tempStats5[idx] = 0;
+                    tempOppStats0[idx] = 0;
+                    tempOppStats1[idx] = 0;
+                    tempOppStats2[idx] = 0;
+                    tempOppStats3[idx] = 0;
+                    tempOppStats4[idx] = 0;
+                    tempOppStats5[idx] = 0;
+                }
+                idx++;
             }
-
-            myFile.Add("Total Item ID List", tempID);
-            myFile.Add("Total Item Cost List", tempCost);
-            myFile.Add("Total Item Color X List", tempColorX);
-            myFile.Add("Total Item Color Y List", tempColorY);
-            myFile.Add("Total Item Color Z List", tempColorZ);
-            myFile.Add("Total Item Color A List", tempColorA);
-            myFile.Add("Total Item Duration List", tempDuration);
-            myFile.Add("Total Item Draw List", tempStats0);
-            myFile.Add("Total Item Guard List", tempStats1);
-            myFile.Add("Total Item Takeout List", tempStats2);
-            myFile.Add("Total Item Strength List", tempStats3);
-            myFile.Add("Total Item Endurance List", tempStats4);
-            myFile.Add("Total Item Cohesion List", tempStats5);
-            myFile.Add("Total Item Opp Draw List", tempOppStats0);
-            myFile.Add("Total Item Opp Guard List", tempOppStats1);
-            myFile.Add("Total Item Opp Takeout List", tempOppStats2);
-            myFile.Add("Total Item Opp Strength List", tempOppStats3);
-            myFile.Add("Total Item Opp Endurance List", tempOppStats4);
-            myFile.Add("Total Item Opp Cohesion List", tempOppStats5);
         }
-    }
 
+        Debug.Log("Saving Equipment - Total Item ID Length - " + tempID.Length);
+        myFile.Add("Total Item ID List", tempID);
+        myFile.Add("Total Item Cost List", tempCost);
+        myFile.Add("Total Item Color X List", tempColorX);
+        myFile.Add("Total Item Color Y List", tempColorY);
+        myFile.Add("Total Item Color Z List", tempColorZ);
+        myFile.Add("Total Item Color A List", tempColorA);
+        myFile.Add("Total Item Duration List", tempDuration);
+        myFile.Add("Total Item Draw List", tempStats0);
+        myFile.Add("Total Item Guard List", tempStats1);
+        myFile.Add("Total Item Takeout List", tempStats2);
+        myFile.Add("Total Item Strength List", tempStats3);
+        myFile.Add("Total Item Endurance List", tempStats4);
+        myFile.Add("Total Item Cohesion List", tempStats5);
+        myFile.Add("Total Item Opp Draw List", tempOppStats0);
+        myFile.Add("Total Item Opp Guard List", tempOppStats1);
+        myFile.Add("Total Item Opp Takeout List", tempOppStats2);
+        myFile.Add("Total Item Opp Strength List", tempOppStats3);
+        myFile.Add("Total Item Opp Endurance List", tempOppStats4);
+        myFile.Add("Total Item Opp Cohesion List", tempOppStats5);
+
+        // Save active equipment IDs
+        activeEquipID = new int[em.activeEquip.Length];
+        float[] tempActiveCost = new float[em.activeEquip.Length];
+        for (int i = 0; i < em.activeEquip.Length; i++)
+        {
+            activeEquipID[i] = em.activeEquip[i].id;
+            tempActiveCost[i] = em.activeEquip[i].cost;
+        }
+        myFile.Add("Active Equip ID List", activeEquipID);
+        myFile.Add("Active Equip Cost List", tempActiveCost);
+    }
 
     private void SaveCurrentGameState(GameSettingsPersist gsp)
     {
@@ -1485,9 +1529,11 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Game Yellow Score List", yellowScoreList);
     }
 
-    public void SaveTournyState(object tournyStateManager = null)
+    public void SaveTournyState(object tournyStateManager = null, GameSettingsPersist gsp = null)
     {
         myFile = new EasyFileSave("my_player_data");
+
+        if (gsp == null) gsp = FindObjectOfType<GameSettingsPersist>();
 
         // Auto-find if not provided
         if (tournyStateManager == null)
@@ -1657,7 +1703,7 @@ public class CareerManager : MonoBehaviour
 
         SaveCurrentGameState(gsp);
         SaveTournyState();
-
+        loadedFromSave = false;
         myFile.Append();
     }
 

@@ -83,7 +83,7 @@ public class CareerSettings : MonoBehaviour
         if (am != null)
             am.PlayBG(3);
 
-        cm.LoadCareer();
+        //cm.LoadCareer();
     }
     // Update is called once per frame
     void Update()
@@ -115,66 +115,19 @@ public class CareerSettings : MonoBehaviour
 
         if (myFile.Load())
         {
-            playerName = myFile.GetString("Player Name");
-            teamName = myFile.GetString("Team Name");
-            teamColour = myFile.GetUnityColor("Team Colour");
-            cm.earnings = myFile.GetFloat("Career Earnings");
+            playerName = cm.playerName;
+            teamName = cm.teamName;
+            teamColour = cm.teamColour;
             earnings = cm.earnings;
             //Debug.Log("Earnings are " + earnings);
-            record = myFile.GetUnityVector2("Career Record");
-            gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
-            Debug.Log("Tourny in Progress is " + myFile.GetBool("Tourny In Progress"));
-            week = myFile.GetInt("Week");
-            season = myFile.GetInt("Season");
-            tourRecord = myFile.GetUnityVector2("Tour Record");
+            record = cm.record;
+            gsp.tournyInProgress = gsp.tournyInProgress;
+            Debug.Log("Tourny in Progress is " + gsp.tournyInProgress);
+            week = cm.week;
+            season = cm.season;
+            tourRecord = cm.tourRecord;
 
-            cm.xp = myFile.GetFloat("XP");
-            //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
-            //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
-
-            int[] activePlayersId = myFile.GetArray<int>("Active Players ID List");
-            string[] activePlayersName = myFile.GetArray<string>("Active Players Name List");
-
-            int[] playerDrawList = myFile.GetArray<int>("Active Players Draw List");
-            int[] playerGuardList = myFile.GetArray<int>("Active Players Guard List");
-            int[] playerTakeoutList = myFile.GetArray<int>("Active Players Takeout List");
-            int[] playerStrengthList = myFile.GetArray<int>("Active Players Strength List");
-            int[] playerEnduroList = myFile.GetArray<int>("Active Players Endurance List");
-            int[] playerCohesionList = myFile.GetArray<int>("Active Players Cohesion List");
-
-            int[] playerOppDrawList = myFile.GetArray<int>("Active Players Opp Draw List");
-            int[] playerOppGuardList = myFile.GetArray<int>("Active Players Opp Guard List");
-            int[] playerOppTakeoutList = myFile.GetArray<int>("Active Players Opp Takeout List");
-            int[] playerOppStrengthList = myFile.GetArray<int>("Active Players Opp Strength List");
-            int[] playerOppEnduroList = myFile.GetArray<int>("Active Players Opp Endurance List");
-            int[] playerOppCohesionList = myFile.GetArray<int>("Active Players Opp Cohesion List");
-
-            //Debug.Log("Player Id List Length - " + activePlayersId.Length);
-            //Debug.Log("Player Name 3 - " + activePlayersName[2]);
-
-            //cm.activePlayers = new Player[3];
-
-            for (int i = 0; i < cm.activePlayers.Length; i++)
-            {
-                //Debug.Log("Setting Active Player " + i);
-                cm.activePlayers[i].name = activePlayersName[i];
-                cm.activePlayers[i].id = activePlayersId[i];
-
-
-                cm.activePlayers[i].draw = playerDrawList[i];
-                cm.activePlayers[i].guard = playerGuardList[i];
-                cm.activePlayers[i].takeOut = playerTakeoutList[i];
-                cm.activePlayers[i].sweepStrength = playerStrengthList[i];
-                cm.activePlayers[i].sweepEnduro = playerEnduroList[i];
-                cm.activePlayers[i].sweepCohesion = playerCohesionList[i];
-
-                cm.activePlayers[i].oppDraw = playerOppDrawList[i];
-                cm.activePlayers[i].oppGuard = playerOppGuardList[i];
-                cm.activePlayers[i].oppTakeOut = playerOppTakeoutList[i];
-                cm.activePlayers[i].oppStrength = playerOppStrengthList[i];
-                cm.activePlayers[i].oppEnduro = playerOppEnduroList[i];
-                cm.activePlayers[i].oppCohesion = playerOppCohesionList[i];
-            }
+           
             if (gsp.tournyInProgress)
             {
                 tournyInProg.SetActive(true);
@@ -199,8 +152,6 @@ public class CareerSettings : MonoBehaviour
 
             cm.gameOver = myFile.GetBool("Game Over");
             
-
-            myFile.Dispose();
             yield return new WaitForEndOfFrame();
 
             gsp.careerLoad = true;

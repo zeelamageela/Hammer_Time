@@ -91,7 +91,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
 		gsp = FindObjectOfType<GameSettingsPersist>();
 		cm = FindObjectOfType<CareerManager>();
 
-		StartCoroutine(LoadCareer());
+		//StartCoroutine(LoadCareer());
 		Debug.Log("Career Earnings before playoffs - $ " + gsp.tournyEarnings.ToString());
 
 		teams = new Team[16];

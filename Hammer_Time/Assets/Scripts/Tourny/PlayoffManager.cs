@@ -22,8 +22,9 @@ public class PlayoffManager : MonoBehaviour
 	public Text careerEarningsText;
 
 	GameSettingsPersist gsp;
+    CareerManager cm;
 
-	EasyFileSave myFile;
+    EasyFileSave myFile;
 	//int pTeams;
 	public int playerTeam;
 	public int oppTeam;
@@ -35,8 +36,9 @@ public class PlayoffManager : MonoBehaviour
 	private void Start()
 	{
 		gsp = FindObjectOfType<GameSettingsPersist>();
+		cm = FindObjectOfType<CareerManager>();
 
-		playoffs.SetActive(true);
+        playoffs.SetActive(true);
 
 		careerEarnings = tm.careerEarnings;
 		careerRecord = tm.careerRecord;
@@ -402,6 +404,7 @@ public class PlayoffManager : MonoBehaviour
 					default:
 						tm.vsDisplay[1].rank.text = "-";
 						tm.vsDisplay[1].name.text = "Knocked Out!";
+                        simButton.gameObject.SetActive(true);
                         playButton.gameObject.SetActive(false);
                         break;
                 }
@@ -413,7 +416,8 @@ public class PlayoffManager : MonoBehaviour
                 //simButton.gameObject.SetActive(true);
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0;
-				StartCoroutine(SaveCareer(true));
+				gsp.AutoSave();
+				//StartCoroutine(SaveCareer(true));
                 break;
             #endregion
             case 2:
@@ -464,6 +468,7 @@ public class PlayoffManager : MonoBehaviour
                 {
                     tm.vs.SetActive(false);
                     playButton.gameObject.SetActive(false);
+                    simButton.gameObject.SetActive(true);
                 }
 
                 playoffs.SetActive(true);
@@ -474,7 +479,8 @@ public class PlayoffManager : MonoBehaviour
 				}
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0.5f;
-				StartCoroutine(SaveCareer(true));
+				gsp.AutoSave();
+                StartCoroutine(SaveCareer(true));
 				break;
             #endregion
             case 3:
@@ -511,7 +517,8 @@ public class PlayoffManager : MonoBehaviour
 				{
 					tm.vs.SetActive(false);
 					playButton.gameObject.SetActive(false);
-				}
+                    simButton.gameObject.SetActive(true);
+                }
 
 				playoffs.SetActive(true);
 				StartCoroutine(RefreshPlayoffPanel());
@@ -519,7 +526,7 @@ public class PlayoffManager : MonoBehaviour
 				//simButton.gameObject.SetActive(true);
 				contButton.gameObject.SetActive(false);
 				scrollBar.value = 1f;
-				StartCoroutine(SaveCareer(true));
+				gsp.AutoSave();
 				break;
             #endregion
             case 4:
@@ -667,10 +674,10 @@ public class PlayoffManager : MonoBehaviour
 				}
                 Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
 				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
-				
+
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
 
-				StartCoroutine(SaveCareer(false));
+				gsp.AutoSave();
 				//heading.text = "So Close!";
 				
 				playButton.gameObject.SetActive(false);
