@@ -1299,13 +1299,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   yellowTeamName: Grumblebum
   yellowTeamColour: {r: 0.44313726, g: 0.85882354, b: 0.4865762, a: 1}
   yellowTeam:
@@ -1314,13 +1320,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   draw: 0
   playoffRound: 0
   numberOfTeams: 0
@@ -1348,13 +1360,19 @@ MonoBehaviour:
     loss: 0
     rank: 0
     nextOpp: 
-    strength: 0
     id: 0
     earnings: 0
     record: {x: 0, y: 0}
     tourRecord: {x: 0, y: 0}
     tourPoints: 0
     player: 0
+    players: []
+    draw: 0
+    takeOut: 0
+    guard: 0
+    sweepStrength: 0
+    sweepEnduro: 0
+    sweepCohesion: 0
   teamColour: {r: 0, g: 0, b: 0, a: 0}
   playerGO: []
 --- !u!4 &1008780141
@@ -3072,15 +3090,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_Color.b
-      value: 0.86666673
+      value: 0.1764706
       objectReference: {fileID: 0}
     - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_Color.g
-      value: 0.91372555
+      value: 0.15686275
       objectReference: {fileID: 0}
     - target: {fileID: 237622941082537490, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_Color.r
-      value: 0.9490197
+      value: 0.1254902
       objectReference: {fileID: 0}
     - target: {fileID: 237622941369529446, guid: 8dca01244be49460eb34f4b486e27ee3, type: 3}
       propertyPath: m_Name

@@ -56,7 +56,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		playoffTeams = new Team[31];
 
 		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
-		if (gsp.careerLoad)
+		if (gsp.tournyInProgress)
 		{
 			Debug.Log("LOADING HERE");
 			LoadPlayoffs();

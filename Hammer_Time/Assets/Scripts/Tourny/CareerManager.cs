@@ -160,6 +160,7 @@ public class CareerManager : MonoBehaviour
         if (em == null) em = FindObjectOfType<EquipmentManager>();
 
         Debug.Log("Loading in CM 2");
+        Debug.Log(Application.persistentDataPath);
 
         ClearRankLists();
         InitializeFileSave();
@@ -252,7 +253,8 @@ public class CareerManager : MonoBehaviour
         teamName = myFile.GetString("Team Name");
         teamColour = myFile.GetUnityColor("Team Colour");
         playerTeamIndex = myFile.GetInt("Player Team Index");
-        record = myFile.GetUnityVector2("Career Record");
+        record.x = myFile.GetInt("Career Wins");
+        record.y = myFile.GetInt("Career Loss");
         cash = myFile.GetFloat("Career Cash");
         earnings = myFile.GetFloat("Career Earnings");
         provQual = myFile.GetBool("Prov Qual");
@@ -599,8 +601,24 @@ public class CareerManager : MonoBehaviour
                     else
                         Debug.LogWarning("Apparel index out of range while loading equipment.");
                 }
+
             }
 
+            if (activeEquipID != null)
+            {
+                em.activeEquip = new Equipment[activeEquipID.Length];
+                for (int i = 0; i < activeEquipID.Length; i++)
+                {
+                    if (equipDict.TryGetValue(activeEquipID[i], out var eq))
+                    {
+                        em.activeEquip[i] = eq;
+                    }
+                    else
+                    {
+                        em.activeEquip[i] = null;
+                    }
+                }
+            }
             // Set activeEquip from saved IDs
             //em.LoadActiveEquipFromCareerManager(this);
         }
@@ -772,7 +790,7 @@ public class CareerManager : MonoBehaviour
         if (gsp == null) gsp = FindObjectOfType<GameSettingsPersist>();
         if (gsp == null) return;
 
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
         if (!myFile.Load()) return;
 
         gsp.tourny = myFile.GetBool("Tourny Game");
@@ -815,7 +833,7 @@ public class CareerManager : MonoBehaviour
 
     public void LoadTournyState(object tournyStateManager = null)
     {
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
         if (!myFile.Load())
         {
             Debug.LogWarning("No save file found for tournament state.");
@@ -1042,7 +1060,7 @@ public class CareerManager : MonoBehaviour
         if (gsp == null)
             gsp = FindObjectOfType<GameSettingsPersist>();
 
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
 
         myFile.Add("Tourny In Progress", gsp.tournyInProgress);
         myFile.Add("Game In Progress", gsp.gameInProgress);
@@ -1054,6 +1072,8 @@ public class CareerManager : MonoBehaviour
         myFile.Add("Team Colour", teamColour);
         myFile.Add("Player Team Index", playerTeamIndex);
         myFile.Add("Career Record", record);
+        myFile.Add("Career Wins", GetPlayerWins());
+        myFile.Add("Career Loss", GetPlayerLosses());
         myFile.Add("Career Cash", cash);
         myFile.Add("Career Earnings", earnings);
         myFile.Add("Prov Qual", provQual);
@@ -1071,7 +1091,6 @@ public class CareerManager : MonoBehaviour
 
         myFile.Add("Game Load", gsp.loadGame);
 
-        myFile.Append();
     }
 
     private void SaveActivePlayers(TeamMenu teamSel)
@@ -1132,7 +1151,6 @@ public class CareerManager : MonoBehaviour
 
     public void SaveTeamsToSave()
     {
-        myFile = new EasyFileSave("my_player_data");
         if (teams == null || teams.Length == 0)
         {
             Debug.LogWarning("No teams to save.");
@@ -1176,7 +1194,6 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        myFile.Append();
         Debug.Log("Teams and players saved to file.");
     }
 
@@ -1354,6 +1371,7 @@ public class CareerManager : MonoBehaviour
 
     private void SaveEquipment(EquipmentManager em)
     {
+
         if (em == null)
             return;
 
@@ -1374,8 +1392,6 @@ public class CareerManager : MonoBehaviour
         myFile.Add("HeadsCount", headsCount);
         myFile.Add("FootwearCount", footwearCount);
         myFile.Add("ApparelCount", apparelCount);
-
-        Debug.Log("Saving Equipment - Handle Count - " + handlesCount);
 
         // Prepare flat arrays for all equipment data
         int[] tempID = new int[total];
@@ -1452,7 +1468,6 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        Debug.Log("Saving Equipment - Total Item ID Length - " + tempID.Length);
         myFile.Add("Total Item ID List", tempID);
         myFile.Add("Total Item Cost List", tempCost);
         myFile.Add("Total Item Color X List", tempColorX);
@@ -1475,14 +1490,13 @@ public class CareerManager : MonoBehaviour
 
         // Save active equipment IDs
         activeEquipID = new int[em.activeEquip.Length];
-        float[] tempActiveCost = new float[em.activeEquip.Length];
         for (int i = 0; i < em.activeEquip.Length; i++)
         {
             activeEquipID[i] = em.activeEquip[i].id;
-            tempActiveCost[i] = em.activeEquip[i].cost;
         }
         myFile.Add("Active Equip ID List", activeEquipID);
-        myFile.Add("Active Equip Cost List", tempActiveCost);
+                
+        Debug.Log("Equipment saved to file. - ActiveEquip ID List Count is" + activeEquipID);
     }
 
     private void SaveCurrentGameState(GameSettingsPersist gsp)
@@ -1527,11 +1541,13 @@ public class CareerManager : MonoBehaviour
         }
         myFile.Add("Game Red Score List", redScoreList);
         myFile.Add("Game Yellow Score List", yellowScoreList);
+
+        Debug.Log("Game State saved to file.");
     }
 
     public void SaveTournyState(object tournyStateManager = null, GameSettingsPersist gsp = null)
     {
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
 
         if (gsp == null) gsp = FindObjectOfType<GameSettingsPersist>();
 
@@ -1652,7 +1668,8 @@ public class CareerManager : MonoBehaviour
             return;
         }
 
-        myFile.Append();
+        Debug.Log("Tourny State saved to file.");
+        //myFile.Append();
     }
 
     public void SaveCareer(
@@ -1746,11 +1763,13 @@ public class CareerManager : MonoBehaviour
         }
         else
         {
+            gsp.KO3 = false;
+
             if (currentTourny.ko1)
                 gsp.KO1 = true;
             else
                 gsp.KO1 = false;
-            gsp.KO3 = false;
+
             for (int i = 0; i < tSel.locals.Length; i++)
             {
                 if (currentTourny.name == tSel.locals[i].name)
@@ -1794,7 +1813,7 @@ public class CareerManager : MonoBehaviour
         //Shuffle(currentTournyTeams);
         Debug.Log("Player Team is " + playerTeamIndex);
         gsp.teams = currentTournyTeams;
-        //SaveCareer();
+        SaveCareer();
     }
 
     public void TournyResults()
@@ -2263,7 +2282,7 @@ public class CareerManager : MonoBehaviour
 
     public void SavePlayoffState(Team[] teams, int playoffRound, Vector2[] gameList = null)
     {
-        myFile = new EasyFileSave("my_player_data");
+        //myFile = new EasyFileSave("my_player_data");
         myFile.Add("PlayoffRound", playoffRound);
 
         int teamCount = teams.Length;
@@ -2293,12 +2312,12 @@ public class CareerManager : MonoBehaviour
             }
         }
 
-        myFile.Append();
+        //myFile.Append();
     }
 
     public void LoadPlayoffState(out Team[] teams, out int playoffRound, out Vector2[] gameList)
     {
-        myFile = new EasyFileSave("my_playoff_data");
+        //myFile = new EasyFileSave("my_playoff_data");
         teams = null;
         playoffRound = 0;
         gameList = null;

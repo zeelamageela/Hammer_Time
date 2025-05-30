@@ -55,7 +55,8 @@ public class CareerSettings : MonoBehaviour
     void Start()
     {
         am = FindObjectOfType<AudioManager>();
-        StartCoroutine(LoadFromFile());
+        cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
         gradient = new Gradient();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
@@ -83,7 +84,8 @@ public class CareerSettings : MonoBehaviour
         if (am != null)
             am.PlayBG(3);
 
-        //cm.LoadCareer();
+        cm.LoadCareer();
+        Player(!cm.gameOver);
     }
     // Update is called once per frame
     void Update()
@@ -103,77 +105,6 @@ public class CareerSettings : MonoBehaviour
         teamColour = gradient.Evaluate(teamColourSlider.value);
     }
 
-    IEnumerator LoadFromFile()
-    {
-        cm = FindObjectOfType<CareerManager>();
-        cm.inProgress = true;
-
-        //cm.LoadCareer();
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        myFile = new EasyFileSave("my_player_data");
-        myFileGame = new EasyFileSave("my_game_data");
-
-        if (myFile.Load())
-        {
-            playerName = cm.playerName;
-            teamName = cm.teamName;
-            teamColour = cm.teamColour;
-            earnings = cm.earnings;
-            //Debug.Log("Earnings are " + earnings);
-            record = cm.record;
-            gsp.tournyInProgress = gsp.tournyInProgress;
-            Debug.Log("Tourny in Progress is " + gsp.tournyInProgress);
-            week = cm.week;
-            season = cm.season;
-            tourRecord = cm.tourRecord;
-
-           
-            if (gsp.tournyInProgress)
-            {
-                tournyInProg.SetActive(true);
-                gsp.KO3 = myFile.GetBool("Triple Knockout Tourny");
-                gsp.KO1 = myFile.GetBool("Single Knockout Tourny");
-                gsp.cashGame = myFile.GetBool("Cash Game");
-                tournyNameLoad.text = myFile.GetString("Current Tourny Name");
-                int draw = 1 + myFile.GetInt("Draw");
-                int playoffRound = myFile.GetInt("Playoff Round");
-
-                if (gsp.KO3)
-                    drawLoad.text = "Triple KO - Round " + playoffRound;
-                else if (gsp.KO1)
-                    drawLoad.text = "Single KO - Round " + playoffRound;
-                else if (playoffRound > 0)
-                    drawLoad.text = "Playoffs - Round " + playoffRound;
-                else
-                    drawLoad.text = "Draw " + draw;
-            }
-            else
-                tournyInProg.SetActive(false);
-
-            cm.gameOver = myFile.GetBool("Game Over");
-            
-            yield return new WaitForEndOfFrame();
-
-            gsp.careerLoad = true;
-            nameLoad.text = playerName + " " + teamName;
-            colourLoad.color = teamColour;
-            weekLoad.text = "Week " + week.ToString();
-            earningsLoad.text = "$" + cm.earnings.ToString("n0");
-            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
-            load.SetActive(true);
-
-            player.SetActive(false); if (cm.gameOver)
-            {
-                weekLoad.text = "Game Over!";
-                nextButton.transform.parent.gameObject.SetActive(false);
-            }
-
-        }
-        else
-        {
-            Player();
-        }
-    }
 
     public void LoadToCM()
     {
@@ -203,10 +134,56 @@ public class CareerSettings : MonoBehaviour
         
     }
 
-    public void Player()
+    public void Player(bool loadPlayer)
     {
-        if (myFile.Load())
-        {
+        if (loadPlayer)
+        { 
+            playerName = cm.playerName;
+            teamName = cm.teamName;
+            teamColour = cm.teamColour;
+            earnings = cm.earnings;
+            //Debug.Log("Earnings are " + earnings);
+            record = cm.record;
+            Debug.Log("Tourny in Progress is " + gsp.tournyInProgress);
+            week = cm.week;
+            season = cm.season;
+            tourRecord = cm.tourRecord;
+
+
+            if (gsp.tournyInProgress)
+            {
+                tournyInProg.SetActive(true);
+                tournyNameLoad.text = cm.currentTourny.name;
+                int draw = 1 + gsp.draw;
+                int playoffRound = gsp.playoffRound;
+
+                if (gsp.KO3)
+                    drawLoad.text = "Triple KO - Round " + playoffRound;
+                else if (gsp.KO1)
+                    drawLoad.text = "Single KO - Round " + playoffRound;
+                else if (playoffRound > 0)
+                    drawLoad.text = "Playoffs - Round " + playoffRound;
+                else
+                    drawLoad.text = "Draw " + draw;
+            }
+            else
+                tournyInProg.SetActive(false);
+
+            gsp.careerLoad = true;
+            nameLoad.text = playerName + " " + teamName;
+            colourLoad.color = teamColour;
+            weekLoad.text = "Week " + week.ToString();
+            earningsLoad.text = "$" + earnings.ToString("n0");
+            recordLoad.text = record.x.ToString() + " - " + record.y.ToString();
+            load.SetActive(true);
+
+            player.SetActive(false); 
+            if (cm.gameOver)
+            {
+                weekLoad.text = "Game Over!";
+                nextButton.transform.parent.gameObject.SetActive(false);
+            }
+
             player.SetActive(false);
             load.SetActive(true);
             nextButton.text = "Continue>";
@@ -252,6 +229,7 @@ public class CareerSettings : MonoBehaviour
 
         //NameGenerator();
     }
+
     public void MainMenu()
     {
         SceneManager.LoadScene("SplashMenu");

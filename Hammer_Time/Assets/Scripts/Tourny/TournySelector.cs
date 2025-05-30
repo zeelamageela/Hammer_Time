@@ -119,7 +119,7 @@ public class TournySelector : MonoBehaviour
 
         if (cm.week == 0)
         {
-            StartCoroutine(NewSeason());
+            cm.NewSeason();
         }
         else
         {
@@ -129,10 +129,11 @@ public class TournySelector : MonoBehaviour
         teamMenu.TeamMenuOpen();
         pm.SetUp();
 
+        em.SetInventory();
+
         //provStandings.SetUp();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
         SetActiveTournies();
-        //em.SetInventory();
     }
 
     IEnumerator WaitForDialogue()
@@ -648,7 +649,7 @@ public class TournySelector : MonoBehaviour
         }
 
         SetPanels();
-        //cm.SaveCareer();
+        cm.SaveCareer();
     }
 
     public void SetPanels()
@@ -696,18 +697,6 @@ public class TournySelector : MonoBehaviour
         }
 
 
-    }
-
-    IEnumerator NewSeason()
-    {
-        //dialogueGO.SetActive(true);
-        //coachGreen.TriggerDialogue("Intro", 0);
-        //cm.introDialogue[7] = true;
-        cm.NewSeason();
-        //yield return new WaitUntil(() => !dialogueGO.activeSelf);
-        yield return new WaitForSeconds(0.75f);
-        //teamMenu.TeamMenuOpen();
-        //Expand(menuButtons[2]);
     }
 
     public void EndOfGame()
@@ -808,14 +797,21 @@ public class TournySelector : MonoBehaviour
         xpm.SaveToCareerManager(cm);
         //cm.SaveCareer();
 
-        SceneManager.LoadScene("Tourny_Menu_1");
+        //SceneManager.LoadScene("Tourny_Menu_1");
+        TournyMenuLoad(FindObjectOfType<TournySettings>());
         //StartCoroutine(TournyMenuLoad());
     }
 
-    IEnumerator TournyMenuLoad()
+    private void TournyMenuLoad(TournySettings ts)
     {
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("Tourny_Menu_1");
+        teamNameText.text = "Confirm";
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].gameObject.SetActive(false);
+        }
+        TournyWindow(false); ;
+        skillbars.SetActive(true);
+        ts.Settings();
     }
 
     public void SelectTourny(int button)
@@ -832,7 +828,7 @@ public class TournySelector : MonoBehaviour
     {
         if (on)
         {
-            teamNameText.text = "Team " + cm.teamName + " Members";
+            teamNameText.text = "Available Tournies";
             mainMenuGO.SetActive(true);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);

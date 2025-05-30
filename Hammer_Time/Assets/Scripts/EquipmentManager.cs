@@ -60,7 +60,7 @@ public class EquipmentManager : MonoBehaviour
     void Start()
     {
         
-        SetInventory();
+        //SetInventory();
         //MainMenu();
     }
 
@@ -77,26 +77,38 @@ public class EquipmentManager : MonoBehaviour
         if (cm.loadedFromSave)
         {
             // Handles
-            if (handles == null || handles.All(h => h == null))
-                handles = GenerateItems(new Equipment[0], "handle");
+            if (handles == null)
+            {
+                Debug.LogError("Handles array is null when loading from save!");
+                return; // or handle error
+            }
             handles = LoadItems(handles, "handle");
 
             // Heads
-            if (heads == null || heads.All(h => h == null))
-                heads = GenerateItems(new Equipment[0], "head");
+            if (heads == null)
+            {
+                Debug.LogError("Heads array is null when loading from save!");
+                return;
+            }
             heads = LoadItems(heads, "head");
 
             // Footwear
-            if (footwear == null || footwear.All(f => f == null))
-                footwear = GenerateItems(new Equipment[0], "footwear");
+            if (footwear == null)
+            {
+                Debug.LogError("Footwear array is null when loading from save!");
+                return;
+            }
             footwear = LoadItems(footwear, "footwear");
 
             // Apparel
-            if (apparel == null || apparel.All(a => a == null))
-                apparel = GenerateItems(new Equipment[0], "apparel");
+            if (apparel == null)
+            {
+                Debug.LogError("Apparel array is null when loading from save!");
+                return;
+            }
             apparel = LoadItems(apparel, "apparel");
 
-            Debug.Log("Set Inventory - Loaded items from save: " + cm.activeEquipID.Length);
+            //Debug.Log("Set Inventory - Loaded items from save: " + cm.activeEquipID.Length);
         }
         else
         {
@@ -163,7 +175,7 @@ public class EquipmentManager : MonoBehaviour
         
         foreach (var eq in activeEquip)
             SetPoints(eq);
-        cm.SaveCareer();
+        //cm.SaveCareer();
     }
 
     public void LoadActiveEquipFromCareerManager(CareerManager cm)
@@ -200,6 +212,7 @@ public class EquipmentManager : MonoBehaviour
             else
                 activeEquip[i] = null;
         }
+        cm.SaveCareer();
     }
 
     public void MainMenu()
@@ -833,7 +846,6 @@ public class EquipmentManager : MonoBehaviour
                         if (i < equipList.Length)
                         {
                             temp[i] = equipList[i];
-                            temp[i].cost = equipList[i].cost;
                         }
                         else
                         {
@@ -873,6 +885,8 @@ public class EquipmentManager : MonoBehaviour
                             temp[i].name = "Exotic Carbon Fibre Handle";
                             temp[i].img = gsImgs[4];
                         }
+
+                        Debug.Log("Loaded " + temp[i].name + " of cost " + temp[i].cost);
                     }
                     break;
                 }

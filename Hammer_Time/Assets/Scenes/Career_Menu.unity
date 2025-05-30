@@ -4128,6 +4128,7 @@ MonoBehaviour:
   inventoryID: 0000000014000000280000003c0000001500000016000000290000002b000000
   inProgress: 0
   season: 0
+  loadedFromSave: 0
   tournyResults: 
   playerPool:
   - name: Tim 'Tam' Dingle
@@ -4138,12 +4139,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 8f98d04ee0c5ee942871526d89c44d1e, type: 3}
     active: 1
     view: 0
-    draw: 3
-    guard: 3
-    takeOut: 2
-    sweepStrength: 5
-    sweepEnduro: 5
-    sweepCohesion: 2
+    draw: 30
+    guard: 30
+    takeOut: 20
+    sweepStrength: 50
+    sweepEnduro: 50
+    sweepCohesion: 20
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4158,12 +4159,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 56041b51583fb44479db50dd7af4ab1e, type: 3}
     active: 1
     view: 0
-    draw: 2
-    guard: 3
-    takeOut: 3
-    sweepStrength: 3
-    sweepEnduro: 3
-    sweepCohesion: 1
+    draw: 20
+    guard: 30
+    takeOut: 30
+    sweepStrength: 30
+    sweepEnduro: 30
+    sweepCohesion: 10
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4178,12 +4179,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 2321c7ee319c6734882876b6ebddcd4e, type: 3}
     active: 1
     view: 0
-    draw: 4
-    guard: 2
-    takeOut: 4
-    sweepStrength: 1
-    sweepEnduro: 1
-    sweepCohesion: 3
+    draw: 40
+    guard: 15
+    takeOut: 45
+    sweepStrength: 5
+    sweepEnduro: 15
+    sweepCohesion: 30
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4197,12 +4198,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: f760c26be31a0384aab821657f9a3fe4, type: 3}
     active: 0
     view: 0
-    draw: 5
-    guard: 5
-    takeOut: 3
-    sweepStrength: 2
-    sweepEnduro: 2
-    sweepCohesion: 1
+    draw: 50
+    guard: 50
+    takeOut: 30
+    sweepStrength: 20
+    sweepEnduro: 25
+    sweepCohesion: 5
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4217,11 +4218,11 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 2c76892a47844014886d19020042c5ed, type: 3}
     active: 0
     view: 0
-    draw: 5
-    guard: 8
-    takeOut: 3
-    sweepStrength: 2
-    sweepEnduro: 1
+    draw: 50
+    guard: 80
+    takeOut: 30
+    sweepStrength: 20
+    sweepEnduro: 10
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -4237,11 +4238,11 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: efcd62d2643c03148a0859e09e5c6931, type: 3}
     active: 0
     view: 0
-    draw: 8
-    guard: 2
-    takeOut: 1
-    sweepStrength: 6
-    sweepEnduro: 4
+    draw: 80
+    guard: 20
+    takeOut: 10
+    sweepStrength: 60
+    sweepEnduro: 40
     sweepCohesion: 0
     oppDraw: 0
     oppGuard: 0
@@ -4257,12 +4258,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 57759ccf1cc5433488326ac2aa50f696, type: 3}
     active: 0
     view: 0
-    draw: 5
+    draw: 50
     guard: 0
-    takeOut: 5
-    sweepStrength: 4
-    sweepEnduro: 4
-    sweepCohesion: 5
+    takeOut: 50
+    sweepStrength: 40
+    sweepEnduro: 40
+    sweepCohesion: 50
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4277,12 +4278,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 838007bc1c7ff2646a1d9a2f428d1cad, type: 3}
     active: 0
     view: 0
-    draw: 2
-    guard: 4
-    takeOut: 2
-    sweepStrength: 4
-    sweepEnduro: 4
-    sweepCohesion: 2
+    draw: 20
+    guard: 40
+    takeOut: 20
+    sweepStrength: 40
+    sweepEnduro: 40
+    sweepCohesion: 20
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4297,12 +4298,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: e7349836d60966340bba9d352b843c4a, type: 3}
     active: 0
     view: 0
-    draw: 5
-    guard: 5
-    takeOut: 5
-    sweepStrength: 5
-    sweepEnduro: 5
-    sweepCohesion: 5
+    draw: 50
+    guard: 50
+    takeOut: 50
+    sweepStrength: 50
+    sweepEnduro: 50
+    sweepCohesion: 50
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4317,12 +4318,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: ae6234133fd860548959b57f82995d5a, type: 3}
     active: 0
     view: 0
-    draw: 3
-    guard: 3
-    takeOut: 3
-    sweepStrength: 7
-    sweepEnduro: 7
-    sweepCohesion: 7
+    draw: 30
+    guard: 30
+    takeOut: 30
+    sweepStrength: 70
+    sweepEnduro: 70
+    sweepCohesion: 70
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4337,12 +4338,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 3859c8d8dd69fc64e931a2440bfb7ab1, type: 3}
     active: 0
     view: 0
-    draw: 6
-    guard: 6
-    takeOut: 6
-    sweepStrength: 4
-    sweepEnduro: 4
-    sweepCohesion: 4
+    draw: 60
+    guard: 60
+    takeOut: 60
+    sweepStrength: 40
+    sweepEnduro: 40
+    sweepCohesion: 40
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4357,12 +4358,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: c804e52da6383cc42912fee09e8446ff, type: 3}
     active: 0
     view: 0
-    draw: 1
-    guard: 1
-    takeOut: 8
-    sweepStrength: 9
-    sweepEnduro: 8
-    sweepCohesion: 3
+    draw: 10
+    guard: 10
+    takeOut: 80
+    sweepStrength: 90
+    sweepEnduro: 80
+    sweepCohesion: 30
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4377,18 +4378,18 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 34bf1e4dae1918b418620f374164b5ed, type: 3}
     active: 0
     view: 0
-    draw: 9
-    guard: 4
-    takeOut: 1
-    sweepStrength: 4
-    sweepEnduro: 9
-    sweepCohesion: 7
+    draw: 90
+    guard: 40
+    takeOut: 10
+    sweepStrength: 40
+    sweepEnduro: 90
+    sweepCohesion: 70
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
-    oppCohesion: 2
+    oppCohesion: -20
   - name: '''Bingo'''
     id: 13
     description: A world-class sweeping specialist, there's no one else you'd want
@@ -4397,18 +4398,18 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 1ba1c12bc933d604eba4248e3166f1a6, type: 3}
     active: 0
     view: 0
-    draw: 6
-    guard: 8
-    takeOut: 2
-    sweepStrength: 10
-    sweepEnduro: 10
-    sweepCohesion: 4
+    draw: 60
+    guard: 80
+    takeOut: 20
+    sweepStrength: 100
+    sweepEnduro: 100
+    sweepCohesion: 40
     oppDraw: 0
     oppGuard: 0
-    oppTakeOut: -1
+    oppTakeOut: -10
     oppStrength: 0
     oppEnduro: 0
-    oppCohesion: -1
+    oppCohesion: -10
   - name: '''Jet'''
     id: 14
     description: Jet is an ace with highly accurate draws and takeouts.  She strikes
@@ -4417,15 +4418,15 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 13320e77a11c63c4a8e33a89ba67c309, type: 3}
     active: 0
     view: 0
-    draw: 10
-    guard: 10
-    takeOut: 8
-    sweepStrength: 3
-    sweepEnduro: 2
-    sweepCohesion: 2
-    oppDraw: -1
-    oppGuard: -1
-    oppTakeOut: -1
+    draw: 100
+    guard: 100
+    takeOut: 80
+    sweepStrength: 30
+    sweepEnduro: 20
+    sweepCohesion: 20
+    oppDraw: -10
+    oppGuard: -10
+    oppTakeOut: -10
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -4438,15 +4439,15 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 9f3f7aa93b81a814c801c27a671cc722, type: 3}
     active: 0
     view: 0
-    draw: 5
-    guard: 5
-    takeOut: 9
-    sweepStrength: 9
-    sweepEnduro: 7
-    sweepCohesion: 7
-    oppDraw: -1
-    oppGuard: -1
-    oppTakeOut: -1
+    draw: 50
+    guard: 50
+    takeOut: 90
+    sweepStrength: 90
+    sweepEnduro: 70
+    sweepCohesion: 70
+    oppDraw: -10
+    oppGuard: -10
+    oppTakeOut: -10
     oppStrength: 0
     oppEnduro: 0
     oppCohesion: 0
@@ -4460,14 +4461,14 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 57b2fd79c6e28ee4e963bc8ec7457c2a, type: 3}
     active: 0
     view: 0
-    draw: 9
-    guard: 7
-    takeOut: 5
-    sweepStrength: 5
-    sweepEnduro: 7
-    sweepCohesion: 9
-    oppDraw: -1
-    oppGuard: -1
+    draw: 90
+    guard: 70
+    takeOut: 50
+    sweepStrength: 50
+    sweepEnduro: 70
+    sweepCohesion: 90
+    oppDraw: -10
+    oppGuard: -10
     oppTakeOut: 0
     oppStrength: 0
     oppEnduro: 0
@@ -4481,17 +4482,17 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: c01c1142b87be8a48a42c518287edefd, type: 3}
     active: 0
     view: 0
-    draw: 8
-    guard: 5
-    takeOut: 7
-    sweepStrength: 10
-    sweepEnduro: 10
-    sweepCohesion: 8
+    draw: 80
+    guard: 50
+    takeOut: 70
+    sweepStrength: 100
+    sweepEnduro: 100
+    sweepCohesion: 80
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
-    oppStrength: -1
-    oppEnduro: -1
+    oppStrength: -10
+    oppEnduro: -10
     oppCohesion: 0
   teamPool:
   - name: Smith

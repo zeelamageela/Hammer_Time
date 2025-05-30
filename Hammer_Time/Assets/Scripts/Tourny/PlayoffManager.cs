@@ -480,7 +480,7 @@ public class PlayoffManager : MonoBehaviour
                 contButton.gameObject.SetActive(false);
                 scrollBar.value = 0.5f;
 				gsp.AutoSave();
-                StartCoroutine(SaveCareer(true));
+                //StartCoroutine(SaveCareer(true));
 				break;
             #endregion
             case 3:

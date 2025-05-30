@@ -272,7 +272,6 @@ public class TeamMenu : MonoBehaviour
                         activePlayers[i].sweepStrength = cm.playerPool[j].sweepStrength;
                         activePlayers[i].sweepEnduro = cm.playerPool[j].sweepEnduro;
                         activePlayers[i].sweepCohesion = cm.playerPool[j].sweepCohesion;
-                        activePlayers[i].ScaleStatsToTotal();
                     }
                 }
             }
@@ -290,7 +289,6 @@ public class TeamMenu : MonoBehaviour
             for (int i = 0; i < activePlayers.Length; i++)
             {
                 activePlayers[i] = cm.playerPool[i];
-                activePlayers[i].ScaleStatsToTotal();
             }
 
             Shuffle(cm.playerPool);
@@ -437,7 +435,6 @@ public class TeamMenu : MonoBehaviour
                 if (cm.playerPool[j].active && !stop)
                 {
                     activePlayers[i] = cm.playerPool[j];
-                    activePlayers[i].ScaleStatsToTotal();
                     stop = true;
                 }
             }
@@ -465,7 +462,6 @@ public class TeamMenu : MonoBehaviour
             {
                 cm.playerPool[i].active = true;
                 activePlayers[playerToReplace] = cm.playerPool[i];
-                activePlayers[playerToReplace].ScaleStatsToTotal();
             }
         }
         freeAgents[freeAgent] = tempPlayer;

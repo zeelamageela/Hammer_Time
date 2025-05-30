@@ -9,6 +9,7 @@ public class TournySettings : MonoBehaviour
 {
     GameSettingsPersist gsp;
     CareerManager cm;
+    public TournySelector tSel;
 
     public Text tournyName;
 
@@ -16,10 +17,14 @@ public class TournySettings : MonoBehaviour
     public int ends;
     public int teams;
     public int prize;
+    public string format;
+    public string location;
+    public Image trophy;
     public int games;
     public float earnings;
     public float entryFee;
 
+    public GameObject tournyGO;
     public GameObject expandButton;
     public GameObject settings;
     public Slider gameSlider;
@@ -34,7 +39,6 @@ public class TournySettings : MonoBehaviour
     public DialogueTrigger coachGreen;
     public GameObject dialogueGO;
 
-    EasyFileSave myFile;
 
     void Start()
     {
@@ -42,25 +46,7 @@ public class TournySettings : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
 
         rockSlider.interactable = false;
-        if (cm)
-        {
-            gsp.tournyEarnings = 0;
-
-            teams = cm.currentTournyTeams.Length;
-            entryFee = cm.currentTourny.entryFee;
-            prize = cm.currentTourny.prizeMoney;
-            Settings();
-        }
-
-        if (gsp.cashGame)
-        {
-            endSlider.value = gsp.ends;
-            rockSlider.value = 2;
-            gameSlider.value = 1;
-            endSlider.transform.parent.gameObject.SetActive(false);
-            rockSlider.interactable = false;
-            gameSlider.transform.parent.gameObject.SetActive(false);
-        }
+        
         //else
         //    StartCoroutine(LoadFromFile());
 
@@ -71,8 +57,16 @@ public class TournySettings : MonoBehaviour
     {
         if (settings.activeSelf)
         {
+            if (endSlider.value <= 2)
+                endSlider.value = 2;
             ends = (int)endSlider.value;
+
+            if (rockSlider.value <= 2)
+                gameSlider.value = 2;
             rocks = (int)rockSlider.value;
+
+            if (gameSlider.value <= (gameSlider.minValue + 1))
+                gameSlider.value = gameSlider.minValue + 1;
             games = (int)gameSlider.value;
 
             endText.text = ends.ToString();
@@ -80,32 +74,6 @@ public class TournySettings : MonoBehaviour
             gameText.text = games.ToString();
 
         }
-    }
-
-    IEnumerator LoadFromFile()
-    {
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        myFile = new EasyFileSave("my_player_data");
-
-        //gsp.earnings = cm.earnings;
-
-        if (myFile.Load())
-        {
-            if (gsp.tournyInProgress)
-            {
-                prize = myFile.GetInt("Prize");
-                teams = myFile.GetInt("Number Of Teams");
-                ends = myFile.GetInt("Ends");
-                rocks = myFile.GetInt("Rocks");
-
-            }
-            //Vector2 tempRecord = myFile.GetUnityVector2("Career Record");
-            //record = new Vector2Int((int)tempRecord.x, (int)tempRecord.y);
-
-            myFile.Dispose();
-            yield return new WaitForEndOfFrame();
-        }
-
     }
 
     public void LoadToGSP()
@@ -144,21 +112,39 @@ public class TournySettings : MonoBehaviour
 
     public void Player()
     {
-
         settings.SetActive(false);
     }
 
     public void Settings()
     {
-        cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        tournyGO.SetActive(true);
+        if (cm)
+        {
+            gsp.tournyEarnings = 0;
 
+            teams = cm.currentTournyTeams.Length;
+            format = cm.currentTourny.format;
+            entryFee = cm.currentTourny.entryFee;
+            prize = cm.currentTourny.prizeMoney;
+            trophy.sprite = cm.currentTourny.image;
+            location = cm.currentTourny.location;
+        }
+
+        if (gsp.cashGame)
+        {
+            endSlider.value = gsp.ends;
+            rockSlider.value = 2;
+            gameSlider.value = 1;
+            endSlider.transform.parent.gameObject.SetActive(false);
+            rockSlider.interactable = false;
+            gameSlider.transform.parent.gameObject.SetActive(false);
+        }
         //if (cm.week == 1)
         //{
         //    //Help();
         //}
 
-        if (gsp.KO3)
+        if (gsp.KO3 || gsp.KO1)
         {
             gameText.gameObject.SetActive(false);
             gameSlider.gameObject.SetActive(false);
@@ -169,28 +155,32 @@ public class TournySettings : MonoBehaviour
         {
             if (teams > 12)
             {
-                gameSlider.minValue = 5;
+                gameSlider.minValue = 4;
                 games = 5;
             }
             else if (teams > 8)
             {
-                gameSlider.minValue = 4;
+                gameSlider.minValue = 3;
                 games = 4;
             }
             else
             {
-                gameSlider.minValue = 3;
+                gameSlider.minValue = 2;
                 games = 3;
             }
             gameSlider.maxValue = teams - 1;
         }
         tournyName.text = cm.currentTourny.name;
-        tournyInfoText[0].text = cm.currentTourny.teams.ToString();
-        tournyInfoText[1].text = cm.currentTourny.format;
-        tournyInfoText[2].text = "$" + cm.currentTourny.prizeMoney.ToString("n0");
-        tournyInfoText[3].text = "$" + cm.currentTourny.entryFee.ToString("n0");
-        ends = 2;
-        rocks = 2;
+        tournyInfoText[0].text = teams.ToString();
+        tournyInfoText[1].text = format;
+        tournyInfoText[2].text = "$" + prize.ToString("n0");
+        tournyInfoText[3].text = "$" + entryFee.ToString("n0");
+        tournyInfoText[4].text = location;
+        if (gsp.ends <= 0)
+            ends = 2;
+        else
+            ends = gsp.ends;
+        rocks = gsp.rocks;
         rockSlider.interactable = true;
         endSlider.interactable = true;
     }
@@ -218,14 +208,13 @@ public class TournySettings : MonoBehaviour
         if (active)
         {
             expandAnim.SetBool("Expand", true);
-            expandButton.transform.GetChild(0).gameObject.SetActive(false);
-            StartCoroutine(WaitForTime(0.35f));
+            expandButton.gameObject.SetActive(false);
+            settings.gameObject.SetActive(true);
         }
         else
         {
             expandAnim.SetBool("Expand", false);
-            expandButton.transform.GetChild(0).gameObject.SetActive(true);
-            settings.gameObject.SetActive(true);
+            expandButton.gameObject.SetActive(true);
         }
     }
 
@@ -279,15 +268,13 @@ public class TournySettings : MonoBehaviour
         cm.currentTourny.complete = false;
         
         cm.SaveCareer();
-        SceneManager.LoadScene("Arena_Selector");
+        tournyGO.SetActive(false);
+
+        tSel.SetActiveTournies();
+        //SceneManager.LoadScene("Arena_Selector");
     }
     public void MainMenu()
     {
         SceneManager.LoadScene("SplashMenu");
-    }
-
-    public void ClearPlayer()
-    {
-        myFile.Delete();
     }
 }

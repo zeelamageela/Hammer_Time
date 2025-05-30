@@ -368,7 +368,7 @@ public class GameSettingsPersist : MonoBehaviour
         playoffRound = 0;
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
-        //cm.SaveCareer(this);
+        cm.SaveCareer(this);
     }
 
     public void TournySetup(int btn = 0)
@@ -625,7 +625,7 @@ public class GameSettingsPersist : MonoBehaviour
         //cm.LoadCareer(this);
         teamList = new List<Team_List>();
         //inProgress = true;
-        cm.LoadTournyState();
+        //cm.LoadTournyState();
         
         Debug.Log("teamList Count is " + teamList.Count);
     }

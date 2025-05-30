@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
-using static Photon.Pun.UtilityScripts.PunTeams;
 
 public class EndMenu : MonoBehaviour
 {
@@ -59,6 +58,7 @@ public class EndMenu : MonoBehaviour
             {
                 end.text = "Cash Game";
             }
+
             if (gsp.endCurrent == 0)
             {
                 contButton.gameObject.SetActive(true);
@@ -309,8 +309,15 @@ public class EndMenu : MonoBehaviour
             Vector2 tempTotal = Vector2.zero;
             for (int i = 0; i < gsp.score.Length; i++)
             {
-                tempTotal.x += gsp.score[i].x;
-                tempTotal.y += gsp.score[i].y;
+                if (gsp.endCurrent == 0)
+                {
+                    tempTotal = Vector2.zero; // Reset total for first end
+                }
+                else
+                {
+                    tempTotal.x += gsp.score[i].x;
+                    tempTotal.y += gsp.score[i].y;
+                }
             }
             redTotalScore.text = tempTotal.x.ToString();
             yellowTotalScore.text = tempTotal.y.ToString();
@@ -341,6 +348,9 @@ public class EndMenu : MonoBehaviour
         gsp.endCurrent++;
         gsp.gameInProgress = true;
 
+        int endsLeft = gsp.ends - gsp.endCurrent;
+        bool lastTwoEnds = gsp.endCurrent >= gsp.ends - 1; // true for last two ends
+
         if (gsp.ends >= gsp.endCurrent)
         {
             Debug.Log("Game is on!");
@@ -370,6 +380,23 @@ public class EndMenu : MonoBehaviour
                     else
                         yellowChance += 1.0f;
 
+                    // --- Blank end logic ---
+                    if (!lastTwoEnds)
+                    {
+                        // Early/mid game: favor blank ends (e.g., 40% chance)
+                        float blankChance = 0.4f;
+                        if (Random.value < blankChance)
+                        {
+                            tempScore[j].x = 0;
+                            tempScore[j].y = 0;
+                            // Hammer is retained
+                            // No need to switch hammer
+                            continue;
+                        }
+                    }
+                    // Last two ends: no blank ends allowed
+                    // If blank would occur, force a score
+
                     // Simulate end result
                     if (redChance > yellowChance)
                     {
@@ -390,9 +417,29 @@ public class EndMenu : MonoBehaviour
                     }
                     else
                     {
-                        // Blank end
-                        tempScore[j].x = 0;
-                        tempScore[j].y = 0;
+                        // If last two ends, force a score for the hammer team
+                        if (lastTwoEnds)
+                        {
+                            if (gsp.redHammer)
+                            {
+                                tempScore[j].x = 1;
+                                tempScore[j].y = 0;
+                                gsp.redHammer = false;
+                            }
+                            else
+                            {
+                                tempScore[j].y = 1;
+                                tempScore[j].x = 0;
+                                gsp.redHammer = true;
+                            }
+                        }
+                        else
+                        {
+                            // Should not reach here due to blankChance, but fallback
+                            tempScore[j].x = 0;
+                            tempScore[j].y = 0;
+                            // Hammer retained
+                        }
                     }
                 }
             }
