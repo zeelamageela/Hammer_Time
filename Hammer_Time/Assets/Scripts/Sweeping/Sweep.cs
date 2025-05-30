@@ -8,7 +8,7 @@ public class Sweep : MonoBehaviour
 {
     public GameManager gm;
     public SweeperManager sm;
-    public MMFeedbackFloatingText fltText;
+    public MMF_FloatingText fltText;
 
     RockManager rm;
     GameObject rock;
@@ -127,11 +127,11 @@ public class Sweep : MonoBehaviour
 
         Debug.Log("Sweep Amount is " + ((statCalc / 2f) * sweepAmt));
 
-        rb.drag -= sweepAmt * statCalc / 2f;
+        rb.linearDamping -= sweepAmt * statCalc / 2f;
 
         if (gm.debug)
         {
-            fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+            fltText.Value = "Drag - " + rb.linearDamping.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
             fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
             fltText.Direction = sm.sweepSel.moveDirection;
             fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position, 2f);
@@ -144,13 +144,13 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
-        rb.drag = 0.38f;
-        rb.angularDrag = 0.32f;
+        rb.linearDamping = 0.38f;
+        rb.angularDamping = 0.32f;
 
         yield return new WaitForSeconds(sweepTime);
         //sm.SweepHard();
         //sweepSel.SweepHard();
-        rb.drag = (rb.drag - (1.5f * sweepAmt));
+        rb.linearDamping = (rb.linearDamping - (1.5f * sweepAmt));
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + ((statCalc / 2f) * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
@@ -171,8 +171,8 @@ public class Sweep : MonoBehaviour
         //rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
-        rb.drag = 0.38f;
-        rb.angularDrag = 0.32f;
+        rb.linearDamping = 0.38f;
+        rb.angularDamping = 0.32f;
 
         yield return new WaitForSeconds(sweepTime);
 
@@ -187,7 +187,7 @@ public class Sweep : MonoBehaviour
         //    //sweepSel.SweepRight();
         //}
 
-        rb.drag -= sweepAmt * statCalc / 4f;
+        rb.linearDamping -= sweepAmt * statCalc / 4f;
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + (statCalc * sweepAmt * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
@@ -195,7 +195,7 @@ public class Sweep : MonoBehaviour
 
         if (gm.debug)
         {
-            fltText.Value = "Drag - " + rb.drag.ToString() + " --- Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+            fltText.Value = "Drag - " + rb.linearDamping.ToString() + " --- Curl - " + rock.GetComponent<Rock_Force>().curl.x;
             fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
             fltText.Direction = sm.sweepSel.moveDirection;
             fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position, 2f);
@@ -213,8 +213,8 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
-        rb.drag = 0.38f;
-        rb.angularDrag = 0.32f;
+        rb.linearDamping = 0.38f;
+        rb.angularDamping = 0.32f;
 
         yield return new WaitForSeconds(sweepAmt);
 
@@ -229,7 +229,7 @@ public class Sweep : MonoBehaviour
         //    //sweepSel.SweepLeft();
         //}
 
-        rb.drag -= sweepAmt * statCalc / 4f;
+        rb.linearDamping -= sweepAmt * statCalc / 4f;
 
         float curl = rock.GetComponent<Rock_Force>().curl.x - (sweepAmt * statCalc * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
@@ -237,7 +237,7 @@ public class Sweep : MonoBehaviour
 
         if (gm.debug)
         {
-            fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+            fltText.Value = "Drag - " + rb.linearDamping.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
             fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
             fltText.Direction = sm.sweepSel.moveDirection;
             fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);
@@ -256,13 +256,13 @@ public class Sweep : MonoBehaviour
         rock.GetComponent<Rock_Force>().curl.x = -0.5f;
 
         //Time.timeScale = 1f;
-        rb.drag = 0.38f;
-        rb.angularDrag = 0.32f;
+        rb.linearDamping = 0.38f;
+        rb.angularDamping = 0.32f;
         //Debug.Log("Curl is " + rock.GetComponent<Rock_Force>().curl.x);
 
         if (gm.debug)
         {
-            fltText.Value = "Drag - " + rb.drag.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
+            fltText.Value = "Drag - " + rb.linearDamping.ToString() + " /-/ Curl - " + rock.GetComponent<Rock_Force>().curl.x;
             fltText.TargetTransform = gm.rockList[gm.rockCurrent].rock.transform;
             fltText.Direction = sm.sweepSel.moveDirection;
             fltText.Play(gm.rockList[gm.rockCurrent].rock.transform.position);

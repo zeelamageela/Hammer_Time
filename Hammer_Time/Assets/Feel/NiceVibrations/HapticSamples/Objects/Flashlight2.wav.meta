@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c4a9b24a45d40455298b260cadbeaf3a
+guid: 65057fd32163e4aab8c8744b3231de63
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Flashlight2.wav
+  uploadId: 759320

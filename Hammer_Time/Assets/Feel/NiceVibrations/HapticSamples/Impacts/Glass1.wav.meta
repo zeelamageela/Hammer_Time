@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8694b04a08a264b4e9fcb4ad2fdad2d2
+guid: a582528a989a849d8b089b8bd4398298
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Impacts/Glass1.wav
+  uploadId: 759320

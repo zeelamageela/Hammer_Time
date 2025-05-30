@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b31b59d6168f743afa061416e57b3cc1
+guid: 0cc8b736879e846a19b851eb815591a8
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Coin1.wav
+  uploadId: 759320

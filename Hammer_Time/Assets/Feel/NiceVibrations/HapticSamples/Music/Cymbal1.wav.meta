@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7821c811756c24782bd668038a00e4c6
+guid: a9441784149b3412aa2800f86d9a0647
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Music/Cymbal1.wav
+  uploadId: 759320

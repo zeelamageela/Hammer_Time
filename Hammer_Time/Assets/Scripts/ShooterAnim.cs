@@ -139,7 +139,7 @@ public class ShooterAnim : MonoBehaviour
     {
         //Debug.Log("slowdon " + slowdownTimer);
         rb.freezeRotation = true;
-        rb.drag = 0.25f * slowdownTimer;
+        rb.linearDamping = 0.25f * slowdownTimer;
 
         yield return new WaitForFixedUpdate();
 

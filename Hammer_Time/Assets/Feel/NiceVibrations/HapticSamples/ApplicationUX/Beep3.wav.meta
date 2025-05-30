@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 87330e686eec5485b9d791f320125d9c
+guid: ebf4609aed0dc4d82ad954bb603461fd
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/ApplicationUX/Beep3.wav
+  uploadId: 759320

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d2dfb4d4f15794fc29b416b9aa242889
+guid: 400bfadff74d1423c93ffffb0666fa04
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Weapons/PistolFire1.wav
+  uploadId: 759320

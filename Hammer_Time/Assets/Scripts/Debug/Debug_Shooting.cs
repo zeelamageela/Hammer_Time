@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 
 public class Debug_Shooting : MonoBehaviour
 {
@@ -68,7 +68,7 @@ public class Debug_Shooting : MonoBehaviour
 
                 Debug.Log("Debug Stop");
 
-                rb.velocity = Vector2.zero;
+                rb.linearVelocity = Vector2.zero;
             }
         }
     }
@@ -162,7 +162,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(houseForce * 1000f);
-        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -184,7 +184,7 @@ public class Debug_Shooting : MonoBehaviour
 
         rb.AddForce(buttonForce * 1000f);
         yield return new WaitForSeconds(0.1f);
-        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -206,7 +206,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(guardForce * 1000f);
-        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -226,7 +226,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(takeoutForce * 1000f);
-        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -247,7 +247,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(customForce * 1000f);
-        Debug.Log(rb.velocity.x + ", " + rb.velocity.y);
+        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;

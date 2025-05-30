@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fe163f5b5b87b4565abe26e234ccbdba
+guid: 7b27863d254b64b43a78a2b21773bad2
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Keyboard3.wav
+  uploadId: 759320

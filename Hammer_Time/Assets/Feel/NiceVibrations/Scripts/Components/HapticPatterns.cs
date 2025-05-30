@@ -1,3 +1,5 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates. 
+
 using System;
 using UnityEngine;
 using System.Globalization;
@@ -10,6 +12,10 @@ namespace Lofelt.NiceVibrations
     ///
     /// Each of the methods here load and play a simple haptic clip or a
     /// haptic pattern, depending on the device capabilities.
+    ///
+    /// None of the methods here are thread-safe and should only be called from
+    /// the main (Unity) thread. Calling these methods from a secondary thread can
+    /// cause undefined behaviour and memory leaks.
     ///
     /// After playback has finished, the loaded clips in this class will remain
     /// loaded in HapticController.
@@ -124,7 +130,7 @@ namespace Lofelt.NiceVibrations
         // A Preset has four different representations, as there are four different playback methods.
         // Each representation is created at construction time, so that playing a
         // Preset has no further conversion cost at playback time.
-        struct Preset
+        internal struct Preset
         {
             // For playback on iOS, using system haptics
             public PresetType type;
@@ -168,47 +174,47 @@ namespace Lofelt.NiceVibrations
         /// <summary>
         /// Predefined Preset that represents a "Selection" haptic preset
         /// </summary>
-        static Preset Selection;
+        internal static Preset Selection;
 
         /// <summary>
         /// Predefined Preset that represents a "Light" haptic preset
         /// </summary>
-        static Preset Light;
+        internal static Preset Light;
 
         /// <summary>
         /// Predefined Preset that represents a "Medium" haptic preset
         /// </summary>
-        static Preset Medium;
+        internal static Preset Medium;
 
         /// <summary>
         /// Predefined Preset that represents a "Heavy" haptic preset
         /// </summary>
-        static Preset Heavy;
+        internal static Preset Heavy;
 
         /// <summary>
         /// Predefined Preset that represents a "Rigid" haptic preset
         /// </summary>
-        static Preset Rigid;
+        internal static Preset Rigid;
 
         /// <summary>
         /// Predefined Preset that represents a "Soft" haptic preset
         /// </summary>
-        static Preset Soft;
+        internal static Preset Soft;
 
         /// <summary>
         /// Predefined Preset that represents a "Success" haptic preset
         /// </summary>
-        static Preset Success;
+        internal static Preset Success;
 
         /// <summary>
         /// Predefined Preset that represents a "Failure" haptic preset
         /// </summary>
-        static Preset Failure;
+        internal static Preset Failure;
 
         /// <summary>
         /// Predefined Preset that represents a "Warning" haptic preset
         /// </summary>
-        static Preset Warning;
+        internal static Preset Warning;
 
         static HapticPatterns()
         {

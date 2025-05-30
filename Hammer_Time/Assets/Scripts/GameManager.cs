@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Cinemachine;
+using Unity.Cinemachine;
 using TigerForge;
 using Photon.Pun;
 using Lofelt.NiceVibrations;
@@ -745,10 +745,10 @@ public class GameManager : MonoBehaviour
         foreach (Rock_List rock in rockList)
         {
             Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
-            if (Mathf.Abs(rockRB.velocity.y) > 0.01f && Mathf.Abs(rockRB.velocity.x) > 0.01f)
+            if (Mathf.Abs(rockRB.linearVelocity.y) > 0.01f && Mathf.Abs(rockRB.linearVelocity.x) > 0.01f)
             {
                 //Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
-                yield return new WaitUntil(() => Mathf.Abs(rockRB.velocity.y) < 0.01f && Mathf.Abs(rockRB.velocity.x) < 0.01f);
+                yield return new WaitUntil(() => Mathf.Abs(rockRB.linearVelocity.y) < 0.01f && Mathf.Abs(rockRB.linearVelocity.x) < 0.01f);
             }
         }
         yield return new WaitForEndOfFrame();

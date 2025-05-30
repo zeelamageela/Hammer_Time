@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cbb05ad78651a4fd5b32ff0075c994ee
+guid: ab652d55be92c4caa86265a2e4a757d9
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Velcro2.wav
+  uploadId: 759320

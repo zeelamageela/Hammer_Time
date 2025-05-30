@@ -60,7 +60,7 @@ public class Rock_Force : MonoBehaviour
 
         Vector2 vel = new Vector2(velX * scaleFactor, velY);
 
-        float audVel = am.maxVol * (body.velocity.y / 4f) ;
+        float audVel = am.maxVol * (body.linearVelocity.y / 4f) ;
         rockSounds[1].volume = audVel;
 
         HapticController.Load(slideHap);
@@ -82,13 +82,13 @@ public class Rock_Force : MonoBehaviour
             //Debug.Log("Curl Force");
             body.AddForce(curl * vel, ForceMode2D.Force);
             //Debug.Log("curl is " + curl.x);
-            if (Mathf.Abs(body.velocity.y) < 0.01f && Mathf.Abs(body.velocity.x) < 0.01f)
+            if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
             {
                 //Debug.Log("Velocity below 0.01");
                 //am.Stop("RockScrape");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
-                body.drag = 0.55f;
+                body.linearDamping = 0.55f;
                 HapticController.Stop();
             }
 

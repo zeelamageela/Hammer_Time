@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6d80d14b3cbaa4e45989d63d970f42e4
+guid: 9125840b6d4c34a0d9a284aa76407a43
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Keys1.wav
+  uploadId: 759320

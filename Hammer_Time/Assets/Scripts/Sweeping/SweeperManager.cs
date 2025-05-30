@@ -48,7 +48,7 @@ public class SweeperManager : MonoBehaviour
 
     public GameObject aimCircle;
     public HapticClip sweepHap;
-    public MMFeedbackFloatingText fltText;
+    public MMF_FloatingText fltText;
 
     void Awake()
     {

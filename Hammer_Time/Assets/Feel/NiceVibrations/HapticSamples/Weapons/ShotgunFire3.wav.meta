@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1ef1a43192cc449128bb99e7978a837a
+guid: db43be1b3b3c343a9b59ce8cd6e05177
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Weapons/ShotgunFire3.wav
+  uploadId: 759320

@@ -107,7 +107,7 @@ public class Rock_Colliders : MonoBehaviour
         gameObject.GetComponent<Animator>().enabled = true;
 
         yield return new WaitForSeconds(0.5f);
-        body.velocity = Vector2.zero;
+        body.linearVelocity = Vector2.zero;
         gameObject.SetActive(false);
     }
 
@@ -126,7 +126,7 @@ public class Rock_Colliders : MonoBehaviour
             Debug.Log("rock is in play");
             inPlay = true;
 
-            Debug.Log("Far Hogline velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
+            Debug.Log("Far Hogline velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
         }
 
         if (collider == boards_collider)
@@ -141,7 +141,7 @@ public class Rock_Colliders : MonoBehaviour
         {
             inHouse = true;
             Debug.Log("In House");
-            Debug.Log("House velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
+            Debug.Log("House velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
         }
     }
 

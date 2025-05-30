@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3f0b90a914d5b4dc69bf3cb939e4ef9b
+guid: 59e2d9940033545829537d70cdc9f04f
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Book1.wav
+  uploadId: 759320

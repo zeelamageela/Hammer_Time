@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0743446745832415a89bb6e8cb65fe1f
+guid: 292aad821b16948af9cba9deaca16525
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/ApplicationUX/Button2.wav
+  uploadId: 759320

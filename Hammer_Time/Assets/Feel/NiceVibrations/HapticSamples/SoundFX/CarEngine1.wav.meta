@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 098448c5fcb1d4f3a82d4a9aa969c7ed
+guid: 72c274521f3154cc4b3c1db9ca2deb64
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/SoundFX/CarEngine1.wav
+  uploadId: 759320

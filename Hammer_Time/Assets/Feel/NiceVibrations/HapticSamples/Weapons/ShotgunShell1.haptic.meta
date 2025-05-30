@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 28ad2f0f9a074410d9d481098e6bdbec
+guid: 1ccced4156f904b4ab04ada67006bbeb
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: dc84fb4fa9e67485a972c887d976d004, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Weapons/ShotgunShell1.haptic
+  uploadId: 759320

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ec4327fbf200740078b8567f35a5197a
+guid: c4c3b1884bce24d589784ec568ffc26a
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: dc84fb4fa9e67485a972c887d976d004, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/SwitchMed1.haptic
+  uploadId: 759320

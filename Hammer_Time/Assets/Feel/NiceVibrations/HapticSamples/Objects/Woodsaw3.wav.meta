@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8308efe8aa69048c5a50f33d4e1dc747
+guid: ad72bc780f3af4389be22960665a8d45
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Woodsaw3.wav
+  uploadId: 759320

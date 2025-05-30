@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fefd12377f2264b72be4c01f9036ac33
+guid: f6409eaded04a4508a90a669fa70d734
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Nature/Rain1.wav
+  uploadId: 759320

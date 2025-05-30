@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c8f98e329e35449eb993a0e42403a25e
+guid: 8db0c6f80a07e4f4a8dc26eefab9cf81
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/Hammer1.wav
+  uploadId: 759320

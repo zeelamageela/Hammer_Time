@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 32a868905f4804a71952d66516eef3c6
+guid: 07da0761b3d1343e896f689ad2577eb9
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: dc84fb4fa9e67485a972c887d976d004, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Weapons/DistanceGunShot2.haptic
+  uploadId: 759320

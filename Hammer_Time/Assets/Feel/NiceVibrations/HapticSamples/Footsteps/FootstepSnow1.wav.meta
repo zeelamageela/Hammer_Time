@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 46363f90723ce4fcb958be8911582db0
+guid: 08ad2b50bcdd548da9fdd9ef4a1e9d43
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Footsteps/FootstepSnow1.wav
+  uploadId: 759320

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: bf60a5a9bd0c94cf4bb1d130d81a8ed7
+guid: 7e492ad07b6d548eea10ccbd1962e88f
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/ApplicationUX/Alert1.wav
+  uploadId: 759320

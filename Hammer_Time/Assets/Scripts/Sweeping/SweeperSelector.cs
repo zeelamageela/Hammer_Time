@@ -62,7 +62,7 @@ public class SweeperSelector : MonoBehaviour
             //}
 
             
-            moveDirection = rockRB.velocity;
+            moveDirection = rockRB.linearVelocity;
 
             if (moveDirection != Vector2.zero)
             {
@@ -85,7 +85,7 @@ public class SweeperSelector : MonoBehaviour
             }
             if (rock2RB != null)
             {
-            moveDirection2 = rock2RB.velocity;
+            moveDirection2 = rock2RB.linearVelocity;
 
             if (moveDirection != Vector2.zero)
             {

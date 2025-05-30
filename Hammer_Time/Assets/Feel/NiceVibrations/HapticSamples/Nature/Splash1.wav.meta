@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: edc4ab47e06e34f9b8085caa70eb01ad
+guid: 6d55888e6190b4ecd9d69a9120fbc7a3
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Nature/Splash1.wav
+  uploadId: 759320

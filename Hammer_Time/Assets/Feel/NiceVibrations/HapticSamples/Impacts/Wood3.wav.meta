@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7e9ad28ef46494e02a6312515a3d9014
+guid: 1ecf85b167cc547beb5e448c3084fd7f
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Impacts/Wood3.wav
+  uploadId: 759320

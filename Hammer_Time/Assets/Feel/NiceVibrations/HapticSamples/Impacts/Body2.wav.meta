@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 887e77c6618854dbbb5b9ebb9568d6d5
+guid: f35c236fc97db4309b80d8b34da60785
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Impacts/Body2.wav
+  uploadId: 759320

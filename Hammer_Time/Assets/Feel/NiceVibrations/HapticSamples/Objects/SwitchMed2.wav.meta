@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8432ee0e5e55b4171ba599ecb5dcab9b
+guid: fadb07e8551cd4db2a081ec1b9702af6
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/SwitchMed2.wav
+  uploadId: 759320

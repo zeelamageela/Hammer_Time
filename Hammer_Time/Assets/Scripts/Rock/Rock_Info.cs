@@ -94,7 +94,7 @@ public class Rock_Info : MonoBehaviour
                 hit = false;
             }
 
-            if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.y) > 0.01f && Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > 0.01f)
+            if (Mathf.Abs(GetComponent<Rigidbody2D>().linearVelocity.y) > 0.01f && Mathf.Abs(GetComponent<Rigidbody2D>().linearVelocity.x) > 0.01f)
             {
                 stopped = false;
                 moving = true;

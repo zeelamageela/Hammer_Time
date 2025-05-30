@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a70be840bf80b4e2aa757d3bab143830
+guid: 1374cfa9612054293957a7b66d7f8488
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: dc84fb4fa9e67485a972c887d976d004, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Weapons/HeavyMachineGunFire1.haptic
+  uploadId: 759320

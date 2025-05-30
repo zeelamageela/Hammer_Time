@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0722f72ab4d5646c6b461dfaec74e559
+guid: 3bc013dad63a144f180df160104b4242
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Impacts/CombatPunch1.wav
+  uploadId: 759320

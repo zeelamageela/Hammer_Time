@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3c11249f22b6e4940afe566aa438ad41
+guid: bbec1866c8d0041ccba6df06af0e17fd
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Objects/SwitchLight1.wav
+  uploadId: 759320

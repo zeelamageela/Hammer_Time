@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cf2c84eee091348dab90ad62bfde5d81
+guid: 81bb5ef83e33448a4a77f92040007a11
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,3 +8,10 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: dc84fb4fa9e67485a972c887d976d004, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 5.5
+  assetPath: Assets/Feel/NiceVibrations/HapticSamples/Impacts/Wood3.haptic
+  uploadId: 759320
