@@ -54,9 +54,9 @@ public class CareerSettings : MonoBehaviour
 
     void Start()
     {
-        am = FindObjectOfType<AudioManager>();
-        cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        am = FindFirstObjectByType<AudioManager>();
+        cm = FindFirstObjectByType<CareerManager>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
         gradient = new Gradient();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
@@ -108,7 +108,7 @@ public class CareerSettings : MonoBehaviour
 
     public void LoadToCM()
     {
-        cm = FindObjectOfType<CareerManager>();
+        cm = FindFirstObjectByType<CareerManager>();
         cm.LoadSettings();
         ginProg = gsp.loadGame;
 
@@ -200,9 +200,9 @@ public class CareerSettings : MonoBehaviour
 
     public void New()
     {
-        ClearPlayer();
-        cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        //ClearPlayer();
+        cm = FindFirstObjectByType<CareerManager>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
 
         cm.gameOver = false;
         nextButton.transform.parent.gameObject.SetActive(true);
@@ -217,7 +217,7 @@ public class CareerSettings : MonoBehaviour
         gsp.tournyInProgress = false;
         cm.inProgress = false;
 
-        cm.activeEquipID = null;
+        //cm.activeEquipID = null;
         cm.inventoryID = null;
 
         load.SetActive(false);

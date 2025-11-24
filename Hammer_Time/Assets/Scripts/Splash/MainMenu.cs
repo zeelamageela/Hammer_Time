@@ -35,9 +35,13 @@ public class MainMenu : MonoBehaviour
             allTimeEarningsList = myFile.GetArray<float>("All Time Earnings");
             allTimeNamesList = myFile.GetArray<string>("All Time Names");
             trophyWonList = myFile.GetList<bool>("All Time Trophies Won");
-            for (int i = 0; i < trophyWon.Length; i++)
+
+            if (trophyWonList.Count > 0)
             {
-                trophyWon[i] = trophyWonList[i];
+                for (int i = 0; i < trophyWon.Length; i++)
+                {
+                    trophyWon[i] = trophyWonList[i];
+                }
             }
             allTimeEarnings.text = "$" + allTimeEarningsList[0].ToString("n0");
             allTimeNames.text = allTimeNamesList[0];

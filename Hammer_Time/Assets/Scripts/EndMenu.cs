@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using Photon.Pun.UtilityScripts;
 
 public class EndMenu : MonoBehaviour
 {
@@ -46,8 +45,8 @@ public class EndMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        cm = FindObjectOfType<CareerManager>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
+        cm = FindFirstObjectByType<CareerManager>();
 
         if (gsp)
         {
@@ -189,20 +188,24 @@ public class EndMenu : MonoBehaviour
                     draw.text = "Round " + gsp.playoffRound.ToString();
                 else if (gsp.KO1)
                 {
-                    switch(gsp.playoffRound)
+                    if (gsp.KO1)
                     {
-                        case 0:
+                        if (gsp.playoffRound == 1)
+                        {
                             draw.text = "Round of 16";
-                            break;
-                        case 1:
+                        }
+                        if (gsp.playoffRound == 2)
+                        {
                             draw.text = "Quarterfinals";
-                            break;
-                        case 2:
+                        }
+                        if (gsp.playoffRound == 3)
+                        {
                             draw.text = "Semifinals";
-                            break;
-                        case 3:
+                        }
+                        if (gsp.playoffRound == 4)
+                        {
                             draw.text = "Finals";
-                            break;
+                        }
                     }
                 }
                 else
@@ -337,8 +340,8 @@ public class EndMenu : MonoBehaviour
 
     public void Continue()
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
 
         SceneManager.LoadScene("TournyGame");
     }
@@ -379,7 +382,7 @@ public class EndMenu : MonoBehaviour
                         redChance += 1.0f;
                     else
                         yellowChance += 1.0f;
-
+                    Debug.Log("Red " + redTeamName + " chance: " + redChance + ", Yellow " + yellowTeamName + " chance: " + yellowChance);
                     // --- Blank end logic ---
                     if (!lastTwoEnds)
                     {
@@ -844,9 +847,13 @@ public class EndMenu : MonoBehaviour
             cm.SaveCareer();
         }
         if (gsp.KO3)
+        {
             SceneManager.LoadScene("Tourny_Home_3K");
+        }
         else if (gsp.KO1)
+        {
             SceneManager.LoadScene("Tourny_Home_SingleK");
+        }
         else
             SceneManager.LoadScene("Tourny_Home_1");
     }

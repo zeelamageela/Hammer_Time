@@ -58,10 +58,10 @@ public class CharacterStats : MonoBehaviour
     }
     public void OnSweepFatigue(float fatigue)
     {
-        fatigue -= (sweepEndurance.GetValue() * 0.065f);
-        //Debug.Log("Fatigue is " + fatigue);
+        fatigue -= 0.01f * (100f - sweepEndurance.GetValue());
+        Debug.Log("Fatigue is " + fatigue);
         sweepHealth -= fatigue;
-        //Debug.Log("Sweep Health is " + fatigue);
+        Debug.Log("Sweep Health is " + fatigue);
 
         if (sweepHealth <= 0)
         {
@@ -73,15 +73,18 @@ public class CharacterStats : MonoBehaviour
     public void OnSweepRecover()
     {
         if (sweepHealth < sweepMax)
-            sweepHealth += sweepEndurance.GetValue() * 0.075f;
+            sweepHealth += (1 - (sweepEndurance.GetValue() * 0.01f));
     }
 
     public void OnShoot()
     {
-        aim = FindObjectOfType<AIManager>();
+        aim = FindFirstObjectByType<AIManager>();
         AI_Shooter aiShoot = aim.gameObject.GetComponent<AI_Shooter>();
-        aiShoot.drawAccu = new Vector2(0.1f - (0.01f * drawAccuracy.GetValue()), 0.1f - (0.01f * drawAccuracy.GetValue()));
-        aiShoot.guardAccu = new Vector2(0.1f - (0.01f * guardAccuracy.GetValue()), 0.1f - (0.01f * guardAccuracy.GetValue()));
-        aiShoot.toAccu = new Vector2(0.1f - (0.01f * takeOutAccuracy.GetValue()), 0.1f - (0.01f * takeOutAccuracy.GetValue()));
+
+        Debug.Log("AI Take Out Accuracy is " + takeOutAccuracy.GetValue());
+
+        aiShoot.drawAccu = new Vector2(0.1f - (0.001f * drawAccuracy.GetValue()), 0.1f - (0.001f * drawAccuracy.GetValue()));
+        aiShoot.guardAccu = new Vector2(0.1f - (0.001f * guardAccuracy.GetValue()), 0.1f - (0.001f * guardAccuracy.GetValue()));
+        aiShoot.toAccu = new Vector2(0.1f - (0.001f * takeOutAccuracy.GetValue()), 0.1f - (0.001f * takeOutAccuracy.GetValue()));
     }
 }

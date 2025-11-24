@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Random = UnityEngine.Random;
-using ExitGames.Client.Photon;
 using System.Linq;
 
 [System.Serializable]
@@ -69,46 +68,19 @@ public class EquipmentManager : MonoBehaviour
     {
         
     }
+
     public void SetInventory()
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
 
-        // Use LoadItems if loaded from save, otherwise GenerateItems
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        Debug.Log("Before SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        // 1. Generate or load all equipment arrays
         if (cm.loadedFromSave)
         {
-            // Handles
-            if (handles == null)
-            {
-                Debug.LogError("Handles array is null when loading from save!");
-                return; // or handle error
-            }
             handles = LoadItems(handles, "handle");
-
-            // Heads
-            if (heads == null)
-            {
-                Debug.LogError("Heads array is null when loading from save!");
-                return;
-            }
             heads = LoadItems(heads, "head");
-
-            // Footwear
-            if (footwear == null)
-            {
-                Debug.LogError("Footwear array is null when loading from save!");
-                return;
-            }
             footwear = LoadItems(footwear, "footwear");
-
-            // Apparel
-            if (apparel == null)
-            {
-                Debug.LogError("Apparel array is null when loading from save!");
-                return;
-            }
             apparel = LoadItems(apparel, "apparel");
-
-            //Debug.Log("Set Inventory - Loaded items from save: " + cm.activeEquipID.Length);
         }
         else
         {
@@ -118,101 +90,199 @@ public class EquipmentManager : MonoBehaviour
             apparel = GenerateItems(apparel, "apparel");
         }
 
-        // After handles, heads, footwear, apparel are set
-        if (activeEquip == null || activeEquip.Length != 4)
-            activeEquip = new Equipment[4];
+        // 2. Mark owned equipment from inventoryID
+        if (cm.inventoryID != null)
+        {
+            foreach (var arr in new[] { handles, heads, footwear, apparel })
+                foreach (var eq in arr)
+                    if (eq != null)
+                        eq.owned = cm.inventoryID.Contains(eq.id);
+        }
 
+        // 3. Build inventory list
         if (inventory == null)
             inventory = new List<Inventory_List>();
         else
             inventory.Clear();
 
         foreach (var arr in new[] { handles, heads, footwear, apparel })
-        {
             foreach (var eq in arr)
-            {
                 if (eq != null && eq.owned)
                     inventory.Add(new Inventory_List(eq));
-            }
-        }
 
-        if (cm.inventoryID != null)
-        {
-            foreach (var arr in new[] { handles, heads, footwear, apparel })
-            {
-                foreach (var eq in arr)
-                {
-                    if (eq != null)
-                        eq.owned = cm.inventoryID.Contains(eq.id);
-                }
-            }
-        }
-
-        // If this is the first run (no save), set activeEquip to the first owned of each type
-        if (cm.activeEquipID == null)
-        {
-            Debug.Log("Set Inventory - cm.activeEquipID is null");
-            // 0: handle, 1: head, 2: footwear, 3: apparel
-            activeEquip[0] = handles.FirstOrDefault(e => e != null && e.owned) ?? handles[0];
-            activeEquip[1] = heads.FirstOrDefault(e => e != null && e.owned) ?? heads[0];
-            activeEquip[2] = footwear.FirstOrDefault(e => e != null && e.owned) ?? footwear[0];
-            activeEquip[3] = apparel.FirstOrDefault(e => e != null && e.owned) ?? apparel[0];
-
-            for (int i = 0; i < activeEquip.Length; i++)
-                if (activeEquip[i] != null)
-                    activeEquip[i].active = true;
-
-            cm.activeEquipID = new int[activeEquip.Length];
-            for (int i = 0; i < activeEquip.Length; i++)
-                cm.activeEquipID[i] = activeEquip[i]?.id ?? -1;
-            Debug.Log("Set Inventory - cm.activeEquip is ");
-        }
-
-        LoadActiveEquipFromCareerManager(cm);
-
-        cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
-        cm.activeEquipID = activeEquip.Select(eq => eq.id).ToArray();
-        
-        foreach (var eq in activeEquip)
-            SetPoints(eq);
-        //cm.SaveCareer();
-    }
-
-    public void LoadActiveEquipFromCareerManager(CareerManager cm)
-    {
-        if (cm == null || cm.activeEquipID == null)
-            return;
-
-        // Build a lookup for all equipment by ID, filtering out duplicates
+        // Build lookup
         var allEquipment = new List<Equipment>();
         if (handles != null) allEquipment.AddRange(handles.Where(e => e != null));
         if (heads != null) allEquipment.AddRange(heads.Where(e => e != null));
         if (footwear != null) allEquipment.AddRange(footwear.Where(e => e != null));
         if (apparel != null) allEquipment.AddRange(apparel.Where(e => e != null));
+        var equipDict = allEquipment.ToDictionary(e => e.id, e => e);
 
-        var equipDict = allEquipment
-            .GroupBy(e => e.id)
-            .Select(g => g.First())
-            .ToDictionary(e => e.id, e => e);
-
-        var duplicateIds = allEquipment.GroupBy(e => e.id)
-            .Where(g => g.Count() > 1)
-            .Select(g => g.Key)
-            .ToList();
-
-        if (duplicateIds.Count > 0)
-            Debug.LogWarning("Duplicate Equipment IDs found: " + string.Join(", ", duplicateIds));
-
-        // Assign activeEquip from IDs
-        activeEquip = new Equipment[cm.activeEquipID.Length];
-        for (int i = 0; i < cm.activeEquipID.Length; i++)
+        // Set activeEquip from IDs
+        if (cm.loadedFromSave)
         {
-            if (equipDict.TryGetValue(cm.activeEquipID[i], out var eq))
-                activeEquip[i] = eq;
-            else
-                activeEquip[i] = null;
+            Debug.Log("Set Inventory - Loaded From Save - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+
+            activeEquip = new Equipment[4];
+            for (int i = 0; i < 4; i++)
+            {
+                int id = (cm.activeEquipID != null && cm.activeEquipID.Length > i) ? cm.activeEquipID[i] : -1;
+                if (equipDict.ContainsKey(id))
+                {
+                    activeEquip[i] = equipDict[id];
+                    activeEquip[i].active = true;
+                }
+                else
+                {
+                    activeEquip[i] = null; // Fallback to null if ID is invalid
+                }
+            }
         }
-        cm.SaveCareer();
+        else
+        {
+            Debug.Log("Set Inventory - NOT Loaded From Save - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+            // Fallback: pick first owned/default
+            activeEquip[0] = inventory[0].equipment;
+            activeEquip[1] = inventory[1].equipment;
+            activeEquip[2] = inventory[2].equipment;
+            activeEquip[3] = inventory[3].equipment;
+            for (int i = 0; i < 4; i++)
+                activeEquip[i].active = true;
+        }
+
+            //if (cm.activeEquipID != null && cm.activeEquipID.Length == 4)
+            //{
+            //    activeEquip = new Equipment[4];
+            //    for (int i = 0; i < 4; i++)
+            //    {
+            //        int id = cm.activeEquipID[i];
+            //        activeEquip[i] = equipDict.ContainsKey(id) ? equipDict[id] : null;
+            //        if (activeEquip[i] != null)
+            //            activeEquip[i].active = true;
+            //    }
+            //}
+            //else
+            //{
+            //    // Fallback: pick first owned/default
+            //    activeEquip = new Equipment[4];
+            //    activeEquip[0] = handles.FirstOrDefault(e => e != null && e.owned) ?? handles[0];
+            //    activeEquip[1] = heads.FirstOrDefault(e => e != null && e.owned) ?? heads[0];
+            //    activeEquip[2] = footwear.FirstOrDefault(e => e != null && e.owned) ?? footwear[0];
+            //    activeEquip[3] = apparel.FirstOrDefault(e => e != null && e.owned) ?? apparel[0];
+            //    for (int i = 0; i < 4; i++)
+            //        if (activeEquip[i] != null)
+            //            activeEquip[i].active = true;
+            //}
+
+            //cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+
+        for (int i = 0; i < 4; i++)
+        {
+            Debug.Log($"activeEquip[{i}]: {(activeEquip[i] != null ? activeEquip[i].name : "null")} " +
+                $"(id: {(activeEquip[i] != null ? activeEquip[i].id.ToString() : "null")})");
+        }
+
+        // 5. Update CareerManager's inventoryID and activeEquipID
+        cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
+        cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+
+        // 6. Apply equipment stats
+        foreach (var eq in activeEquip)
+            if (eq != null)
+                SetPoints(eq);
+
+        Debug.Log("After SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+    }
+
+    public void EnsureDefaultActiveEquip()
+    {
+        if (activeEquip == null || activeEquip.Length != 4)
+            activeEquip = new Equipment[4];
+
+        // Only set if null or id is invalid
+        if (activeEquip[0] == null || activeEquip[0].id < 0)
+            activeEquip[0] = handles?.FirstOrDefault(e => e != null) ?? new Equipment { id = 0 };
+        if (activeEquip[1] == null || activeEquip[1].id < 0)
+            activeEquip[1] = heads?.FirstOrDefault(e => e != null) ?? new Equipment { id = 30 };
+        if (activeEquip[2] == null || activeEquip[2].id < 0)
+            activeEquip[2] = footwear?.FirstOrDefault(e => e != null) ?? new Equipment { id = 60 };
+        if (activeEquip[3] == null || activeEquip[3].id < 0)
+            activeEquip[3] = apparel?.FirstOrDefault(e => e != null) ?? new Equipment { id = 90 };
+
+        // Update CareerManager's activeEquipID
+        var cm = FindFirstObjectByType<CareerManager>();
+        if (cm != null)
+            cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+    }
+
+    public void SyncFromCareerManager()
+    {
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+
+        Debug.Log("Before SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+
+        // 1. Mark owned equipment from inventoryID
+        if (cm.inventoryID != null)
+        {
+            foreach (var arr in new[] { handles, heads, footwear, apparel })
+                foreach (var eq in arr)
+                    if (eq != null)
+                        eq.owned = cm.inventoryID.Contains(eq.id);
+        }
+
+        // 2. Build inventory list
+        if (inventory == null)
+            inventory = new List<Inventory_List>();
+        else
+            inventory.Clear();
+
+        foreach (var arr in new[] { handles, heads, footwear, apparel })
+            foreach (var eq in arr)
+                if (eq != null && eq.owned)
+                    inventory.Add(new Inventory_List(eq));
+
+        // 3. Build lookup
+        var allEquipment = new List<Equipment>();
+        if (handles != null) allEquipment.AddRange(handles.Where(e => e != null));
+        if (heads != null) allEquipment.AddRange(heads.Where(e => e != null));
+        if (footwear != null) allEquipment.AddRange(footwear.Where(e => e != null));
+        if (apparel != null) allEquipment.AddRange(apparel.Where(e => e != null));
+        var equipDict = allEquipment.ToDictionary(e => e.id, e => e);
+
+        // Failsafe: assign defaults if IDs are missing/invalid
+        bool needsDefault = false;
+        activeEquip = new Equipment[4];
+        for (int i = 0; i < 4; i++)
+        {
+            int id = (cm.activeEquipID != null && cm.activeEquipID.Length > i) ? cm.activeEquipID[i] : -1;
+            if (equipDict.ContainsKey(id))
+            {
+                activeEquip[i] = equipDict[id];
+            }
+            else
+            {
+                needsDefault = true;
+                if (i == 0) activeEquip[i] = handles.FirstOrDefault(e => e != null && e.owned) ?? handles[0];
+                if (i == 1) activeEquip[i] = heads.FirstOrDefault(e => e != null && e.owned) ?? heads[0];
+                if (i == 2) activeEquip[i] = footwear.FirstOrDefault(e => e != null && e.owned) ?? footwear[0];
+                if (i == 3) activeEquip[i] = apparel.FirstOrDefault(e => e != null && e.owned) ?? apparel[0];
+            }
+            if (activeEquip[i] != null)
+                activeEquip[i].active = true;
+        }
+        if (needsDefault)
+            cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+
+        // 5. Update CareerManager's inventoryID and activeEquipID to match
+        cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
+        cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+
+        // 6. Apply equipment stats
+        foreach (var eq in activeEquip)
+            if (eq != null)
+                SetPoints(eq);
+
+        Debug.Log("After SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
     }
 
     public void MainMenu()
@@ -446,7 +516,7 @@ public class EquipmentManager : MonoBehaviour
         forSaleHeader.image.sprite = activeEquip[n].img;
         forSaleHeader.image.color = activeEquip[n].color;
 
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         for (int i = 0; i < forSaleUIs.Length; i++)
         {
@@ -526,7 +596,7 @@ public class EquipmentManager : MonoBehaviour
                 equipUIs[i].image.color = activeEquip[i].color;
             }
 
-            CareerManager cm = FindObjectOfType<CareerManager>();
+            CareerManager cm = FindFirstObjectByType<CareerManager>();
             cm.cash -= newEquip.cost;
             teamMenu.CashDeltaText(-newEquip.cost);
             origEquip.active = false;
@@ -1064,7 +1134,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void SetPoints(Equipment equip)
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         cm.modStats.drawAccuracy += equip.stats[0];
         cm.modStats.guardAccuracy += equip.stats[1];
@@ -1082,7 +1152,7 @@ public class EquipmentManager : MonoBehaviour
 
     public void ResetPoints(Equipment equip)
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         cm.modStats.drawAccuracy -= equip.stats[0];
         cm.modStats.guardAccuracy -= equip.stats[1];

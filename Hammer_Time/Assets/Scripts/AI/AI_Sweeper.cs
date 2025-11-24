@@ -8,10 +8,14 @@ public class AI_Sweeper : MonoBehaviour
     public AIManager aim;
     public GameManager gm;
     public SweeperManager sm;
+    public MMF_Player fltFbk;
     public MMF_FloatingText fltText;
 
     //Transform target;
-    
+    private void Start()
+    {
+        fltText = fltFbk.GetFeedbackOfType<MMF_FloatingText>();
+    }
     public void OnSweep(bool aiTurn, string shotType, Vector2 target, bool inturn)
     {
         if (aiTurn)
@@ -923,12 +927,11 @@ public class AI_Sweeper : MonoBehaviour
 
     IEnumerator PlayerSpeed(string playerShotType, Vector2 target, bool inturn)
     {
-
         Rigidbody2D rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
         GameObject rock = gm.rockList[gm.rockCurrent].rock;
 
         Debug.Log("sweeperL is " + sm.sweeperL.gameObject.activeSelf);
-        fltText.TargetTransform = rock.transform;
+        //fltText.TargetTransform = rock.transform;
 
         Debug.Log("Player Speed Callouts - " + playerShotType);
 
@@ -968,7 +971,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position, 2f);
+                //fltText.Play(rockRB.position, 2f);
                 break;
 
             case "Tight Centre Guard":
@@ -1008,7 +1011,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "High Centre Guard":
@@ -1034,7 +1037,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
             #endregion
 
@@ -1070,7 +1073,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position, 2f);
+                //fltText.Play(rockRB.position, 2f);
                 break;
 
             case "Left Tight Corner Guard":
@@ -1110,7 +1113,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "Left High Corner Guard":
@@ -1136,7 +1139,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "Right Corner Guard":
@@ -1146,7 +1149,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 3.75f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1155,7 +1158,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1164,7 +1167,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
                 Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
@@ -1173,18 +1176,18 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 break;
 
             case "Right Tight Corner Guard":
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
                 Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.25f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1193,7 +1196,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1202,7 +1205,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
                 Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
@@ -1210,7 +1213,7 @@ public class AI_Sweeper : MonoBehaviour
                         fltText.Value = "Rock is slow!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1227,7 +1230,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 3.3f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1236,7 +1239,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1245,7 +1248,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 break;
             #endregion
 
@@ -1257,7 +1260,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.58f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1266,7 +1269,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1278,7 +1281,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
                 Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
@@ -1290,7 +1293,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1303,7 +1306,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                ////fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 fltText.Value = "Speed is good!!";
                 break;
@@ -1315,7 +1318,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.9f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1324,7 +1327,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1336,7 +1339,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1348,7 +1351,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1372,7 +1375,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 5.5f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1381,7 +1384,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1393,7 +1396,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1417,7 +1420,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
                 Debug.Log("y = 6.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 6.5 xPos is " + rock.transform.position.x);
@@ -1430,7 +1433,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 fltText.Value = "Speed is good!!";
                 break;
@@ -1442,7 +1445,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.9f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1451,7 +1454,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1463,7 +1466,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1475,7 +1478,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1487,10 +1490,10 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
                 fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
             #endregion
 
@@ -1502,7 +1505,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.9f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1511,7 +1514,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1524,7 +1527,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1537,7 +1540,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1550,7 +1553,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
                 fltText.Value = "Speed is good!!";
 
@@ -1563,7 +1566,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.9f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1572,7 +1575,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1585,7 +1588,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1598,7 +1601,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1611,10 +1614,10 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => Mathf.Abs(0.37f - rock.transform.position.x) >= 0.1f);
                 fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "Right Four Foot":
@@ -1624,7 +1627,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.9f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1633,7 +1636,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1645,7 +1648,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1657,7 +1660,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep the Curl!!";
                 else
                     fltText.Value = "Speed is good!!";
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1670,7 +1673,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "Top Four Foot":
@@ -1680,7 +1683,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 4.75f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1689,7 +1692,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1702,7 +1705,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1715,7 +1718,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1728,7 +1731,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
 
             case "Back Four Foot":
@@ -1738,7 +1741,7 @@ public class AI_Sweeper : MonoBehaviour
                 if (rockRB.linearVelocity.y <= 5f)
                         fltText.Value = "Rock is slow!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1747,7 +1750,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1760,7 +1763,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1773,7 +1776,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Speed is good!!";
 
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1787,7 +1790,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Speed is good!!";
                 //yield return new WaitUntil(() => Mathf.Abs(rock.transform.position.x) >= 0.05f);
                 //sm.SweepWhoa(true);
-                fltText.Play(rockRB.position);
+                //fltText.Play(rockRB.position);
                 break;
             #endregion
 
@@ -1802,7 +1805,7 @@ public class AI_Sweeper : MonoBehaviour
                     fltText.Value = "Sweep!!";
                 else
                     fltText.Value = "Leave it!!";
-                fltText.Play(rockRB.position, 1.25f);
+                //fltText.Play(rockRB.position, 1.25f);
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
@@ -1812,7 +1815,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Nope!!";
 
-                fltText.Play(rockRB.position, 1.4f);
+                //fltText.Play(rockRB.position, 1.4f);
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
@@ -1826,7 +1829,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "Leave it!!";
 
-                fltText.Play(rockRB.position, 1.6f);
+                //fltText.Play(rockRB.position, 1.6f);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
@@ -1840,7 +1843,7 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "It's good!!";
 
-                fltText.Play(rockRB.position, 1.75f);
+                //fltText.Play(rockRB.position, 1.75f);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
@@ -1854,13 +1857,13 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     fltText.Value = "It's good!!";
 
-                fltText.Play(rockRB.position, 1.85f);
+                //fltText.Play(rockRB.position, 1.85f);
                 yield return new WaitUntil(() => rock.transform.position.y >= target.x);
                 velLimit = 0.5f * ((target.y - 5.225f) / 2.55f);
                 if (rockRB.linearVelocity.y >= velLimit)
                     fltText.Value = "We're there!!";
 
-                fltText.Play(rockRB.position, intensity);
+                //fltText.Play(rockRB.position, intensity);
                 break;
 
             case "Guard To Target":

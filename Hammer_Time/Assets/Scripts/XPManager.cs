@@ -55,7 +55,7 @@ public class XPManager : MonoBehaviour
 
     void Start()
     {
-        cm = FindObjectOfType<CareerManager>();
+        cm = FindFirstObjectByType<CareerManager>();
         LoadFromCareerManager(cm);
         AddXP(0);
     }
@@ -231,7 +231,7 @@ public class XPManager : MonoBehaviour
         }
 
         SetSliders(activePlayer);
-        TeamMenu tm = FindObjectOfType<TeamMenu>();
+        TeamMenu tm = FindFirstObjectByType<TeamMenu>();
         tm.playerSelect = activePlayer;
         tm.SkillMenu();
     }

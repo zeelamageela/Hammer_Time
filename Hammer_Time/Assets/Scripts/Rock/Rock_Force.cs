@@ -34,7 +34,7 @@ public class Rock_Force : MonoBehaviour
         //trajLineGO = GameObject.Find("TrajectoryLine");
         //trajLine = trajLineGO.GetComponent<TrajectoryLine>();
 
-        am = FindObjectOfType<AudioManager>();
+        am = FindFirstObjectByType<AudioManager>();
         rockSounds = GetComponents<AudioSource>();
     }
 

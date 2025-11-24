@@ -80,8 +80,8 @@ public class TeamMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<SponsorManager>();
+        cm = FindFirstObjectByType<CareerManager>();
+        pm = FindFirstObjectByType<SponsorManager>();
         //Shuffle(playerPool);
         callCount = false;
         cdCount = 0;
@@ -215,7 +215,7 @@ public class TeamMenu : MonoBehaviour
         {
             title.text = "Team";
             callCount = true;
-            cm = FindObjectOfType<CareerManager>();
+            cm = FindFirstObjectByType<CareerManager>();
             StartCoroutine(SetUpTeam());
         }
         //cm.SaveCareer();
@@ -223,8 +223,6 @@ public class TeamMenu : MonoBehaviour
 
     IEnumerator SetUpTeam()
     {
-        myFile = new EasyFileSave("my_player_data");
-
         cm.coachDialogue = new bool[tSel.coachGreen.dialogue.Length];
         //cm.qualDialogue = new bool[tSel.coachGreen.qualDialogue.Length];
         //cm.reviewDialogue = new bool[tSel.coachGreen.reviewDialogue.Length];
@@ -478,10 +476,25 @@ public class TeamMenu : MonoBehaviour
             teamCost += activePlayers[i].cost;
         }
 
+        // Find the player's team in cm.teams and replace its players with activePlayers
+        for (int i = 0; i < cm.teams.Length; i++)
+        {
+            if (cm.teams[i].player)
+            {
+                // Clear the existing players list
+                cm.teams[i].players.Clear();
+                // Add each active player to the team
+                foreach (var p in activePlayers)
+                {
+                    cm.teams[i].players.Add(p);
+                }
+                cm.teams[i].players.Add(cm.playerCharacter); // Add the player's character to the team
+                break; // Only one player team expected
+            }
+        }
+
         Debug.Log("Team Cost is " + teamCost);
-        cm.cash -= cm.currentTourny.entryFee;
-        cm.cash -= cm.costPerWeek;
-        CashDeltaText(-(cm.costPerWeek + cm.currentTourny.entryFee));
+        
         cm.teamPaid = true;
         //teamMenu.SetActive(false);
         //agentMenu.SetActive(false);
@@ -566,7 +579,7 @@ public class TeamMenu : MonoBehaviour
         setTeamButton.SetActive(false);
         agentMenu.SetActive(false);
 
-        XPManager xpm = FindObjectOfType<XPManager>();
+        XPManager xpm = FindFirstObjectByType<XPManager>();
         xpm.activePlayer = playerSelect;
         xpm.SetPlayer();
     }
@@ -591,8 +604,8 @@ public class TeamMenu : MonoBehaviour
 
     public void PreviewPoints()
     {
-        cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<SponsorManager>();
+        cm = FindFirstObjectByType<CareerManager>();
+        pm = FindFirstObjectByType<SponsorManager>();
 
         cm.modStats.drawAccuracy = activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
         cm.modStats.guardAccuracy = activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
@@ -610,8 +623,8 @@ public class TeamMenu : MonoBehaviour
 
     public void UnPreviewPoints()
     {
-        cm = FindObjectOfType<CareerManager>();
-        pm = FindObjectOfType<SponsorManager>();
+        cm = FindFirstObjectByType<CareerManager>();
+        pm = FindFirstObjectByType<SponsorManager>();
 
         for (int i = 0; i < pm.activeCards.Length; i++)
         {

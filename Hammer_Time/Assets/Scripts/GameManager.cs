@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
 using TigerForge;
-using Photon.Pun;
 using Lofelt.NiceVibrations;
 
 public enum GameState { START, DRAWTOBUTTON, REDTURN, YELLOWTURN, CHECKSCORE, SCORE, RESET, END, DEBUG }
@@ -86,12 +85,15 @@ public class GameManager : MonoBehaviour
 
     public CameraManager cm;
     public GameObject vcam_go;
-    public CinemachineVirtualCamera vcam;
+    //public CinemachineVirtualCamera vcam;
     Transform tFollowTarget;
 
     public ShootingKnob knob;
+    [SerializeField]
     public List<Rock_List> rockList;
+    [SerializeField]
     public List<House_List> houseList;
+    [SerializeField]
     public List<Guard_List> gList;
 
     public Animator tournyIntro;
@@ -118,8 +120,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Start");
 
 
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        Rock_Placement rp = FindObjectOfType<Rock_Placement>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
+        Rock_Placement rp = FindFirstObjectByType<Rock_Placement>();
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
@@ -296,15 +298,8 @@ public class GameManager : MonoBehaviour
             if (i % 2 == notHammer)
             {
                 GameObject yellowRock_go;
-                if (multiplayer)
-                {
-                    yellowRock_go = PhotonNetwork.Instantiate(yellowShooter.gameObject.name, yellowRocksInactive.transform.position, Quaternion.identity, 0);
-                    yellowRock_go.transform.parent = yellowRocksInactive;
-                }
-                else
-                {
-                    yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
-                }
+
+                yellowRock_go = Instantiate(yellowShooter, yellowRocksInactive);
 
                 int yRocks = 4;
                 int k = (i / 2) + notHammer;
@@ -337,15 +332,9 @@ public class GameManager : MonoBehaviour
             if (i % 2 == hammer)
             {
                 GameObject redRock_go;
-                if (multiplayer)
-                {
-                    redRock_go = PhotonNetwork.Instantiate(redShooter.gameObject.name, redRocksInactive.transform.position, Quaternion.identity, 0);
-                    redRock_go.transform.parent = redRocksInactive;
-                }
-                else
-                {
-                    redRock_go = Instantiate(redShooter, redRocksInactive);
-                }
+
+                redRock_go = Instantiate(redShooter, redRocksInactive);
+
                 int yRocks = 4;
                 int k = (i / 2) + hammer;
                 if (k <= yRocks)
@@ -556,7 +545,7 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         Debug.Log("redRock at Rest");
-        vcam.enabled = false;
+        //vcam.enabled = false;
 
         StartCoroutine(AllStopped());
 
@@ -703,7 +692,7 @@ public class GameManager : MonoBehaviour
 
         rm.GetComponent<Sweep>().ExitSweepZone();
 
-        vcam.enabled = false;
+        //vcam.enabled = false;
 
         yield return new WaitForEndOfFrame();
 
@@ -1159,6 +1148,10 @@ public class GameManager : MonoBehaviour
         rockBar.EndUpdate(yellowScore, redScore);
         //yield return StartCoroutine(WaitForClick());
         rockCurrent = gsp.rockCurrent - 1;
+        if (rockCurrent < 0)
+        {
+            rockCurrent = 0;
+        }
         //lg.enabled = true;
 
         //yield return new WaitUntil(() => lg.rocksPlaced == true);

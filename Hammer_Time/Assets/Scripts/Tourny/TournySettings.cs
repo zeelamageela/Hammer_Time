@@ -42,8 +42,8 @@ public class TournySettings : MonoBehaviour
 
     void Start()
     {
-        cm = FindObjectOfType<CareerManager>();
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        cm = FindFirstObjectByType<CareerManager>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
 
         rockSlider.interactable = false;
         
@@ -78,7 +78,7 @@ public class TournySettings : MonoBehaviour
 
     public void LoadToGSP()
     {
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
 

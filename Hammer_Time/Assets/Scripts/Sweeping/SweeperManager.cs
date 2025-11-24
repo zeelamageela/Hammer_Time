@@ -48,6 +48,7 @@ public class SweeperManager : MonoBehaviour
 
     public GameObject aimCircle;
     public HapticClip sweepHap;
+    public MMF_Player fltFdbk;
     public MMF_FloatingText fltText;
 
     void Awake()
@@ -57,9 +58,9 @@ public class SweeperManager : MonoBehaviour
         //{
         //    Debug.Log("Audio Manager not loaded");
         //}
-        gsp = FindObjectOfType<GameSettingsPersist>();
+        gsp = FindFirstObjectByType<GameSettingsPersist>();
         rockSounds = sweepSel.GetComponents<AudioSource>();
-
+        fltText = fltFdbk.GetFeedbackOfType<MMF_FloatingText>();
         //float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
         //sweepTimer = sweepEndur * 0.02f;
     }
@@ -109,8 +110,8 @@ public class SweeperManager : MonoBehaviour
         //sweeperRedR.gameObject.SetActive(false);
         //sweeperYellowL.gameObject.SetActive(false);
         //sweeperYellowR.gameObject.SetActive(false);
-        GameManager gm = FindObjectOfType<GameManager>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (redTurn)
         {
             sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
@@ -239,7 +240,7 @@ public class SweeperManager : MonoBehaviour
         //Tap on the sweep target
 
         float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = 0.5f + (sweepEndur * 0.02f);
+        float sweepTimer = (sweepEndur * 0.02f);
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
@@ -521,7 +522,7 @@ public class SweeperManager : MonoBehaviour
 
     public void CallOut(string call)
     {
-        am = FindObjectOfType<AudioManager>();
+        am = FindFirstObjectByType<AudioManager>();
 
         //Debug.Log("Sweeping " + call);
         if (Random.Range(0f, 1f) < 0.5f)
@@ -540,9 +541,9 @@ public class SweeperManager : MonoBehaviour
 
     void ShotLocation()
     {
-        AI_Sweeper aiSweep = FindObjectOfType<AI_Sweeper>();
-        AI_Shooter aiShoot = FindObjectOfType<AI_Shooter>();
-        RockManager rm = FindObjectOfType<RockManager>();
+        AI_Sweeper aiSweep = FindFirstObjectByType<AI_Sweeper>();
+        AI_Shooter aiShoot = FindFirstObjectByType<AI_Shooter>();
+        RockManager rm = FindFirstObjectByType<RockManager>();
         Vector3 aimPos = aimCircle.transform.position;
 
         string shotType;

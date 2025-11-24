@@ -76,11 +76,11 @@ public class Team
             totalSweepCohesion += p.sweepCohesion;
         }
         int count = players.Count;
-        draw = Mathf.RoundToInt(totalDraw / count);
-        takeOut = Mathf.RoundToInt(totalTakeOut / count);
-        guard = Mathf.RoundToInt(totalGuard / count);
-        sweepStrength = Mathf.RoundToInt(totalSweepStrength / count);
-        sweepEnduro = Mathf.RoundToInt(totalSweepEnduro / count);
-        sweepCohesion = Mathf.RoundToInt(totalSweepCohesion / count);
+        draw = Mathf.RoundToInt(totalDraw);
+        takeOut = Mathf.RoundToInt(totalTakeOut);
+        guard = Mathf.RoundToInt(totalGuard);
+        sweepStrength = Mathf.RoundToInt(totalSweepStrength);
+        sweepEnduro = Mathf.RoundToInt(totalSweepEnduro);
+        sweepCohesion = Mathf.RoundToInt(totalSweepCohesion);
     }
 }

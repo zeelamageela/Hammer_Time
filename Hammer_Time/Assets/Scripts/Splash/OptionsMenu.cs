@@ -15,7 +15,7 @@ public class OptionsMenu : MonoBehaviour
 
     private void Start()
     {
-        am = FindObjectOfType<AudioManager>();
+        am = FindFirstObjectByType<AudioManager>();
         am.PlayBG(4);
     }
     // Update is called once per frame

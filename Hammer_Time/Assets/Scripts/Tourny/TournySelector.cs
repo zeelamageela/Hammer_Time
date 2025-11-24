@@ -72,6 +72,7 @@ public class TournySelector : MonoBehaviour
 
     public GameObject quitButton;
     public GameObject mainMenuGO;
+    public GameObject tournyScrollGO;
     public GameObject playerMenu;
     public GameObject xpWindow;
     public GameObject profPanelGO;
@@ -97,7 +98,7 @@ public class TournySelector : MonoBehaviour
 
     private void Start()
     {
-        cm = FindObjectOfType<CareerManager>();
+        cm = FindFirstObjectByType<CareerManager>();
         //if (cm.inProgress)
         //cm.LoadCareer();
         teamNameText.text = cm.playerName + " " + cm.teamName;
@@ -113,7 +114,7 @@ public class TournySelector : MonoBehaviour
     public void SetUp()
     {
 
-        SponsorManager pm = FindObjectOfType<SponsorManager>();
+        SponsorManager pm = FindFirstObjectByType<SponsorManager>();
 
         Debug.Log("TSel cm.week is " + cm.week);
 
@@ -133,6 +134,7 @@ public class TournySelector : MonoBehaviour
 
         //provStandings.SetUp();
         //Debug.Log("Skill Points are " + xpm.skillPoints);
+
         SetActiveTournies();
     }
 
@@ -340,7 +342,7 @@ public class TournySelector : MonoBehaviour
             }
         }
 
-        StorylineManager slm = FindObjectOfType<StorylineManager>();
+        StorylineManager slm = FindFirstObjectByType<StorylineManager>();
 
         int localSelect = UnityEngine.Random.Range(0, locals.Length);
         //Debug.Log("local Select is " + localSelect);
@@ -701,7 +703,7 @@ public class TournySelector : MonoBehaviour
 
     public void EndOfGame()
     {
-        cm = FindObjectOfType<CareerManager>();
+        cm = FindFirstObjectByType<CareerManager>();
         dialogueGO.SetActive(true);
         coachGreen.TriggerDialogue("Story", 0);
 
@@ -710,7 +712,7 @@ public class TournySelector : MonoBehaviour
 
     IEnumerator EndOfSeason()
     {
-        StorylineManager slm = FindObjectOfType<StorylineManager>();
+        StorylineManager slm = FindFirstObjectByType<StorylineManager>();
         Debug.Log("End of Game dialogue is " + slm.dialogueGO.activeSelf);
         yield return new WaitUntil(() => !slm.dialogueGO.activeSelf);
 
@@ -778,9 +780,9 @@ public class TournySelector : MonoBehaviour
                 provChampionship.complete = true;
         }
 
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        TeamMenu tm = FindObjectOfType<TeamMenu>();
-        XPManager xpm = FindObjectOfType<XPManager>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        TeamMenu tm = FindFirstObjectByType<TeamMenu>();
+        XPManager xpm = FindFirstObjectByType<XPManager>();
 
         gsp.LoadFromTournySelector();
 
@@ -793,12 +795,14 @@ public class TournySelector : MonoBehaviour
         cm.champ[0] = tourChampionship;
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
-        tm.SetTeam();
-        xpm.SaveToCareerManager(cm);
-        //cm.SaveCareer();
+        cm.cash -= cm.currentTourny.entryFee;
+        cm.cash -= cm.costPerWeek;
+        tm.CashDeltaText(-(cm.costPerWeek + cm.currentTourny.entryFee));
+        //xpm.SaveToCareerManager(cm);
+        cm.SaveCareer();
 
         //SceneManager.LoadScene("Tourny_Menu_1");
-        TournyMenuLoad(FindObjectOfType<TournySettings>());
+        TournyMenuLoad(FindFirstObjectByType<TournySettings>());
         //StartCoroutine(TournyMenuLoad());
     }
 
@@ -809,7 +813,7 @@ public class TournySelector : MonoBehaviour
         {
             menuButtons[i].gameObject.SetActive(false);
         }
-        TournyWindow(false); ;
+        tournyScrollGO.SetActive(false);
         skillbars.SetActive(true);
         ts.Settings();
     }
@@ -818,7 +822,7 @@ public class TournySelector : MonoBehaviour
     {
         currentTourny = activeTournies[button];
         Debug.Log("Button is " + button);
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         cm.SetupTourny(this, gsp);
         //playButton.SetActive(true);
         PlayTourny();
@@ -830,6 +834,7 @@ public class TournySelector : MonoBehaviour
         {
             teamNameText.text = "Available Tournies";
             mainMenuGO.SetActive(true);
+            tournyScrollGO.SetActive(true);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(false);
             tourStandings.gameObject.SetActive(false);
@@ -865,7 +870,7 @@ public class TournySelector : MonoBehaviour
 
     public void Profile(Button button)
     {
-        cm = FindObjectOfType<CareerManager>();
+        cm = FindFirstObjectByType<CareerManager>();
         bool on;
         if (profPanelGO.activeSelf)
             on = false;
@@ -1244,7 +1249,7 @@ public class TournySelector : MonoBehaviour
 
     IEnumerator HandleExpandShrink(float waitTime, int menuSelector, Button expandButton, int previousExpanded)
     {
-        AudioManager am = FindObjectOfType<AudioManager>();
+        AudioManager am = FindFirstObjectByType<AudioManager>();
         am.PlayBG(menuSelector);
 
         yield return new WaitForSeconds(waitTime);
@@ -1332,7 +1337,6 @@ public class TournySelector : MonoBehaviour
                 break;
         }
     }
-
 
     IEnumerator ResetShrink(Animator anim, float delay)
         {

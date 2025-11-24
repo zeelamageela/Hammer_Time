@@ -57,11 +57,12 @@ public class TournyManager : MonoBehaviour
 	public Vector2 careerRecord;
 	public float careerEarnings;
 	string teamName;
+	public bool isStandingsReady;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		cm = FindObjectOfType<CareerManager>();
+		cm = FindFirstObjectByType<CareerManager>();
 		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
 		//Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
@@ -92,7 +93,7 @@ public class TournyManager : MonoBehaviour
 
 		if (cashGame)
         {
-			CashGames cg = FindObjectOfType<CashGames>();
+			CashGames cg = FindFirstObjectByType<CashGames>();
 			numberOfTeams = gsp.numberOfTeams;
 			prize = gsp.prize;
 			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
@@ -162,8 +163,9 @@ public class TournyManager : MonoBehaviour
     }
 
 	IEnumerator SetupStandings()
-	{
-		cm = FindObjectOfType<CareerManager>();
+    {
+        isStandingsReady = false;
+        cm = FindFirstObjectByType<CareerManager>();
 		//yield return new WaitUntil(() => teams.Length >= numberOfTeams);
 		row = new GameObject[teams.Length];
 		//Debug.Log("Setup Stand Team Length is " + teams.Length);
@@ -368,7 +370,9 @@ public class TournyManager : MonoBehaviour
 			if (!gsp.KO1) 
 				SetDraw();
 		}
-		yield return new WaitForEndOfFrame();
+
+        isStandingsReady = true;
+        yield return new WaitForEndOfFrame();
 	}
 
 	void Shuffle(Team[] a)
@@ -663,8 +667,8 @@ public class TournyManager : MonoBehaviour
 
 	public void TournyComplete()
     {
-		CareerManager cm = FindObjectOfType<CareerManager>();
-		gsp = FindObjectOfType<GameSettingsPersist>();
+		CareerManager cm = FindFirstObjectByType<CareerManager>();
+		gsp = FindFirstObjectByType<GameSettingsPersist>();
 		gsp.teams = teams;
 		if (gsp.cashGame)
 			gsp.tournyEarnings = cm.cash;
@@ -700,92 +704,4 @@ public class TournyManager : MonoBehaviour
 		SceneManager.LoadScene("Arena_Selector");
     }
 
-	IEnumerator SaveCareer()
-	{
-		Debug.Log("Saving in TournyManager");
-		myFile = new EasyFileSave("my_player_data");
-
-		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
-		//inProgress = true;
-		//myFile.Add("First Name", gsp.firstName);
-		//myFile.Add("Team Name", gsp.teamName);
-		//myFile.Add("Team Colour", cm.teamColour);
-		//myFile.Add("Career Earnings", gsp.earnings);
-		//Debug.Log("TM Career Earnings - " + gsp.earnings);
-		gsp.loadGame = false;
-		//myFile.Add("Tourny Record", gsp.record);
-		//myFile.Add("Career Record", cm.record);
-		myFile.Add("Tourny In Progress", true);
-		gsp.tournyInProgress = true;
-		gsp.gameInProgress = false;
-		myFile.Add("Game Load", false);
-		myFile.Add("Game In Progress", false);
-		myFile.Add("Draw", draw);
-		myFile.Add("Number Of Teams", numberOfTeams);
-		myFile.Add("Prize", prize);
-		myFile.Add("Rocks", gsp.rocks);
-		myFile.Add("Ends", gsp.ends);
-		myFile.Add("Games", gsp.games);
-		//myFile.Add("Player Team", playerTeam);
-		myFile.Add("OppTeam", oppTeam);
-		myFile.Add("Playoff Round", playoffRound);
-		myFile.Add("BG", gsp.bg);
-		string[] nameList = new string[teams.Length];
-        int[] winsList = new int[teams.Length];
-        int[] lossList = new int[teams.Length];
-        int[] rankList = new int[teams.Length];
-        string[] nextOppList = new string[teams.Length];
-        int[] strengthList = new int[teams.Length];
-        int[] idList = new int[teams.Length];
-		bool[] playerList = new bool[teams.Length];
-		float[] earningsList = new float[teams.Length];
-
-        for (int i = 0; i < teams.Length; i++)
-        {
-			nameList[i] = teams[i].name;
-            winsList[i] = teams[i].wins;
-            lossList[i] = teams[i].loss;
-            rankList[i] = teams[i].rank;
-            nextOppList[i] = teams[i].nextOpp;
-            strengthList[i] = teams[i].strength;
-            idList[i] = teams[i].id;
-			playerList[i] = teams[i].player;
-			earningsList[i] = teams[i].earnings;
-			//Debug.Log("Tourny Id List - " + idList[i]);
-        }
-
-		myFile.Add("Tourny Name List", nameList);
-        myFile.Add("Tourny Wins List", winsList);
-        myFile.Add("Tourny Loss List", lossList);
-        myFile.Add("Tourny Rank List", rankList);
-        myFile.Add("Tourny NextOpp List", nextOppList);
-        myFile.Add("Tourny Strength List", strengthList);
-        myFile.Add("Tourny Team ID List", idList);
-		myFile.Add("Tourny Earnings List", earningsList);
-		myFile.Add("Tourny Player List", playerList);
-		//yield return myFile.TestDataSaveLoad();
-
-
-		int[] tempTRX = new int[cm.teamRecords.Length];
-		int[] tempTRY = new int[cm.teamRecords.Length];
-		float[] tempTRZ = new float[cm.teamRecords.Length];
-		int[] tempTRW = new int[cm.teamRecords.Length];
-
-		for (int i = 0; i < cm.teamRecords.Length; i++)
-		{
-			tempTRX[i] = (int)cm.teamRecords[i].x;
-			tempTRY[i] = (int)cm.teamRecords[i].y;
-			tempTRZ[i] = cm.teamRecords[i].z;
-			tempTRW[i] = (int)cm.teamRecords[i].w;
-		}
-		myFile.Add("Team Records X", tempTRX);
-		myFile.Add("Team Records Y", tempTRY);
-		myFile.Add("Team Records Z", tempTRZ);
-		myFile.Add("Team Records W", tempTRW);
-
-		yield return myFile.Append();
-
-
-		//cm.SaveCareer();
-	}
 }

@@ -148,7 +148,7 @@ public class SweeperSelector : MonoBehaviour
     {
         //panel.SetActive(true);
         Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
 
         if (rockInfo.moving)
         {

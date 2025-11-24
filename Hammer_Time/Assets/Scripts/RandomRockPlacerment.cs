@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Feedbacks;
 using Lofelt.NiceVibrations;
-using Photon.Realtime;
 using System;
 using Random = UnityEngine.Random;
 
@@ -49,6 +48,8 @@ public class RandomRockPlacerment : MonoBehaviour
         placed = false;
         rockPos = new Vector2[gm.rockCurrent];
         HapticController.Play();
+        Debug.Log("fldfdbk is " + fltFdbk);
+        fltText = fltFdbk.GetFeedbackOfType<MMF_FloatingText>();
     }
 
     public Coroutine OnRockPlace(int rockCrnt, bool redTeam, bool mixed = false)
@@ -78,8 +79,8 @@ public class RandomRockPlacerment : MonoBehaviour
 
     IEnumerator RandomRockPlace()
     {
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         int houseCount = 0;
         int houseRed = 0;
@@ -127,7 +128,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             houseRed++;
                             if (gsp.aiRed)
                                 rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1 - (0.09f * cm.cStats.drawAccuracy)) * 1.25f));
+                                    + (Random.insideUnitCircle * ((1f - (0.009f * cm.cStats.drawAccuracy)) * 1.25f));
                             else
                                 rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
@@ -136,7 +137,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             houseRed++;
                             if (gsp.aiRed)
                                 rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1 - (0.09f * cm.cStats.drawAccuracy)) * 1.25f));
+                                    + (Random.insideUnitCircle * ((1 - (0.009f * cm.cStats.drawAccuracy)) * 1.25f));
                             else
                                 rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
@@ -280,8 +281,8 @@ public class RandomRockPlacerment : MonoBehaviour
     IEnumerator StratSelect(bool redTeam, bool aiTurn)
     {
         round++;
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (!aiTurn)
             playerStratGO.SetActive(true);
 
@@ -328,7 +329,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
     IEnumerator Placement(bool redTeam)
     {
-        GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         Debug.Log("RedTeam is " + redTeam);
         gm.houseList.Sort();
         //int houseCount = 0;
@@ -1693,6 +1694,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
             Debug.Log("Player Selection - " + playerSelection);
         }
+
         else
             ShotSelector(shotSelector, takeOutSelector, activeCharStats, otherCharStats);
 
@@ -1784,9 +1786,11 @@ public class RandomRockPlacerment : MonoBehaviour
         }
 
 
-        if (gm.gsp.debug)
-            fltFdbk.PlayFeedbacks(gm.rockList[rockCurrent].rock.transform.position, 1f);
-        //fltText.Play(rockPos[rockCurrent]);
+        //if (gm.gsp.debug)
+        //    fltFdbk.PlayFeedbacks(gm.rockList[rockCurrent].rock.transform.position, 1f);
+
+        //fltText.TargetTransform = gm.rockList[rockCurrent].rock.transform;
+        //fltFdbk.PlayFeedbacks(gm.rockList[rockCurrent].rock.transform.position);
         //gm.rockCurrent = rockCurrent - 1;
         //gm.rockCurrent--;
         placed1 = true;
@@ -1827,13 +1831,13 @@ public class RandomRockPlacerment : MonoBehaviour
             case 0:
                 #region Draw Random
                 Debug.Log("Case 0 - House");
-                HapticController.Load(drawHap);
-                //fltText.Value = "Draw";
+                HapticController.Play(drawHap);
+                fltText.Value = "Draw";
                 //Debug.Log("Case 0 - " + houseCount + " - i is " + rockCurrent);
                 placeSelector = 9;
                 rockPos[rockCurrent] = placePos[placeSelector]
                     + (Random.insideUnitCircle
-                    * (1.5f - (0.05f * activeCharStats.drawAccuracy.GetValue())));
+                    * (1.5f - (0.01f * activeCharStats.drawAccuracy.GetValue())));
                 //houseCount++;
                 //gm.houseList.Add(new House_List (gm.rockList[rockCurrent].rock, gm.rockList[rockCurrent].rockInfo));
                 Debug.Log("case 0 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
@@ -1842,7 +1846,7 @@ public class RandomRockPlacerment : MonoBehaviour
             case 1:
                 #region Out
                 Debug.Log("Case 1 - Out");
-                //fltText.Value = "Out";
+                fltText.Value = "Out";
                 placeSelector = 10;
                 rockPos[rockCurrent] = placePos[placeSelector];
                 Debug.Log("case 1 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
@@ -1851,8 +1855,8 @@ public class RandomRockPlacerment : MonoBehaviour
             case 2:
                 #region Draw Four Foot
                 Debug.Log("Case 2 - Four Foot");
-                HapticController.Load(drawHap);
-                //fltText.Value = "Four Foot";
+                HapticController.Play(drawHap);
+                fltText.Value = "Four Foot";
                 placeSelector = 9;
                 rockPos[rockCurrent] = placePos[placeSelector] + (Random.insideUnitCircle * 0.5f);
                 Debug.Log("case 2 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
@@ -1862,8 +1866,8 @@ public class RandomRockPlacerment : MonoBehaviour
                 #region AutoGuard
                 Debug.Log("Case 3 - Guard");
                 Debug.Log("case 3 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
-                HapticController.Load(drawHap);
-                //fltText.Value = "Guard";
+                HapticController.Play(drawHap);
+                fltText.Value = "Guard";
                 int guardSelect;
 
                 if (rockCurrent % 2 == 1)
@@ -1900,7 +1904,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 }
                 rockPos[rockCurrent] = placePos[placeSelector]
                     + (Random.insideUnitCircle
-                    * Random.Range(0f, 1.5f - (0.1f * activeCharStats.guardAccuracy.GetValue())));
+                    * Random.Range(0f, 1.5f - (0.01f * activeCharStats.guardAccuracy.GetValue())));
                 break;
                 #endregion
             case 4:
@@ -1908,16 +1912,15 @@ public class RandomRockPlacerment : MonoBehaviour
                 //takeOut check
                 Debug.Log("Takeout Selector - " + takeOutSelector);
                 lastShotWasTakeout = true;
-                HapticController.Load(hitHap);
-                //fltText = fltFdbk.GetComponent<MMF_FloatingText>();
-                //fltText.Value = "Takeout";
-                //fltText.Play(lastTakeoutTarget.transform.position);
+                HapticController.Play(hitHap);
+                fltText.Value = "Takeout";
+                //fltFdbk.PlayFeedbacks(lastTakeoutTarget.transform.position);
                 lastTakeoutTarget = null;
-                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < activeCharStats.takeOutAccuracy.GetValue())
                 {
                     //placeSelector = 9;
                     rockPos[rockCurrent] = rockPos[takeOutSelector]
-                        + (Random.insideUnitCircle * (1.5f - (0.1f * activeCharStats.takeOutAccuracy.GetValue())));
+                        + (Random.insideUnitCircle * (1.5f - (0.005f * activeCharStats.takeOutAccuracy.GetValue())));
                     Debug.Log("Hit and Roll Check - SUCCESS");
                     houseCount++;
                 }
@@ -1930,25 +1933,25 @@ public class RandomRockPlacerment : MonoBehaviour
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
 
-                if (Random.Range(0f, 10f) < activeCharStats.takeOutAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < activeCharStats.takeOutAccuracy.GetValue())
                 {
                     rockPos[takeOutSelector] = placePos[10];
                     Debug.Log("Opponent Rock Out of Play Check - SUCCESS");
-                    houseCount--; 
-                    //if (rockPos[rockCurrent] == placePos[10])
-                    //{
-                    //    fltText.Value = "HIT";
-                    //}
+                    houseCount--;
+                    if (rockPos[rockCurrent] == placePos[10])
+                    {
+                        fltText.Value = "HIT";
+                    }
                 }
                 else
                 {
                     rockPos[takeOutSelector] += 
-                        (Random.insideUnitCircle * (1.5f - (0.1f * activeCharStats.takeOutAccuracy.GetValue())));
+                        (Random.insideUnitCircle * (1.5f - (0.01f * activeCharStats.takeOutAccuracy.GetValue())));
                     Debug.Log("Opponent Rock Out of Play Check - FAIL");
-                    //if (rockPos[rockCurrent] == placePos[10])
-                    //{
-                    //    fltText.Value = "MISS";
-                    //}
+                    if (rockPos[rockCurrent] == placePos[10])
+                    {
+                        fltText.Value = "MISS";
+                    }
                 }
                 if (takeOutSelector != 99 && takeOutSelector < gm.rockList.Count)
                 {
@@ -1960,14 +1963,14 @@ public class RandomRockPlacerment : MonoBehaviour
             case 5:
                 #region Freeze
                 Debug.Log("Case 5 - Freeze - " + takeOutSelector);
-                //fltText.Value = "Freeze";
+                fltText.Value = "Freeze";
                 //Freeze check
-                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < activeCharStats.drawAccuracy.GetValue())
                 {
                     rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.25f;
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
-                            * (0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue())));
+                            * (0.5f - (0.005f * activeCharStats.drawAccuracy.GetValue())));
                     Debug.Log("Close Freeze Check - SUCCESS");
                     
                 }
@@ -1976,22 +1979,22 @@ public class RandomRockPlacerment : MonoBehaviour
                     rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.25f;
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
-                            * (2f - (0.1f * activeCharStats.drawAccuracy.GetValue())));
+                            * (2f - (0.01f * activeCharStats.drawAccuracy.GetValue())));
                     Debug.Log("Close Freeze Check - FAIL");
                 }
                 houseCount++;
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
 
-                if (Random.Range(0f, 10f) < activeCharStats.drawAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < activeCharStats.drawAccuracy.GetValue())
                 {
-                    rockPos[takeOutSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].y += 0.5f - (0.005f * activeCharStats.drawAccuracy.GetValue());
                     Debug.Log("Opponent Freeze Check - SUCCESS");
                 }
                 else
                 {
                     rockPos[takeOutSelector].x += Random.Range(0f, 0.1f * activeCharStats.drawAccuracy.GetValue());
-                    rockPos[takeOutSelector].y += 0.5f - (0.05f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].y += 1.5f - (0.005f * activeCharStats.drawAccuracy.GetValue());
                     Debug.Log("Opponent Freeze Check - FAIL");
                 }
                 break;
@@ -2020,7 +2023,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     guardCounter++;
                 }
-                rockPos[rockCurrent] = placePos[placeSelector] * Random.Range(0f, 1.5f - (0.1f * activeCharStats.guardAccuracy.GetValue()));
+                rockPos[rockCurrent] = placePos[placeSelector] * Random.Range(0f, 1.5f - (0.01f * activeCharStats.guardAccuracy.GetValue()));
                 break;
             #endregion
 
@@ -2160,11 +2163,11 @@ public class RandomRockPlacerment : MonoBehaviour
         switch (shot)
         {
             case "Guard":
-                if (Random.Range(0f, 11f) < skill)
+                if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 3;
                     Debug.Log("Guard Check - SUCCESS");
-                    //fltText.Value = "Guard Check - SUCCESS";
+                    fltText.Value = "Guard Check - SUCCESS";
                 }
                 else
                 {
@@ -2173,23 +2176,23 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 0;
                         Debug.Log("Guard Check - long - FAIL");
-                        //fltText.Value = "Guard Check - long - FAIL";
+                        fltText.Value = "Guard Check - long - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Guard Check - short - FAIL");
-                        //fltText.Value = "Guard Check - short - FAIL";
+                        fltText.Value = "Guard Check - short - FAIL";
                     }
                 }
                 break;
 
             case "Draw":
-                if (Random.Range(0f, 11f) < skill)
+                if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 0;
                     Debug.Log("Draw Check - SUCCESS");
-                    //fltText.Value = "Draw Check - SUCCESS";
+                    fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
                 {
@@ -2198,23 +2201,23 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Draw Check - short - FAIL");
-                        //fltText.Value = "Draw Check - short - FAIL";
+                        fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Draw Check - long - FAIL");
-                        //fltText.Value = "Draw Check - long - FAIL";
+                        fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
                 break;
 
             case "Draw Four Foot":
-                if (Random.Range(0f, 11f) < skill)
+                if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 2;
                     Debug.Log("Draw Check - SUCCESS");
-                    //fltText.Value = "Draw Check - SUCCESS";
+                    fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
                 {
@@ -2223,24 +2226,24 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Draw Check - short - FAIL");
-                        //fltText.Value = "Draw Check - short - FAIL";
+                        fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Draw Check - long - FAIL");
-                        //fltText.Value = "Draw Check - long - FAIL";
+                        fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
                 break;
 
             case "Takeout":
                 //SKILL check
-                if (Random.Range(0f, 11f) < skill)
+                if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 4;
                     Debug.Log("Takeout Check - SUCCESS");
-                    //fltText.Value = "Takeout Check - SUCCESS";
+                    fltText.Value = "Takeout Check - SUCCESS";
                 }
                 //SKILL check - fail
                 else
@@ -2250,25 +2253,25 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 99;
                         Debug.Log("Takeout Check - crash - FAIL");
-                        //fltText.Value = "Takeout Check - crash - FAIL";
+                        fltText.Value = "Takeout Check - crash - FAIL";
                     }
                     //crash check - out
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Takeout Check - out - FAIL");
-                        //fltText.Value = "Takeout Check - out - FAIL";
+                        fltText.Value = "Takeout Check - out - FAIL";
                     }
                 }
                 break;
 
             case "Freeze":
                 //SKILL check
-                if (Random.Range(0f, 11f) < skill)
+                if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 5;
                     Debug.Log("Freeze Check - SUCCESS");
-                    //fltText.Value = "Freeze Check - SUCCESS";
+                    fltText.Value = "Freeze Check - SUCCESS";
                 }
                 //SKILL check - fail
                 else
@@ -2278,23 +2281,24 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         shotSelector = 3;
                         Debug.Log("Freeze Check - short - FAIL");
-                        //fltText.Value = "Freeze Check - short - FAIL";
+                        fltText.Value = "Freeze Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
                         Debug.Log("Freeze Check - long - FAIL");
-                        //fltText.Value = "Freeze Check - long - FAIL";
+                        fltText.Value = "Freeze Check - long - FAIL";
                     }
                 }
                 break;
+
             default:
                 shotSelector = 1;
                 Debug.Log("Skill Check Default - FAIL");
-                //fltText.Value = "Skill Check Default - FAIL";
+                fltText.Value = "Skill Check Default - FAIL";
                 break;
         }
-
+        
         return shotSelector;
     }
 }

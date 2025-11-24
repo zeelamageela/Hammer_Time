@@ -172,7 +172,7 @@ public class Rock_Colliders : MonoBehaviour
 
             //slowMo.SlowdownTime(true);
 
-            Debug.Log("Time scale is " + Time.timeScale);
+            //Debug.Log("Time scale is " + Time.timeScale);
 
             //GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             if (gm.redHammer)
@@ -181,13 +181,15 @@ public class Rock_Colliders : MonoBehaviour
                 if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
                     //is it aiTeam
-                    sm.SweepHit(gm.aiTeamRed);
+                    if (sm != null)
+                        sm.SweepHit(gm.aiTeamRed);
                 }
                 //if the rock is yellow
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    //is the aiTeam yellow
-                    sm.SweepHit(gm.aiTeamYellow);
+                    if (sm != null)
+                        //is the aiTeam yellow
+                        sm.SweepHit(gm.aiTeamYellow);
                 }
             }
             else if (!gm.redHammer)
@@ -195,12 +197,14 @@ public class Rock_Colliders : MonoBehaviour
                 //if the rock is yellow
                 if (GetComponent<Rock_Info>().teamName == gm.rockList[0].rockInfo.teamName)
                 {
-                    sm.SweepHit(gm.aiTeamYellow);
+                    if (sm != null)
+                        sm.SweepHit(gm.aiTeamYellow);
                 }
                 //if the rock is red
                 else if (GetComponent<Rock_Info>().teamName == gm.rockList[1].rockInfo.teamName)
                 {
-                    sm.SweepHit(gm.aiTeamRed);
+                    if (sm != null)
+                        sm.SweepHit(gm.aiTeamRed);
                 }
             }
         }

@@ -112,7 +112,7 @@ public class GameSettingsPersist : MonoBehaviour
             OnTutorial();
         }
 
-        teamM = FindObjectOfType<TeamManager>();
+        teamM = FindFirstObjectByType<TeamManager>();
 
     }
 
@@ -307,8 +307,8 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadFromTournySelector()
     {
-        TournySelector ts = FindObjectOfType<TournySelector>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        TournySelector ts = FindFirstObjectByType<TournySelector>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
@@ -349,7 +349,7 @@ public class GameSettingsPersist : MonoBehaviour
     public void LoadTournySettings(TournySettings ts)
     {
 
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
@@ -374,11 +374,11 @@ public class GameSettingsPersist : MonoBehaviour
     public void TournySetup(int btn = 0)
     {
         Debug.Log("Tourny Setup GSP");
-        TournyManager tm = FindObjectOfType<TournyManager>();
-        PlayoffManager pm = FindObjectOfType<PlayoffManager>();
-        PlayoffManager_SingleK pm1k = FindObjectOfType<PlayoffManager_SingleK>();
-        CareerManager cm = FindObjectOfType<CareerManager>();
-        CashGames cg = FindObjectOfType<CashGames>();
+        TournyManager tm = FindFirstObjectByType<TournyManager>();
+        PlayoffManager pm = FindFirstObjectByType<PlayoffManager>();
+        PlayoffManager_SingleK pm1k = FindFirstObjectByType<PlayoffManager_SingleK>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        CashGames cg = FindFirstObjectByType<CashGames>();
         careerLoad = false;
         if (cg != null)
         {
@@ -512,7 +512,7 @@ public class GameSettingsPersist : MonoBehaviour
     public void TournyKOSetup()
     {
         Debug.Log("Tourny KO Setup GSP");
-        PlayoffManager_TripleK pm = FindObjectOfType<PlayoffManager_TripleK>();
+        PlayoffManager_TripleK pm = FindFirstObjectByType<PlayoffManager_TripleK>();
         careerLoad = false;
         tourny = true;
         draw = 0;
@@ -601,7 +601,7 @@ public class GameSettingsPersist : MonoBehaviour
     public void LoadCareer()
     {
         Debug.Log("Load Career GSP");
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
         //teamList = new List<Team_List>();
         teamColour = cm.teamColour;
         cm.LoadCareer(this);
@@ -615,7 +615,7 @@ public class GameSettingsPersist : MonoBehaviour
     public void LoadTourny()
     {
         Debug.Log("Load Tourny GSP");
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         cm.LoadCareer(this);
         bg = cm.currentTourny.BG;
@@ -632,9 +632,9 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadKOTourny()
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
         //cm.LoadCareer();
-        PlayoffManager_TripleK pm3k = FindObjectOfType<PlayoffManager_TripleK>();
+        PlayoffManager_TripleK pm3k = FindFirstObjectByType<PlayoffManager_TripleK>();
         teamList = new List<Team_List>();
         myFile = new EasyFileSave("my_player_data");
         //inProgress = true;
@@ -729,7 +729,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void AutoSave()
     {
-        CareerManager cm = FindObjectOfType<CareerManager>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
         cm.SaveCareer();
     }
 
@@ -751,7 +751,7 @@ public class GameSettingsPersist : MonoBehaviour
         ends = 10;
         rocks = 8;
         redHammer = true;
-        //GameManager gm = FindObjectOfType<GameManager>();
+        //GameManager gm = FindFirstObjectByType<GameManager>();
 
         //gm.endCurrent = 10;
     }
