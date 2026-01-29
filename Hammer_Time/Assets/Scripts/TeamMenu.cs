@@ -100,25 +100,51 @@ public class TeamMenu : MonoBehaviour
             else
                 oppStatBase = 10;
 
-            drawSlider.value = cm.cStats.drawAccuracy;
-            guardSlider.value = cm.cStats.guardAccuracy;
-            takeOutSlider.value = cm.cStats.takeOutAccuracy;
-            enduranceSlider.value = cm.cStats.sweepEndurance;
-            strengthSlider.value = cm.cStats.sweepStrength;
-            healthSlider.value = cm.cStats.sweepCohesion;
+            // Calculate team base stats (sum of all 4 players)
+            int teamBaseDraw = 0;
+            int teamBaseGuard = 0;
+            int teamBaseTakeOut = 0;
+            int teamBaseStrength = 0;
+            int teamBaseEndurance = 0;
+            int teamBaseCohesion = 0;
+            
+            // Add the 3 team members' stats
+            if (cm.activePlayers != null && cm.activePlayers.Length >= 3)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    teamBaseDraw += cm.activePlayers[i].draw;
+                    teamBaseGuard += cm.activePlayers[i].guard;
+                    teamBaseTakeOut += cm.activePlayers[i].takeOut;
+                    teamBaseStrength += cm.activePlayers[i].sweepStrength;
+                    teamBaseEndurance += cm.activePlayers[i].sweepEnduro;
+                    teamBaseCohesion += cm.activePlayers[i].sweepCohesion;
+                }
+            }
+            
+            // Add the Skip's (player character) stats
+            teamBaseDraw += cm.cStats.drawAccuracy;
+            teamBaseGuard += cm.cStats.guardAccuracy;
+            teamBaseTakeOut += cm.cStats.takeOutAccuracy;
+            teamBaseStrength += cm.cStats.sweepStrength;
+            teamBaseEndurance += cm.cStats.sweepEndurance;
+            teamBaseCohesion += cm.cStats.sweepCohesion;
+            
+            // Base sliders show TEAM total (all 4 players combined)
+            drawSlider.value = teamBaseDraw;
+            guardSlider.value = teamBaseGuard;
+            takeOutSlider.value = teamBaseTakeOut;
+            strengthSlider.value = teamBaseStrength;
+            enduranceSlider.value = teamBaseEndurance;
+            healthSlider.value = teamBaseCohesion;
 
-            drawModSlider.value = cm.cStats.drawAccuracy + cm.modStats.drawAccuracy;
-            guardModSlider.value = cm.cStats.guardAccuracy + cm.modStats.guardAccuracy;
-            takeOutModSlider.value = cm.cStats.takeOutAccuracy + cm.modStats.takeOutAccuracy;
-            enduranceModSlider.value = cm.cStats.sweepEndurance + cm.modStats.sweepEndurance;
-            strengthModSlider.value = cm.cStats.sweepStrength + cm.modStats.sweepStrength;
-            healthModSlider.value = cm.cStats.sweepCohesion + cm.modStats.sweepCohesion;
-            //oppDrawSlider.value = oppStatBase + cm.oppStats.drawAccuracy;
-            //oppGuardSlider.value = oppStatBase + cm.oppStats.guardAccuracy;
-            //oppTakeOutSlider.value = oppStatBase + cm.oppStats.takeOutAccuracy;
-            //oppEnduranceSlider.value = oppStatBase + cm.oppStats.sweepEndurance;
-            //oppStrengthSlider.value = oppStatBase + cm.oppStats.sweepStrength;
-            //oppHealthSlider.value = oppStatBase + cm.oppStats.sweepCohesion;
+            // Mod sliders show TEAM total + equipment/sponsor bonuses
+            drawModSlider.value = teamBaseDraw + cm.modStats.drawAccuracy;
+            guardModSlider.value = teamBaseGuard + cm.modStats.guardAccuracy;
+            takeOutModSlider.value = teamBaseTakeOut + cm.modStats.takeOutAccuracy;
+            strengthModSlider.value = teamBaseStrength + cm.modStats.sweepStrength;
+            enduranceModSlider.value = teamBaseEndurance + cm.modStats.sweepEndurance;
+            healthModSlider.value = teamBaseCohesion + cm.modStats.sweepCohesion;
 
             xp = cm.xp;
             cash = cm.cash;
@@ -249,28 +275,36 @@ public class TeamMenu : MonoBehaviour
         //Debug.Log("TeamMenu Earnings are " + cm.earnings);
         if (cm.week > 1)
         {
-            for (int i = 0; i < activePlayers.Length; i++)
+            // Load activePlayers from CareerManager (contains saved stats and metadata)
+            if (cm.activePlayers != null && cm.activePlayers.Length >= 3)
             {
-                //Debug.Log("Active Players ID is " + i + " - " + activePlayers[i].id);
-                for (int j = 0; j < cm.playerPool.Length; j++)
+                // Copy from cm.activePlayers to local activePlayers
+                for (int i = 0; i < activePlayers.Length && i < cm.activePlayers.Length; i++)
                 {
-                    if (activePlayers[i].id == cm.playerPool[j].id)
+                    activePlayers[i] = cm.activePlayers[i];
+                }
+                
+                // Mark these players as active in playerPool
+                for (int i = 0; i < activePlayers.Length; i++)
+                {
+                    for (int j = 0; j < cm.playerPool.Length; j++)
                     {
-                        activePlayers[i].name = cm.playerPool[j].name;
-                        activePlayers[i].description = cm.playerPool[j].description;
-                        activePlayers[i].cost = cm.playerPool[j].cost;
-                        activePlayers[i].image = cm.playerPool[j].image;
-                        activePlayers[i].view = cm.playerPool[j].view;
-                        activePlayers[i].active = true;
-                        cm.playerPool[j].active = true;
-                        // Copy stats and scale
-                        activePlayers[i].draw = cm.playerPool[j].draw;
-                        activePlayers[i].takeOut = cm.playerPool[j].takeOut;
-                        activePlayers[i].guard = cm.playerPool[j].guard;
-                        activePlayers[i].sweepStrength = cm.playerPool[j].sweepStrength;
-                        activePlayers[i].sweepEnduro = cm.playerPool[j].sweepEnduro;
-                        activePlayers[i].sweepCohesion = cm.playerPool[j].sweepCohesion;
+                        if (activePlayers[i].id == cm.playerPool[j].id)
+                        {
+                            cm.playerPool[j].active = true;
+                            break;
+                        }
                     }
+                }
+            }
+            else
+            {
+                // Fallback: load from playerPool if cm.activePlayers is empty
+                Debug.LogWarning("[TeamMenu] cm.activePlayers is null or empty, loading from playerPool");
+                for (int i = 0; i < activePlayers.Length; i++)
+                {
+                    activePlayers[i] = cm.playerPool[i];
+                    cm.playerPool[i].active = true;
                 }
             }
 
@@ -284,9 +318,26 @@ public class TeamMenu : MonoBehaviour
         }
         else
         {
+            // Week 1: Create independent copies from playerPool
             for (int i = 0; i < activePlayers.Length; i++)
             {
-                activePlayers[i] = cm.playerPool[i];
+                // Clone the player so changes to playerPool don't affect our team
+                activePlayers[i] = new Player
+                {
+                    id = cm.playerPool[i].id,
+                    name = cm.playerPool[i].name,
+                    description = cm.playerPool[i].description,
+                    cost = cm.playerPool[i].cost,
+                    image = cm.playerPool[i].image,
+                    active = true,
+                    view = cm.playerPool[i].view,
+                    draw = cm.playerPool[i].draw,
+                    guard = cm.playerPool[i].guard,
+                    takeOut = cm.playerPool[i].takeOut,
+                    sweepStrength = cm.playerPool[i].sweepStrength,
+                    sweepEnduro = cm.playerPool[i].sweepEnduro,
+                    sweepCohesion = cm.playerPool[i].sweepCohesion
+                };
             }
 
             Shuffle(cm.playerPool);
@@ -347,7 +398,8 @@ public class TeamMenu : MonoBehaviour
         setTeamButton.SetActive(true);
         agentMenu.SetActive(false);
         //pm.nextWeekButton.gameObject.SetActive(false);
-        PreviewPoints();
+        // DON'T call PreviewPoints() - it was overwriting modStats incorrectly!
+        // modStats should only contain equipment/sponsor bonuses, not team member stats
 
         for (int i = 0; i < cm.playerPool.Length; i++)
         {
@@ -443,7 +495,7 @@ public class TeamMenu : MonoBehaviour
     {
         int playerToReplace = 99;
 
-        UnPreviewPoints();
+        // DON'T call UnPreviewPoints() - it was manipulating modStats incorrectly
         for (int i = 0; i < activePlayers.Length; i++)
         {
             if (activePlayers[i].name == replaceMemberDisplay.charName.text)
@@ -459,7 +511,24 @@ public class TeamMenu : MonoBehaviour
             if (freeAgents[freeAgent].id == cm.playerPool[i].id)
             {
                 cm.playerPool[i].active = true;
-                activePlayers[playerToReplace] = cm.playerPool[i];
+                
+                // Clone the player so changes to playerPool don't affect our team
+                activePlayers[playerToReplace] = new Player
+                {
+                    id = cm.playerPool[i].id,
+                    name = cm.playerPool[i].name,
+                    description = cm.playerPool[i].description,
+                    cost = cm.playerPool[i].cost,
+                    image = cm.playerPool[i].image,
+                    active = true,
+                    view = cm.playerPool[i].view,
+                    draw = cm.playerPool[i].draw,
+                    guard = cm.playerPool[i].guard,
+                    takeOut = cm.playerPool[i].takeOut,
+                    sweepStrength = cm.playerPool[i].sweepStrength,
+                    sweepEnduro = cm.playerPool[i].sweepEnduro,
+                    sweepCohesion = cm.playerPool[i].sweepCohesion
+                };
             }
         }
         freeAgents[freeAgent] = tempPlayer;
@@ -489,6 +558,11 @@ public class TeamMenu : MonoBehaviour
                     cm.teams[i].players.Add(p);
                 }
                 cm.teams[i].players.Add(cm.playerCharacter); // Add the player's character to the team
+                
+                // IMPORTANT: Update team skills from the new player roster
+                cm.teams[i].UpdateTeamSkillsFromPlayers();
+                
+                Debug.Log($"[TeamMenu] Team skills updated: draw={cm.teams[i].draw}, strength={cm.teams[i].strength}");
                 break; // Only one player team expected
             }
         }
@@ -599,47 +673,6 @@ public class TeamMenu : MonoBehaviour
             // Swap the new and old values
             a[i] = a[rnd];
             a[rnd] = temp;
-        }
-    }
-
-    public void PreviewPoints()
-    {
-        cm = FindFirstObjectByType<CareerManager>();
-        pm = FindFirstObjectByType<SponsorManager>();
-
-        cm.modStats.drawAccuracy = activePlayers[0].draw + activePlayers[1].draw + activePlayers[2].draw;
-        cm.modStats.guardAccuracy = activePlayers[0].guard + activePlayers[1].guard + activePlayers[2].guard;
-        cm.modStats.takeOutAccuracy = activePlayers[0].takeOut + activePlayers[1].takeOut + activePlayers[2].takeOut;
-        cm.modStats.sweepEndurance = activePlayers[0].sweepEnduro + activePlayers[1].sweepEnduro + activePlayers[2].sweepEnduro;
-        cm.modStats.sweepStrength = activePlayers[0].sweepStrength + activePlayers[1].sweepStrength + activePlayers[2].sweepStrength;
-        cm.modStats.sweepCohesion = activePlayers[0].sweepCohesion + activePlayers[1].sweepCohesion + activePlayers[2].sweepCohesion;
-        cm.oppStats.drawAccuracy = activePlayers[0].oppDraw + activePlayers[1].oppDraw + activePlayers[2].oppDraw;
-        cm.oppStats.guardAccuracy = activePlayers[0].oppGuard + activePlayers[1].oppGuard + activePlayers[2].oppGuard;
-        cm.oppStats.takeOutAccuracy = activePlayers[0].oppTakeOut + activePlayers[1].oppTakeOut + activePlayers[2].oppTakeOut;
-        cm.oppStats.sweepEndurance = activePlayers[0].oppEnduro + activePlayers[1].oppEnduro + activePlayers[2].oppEnduro;
-        cm.oppStats.sweepStrength = activePlayers[0].oppStrength + activePlayers[1].oppStrength + activePlayers[2].oppStrength;
-        cm.oppStats.sweepCohesion = activePlayers[0].oppCohesion + activePlayers[1].oppCohesion + activePlayers[2].oppCohesion;
-    }
-
-    public void UnPreviewPoints()
-    {
-        cm = FindFirstObjectByType<CareerManager>();
-        pm = FindFirstObjectByType<SponsorManager>();
-
-        for (int i = 0; i < pm.activeCards.Length; i++)
-        {
-            cm.modStats.drawAccuracy += pm.activeCards[i].draw;
-            cm.modStats.guardAccuracy += pm.activeCards[i].guard;
-            cm.modStats.takeOutAccuracy += pm.activeCards[i].takeOut;
-            cm.modStats.sweepEndurance += pm.activeCards[i].sweepEnduro;
-            cm.modStats.sweepStrength += pm.activeCards[i].sweepStrength;
-            cm.modStats.sweepCohesion += pm.activeCards[i].sweepCohesion;
-            cm.oppStats.drawAccuracy += pm.activeCards[i].oppDraw;
-            cm.oppStats.guardAccuracy += pm.activeCards[i].oppGuard;
-            cm.oppStats.takeOutAccuracy += pm.activeCards[i].oppTakeOut;
-            cm.oppStats.sweepEndurance += pm.activeCards[i].oppEnduro;
-            cm.oppStats.sweepStrength += pm.activeCards[i].oppStrength;
-            cm.oppStats.sweepCohesion += pm.activeCards[i].oppCohesion;
         }
     }
 }

@@ -31025,7 +31025,7 @@ MonoBehaviour:
     apparel: 0
     head: 0
     handle: 1
-    id: 5
+    id: 6
     img: {fileID: 21300000, guid: 678d52b7260e146b387ea8e987b5f14e, type: 3}
     cost: 5000
     text: 
@@ -55922,7 +55922,7 @@ MonoBehaviour:
   teamNameText: {fileID: 380867010}
   teamNameAlertText: {fileID: 1079479451}
   earningsText: {fileID: 0}
-  recordText: {fileID: 0}
+  recordText: {fileID: 1369843471}
   hScroll: {fileID: 64754807}
   menuButtons:
   - {fileID: 288163933}
@@ -69321,16 +69321,18 @@ MonoBehaviour:
   redTeamColour: {r: 0, g: 0, b: 0, a: 0}
   redTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -69342,16 +69344,18 @@ MonoBehaviour:
   yellowTeamColour: {r: 0, g: 0, b: 0, a: 0}
   yellowTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -69376,16 +69380,18 @@ MonoBehaviour:
   skinValue: []
   playerTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80235,16 +80241,18 @@ MonoBehaviour:
     oppCohesion: 0
   teamPool:
   - name: Smith
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80253,16 +80261,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Goodelhopper
-    wins: 0
-    loss: 0
+    id: 1
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 1
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80271,16 +80281,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Isgard
-    wins: 0
-    loss: 0
+    id: 2
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 2
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80289,16 +80301,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Lockhart
-    wins: 0
-    loss: 0
+    id: 3
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 3
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80307,16 +80321,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Tubbler
-    wins: 0
-    loss: 0
+    id: 4
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 4
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80325,16 +80341,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Gruber
-    wins: 0
-    loss: 0
+    id: 5
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 5
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80343,16 +80361,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Hoppenberg
-    wins: 0
-    loss: 0
+    id: 6
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 6
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80361,16 +80381,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Crocker
-    wins: 0
-    loss: 0
+    id: 7
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 7
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80379,16 +80401,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Yamaguchi
-    wins: 0
-    loss: 0
+    id: 8
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 8
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80397,16 +80421,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Reid
-    wins: 0
-    loss: 0
+    id: 9
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 9
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80415,16 +80441,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Saint-Pierre
-    wins: 0
-    loss: 0
+    id: 10
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 10
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80433,16 +80461,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: O'Leary
-    wins: 0
-    loss: 0
+    id: 11
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 11
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80451,16 +80481,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Hansen
-    wins: 0
-    loss: 0
+    id: 12
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 12
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80469,16 +80501,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Tortellini
-    wins: 0
-    loss: 0
+    id: 13
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 13
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80487,16 +80521,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Dupuis
-    wins: 0
-    loss: 0
+    id: 14
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 14
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80505,16 +80541,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Lacroix
-    wins: 0
-    loss: 0
+    id: 15
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 15
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80523,16 +80561,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Chabonel
-    wins: 0
-    loss: 0
+    id: 16
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 16
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80541,16 +80581,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Tasselborg
-    wins: 0
-    loss: 0
+    id: 17
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 17
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80559,16 +80601,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Nakajima
-    wins: 0
-    loss: 0
+    id: 18
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 18
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80577,16 +80621,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Murphy
-    wins: 0
-    loss: 0
+    id: 19
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 19
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80595,16 +80641,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Koronova
-    wins: 0
-    loss: 0
+    id: 20
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 20
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80613,16 +80661,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Kim
-    wins: 0
-    loss: 0
+    id: 21
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 21
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80631,16 +80681,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Kaiser
-    wins: 0
-    loss: 0
+    id: 22
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 22
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80649,16 +80701,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Fulton
-    wins: 0
-    loss: 0
+    id: 23
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 23
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80667,16 +80721,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Huang
-    wins: 0
-    loss: 0
+    id: 24
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 24
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80685,16 +80741,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Barleywood
-    wins: 0
-    loss: 0
+    id: 25
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 25
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80703,16 +80761,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: van Doeffel
-    wins: 0
-    loss: 0
+    id: 26
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 26
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80721,16 +80781,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Kenta
-    wins: 0
-    loss: 0
+    id: 27
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 27
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80739,16 +80801,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Frunkle
-    wins: 0
-    loss: 0
+    id: 39
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 39
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80757,16 +80821,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Tuttleson
-    wins: 0
-    loss: 0
+    id: 28
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 28
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80775,16 +80841,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Kimbler
-    wins: 0
-    loss: 0
+    id: 29
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 29
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80793,16 +80861,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Sokorov
-    wins: 0
-    loss: 0
+    id: 30
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 30
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80811,16 +80881,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: LaFayette
-    wins: 0
-    loss: 0
+    id: 31
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 31
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80829,16 +80901,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Devon
-    wins: 0
-    loss: 0
+    id: 32
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 32
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80847,16 +80921,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Gundellson
-    wins: 0
-    loss: 0
+    id: 33
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 33
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80865,16 +80941,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Voisine
-    wins: 0
-    loss: 0
+    id: 34
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 34
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80883,16 +80961,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Crawdad
-    wins: 0
-    loss: 0
+    id: 35
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 35
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80901,16 +80981,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Russell
-    wins: 0
-    loss: 0
+    id: 36
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 36
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80919,16 +81001,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Babych
-    wins: 0
-    loss: 0
+    id: 37
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 37
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80937,16 +81021,18 @@ MonoBehaviour:
     sweepEnduro: 0
     sweepCohesion: 0
   - name: Sandoval
-    wins: 0
-    loss: 0
+    id: 38
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 38
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -80961,16 +81047,18 @@ MonoBehaviour:
   tourRecords: []
   playerTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -93699,19 +93787,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8983778961508762602, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 219.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8983778961508762602, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8983778961508762602, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 127
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778961508762602, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 134
+      value: 227
       objectReference: {fileID: 0}
     - target: {fileID: 8983778961508762602, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -91
+      value: -111
       objectReference: {fileID: 0}
     - target: {fileID: 8983778961509050732, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_FontData.m_MaxSize
@@ -93915,39 +94003,71 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962381741448, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 323.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8983778962381741448, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
-      propertyPath: m_SizeDelta.y
       value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962381741448, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 127
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962381741448, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 395
+      value: 419
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962381741448, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -91.000046
+      value: -111
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962389200432, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962389200432, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962389200435, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.29077375
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962389200435, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 161.9
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962389200435, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 63.501
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962389200435, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 80.95
+      value: 0.000045776367
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962389200435, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.15001
+      value: -45.036
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962579847606, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 109.6
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962579847606, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 63.5
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962579847606, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 54.800003
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962579847606, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -31.750011
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962579847607, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962579847607, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962648362368, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
@@ -93971,59 +94091,91 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149694, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 109.6
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149694, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 149.85
+      value: 63.5
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149694, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -54.799988
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149694, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.074313
+      value: 31.74998
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_Text
       value: XP
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_FontData.m_Alignment
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962710149695, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_HorizontalOverflow
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8983778962755985194, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 161.9
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962755985194, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 63.5
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962755985194, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -80.94998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962755985194, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0014275
+      value: 31.750011
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962755985195, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8983778962755985195, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962755985195, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_FontData.m_Alignment
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 8983778962755985195, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8983778962844780509, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 414.7
+      value: 494.7
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962844780509, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 150
+      value: 106.6
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962844780509, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 271
+      value: 311
       objectReference: {fileID: 0}
     - target: {fileID: 8983778962844780509, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -206.1
+      value: -227.80002
       objectReference: {fileID: 0}
     - target: {fileID: 8983778963182056946, guid: e8a57cb3f43144c3f9ec0c571f31d66f, type: 3}
       propertyPath: m_SizeDelta.x

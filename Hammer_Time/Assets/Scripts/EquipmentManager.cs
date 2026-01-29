@@ -748,9 +748,6 @@ public class EquipmentManager : MonoBehaviour
 
                         temp[i].head = true;
 
-                        if (i == 0)
-                            temp[i] = equipList[i];
-
                         if (temp[i].cost < 500)
                         {
                             temp[i].name = "Basic Bristled Head";
@@ -901,212 +898,198 @@ public class EquipmentManager : MonoBehaviour
 
     public Equipment[] LoadItems(Equipment[] equipList, string type)
     {
-        Equipment[] temp = new Equipment[30];
+        Equipment[] temp;
+        int arraySize;
+        int idOffset;
 
+        // Determine array size and ID offset based on type
         switch (type)
         {
             case "handle":
-                {
-                    temp = new Equipment[30]; 
-                    
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        //Debug.Log("index is " + i);
-
-                        if (i < equipList.Length)
-                        {
-                            temp[i] = equipList[i];
-                        }
-                        else
-                        {
-                            temp[i] = new Equipment();
-                            temp[i].cost = Random.Range(500f, 15000f);
-                        }
-
-                        if (temp[i].stats == null || temp[i].stats.Length != 6)
-                            temp[i].stats = new int[6];
-                        if (temp[i].oppStats == null || temp[i].oppStats.Length != 6)
-                            temp[i].oppStats = new int[6];
-
-                        temp[i].handle = true;
-
-                        if (temp[i].cost < 500)
-                        {
-                            temp[i].name = "Wooden Handle";
-                            temp[i].img = gsImgs[0];
-                        }
-                        else if (temp[i].cost < 1500)
-                        {
-                            temp[i].name = "Fibreglass Handle";
-                            temp[i].img = gsImgs[1];
-                        }
-                        else if (temp[i].cost < 3500)
-                        {
-                            temp[i].name = "Composite Handle";
-                            temp[i].img = gsImgs[2];
-                        }
-                        else if (temp[i].cost < 7500)
-                        {
-                            temp[i].name = "Carbon Fibre Handle";
-                            temp[i].img = gsImgs[3];
-                        }
-                        else
-                        {
-                            temp[i].name = "Exotic Carbon Fibre Handle";
-                            temp[i].img = gsImgs[4];
-                        }
-
-                        Debug.Log("Loaded " + temp[i].name + " of cost " + temp[i].cost);
-                    }
-                    break;
-                }
+                arraySize = 30;
+                idOffset = 0;
+                break;
             case "head":
-                {
-                    temp = new Equipment[30];
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        if (i < equipList.Length)
-                        {
-                            temp[i] = equipList[i];
-                            temp[i].cost = equipList[i].cost;
-                        }
-                        else
-                        {
-                            temp[i] = new Equipment();
-                            temp[i].cost = Random.Range(500f, 15000f);
-                        }
-
-                        temp[i].head = true;
-
-                        if (temp[i].cost < 500)
-                        {
-                            temp[i].name = "Basic Bristled Head";
-                            temp[i].img = gsImgs[5];
-                        }
-                        else if (temp[i].cost < 1500)
-                        {
-                            temp[i].name = "Fabric Head";
-                            temp[i].img = gsImgs[6];
-                        }
-                        else if (temp[i].cost < 3500)
-                        {
-                            temp[i].name = "Advanced Fabric Head";
-                            temp[i].img = gsImgs[7];
-                        }
-                        else if (temp[i].cost < 7500)
-                        {
-                            temp[i].name = "Premium Fabric Head";
-                            temp[i].img = gsImgs[7];
-                        }
-                        else
-                        {
-                            temp[i].name = "Exotic Fabric Head";
-                            temp[i].img = gsImgs[8];
-                        }
-                    }
-                    break;
-                }
+                arraySize = 30;
+                idOffset = 30;
+                break;
             case "footwear":
-                {
-                    temp = new Equipment[20];
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        if (i < equipList.Length)
-                        {
-                            temp[i] = equipList[i];
-                            temp[i].cost = equipList[i].cost;
-                        }
-                        else
-                        {
-                            temp[i] = new Equipment();
-                            temp[i].cost = Random.Range(500f, 15000f);
-                        }
-
-                        temp[i].footwear = true;
-
-                        if (i == 0)
-                            temp[i] = equipList[i];
-
-                        if (temp[i].cost < 500)
-                        {
-                            temp[i].name = "Half Slider";
-                            temp[i].img = gsImgs[9];
-                        }
-                        else if (temp[i].cost < 1500)
-                        {
-                            temp[i].name = "Full Slider";
-                            temp[i].img = gsImgs[10];
-                        }
-                        else if (temp[i].cost < 3500)
-                        {
-                            temp[i].name = "Premium Slider";
-                            temp[i].img = gsImgs[11];
-                        }
-                        else if (temp[i].cost < 7500)
-                        {
-                            temp[i].name = "Premium Shoes";
-                            temp[i].img = gsImgs[12];
-                        }
-                        else
-                        {
-                            temp[i].name = "Exotic Shoes";
-                            temp[i].img = gsImgs[13];
-                        }
-                    }
-                    break;
-                }
+                arraySize = 20;
+                idOffset = 60;
+                break;
             case "apparel":
-                {
-                    temp = new Equipment[20];
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        if (i < equipList.Length)
-                        {
-                            temp[i] = equipList[i];
-                            temp[i].cost = equipList[i].cost;
-                        }
-                        else
-                        {
-                            temp[i] = new Equipment();
-                            temp[i].cost = Random.Range(500f, 15000f);
-                        }
+                arraySize = 20;
+                idOffset = 80;
+                break;
+            default:
+                Debug.LogError($"[EquipmentManager] Unknown equipment type: {type}");
+                return new Equipment[0];
+        }
 
-                        temp[i].apparel = true;
+        temp = new Equipment[arraySize];
 
-                        if (temp[i].cost < 500)
-                        {
-                            temp[i].name = "Basic Nylon Jersey";
-                            temp[i].img = gsImgs[14];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
-                        }
-                        else if (temp[i].cost < 1500)
-                        {
-                            temp[i].name = "Cotton Jersey";
-                            temp[i].img = gsImgs[15];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                        }
-                        else if (temp[i].cost < 3500)
-                        {
-                            temp[i].name = "Poly-lycra Blended Uniform";
-                            temp[i].img = gsImgs[16];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                        }
-                        else if (temp[i].cost < 7500)
-                        {
-                            temp[i].name = "Textured Fleece Uniform";
-                            temp[i].img = gsImgs[17];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                        }
-                        else
-                        {
-                            temp[i].name = "Dri-fit Jersey";
-                            temp[i].img = gsImgs[18];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                        }
-                    }
+        for (int i = 0; i < arraySize; i++)
+        {
+            if (equipList != null && i < equipList.Length && equipList[i] != null)
+            {
+                // Use existing equipment from save file
+                temp[i] = equipList[i];
+            }
+            else
+            {
+                // Create new equipment with proper ID
+                temp[i] = new Equipment();
+                temp[i].id = i + idOffset;
+                temp[i].cost = Random.Range(500f, 15000f);
+                
+                // Initialize stats arrays
+                if (temp[i].stats == null || temp[i].stats.Length != 6)
+                    temp[i].stats = new int[6];
+                if (temp[i].oppStats == null || temp[i].oppStats.Length != 6)
+                    temp[i].oppStats = new int[6];
+            }
 
+            // Ensure stats arrays are initialized
+            if (temp[i].stats == null || temp[i].stats.Length != 6)
+                temp[i].stats = new int[6];
+            if (temp[i].oppStats == null || temp[i].oppStats.Length != 6)
+                temp[i].oppStats = new int[6];
+
+            // Set type flag
+            switch (type)
+            {
+                case "handle":
+                    temp[i].handle = true;
                     break;
+                case "head":
+                    temp[i].head = true;
+                    break;
+                case "footwear":
+                    temp[i].footwear = true;
+                    break;
+                case "apparel":
+                    temp[i].apparel = true;
+                    break;
+            }
+
+            // Set name and image based on cost
+            if (type == "handle")
+            {
+                if (temp[i].cost < 500)
+                {
+                    temp[i].name = "Wooden Handle";
+                    temp[i].img = gsImgs[0];
                 }
+                else if (temp[i].cost < 1500)
+                {
+                    temp[i].name = "Fibreglass Handle";
+                    temp[i].img = gsImgs[1];
+                }
+                else if (temp[i].cost < 3500)
+                {
+                    temp[i].name = "Composite Handle";
+                    temp[i].img = gsImgs[2];
+                }
+                else if (temp[i].cost < 7500)
+                {
+                    temp[i].name = "Carbon Fibre Handle";
+                    temp[i].img = gsImgs[3];
+                }
+                else
+                {
+                    temp[i].name = "Exotic Carbon Fibre Handle";
+                    temp[i].img = gsImgs[4];
+                }
+            }
+            else if (type == "head")
+            {
+                if (temp[i].cost < 500)
+                {
+                    temp[i].name = "Basic Bristled Head";
+                    temp[i].img = gsImgs[5];
+                }
+                else if (temp[i].cost < 1500)
+                {
+                    temp[i].name = "Fabric Head";
+                    temp[i].img = gsImgs[6];
+                }
+                else if (temp[i].cost < 3500)
+                {
+                    temp[i].name = "Advanced Fabric Head";
+                    temp[i].img = gsImgs[7];
+                }
+                else if (temp[i].cost < 7500)
+                {
+                    temp[i].name = "Premium Fabric Head";
+                    temp[i].img = gsImgs[7];
+                }
+                else
+                {
+                    temp[i].name = "Exotic Fabric Head";
+                    temp[i].img = gsImgs[8];
+                }
+            }
+            else if (type == "footwear")
+            {
+                if (temp[i].cost < 500)
+                {
+                    temp[i].name = "Half Slider";
+                    temp[i].img = gsImgs[9];
+                }
+                else if (temp[i].cost < 1500)
+                {
+                    temp[i].name = "Full Slider";
+                    temp[i].img = gsImgs[10];
+                }
+                else if (temp[i].cost < 3500)
+                {
+                    temp[i].name = "Premium Slider";
+                    temp[i].img = gsImgs[11];
+                }
+                else if (temp[i].cost < 7500)
+                {
+                    temp[i].name = "Premium Shoes";
+                    temp[i].img = gsImgs[12];
+                }
+                else
+                {
+                    temp[i].name = "Exotic Shoes";
+                    temp[i].img = gsImgs[13];
+                }
+            }
+            else if (type == "apparel")
+            {
+                if (temp[i].cost < 500)
+                {
+                    temp[i].name = "Basic Nylon Jersey";
+                    temp[i].img = gsImgs[14];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
+                }
+                else if (temp[i].cost < 1500)
+                {
+                    temp[i].name = "Cotton Jersey";
+                    temp[i].img = gsImgs[15];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                }
+                else if (temp[i].cost < 3500)
+                {
+                    temp[i].name = "Poly-lycra Blended Uniform";
+                    temp[i].img = gsImgs[16];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                }
+                else if (temp[i].cost < 7500)
+                {
+                    temp[i].name = "Textured Fleece Uniform";
+                    temp[i].img = gsImgs[17];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                }
+                else
+                {
+                    temp[i].name = "Dri-fit Jersey";
+                    temp[i].img = gsImgs[18];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                }
+            }
         }
 
         return temp;

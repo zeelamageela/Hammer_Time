@@ -59,6 +59,27 @@ public class XPManager : MonoBehaviour
         LoadFromCareerManager(cm);
         AddXP(0);
     }
+    
+    void OnDisable()
+    {
+        // Save back to CareerManager when XPManager is closed
+        if (cm != null)
+        {
+            SaveToCareerManager(cm);
+            Debug.Log("[XPManager] Saved XP/skillPoints back to CareerManager on disable");
+        }
+    }
+    
+    void OnDestroy()
+    {
+        // Backup save on destroy
+        if (cm != null)
+        {
+            SaveToCareerManager(cm);
+            Debug.Log("[XPManager] Saved XP/skillPoints back to CareerManager on destroy");
+        }
+    }
+    
     public void LoadFromCareerManager(CareerManager cm)
     {
         level = cm.level;

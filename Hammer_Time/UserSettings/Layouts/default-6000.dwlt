@@ -342,7 +342,7 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_SearchFilter:
-    m_NameFilter: 
+    m_NameFilter: career mana
     m_ClassNames: []
     m_AssetLabels: []
     m_AssetBundleNames: []
@@ -352,25 +352,25 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs
+    - Assets/Scripts/Tourny
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
-    m_OriginalText: 
+    m_OriginalText: career mana
     m_ImportLogFlags: 0
     m_FilterByTypeIntersection: 0
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets/Scripts/Tourny
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\zackl\Documents\Hammer_Time\Hammer_Time
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 88b00000
-    m_LastClickedID: 45192
+    m_SelectedIDs: bee41700
+    m_LastClickedID: 1565886
     m_ExpandedIDs: 0000000086b0000088b000008ab000008cb000008eb0000090b0000092b0000094b0000096b0000098b000009ab000009cb000009eb0000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -426,8 +426,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 76f2b0ff
-    m_LastClickedInstanceID: -5180810
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
@@ -546,23 +546,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 3a5c0b00
-      m_LastClickedID: 0
-      m_ExpandedIDs: 783aa7ff823aa7ff903aa7ffd048a7ff504aa7ffc481a7ffc486a7ff8c3ab0ff76f2b0ff2af5b0fff2aab1ff00abb1ff6e4fb4ffde52b4ff52a5b9ff84a5b9ff80f5bbff70f8bbff1a9ecaffc6e5ceffda11cfffb856cfffb05bcfff1291d2ff78eae1ff2449edff6e84edff4438efff107aefff08ebf0ff3665f6ffbe45f8ff48b9f9ffc61cfdffdc56fdffbc8ffeffd4dffeff00fbfffff4ffffffe0b50100d0660200026a02008a6c0200b0cb0200e2ce02006ee40300e6430400aa96040032990400ce4305006cb905005c080700eeb20700682708000471090046170a0094220a0002350b00
+      m_SelectedIDs: d67c3d00
+      m_LastClickedID: 4029654
+      m_ExpandedIDs: 64273cff28463fff107f43ff647649fffc564cff8c644cff8e8e4cff30a04cff6eab4cffdcbc4cff9c7177ff68058fff20009cfffa569effe2779effb0f5a2ffb006a4ff6a21a4fffed2a5ffc639a7ffba41a7ff0e6aa8ffd6edaaff24a9b4ffa2bab4ffb4bab4ffc6bab4ff3cbbb4ffcac3b4ff7adab4ffccc5b7ff8634b8ff048dbaffbafabfff2220c0ff3420c0ff4620c0ff9820c0ff542cc0ff6632c0ffe492c5ffccd2c8ff20c0caffec18ddff3c30ddffaea7dfff8cc0dfff8452e2ff7ccfe6ff0a31e7ff0477e7ff028ee7ffe86ae8ff78cce8ffce2be9ff0ad2e9ffd8cbecff9c98f1ff7adef1ff0241f5ff00fbfffff4fffffffaaa000018ab000014ac00002eac0000caac0000267803008078030092780300c61d0c00ce1e0c00841f0c004ab21d00f4c11d0076c61d000ac91d0056de1f006a3923004a3b2300c84023004642230096482300144923002a5023004e7725001e8c2500902a26006406270066732800ba7c280010832800268a2800ae8e2800b68e2800d8922800a0ba2c007a6e2d007047350086483500dc483500e4483500b6493500c4493500ea4b3500004d3500b64d3500304e3500747037001a773b00e07b3d003a7c3d004c7c3d00
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: SweepTarget
-        m_OriginalName: SweepTarget
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -5180898
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 3}
@@ -1054,9 +1054,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -2.081769, y: -13.35572, z: -0.03733059}
+    m_Target: {x: -1.7834046, y: 0.7975832, z: 433.40872}
     speed: 2
-    m_Value: {x: -2.081769, y: -13.35572, z: -0.03733059}
+    m_Value: {x: -1.7834046, y: 0.7975832, z: 433.40872}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1106,9 +1106,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 4.873262
+    m_Target: 6.314852
     speed: 2
-    m_Value: 4.873262
+    m_Value: 6.314852
   m_Ortho:
     m_Target: 1
     speed: 2

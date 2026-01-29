@@ -244,9 +244,13 @@ public class SponsorManager : MonoBehaviour
 
         //Debug.Log("activeList Length is " + activeIdList.Length);
 
-        if (cm.playedCardIDList.Length > 0)
+        if (cm.playedCardIDList != null && cm.playedCardIDList.Length > 0)
         {
             playedIdList = cm.playedCardIDList;
+        }
+        else
+        {
+            playedIdList = new int[0]; // Initialize as empty array
         }
 
         //match the card ids to load a saved state
@@ -293,7 +297,6 @@ public class SponsorManager : MonoBehaviour
                     if (cardsSponsor[j].id == activeIdList[i])
                     {
                         cardsSponsor[j].duration = activeLengthList[i];
-                        cardsSponsor[j].duration--;
 
                         Debug.Log(cardsSponsor[j].name + " is " + cardsSponsor[j].duration + " long");
                         if (cardsSponsor[j].duration > 0)
@@ -317,14 +320,17 @@ public class SponsorManager : MonoBehaviour
         }
 
         //Determine which cards have been played
-        for (int i = 0; i < playedIdList.Length; i++)
+        if (playedIdList != null && playedIdList.Length > 0)
         {
-            for (int j = 0; j < cardsSponsor.Length; i++)
+            for (int i = 0; i < playedIdList.Length; i++)
             {
-                if (cardsSponsor[j].id == playedIdList[i])
+                for (int j = 0; j < cardsSponsor.Length; j++)
                 {
-                    cardsSponsor[i].played = true;
-                    playedCards.Add(cardsSponsor[j]);
+                    if (cardsSponsor[j].id == playedIdList[i])
+                    {
+                        cardsSponsor[j].played = true;
+                        playedCards.Add(cardsSponsor[j]);
+                    }
                 }
             }
         }
@@ -440,7 +446,8 @@ public class SponsorManager : MonoBehaviour
                 ColorChanger(7, 0, i);
             }
 
-            tm.PreviewPoints();
+            // DON'T call tm.PreviewPoints() - it overwrites modStats with team stats!
+            // modStats should only contain equipment/sponsor bonuses
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -481,6 +488,12 @@ public class SponsorManager : MonoBehaviour
             }
         }
 
+        // Sync arrays back to CareerManager after setup
+        cm.activeCardIDList = activeIdList;
+        cm.activeCardLengthList = activeLengthList;
+        cm.cardSponsorIDList = idSponsorList;
+        cm.playedCardIDList = playedIdList;
+
         //cm.SaveCareer();
     }
 
@@ -515,7 +528,7 @@ public class SponsorManager : MonoBehaviour
 
         for (int i = 0; i < activeCards.Length; i++)
         {
-            tm.UnPreviewPoints();
+            // DON'T call tm.UnPreviewPoints() - it manipulates modStats incorrectly
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -626,7 +639,7 @@ public class SponsorManager : MonoBehaviour
         //Update the master skillbars and set the skillbars on the card
         for (int i = 0; i < activeCards.Length; i++)
         {
-            tm.PreviewPoints();
+            // DON'T call tm.PreviewPoints() - it overwrites modStats!
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -659,7 +672,7 @@ public class SponsorManager : MonoBehaviour
 
         for (int i = 0; i < activeCards.Length; i++)
         {
-            tm.UnPreviewPoints();
+            // DON'T call tm.UnPreviewPoints() - it manipulates modStats incorrectly
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {
@@ -794,7 +807,15 @@ public class SponsorManager : MonoBehaviour
                 activeIdList[i] = activeCards[i].id;
                 activeLengthList[i] = activeCards[i].duration;
                 costPerWeek -= activeCards[i].cost;
-
+            }
+        
+            // Sync local arrays back to CareerManager after buying
+            cm.activeCardIDList = activeIdList;
+            cm.activeCardLengthList = activeLengthList;
+        }
+        
+        for (int i = 0; i < (cardGOs.Length / 2); i++)
+        {
                 if (activeCards[i].id == 99 | activeCards[i].cost == 0)
                 {
                     ColorChanger(6, 1, i);
@@ -818,12 +839,11 @@ public class SponsorManager : MonoBehaviour
                 {
                     ColorChanger(6, 1, i);
                 }
-            }
         }
 
         for (int i = 0; i < activeCards.Length; i++)
         {
-            tm.PreviewPoints();
+            // DON'T call tm.PreviewPoints() - it overwrites modStats!
 
             for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
             {

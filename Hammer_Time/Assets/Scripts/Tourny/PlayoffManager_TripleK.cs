@@ -278,25 +278,17 @@ public class PlayoffManager_TripleK : MonoBehaviour
     
     public void LoadPlayoff()
     {
-        if (cm != null)
-        {
-            Team[] loadedTeams;
-            int loadedRound;
-            Vector2[] loadedGameList;
-            cm.LoadPlayoffState(out loadedTeams, out loadedRound, out loadedGameList);
-
-            if (loadedTeams != null)
-            {
-                teams = loadedTeams;
-                playoffRound = loadedRound;
-                gameList = loadedGameList;
-            }
-        }
+        // Tournament state is now loaded automatically via CareerManager's JSON save system
+        // This method is kept for compatibility but no longer performs any action
+        Debug.Log("[PlayoffManager_TripleK] LoadPlayoff called - tournament state loaded via CareerManager");
     }
     public void SavePlayoff()
     {
+        // Tournament state is now saved automatically via CareerManager's JSON save system
+        // This method is kept for compatibility but delegates to CareerManager
+        Debug.Log("[PlayoffManager_TripleK] SavePlayoff called - triggering CareerManager save");
         if (cm != null)
-            cm.SavePlayoffState(teams, playoffRound, gameList);
+            cm.SaveCareer();
     }
 
     public void SetPlayoffs()

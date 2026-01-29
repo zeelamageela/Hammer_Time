@@ -142,8 +142,11 @@ public class CareerSettings : MonoBehaviour
             teamName = cm.teamName;
             teamColour = cm.teamColour;
             earnings = cm.earnings;
-            //Debug.Log("Earnings are " + earnings);
+            
+            // Use cm.record directly - this is the authoritative source for career stats
             record = cm.record;
+            Debug.Log($"[CareerSettings] Loaded career record: {record.x}-{record.y}");
+            
             Debug.Log("Tourny in Progress is " + gsp.tournyInProgress);
             week = cm.week;
             season = cm.season;
@@ -200,9 +203,15 @@ public class CareerSettings : MonoBehaviour
 
     public void New()
     {
-        //ClearPlayer();
         cm = FindFirstObjectByType<CareerManager>();
         gsp = FindFirstObjectByType<GameSettingsPersist>();
+
+        // Delete existing save before starting new career
+        if (cm.SaveFileExists())
+        {
+            Debug.Log("[CareerSettings] Deleting existing save for new career");
+            cm.DeleteCareerSave();
+        }
 
         cm.gameOver = false;
         nextButton.transform.parent.gameObject.SetActive(true);
@@ -217,7 +226,6 @@ public class CareerSettings : MonoBehaviour
         gsp.tournyInProgress = false;
         cm.inProgress = false;
 
-        //cm.activeEquipID = null;
         cm.inventoryID = null;
 
         load.SetActive(false);

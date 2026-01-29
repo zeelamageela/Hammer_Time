@@ -196,6 +196,8 @@ public class GameManager : MonoBehaviour
                 cm.HouseView();
                 rockBar.ResetBar(redHammer);
                 int tempRckCrnt = rockCurrent;
+                
+                // Place all rocks instantly without delays
                 for (int i = 0; i < rockCurrent; i++)
                 {
                     rm.rrp.placed1 = false;
@@ -214,9 +216,6 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        //cm.TopView();
-                        //Debug.Log("placed1 is " + rm.rrp.placed1);
-                        //Debug.Log("placed1 is " + rm.rrp.placed1);
                         if (gsp.aiRed)
                         {
                             yield return rm.rrp.OnRockPlace(i, false);
@@ -225,7 +224,6 @@ public class GameManager : MonoBehaviour
                         {
                             yield return rm.rrp.OnRockPlace(i, true);
                         }
-
                     }
 
                     if (i % 2 == 0)
@@ -243,18 +241,15 @@ public class GameManager : MonoBehaviour
                             rockBar.ActiveRock(false, i);
                     }
 
-                    //yield return new WaitForEndOfFrame();
                     rockBar.ShotUpdate(i, rockList[i].rockInfo.outOfPlay);
-                    yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                    
+                    // Wait for rock bar UI to be ready (only once)
+                    if (i == 0)
+                        yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
 
                     yield return new WaitUntil(() => rm.rrp.placed1);
 
-                    //yield return new WaitForSeconds(0.25f);
-
                     gHUD.MainDisplayOff();
-                    //yield return StartCoroutine(CheckScore());
-
-                    //yield return new WaitUntil(() => !gHUD.panel.activeSelf);
                 }
                 rockCurrent--;
 

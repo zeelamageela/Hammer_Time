@@ -6,11 +6,59 @@ using System.Net.Security;
 using System;
 using System.Linq;
 
+/// <summary>
+/// CareerManager - Main controller for career mode progression and save/load
+/// 
+/// SAVE SYSTEM:
+/// - Uses JSON-based save system (CareerSaveService)
+/// - Auto-save enabled by default (30-second intervals)
+/// - Supports mid-game and mid-tournament saves
+/// - Separate high score system (HighScoreService) for all-time leaderboards
+/// 
+/// Save Location: Application.persistentDataPath/career_save.json
+/// High Scores: Application.persistentDataPath/high_scores.json
+/// </summary>
 public class CareerManager : MonoBehaviour
 {
+    // XP and Reward Constants
+    private const float XP_TOUR_WIN = 100f;
+    private const float XP_TOUR_TOP4 = 60f;
+    private const float XP_TOUR_PARTICIPATION = 30f;
+    private const float XP_CHAMPIONSHIP_WIN = 200f;
+    private const float XP_CHAMPIONSHIP_TOP4 = 120f;
+    private const float XP_CHAMPIONSHIP_PARTICIPATION = 60f;
+    private const float XP_QUALIFIER_SUCCESS = 50f;
+    private const float XP_QUALIFIER_PARTICIPATION = 20f;
+    private const float XP_LOCAL_WIN = 40f;
+    private const float XP_LOCAL_TOP4 = 20f;
+    private const float XP_LOCAL_PARTICIPATION = 10f;
+    private const float XP_TOP5_BONUS = 5f;
+    private const float XP_QUALIFIER_BONUS = 25f;
+    private const float XP_PER_WIN = 3f;
+    private const float XP_PER_LOSS = 1f;
+    
+    // Team Generation Constants
+    private const int BASE_STAT_TOTAL = 150;
+    private const int MAX_STAT_TOTAL = 240;
+    private const int STAT_VARIATION = 5;
+    private const int PLAYERS_PER_TEAM = 4;
+    private const int NUM_STATS = 6;
+    
+    // Starting Values
+    private const float STARTING_CASH = 1000f;
+    private const int STARTING_STAT_VALUE = 45;
+    
+    // Misc Constants
+    private const int TOP_RANK_THRESHOLD = 5;
+    private const int HIGH_SCORE_MAX_ENTRIES = 100;
+    
+    // Auto-save Configuration
+    private const float AUTO_SAVE_INTERVAL = 30f; // Auto-save every 30 seconds
+    private float autoSaveTimer = 0f;
+    private bool enableAutoSave = true;
+    
     public static CareerManager instance;
     TournySettings ts;
-    EasyFileSave myFile;
     CareerSettings cs;
 
     public string debug = "blank";
@@ -129,7 +177,50 @@ public class CareerManager : MonoBehaviour
 
     private void Update()
     {
-        
+        // Auto-save timer
+        if (enableAutoSave)
+        {
+            autoSaveTimer += Time.deltaTime;
+            
+            if (autoSaveTimer >= AUTO_SAVE_INTERVAL)
+            {
+                autoSaveTimer = 0f;
+                AutoSave();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// iOS lifecycle handler - called when app is backgrounded or resumed
+    /// </summary>
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            // App going to background on iOS - save immediately
+            Debug.Log("[CareerManager] App pausing - forcing save");
+            SaveCareer();
+            
+            // Disable auto-save while backgrounded to save battery
+            SetAutoSave(false);
+        }
+        else
+        {
+            // App resumed - re-enable auto-save
+            Debug.Log("[CareerManager] App resumed - enabling auto-save");
+            SetAutoSave(true);
+            autoSaveTimer = 0f; // Reset timer
+        }
+    }
+    
+    /// <summary>
+    /// iOS lifecycle handler - called when app is closing
+    /// </summary>
+    private void OnApplicationQuit()
+    {
+        // Final save before app closes
+        Debug.Log("[CareerManager] App quitting - final save");
+        SaveCareer();
     }
     private void UpdateCharacter()
     {
@@ -198,30 +289,171 @@ public class CareerManager : MonoBehaviour
         Debug.Log(Application.persistentDataPath);
 
         ClearRankLists();
-        InitializeFileSave();
-
-        if (myFile.Load())
+        
+        // Use JSON save system
+        LoadCareerJSON(gsp, tSel, slm, teamSel, pUpM, em);
+    }
+    
+    /// <summary>
+    /// New JSON-based save loading
+    /// </summary>
+    private void LoadCareerJSON(
+        GameSettingsPersist gsp,
+        TournySelector tSel,
+        StorylineManager slm,
+        TeamMenu teamSel,
+        SponsorManager pUpM,
+        EquipmentManager em)
+    {
+        try
         {
-            LoadGameProgress(gsp);
-            LoadDialogueStatus(slm);
-
-            LoadActivePlayers(teamSel);
-            LoadCardData();
-            LoadTournamentData(tSel);
-
-            LoadSponsorManager(pUpM);
-            LoadEquipment(em);
-            LoadTourTeamData();
-            LoadTeamsFromSave();
-            UpdateCurrentTourny(gsp);
-            LoadGameSettings(gsp);
-
-            LoadTournyState();
-            LoadCurrentGameState(gsp);
-            loadedFromSave = true;
-            myFile.Dispose();
+            // Load from JSON
+            CareerSaveData saveData = CareerSaveService.LoadCareer();
+            
+            if (saveData == null)
+            {
+                Debug.LogWarning("[CareerManager] No save data found - starting fresh career");
+                return;
+            }
+            
+            // Validate save data version
+            if (saveData.version != 1)
+            {
+                Debug.LogError($"[CareerManager] Unsupported save version {saveData.version}. Expected version 1.");
+                Debug.LogWarning("[CareerManager] Save file may be corrupted or from incompatible version");
+                return;
+            }
+            
+            Debug.Log($"[CareerManager] Loading career save from {saveData.saveDate}");
+            
+            // Apply save data to CareerManager
+            LoadFromSaveData(saveData);
+            
+            // Apply tournament data to TournySelector
+            if (tSel != null)
+            {
+                ApplyTournamentData(tSel, saveData);
+            }
+            
+            // Apply dialogue data to StorylineManager
+            if (slm != null && saveData.dialogueFlags != null)
+            {
+                slm.blockIndex = saveData.dialogueFlags.storyBlockIndex;
+            }
+            
+            // Equipment data is already restored from save file directly into EquipmentManager
+            // Now sync the equipment UI and stats
+            if (em != null)
+            {
+                Debug.Log("[CareerManager] Refreshing equipment manager after load");
+                em.SetInventory(); // This will rebuild inventory and apply equipment stats
+            }
+            
+            // Refresh SponsorManager with loaded card/sponsor data
+            if (pUpM != null)
+            {
+                Debug.Log("[CareerManager] Refreshing sponsor manager after load");
+                pUpM.SetUp(); // This will rebuild active cards and available sponsors from loaded IDs
+            }
+            
+            // Refresh TeamMenu with loaded team data
+            if (teamSel != null && activePlayers != null && activePlayers.Length > 0)
+            {
+                Debug.Log("[CareerManager] Refreshing team menu after load");
+                teamSel.activePlayers = activePlayers; // Sync the active players
+                // TeamMenu will refresh itself when the menu is opened via TeamMenuOpen()
+            }
+            
+            // Restore tournament state if tournament was in progress
+            if (saveData.currentTournamentState != null && saveData.currentGameState != null && saveData.currentGameState.tournyInProgress)
+            {
+                RestoreTournamentState(saveData.currentTournamentState, gsp);
+            }
+            
+            // Restore game state if game was in progress
+            if (saveData.currentGameState != null && saveData.currentGameState.gameInProgress && gsp != null)
+            {
+                RestoreGameState(saveData.currentGameState, gsp);
+            }
+            
+            Debug.Log("[CareerManager] Career loaded successfully from JSON");
         }
-        // Additional logic if needed...
+        catch (Exception ex)
+        {
+            Debug.LogError($"[CareerManager] Failed to load career from JSON: {ex.Message}");
+            Debug.LogError($"[CareerManager] Stack trace: {ex.StackTrace}");
+            Debug.LogWarning("[CareerManager] Career load failed - starting fresh or check save file integrity");
+        }
+    }
+    
+    /// <summary>
+    /// Applies tournament progress data to TournySelector
+    /// </summary>
+    private void ApplyTournamentData(TournySelector tSel, CareerSaveData saveData)
+    {
+        // Apply provincial tournaments
+        if (saveData.provincialTournaments != null && tSel.provQual != null)
+        {
+            for (int i = 0; i < saveData.provincialTournaments.Count && i < tSel.provQual.Length; i++)
+            {
+                var data = saveData.provincialTournaments[i];
+                for (int j = 0; j < tSel.provQual.Length; j++)
+                {
+                    if (tSel.provQual[j] != null && tSel.provQual[j].id == data.id)
+                    {
+                        tSel.provQual[j].complete = data.complete;
+                        tSel.provQual[j].trophyWon = data.trophyWon;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Apply tour tournaments
+        if (saveData.tourTournaments != null && tSel.tour != null)
+        {
+            for (int i = 0; i < saveData.tourTournaments.Count && i < tSel.tour.Length; i++)
+            {
+                var data = saveData.tourTournaments[i];
+                for (int j = 0; j < tSel.tour.Length; j++)
+                {
+                    if (tSel.tour[j] != null && tSel.tour[j].id == data.id)
+                    {
+                        tSel.tour[j].complete = data.complete;
+                        tSel.tour[j].trophyWon = data.trophyWon;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Apply regular tournaments
+        if (saveData.regularTournaments != null && tSel.tournies != null)
+        {
+            for (int i = 0; i < saveData.regularTournaments.Count && i < tSel.tournies.Length; i++)
+            {
+                var data = saveData.regularTournaments[i];
+                for (int j = 0; j < tSel.tournies.Length; j++)
+                {
+                    if (tSel.tournies[j] != null && tSel.tournies[j].id == data.id)
+                    {
+                        tSel.tournies[j].complete = data.complete;
+                        tSel.tournies[j].trophyWon = data.trophyWon;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Apply championship completion
+        if (tSel.tourChampionship != null)
+        {
+            tSel.tourChampionship.complete = saveData.tourChampionshipComplete;
+        }
+        if (tSel.provChampionship != null)
+        {
+            tSel.provChampionship.complete = saveData.provChampionshipComplete;
+        }
     }
 
     private void ClearRankLists()
@@ -230,1333 +462,57 @@ public class CareerManager : MonoBehaviour
         tourRankList?.Clear();
     }
 
-    private void InitializeFileSave()
-    {
-        myFile = new EasyFileSave("my_player_data");
-    }
-
-    private void LoadActivePlayers(TeamMenu teamSel)
-    {
-        if (teamSel)
-        {
-            int[] playersIdList = myFile.GetArray<int>("Active Players ID List");
-            string[] playersNameList = myFile.GetArray<string>("Active Players Name List");
-            int[] playersDrawList = myFile.GetArray<int>("Active Players Draw List");
-            int[] playersGuardList = myFile.GetArray<int>("Active Players Guard List");
-            int[] playersTakeOutList = myFile.GetArray<int>("Active Players Takeout List");
-            int[] playersStrengthList = myFile.GetArray<int>("Active Players Strength List");
-            int[] playersEnduroList = myFile.GetArray<int>("Active Players Endurance List");
-            int[] playersCohesionList = myFile.GetArray<int>("Active Players Cohesion List");
-            int[] playersOppDrawList = myFile.GetArray<int>("Active Players Opp Draw List");
-            int[] playersOppGuardList = myFile.GetArray<int>("Active Players Opp Guard List");
-            int[] playersOppTakeOutList = myFile.GetArray<int>("Active Players Opp Takeout List");
-            int[] playersOppStrengthList = myFile.GetArray<int>("Active Players Opp Strength List");
-            int[] playersOppEnduroList = myFile.GetArray<int>("Active Players Opp Endurance List");
-            int[] playersOppCohesionList = myFile.GetArray<int>("Active Players Opp Cohesion List");
-
-            for (int i = 0; i < playersIdList.Length; i++)
-            {
-                teamSel.activePlayers[i].id = playersIdList[i];
-                teamSel.activePlayers[i].name = playersNameList[i];
-                teamSel.activePlayers[i].draw = playersDrawList[i];
-                teamSel.activePlayers[i].guard = playersGuardList[i];
-                teamSel.activePlayers[i].takeOut = playersTakeOutList[i];
-                teamSel.activePlayers[i].sweepStrength = playersStrengthList[i];
-                teamSel.activePlayers[i].sweepEnduro = playersEnduroList[i];
-                teamSel.activePlayers[i].sweepCohesion = playersCohesionList[i];
-                teamSel.activePlayers[i].oppDraw = playersOppDrawList[i];
-                teamSel.activePlayers[i].oppGuard = playersOppGuardList[i];
-                teamSel.activePlayers[i].oppTakeOut = playersOppTakeOutList[i];
-                teamSel.activePlayers[i].oppStrength = playersOppStrengthList[i];
-                teamSel.activePlayers[i].oppEnduro = playersOppEnduroList[i];
-                teamSel.activePlayers[i].oppCohesion = playersOppCohesionList[i];
-            }
-        }
-    }
-
-    private void LoadGameProgress(GameSettingsPersist gsp)
-    {
-        gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
-        gsp.gameInProgress = myFile.GetBool("Game In Progress");
-        Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
-        debug = myFile.GetString("Mode");
-        week = myFile.GetInt("Week");
-        Debug.Log("CM Load Career Week is " + week);
-        season = myFile.GetInt("Season");
-        playerName = myFile.GetString("Player Name");
-        teamName = myFile.GetString("Team Name");
-        teamColour = myFile.GetUnityColor("Team Colour");
-        playerTeamIndex = myFile.GetInt("Player Team Index");
-        record.x = myFile.GetInt("Career Wins");
-        record.y = myFile.GetInt("Career Loss");
-        cash = myFile.GetFloat("Career Cash");
-        earnings = myFile.GetFloat("Career Earnings");
-        provQual = myFile.GetBool("Prov Qual");
-        tourQual = myFile.GetBool("Tour Qual");
-        xp = myFile.GetFloat("XP");
-        skillPoints = myFile.GetInt("Skillpoints");
-        level = myFile.GetInt("Level");
-
-        cStats.drawAccuracy = myFile.GetInt("Draw Accuracy");
-        cStats.takeOutAccuracy = myFile.GetInt("Take Out Accuracy");
-        cStats.guardAccuracy = myFile.GetInt("Guard Accuracy");
-        cStats.sweepStrength = myFile.GetInt("Sweep Strength");
-        cStats.sweepEndurance = myFile.GetInt("Sweep Endurance");
-        cStats.sweepCohesion = myFile.GetInt("Sweep Cohesion");
-        gsp.loadGame = myFile.GetBool("Game Load");
-        //activeEquipID = myFile.GetArray<int>("Active Equip ID List");
-    }
-
-    private void LoadDialogueStatus(StorylineManager slm)
-    {
-
-        coachDialogue = myFile.GetArray<bool>("Coach Dialogue Played List");
-        qualDialogue = myFile.GetArray<bool>("Qualifying Dialogue Played List");
-        reviewDialogue = myFile.GetArray<bool>("Review Dialogue Played List");
-        introDialogue = myFile.GetArray<bool>("Intro Dialogue Played List");
-        helpDialogue = myFile.GetArray<bool>("Help Dialogue Played List");
-        strategyDialogue = myFile.GetArray<bool>("Strategy Dialogue Played List");
-        storyDialogue = myFile.GetArray<bool>("Story Dialogue Played List");
-
-        if (slm)
-            slm.blockIndex = myFile.GetInt("Story Block");
-
-    }
-
-    private void LoadCardData()
-    {
-        cardPUIDList = myFile.GetArray<int>("Card PowerUp ID List");
-        if (cardPUIDList == null) cardPUIDList = new int[0];
-
-        cardSponsorIDList = myFile.GetArray<int>("Card Sponsor ID List");
-        if (cardSponsorIDList == null) cardSponsorIDList = new int[0];
-
-        activeCardIDList = myFile.GetArray<int>("Active Card ID List");
-        if (activeCardIDList == null) activeCardIDList = new int[0];
-
-        playedCardIDList = myFile.GetArray<int>("Played Card ID List");
-        if (playedCardIDList == null) playedCardIDList = new int[0];
-
-        activeCardLengthList = myFile.GetArray<int>("Active Card Length List");
-        if (activeCardLengthList == null) activeCardLengthList = new int[0];
-    }
-
-    private void LoadTournamentData(TournySelector tSel)
-    {
-        if (tSel != null)
-        {
-            int[] provIDList = myFile.GetArray<int>("Prov ID List");
-            bool[] provCompleteList = myFile.GetArray<bool>("Prov Complete List");
-            int[] tourIDList = myFile.GetArray<int>("Tour ID List");
-            bool[] tourCompleteList = myFile.GetArray<bool>("Tour Complete List");
-            int[] tourniesIDList = myFile.GetArray<int>("Tournies ID List");
-            bool[] tourniesCompleteList = myFile.GetArray<bool>("Tournies Complete List");
-
-            prov = tSel.provQual;
-            tour = tSel.tour;
-            tournies = tSel.tournies;
-            champ = new Tourny[2];
-            champ[0] = tSel.tourChampionship;
-            champ[1] = tSel.provChampionship;
-            champ[0].complete = myFile.GetBool("Tour Championship Complete");
-            champ[1].complete = myFile.GetBool("Prov Championship Complete");
-
-            for (int i = 0; i < provIDList.Length; i++)
-            {
-                prov[i].id = provIDList[i];
-                for (int j = 0; j < tSel.provQual.Length; j++)
-                {
-                    if (prov[i].id == tSel.provQual[j].id)
-                        prov[i] = tSel.provQual[j];
-                }
-                prov[i].complete = provCompleteList[i];
-            }
-            for (int i = 0; i < tourIDList.Length; i++)
-            {
-                tour[i].id = tourIDList[i];
-                for (int j = 0; j < tSel.tour.Length; j++)
-                {
-                    if (tour[i].id == tSel.tour[j].id)
-                        tour[i] = tSel.tour[j];
-                }
-                tour[i].complete = tourCompleteList[i];
-            }
-            for (int i = 0; i < tourniesIDList.Length; i++)
-            {
-                tournies[i].id = tourniesIDList[i];
-                for (int j = 0; j < tSel.tournies.Length; j++)
-                {
-                    if (tournies[i].id == tSel.tournies[j].id)
-                        tournies[i] = tSel.tournies[j];
-                }
-                tournies[i].complete = tourniesCompleteList[i];
-            }
-
-            tSel.provQual = prov;
-            tSel.tour = tour;
-            tSel.tournies = tournies;
-            tSel.tourChampionship = champ[0];
-            tSel.provChampionship = champ[1];
-        }
-    }
-
-    private void LoadSponsorManager(SponsorManager pUpM)
-    {
-
-    }
-
-    public void LoadTeamsFromSave()
-    {
-        if (!myFile.Load())
-        {
-            Debug.LogWarning("No save file found for teams.");
-            return;
-        }
-
-        int teamCount = myFile.GetInt("Team Count", 0);
-        if (teamCount == 0)
-        {
-            Debug.LogWarning("No teams found in save file.");
-            return;
-        }
-
-        teams = new Team[teamCount];
-
-        for (int i = 0; i < teamCount; i++)
-        {
-            Team team = new Team();
-            team.id = myFile.GetInt($"Team_{i}_Id");
-            team.name = myFile.GetString($"Team_{i}_Name");
-            team.wins = myFile.GetInt($"Team_{i}_Wins");
-            team.loss = myFile.GetInt($"Team_{i}_Loss");
-            team.earnings = myFile.GetFloat($"Team_{i}_Earnings");
-            team.player = myFile.GetBool($"Team_{i}_Player");
-            team.rank = myFile.GetInt($"Team_{i}_Rank");
-            team.nextOpp = myFile.GetString($"Team_{i}_NextOpp");
-            team.draw = myFile.GetInt($"Team_{i}_Draw");
-            team.takeOut = myFile.GetInt($"Team_{i}_TakeOut");
-            team.guard = myFile.GetInt($"Team_{i}_Guard");
-            team.sweepStrength = myFile.GetInt($"Team_{i}_SweepStrength");
-            team.sweepEnduro = myFile.GetInt($"Team_{i}_SweepEnduro");
-            team.sweepCohesion = myFile.GetInt($"Team_{i}_SweepCohesion");
-
-            int playerCount = myFile.GetInt($"Team_{i}_PlayerCount", 0);
-            team.players = new List<Player>();
-            for (int j = 0; j < playerCount; j++)
-            {
-                Player p = new Player();
-                p.id = myFile.GetInt($"Team_{i}_Player_{j}_Id");
-                p.name = myFile.GetString($"Team_{i}_Player_{j}_Name");
-                p.draw = myFile.GetInt($"Team_{i}_Player_{j}_Draw");
-                p.takeOut = myFile.GetInt($"Team_{i}_Player_{j}_TakeOut");
-                p.guard = myFile.GetInt($"Team_{i}_Player_{j}_Guard");
-                p.sweepStrength = myFile.GetInt($"Team_{i}_Player_{j}_SweepStrength");
-                p.sweepEnduro = myFile.GetInt($"Team_{i}_Player_{j}_SweepEnduro");
-                p.sweepCohesion = myFile.GetInt($"Team_{i}_Player_{j}_SweepCohesion");
-                // Add other player fields as needed
-                team.players.Add(p);
-            }
-
-            teams[i] = team;
-        }
-
-        Debug.Log("Teams and players loaded from save.");
-    }
-
-    private void LoadEquipment(EquipmentManager em)
-    {
-
-        // Load IDs from save
-        inventoryID = myFile.GetArray<int>("Inventory ID List");
-        activeEquipID = myFile.GetArray<int>("Active Equip ID List");
-
-        if (em == null) return;
-        // Load all equipment arrays from save
-        int[] tempID = myFile.GetArray<int>("Total Item ID List");
-        float[] tempCost = myFile.GetArray<float>("Total Item Cost List");
-        float[] tempColorX = myFile.GetArray<float>("Total Item Color X List");
-        float[] tempColorY = myFile.GetArray<float>("Total Item Color Y List");
-        float[] tempColorZ = myFile.GetArray<float>("Total Item Color Z List");
-        float[] tempColorA = myFile.GetArray<float>("Total Item Color A List");
-        int[] tempDuration = myFile.GetArray<int>("Total Item Duration List");
-        int[] tempStats0 = myFile.GetArray<int>("Total Item Draw List");
-        int[] tempStats1 = myFile.GetArray<int>("Total Item Guard List");
-        int[] tempStats2 = myFile.GetArray<int>("Total Item Takeout List");
-        int[] tempStats3 = myFile.GetArray<int>("Total Item Strength List");
-        int[] tempStats4 = myFile.GetArray<int>("Total Item Endurance List");
-        int[] tempStats5 = myFile.GetArray<int>("Total Item Cohesion List");
-        int[] tempOppStats0 = myFile.GetArray<int>("Total Item Opp Draw List");
-        int[] tempOppStats1 = myFile.GetArray<int>("Total Item Opp Guard List");
-        int[] tempOppStats2 = myFile.GetArray<int>("Total Item Opp Takeout List");
-        int[] tempOppStats3 = myFile.GetArray<int>("Total Item Opp Strength List");
-        int[] tempOppStats4 = myFile.GetArray<int>("Total Item Opp Endurance List");
-        int[] tempOppStats5 = myFile.GetArray<int>("Total Item Opp Cohesion List");
-
-        int handlesCount = myFile.GetInt("HandlesCount", 30);
-        int headsCount = myFile.GetInt("HeadsCount", 30);
-        int footwearCount = myFile.GetInt("FootwearCount", 20);
-        int apparelCount = myFile.GetInt("ApparelCount", 20);
-
-        em.LoadAllEquipmentFromSave(
-            tempID, tempCost, tempColorX, tempColorY, tempColorZ, tempColorA,
-            tempDuration,
-            tempStats0, tempStats1, tempStats2, tempStats3, tempStats4, tempStats5,
-            tempOppStats0, tempOppStats1, tempOppStats2, tempOppStats3, tempOppStats4, tempOppStats5,
-            handlesCount, headsCount, footwearCount, apparelCount
-        );
-
-        // Now let EquipmentManager handle all assignment and syncing
-        em.SyncFromCareerManager();
-
-        Debug.Log("Equipment loaded from file. - ActiveEquip ID List Count is" + string.Join(",", activeEquipID ?? new int[0]));
-    }
-
-    private void LoadTourTeamData()
-    {
-        int[] tempTRX = myFile.GetArray<int>("Team Records X");
-        int[] tempTRY = myFile.GetArray<int>("Team Records Y");
-        float[] tempTRZ = myFile.GetArray<float>("Team Records Z");
-        int[] tempTRW = myFile.GetArray<int>("Team Records W");
-
-        int[] tempTourTRX = myFile.GetArray<int>("Tour Records X");
-        int[] tempTourTRY = myFile.GetArray<int>("Tour Records Y");
-        float[] tempTourTRZ = myFile.GetArray<float>("Tour Records Z");
-        int[] tempTourTRW = myFile.GetArray<int>("Tour Records W");
-
-        teamRecords = new Vector4[tempTRX.Length];
-        tourRecords = new Vector4[tempTourTRX.Length];
-
-        for (int i = 0; i < teamRecords.Length; i++)
-        {
-            teamRecords[i].x = tempTRX[i];
-            teamRecords[i].y = tempTRY[i];
-            teamRecords[i].z = tempTRZ[i];
-            teamRecords[i].w = tempTRW[i];
-        }
-
-        for (int i = 0; i < tourRecords.Length; i++)
-        {
-            tourRecords[i].x = tempTourTRX[i];
-            tourRecords[i].y = tempTourTRY[i];
-            tourRecords[i].z = tempTourTRZ[i];
-            tourRecords[i].w = tempTourTRW[i];
-        }
-
-        Debug.Log("Team Records Length is " + teamRecords.Length);
-
-        if (provRankList == null)
-        {
-            provRankList = new List<Standings_List>();
-        }
-
-        if (tourRankList == null)
-        {
-            tourRankList = new List<TourStandings_List>();
-        }
-    }
-
-    private void UpdateCurrentTourny(GameSettingsPersist gsp)
-    {
-
-        if (gsp.tournyInProgress)
-        {
-            currentTourny.name = myFile.GetString("Current Tourny Name");
-            currentTourny.id = myFile.GetInt("Current Tourny ID");
-            currentTourny.tour = myFile.GetBool("Current Tourny Tour");
-            currentTourny.qualifier = myFile.GetBool("Current Tourny Qualifier");
-            currentTourny.championship = myFile.GetBool("Current Tourny Championship");
-            currentTourny.prizeMoney = myFile.GetInt("Prize Money");
-            currentTourny.BG = myFile.GetInt("Current Tourny BG");
-            currentTourny.crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
-
-            gsp.KO3 = currentTourny.tour;
-            gsp.draw = myFile.GetInt("Current Tourny Draw");
-            gsp.playoffRound = myFile.GetInt("Current Tourny Playoff Round");
-
-            string[] tournyNameList = myFile.GetArray<string>("Tourny Name List");
-            int[] tournyIDList = myFile.GetArray<int>("Tourny Team ID List");
-            int[] tournyWinsList = myFile.GetArray<int>("Tourny Wins List");
-            int[] tournyLossList = myFile.GetArray<int>("Tourny Loss List");
-            string[] tournyNextOppList = myFile.GetArray<string>("Tourny NextOpp List");
-            float[] tournyEarningsList = myFile.GetArray<float>("Tourny Earnings List");
-            bool[] tournyPlayerList = myFile.GetArray<bool>("Tourny Player List");
-            //Debug.Log("Tourny Earnings List length is " + tournyEarningsList.Length);
-
-
-            if (currentTournyTeams.Length <= 0)
-                currentTournyTeams = new Team[tournyIDList.Length];
-
-            for (int i = 0; i < currentTournyTeams.Length; i++)
-            {
-                currentTournyTeams[i] = new Team();
-                currentTournyTeams[i].id = tournyIDList[i];
-                currentTournyTeams[i].player = tournyPlayerList[i];
-                currentTournyTeams[i].nextOpp = tournyNextOppList[i];
-
-                for (int j = 0; j < teams.Length; j++)
-                {
-                    if (currentTournyTeams[i].id == teams[j].id)
-                        currentTournyTeams[i] = teams[j];
-
-                }
-
-                if (currentTournyTeams[i].player)
-                {
-                    Debug.Log("Player Team - " + playerTeamIndex);
-                    currentTournyTeams[i].name = teamName;
-                    //currentTournyTeams[i].earnings = earnings;
-                }
-
-                currentTournyTeams[i].name = tournyNameList[i];
-                currentTournyTeams[i].wins = tournyWinsList[i];
-                currentTournyTeams[i].loss = tournyLossList[i];
-                currentTournyTeams[i].earnings = tournyEarningsList[i];
-
-            }
-
-            //teamRecords = new Vector4[currentTourny.teams];
-
-            //int[] tempTRX = myFile.GetArray<int>("Team Records X");
-            //int[] tempTRY = myFile.GetArray<int>("Team Records Y");
-            //float[] tempTRZ = myFile.GetArray<float>("Team Records Z");
-            //int[] tempTRW = myFile.GetArray<int>("Team Records W");
-
-            //for (int i = 0; i < teamRecords.Length; i++)
-            //{
-            //    teamRecords[i].x = tempTRX[i];
-            //    teamRecords[i].y = tempTRY[i];
-            //    teamRecords[i].z = tempTRZ[i];
-            //    teamRecords[i].w = tempTRW[i];
-            //}
-        }
-    }
-
-    private void LoadGameSettings(GameSettingsPersist gsp)
-    {
-        if (gsp)
-        {
-            gsp.tourny = myFile.GetBool("Tourny Game");
-            gsp.ends = myFile.GetInt("Game Ends");
-            gsp.endCurrent = myFile.GetInt("Game Active End");
-            gsp.rocks = myFile.GetInt("Game Rocks");
-            gsp.rockCurrent = myFile.GetInt("Game Rock Current");
-            gsp.redHammer = myFile.GetBool("Game Red Hammer");
-            gsp.aiYellow = myFile.GetBool("Game AI Yellow");
-            gsp.aiRed = myFile.GetBool("Game AI Red");
-            gsp.yellowScore = myFile.GetInt("Game Yellow Score");
-            gsp.redScore = myFile.GetInt("Game Red Score");
-            gsp.yellowTeamName = myFile.GetString("Game Yellow Team Name");
-            gsp.redTeamName = myFile.GetString("Game Red Team Name");
-
-            float[] rockPosX = myFile.GetArray<float>("Game Rock Position X List");
-            float[] rockPosY = myFile.GetArray<float>("Game Rock Position Y List");
-            bool[] rockInPlay = myFile.GetArray<bool>("Game Rock In Play List");
-            gsp.rockPos = new Vector2[rockPosX.Length];
-            gsp.rockInPlay = new bool[rockInPlay.Length];
-            for (int i = 0; i < rockPosX.Length; i++)
-            {
-                gsp.rockPos[i] = new Vector2(rockPosX[i], rockPosY[i]);
-                gsp.rockInPlay[i] = rockInPlay[i];
-            }
-
-            int[] redScoreList = myFile.GetArray<int>("Game Red Score List");
-            int[] yellowScoreList = myFile.GetArray<int>("Game Yellow Score List");
-            Debug.Log("gsp.ends is " + gsp.ends);
-            gsp.score = new Vector2Int[gsp.ends];
-            for (int i = 0; i < gsp.score.Length; i++)
-            {
-                gsp.score[i].x = redScoreList[i];
-                gsp.score[i].y = yellowScoreList[i];
-            }
-
-        }
-    }
-
-    private void LoadCurrentGameState(GameSettingsPersist gsp)
-    {
-        if (gsp == null) gsp = FindFirstObjectByType<GameSettingsPersist>();
-        if (gsp == null) return;
-
-        //myFile = new EasyFileSave("my_player_data");
-        if (!myFile.Load()) return;
-
-        gsp.tourny = myFile.GetBool("Tourny Game");
-        gsp.ends = myFile.GetInt("Game Ends");
-        gsp.endCurrent = myFile.GetInt("Game Active End");
-        gsp.rocks = myFile.GetInt("Game Rocks");
-        gsp.rockCurrent = myFile.GetInt("Game Rock Current");
-        gsp.redHammer = myFile.GetBool("Game Red Hammer");
-        gsp.aiYellow = myFile.GetBool("Game AI Yellow");
-        gsp.aiRed = myFile.GetBool("Game AI Red");
-        gsp.yellowScore = myFile.GetInt("Game Yellow Score");
-        gsp.redScore = myFile.GetInt("Game Red Score");
-        gsp.yellowTeamName = myFile.GetString("Game Yellow Team Name");
-        gsp.redTeamName = myFile.GetString("Game Red Team Name");
-
-        gsp.gameInProgress = myFile.GetBool("Game In Progress");
-        gsp.tournyInProgress = myFile.GetBool("Tourny In Progress");
-        gsp.loadGame = myFile.GetBool("Game Load");
-
-        float[] rockPosX = myFile.GetArray<float>("Game Rock Position X List");
-        float[] rockPosY = myFile.GetArray<float>("Game Rock Position Y List");
-        bool[] rockInPlay = myFile.GetArray<bool>("Game Rock In Play List");
-        gsp.rockPos = new Vector2[rockPosX.Length];
-        gsp.rockInPlay = new bool[rockInPlay.Length];
-        for (int i = 0; i < rockPosX.Length; i++)
-        {
-            gsp.rockPos[i] = new Vector2(rockPosX[i], rockPosY[i]);
-            gsp.rockInPlay[i] = rockInPlay[i];
-        }
-
-        int[] redScoreList = myFile.GetArray<int>("Game Red Score List");
-        int[] yellowScoreList = myFile.GetArray<int>("Game Yellow Score List");
-        gsp.score = new Vector2Int[redScoreList.Length];
-        for (int i = 0; i < gsp.score.Length; i++)
-        {
-            gsp.score[i].x = redScoreList[i];
-            gsp.score[i].y = yellowScoreList[i];
-        }
-    }
-
-    public void LoadTournyState(object tournyStateManager = null)
-    {
-        //myFile = new EasyFileSave("my_player_data");
-        if (!myFile.Load())
-        {
-            Debug.LogWarning("No save file found for tournament state.");
-            return;
-        }
-
-        // Auto-find if not provided
-        if (tournyStateManager == null)
-        {
-            tournyStateManager =
-                (object)FindFirstObjectByType<TournyManager>() ??
-                (object)FindFirstObjectByType<PlayoffManager>() ??
-                (object)FindFirstObjectByType<PlayoffManager_SingleK>() ??
-                (object)FindFirstObjectByType<PlayoffManager_TripleK>();
-        }
-
-        if (tournyStateManager is TournyManager tm)
-        {
-            string tag = "TournyManager_";
-            tm.draw = myFile.GetInt($"{tag}Draw");
-            tm.numberOfTeams = myFile.GetInt($"{tag}NumberOfTeams");
-            tm.prize = myFile.GetInt($"{tag}Prize");
-            tm.oppTeam = myFile.GetInt($"{tag}OppTeam");
-            tm.playoffRound = myFile.GetInt($"{tag}PlayoffRound");
-
-            int teamCount = myFile.GetInt($"{tag}TeamCount");
-            tm.teams = new Team[teamCount];
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = new Team();
-                t.id = myFile.GetInt($"{tag}Team_{i}_Id");
-                t.name = myFile.GetString($"{tag}Team_{i}_Name");
-                t.wins = myFile.GetInt($"{tag}Team_{i}_Wins");
-                t.loss = myFile.GetInt($"{tag}Team_{i}_Loss");
-                t.earnings = myFile.GetFloat($"{tag}Team_{i}_Earnings");
-                t.player = myFile.GetBool($"{tag}Team_{i}_Player");
-                t.rank = myFile.GetInt($"{tag}Team_{i}_Rank");
-                t.strength = myFile.GetInt($"{tag}Team_{i}_Strength");
-                t.nextOpp = myFile.GetString($"{tag}Team_{i}_NextOpp");
-                tm.teams[i] = t;
-            }
-        }
-        else if (tournyStateManager is PlayoffManager pm)
-        {
-            string tag = "PlayoffManager_";
-            pm.oppTeam = myFile.GetInt($"{tag}OppTeam");
-            pm.playoffRound = myFile.GetInt($"{tag}PlayoffRound");
-
-            int teamCount = myFile.GetInt($"{tag}TeamCount");
-            pm.playoffTeams = new Team[teamCount];
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = new Team();
-                t.id = myFile.GetInt($"{tag}Team_{i}_Id");
-                t.name = myFile.GetString($"{tag}Team_{i}_Name");
-                t.wins = myFile.GetInt($"{tag}Team_{i}_Wins");
-                t.loss = myFile.GetInt($"{tag}Team_{i}_Loss");
-                t.earnings = myFile.GetFloat($"{tag}Team_{i}_Earnings");
-                t.player = myFile.GetBool($"{tag}Team_{i}_Player");
-                t.rank = myFile.GetInt($"{tag}Team_{i}_Rank");
-                t.strength = myFile.GetInt($"{tag}Team_{i}_Strength");
-                t.nextOpp = myFile.GetString($"{tag}Team_{i}_NextOpp");
-                pm.playoffTeams[i] = t;
-            }
-        }
-        else if (tournyStateManager is PlayoffManager_SingleK pmSingle)
-        {
-            string tag = "PlayoffManager_SingleK_";
-            pmSingle.oppTeam = myFile.GetInt($"{tag}OppTeam");
-            pmSingle.playoffRound = myFile.GetInt($"{tag}PlayoffRound");
-
-            int teamCount = myFile.GetInt($"{tag}TeamCount");
-            pmSingle.playoffTeams = new Team[teamCount];
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = new Team();
-                t.id = myFile.GetInt($"{tag}Team_{i}_Id");
-                t.name = myFile.GetString($"{tag}Team_{i}_Name");
-                t.wins = myFile.GetInt($"{tag}Team_{i}_Wins");
-                t.loss = myFile.GetInt($"{tag}Team_{i}_Loss");
-                t.earnings = myFile.GetFloat($"{tag}Team_{i}_Earnings");
-                t.player = myFile.GetBool($"{tag}Team_{i}_Player");
-                t.rank = myFile.GetInt($"{tag}Team_{i}_Rank");
-                t.strength = myFile.GetInt($"{tag}Team_{i}_Strength");
-                t.nextOpp = myFile.GetString($"{tag}Team_{i}_NextOpp");
-                pmSingle.playoffTeams[i] = t;
-            }
-        }
-        else if (tournyStateManager is PlayoffManager_TripleK pmTriple)
-        {
-            string tag = "PlayoffManager_TripleK_";
-            pmTriple.playoffRound = myFile.GetInt($"{tag}PlayoffRound");
-
-            int teamCount = myFile.GetInt($"{tag}TeamCount");
-            pmTriple.teams = new Team[teamCount];
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = new Team();
-                t.id = myFile.GetInt($"{tag}Team_{i}_Id");
-                t.name = myFile.GetString($"{tag}Team_{i}_Name");
-                t.wins = myFile.GetInt($"{tag}Team_{i}_Wins");
-                t.loss = myFile.GetInt($"{tag}Team_{i}_Loss");
-                t.earnings = myFile.GetFloat($"{tag}Team_{i}_Earnings");
-                t.player = myFile.GetBool($"{tag}Team_{i}_Player");
-                t.rank = myFile.GetInt($"{tag}Team_{i}_Rank");
-                t.strength = myFile.GetInt($"{tag}Team_{i}_Strength");
-                t.nextOpp = myFile.GetString($"{tag}Team_{i}_NextOpp");
-                pmTriple.teams[i] = t;
-            }
-
-            int gameListCount = myFile.GetInt($"{tag}GameListCount");
-            pmTriple.gameList = new Vector2[gameListCount];
-            for (int i = 0; i < gameListCount; i++)
-            {
-                float x = myFile.GetFloat($"{tag}GameList_{i}_X");
-                float y = myFile.GetFloat($"{tag}GameList_{i}_Y");
-                pmTriple.gameList[i] = new Vector2(x, y);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Unknown tournament/playoff manager type passed to LoadTournyState.");
-        }
-    }
 
     // Continue with other helper methods like LoadGameProgress, LoadDialogueStatus, etc.
 
     // Define all the helper methods with specific loading logic
 
+    /// <summary>
+    /// Save high score to persistent leaderboard (survives career deletion)
+    /// </summary>
     IEnumerator SaveHighScore()
     {
-        myFile = new EasyFileSave("my_hiscore_data");
-        allTimeList = new List<Standings_List>();
-
-        if (myFile.Load())
-        {
-            float[] allTimeEarnings = myFile.GetArray<float>("All Time Earnings");
-            string[] allTimeName = myFile.GetArray<string>("All Time Names");
-            allTimeTrophyList = myFile.GetList<bool>("All Time Trophies Won");
-
-            if (allTimeTrophyList.Count <= 0)
-            {
-                allTimeTrophyList.AddRange(currentTrophyList);
-            }
-            //Debug.Log("All Time Earnings length is " + allTimeEarnings.Length);
-
-
-            for (int j = 0; j < allTimeEarnings.Length; j++)
-            {
-                Team tempTeam = new Team();
-                //tempTeam.wins = 0;
-                //tempTeam.loss = 0;
-                //tempTeam.earnings = 0;
-                //tempTeam.name = "";
-
-                tempTeam.name = allTimeName[j];
-                //tempTeam.wins = Mathf.RoundToInt(allTimeEarnings[i]);
-                tempTeam.earnings = allTimeEarnings[j];
-                allTimeList.Add(new Standings_List(tempTeam));
-            }
-
-            myFile.Dispose();
-        }
-
         yield return new WaitForEndOfFrame();
-
+        
+        // Find player team
+        Team playerTeamData = null;
         for (int i = 0; i < teams.Length; i++)
         {
             if (teams[i].id == playerTeamIndex)
             {
-                string fullTemp = playerName + " " + teamName;
-                string halfTemp = teams[i].name;
-                teams[i].name = fullTemp;
-                allTimeList.Add(new Standings_List(teams[i]));
-                teams[i].name = halfTemp;
-            }
-        }
-
-        //Debug.Log("All Time List - " + allTimeList.Count);
-
-        //Debug.Log("Top of the List is " + allTimeList[0].team.name);
-        allTimeList.Sort();
-
-        float[] allTimeEarningsTemp = new float[allTimeList.Count];
-        if (allTimeList.Count > 100)
-            allTimeEarningsTemp = new float[99];
-
-        string[] allTimeNameTemp = new string[allTimeList.Count];
-        if (allTimeList.Count > 100)
-            allTimeNameTemp = new string[99];
-
-        for (int i = 0; i < allTimeEarningsTemp.Length; i++)
-        {
-            allTimeEarningsTemp[i] = allTimeList[i].team.earnings;
-            allTimeNameTemp[i] = allTimeList[i].team.name;
-        }
-
-        //Debug.Log("All Time Trophy List Count - " + allTimeTrophyList.Count);
-
-        if (currentTrophyList.Count > 0)
-        {
-            for (int i = 0; i < allTimeTrophyList.Count; i++)
-            {
-                if (allTimeTrophyList[i] == false && currentTrophyList[i] == true)
-                    allTimeTrophyList[i] = true;
+                playerTeamData = teams[i];
+                break;
             }
         }
         
-
-        //Debug.Log("All Time List Length - " + allTimeList.Count);
-        myFile.Dispose();
-
-        myFile = new EasyFileSave("my_hiscore_data");
-
-        myFile.Add("All Time Earnings", allTimeEarningsTemp);
-        myFile.Add("All Time Names", allTimeNameTemp);
-        myFile.Add("All Time Trophies Won", allTimeTrophyList);
-
-        myFile.Append();
-    }
-
-    private void SaveGameProgress(GameSettingsPersist gsp)
-    {
-        if (gsp == null)
-            gsp = FindFirstObjectByType<GameSettingsPersist>();
-
-        //myFile = new EasyFileSave("my_player_data");
-
-        myFile.Add("Tourny In Progress", gsp.tournyInProgress);
-        myFile.Add("Game In Progress", gsp.gameInProgress);
-        myFile.Add("Mode", debug);
-        myFile.Add("Week", week);
-        myFile.Add("Season", season);
-        myFile.Add("Player Name", playerName);
-        myFile.Add("Team Name", teamName);
-        myFile.Add("Team Colour", teamColour);
-        myFile.Add("Player Team Index", playerTeamIndex);
-        myFile.Add("Career Record", record);
-        myFile.Add("Career Wins", GetPlayerWins());
-        myFile.Add("Career Loss", GetPlayerLosses());
-        myFile.Add("Career Cash", cash);
-        myFile.Add("Career Earnings", earnings);
-        myFile.Add("Prov Qual", provQual);
-        myFile.Add("Tour Qual", tourQual);
-        myFile.Add("XP", xp);
-        myFile.Add("Skillpoints", skillPoints);
-        myFile.Add("Level", level);
-
-        myFile.Add("Draw Accuracy", cStats.drawAccuracy);
-        myFile.Add("Take Out Accuracy", cStats.takeOutAccuracy);
-        myFile.Add("Guard Accuracy", cStats.guardAccuracy);
-        myFile.Add("Sweep Strength", cStats.sweepStrength);
-        myFile.Add("Sweep Endurance", cStats.sweepEndurance);
-        myFile.Add("Sweep Cohesion", cStats.sweepCohesion);
-
-        myFile.Add("Game Load", gsp.loadGame);
-    }
-
-    private void SaveActivePlayers(TeamMenu teamSel)
-    {
-        if (teamSel && teamSel.activePlayers != null)
+        if (playerTeamData == null)
         {
-            int len = teamSel.activePlayers.Length;
-            int[] idList = new int[len];
-            string[] nameList = new string[len];
-            int[] drawList = new int[len];
-            int[] guardList = new int[len];
-            int[] takeOutList = new int[len];
-            int[] strengthList = new int[len];
-            int[] enduroList = new int[len];
-            int[] cohesionList = new int[len];
-            int[] oppDrawList = new int[len];
-            int[] oppGuardList = new int[len];
-            int[] oppTakeOutList = new int[len];
-            int[] oppStrengthList = new int[len];
-            int[] oppEnduroList = new int[len];
-            int[] oppCohesionList = new int[len];
-
-            for (int i = 0; i < len; i++)
-            {
-                var p = teamSel.activePlayers[i];
-                idList[i] = p.id;
-                nameList[i] = p.name;
-                drawList[i] = p.draw;
-                guardList[i] = p.guard;
-                takeOutList[i] = p.takeOut;
-                strengthList[i] = p.sweepStrength;
-                enduroList[i] = p.sweepEnduro;
-                cohesionList[i] = p.sweepCohesion;
-                oppDrawList[i] = p.oppDraw;
-                oppGuardList[i] = p.oppGuard;
-                oppTakeOutList[i] = p.oppTakeOut;
-                oppStrengthList[i] = p.oppStrength;
-                oppEnduroList[i] = p.oppEnduro;
-                oppCohesionList[i] = p.oppCohesion;
-            }
-
-            myFile.Add("Active Players ID List", idList);
-            myFile.Add("Active Players Name List", nameList);
-            myFile.Add("Active Players Draw List", drawList);
-            myFile.Add("Active Players Guard List", guardList);
-            myFile.Add("Active Players Takeout List", takeOutList);
-            myFile.Add("Active Players Strength List", strengthList);
-            myFile.Add("Active Players Endurance List", enduroList);
-            myFile.Add("Active Players Cohesion List", cohesionList);
-            myFile.Add("Active Players Opp Draw List", oppDrawList);
-            myFile.Add("Active Players Opp Guard List", oppGuardList);
-            myFile.Add("Active Players Opp Takeout List", oppTakeOutList);
-            myFile.Add("Active Players Opp Strength List", oppStrengthList);
-            myFile.Add("Active Players Opp Endurance List", oppEnduroList);
-            myFile.Add("Active Players Opp Cohesion List", oppCohesionList);
+            Debug.LogWarning("[CareerManager] Player team not found in SaveHighScore");
+            yield break;
         }
-    }
-
-    public void SaveTeamsToSave()
-    {
-        if (teams == null || teams.Length == 0)
-        {
-            Debug.LogWarning("No teams to save.");
-            return;
-        }
-
-        int teamCount = teams.Length;
-        myFile.Add("Team Count", teamCount);
-
-        for (int i = 0; i < teamCount; i++)
-        {
-            Team team = teams[i];
-            myFile.Add($"Team_{i}_Id", team.id);
-            myFile.Add($"Team_{i}_Name", team.name);
-            myFile.Add($"Team_{i}_Wins", team.wins);
-            myFile.Add($"Team_{i}_Loss", team.loss);
-            myFile.Add($"Team_{i}_Earnings", team.earnings);
-            myFile.Add($"Team_{i}_Player", team.player);
-            myFile.Add($"Team_{i}_Rank", team.rank);
-            myFile.Add($"Team_{i}_NextOpp", team.nextOpp);
-            myFile.Add($"Team_{i}_Draw", team.draw);
-            myFile.Add($"Team_{i}_TakeOut", team.takeOut);
-            myFile.Add($"Team_{i}_Guard", team.guard);
-            myFile.Add($"Team_{i}_SweepStrength", team.sweepStrength);
-            myFile.Add($"Team_{i}_SweepEnduro", team.sweepEnduro);
-            myFile.Add($"Team_{i}_SweepCohesion", team.sweepCohesion);
-
-            int playerCount = team.players != null ? team.players.Count : 0;
-            myFile.Add($"Team_{i}_PlayerCount", playerCount);
-            for (int j = 0; j < playerCount; j++)
-            {
-                Player p = team.players[j];
-                myFile.Add($"Team_{i}_Player_{j}_Id", p.id);
-                myFile.Add($"Team_{i}_Player_{j}_Name", p.name);
-                myFile.Add($"Team_{i}_Player_{j}_Draw", p.draw);
-                myFile.Add($"Team_{i}_Player_{j}_TakeOut", p.takeOut);
-                myFile.Add($"Team_{i}_Player_{j}_Guard", p.guard);
-                myFile.Add($"Team_{i}_Player_{j}_SweepStrength", p.sweepStrength);
-                myFile.Add($"Team_{i}_Player_{j}_SweepEnduro", p.sweepEnduro);
-                myFile.Add($"Team_{i}_Player_{j}_SweepCohesion", p.sweepCohesion);
-            }
-        }
-
-        Debug.Log("Teams and players saved to file.");
-    }
-
-    private void SaveDialogueStatus(StorylineManager slm)
-    {
-        myFile.Add("Coach Dialogue Played List", coachDialogue);
-        myFile.Add("Qualifying Dialogue Played List", qualDialogue);
-        myFile.Add("Review Dialogue Played List", reviewDialogue);
-        myFile.Add("Intro Dialogue Played List", introDialogue);
-        myFile.Add("Help Dialogue Played List", helpDialogue);
-        myFile.Add("Strategy Dialogue Played List", strategyDialogue);
-        myFile.Add("Story Dialogue Played List", storyDialogue);
-
-        if (slm != null)
-            myFile.Add("Story Block", slm.blockIndex);
-    }
-
-    private void SaveCardData(SponsorManager sm)
-    {
-        if (cardPUIDList != null && cardPUIDList.Length > 0)
-            myFile.Add("Card PowerUp ID List", cardPUIDList);
-        else
-            myFile.Add("Card PowerUp ID List", new int[0]);
-
-        if (cardSponsorIDList != null && cardSponsorIDList.Length > 0)
-            myFile.Add("Card Sponsor ID List", cardSponsorIDList);
-        else
-            myFile.Add("Card Sponsor ID List", new int[0]);
-
-        if (activeCardIDList != null && activeCardIDList.Length > 0)
-            myFile.Add("Active Card ID List", activeCardIDList);
-        else
-            myFile.Add("Active Card ID List", new int[0]);
-
-        if (playedCardIDList != null && playedCardIDList.Length > 0)
-            myFile.Add("Played Card ID List", playedCardIDList);
-        else
-            myFile.Add("Played Card ID List", new int[0]);
-
-        if (activeCardLengthList != null && activeCardLengthList.Length > 0)
-            myFile.Add("Active Card Length List", activeCardLengthList);
-        else
-            myFile.Add("Active Card Length List", new int[0]);
-    }
-
-    private void SaveTournamentData(TournySelector tSel)
-    {
-        if (tSel != null)
-        {
-            int[] provIDList = new int[prov.Length];
-            bool[] provCompleteList = new bool[prov.Length];
-            int[] tourIDList = new int[tour.Length];
-            bool[] tourCompleteList = new bool[tour.Length];
-            int[] tourniesIDList = new int[tournies.Length];
-            bool[] tourniesCompleteList = new bool[tournies.Length];
-
-            for (int i = 0; i < prov.Length; i++)
-            {
-                provIDList[i] = prov[i].id;
-                provCompleteList[i] = prov[i].complete;
-            }
-            for (int i = 0; i < tour.Length; i++)
-            {
-                tourIDList[i] = tour[i].id;
-                tourCompleteList[i] = tour[i].complete;
-            }
-            for (int i = 0; i < tournies.Length; i++)
-            {
-                tourniesIDList[i] = tournies[i].id;
-                tourniesCompleteList[i] = tournies[i].complete;
-            }
-
-            myFile.Add("Tour Championship Complete", tSel.tourChampionship.complete);
-            myFile.Add("Prov Championship Complete", tSel.provChampionship.complete);
-            myFile.Add("Prov ID List", provIDList);
-            myFile.Add("Prov Complete List", provCompleteList);
-            myFile.Add("Tour ID List", tourIDList);
-            myFile.Add("Tour Complete List", tourCompleteList);
-            myFile.Add("Tournies ID List", tourniesIDList);
-            myFile.Add("Tournies Complete List", tourniesCompleteList);
-        }
-    }
-
-    private void SaveTourTeamData()
-    {
-        if (teamRecords != null)
-        {
-            int[] tempTRX = new int[teamRecords.Length];
-            int[] tempTRY = new int[teamRecords.Length];
-            float[] tempTRZ = new float[teamRecords.Length];
-            int[] tempTRW = new int[teamRecords.Length];
-            for (int i = 0; i < teamRecords.Length; i++)
-            {
-                tempTRX[i] = (int)teamRecords[i].x;
-                tempTRY[i] = (int)teamRecords[i].y;
-                tempTRZ[i] = teamRecords[i].z;
-                tempTRW[i] = (int)teamRecords[i].w;
-            }
-            myFile.Add("Team Records X", tempTRX);
-            myFile.Add("Team Records Y", tempTRY);
-            myFile.Add("Team Records Z", tempTRZ);
-            myFile.Add("Team Records W", tempTRW);
-        }
-        if (tourRecords != null)
-        {
-            int[] tempTourTRX = new int[tourRecords.Length];
-            int[] tempTourTRY = new int[tourRecords.Length];
-            float[] tempTourTRZ = new float[tourRecords.Length];
-            int[] tempTourTRW = new int[tourRecords.Length];
-            for (int i = 0; i < tourRecords.Length; i++)
-            {
-                tempTourTRX[i] = (int)tourRecords[i].x;
-                tempTourTRY[i] = (int)tourRecords[i].y;
-                tempTourTRZ[i] = tourRecords[i].z;
-                tempTourTRW[i] = (int)tourRecords[i].w;
-            }
-            myFile.Add("Tour Records X", tempTourTRX);
-            myFile.Add("Tour Records Y", tempTourTRY);
-            myFile.Add("Tour Records Z", tempTourTRZ);
-            myFile.Add("Tour Records W", tempTourTRW);
-        }
-    }
-
-    private void SaveTeamDetails()
-    {
-        int[] idList = new int[teams.Length];
-        int[] winsList = new int[teams.Length];
-        int[] lossList = new int[teams.Length];
-        float[] earningsList = new float[teams.Length];
-
-        for (int i = 0; i < teams.Length; i++)
-        {
-            idList[i] = teams[i].id;
-            winsList[i] = teams[i].wins;
-            lossList[i] = teams[i].loss;
-            earningsList[i] = teams[i].earnings;
-        }
-
-        myFile.Add("Total ID List", idList);
-        myFile.Add("Total Wins List", winsList);
-        myFile.Add("Total Loss List", lossList);
-        myFile.Add("Total Earnings List", earningsList);
-
-
-        // Tour teams
-        int[] tourTeamsIDList = new int[tourTeams.Length];
-        int[] tourWinsList = new int[tourTeams.Length];
-        int[] tourLossList = new int[tourTeams.Length];
-        float[] tourPointsList = new float[tourTeams.Length];
-
-        for (int i = 0; i < tourTeams.Length; i++)
-        {
-            if (tourTeams[i] != null)
-            {
-                tourTeamsIDList[i] = tourTeams[i].id;
-                tourWinsList[i] = (int)tourTeams[i].tourRecord.x;
-                tourLossList[i] = (int)tourTeams[i].tourRecord.y;
-                tourPointsList[i] = tourTeams[i].tourPoints;
-            }
-            else
-            {
-                tourTeamsIDList[i] = -1;
-                tourWinsList[i] = 0;
-                tourLossList[i] = 0;
-                tourPointsList[i] = 0f;
-                Debug.LogWarning($"tourTeams[{i}] is null in SaveTeamDetails.");
-            }
-        }
-
-        myFile.Add("Tour Team ID List", tourTeamsIDList);
-        myFile.Add("Tour Wins List", tourWinsList);
-        myFile.Add("Tour Loss List", tourLossList);
-        myFile.Add("Tour Points List", tourPointsList);
-    }
-
-    private void SaveEquipment(EquipmentManager em)
-    {
-        // Save active equipment IDs
         
-        Debug.Log("Saving activeEquipID: " + string.Join(",", activeEquipID ?? new int[0]));
-        //myFile.Add("Active Equip ID List", activeEquipID);
-
-        if (em == null)
-            return;
-        // Save active equipment IDs
-        activeEquipID = em.activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
-        myFile.Add("Active Equip ID List", activeEquipID);
-        Debug.Log("Saving activeEquipID: " + string.Join(",", activeEquipID ?? new int[0]));
-        //myFile.Add("Active Equip ID List", activeEquipID);
-        // Ensure arrays are not null
-        Equipment[] handles = em.handles ?? new Equipment[0];
-        Equipment[] heads = em.heads ?? new Equipment[0];
-        Equipment[] footwear = em.footwear ?? new Equipment[0];
-        Equipment[] apparel = em.apparel ?? new Equipment[0];
+        // Format full name
+        string fullName = $"{playerName} {teamName}";
         
-        int handlesCount = handles.Length;
-        int headsCount = heads.Length;
-        int footwearCount = footwear.Length;
-        int apparelCount = apparel.Length;
-        int total = handlesCount + headsCount + footwearCount + apparelCount;
-
-        // Save counts for robust loading
-        myFile.Add("HandlesCount", handlesCount);
-        myFile.Add("HeadsCount", headsCount);
-        myFile.Add("FootwearCount", footwearCount);
-        myFile.Add("ApparelCount", apparelCount);
-
-        // Prepare flat arrays for all equipment data
-        int[] tempID = new int[total];
-        float[] tempCost = new float[total];
-        float[] tempColorX = new float[total];
-        float[] tempColorY = new float[total];
-        float[] tempColorZ = new float[total];
-        float[] tempColorA = new float[total];
-        int[] tempDuration = new int[total];
-        int[] tempStats0 = new int[total];
-        int[] tempStats1 = new int[total];
-        int[] tempStats2 = new int[total];
-        int[] tempStats3 = new int[total];
-        int[] tempStats4 = new int[total];
-        int[] tempStats5 = new int[total];
-        int[] tempOppStats0 = new int[total];
-        int[] tempOppStats1 = new int[total];
-        int[] tempOppStats2 = new int[total];
-        int[] tempOppStats3 = new int[total];
-        int[] tempOppStats4 = new int[total];
-        int[] tempOppStats5 = new int[total];
-
-        int idx = 0;
-        Equipment[][] all = { handles, heads, footwear, apparel };
-        foreach (var arr in all)
-        {
-            foreach (var eq in arr)
-            {
-                if (eq != null)
-                {
-                    tempID[idx] = eq.id;
-                    tempCost[idx] = eq.cost;
-                    tempColorX[idx] = eq.color.r;
-                    tempColorY[idx] = eq.color.g;
-                    tempColorZ[idx] = eq.color.b;
-                    tempColorA[idx] = eq.color.a;
-                    tempDuration[idx] = eq.duration;
-                    tempStats0[idx] = eq.stats != null && eq.stats.Length > 0 ? eq.stats[0] : 0;
-                    tempStats1[idx] = eq.stats != null && eq.stats.Length > 1 ? eq.stats[1] : 0;
-                    tempStats2[idx] = eq.stats != null && eq.stats.Length > 2 ? eq.stats[2] : 0;
-                    tempStats3[idx] = eq.stats != null && eq.stats.Length > 3 ? eq.stats[3] : 0;
-                    tempStats4[idx] = eq.stats != null && eq.stats.Length > 4 ? eq.stats[4] : 0;
-                    tempStats5[idx] = eq.stats != null && eq.stats.Length > 5 ? eq.stats[5] : 0;
-                    tempOppStats0[idx] = eq.oppStats != null && eq.oppStats.Length > 0 ? eq.oppStats[0] : 0;
-                    tempOppStats1[idx] = eq.oppStats != null && eq.oppStats.Length > 1 ? eq.oppStats[1] : 0;
-                    tempOppStats2[idx] = eq.oppStats != null && eq.oppStats.Length > 2 ? eq.oppStats[2] : 0;
-                    tempOppStats3[idx] = eq.oppStats != null && eq.oppStats.Length > 3 ? eq.oppStats[3] : 0;
-                    tempOppStats4[idx] = eq.oppStats != null && eq.oppStats.Length > 4 ? eq.oppStats[4] : 0;
-                    tempOppStats5[idx] = eq.oppStats != null && eq.oppStats.Length > 5 ? eq.oppStats[5] : 0;
-                }
-                else
-                {
-                    tempID[idx] = -1;
-                    tempCost[idx] = 0f;
-                    tempColorX[idx] = 0f;
-                    tempColorY[idx] = 0f;
-                    tempColorZ[idx] = 0f;
-                    tempColorA[idx] = 0f;
-                    tempDuration[idx] = 0;
-                    tempStats0[idx] = 0;
-                    tempStats1[idx] = 0;
-                    tempStats2[idx] = 0;
-                    tempStats3[idx] = 0;
-                    tempStats4[idx] = 0;
-                    tempStats5[idx] = 0;
-                    tempOppStats0[idx] = 0;
-                    tempOppStats1[idx] = 0;
-                    tempOppStats2[idx] = 0;
-                    tempOppStats3[idx] = 0;
-                    tempOppStats4[idx] = 0;
-                    tempOppStats5[idx] = 0;
-                }
-                idx++;
-            }
-        }
-
-        myFile.Add("Total Item ID List", tempID);
-        myFile.Add("Total Item Cost List", tempCost);
-        myFile.Add("Total Item Color X List", tempColorX);
-        myFile.Add("Total Item Color Y List", tempColorY);
-        myFile.Add("Total Item Color Z List", tempColorZ);
-        myFile.Add("Total Item Color A List", tempColorA);
-        myFile.Add("Total Item Duration List", tempDuration);
-        myFile.Add("Total Item Draw List", tempStats0);
-        myFile.Add("Total Item Guard List", tempStats1);
-        myFile.Add("Total Item Takeout List", tempStats2);
-        myFile.Add("Total Item Strength List", tempStats3);
-        myFile.Add("Total Item Endurance List", tempStats4);
-        myFile.Add("Total Item Cohesion List", tempStats5);
-        myFile.Add("Total Item Opp Draw List", tempOppStats0);
-        myFile.Add("Total Item Opp Guard List", tempOppStats1);
-        myFile.Add("Total Item Opp Takeout List", tempOppStats2);
-        myFile.Add("Total Item Opp Strength List", tempOppStats3);
-        myFile.Add("Total Item Opp Endurance List", tempOppStats4);
-        myFile.Add("Total Item Opp Cohesion List", tempOppStats5);
-
-                
-        Debug.Log("Equipment saved to file. - ActiveEquip ID List Count is" + activeEquipID.Length.ToString());
-    }
-
-    private void SaveCurrentGameState(GameSettingsPersist gsp)
-    {
-        if (gsp == null) gsp = FindFirstObjectByType<GameSettingsPersist>();
-        if (gsp == null) return;
-
-        myFile.Add("Tourny Game", gsp.tourny);
-        myFile.Add("Game Ends", gsp.ends);
-        myFile.Add("Game Active End", gsp.endCurrent);
-        myFile.Add("Game Rocks", gsp.rocks);
-        myFile.Add("Game Rock Current", gsp.rockCurrent);
-        myFile.Add("Game Red Hammer", gsp.redHammer);
-        myFile.Add("Game AI Yellow", gsp.aiYellow);
-        myFile.Add("Game AI Red", gsp.aiRed);
-        myFile.Add("Game Yellow Score", gsp.yellowScore);
-        myFile.Add("Game Red Score", gsp.redScore);
-        myFile.Add("Game Yellow Team Name", gsp.yellowTeamName);
-        myFile.Add("Game Red Team Name", gsp.redTeamName);
-
-        myFile.Add("Game In Progress", gsp.gameInProgress);
-        myFile.Add("Tourny In Progress", gsp.tournyInProgress);
-        myFile.Add("Game Load", gsp.loadGame);
-
-        float[] rockPosX = new float[gsp.rockPos.Length];
-        float[] rockPosY = new float[gsp.rockPos.Length];
-        for (int i = 0; i < gsp.rockPos.Length; i++)
-        {
-            rockPosX[i] = gsp.rockPos[i].x;
-            rockPosY[i] = gsp.rockPos[i].y;
-        }
-        myFile.Add("Game Rock Position X List", rockPosX);
-        myFile.Add("Game Rock Position Y List", rockPosY);
-        myFile.Add("Game Rock In Play List", gsp.rockInPlay);
-
-        int[] redScoreList = new int[gsp.score.Length];
-        int[] yellowScoreList = new int[gsp.score.Length];
-        for (int i = 0; i < gsp.score.Length; i++)
-        {
-            redScoreList[i] = gsp.score[i].x;
-            yellowScoreList[i] = gsp.score[i].y;
-        }
-        myFile.Add("Game Red Score List", redScoreList);
-        myFile.Add("Game Yellow Score List", yellowScoreList);
-
-        Debug.Log("Game State saved to file.");
+        // Add to high score service
+        HighScoreService.AddCareerEntry(
+            playerName: playerName,
+            teamName: teamName,
+            earnings: earnings,
+            season: season,
+            wins: (int)record.x,
+            losses: (int)record.y,
+            trophies: currentTrophyList
+        );
+        
+        Debug.Log($"[CareerManager] High score saved: {fullName} - ${earnings:N0}");
     }
 
     public void SaveTournyState(object tournyStateManager = null, GameSettingsPersist gsp = null)
     {
-        //myFile = new EasyFileSave("my_player_data");
-
-        if (gsp == null) gsp = FindFirstObjectByType<GameSettingsPersist>();
-
-        // Auto-find if not provided
-        if (tournyStateManager == null)
-        {
-            tournyStateManager =
-                (object)FindFirstObjectByType<TournyManager>() ??
-                (object)FindFirstObjectByType<PlayoffManager>() ??
-                (object)FindFirstObjectByType<PlayoffManager_SingleK>() ??
-                (object)FindFirstObjectByType<PlayoffManager_TripleK>();
-        }
-
-        if (tournyStateManager is TournyManager tm)
-        {
-            string tag = "TournyManager_";
-            myFile.Add($"{tag}Draw", tm.draw);
-            myFile.Add($"{tag}NumberOfTeams", tm.numberOfTeams);
-            myFile.Add($"{tag}Prize", tm.prize);
-            myFile.Add($"{tag}OppTeam", tm.oppTeam);
-            myFile.Add($"{tag}PlayoffRound", tm.playoffRound);
-
-            int teamCount = tm.teams.Length;
-            myFile.Add($"{tag}TeamCount", teamCount);
-
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = tm.teams[i];
-                myFile.Add($"{tag}Team_{i}_Id", t.id);
-                myFile.Add($"{tag}Team_{i}_Name", t.name);
-                myFile.Add($"{tag}Team_{i}_Wins", t.wins);
-                myFile.Add($"{tag}Team_{i}_Loss", t.loss);
-                myFile.Add($"{tag}Team_{i}_Earnings", t.earnings);
-                myFile.Add($"{tag}Team_{i}_Player", t.player);
-                myFile.Add($"{tag}Team_{i}_Rank", t.rank);
-                myFile.Add($"{tag}Team_{i}_Strength", t.strength);
-                myFile.Add($"{tag}Team_{i}_NextOpp", t.nextOpp);
-            }
-        }
-        else if (tournyStateManager is PlayoffManager pm)
-        {
-            string tag = "PlayoffManager_";
-            myFile.Add($"{tag}OppTeam", pm.oppTeam);
-            myFile.Add($"{tag}PlayoffRound", pm.playoffRound);
-
-            int teamCount = pm.playoffTeams.Length;
-            myFile.Add($"{tag}TeamCount", teamCount);
-
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = pm.playoffTeams[i];
-                myFile.Add($"{tag}Team_{i}_Id", t.id);
-                myFile.Add($"{tag}Team_{i}_Name", t.name);
-                myFile.Add($"{tag}Team_{i}_Wins", t.wins);
-                myFile.Add($"{tag}Team_{i}_Loss", t.loss);
-                myFile.Add($"{tag}Team_{i}_Earnings", t.earnings);
-                myFile.Add($"{tag}Team_{i}_Player", t.player);
-                myFile.Add($"{tag}Team_{i}_Rank", t.rank);
-                myFile.Add($"{tag}Team_{i}_Strength", t.strength);
-                myFile.Add($"{tag}Team_{i}_NextOpp", t.nextOpp);
-            }
-        }
-        else if (tournyStateManager is PlayoffManager_SingleK pmSingle)
-        {
-            string tag = "PlayoffManager_SingleK_";
-            myFile.Add($"{tag}OppTeam", pmSingle.oppTeam);
-            myFile.Add($"{tag}PlayoffRound", pmSingle.playoffRound);
-
-            int teamCount = pmSingle.playoffTeams.Length;
-            myFile.Add($"{tag}TeamCount", teamCount);
-
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = pmSingle.playoffTeams[i];
-                myFile.Add($"{tag}Team_{i}_Id", t.id);
-                myFile.Add($"{tag}Team_{i}_Name", t.name);
-                myFile.Add($"{tag}Team_{i}_Wins", t.wins);
-                myFile.Add($"{tag}Team_{i}_Loss", t.loss);
-                myFile.Add($"{tag}Team_{i}_Earnings", t.earnings);
-                myFile.Add($"{tag}Team_{i}_Player", t.player);
-                myFile.Add($"{tag}Team_{i}_Rank", t.rank);
-                myFile.Add($"{tag}Team_{i}_Strength", t.strength);
-                myFile.Add($"{tag}Team_{i}_NextOpp", t.nextOpp);
-            }
-        }
-        else if (tournyStateManager is PlayoffManager_TripleK pmTriple)
-        {
-            string tag = "PlayoffManager_TripleK_";
-            myFile.Add($"{tag}PlayoffRound", pmTriple.playoffRound);
-
-            int teamCount = pmTriple.teams.Length;
-            myFile.Add($"{tag}TeamCount", teamCount);
-
-            for (int i = 0; i < teamCount; i++)
-            {
-                Team t = pmTriple.teams[i];
-                myFile.Add($"{tag}Team_{i}_Id", t.id);
-                myFile.Add($"{tag}Team_{i}_Name", t.name);
-                myFile.Add($"{tag}Team_{i}_Wins", t.wins);
-                myFile.Add($"{tag}Team_{i}_Loss", t.loss);
-                myFile.Add($"{tag}Team_{i}_Earnings", t.earnings);
-                myFile.Add($"{tag}Team_{i}_Player", t.player);
-                myFile.Add($"{tag}Team_{i}_Rank", t.rank);
-                myFile.Add($"{tag}Team_{i}_Strength", t.strength);
-                myFile.Add($"{tag}Team_{i}_NextOpp", t.nextOpp);
-            }
-
-            myFile.Add($"{tag}GameListCount", pmTriple.gameList.Length);
-            for (int i = 0; i < pmTriple.gameList.Length; i++)
-            {
-                myFile.Add($"{tag}GameList_{i}_X", pmTriple.gameList[i].x);
-                myFile.Add($"{tag}GameList_{i}_Y", pmTriple.gameList[i].y);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Unknown tournament/playoff manager type passed to SaveTournyState.");
-            return;
-        }
-
-        Debug.Log("Tourny State saved to file.");
-        //myFile.Append();
+        // Tournament state is now saved via JSON save system in SaveCareer()
+        Debug.Log("[CareerManager] SaveTournyState called - tournament state saved via SaveCareer()");
+        return;
     }
 
     public void SaveCareer(
@@ -1576,41 +532,156 @@ public class CareerManager : MonoBehaviour
         if (em == null) em = FindFirstObjectByType<EquipmentManager>();
         if (sm == null) sm = FindFirstObjectByType<SponsorManager>();
 
-        myFile = new EasyFileSave("my_player_data");
-
-        // Save main game progress
-        SaveGameProgress(gsp);
-
-        // Save active players
-        SaveActivePlayers(teamSel);
-
-
-        // Save dialogue status
-        SaveDialogueStatus(slm);
-
-        // Save card data
-        SaveCardData(sm);
-
-        // Save tournament data
-        SaveTournamentData(tSel);
-
-        // Save tour/team records
-        SaveTourTeamData();
-
-        // Save team details (summary lists)
-        SaveTeamDetails();
-
-        // Save equipment
-        SaveEquipment(em);
-
-        // Save teams and players
-        SaveTeamsToSave();
-        SaveCurrentGameState(gsp);
-        SaveTournyState();
+        SaveCareerJSON(gsp, teamSel, tSel, slm, em, sm);
+        
         loadedFromSave = false;
-        myFile.Append();
     }
-
+    
+    /// <summary>
+    /// Auto-save method called periodically
+    /// </summary>
+    private void AutoSave()
+    {
+        if (gameOver)
+        {
+            // Don't auto-save if career is over
+            return;
+        }
+        
+        Debug.Log("[CareerManager] Auto-saving...");
+        SaveCareer();
+    }
+    
+    /// <summary>
+    /// Public method to manually trigger save (optional)
+    /// </summary>
+    public void ManualSave()
+    {
+        Debug.Log("[CareerManager] Manual save triggered");
+        SaveCareer();
+        autoSaveTimer = 0f; // Reset auto-save timer
+    }
+    
+    /// <summary>
+    /// Enable or disable auto-save
+    /// </summary>
+    public void SetAutoSave(bool enabled)
+    {
+        enableAutoSave = enabled;
+        Debug.Log($"[CareerManager] Auto-save {(enabled ? "enabled" : "disabled")}");
+    }
+    
+    /// <summary>
+    /// Deletes the current career save file
+    /// </summary>
+    public void DeleteCareerSave()
+    {
+        CareerSaveService.DeleteSave();
+        Debug.Log("[CareerManager] Career save deleted");
+    }
+    
+    /// <summary>
+    /// Checks if a save file exists
+    /// </summary>
+    public bool SaveFileExists()
+    {
+        return CareerSaveService.SaveExists();
+    }
+    
+    /// <summary>
+    /// Gets formatted save file information
+    /// </summary>
+    public string GetSaveFileInfo()
+    {
+        return CareerSaveService.GetSaveInfo();
+    }
+    
+    /// <summary>
+    /// New JSON-based save
+    /// </summary>
+    private void SaveCareerJSON(
+        GameSettingsPersist gsp,
+        TeamMenu teamSel,
+        TournySelector tSel,
+        StorylineManager slm,
+        EquipmentManager em,
+        SponsorManager sm)
+    {
+        try
+        {
+            // Convert current state to save data
+            CareerSaveData saveData = ToSaveData();
+            
+            // Add current game state if in progress
+            if (gsp != null && gsp.gameInProgress)
+            {
+                saveData.currentGameState = new GameStateData
+                {
+                    gameInProgress = gsp.gameInProgress,
+                    tournyInProgress = gsp.tournyInProgress,
+                    isTournyGame = gsp.tourny,
+                    ends = gsp.ends,
+                    currentEnd = gsp.endCurrent,
+                    rocks = gsp.rocks,
+                    currentRock = gsp.rockCurrent,
+                    redHammer = gsp.redHammer,
+                    aiYellow = gsp.aiYellow,
+                    aiRed = gsp.aiRed,
+                    yellowScore = gsp.yellowScore,
+                    redScore = gsp.redScore,
+                    yellowTeamName = gsp.yellowTeamName,
+                    redTeamName = gsp.redTeamName
+                };
+                
+                // Save rock positions
+                if (gsp.rockPos != null)
+                {
+                    foreach (var pos in gsp.rockPos)
+                    {
+                        saveData.currentGameState.rockPositions.Add(new Vector2Data(pos));
+                    }
+                }
+                
+                if (gsp.rockInPlay != null)
+                {
+                    saveData.currentGameState.rockInPlay.AddRange(gsp.rockInPlay);
+                }
+                
+                if (gsp.score != null)
+                {
+                    foreach (var score in gsp.score)
+                    {
+                        saveData.currentGameState.endScores.Add(new Vector2IntData(score));
+                    }
+                }
+            }
+            
+            // Add tournament state if tournament is in progress
+            if (gsp != null && gsp.tournyInProgress && currentTourny != null)
+            {
+                saveData.currentTournamentState = CaptureTournamentState(gsp);
+            }
+            
+            // Save using the service
+            bool success = CareerSaveService.SaveCareer(saveData);
+            
+            if (success)
+            {
+                Debug.Log($"[CareerManager] Career saved successfully to JSON (Week {week}, Season {season})");
+            }
+            else
+            {
+                Debug.LogError("[CareerManager] Failed to save career to JSON - CareerSaveService returned false");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[CareerManager] Exception during JSON save: {ex.Message}");
+            Debug.LogError($"[CareerManager] Stack trace: {ex.StackTrace}");
+            Debug.LogError("[CareerManager] Save operation failed - career progress may not be saved!");
+        }
+    }
+    
     public void SetupTourny(TournySelector tSel, GameSettingsPersist gsp)
     {
         currentTourny = tSel.currentTourny;
@@ -1717,23 +788,18 @@ public class CareerManager : MonoBehaviour
         {
             currentTournyTeams = gsp.teams;
 
-            for (int i = 0; i < teamRecords.Length; i++)
+            // Update cm.record from the player's team in currentTournyTeams
+            // This team has the cumulative wins/losses after TournyComplete() restored them
+            for (int i = 0; i < currentTournyTeams.Length; i++)
             {
-                if (teamRecords[i].w == gsp.playerTeamIndex)
+                if (playerTeamIndex == currentTournyTeams[i].id)
                 {
-                    record.x += teamRecords[i].x;
-                    record.y += teamRecords[i].y;
-                    earnings += teamRecords[i].z;
-                }
-            }
-
-            for (int i = 0; i < tourRecords.Length; i++)
-            {
-                if (tourRecords[i].w == gsp.playerTeamIndex)
-                {
-                    record.x += tourRecords[i].x;
-                    record.y += tourRecords[i].y;
-                    earnings += tourRecords[i].z;
+                    // Set record to the team's cumulative stats (which include pre-tournament + tournament)
+                    record.x = currentTournyTeams[i].seasonWins;
+                    record.y = currentTournyTeams[i].seasonLosses;
+                    
+                    Debug.Log($"[CareerManager] Updated cm.record to {record.x}-{record.y} from team {currentTournyTeams[i].name}");
+                    break;
                 }
             }
 
@@ -1782,9 +848,9 @@ public class CareerManager : MonoBehaviour
                         currentTourny.trophyWon = true;
                     }
 
-                    if (currentTournyTeams[i].rank < 5)
+                    if (currentTournyTeams[i].rank < TOP_RANK_THRESHOLD)
                     {
-                        xpChange += 5f;
+                        xpChange += XP_TOP5_BONUS;
                     }
                 }
             }
@@ -1796,10 +862,10 @@ public class CareerManager : MonoBehaviour
             {
                 if (playerTeamIndex == currentTournyTeams[i].id)
                 {
-                    if (currentTournyTeams[i].rank < 5)
+                    if (currentTournyTeams[i].rank < TOP_RANK_THRESHOLD)
                     {
                         provQual = true;
-                        xpChange += 25f;
+                        xpChange += XP_QUALIFIER_BONUS;
                     }
                 }
             }
@@ -1888,11 +954,11 @@ public class CareerManager : MonoBehaviour
             if (playerTeamIndex == GetPlayerRankedTeamId())
             {
                 if (GetPlayerRank() == 1)
-                    xpChange += 100f; // Winner
+                    xpChange += XP_TOUR_WIN;
                 else if (GetPlayerRank() <= 4)
-                    xpChange += 60f; // Top 4
+                    xpChange += XP_TOUR_TOP4;
                 else
-                    xpChange += 30f; // Participation
+                    xpChange += XP_TOUR_PARTICIPATION;
             }
         }
         else if (currentTourny.championship)
@@ -1901,11 +967,11 @@ public class CareerManager : MonoBehaviour
             if (playerTeamIndex == GetPlayerRankedTeamId())
             {
                 if (GetPlayerRank() == 1)
-                    xpChange += 200f;
+                    xpChange += XP_CHAMPIONSHIP_WIN;
                 else if (GetPlayerRank() <= 4)
-                    xpChange += 120f;
+                    xpChange += XP_CHAMPIONSHIP_TOP4;
                 else
-                    xpChange += 60f;
+                    xpChange += XP_CHAMPIONSHIP_PARTICIPATION;
             }
         }
         else if (currentTourny.qualifier)
@@ -1913,10 +979,10 @@ public class CareerManager : MonoBehaviour
             // Qualifier event
             if (playerTeamIndex == GetPlayerRankedTeamId())
             {
-                if (GetPlayerRank() < 5)
-                    xpChange += 50f;
+                if (GetPlayerRank() < TOP_RANK_THRESHOLD)
+                    xpChange += XP_QUALIFIER_SUCCESS;
                 else
-                    xpChange += 20f;
+                    xpChange += XP_QUALIFIER_PARTICIPATION;
             }
         }
         else
@@ -1925,19 +991,19 @@ public class CareerManager : MonoBehaviour
             if (playerTeamIndex == GetPlayerRankedTeamId())
             {
                 if (GetPlayerRank() == 1)
-                    xpChange += 40f;
+                    xpChange += XP_LOCAL_WIN;
                 else if (GetPlayerRank() <= 4)
-                    xpChange += 20f;
+                    xpChange += XP_LOCAL_TOP4;
                 else
-                    xpChange += 10f;
+                    xpChange += XP_LOCAL_PARTICIPATION;
             }
         }
 
         // Optionally, add XP for wins/losses
         if (playerTeamIndex == GetPlayerRankedTeamId())
         {
-            xpChange += GetPlayerWins() * 3f;
-            xpChange += GetPlayerLosses() * 1f;
+            xpChange += GetPlayerWins() * XP_PER_WIN;
+            xpChange += GetPlayerLosses() * XP_PER_LOSS;
         }
         //if (allTimeTrophyList.Count <= 0)
         //    allTimeTrophyList = new List<bool>();
@@ -1984,6 +1050,28 @@ public class CareerManager : MonoBehaviour
     public void NextWeek()
     {
         week++;
+        
+        // Decrement active sponsor card durations
+        if (activeCardLengthList != null && activeCardLengthList.Length > 0)
+        {
+            for (int i = 0; i < activeCardLengthList.Length; i++)
+            {
+                // Only decrement if duration is less than 50 (50+ means permanent sponsor)
+                if (activeCardLengthList[i] > 0 && activeCardLengthList[i] < 50)
+                {
+                    activeCardLengthList[i]--;
+                    Debug.Log($"[CareerManager] Decremented sponsor {i} duration to {activeCardLengthList[i]}");
+                    
+                    // If duration reaches 0, mark card as expired
+                    if (activeCardLengthList[i] == 0)
+                    {
+                        Debug.Log($"[CareerManager] Sponsor {i} (ID: {activeCardIDList[i]}) has expired");
+                        // Card will be handled by SponsorManager.SetUp() which checks duration
+                    }
+                }
+            }
+        }
+        
         SaveCareer();
         //tSel.SetUp();
     }
@@ -2018,39 +1106,73 @@ public class CareerManager : MonoBehaviour
         TournySelector tSel = FindFirstObjectByType<TournySelector>();
         EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
 
+        // Reset progression
         provRankList = new List<Standings_List>();
         tourRankList = new List<TourStandings_List>();
-
+        
         xp = 0f;
         skillPoints = 0;
         level = 0;
-
+        
         loadedFromSave = false;
         gameOver = false;
         record = new Vector2(0f, 0f);
         tourRecord = new Vector2(0f, 0f);
+        
+        // Reset qualifications
+        provQual = false;
+        tourQual = false;
 
-        cStats.drawAccuracy = 45;
-        cStats.guardAccuracy = 45;
-        cStats.takeOutAccuracy = 45;
-        cStats.sweepStrength = 45;
-        cStats.sweepEndurance = 45;
-        cStats.sweepCohesion = 45;
+        // Reset player character stats to starting values
+        cStats.drawAccuracy = STARTING_STAT_VALUE;
+        cStats.guardAccuracy = STARTING_STAT_VALUE;
+        cStats.takeOutAccuracy = STARTING_STAT_VALUE;
+        cStats.sweepStrength = STARTING_STAT_VALUE;
+        cStats.sweepEndurance = STARTING_STAT_VALUE;
+        cStats.sweepCohesion = STARTING_STAT_VALUE;
+        
+        // Reset modifier stats (from equipment/sponsors)
+        modStats.drawAccuracy = 0;
+        modStats.guardAccuracy = 0;
+        modStats.takeOutAccuracy = 0;
+        modStats.sweepStrength = 0;
+        modStats.sweepEndurance = 0;
+        modStats.sweepCohesion = 0;
+        
+        // Reset opponent modifier stats
+        oppStats.drawAccuracy = 0;
+        oppStats.guardAccuracy = 0;
+        oppStats.takeOutAccuracy = 0;
+        oppStats.sweepStrength = 0;
+        oppStats.sweepEndurance = 0;
+        oppStats.sweepCohesion = 0;
 
         season++;
 
+        // Reset team to starting players
         activePlayers = new Player[3];
         for (int i = 0; i < activePlayers.Length; i++)
         {
             activePlayers[i] = playerPool[i];
         }
+        
+        // Clear equipment
         activeEquipID = null;
+        inventoryID = null;
+        
+        // Clear all sponsor/card data
+        activeCardIDList = null;
+        cardPUIDList = null;
+        cardSponsorIDList = null;
+        playedCardIDList = null;
+        activeCardLengthList = null;
 
         Shuffle(teamPool);
         if (em != null)
         {
             em.EnsureDefaultActiveEquip();
         }
+        
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
         Debug.Log("provRankList Count is " + provRankList.Count);
@@ -2058,11 +1180,10 @@ public class CareerManager : MonoBehaviour
         string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron" };
         string[] lastNames = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King" };
 
-        int playersPerTeam = 4;
-        //int statTotal = 200;
+        int playersPerTeam = PLAYERS_PER_TEAM;
 
-        int baseStatTotal = 150; // Minimum possible stat total for the weakest team
-        int maxStatTotal = 240;  // Maximum possible stat total for the strongest team
+        int baseStatTotal = BASE_STAT_TOTAL;
+        int maxStatTotal = MAX_STAT_TOTAL;
 
         System.Random rand = new System.Random();
 
@@ -2096,8 +1217,8 @@ public class CareerManager : MonoBehaviour
             // Calculate stat total based on normalized strength
             int statTotal = Mathf.RoundToInt(baseStatTotal + normalized * (maxStatTotal - baseStatTotal));
 
-            // Add a random weekly variation, e.g. -5 to +5
-            statTotal += rand.Next(-5, 6);
+            // Add a random weekly variation
+            statTotal += rand.Next(-STAT_VARIATION, STAT_VARIATION + 1);
 
             // Clamp to valid range
             statTotal = Mathf.Clamp(statTotal, baseStatTotal, maxStatTotal);
@@ -2115,11 +1236,11 @@ public class CareerManager : MonoBehaviour
                 player.id = p;
 
                 float[] weights = roleWeights[p];
-                int[] stats = new int[6];
+                int[] stats = new int[NUM_STATS];
                 int assigned = 0;
 
                 // Assign stats based on weights, rounding down
-                for (int s = 0; s < 6; s++)
+                for (int s = 0; s < NUM_STATS; s++)
                 {
                     stats[s] = (int)(statTotal * weights[s]);
                     assigned += stats[s];
@@ -2128,7 +1249,7 @@ public class CareerManager : MonoBehaviour
                 int remaining = statTotal - assigned;
                 for (int r = 0; r < remaining; r++)
                 {
-                    int idx = rand.Next(6);
+                    int idx = rand.Next(NUM_STATS);
                     stats[idx]++;
                 }
 
@@ -2161,8 +1282,13 @@ public class CareerManager : MonoBehaviour
         }
         UpdateCharacter();
         teams[0].players.Add(playerCharacter);
+        
+        // Update team skills from player stats
+        teams[0].UpdateTeamSkillsFromPlayers();
+        Debug.Log($"[CareerManager] Player team skills: draw={teams[0].draw}, strength={teams[0].strength}");
+        
         teams[0].earnings = earnings;
-        cash = 1000f;
+        cash = STARTING_CASH;
         playerTeamIndex = teams[0].id;
         gsp.playerTeamIndex = playerTeamIndex;
         playerTeam = teams[0];
@@ -2213,80 +1339,6 @@ public class CareerManager : MonoBehaviour
         gameOver = true;
         SaveCareer();
         StartCoroutine(SaveHighScore());
-    }
-
-    public void SavePlayoffState(Team[] teams, int playoffRound, Vector2[] gameList = null)
-    {
-        //myFile = new EasyFileSave("my_player_data");
-        myFile.Add("PlayoffRound", playoffRound);
-
-        int teamCount = teams.Length;
-        myFile.Add("TeamCount", teamCount);
-
-        for (int i = 0; i < teamCount; i++)
-        {
-            Team t = teams[i];
-            myFile.Add($"Team_{i}_Id", t.id);
-            myFile.Add($"Team_{i}_Name", t.name);
-            myFile.Add($"Team_{i}_Wins", t.wins);
-            myFile.Add($"Team_{i}_Loss", t.loss);
-            myFile.Add($"Team_{i}_Earnings", t.earnings);
-            myFile.Add($"Team_{i}_Player", t.player);
-            myFile.Add($"Team_{i}_Rank", t.rank);
-            myFile.Add($"Team_{i}_Strength", t.strength);
-            myFile.Add($"Team_{i}_NextOpp", t.nextOpp);
-        }
-
-        if (gameList != null)
-        {
-            myFile.Add("GameListCount", gameList.Length);
-            for (int i = 0; i < gameList.Length; i++)
-            {
-                myFile.Add($"GameList_{i}_X", gameList[i].x);
-                myFile.Add($"GameList_{i}_Y", gameList[i].y);
-            }
-        }
-
-        //myFile.Append();
-    }
-
-    public void LoadPlayoffState(out Team[] teams, out int playoffRound, out Vector2[] gameList)
-    {
-        //myFile = new EasyFileSave("my_playoff_data");
-        teams = null;
-        playoffRound = 0;
-        gameList = null;
-
-        if (!myFile.Load())
-            return;
-
-        playoffRound = myFile.GetInt("PlayoffRound");
-        int teamCount = myFile.GetInt("TeamCount");
-        teams = new Team[teamCount];
-
-        for (int i = 0; i < teamCount; i++)
-        {
-            Team t = new Team();
-            t.id = myFile.GetInt($"Team_{i}_Id");
-            t.name = myFile.GetString($"Team_{i}_Name");
-            t.wins = myFile.GetInt($"Team_{i}_Wins");
-            t.loss = myFile.GetInt($"Team_{i}_Loss");
-            t.earnings = myFile.GetFloat($"Team_{i}_Earnings");
-            t.player = myFile.GetBool($"Team_{i}_Player");
-            t.rank = myFile.GetInt($"Team_{i}_Rank");
-            t.strength = myFile.GetInt($"Team_{i}_Strength");
-            t.nextOpp = myFile.GetString($"Team_{i}_NextOpp");
-            teams[i] = t;
-        }
-
-        int gameListCount = myFile.GetInt("GameListCount");
-        gameList = new Vector2[gameListCount];
-        for (int i = 0; i < gameListCount; i++)
-        {
-            float x = myFile.GetFloat($"GameList_{i}_X");
-            float y = myFile.GetFloat($"GameList_{i}_Y");
-            gameList[i] = new Vector2(x, y);
-        }
     }
 
     void Shuffle(Team[] a)
@@ -2380,6 +1432,7 @@ public class CareerManager : MonoBehaviour
             Debug.Log("Team Strength - " + teams[i].name + " - " + teams[i].strength);
         }
     }
+
     int GetPlayerRankedTeamId()
     {
         foreach (var team in currentTournyTeams)
@@ -2411,4 +1464,905 @@ public class CareerManager : MonoBehaviour
                 return team.loss;
         return 0;
     }
+    
+    #region JSON SAVE/LOAD CONVERSION METHODS
+    
+    /// <summary>
+    /// Converts current CareerManager state to CareerSaveData
+    /// </summary>
+    private CareerSaveData ToSaveData()
+    {
+        CareerSaveData data = new CareerSaveData();
+        
+        // Player Identity
+        data.playerName = playerName;
+        data.teamName = teamName;
+        data.teamColour = new SerializableColor(teamColour);
+        data.playerTeamIndex = playerTeamIndex;
+        
+        // Progress & Resources
+        data.week = week;
+        data.season = season;
+        data.cash = cash;
+        data.earnings = earnings;
+        data.xp = xp;
+        data.level = level;
+        data.skillPoints = skillPoints;
+        
+        // Career Record
+        data.careerWins = (int)record.x;
+        data.careerLosses = (int)record.y;
+        
+        // Career Stats
+        data.careerStats = new CareerStatsData
+        {
+            drawAccuracy = cStats.drawAccuracy,
+            guardAccuracy = cStats.guardAccuracy,
+            takeOutAccuracy = cStats.takeOutAccuracy,
+            sweepStrength = cStats.sweepStrength,
+            sweepEndurance = cStats.sweepEndurance,
+            sweepCohesion = cStats.sweepCohesion
+        };
+        
+        data.oppStats = new CareerStatsData
+        {
+            drawAccuracy = oppStats.drawAccuracy,
+            guardAccuracy = oppStats.guardAccuracy,
+            takeOutAccuracy = oppStats.takeOutAccuracy,
+            sweepStrength = oppStats.sweepStrength,
+            sweepEndurance = oppStats.sweepEndurance,
+            sweepCohesion = oppStats.sweepCohesion
+        };
+        
+        // Qualifications
+        data.provQual = provQual;
+        data.tourQual = tourQual;
+        
+        // Teams
+        if (teams != null && teams.Length > 0)
+        {
+            foreach (var team in teams)
+            {
+                if (team != null)
+                {
+                    data.teams.Add(TeamToData(team));
+                }
+            }
+        }
+        
+        if (tourTeams != null && tourTeams.Length > 0)
+        {
+            foreach (var team in tourTeams)
+            {
+                if (team != null)
+                {
+                    data.tourTeams.Add(TeamToData(team));
+                }
+            }
+        }
+        
+        // Team Records
+        if (teamRecords != null && teamRecords.Length > 0)
+        {
+            foreach (var record in teamRecords)
+            {
+                data.teamRecords.Add(new TeamRecordData
+                {
+                    teamId = (int)record.w,
+                    wins = (int)record.x,
+                    losses = (int)record.y,
+                    earnings = record.z
+                });
+            }
+        }
+        
+        if (tourRecords != null && tourRecords.Length > 0)
+        {
+            foreach (var record in tourRecords)
+            {
+                data.tourRecords.Add(new TeamRecordData
+                {
+                    teamId = (int)record.w,
+                    wins = (int)record.x,
+                    losses = (int)record.y,
+                    earnings = record.z
+                });
+            }
+        }
+        
+        // Active Players
+        if (activePlayers != null && activePlayers.Length > 0)
+        {
+            foreach (var player in activePlayers)
+            {
+                if (player != null)
+                {
+                    data.activePlayers.Add(PlayerToData(player));
+                }
+            }
+        }
+        
+        // Equipment
+        if (activeEquipID != null) data.activeEquipIDs.AddRange(activeEquipID);
+        if (inventoryID != null) data.inventoryIDs.AddRange(inventoryID);
+        
+        // Serialize all equipment if EquipmentManager exists
+        EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
+        if (em != null)
+        {
+            data.allEquipment = new EquipmentCollectionData();
+            
+            // Serialize handles
+            if (em.handles != null)
+            {
+                foreach (var eq in em.handles)
+                {
+                    if (eq != null)
+                    {
+                        data.allEquipment.handles.Add(EquipmentToData(eq));
+                    }
+                }
+            }
+            
+            // Serialize heads
+            if (em.heads != null)
+            {
+                foreach (var eq in em.heads)
+                {
+                    if (eq != null)
+                    {
+                        data.allEquipment.heads.Add(EquipmentToData(eq));
+                    }
+                }
+            }
+            
+            // Serialize footwear
+            if (em.footwear != null)
+            {
+                foreach (var eq in em.footwear)
+                {
+                    if (eq != null)
+                    {
+                        data.allEquipment.footwear.Add(EquipmentToData(eq));
+                    }
+                }
+            }
+            
+            // Serialize apparel
+            if (em.apparel != null)
+            {
+                foreach (var eq in em.apparel)
+                {
+                    if (eq != null)
+                    {
+                        data.allEquipment.apparel.Add(EquipmentToData(eq));
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[CareerManager] EquipmentManager not found during save - equipment data will not be saved");
+            data.allEquipment = new EquipmentCollectionData(); // Save empty collection
+        }
+        
+        // Cards/Sponsors
+        if (cardPUIDList != null) data.cardPowerUpIDs.AddRange(cardPUIDList);
+        if (cardSponsorIDList != null) data.cardSponsorIDs.AddRange(cardSponsorIDList);
+        if (activeCardIDList != null) data.activeCardIDs.AddRange(activeCardIDList);
+        if (playedCardIDList != null) data.playedCardIDs.AddRange(playedCardIDList);
+        if (activeCardLengthList != null) data.activeCardLengths.AddRange(activeCardLengthList);
+        
+        // Tournaments - Add null checks for individual tournament objects
+        if (prov != null)
+        {
+            foreach (var tourny in prov)
+            {
+                if (tourny != null)
+                {
+                    data.provincialTournaments.Add(new TournamentProgressData
+                    {
+                        id = tourny.id,
+                        complete = tourny.complete,
+                        trophyWon = tourny.trophyWon
+                    });
+                }
+            }
+        }
+        
+        if (tour != null)
+        {
+            foreach (var tourny in tour)
+            {
+                if (tourny != null)
+                {
+                    data.tourTournaments.Add(new TournamentProgressData
+                    {
+                        id = tourny.id,
+                        complete = tourny.complete,
+                        trophyWon = tourny.trophyWon
+                    });
+                }
+            }
+        }
+        
+        if (tournies != null)
+        {
+            foreach (var tourny in tournies)
+            {
+                if (tourny != null)
+                {
+                    data.regularTournaments.Add(new TournamentProgressData
+                    {
+                        id = tourny.id,
+                        complete = tourny.complete,
+                        trophyWon = tourny.trophyWon
+                    });
+                }
+            }
+        }
+        
+        if (champ != null && champ.Length >= 2)
+        {
+            if (champ[0] != null)
+            {
+                data.tourChampionshipComplete = champ[0].complete;
+            }
+            if (champ[1] != null)
+            {
+                data.provChampionshipComplete = champ[1].complete;
+            }
+        }
+        
+        // Tournament Results
+        if (tournyResults != null) data.tournamentResults.AddRange(tournyResults);
+        
+        // Dialogue Flags
+        data.dialogueFlags = new DialogueFlagsData
+        {
+            coachDialogue = coachDialogue ?? new bool[0],
+            qualDialogue = qualDialogue ?? new bool[0],
+            reviewDialogue = reviewDialogue ?? new bool[0],
+            introDialogue = introDialogue ?? new bool[0],
+            helpDialogue = helpDialogue ?? new bool[0],
+            strategyDialogue = strategyDialogue ?? new bool[0],
+            storyDialogue = storyDialogue ?? new bool[0],
+            storyBlockIndex = storyBlock
+        };
+        
+        // Trophies
+        if (allTimeTrophyList != null) data.allTimeTrophies.AddRange(allTimeTrophyList);
+        if (currentTrophyList != null) data.currentSeasonTrophies.AddRange(currentTrophyList);
+        
+        return data;
+    }
+    
+    /// <summary>
+    /// Restores CareerManager state from CareerSaveData
+    /// </summary>
+    private void LoadFromSaveData(CareerSaveData data)
+    {
+        if (data == null)
+        {
+            Debug.LogError("[CareerManager] Cannot load from null save data");
+            return;
+        }
+        
+        // Player Identity
+        playerName = data.playerName;
+        teamName = data.teamName;
+        teamColour = data.teamColour.ToColor();
+        playerTeamIndex = data.playerTeamIndex;
+        
+        // Progress & Resources
+        week = data.week;
+        season = data.season;
+        cash = data.cash;
+        earnings = data.earnings;
+        xp = data.xp;
+        level = data.level;
+        skillPoints = data.skillPoints;
+        
+        // Career Record
+        record = new Vector2(data.careerWins, data.careerLosses);
+        Debug.Log($"[CareerManager] Loaded career record from save: {record.x}-{record.y}");
+        
+        // Career Stats
+        cStats.drawAccuracy = data.careerStats.drawAccuracy;
+        cStats.guardAccuracy = data.careerStats.guardAccuracy;
+        cStats.takeOutAccuracy = data.careerStats.takeOutAccuracy;
+        cStats.sweepStrength = data.careerStats.sweepStrength;
+        cStats.sweepEndurance = data.careerStats.sweepEndurance;
+        cStats.sweepCohesion = data.careerStats.sweepCohesion;
+        
+        oppStats.drawAccuracy = data.oppStats.drawAccuracy;
+        oppStats.guardAccuracy = data.oppStats.guardAccuracy;
+        oppStats.takeOutAccuracy = data.oppStats.takeOutAccuracy;
+        oppStats.sweepStrength = data.oppStats.sweepStrength;
+        oppStats.sweepEndurance = data.oppStats.sweepEndurance;
+        oppStats.sweepCohesion = data.oppStats.sweepCohesion;
+        
+        // Qualifications
+        provQual = data.provQual;
+        tourQual = data.tourQual;
+        
+        // Teams
+        teams = new Team[data.teams.Count];
+        for (int i = 0; i < data.teams.Count; i++)
+        {
+            teams[i] = DataToTeam(data.teams[i]);
+        }
+        
+        tourTeams = new Team[data.tourTeams.Count];
+        for (int i = 0; i < data.tourTeams.Count; i++)
+        {
+            tourTeams[i] = DataToTeam(data.tourTeams[i]);
+        }
+        
+        // Team Records
+        teamRecords = new Vector4[data.teamRecords.Count];
+        for (int i = 0; i < data.teamRecords.Count; i++)
+        {
+            var record = data.teamRecords[i];
+            teamRecords[i] = new Vector4(record.wins, record.losses, record.earnings, record.teamId);
+        }
+        
+        tourRecords = new Vector4[data.tourRecords.Count];
+        for (int i = 0; i < data.tourRecords.Count; i++)
+        {
+            var record = data.tourRecords[i];
+            tourRecords[i] = new Vector4(record.wins, record.losses, record.earnings, record.teamId);
+        }
+        
+        // Active Players
+        activePlayers = new Player[data.activePlayers.Count];
+        for (int i = 0; i < data.activePlayers.Count; i++)
+        {
+            activePlayers[i] = DataToPlayer(data.activePlayers[i]);
+        }
+        
+        // Equipment
+        activeEquipID = data.activeEquipIDs.ToArray();
+        inventoryID = data.inventoryIDs.ToArray();
+        
+        // Restore equipment collections if available
+        if (data.allEquipment != null)
+        {
+            EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
+            if (em != null)
+            {
+                // Restore handles
+                if (data.allEquipment.handles != null && data.allEquipment.handles.Count > 0)
+                {
+                    em.handles = new Equipment[data.allEquipment.handles.Count];
+                    for (int i = 0; i < data.allEquipment.handles.Count; i++)
+                    {
+                        em.handles[i] = DataToEquipment(data.allEquipment.handles[i]);
+                    }
+                }
+                
+                // Restore heads
+                if (data.allEquipment.heads != null && data.allEquipment.heads.Count > 0)
+                {
+                    em.heads = new Equipment[data.allEquipment.heads.Count];
+                    for (int i = 0; i < data.allEquipment.heads.Count; i++)
+                    {
+                        em.heads[i] = DataToEquipment(data.allEquipment.heads[i]);
+                    }
+                }
+                
+                // Restore footwear
+                if (data.allEquipment.footwear != null && data.allEquipment.footwear.Count > 0)
+                {
+                    em.footwear = new Equipment[data.allEquipment.footwear.Count];
+                    for (int i = 0; i < data.allEquipment.footwear.Count; i++)
+                    {
+                        em.footwear[i] = DataToEquipment(data.allEquipment.footwear[i]);
+                    }
+                }
+                
+                // Restore apparel
+                if (data.allEquipment.apparel != null && data.allEquipment.apparel.Count > 0)
+                {
+                    em.apparel = new Equipment[data.allEquipment.apparel.Count];
+                    for (int i = 0; i < data.allEquipment.apparel.Count; i++)
+                    {
+                        em.apparel[i] = DataToEquipment(data.allEquipment.apparel[i]);
+                    }
+                }
+            }
+        }
+        
+        // Cards/Sponsors
+        cardPUIDList = data.cardPowerUpIDs.ToArray();
+        cardSponsorIDList = data.cardSponsorIDs.ToArray();
+        activeCardIDList = data.activeCardIDs.ToArray();
+        playedCardIDList = data.playedCardIDs.ToArray();
+        activeCardLengthList = data.activeCardLengths.ToArray();
+        
+        // Tournament Results
+        tournyResults = new List<int>(data.tournamentResults);
+        
+        // Dialogue Flags
+        coachDialogue = data.dialogueFlags.coachDialogue;
+        qualDialogue = data.dialogueFlags.qualDialogue;
+        reviewDialogue = data.dialogueFlags.reviewDialogue;
+        introDialogue = data.dialogueFlags.introDialogue;
+        helpDialogue = data.dialogueFlags.helpDialogue;
+        strategyDialogue = data.dialogueFlags.strategyDialogue;
+        storyDialogue = data.dialogueFlags.storyDialogue;
+        storyBlock = data.dialogueFlags.storyBlockIndex;
+        
+        // Trophies
+        allTimeTrophyList = new List<bool>(data.allTimeTrophies);
+        currentTrophyList = new List<bool>(data.currentSeasonTrophies);
+        
+        loadedFromSave = true;
+        
+        Debug.Log($"[CareerManager] Loaded save from {data.saveDate}");
+    }
+    
+    /// <summary>
+    /// Converts Team to TeamData
+    /// </summary>
+    private TeamData TeamToData(Team team)
+    {
+        TeamData data = new TeamData
+        {
+            id = team.id,
+            name = team.name,
+            isPlayer = team.player,
+            
+            // Tournament state
+            tournamentWins = team.tournamentWins,
+            tournamentLosses = team.tournamentLosses,
+            tournamentEarnings = team.tournamentEarnings,
+            rank = team.rank,
+            nextOpp = team.nextOpp,
+            
+            // Season cumulative
+            seasonWins = team.seasonWins,
+            seasonLosses = team.seasonLosses,
+            seasonEarnings = team.seasonEarnings,
+            
+            // Tour
+            tourPoints = team.tourPoints,
+            
+            // Skills
+            strength = team.strength,
+            draw = team.draw,
+            guard = team.guard,
+            takeOut = team.takeOut,
+            sweepStrength = team.sweepStrength,
+            sweepEnduro = team.sweepEnduro,
+            sweepCohesion = team.sweepCohesion,
+            
+            // Legacy compatibility
+            tourRecordX = team.tourRecord.x,
+            tourRecordY = team.tourRecord.y
+        };
+        
+        if (team.players != null)
+        {
+            foreach (var player in team.players)
+            {
+                data.players.Add(PlayerToData(player));
+            }
+        }
+        
+        return data;
+    }
+    
+    /// <summary>
+    /// Converts TeamData to Team
+    /// </summary>
+    private Team DataToTeam(TeamData data)
+    {
+        Team team = new Team
+        {
+            id = data.id,
+            name = data.name,
+            player = data.isPlayer,
+            
+            // Tournament state
+            tournamentWins = data.tournamentWins,
+            tournamentLosses = data.tournamentLosses,
+            tournamentEarnings = data.tournamentEarnings,
+            rank = data.rank,
+            nextOpp = data.nextOpp ?? "",
+            
+            // Season cumulative
+            seasonWins = data.seasonWins,
+            seasonLosses = data.seasonLosses,
+            seasonEarnings = data.seasonEarnings,
+            
+            // Tour
+            tourPoints = data.tourPoints,
+            
+            // Skills
+            strength = data.strength,
+            draw = data.draw,
+            guard = data.guard,
+            takeOut = data.takeOut,
+            sweepStrength = data.sweepStrength,
+            sweepEnduro = data.sweepEnduro,
+            sweepCohesion = data.sweepCohesion,
+            
+            // Legacy compatibility
+            tourRecord = new Vector2(data.tourRecordX, data.tourRecordY),
+            
+            players = new List<Player>()
+        };
+        
+        foreach (var playerData in data.players)
+        {
+            team.players.Add(DataToPlayer(playerData));
+        }
+        
+        return team;
+    }
+    
+    /// <summary>
+    /// Converts Player to PlayerData
+    /// </summary>
+    private PlayerData PlayerToData(Player player)
+    {
+        return new PlayerData
+        {
+            id = player.id,
+            name = player.name,
+            draw = player.draw,
+            guard = player.guard,
+            takeOut = player.takeOut,
+            sweepStrength = player.sweepStrength,
+            sweepEnduro = player.sweepEnduro,
+            sweepCohesion = player.sweepCohesion,
+            oppDraw = player.oppDraw,
+            oppGuard = player.oppGuard,
+            oppTakeOut = player.oppTakeOut,
+            oppStrength = player.oppStrength,
+            oppEnduro = player.oppEnduro,
+            oppCohesion = player.oppCohesion,
+            cost = player.cost,
+            description = player.description
+            // Note: image (Sprite) will be restored from playerPool reference
+        };
+    }
+    
+    /// <summary>
+    /// Converts PlayerData to Player, restoring image from playerPool by ID
+    /// </summary>
+    private Player DataToPlayer(PlayerData data)
+    {
+        Player player = new Player
+        {
+            id = data.id,
+            name = data.name,
+            draw = data.draw,
+            guard = data.guard,
+            takeOut = data.takeOut,
+            sweepStrength = data.sweepStrength,
+            sweepEnduro = data.sweepEnduro,
+            sweepCohesion = data.sweepCohesion,
+            oppDraw = data.oppDraw,
+            oppGuard = data.oppGuard,
+            oppTakeOut = data.oppTakeOut,
+            oppStrength = data.oppStrength,
+            oppEnduro = data.oppEnduro,
+            oppCohesion = data.oppCohesion,
+            cost = data.cost,
+            description = data.description
+        };
+        
+        // Restore image (Sprite) from playerPool by matching ID
+        if (playerPool != null)
+        {
+            foreach (var poolPlayer in playerPool)
+            {
+                if (poolPlayer.id == data.id)
+                {
+                    player.image = poolPlayer.image;
+                    Debug.Log($"[CareerManager] Restored image for player {data.name} (ID: {data.id})");
+                    break;
+                }
+            }
+        }
+        
+        if (player.image == null)
+        {
+            Debug.LogWarning($"[CareerManager] Could not restore image for player {data.name} (ID: {data.id}) - not found in playerPool");
+        }
+        
+        return player;
+    }
+    
+    /// <summary>
+    /// Captures current tournament state for saving
+    /// </summary>
+    private TournamentStateData CaptureTournamentState(GameSettingsPersist gsp)
+    {
+        var tournamentState = new TournamentStateData();
+        
+        // Find the active tournament manager
+        object manager = FindFirstObjectByType<TournyManager>() ??
+                        (object)FindFirstObjectByType<PlayoffManager>() ??
+                        (object)FindFirstObjectByType<PlayoffManager_SingleK>() ??
+                        (object)FindFirstObjectByType<PlayoffManager_TripleK>();
+        
+        // Save current tournament info
+        if (currentTourny != null)
+        {
+            tournamentState.currentTournamentName = currentTourny.name;
+            tournamentState.currentTournamentId = currentTourny.id;
+            tournamentState.isTourEvent = currentTourny.tour;
+            tournamentState.isQualifier = currentTourny.qualifier;
+            tournamentState.isChampionship = currentTourny.championship;
+            tournamentState.prizeMoney = currentTourny.prizeMoney;
+            tournamentState.backgroundId = currentTourny.BG;
+            tournamentState.crowdDensity = currentTourny.crowdDensity;
+        }
+        else
+        {
+            Debug.LogWarning("[CareerManager] currentTourny is null during CaptureTournamentState - using defaults");
+            tournamentState.currentTournamentName = "Unknown Tournament";
+            tournamentState.currentTournamentId = -1;
+        }
+        
+        // Save manager-specific state
+        if (manager is TournyManager tm)
+        {
+            tournamentState.managerType = "TournyManager";
+            tournamentState.draw = tm.draw;
+            tournamentState.numberOfTeams = tm.numberOfTeams;
+            tournamentState.prize = tm.prize;
+            tournamentState.oppTeam = tm.oppTeam;
+            tournamentState.playoffRound = tm.playoffRound;
+            
+            if (tm.teams != null && tm.teams.Length > 0)
+            {
+                foreach (var team in tm.teams)
+                {
+                    if (team != null)
+                    {
+                        tournamentState.teams.Add(TeamToData(team));
+                    }
+                }
+            }
+        }
+        else if (manager is PlayoffManager pm)
+        {
+            tournamentState.managerType = "PlayoffManager";
+            tournamentState.oppTeam = pm.oppTeam;
+            tournamentState.playoffRound = pm.playoffRound;
+            
+            if (pm.playoffTeams != null && pm.playoffTeams.Length > 0)
+            {
+                foreach (var team in pm.playoffTeams)
+                {
+                    if (team != null)
+                    {
+                        tournamentState.teams.Add(TeamToData(team));
+                    }
+                }
+            }
+        }
+        else if (manager is PlayoffManager_SingleK pmSingle)
+        {
+            tournamentState.managerType = "PlayoffManager_SingleK";
+            tournamentState.oppTeam = pmSingle.oppTeam;
+            tournamentState.playoffRound = pmSingle.playoffRound;
+            
+            if (pmSingle.playoffTeams != null && pmSingle.playoffTeams.Length > 0)
+            {
+                foreach (var team in pmSingle.playoffTeams)
+                {
+                    if (team != null)
+                    {
+                        tournamentState.teams.Add(TeamToData(team));
+                    }
+                }
+            }
+        }
+        else if (manager is PlayoffManager_TripleK pmTriple)
+        {
+            tournamentState.managerType = "PlayoffManager_TripleK";
+            tournamentState.playoffRound = pmTriple.playoffRound;
+            
+            if (pmTriple.teams != null && pmTriple.teams.Length > 0)
+            {
+                foreach (var team in pmTriple.teams)
+                {
+                    if (team != null)
+                    {
+                        tournamentState.teams.Add(TeamToData(team));
+                    }
+                }
+            }
+            
+            if (pmTriple.gameList != null && pmTriple.gameList.Length > 0)
+            {
+                foreach (var game in pmTriple.gameList)
+                {
+                    tournamentState.gameList.Add(new Vector2Data(game));
+                }
+            }
+        }
+        
+        // Save participating teams from currentTournyTeams as fallback
+        if (currentTournyTeams != null && currentTournyTeams.Length > 0 && tournamentState.teams.Count == 0)
+        {
+            foreach (var team in currentTournyTeams)
+            {
+                if (team != null)
+                {
+                    tournamentState.teams.Add(TeamToData(team));
+                }
+            }
+        }
+        
+        // Save draw and playoff round from GameSettingsPersist
+        if (gsp != null)
+        {
+            tournamentState.draw = gsp.draw;
+            tournamentState.playoffRound = gsp.playoffRound;
+        }
+        
+        Debug.Log($"[CareerManager] Captured tournament state: {tournamentState.managerType}, {tournamentState.teams.Count} teams");
+        
+        return tournamentState;
+    }
+    
+    /// <summary>
+    /// Restores tournament state from save data
+    /// </summary>
+    private void RestoreTournamentState(TournamentStateData tournamentState, GameSettingsPersist gsp)
+    {
+        if (tournamentState == null)
+        {
+            Debug.LogWarning("[CareerManager] No tournament state to restore");
+            return;
+        }
+        
+        Debug.Log($"[CareerManager] Restoring tournament state: {tournamentState.managerType}");
+        
+        // Restore current tournament info
+        if (currentTourny == null)
+        {
+            currentTourny = new Tourny();
+        }
+        
+        currentTourny.name = tournamentState.currentTournamentName;
+        currentTourny.id = tournamentState.currentTournamentId;
+        currentTourny.tour = tournamentState.isTourEvent;
+        currentTourny.qualifier = tournamentState.isQualifier;
+        currentTourny.championship = tournamentState.isChampionship;
+        currentTourny.prizeMoney = tournamentState.prizeMoney;
+        currentTourny.BG = tournamentState.backgroundId;
+        currentTourny.crowdDensity = tournamentState.crowdDensity;
+        
+        // Restore tournament teams
+        if (tournamentState.teams != null && tournamentState.teams.Count > 0)
+        {
+            currentTournyTeams = new Team[tournamentState.teams.Count];
+            for (int i = 0; i < tournamentState.teams.Count; i++)
+            {
+                currentTournyTeams[i] = DataToTeam(tournamentState.teams[i]);
+            }
+        }
+        
+        // Restore GameSettingsPersist values
+        if (gsp != null)
+        {
+            gsp.KO3 = currentTourny.tour;
+            gsp.draw = tournamentState.draw;
+            gsp.playoffRound = tournamentState.playoffRound;
+            gsp.teams = currentTournyTeams;
+        }
+        
+        Debug.Log($"[CareerManager] Tournament state restored: {currentTournyTeams?.Length ?? 0} teams, playoff round {tournamentState.playoffRound}");
+    }
+    
+    /// <summary>
+    /// Restores game state from save data (for mid-game resume)
+    /// </summary>
+    private void RestoreGameState(GameStateData gameState, GameSettingsPersist gsp)
+    {
+        if (gameState == null || gsp == null)
+        {
+            Debug.LogWarning("[CareerManager] Cannot restore game state: null data");
+            return;
+        }
+        
+        Debug.Log("[CareerManager] Restoring game state...");
+        
+        // Restore game progress flags
+        gsp.gameInProgress = gameState.gameInProgress;
+        gsp.tournyInProgress = gameState.tournyInProgress;
+        gsp.tourny = gameState.isTournyGame;
+        gsp.loadGame = true; // Signal to GameManager to load the saved game
+        
+        // Restore game settings
+        gsp.ends = gameState.ends;
+        gsp.endCurrent = gameState.currentEnd;
+        gsp.rocks = gameState.rocks;
+        gsp.rockCurrent = gameState.currentRock;
+        gsp.redHammer = gameState.redHammer;
+        gsp.aiYellow = gameState.aiYellow;
+        gsp.aiRed = gameState.aiRed;
+        
+        // Restore team names and scores
+        gsp.yellowTeamName = gameState.yellowTeamName;
+        gsp.redTeamName = gameState.redTeamName;
+        gsp.yellowScore = gameState.yellowScore;
+        gsp.redScore = gameState.redScore;
+        
+        // Restore rock positions
+        if (gameState.rockPositions != null && gameState.rockPositions.Count > 0)
+        {
+            gsp.rockPos = new Vector2[gameState.rockPositions.Count];
+            for (int i = 0; i < gameState.rockPositions.Count; i++)
+            {
+                gsp.rockPos[i] = gameState.rockPositions[i].ToVector2();
+            }
+        }
+        
+        // Restore rock in-play status
+        if (gameState.rockInPlay != null && gameState.rockInPlay.Count > 0)
+        {
+            gsp.rockInPlay = gameState.rockInPlay.ToArray();
+        }
+        
+        // Restore end scores
+        if (gameState.endScores != null && gameState.endScores.Count > 0)
+        {
+            gsp.score = new Vector2Int[gameState.endScores.Count];
+            for (int i = 0; i < gameState.endScores.Count; i++)
+            {
+                gsp.score[i] = gameState.endScores[i].ToVector2Int();
+            }
+        }
+        
+        Debug.Log($"[CareerManager] Game state restored: End {gameState.currentEnd}/{gameState.ends}, Rock {gameState.currentRock}/{gameState.rocks}");
+    }
+    
+    /// <summary>
+    /// Converts Equipment to EquipmentData
+    /// </summary>
+    private EquipmentData EquipmentToData(Equipment equipment)
+    {
+        EquipmentData data = new EquipmentData
+        {
+            id = equipment.id,
+            cost = equipment.cost,
+            color = new SerializableColor(equipment.color),
+            duration = equipment.duration,
+            stats = equipment.stats != null ? (int[])equipment.stats.Clone() : new int[6],
+            oppStats = equipment.oppStats != null ? (int[])equipment.oppStats.Clone() : new int[6]
+        };
+        
+        return data;
+    }
+    
+    /// <summary>
+    /// Converts EquipmentData to Equipment
+    /// </summary>
+    private Equipment DataToEquipment(EquipmentData data)
+    {
+        Equipment equipment = new Equipment
+        {
+            id = data.id,
+            cost = data.cost,
+            color = data.color.ToColor(),
+            duration = data.duration,
+            stats = data.stats != null ? (int[])data.stats.Clone() : new int[6],
+            oppStats = data.oppStats != null ? (int[])data.oppStats.Clone() : new int[6]
+        };
+        
+        // The name, img, text, and type flags (handle, head, footwear, apparel) 
+        // will be set by EquipmentManager based on id and cost when loading
+        
+        return equipment;
+    }
+    
+    #endregion
 }

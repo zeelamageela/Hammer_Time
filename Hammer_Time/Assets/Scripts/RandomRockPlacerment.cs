@@ -16,7 +16,7 @@ public class RandomRockPlacerment : MonoBehaviour
     public bool placed;
     public bool placed1;
     public int rockCurrent;
-    public float pauseAfterRockPlacement = 1.0f;
+    public float pauseAfterRockPlacement = 0f;
 
     public Vector2[] placePos;
     public Vector2[] rockPos;

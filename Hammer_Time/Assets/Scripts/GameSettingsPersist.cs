@@ -208,45 +208,7 @@ public class GameSettingsPersist : MonoBehaviour
         //score[endCurrent] = new Vector2Int(redScore, yellowScore);
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
-        if (ends <= endCurrent)
-        {
-            if (redScore > yellowScore)
-            {
-                for (int i = 0; i < teams.Length; i++)
-                {
-                    if (teams[i].name == redTeamName)
-                    {
-                        teams[i].wins++;
-                        if (KO3)
-                            teams[i].tourRecord.x++;
-                    }
-                    if (teams[i].name == yellowTeamName)
-                    {
-                        teams[i].loss++;
-                        if (KO3)
-                            teams[i].tourRecord.y++;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < teams.Length; i++)
-                {
-                    if (teams[i].name == yellowTeamName)
-                    {
-                        teams[i].wins++;
-                        if (KO3)
-                            teams[i].tourRecord.x++;
-                    }
-                    if (teams[i].name == redTeamName)
-                    {
-                        teams[i].loss++;
-                        if (KO3)
-                            teams[i].tourRecord.y++;
-                    }
-                }
-            }
-        }
+        
         
     }
 
@@ -600,16 +562,20 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadCareer()
     {
-        Debug.Log("Load Career GSP");
+        Debug.Log("[GameSettingsPersist] LoadCareer called - delegating to CareerManager");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
-        //teamList = new List<Team_List>();
+        
+        if (cm == null)
+        {
+            Debug.LogError("[GameSettingsPersist] CareerManager not found!");
+            return;
+        }
+        
+        // Just sync color, don't trigger full load (CareerManager handles loading)
         teamColour = cm.teamColour;
-        cm.LoadCareer(this);
-        //earnings = myFile.GetFloat("Career Earnings");
-        //record = myFile.GetUnityVector2("Career Record");
-        //inProgress = cm.inProgress;
-
-        //numberOfTeams = myFile.GetInt("Number Of Teams");
+        
+        // Don't call cm.LoadCareer() here - it creates circular dependency
+        // CareerManager will load itself in its Start() method
     }
 
     public void LoadTourny()
@@ -729,8 +695,17 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void AutoSave()
     {
+        Debug.Log("[GameSettingsPersist] AutoSave called - delegating to CareerManager");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
-        cm.SaveCareer();
+        
+        if (cm != null)
+        {
+            cm.SaveCareer(this);  // Pass self to save current game state
+        }
+        else
+        {
+            Debug.LogWarning("[GameSettingsPersist] CareerManager not found for auto-save");
+        }
     }
 
     private void Update()

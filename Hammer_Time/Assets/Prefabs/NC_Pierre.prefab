@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_Sprite: {fileID: 8485781458292051904, guid: 5e9705da0889a014abbcb3e50bafbf44, type: 3}
-  m_Color: {r: 0.347969, g: 0.08130753, b: 0.82260215, a: 1}
+  m_Color: {r: 0.29720408, g: 0.68707716, b: 0.27472764, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -415,7 +415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0.347969, g: 0.08130753, b: 0.82260215, a: 1}
+  colour1: {r: 0.29720408, g: 0.68707716, b: 0.27472764, a: 1}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -434,17 +434,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Pierre
   drawAccuracy:
-    baseValue: 35
+    baseValue: 56
   takeOutAccuracy:
-    baseValue: 45
+    baseValue: 56
   guardAccuracy:
-    baseValue: 15
+    baseValue: 56
   sweepStrength:
-    baseValue: 5
+    baseValue: 46
   sweepEndurance:
-    baseValue: 15
+    baseValue: 46
   sweepCohesion:
-    baseValue: 30
+    baseValue: 49
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0

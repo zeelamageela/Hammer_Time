@@ -266,6 +266,8 @@ public class TournySelector : MonoBehaviour
 
         for (int i = 0; i < tournies.Length; i++)
         {
+            if (tournies[i] == null) continue;  // Skip null tournaments
+            
             //Debug.Log("tournies[" + i + "].complete = " + tournies[i].complete);
             if (tournies[i].complete)
             {
@@ -299,6 +301,8 @@ public class TournySelector : MonoBehaviour
 
         for (int i = 0; i < tour.Length; i++)
         {
+            if (tour[i] == null) continue;  // Skip null tournaments
+            
             if (tour[i].complete)
             {
                 tourComplete = true;
@@ -314,6 +318,8 @@ public class TournySelector : MonoBehaviour
 
         for (int i = 0; i < singleKOs.Length; i++)
         {
+            if (singleKOs[i] == null) continue;  // Skip null tournaments
+            
             if (singleKOs[i].complete)
             {
                 skoComplete = true;
@@ -329,6 +335,8 @@ public class TournySelector : MonoBehaviour
 
         for (int i = 0; i < provQual.Length; i++)
         {
+            if (provQual[i] == null) continue;  // Skip null tournaments
+            
             if (provQual[i].complete)
             {
                 provQualComplete = true;
@@ -639,7 +647,8 @@ public class TournySelector : MonoBehaviour
                         activeTournies[2] = locals[localSelect];
                 }
 
-                if (cm.cash < cm.costPerWeek)
+                // Only check for bankruptcy if the game has progressed (not a fresh start)
+                if (cm.week > 1 && cm.cash < cm.costPerWeek)
                 {
                     slm.EndOfGame(5);
                     cm.gameOver = true;

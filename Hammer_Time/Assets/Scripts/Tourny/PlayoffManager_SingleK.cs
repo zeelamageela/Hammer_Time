@@ -153,1355 +153,721 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		//}
 	}
 
-	void LoadAndAdvancePlayoffs()
+	#region Phase 2: Helper Methods
+	
+	// Helper variables for playoff logic
+	int roundLength;
+	int playerGame;
+	
+	/// <summary>
+	/// Gets the opponent team index for the player in the current playoff round
+	/// Uses standard single elimination pairing (0v1, 2v3, etc.)
+	/// </summary>
+	int GetPlayerOpponentIndex()
 	{
-		//playoffRound--;
-		Debug.Log("Load Playoffs - Round " + playoffRound);
-		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
-
-		int playerGame;
-		int roundLength;
-
-		for (int i = 0; i < playoffTeams.Length; i++)
-        {
-			playoffTeams[i] = gsp.playoffTeams[i];
-        }
-        //playoffTeams = gsp.playoffTeams;
-
-        for (int i = playoffTeams.Length - 1; i >= 0; i--)
-        {
-			if (playoffTeams[i].player)
-				playerTeam = i;
-		}
-		for (int i = playoffTeams.Length - 1; i >= 0; i--)
+		int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
+		int startIndex = config[0];
+		int matchCount = config[1];
+		
+		// Find opponent in bracket pairs
+		for (int i = 0; i < matchCount * 2; i += 2)
 		{
-			if (gsp.playoffTeams[i].player)
-				if (i % 2 == 0)
-				{
-					oppTeam = i + 1;
-				}
-				else
-				{
-					oppTeam = i - 1;
-				}
-		}
-		Debug.Log("OppTeam is " + oppTeam);
-		switch (playoffRound)
-        {
-			case 1:
-                #region Round 1
-                playerGame = 0;
-				roundLength = roundOf16Display.Length;
+			int idx1 = startIndex + i;
+			int idx2 = startIndex + i + 1;
+			
+			if (idx1 >= playoffTeams.Length || idx2 >= playoffTeams.Length)
+				break;
 				
-				for (int i = 0; i < roundLength; i++)
-				{
-					if (playoffTeams[i].player)
-					{
-						playerTeam = i;
-						if (i % 2 == 0)
-						{
-							playerGame = i / 2;
-						}
-						else
-						{
-							playerGame = (i - 1) / 2;
-						}
-					}
-				}
-
-				Debug.Log("Game  " + playerGame + " - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						Debug.Log("Player Red beat Yellow");
-						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
-						playoffTeams[oppTeam].rank = 9;
-					}
-					else
-					{
-						Debug.Log("Yellow beat Player Red");
-						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
-						playoffTeams[playerTeam].rank = 9;
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						Debug.Log("Player Yellow beat Red");
-						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
-						playoffTeams[oppTeam].rank = 9;
-					}
-					else
-					{
-						Debug.Log("Red beat Player Yellow");
-						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
-						playoffTeams[playerTeam].rank = 9;
-					}
-				}
-
-				StartCoroutine(SimPlayoff(playerGame));
-				break;
-#endregion
-            case 2:
-                #region Round 2
-                playerGame = 0;
-				roundLength = quartersDisplay.Length + roundOf16Display.Length;
-
-				for (int i = roundOf16Display.Length; i < roundLength; i++)
-				{
-					if (playoffTeams[i].player)
-					{
-						playerTeam = i;
-						if (i % 2 == 0)
-						{
-							playerGame = i / 2;
-							oppTeam = i + 1;
-						}
-						else
-						{
-							playerGame = (i - 1) / 2;
-							oppTeam = i - 1;
-						}
-					}
-				}
-
-				Debug.Log("Game  " + playerGame + " - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						Debug.Log("Player Red beat Yellow");
-						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
-						playoffTeams[oppTeam].rank = 5;
-					}
-					else
-					{
-						Debug.Log("Yellow beat Player Red");
-						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
-						playoffTeams[playerTeam].rank = 5;
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						Debug.Log("Player Yellow beat Red");
-						playoffTeams[roundLength + playerGame] = playoffTeams[playerTeam];
-						playoffTeams[oppTeam].rank = 5;
-					}
-					else
-					{
-						Debug.Log("Red beat Player Yellow");
-						playoffTeams[roundLength + playerGame] = playoffTeams[oppTeam];
-						playoffTeams[playerTeam].rank = 5;
-					}
-				}
-
-				StartCoroutine(SimPlayoff(playerGame));
-				break;
-#endregion
-            case 3:
-                #region Round 3
-                playerGame = 0;
-				roundLength = semisDisplay.Length + quartersDisplay.Length + roundOf16Display.Length;
-
-				for (int i = roundOf16Display.Length + quartersDisplay.Length; i < roundLength; i++)
-				{
-					if (playoffTeams[i].player)
-					{
-						playerTeam = i;
-						if (i % 2 == 0)
-						{
-							playerGame = i / 2;
-							oppTeam = i + 1;
-						}
-						else
-						{
-							playerGame = (i - 1) / 2;
-							oppTeam = i - 1;
-						}
-					}
-				}
-
-				Debug.Log("Game  " + playerGame + " - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						Debug.Log("Player Red beat Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
-						playoffTeams[oppTeam].rank = 3;
-					}
-					else
-					{
-						Debug.Log("Yellow beat Player Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
-						playoffTeams[playerTeam].rank = 3;
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						Debug.Log("Player Yellow beat Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
-						playoffTeams[oppTeam].rank = 3;
-					}
-					else
-					{
-						Debug.Log("Red beat Player Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
-						playoffTeams[playerTeam].rank = 3;
-					}
-				}
-
-				StartCoroutine(SimPlayoff(playerGame));
-				break;
-			#endregion
-			case 4:
-				#region Round 4
-				playerGame = 0;
-				roundLength = finalsDisplay.Length + semisDisplay.Length + quartersDisplay.Length + roundOf16Display.Length;
-
-				for (int i = semisDisplay.Length + quartersDisplay.Length + roundOf16Display.Length; i < roundLength; i++)
-				{
-					if (playoffTeams[i].player)
-					{
-						playerTeam = i;
-						if (i % 2 == 0)
-						{
-							playerGame = i / 2;
-							oppTeam = i + 1;
-						}
-						else
-						{
-							playerGame = (i - 1) / 2;
-							oppTeam = i - 1;
-						}
-					}
-				}
-
-				Debug.Log("Game  " + playerGame + " - " + gsp.redTeamName + " - " + gsp.redScore + " vs " + gsp.yellowTeamName + " - " + gsp.yellowScore);
-				if (gsp.playerTeam.name == gsp.redTeamName)
-				{
-					if (gsp.redScore > gsp.yellowScore)
-					{
-						Debug.Log("Player Red beat Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
-						playoffTeams[playerTeam].rank = 1;
-						playoffTeams[oppTeam].rank = 2;
-					}
-					else
-					{
-						Debug.Log("Yellow beat Player Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
-						playoffTeams[playerTeam].rank = 2;
-						playoffTeams[oppTeam].rank = 1;
-					}
-				}
-				else
-				{
-					if (gsp.redScore < gsp.yellowScore)
-					{
-						Debug.Log("Player Yellow beat Red");
-						playoffTeams[roundLength + playerGame] = tm.teams[playerTeam];
-						playoffTeams[playerTeam].rank = 1;
-						playoffTeams[oppTeam].rank = 2;
-					}
-					else
-					{
-						Debug.Log("Red beat Player Yellow");
-						playoffTeams[roundLength + playerGame] = tm.teams[oppTeam];
-						playoffTeams[playerTeam].rank = 2;
-						playoffTeams[oppTeam].rank = 1;
-					}
-				}
-
-				StartCoroutine(SimPlayoff(playerGame));
-				break;
-				#endregion
+			if (playoffTeams[idx1].player)
+				return idx2;
+			if (playoffTeams[idx2].player)
+				return idx1;
 		}
 
-		//SetPlayoffs();
-	}
+        return -1; // Player not found
+    }
 
-	void LoadPlayoffs()
-	{
-		gsp.careerLoad = false;
-		//playoffRound--;
-		Debug.Log("Load Playoffs - Round " + playoffRound);
-		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
-
-		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
-		{
-			for (int i = 0; i < gsp.playoffTeams.Length; i++)
-			{
-				playoffTeams[i] = gsp.playoffTeams[i];
-			}
-		}
-		else
+    /// <summary>
+    /// Simulates matches for a given round (skips player's game if already processed)
+    /// </summary>
+    void SimulateRoundMatches(BracketDisplay[] currentDisplay, int startIndex, int nextRoundStart, int playerGame, int eliminationRank)
+    {
+        for (int i = 0; i < currentDisplay.Length; i++)
         {
-			List<Team_List> teamList = new List<Team_List>();
-
-
-			for (int i = 0; i < tm.teams.Length; i++)
+            if (i % 2 == 0)
             {
-				teamList.Add(new Team_List(tm.teams[i]));
-            }
-			//teamList.Sort();
-			gsp.playoffTeams = new Team[playoffTeams.Length];
-			Debug.Log("gsp.playoffTeams Length is " + gsp.playoffTeams.Length);
-
-			for (int i = 0; i < playoffTeams.Length; i++)
-			{
-				for (int j = 0; j < teamList.Count; j++)
+                int game = i / 2;
+                Team gameX = playoffTeams[startIndex + i];
+                Team gameY = playoffTeams[startIndex + i + 1];
+                
+                // Check for null teams (safety check)
+                if (gameX == null || gameY == null)
                 {
-					if (playoffTeams[i].id == teamList[j].team.id)
+                    Debug.LogWarning($"[SimulateRoundMatches] Null team at index {startIndex + i} or {startIndex + i + 1}");
+                    continue;
+                }
+
+                if (game != playerGame)
+                {
+                    if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
                     {
-						playoffTeams[i] = teamList[j].team;
+                        playoffTeams[nextRoundStart + game] = gameX;
+                        
+                        // Only increment wins/losses if this is NOT returning from a player game (playerGame != 99)
+                        // When playerGame == 99, it means we're simulating all games (OnSim button)
+                        // When playerGame is a specific game number, we're returning from player's game
+                        // and wins/losses were already updated in LoadAndAdvancePlayoffs
+                        if (playerGame == 99)
+                        {
+                            gameX.wins++;
+                            gameY.loss++;
+                        }
+                        
+                        gameX.rank = 0;
+                        gameY.rank = eliminationRank;
+                    }
+                    else
+                    {
+                        playoffTeams[nextRoundStart + game] = gameY;
+                        
+                        // Only increment wins/losses when simulating (playerGame == 99)
+                        if (playerGame == 99)
+                        {
+                            gameX.loss++;
+                            gameY.wins++;
+                        }
+                        
+                        gameX.rank = eliminationRank;
+                        gameY.rank = 0;
                     }
                 }
-				gsp.playoffTeams[i] = playoffTeams[i];
-			}
+            }
         }
-		//playoffTeams = gsp.playoffTeams;
+    }
 
-		Debug.Log("OppTeam is " + oppTeam);
-
-		int offset = roundOf16Display.Length;
-		switch (playoffRound)
+    /// <summary>
+    /// Updates a bracket display with team info and colors
+    /// </summary>
+    void UpdateBracketDisplay(BracketDisplay[] display, int teamStartIndex, int rowStartIndex, int eliminationRank)
+    {
+        for (int i = 0; i < display.Length; i++)
         {
-			case 1:
-				#region Round 1
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-
-					if (playoffTeams[i].player)
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				offset = 30;
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[offset].SetActive(false);
-				heading.text = "Loaded...Round of 16";
-				#endregion
-				break;
-
-			case 2:
-				#region Round 2
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-
-					if (playoffTeams[i].player)
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length;
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					Debug.Log("playoff round is " + playoffRound + " - i is " + i);
-					quartersDisplay[i].name.text = playoffTeams[i + offset].name;
-					quartersDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				offset = 30;
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[offset].SetActive(false);
-				heading.text = "Loaded...Quarterfinals";
-				#endregion
-				break;
-
-			case 3:
-				#region Round 3
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-
-					if (playoffTeams[i].player)
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length;
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					Debug.Log("playoff round is " + playoffRound + " - i is " + i);
-					quartersDisplay[i].name.text = playoffTeams[i + offset].name;
-					quartersDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length;
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.text = playoffTeams[i + offset].name;
-					semisDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						semisDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				offset = 30;
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[offset].SetActive(false);
-				heading.text = "Loaded...Semifinals";
-				#endregion
-				break;
-
-			case 4:
-				#region Round 4
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-
-					if (playoffTeams[i].player)
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length;
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					quartersDisplay[i].name.text = playoffTeams[i + offset].name;
-					quartersDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length;
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.text = playoffTeams[i + offset].name;
-					semisDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						semisDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length;
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.text = playoffTeams[i + offset].name;
-					finalsDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[offset + i].SetActive(true);
-
-					if (playoffTeams[i + offset].player)
-						finalsDisplay[i].bg.GetComponent<Image>().color = yellow;
-				}
-
-				offset = 30;
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[offset].SetActive(false);
-				heading.text = "Loaded...Finals";
-				#endregion
-				break;
-
-			case 5:
-				#region Round 5
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-				}
-
-				offset = roundOf16Display.Length;
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					quartersDisplay[i].name.text = playoffTeams[i + offset].name;
-					quartersDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length;
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.text = playoffTeams[i + offset].name;
-					semisDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length;
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.text = playoffTeams[i + offset].name;
-					finalsDisplay[i].rank.text = playoffTeams[i + offset].rank.ToString();
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[offset + i].SetActive(true);
-				}
-
-				offset = roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + finalsDisplay.Length;
-				winnerDisplay.name.text = playoffTeams[1 + offset].name;
-				winnerDisplay.rank.text = playoffTeams[1 + offset].rank.ToString();
-				winnerDisplay.name.transform.parent.gameObject.SetActive(true);
-				row[offset + 1].SetActive(true);
-				heading.text = "Loaded...Tourny Over";
-				#endregion
-				break;
-		}
-
-		tm.playoffRound = playoffRound;
-
-
-		StartCoroutine(SetPlayoffs());
-	}
-
-	IEnumerator SetPlayoffs()
-	{
-		if (playoffRound < 1)
-		{
-			playoffRound = 1;
-			gsp.playoffRound = playoffRound;
-		}
-		Debug.Log("Set Playoffs - Round " + playoffRound);
-
-		bool ko;
-		int offset;
-		switch (playoffRound)
-		{
-			case 1:
-				#region Case 1
-
-				heading.text = "Round of 16";
-				playButton.gameObject.SetActive(true);
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-
-					row[i].SetActive(true);
-
-					if (playoffTeams[i].player)
-					{
-						roundOf16Display[i].panel.GetComponent<Image>().color = yellow;
-						roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					}
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + finalsDisplay.Length].SetActive(false);
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (playoffTeams[i].player)
-					{
-						tm.vsDisplay[0].name.text = playoffTeams[i].name;
-						tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString();
-
-						if (i % 2 == 0)
-						{
-							playoffTeams[i].nextOpp = playoffTeams[i + 1].name;
-							tm.vsDisplay[1].name.text = playoffTeams[i + 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[i + 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[1 + 1].name;
-						}
-						else
-						{
-							playoffTeams[i].nextOpp = playoffTeams[i - 1].name;
-							tm.vsDisplay[1].name.text = playoffTeams[i - 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[i - 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[1 - 1].name;
-						}
-					}
-				}
-
-				//StartCoroutine(RefreshPlayoffPanel());
-
-				playoffs.SetActive(true);
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				scrollBar.value = 0;
-				for (int i = 0; i < tm.teams.Length; i++)
-				{
-					tm.teams[i] = playoffTeams[i];
-				}
-				break;
-			#endregion
-			case 2:
-				#region Case 2
-				heading.text = "Quarterfinals";
-
-				ko = true;
-				offset = roundOf16Display.Length;
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					if (playoffTeams[i + offset].player)
-					{
-						tm.vsDisplay[0].name.text = playoffTeams[roundOf16Display.Length + i].name;
-						tm.vsDisplay[0].rank.text = playoffTeams[roundOf16Display.Length + i].rank.ToString();
-
-						quartersDisplay[i].panel.GetComponent<Image>().color = yellow;
-						quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-
-						if (i % 2 == 0)
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + i + 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + i + 1].rank.ToString();
-							playoffTeams[i + offset].nextOpp = playoffTeams[roundOf16Display.Length + i + 1].name;
-						}
-						else
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + i - 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + i - 1].rank.ToString();
-							playoffTeams[i + offset].nextOpp = playoffTeams[roundOf16Display.Length + i - 1].name;
-						}
-						ko = false;
-					}
-				}
-				playButton.gameObject.SetActive(true);
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				if (ko)
-				{
-					playButton.gameObject.SetActive(false);
-
-					for (int i = 0; i < playoffTeams.Length; i++)
-					{
-						if (playoffTeams[i].player)
-						{
-							tm.vsDisplay[0].name.text = playoffTeams[i].name;
-							tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString();
-						}
-					}
-					tm.vsDisplay[1].name.text = "Knocked Out!";
-					tm.vsDisplay[1].rank.text = " ";
-				}
-				playoffs.SetActive(true);
-				//StartCoroutine(RefreshPlayoffPanel());
-
-				scrollBar.value = 0.25f;
-				break;
-			#endregion
-			case 3:
-				#region Case 3
-				heading.text = "Semifinals";
-
-				ko = true;
-
-				offset = roundOf16Display.Length + quartersDisplay.Length;
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					if (playoffTeams[i + offset].player)
-					{
-						semisDisplay[i].panel.GetComponent<Image>().color = yellow;
-						tm.vsDisplay[0].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].name;
-						tm.vsDisplay[0].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
-
-						if (i % 2 == 0)
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i + 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i + 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i + 1].name;
-						}
-						else
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i - 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i - 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i - 1].name;
-						}
-						ko = false;
-					}
-				}
-
-				if (ko)
-				{
-					for (int i = 0; i < playoffTeams.Length; i++)
-					{
-						if (playoffTeams[i].player)
-						{
-							tm.vsDisplay[0].name.text = playoffTeams[i].name;
-							tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString();
-						}
-					}
-					tm.vsDisplay[1].name.text = "Knocked Out!";
-					tm.vsDisplay[1].rank.text = " ";
-				}
-				playoffs.SetActive(true);
-				//StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				scrollBar.value = 0.5f;
-				break;
-			#endregion
-			case 4:
-				#region Case 4
-				heading.text = "Finals";
-
-				ko = true;
-
-				offset = roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length;
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					if (playoffTeams[i + offset].player)
-					{
-						finalsDisplay[i].panel.GetComponent<Image>().color = yellow;
-						tm.vsDisplay[0].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].name;
-						tm.vsDisplay[0].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].rank.ToString();
-
-						if (i % 2 == 0)
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i + 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i + 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i + 1].name;
-						}
-						else
-						{
-							tm.vsDisplay[1].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i - 1].name;
-							tm.vsDisplay[1].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i - 1].rank.ToString();
-							playoffTeams[i].nextOpp = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i - 1].name;
-						}
-						ko = false;
-					}
-				}
-
-				if (ko)
-				{
-					for (int i = 0; i < playoffTeams.Length; i++)
-					{
-						if (playoffTeams[i].player)
-						{
-							tm.vsDisplay[0].name.text = playoffTeams[i].name;
-							tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString();
-						}
-					}
-					tm.vsDisplay[1].name.text = "Knocked Out!";
-					tm.vsDisplay[1].rank.text = "X";
-				}
-				playoffs.SetActive(true);
-				//StartCoroutine(RefreshPlayoffPanel());
-
-				simButton.gameObject.SetActive(true);
-				contButton.gameObject.SetActive(false);
-				scrollBar.value = 0.75f;
-				break;
-			#endregion
-			case 5:
-				#region Case 5
-
-				heading.text = "Finals";
-				winnerDisplay.name.text = playoffTeams[30].name;
-				winnerDisplay.rank.text = playoffTeams[30].rank.ToString();
-				winnerDisplay.bg.GetComponent<Image>().color = yellow;
-				//brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
-				row[30].SetActive(true);
-
-				playoffs.SetActive(true);
-				//StartCoroutine(RefreshPlayoffPanel());
-
-				tm.vsTitle.text = "Results";
-				tm.vsVS.text = " ";
-				tm.vs.SetActive(true);
-
-				for (int i = 24; i < playoffTeams.Length; i++)
-				{
-					if (i == 30)
-					{
-						playoffTeams[i].earnings = gsp.prize * 0.5f;
-						playoffTeams[i].rank = 1;
-
-						if (playoffTeams[i].player)
-						{
-							heading.text = "You Win!";
-							gsp.tournyEarnings += gsp.prize * 0.5f;
-
-							tm.vs.SetActive(true);
-
-							tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString("n0");
-							tm.vsDisplay[0].name.text = playoffTeams[30].name;
-							tm.vsDisplay[0].rank.text = playoffTeams[30].rank.ToString() + "st";
-							tm.vsDisplay[1].rank.gameObject.SetActive(false);
-						}
-					}
-					else if (i == 28 | i == 29)
-					{
-						if (playoffTeams[i].id != playoffTeams[30].id)
-						{
-							playoffTeams[i].earnings = gsp.prize * 0.25f;
-							playoffTeams[i].rank = 2;
-
-							if (playoffTeams[i].player)
-							{
-								heading.text = "Runner-up";
-								gsp.tournyEarnings += gsp.prize * 0.25f;
-
-								tm.vs.SetActive(true);
-
-								tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
-								tm.vsDisplay[0].name.text = playoffTeams[i].name;
-								tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
-								tm.vsDisplay[1].rank.gameObject.SetActive(false);
-							}
-						}
-					}
-					else
-					{
-						if (playoffTeams[i].id != playoffTeams[28].id | playoffTeams[i].id != playoffTeams[29].id)
-						{
-							playoffTeams[i].earnings = gsp.prize * 0.125f;
-							playoffTeams[i].rank = 3;
-
-							if (playoffTeams[i].player)
-							{
-								heading.text = "3rd Place";
-								gsp.tournyEarnings += gsp.prize * 0.125f;
-
-								tm.vs.SetActive(true);
-
-								tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.125f).ToString("n0");
-								tm.vsDisplay[0].name.text = playoffTeams[i].name;
-								tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
-								tm.vsDisplay[1].rank.gameObject.SetActive(false);
-							}
-						}
-					}
-				}
-
-				Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
-				careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
-
-				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
-
-				//heading.text = "So Close!";
-
-				playButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(false);
-				simButton.gameObject.SetActive(false);
-				nextButton.gameObject.SetActive(true);
-				scrollBar.value = 1;
-
-				break;
-				#endregion
-
-		}
+            Team team = playoffTeams[teamStartIndex + i];
+
+            if (team.rank == eliminationRank)
+            {
+                display[i].rank.text = eliminationRank == 9 ? "KO" :
+                                       eliminationRank == 5 ? "KO" :
+                                       eliminationRank == 3 ? "3rd" :
+                                       eliminationRank == 2 ? "2nd" : "KO";
+                display[i].bg.GetComponent<Image>().color = dark;
+            }
+            else
+            {
+                display[i].rank.text = team.rank.ToString();
+                display[i].bg.GetComponent<Image>().color = yellow;
+            }
+
+            display[i].name.text = team.name;
+            display[i].name.transform.parent.gameObject.SetActive(true);
+            row[rowStartIndex + i].SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Shows the next round's winners
+    /// </summary>
+    void ShowNextRoundWinners(BracketDisplay[] display, int teamStartIndex, int rowStartIndex)
+    {
+        for (int i = 0; i < display.Length; i++)
+        {
+            display[i].rank.text = playoffTeams[teamStartIndex + i].rank.ToString();
+            display[i].name.text = playoffTeams[teamStartIndex + i].name;
+            display[i].name.transform.parent.gameObject.SetActive(true);
+            row[rowStartIndex + i].SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Hides a bracket display and its rows
+    /// </summary>
+    void HideBracketDisplay(BracketDisplay[] display, int rowStartIndex)
+    {
+        for (int i = 0; i < display.Length; i++)
+        {
+            display[i].name.transform.parent.gameObject.SetActive(false);
+            row[rowStartIndex + i].SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Calculates which game number the player is in based on their bracket position
+    /// </summary>
+    int CalculatePlayerGameNumber(int playerTeamIndex, int startIndex)
+    {
+        int positionInRound = playerTeamIndex - startIndex;
+        return positionInRound / 2;
+    }
+
+    /// <summary>
+    /// Updates bracket based on player's match result
+    /// </summary>
+    void ProcessPlayerMatchResult(bool playerWon, int nextRoundStart, int eliminationRank)
+    {
+        if (playerWon)
+        {
+            Debug.Log($"Player won! Advancing to next round at index {nextRoundStart + playerGame}");
+            playoffTeams[nextRoundStart + playerGame] = playoffTeams[playerTeam];
+            playoffTeams[playerTeam].wins++;
+            playoffTeams[oppTeam].loss++;
+            playoffTeams[oppTeam].rank = eliminationRank;
+        }
+        else
+        {
+            Debug.Log($"Player lost. Opponent advancing to next round at index {nextRoundStart + playerGame}");
+            playoffTeams[nextRoundStart + playerGame] = playoffTeams[oppTeam];
+            playoffTeams[oppTeam].wins++;
+            playoffTeams[playerTeam].loss++;
+            playoffTeams[playerTeam].rank = eliminationRank;
+        }
+    }
+
+    /// <summary>
+    /// Displays teams for a given round with player highlighting
+    /// </summary>
+    void DisplayRoundTeams(BracketDisplay[] display, int startIndex, bool highlightPlayer = false)
+    {
+        for (int i = 0; i < display.Length; i++)
+        {
+            display[i].rank.text = playoffTeams[startIndex + i].rank.ToString();
+            display[i].name.text = playoffTeams[startIndex + i].name;
+            row[startIndex + i].SetActive(true);
+
+            if (playoffTeams[startIndex + i].player && highlightPlayer)
+            {
+                display[i].panel.GetComponent<Image>().color = yellow;
+                display[i].name.transform.parent.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets up VS display showing player and their opponent
+    /// </summary>
+    /// <returns>True if player is still in tournament, false if knocked out</returns>
+    bool SetupVsDisplay(int roundStartIndex, int roundLength)
+    {
+        for (int i = 0; i < roundLength; i++)
+        {
+            if (playoffTeams[roundStartIndex + i].player)
+            {
+                tm.vsDisplay[0].name.text = playoffTeams[roundStartIndex + i].name;
+                tm.vsDisplay[0].rank.text = playoffTeams[roundStartIndex + i].rank.ToString();
+
+                // Find opponent
+                if (i % 2 == 0)
+                {
+                    tm.vsDisplay[1].name.text = playoffTeams[roundStartIndex + i + 1].name;
+                    tm.vsDisplay[1].rank.text = playoffTeams[roundStartIndex + i + 1].rank.ToString();
+                    playoffTeams[roundStartIndex + i].nextOpp = playoffTeams[roundStartIndex + i + 1].name;
+                }
+                else
+                {
+                    tm.vsDisplay[1].name.text = playoffTeams[roundStartIndex + i - 1].name;
+                    tm.vsDisplay[1].rank.text = playoffTeams[roundStartIndex + i - 1].rank.ToString();
+                    playoffTeams[roundStartIndex + i].nextOpp = playoffTeams[roundStartIndex + i - 1].name;
+                }
+                return true; // Player found and active
+            }
+        }
+        return false; // Player not in this round (knocked out)
+    }
+
+    /// <summary>
+    /// Shows "Knocked Out" message in VS display
+    /// </summary>
+    void ShowKnockedOutDisplay()
+    {
+        for (int i = 0; i < playoffTeams.Length; i++)
+        {
+            if (playoffTeams[i].player)
+            {
+                tm.vsDisplay[0].name.text = playoffTeams[i].name;
+                tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString();
+            }
+        }
+        tm.vsDisplay[1].name.text = "Knocked Out!";
+        tm.vsDisplay[1].rank.text = playoffRound == 4 ? "X" : " ";
+    }
+
+    /// <summary>
+    /// Configures UI buttons based on whether player is still active
+    /// </summary>
+    void ConfigurePlayoffButtons(bool playerActive)
+    {
+        playButton.gameObject.SetActive(playerActive);
+        simButton.gameObject.SetActive(true);
+        contButton.gameObject.SetActive(false);
+    }
+
+    #endregion
+
+    #region Phase 2: Refactored LoadAndAdvancePlayoffs
+
+    void LoadAndAdvancePlayoffs()
+    {
+        Debug.Log($"[LoadAndAdvancePlayoffs] Loading playoffs - Round {playoffRound}");
+
+        // Load saved teams from persistent storage
+        for (int i = 0; i < playoffTeams.Length; i++)
+            playoffTeams[i] = gsp.playoffTeams[i];
+
+        // Find player team using helper
+        playerTeam = SharedTournamentLogic.FindPlayerTeamIndex(playoffTeams);
+        if (playerTeam == -1)
+        {
+            Debug.LogError("[LoadAndAdvancePlayoffs] Player team not found!");
+            return;
+        }
+
+        // Find opponent using pairing logic
+        oppTeam = GetPlayerOpponentIndex();
+        Debug.Log($"[LoadAndAdvancePlayoffs] PlayerTeam index: {playerTeam}, OppTeam index: {oppTeam}");
+
+        // Get round configuration
+        int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
+        int startIndex = config[0];
+        int nextRoundStart = config[2];
+        int eliminationRank = SharedTournamentLogic.GetSingleEliminationRank(playoffRound);
+
+        // Determine player game number
+        playerGame = CalculatePlayerGameNumber(playerTeam, startIndex);
+
+        // Process player's match result
+        bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
+        ProcessPlayerMatchResult(playerWon, nextRoundStart, eliminationRank);
+
+        Debug.Log($"Game {playerGame} - {gsp.redTeamName} ({gsp.redScore}) vs {gsp.yellowTeamName} ({gsp.yellowScore}) - Player won: {playerWon}");
+
+        // Continue simulation
+        StartCoroutine(SimPlayoff(playerGame));
+    }
+
+    #endregion
+
+    void LoadPlayoffs()
+    {
+        gsp.careerLoad = false;
+        Debug.Log($"[LoadPlayoffs] Loading saved playoffs - Round {playoffRound}");
+        Debug.Log($"gsp.playerTeam.nextOpp: {gsp.playerTeam.nextOpp}");
+
+        // Load teams from persistent storage or initialize from TournyManager
+        if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
+        {
+            for (int i = 0; i < gsp.playoffTeams.Length; i++)
+            {
+                playoffTeams[i] = gsp.playoffTeams[i];
+            }
+        }
+        else
+        {
+            List<Team_List> teamList = new List<Team_List>();
+            for (int i = 0; i < tm.teams.Length; i++)
+            {
+                teamList.Add(new Team_List(tm.teams[i]));
+            }
+
+            gsp.playoffTeams = new Team[playoffTeams.Length];
+            Debug.Log($"gsp.playoffTeams Length is {gsp.playoffTeams.Length}");
+
+            for (int i = 0; i < playoffTeams.Length; i++)
+            {
+                for (int j = 0; j < teamList.Count; j++)
+                {
+                    if (playoffTeams[i].id == teamList[j].team.id)
+                    {
+                        playoffTeams[i] = teamList[j].team;
+                    }
+                }
+                gsp.playoffTeams[i] = playoffTeams[i];
+            }
+        }
+
+        Debug.Log($"OppTeam is {oppTeam}");
+
+        // Handle tournament completion (Round 5)
+        if (playoffRound == 5)
+        {
+            // Display all rounds
+            DisplayRoundTeams(roundOf16Display, 0);
+            DisplayRoundTeams(quartersDisplay, roundOf16Display.Length);
+            DisplayRoundTeams(semisDisplay, roundOf16Display.Length + quartersDisplay.Length);
+            DisplayRoundTeams(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+
+            // Display winner (index 30 is the final winner position)
+            winnerDisplay.name.text = playoffTeams[30].name;
+            winnerDisplay.rank.text = playoffTeams[30].rank.ToString();
+            winnerDisplay.name.transform.parent.gameObject.SetActive(true);
+            row[30].SetActive(true);
+
+            heading.text = "Loaded...Tourny Over";
+            tm.playoffRound = playoffRound;
+            StartCoroutine(SetPlayoffs());
+            return;
+        }
+
+        // Handle active playoff rounds (1-4)
+        string[] loadedRoundNames = { "", "Loaded...Round of 16", "Loaded...Quarterfinals", "Loaded...Semifinals", "Loaded...Finals" };
+        heading.text = loadedRoundNames[playoffRound];
+
+        // Display Round of 16 (always visible in rounds 1-4)
+        DisplayRoundTeams(roundOf16Display, 0, highlightPlayer: true);
+
+        // Display Quarterfinals (visible in rounds 2-4)
+        if (playoffRound >= 2)
+        {
+            DisplayRoundTeams(quartersDisplay, roundOf16Display.Length, highlightPlayer: true);
+        }
+        else
+        {
+            HideBracketDisplay(quartersDisplay, roundOf16Display.Length);
+        }
+
+        // Display Semifinals (visible in rounds 3-4)
+        if (playoffRound >= 3)
+        {
+            DisplayRoundTeams(semisDisplay, roundOf16Display.Length + quartersDisplay.Length, highlightPlayer: true);
+        }
+        else
+        {
+            HideBracketDisplay(semisDisplay, roundOf16Display.Length + quartersDisplay.Length);
+        }
+
+        // Display Finals (visible only in round 4)
+        if (playoffRound >= 4)
+        {
+            int finalsOffset = roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length;
+            for (int i = 0; i < finalsDisplay.Length; i++)
+            {
+                finalsDisplay[i].name.text = playoffTeams[finalsOffset + i].name;
+                finalsDisplay[i].rank.text = playoffTeams[finalsOffset + i].rank.ToString();
+                finalsDisplay[i].name.transform.parent.gameObject.SetActive(false); // Hidden until SetPlayoffs
+                row[finalsOffset + i].SetActive(true);
+
+                if (playoffTeams[finalsOffset + i].player)
+                    finalsDisplay[i].bg.GetComponent<Image>().color = yellow;
+            }
+        }
+        else
+        {
+            HideBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+        }
+
+        // Hide winner display (not visible until round 5)
+        winnerDisplay.name.transform.parent.gameObject.SetActive(false);
+        row[30].SetActive(false);
+
+        tm.playoffRound = playoffRound;
+        StartCoroutine(SetPlayoffs());
+    }
+
+    IEnumerator SetPlayoffs()
+    {
+        if (playoffRound < 1)
+        {
+            playoffRound = 1;
+            gsp.playoffRound = playoffRound;
+        }
+        Debug.Log("Set Playoffs - Round " + playoffRound);
+
+        // Handle tournament completion (Case 5)
+        if (playoffRound == 5)
+        {
+            heading.text = "Finals";
+            winnerDisplay.name.text = playoffTeams[30].name;
+            winnerDisplay.rank.text = playoffTeams[30].rank.ToString();
+            winnerDisplay.bg.GetComponent<Image>().color = yellow;
+            row[30].SetActive(true);
+
+            playoffs.SetActive(true);
+
+            tm.vsTitle.text = "Results";
+            tm.vsVS.text = " ";
+            tm.vs.SetActive(true);
+
+            // Distribute prizes
+            for (int i = 24; i < playoffTeams.Length; i++)
+            {
+                if (i == 30)
+                {
+                    playoffTeams[i].earnings = gsp.prize * 0.5f;
+                    playoffTeams[i].rank = 1;
+
+                    if (playoffTeams[i].player)
+                    {
+                        heading.text = "You Win!";
+                        gsp.tournyEarnings += gsp.prize * 0.5f;
+                        tm.vs.SetActive(true);
+                        tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.5f).ToString("n0");
+                        tm.vsDisplay[0].name.text = playoffTeams[30].name;
+                        tm.vsDisplay[0].rank.text = playoffTeams[30].rank.ToString() + "st";
+                        tm.vsDisplay[1].rank.gameObject.SetActive(false);
+                    }
+                }
+                else if (i == 28 || i == 29)
+                {
+                    if (playoffTeams[i].id != playoffTeams[30].id)
+                    {
+                        playoffTeams[i].earnings = gsp.prize * 0.25f;
+                        playoffTeams[i].rank = 2;
+
+                        if (playoffTeams[i].player)
+                        {
+                            heading.text = "Runner-up";
+                            gsp.tournyEarnings += gsp.prize * 0.25f;
+                            tm.vs.SetActive(true);
+                            tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.25f).ToString("n0");
+                            tm.vsDisplay[0].name.text = playoffTeams[i].name;
+                            tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
+                            tm.vsDisplay[1].rank.gameObject.SetActive(false);
+                        }
+                    }
+                }
+                else
+                {
+                    if (playoffTeams[i].id != playoffTeams[28].id && playoffTeams[i].id != playoffTeams[29].id)
+                    {
+                        playoffTeams[i].earnings = gsp.prize * 0.125f;
+                        playoffTeams[i].rank = 3;
+
+                        if (playoffTeams[i].player)
+                        {
+                            heading.text = "3rd Place";
+                            gsp.tournyEarnings += gsp.prize * 0.125f;
+                            tm.vs.SetActive(true);
+                            tm.vsDisplay[1].name.text = "$" + (gsp.prize * 0.125f).ToString("n0");
+                            tm.vsDisplay[0].name.text = playoffTeams[i].name;
+                            tm.vsDisplay[0].rank.text = playoffTeams[i].rank.ToString() + "st";
+                            tm.vsDisplay[1].rank.gameObject.SetActive(false);
+                        }
+                    }
+                }
+            }
+
+            Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
+            careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
+
+            playButton.gameObject.SetActive(false);
+            contButton.gameObject.SetActive(false);
+            simButton.gameObject.SetActive(false);
+            nextButton.gameObject.SetActive(true);
+            scrollBar.value = 1;
+
+            yield return new WaitUntil(() => tm != null && tm.isStandingsReady);
+            cm.SaveCareer();
+            yield break;
+        }
+
+        // Handle active playoff rounds (1-4)
+        string[] roundNames = { "", "Round of 16", "Quarterfinals", "Semifinals", "Finals" };
+        float[] scrollPositions = { 0f, 0f, 0.25f, 0.5f, 0.75f };
+
+        heading.text = roundNames[playoffRound];
+
+        // Get round configuration
+        int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
+        int startIndex = config[0];
+
+        // Display teams for current round
+        BracketDisplay[] currentDisplay;
+        if (playoffRound == 1)
+            currentDisplay = roundOf16Display;
+        else if (playoffRound == 2)
+            currentDisplay = quartersDisplay;
+        else if (playoffRound == 3)
+            currentDisplay = semisDisplay;
+        else if (playoffRound == 4)
+            currentDisplay = finalsDisplay;
+        else
+        {
+            Debug.LogError($"[SetPlayoffs] Invalid playoffRound: {playoffRound}");
+            yield break;
+        }
+
+        DisplayRoundTeams(currentDisplay, startIndex, highlightPlayer: true);
+
+        // Hide future rounds
+        if (playoffRound < 2)
+        {
+            HideBracketDisplay(quartersDisplay, roundOf16Display.Length);
+            HideBracketDisplay(semisDisplay, roundOf16Display.Length + quartersDisplay.Length);
+            HideBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+            winnerDisplay.name.transform.parent.gameObject.SetActive(false);
+            row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + finalsDisplay.Length].SetActive(false);
+        }
+        else if (playoffRound < 3)
+        {
+            HideBracketDisplay(semisDisplay, roundOf16Display.Length + quartersDisplay.Length);
+            HideBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+            winnerDisplay.name.transform.parent.gameObject.SetActive(false);
+            row[30].SetActive(false);
+        }
+        else if (playoffRound < 4)
+        {
+            HideBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+            winnerDisplay.name.transform.parent.gameObject.SetActive(false);
+            row[30].SetActive(false);
+        }
+
+        // Setup VS display and check if player is still active
+        bool playerActive = SetupVsDisplay(startIndex, currentDisplay.Length);
+
+        if (!playerActive && playoffRound > 1)
+        {
+            ShowKnockedOutDisplay();
+        }
+
+        // Configure UI buttons
+        ConfigurePlayoffButtons(playerActive);
+
+        // Special case for Round 1: sync teams with TournyManager
+        if (playoffRound == 1)
+        {
+            for (int i = 0; i < tm.teams.Length; i++)
+            {
+                tm.teams[i] = playoffTeams[i];
+            }
+        }
+
+        // Set scrollbar position
+        scrollBar.value = scrollPositions[playoffRound];
+
+        playoffs.SetActive(true);
 
         yield return new WaitUntil(() => tm != null && tm.isStandingsReady);
-
         cm.SaveCareer();
     }
 
-	public void OnSim()
+    public void OnSim()
     {
-		switch (playoffRound)
-        {
-            case 1:
-				StartCoroutine(SimPlayoff(99));
-				break;
-			case 2:
-				StartCoroutine(SimPlayoff(99));
-				break;
-			case 3:
-				StartCoroutine(SimPlayoff(99));
-				break;
-			case 4:
-				StartCoroutine(SimPlayoff(99));
-				break;
-			case 5:
-				StartCoroutine(SimPlayoff(99));
-				break;
-		}
+        StartCoroutine(SimPlayoff(99));
     }
 
-    IEnumerator SimPlayoff(int playerGame)
+	IEnumerator SimPlayoff(int playerGame)
 	{
-
 		Debug.Log("Sim Playoffs - Round " + playoffRound);
-		Team gameX;
-		Team gameY;
-		int game = 0;
 
-		switch (playoffRound)
+		// Get round configuration using SharedTournamentLogic
+		int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
+		if (config[1] == 0)
 		{
-			case 1:
-                #region Round 1
-                for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (i % 2 == 0)
-					{
-						game = i / 2;
-						gameX = playoffTeams[i];
-						gameY = playoffTeams[i + 1];
-
-						if (game != playerGame)
-						{
-							if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
-							{
-								playoffTeams[roundOf16Display.Length + game] = gameX;
-								gameX.wins++;
-								gameX.rank = 0;
-								gameY.loss++;
-								gameY.rank = 9;
-							}
-							else
-							{
-								playoffTeams[roundOf16Display.Length + game] = gameY;
-								gameX.loss++;
-								gameX.rank = 9;
-								gameY.wins++;
-								gameY.rank = 0;
-							}
-						}
-					}
-
-				}
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (playoffTeams[i].rank == 9)
-					{
-						roundOf16Display[i].rank.text = "KO";
-						roundOf16Display[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					quartersDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + i].rank.ToString();
-					quartersDisplay[i].name.text = playoffTeams[roundOf16Display.Length + i].name;
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(false);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + finalsDisplay.Length].SetActive(false);
-
-				//StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				StartCoroutine(SetPlayoffs());
-				break;
-            #endregion
-            case 2:
-                #region Round 2
-                for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					if (i % 2 == 0)
-					{
-						game = i / 2;
-						gameX = playoffTeams[roundOf16Display.Length + i];
-						gameY = playoffTeams[roundOf16Display.Length + i + 1];
-
-						if (game != playerGame)
-						{
-							if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
-							{
-								playoffTeams[roundOf16Display.Length + quartersDisplay.Length + game] = gameX;
-								gameX.wins++;
-								gameX.rank = 0;
-								gameY.loss++;
-								gameY.rank = 5;
-							}
-							else
-							{
-								playoffTeams[roundOf16Display.Length + quartersDisplay.Length + game] = gameY;
-								gameX.loss++;
-								gameX.rank = 5;
-								gameY.wins++;
-								gameY.rank = 0;
-							}
-						}
-					}
-
-				}
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (playoffTeams[i].rank == 9)
-					{
-						roundOf16Display[i].rank.text = "KO";
-						roundOf16Display[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + i].rank == 5)
-					{
-						quartersDisplay[i].rank.text = "KO";
-						quartersDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						quartersDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + i].rank.ToString();
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					quartersDisplay[i].name.text = playoffTeams[roundOf16Display.Length + i].name;
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					Debug.Log("playoffTeams Length is " + playoffTeams.Length + " - playoffTeams range is " + (roundOf16Display.Length + quartersDisplay.Length + i));
-                    semisDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
-					semisDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].name;
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(false);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(false);
-				}
-
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + finalsDisplay.Length].SetActive(false);
-
-				//StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				StartCoroutine(SetPlayoffs());
-				break;
-            #endregion
-            case 3:
-                #region Round 3
-                for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					if (i % 2 == 0)
-					{
-						game = i / 2;
-						gameX = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i];
-						gameY = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i + 1];
-
-						if (game != playerGame)
-						{
-							if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
-                            {
-								playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + game] = gameX;
-								gameX.wins++;
-								gameX.rank = 0;
-								gameY.loss++;
-								gameY.rank = 3;
-							}
-							else
-							{
-								playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + game] = gameY;
-								gameX.loss++;
-								gameX.rank = 3;
-								gameY.wins++;
-								gameY.rank = 0;
-							}
-						}
-					}
-
-				}
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (playoffTeams[i].rank == 9)
-					{
-						roundOf16Display[i].rank.text = "KO";
-						roundOf16Display[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + i].rank == 5)
-					{
-						quartersDisplay[i].rank.text = "KO";
-						quartersDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						quartersDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + i].rank.ToString();
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					quartersDisplay[i].name.text = playoffTeams[roundOf16Display.Length + i].name;
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank == 3)
-					{
-						semisDisplay[i].rank.text = "3rd";
-						semisDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						semisDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
-						semisDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					semisDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].name;
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					finalsDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].rank.ToString();
-					finalsDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].name;
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(true);
-				}
-
-				winnerDisplay.name.transform.parent.gameObject.SetActive(false);
-				row[30].SetActive(false);
-
-				//StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				StartCoroutine(SetPlayoffs());
-				break;
-            #endregion
-            case 4:
-                #region Round 4
-                if (playerGame == 99)
-				{
-					gameX = playoffTeams[28];
-					gameY = playoffTeams[29];
-
-					if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
-					{
-						playoffTeams[30] = gameX;
-						gameX.wins++;
-						gameX.rank = 1;
-						gameY.loss++;
-						gameY.rank = 2;
-					}
-					else
-					{
-						playoffTeams[30] = gameY;
-						gameX.loss++;
-						gameX.rank = 2;
-						gameY.wins++;
-						gameY.rank = 1;
-					}
-				}
-
-				for (int i = 0; i < roundOf16Display.Length; i++)
-				{
-					if (playoffTeams[i].rank == 9)
-					{
-						roundOf16Display[i].rank.text = "KO";
-						roundOf16Display[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						roundOf16Display[i].rank.text = playoffTeams[i].rank.ToString();
-						roundOf16Display[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					roundOf16Display[i].name.text = playoffTeams[i].name;
-					roundOf16Display[i].name.transform.parent.gameObject.SetActive(true);
-					row[i].SetActive(true);
-				}
-
-				for (int i = 0; i < quartersDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + i].rank == 5)
-					{
-						quartersDisplay[i].rank.text = "KO";
-						quartersDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						quartersDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + i].rank.ToString();
-						quartersDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					quartersDisplay[i].name.text = playoffTeams[roundOf16Display.Length + i].name;
-					quartersDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < semisDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank == 3)
-					{
-						semisDisplay[i].rank.text = "3rd";
-						semisDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						semisDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].rank.ToString();
-						semisDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					semisDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + i].name;
-					semisDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + quartersDisplay.Length + i].SetActive(true);
-				}
-
-				for (int i = 0; i < finalsDisplay.Length; i++)
-				{
-					if (playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].rank == 2)
-					{
-						finalsDisplay[i].rank.text = "2nd";
-						finalsDisplay[i].bg.GetComponent<Image>().color = dark;
-					}
-					else
-					{
-						finalsDisplay[i].rank.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].rank.ToString();
-						finalsDisplay[i].bg.GetComponent<Image>().color = yellow;
-					}
-
-					finalsDisplay[i].name.text = playoffTeams[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].name;
-					finalsDisplay[i].name.transform.parent.gameObject.SetActive(true);
-					row[roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length + i].SetActive(true);
-				}
-
-				winnerDisplay.rank.text = "1st";
-				winnerDisplay.name.text = playoffTeams[30].name;
-				winnerDisplay.name.transform.parent.gameObject.SetActive(true);
-				row[30].SetActive(true);
-
-				//StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				StartCoroutine(SetPlayoffs());
-				break;
-            #endregion
-            default:
-				Debug.Log("Bonk! Need another round");
-				StartCoroutine(SetPlayoffs());
-				break;
-
+			Debug.Log("Bonk! Need another round");
+			StartCoroutine(SetPlayoffs());
+			yield break;
 		}
+
+		int startIndex = config[0];
+		int nextRoundStart = config[2];
+		int eliminationRank = SharedTournamentLogic.GetSingleEliminationRank(playoffRound);
+
+		// Get current round display
+		BracketDisplay[] currentDisplay = playoffRound == 1 ? roundOf16Display :
+										  playoffRound == 2 ? quartersDisplay :
+										  playoffRound == 3 ? semisDisplay :
+										  finalsDisplay;
+
+		// Simulate matches for this round (skipping player's game)
+		SimulateRoundMatches(currentDisplay, startIndex, nextRoundStart, playerGame, eliminationRank);
+
+		// Update all bracket displays up to current round
+		UpdateBracketDisplay(roundOf16Display, 0, 0, 9);
+
+		if (playoffRound >= 2)
+		{
+			UpdateBracketDisplay(quartersDisplay, roundOf16Display.Length, roundOf16Display.Length, 5);
+		}
+
+		if (playoffRound >= 3)
+		{
+			UpdateBracketDisplay(semisDisplay, roundOf16Display.Length + quartersDisplay.Length,
+								roundOf16Display.Length + quartersDisplay.Length, 3);
+		}
+
+		if (playoffRound >= 4)
+		{
+			// Update finals display
+			UpdateBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length,
+								roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length, 2);
+
+			// Handle finals special case - simulate the championship match if needed
+			if (playerGame == 99)
+			{
+				Team gameX = playoffTeams[28];
+				Team gameY = playoffTeams[29];
+
+				if (Random.Range(0, gameX.strength) > Random.Range(0, gameY.strength))
+				{
+					playoffTeams[30] = gameX;
+					gameX.wins++;
+					gameX.rank = 1;
+					gameY.loss++;
+					gameY.rank = 2;
+				}
+				else
+				{
+					playoffTeams[30] = gameY;
+					gameX.loss++;
+					gameX.rank = 2;
+					gameY.wins++;
+					gameY.rank = 1;
+				}
+			}
+
+			// Show winner
+			winnerDisplay.rank.text = "1st";
+			winnerDisplay.name.text = playoffTeams[30].name;
+			winnerDisplay.name.transform.parent.gameObject.SetActive(true);
+			row[30].SetActive(true);
+		}
+
+		// Show next round winners
+		if (playoffRound == 1)
+		{
+			ShowNextRoundWinners(quartersDisplay, roundOf16Display.Length, roundOf16Display.Length);
+		}
+		else if (playoffRound == 2)
+		{
+			ShowNextRoundWinners(semisDisplay, roundOf16Display.Length + quartersDisplay.Length,
+								roundOf16Display.Length + quartersDisplay.Length);
+		}
+		else if (playoffRound == 3)
+		{
+			ShowNextRoundWinners(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length,
+								roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+		}
+
+		// Hide future rounds that haven't been played yet
+		if (playoffRound < 2)
+		{
+			HideBracketDisplay(semisDisplay, roundOf16Display.Length + quartersDisplay.Length);
+		}
+
+		if (playoffRound < 3)
+		{
+			HideBracketDisplay(finalsDisplay, roundOf16Display.Length + quartersDisplay.Length + semisDisplay.Length);
+		}
+
+		if (playoffRound < 4)
+		{
+			winnerDisplay.name.transform.parent.gameObject.SetActive(false);
+			row[30].SetActive(false);
+		}
+
+		// Advance to next round
+		playoffRound++;
+		simButton.gameObject.SetActive(false);
+		contButton.gameObject.SetActive(true);
+		StartCoroutine(SetPlayoffs());
 
 		yield break;
 	}
@@ -1597,3 +963,290 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		yield return myFile.Append();
 	}
 }
+
+#region SharedTournamentLogic - Phase 1 Refactoring Helper
+
+/// <summary>
+/// Shared logic for all tournament types - eliminates code duplication
+/// across PlayoffManager, PlayoffManager_SingleK, and PlayoffManager_TripleK
+/// </summary>
+public static class SharedTournamentLogic
+{
+	/// <summary>
+	/// Simulate a match between two teams based on their strength
+	/// </summary>
+	/// <returns>The ID of the winning team</returns>
+	public static int SimulateMatch(Team team1, Team team2)
+	{
+		if (Random.Range(0, team1.strength) > Random.Range(0, team2.strength))
+			return team1.id;
+		else
+			return team2.id;
+	}
+
+	/// <summary>
+	/// Record match result for both teams (updates tournament stats)
+	/// </summary>
+	public static void RecordMatchResult(Team winner, Team loser)
+	{
+		winner.tournamentWins++;
+		loser.tournamentLosses++;
+	}
+
+	/// <summary>
+	/// Calculate prize distribution using exponential decay formula
+	/// Matches the existing prize calculation logic
+	/// </summary>
+	/// <param name="rank">Team's final rank (1st, 2nd, 3rd, etc.)</param>
+	/// <param name="totalTeams">Total number of teams in tournament</param>
+	/// <param name="totalPrize">Total prize pool</param>
+	/// <returns>Prize amount for this rank</returns>
+	public static float CalculatePrize(int rank, int totalTeams, float totalPrize)
+	{
+		switch (rank)
+		{
+			case 1: return totalPrize * 0.5f;      // 50% for 1st
+			case 2: return totalPrize * 0.25f;     // 25% for 2nd
+			case 3: return totalPrize * 0.15f;     // 15% for 3rd
+			case 4: return totalPrize * 0.075f;    // 7.5% for 4th
+			case 5: return totalPrize * 0.038f;    // 3.8% for 5th
+			default:
+				// Exponential decay for remaining positions
+				float p = 1.4f;
+				float remaining = totalTeams - 5f;
+				float prizePayout = ((Mathf.Pow(p, remaining - (rank - 6))) /
+								   (Mathf.Pow(p, remaining) - 1f)) *
+								   (totalPrize * 0.15f) * (p - 1);
+				return prizePayout;
+		}
+	}
+
+	/// <summary>
+	/// Determine player's opponent in a bracket array
+	/// Assumes teams are paired sequentially (0vs1, 2vs3, etc.)
+	/// </summary>
+	/// <param name="bracket">Array of teams in bracket</param>
+	/// <param name="playerTeamId">ID of player's team</param>
+	/// <param name="startIndex">Starting index in bracket to search from</param>
+	/// <param name="matchCount">Number of matches to check</param>
+	/// <returns>ID of opponent team, or -1 if not found</returns>
+	public static int GetOpponentId(Team[] bracket, int playerTeamId, int startIndex, int matchCount)
+	{
+		for (int i = 0; i < matchCount; i++)
+		{
+			int team1Index = startIndex + (i * 2);
+			int team2Index = startIndex + (i * 2) + 1;
+
+			if (team1Index >= bracket.Length || team2Index >= bracket.Length)
+				break;
+
+			if (bracket[team1Index].id == playerTeamId)
+				return bracket[team2Index].id;
+			else if (bracket[team2Index].id == playerTeamId)
+				return bracket[team1Index].id;
+		}
+
+		return -1;
+	}
+
+	/// <summary>
+	/// Find the index of player's team in a bracket array
+	/// </summary>
+	/// <param name="bracket">Array of teams</param>
+	/// <returns>Index of player team, or -1 if not found</returns>
+	public static int FindPlayerTeamIndex(Team[] bracket)
+	{
+		for (int i = 0; i < bracket.Length; i++)
+		{
+			if (bracket[i] != null && bracket[i].player)
+				return i;
+		}
+		return -1;
+	}
+
+	/// <summary>
+	/// Determine if player won their match based on game settings
+	/// </summary>
+	/// <param name="gsp">Game settings persist object</param>
+	/// <returns>True if player won, false otherwise</returns>
+	public static bool DeterminePlayerWon(GameSettingsPersist gsp)
+	{
+		if (gsp.playerTeam.name == gsp.redTeamName)
+			return gsp.redScore > gsp.yellowScore;
+		else if (gsp.playerTeam.name == gsp.yellowTeamName)
+			return gsp.yellowScore > gsp.redScore;
+
+		Debug.LogWarning("[SharedTournamentLogic] Could not determine player team color!");
+		return false;
+	}
+
+	/// <summary>
+	/// Get elimination rank based on tournament round
+	/// For single elimination tournaments
+	/// </summary>
+	/// <param name="round">Round number (1-4)</param>
+	/// <returns>Rank assigned to teams eliminated in this round</returns>
+	public static int GetSingleEliminationRank(int round)
+	{
+		switch (round)
+		{
+			case 1: return 9;  // Lost in Round of 16 (9th-16th place)
+			case 2: return 5;  // Lost in Quarterfinals (5th-8th place)
+			case 3: return 3;  // Lost in Semifinals (3rd-4th place)
+			case 4: return 2;  // Lost in Finals (2nd place)
+			default: return 99; // Unknown
+		}
+	}
+
+	/// <summary>
+	/// Get elimination rank for Page Playoff system
+	/// </summary>
+	/// <param name="round">Round number (1-3)</param>
+	/// <param name="position">Position in that round</param>
+	/// <returns>Rank assigned</returns>
+	public static int GetPagePlayoffRank(int round, int position)
+	{
+		// Page Playoff: 1v2 (winner to finals), 3v4
+		// Round 2: Loser of 1v2 vs Winner of 3v4
+		// Round 3: Finals
+
+		if (round == 1)
+		{
+			// Lost in first round
+			return position == 0 ? 3 : 4; // 1v2 loser gets 3rd, 3v4 loser gets 4th
+		}
+		else if (round == 2)
+		{
+			return 3; // Lost in semis gets 3rd
+		}
+		else if (round == 3)
+		{
+			return 2; // Lost in finals gets 2nd
+		}
+
+		return 99;
+	}
+
+	/// <summary>
+	/// Calculate next round index for single elimination bracket
+	/// </summary>
+	/// <param name="round">Current round (1-4)</param>
+	/// <param name="currentIndex">Current position in bracket</param>
+	/// <returns>Index in next round's bracket</returns>
+	public static int CalculateNextRoundIndex(int round, int currentIndex)
+	{
+		// Bracket layout for 16-team single elimination:
+		// Round 1 (0-15)   -> Round 2 (16-23)
+		// Round 2 (16-23)  -> Round 3 (24-27)
+		// Round 3 (24-27)  -> Round 4 (28-29)
+		// Round 4 (28-29)  -> Finals (30)
+
+		int[] roundStarts = { 0, 16, 24, 28, 30 };
+
+		if (round < 1 || round >= roundStarts.Length - 1)
+		{
+			Debug.LogError($"[SharedTournamentLogic] Invalid round: {round}");
+			return -1;
+		}
+
+		int positionInRound = currentIndex - roundStarts[round - 1];
+		int nextRoundStart = roundStarts[round];
+
+		return nextRoundStart + (positionInRound / 2);
+	}
+
+	/// <summary>
+	/// Get round configuration for single elimination
+	/// Returns [startIndex, matchCount, nextRoundStart]
+	/// </summary>
+	public static int[] GetSingleEliminationRoundConfig(int round)
+	{
+		switch (round)
+		{
+			case 1: return new int[] { 0, 8, 16 };   // Round of 16: 8 matches
+			case 2: return new int[] { 16, 4, 24 };  // Quarterfinals: 4 matches
+			case 3: return new int[] { 24, 2, 28 };  // Semifinals: 2 matches
+			case 4: return new int[] { 28, 1, 30 };  // Finals: 1 match
+			default:
+				Debug.LogError($"[SharedTournamentLogic] Invalid round: {round}");
+				return new int[] { 0, 0, 0 };
+		}
+	}
+
+	/// <summary>
+	/// Get round configuration for Page Playoff system (4 teams)
+	/// Returns [startIndex, matchCount, nextRoundStart, displayEndIndex]
+	/// Bracket: [0-3] initial, [4-6] semi-finals, [7] finals winner loser, [8] champion
+	/// </summary>
+	public static int[] GetPagePlayoffRoundConfig(int round)
+	{
+		switch (round)
+		{
+			case 1: return new int[] { 0, 2, 4, 7 };  // Round 1: 1v2, 3v4 -> positions 4,5,6
+			case 2: return new int[] { 4, 1, 7, 8 };  // Semifinals: 5v6 -> position 7
+			case 3: return new int[] { 4, 1, 8, 9 };  // Finals: 4v7 -> position 8
+			case 4: return new int[] { 0, 0, 9, 9 };  // Tournament complete
+			default:
+				Debug.LogError($"[SharedTournamentLogic] Invalid Page Playoff round: {round}");
+				return new int[] { 0, 0, 0, 0 };
+		}
+	}
+
+	/// <summary>
+	/// Apply tournament earnings to season earnings
+	/// Called at end of tournament
+	/// </summary>
+	public static void CompleteTournamentForTeam(Team team)
+	{
+		team.CompleteTournament(); // Uses Team's built-in method
+	}
+
+	/// <summary>
+	/// Reset tournament stats for a team
+	/// Called at start of new tournament
+	/// </summary>
+	public static void StartTournamentForTeam(Team team)
+	{
+		team.StartTournament(); // Uses Team's built-in method
+	}
+
+	/// <summary>
+	/// Distribute prizes to all teams based on final rankings
+	/// </summary>
+	/// <param name="teams">Array of teams</param>
+	/// <param name="totalPrize">Total prize pool</param>
+	public static void DistributePrizes(Team[] teams, float totalPrize)
+	{
+		int totalTeams = teams.Length;
+
+		foreach (Team team in teams)
+		{
+			if (team == null) continue;
+
+			float prize = CalculatePrize(team.rank, totalTeams, totalPrize);
+			team.tournamentEarnings += prize;
+
+			Debug.Log($"[SharedTournamentLogic] {team.name} (Rank {team.rank}) receives ${prize:n0}");
+		}
+	}
+
+	/// <summary>
+	/// Log tournament state for debugging
+	/// </summary>
+	public static void LogTournamentState(Team[] teams, int currentRound, string tournamentType)
+	{
+		Debug.Log($"=== {tournamentType} - Round {currentRound} ===");
+
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (teams[i] == null) continue;
+
+			string playerMarker = teams[i].player ? " [PLAYER]" : "";
+			Debug.Log($"[{i}] {teams[i].name}{playerMarker} - " +
+					 $"W:{teams[i].tournamentWins} L:{teams[i].tournamentLosses} " +
+					 $"Rank:{teams[i].rank} Earnings:${teams[i].tournamentEarnings:n0}");
+		}
+	}
+}
+
+#endregion

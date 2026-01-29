@@ -312,15 +312,8 @@ public class EndMenu : MonoBehaviour
             Vector2 tempTotal = Vector2.zero;
             for (int i = 0; i < gsp.score.Length; i++)
             {
-                if (gsp.endCurrent == 0)
-                {
-                    tempTotal = Vector2.zero; // Reset total for first end
-                }
-                else
-                {
-                    tempTotal.x += gsp.score[i].x;
-                    tempTotal.y += gsp.score[i].y;
-                }
+                tempTotal.x += gsp.score[i].x;
+                tempTotal.y += gsp.score[i].y;
             }
             redTotalScore.text = tempTotal.x.ToString();
             yellowTotalScore.text = tempTotal.y.ToString();

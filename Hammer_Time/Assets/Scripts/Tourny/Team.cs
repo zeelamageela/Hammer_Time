@@ -6,20 +6,55 @@ using UnityEngine;
 public class Team
 {
     public string name;
-
-    public int wins;
-    public int loss;
-    public int rank;
-    public string nextOpp;
-
     public int id;
-    public float earnings;
-
-    public Vector2 record;
-    public Vector2 tourRecord;
-    public float tourPoints;
-
     public bool player;
+    
+    // TOURNAMENT STATE (reset each tournament)
+    public int tournamentWins;
+    public int tournamentLosses;
+    public float tournamentEarnings;
+    public int rank;               // Placement in current tournament
+    public string nextOpp;         // Next opponent in current tournament
+    
+    // SEASON CUMULATIVE (reset each season)
+    public int seasonWins;
+    public int seasonLosses;
+    public float seasonEarnings;
+    
+    // TOUR CUMULATIVE (across entire season)
+    public float tourPoints;
+    
+    // LEGACY COMPATIBILITY (kept for backwards compatibility during transition)
+    // These now map to seasonWins/seasonLosses for existing code
+    public int wins
+    {
+        get { return seasonWins; }
+        set { seasonWins = value; }
+    }
+    
+    public int loss
+    {
+        get { return seasonLosses; }
+        set { seasonLosses = value; }
+    }
+    
+    public float earnings
+    {
+        get { return seasonEarnings; }
+        set { seasonEarnings = value; }
+    }
+    
+    // DEPRECATED: Use seasonWins/seasonLosses instead
+    [System.Obsolete("Use seasonWins/seasonLosses instead")]
+    public Vector2 record
+    {
+        get { return new Vector2(seasonWins, seasonLosses); }
+        set { seasonWins = (int)value.x; seasonLosses = (int)value.y; }
+    }
+    
+    // DEPRECATED: Use tourPoints directly
+    [System.Obsolete("Use tourPoints directly")]
+    public Vector2 tourRecord;  // Keeping for save compatibility
 
     // List of players on the team
     public List<Player> players = new List<Player>();
@@ -76,11 +111,47 @@ public class Team
             totalSweepCohesion += p.sweepCohesion;
         }
         int count = players.Count;
-        draw = Mathf.RoundToInt(totalDraw);
-        takeOut = Mathf.RoundToInt(totalTakeOut);
-        guard = Mathf.RoundToInt(totalGuard);
-        sweepStrength = Mathf.RoundToInt(totalSweepStrength);
-        sweepEnduro = Mathf.RoundToInt(totalSweepEnduro);
-        sweepCohesion = Mathf.RoundToInt(totalSweepCohesion);
+        draw = Mathf.RoundToInt(totalDraw / count);
+        takeOut = Mathf.RoundToInt(totalTakeOut / count);
+        guard = Mathf.RoundToInt(totalGuard / count);
+        sweepStrength = Mathf.RoundToInt(totalSweepStrength / count);
+        sweepEnduro = Mathf.RoundToInt(totalSweepEnduro / count);
+        sweepCohesion = Mathf.RoundToInt(totalSweepCohesion / count);
+    }
+    
+    // --- Tournament Stats Management ---
+    
+    /// <summary>
+    /// Reset tournament-specific stats at the start of a new tournament
+    /// </summary>
+    public void StartTournament()
+    {
+        tournamentWins = 0;
+        tournamentLosses = 0;
+        tournamentEarnings = 0;
+        rank = 0;
+        nextOpp = "";
+    }
+    
+    /// <summary>
+    /// Add tournament results to season cumulative stats
+    /// </summary>
+    public void CompleteTournament()
+    {
+        seasonWins += tournamentWins;
+        seasonLosses += tournamentLosses;
+        seasonEarnings += tournamentEarnings;
+    }
+    
+    /// <summary>
+    /// Reset season stats at the start of a new season
+    /// </summary>
+    public void StartNewSeason()
+    {
+        seasonWins = 0;
+        seasonLosses = 0;
+        seasonEarnings = 0;
+        tourPoints = 0;
+        StartTournament();
     }
 }

@@ -8836,16 +8836,18 @@ MonoBehaviour:
   redTeamColour: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   redTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -8857,16 +8859,18 @@ MonoBehaviour:
   yellowTeamColour: {r: 0, g: 1, b: 0.5857141, a: 1}
   yellowTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -8894,16 +8898,18 @@ MonoBehaviour:
   - 2500
   playerTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
@@ -10988,7 +10994,7 @@ MonoBehaviour:
   placed: 0
   placed1: 0
   rockCurrent: 0
-  pauseAfterRockPlacement: 1
+  pauseAfterRockPlacement: 0
   placePos:
   - {x: -0.84, y: 4.34}
   - {x: -0.75, y: 2.88}
@@ -33637,16 +33643,18 @@ MonoBehaviour:
   tourRecords: []
   playerTeam:
     name: 
-    wins: 0
-    loss: 0
+    id: 0
+    player: 0
+    tournamentWins: 0
+    tournamentLosses: 0
+    tournamentEarnings: 0
     rank: 0
     nextOpp: 
-    id: 0
-    earnings: 0
-    record: {x: 0, y: 0}
-    tourRecord: {x: 0, y: 0}
+    seasonWins: 0
+    seasonLosses: 0
+    seasonEarnings: 0
     tourPoints: 0
-    player: 0
+    tourRecord: {x: 0, y: 0}
     players: []
     draw: 0
     takeOut: 0
