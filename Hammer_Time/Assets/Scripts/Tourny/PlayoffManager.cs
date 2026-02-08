@@ -281,12 +281,24 @@ public class PlayoffManager : MonoBehaviour
 
     /// <summary>
     /// Configures UI buttons for Page Playoff
+    /// playerHasGame: true if player has an actual game to play (not knocked out, not BYE)
     /// </summary>
-    void ConfigurePagePlayoffButtons(bool playerActive, bool showPlayButton)
+    void ConfigurePagePlayoffButtons(bool playerHasGame)
     {
-        playButton.gameObject.SetActive(playerActive && showPlayButton);
-        simButton.gameObject.SetActive(true);
-        contButton.gameObject.SetActive(false);
+        if (playerHasGame)
+        {
+            // Player has a game - show ONLY Play button
+            playButton.gameObject.SetActive(true);
+            simButton.gameObject.SetActive(false);
+            contButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Player knocked out, has BYE, or all AI games - show ONLY Sim button
+            playButton.gameObject.SetActive(false);
+            simButton.gameObject.SetActive(true);
+            contButton.gameObject.SetActive(false);
+        }
     }
 
     #endregion
@@ -501,13 +513,13 @@ public class PlayoffManager : MonoBehaviour
 		Debug.Log("Set Playoffs - Round " + playoffRound);
 		switch (playoffRound)
         {
-			case 1:
+        case 1:
                 #region Case 1
                 heading.text = "Page Playoff - Round 1";
                 
                 DisplayPagePlayoffTeams(4, highlightPlayer: true);
                 bool playerActive1 = SetupPagePlayoffVsDisplay();
-                ConfigurePagePlayoffButtons(playerActive1, showPlayButton: true);
+                ConfigurePagePlayoffButtons(playerActive1);
                 
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
@@ -524,21 +536,10 @@ public class PlayoffManager : MonoBehaviour
                 
                 // Special case: BYE handling
                 // If player is at position 4 (winner of 1v2), they have a BYE to finals
-                // Show Continue button only, no Play/Sim buttons
-                bool hasOpponent = tm.vsDisplay[1].name.text != "BYE TO FINALS";
+                // Player has no game to play - show only Sim button (to simulate other games)
+                bool hasActualGame = tm.vsDisplay[1].name.text != "BYE TO FINALS";
                 
-                if (!hasOpponent)
-                {
-                    // Player has BYE - only show Continue button
-                    playButton.gameObject.SetActive(false);
-                    simButton.gameObject.SetActive(false);
-                    contButton.gameObject.SetActive(true);
-                }
-                else
-                {
-                    // Player has a match - show Play and Sim buttons
-                    ConfigurePagePlayoffButtons(playerActive2, hasOpponent);
-                }
+                ConfigurePagePlayoffButtons(hasActualGame);
                 
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
@@ -552,7 +553,7 @@ public class PlayoffManager : MonoBehaviour
                 
                 DisplayPagePlayoffTeams(8, highlightPlayer: true);
                 bool playerActive3 = SetupPagePlayoffVsDisplay();
-                ConfigurePagePlayoffButtons(playerActive3, showPlayButton: true);
+                ConfigurePagePlayoffButtons(playerActive3);
                 
                 playoffs.SetActive(true);
                 StartCoroutine(RefreshPlayoffPanel());
@@ -723,9 +724,12 @@ public class PlayoffManager : MonoBehaviour
 				}
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
+				SetPlayoffs();
+				
+				// After advancing round, show Continue button to let user review and advance
+				playButton.gameObject.SetActive(false);
 				simButton.gameObject.SetActive(false);
 				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
 				break;
 
 			case 2:
@@ -756,14 +760,17 @@ public class PlayoffManager : MonoBehaviour
 					brackDisplay[i].name.transform.parent.gameObject.SetActive(true);
 					row[i].SetActive(true);
 				}
-				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
-				break;
+			StartCoroutine(RefreshPlayoffPanel());
+			playoffRound++;
+			SetPlayoffs();
+			
+			// After advancing round, show Continue button to let user review and advance
+			playButton.gameObject.SetActive(false);
+			simButton.gameObject.SetActive(false);
+			contButton.gameObject.SetActive(true);
+			break;
 
-			case 3:
+		case 3:
 				game1X = playoffTeams[4];
 				game1Y = playoffTeams[7];
 
@@ -784,14 +791,17 @@ public class PlayoffManager : MonoBehaviour
 					row[i].SetActive(true);
 				}
 
-				StartCoroutine(RefreshPlayoffPanel());
-				playoffRound++;
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
-				SetPlayoffs();
-				break;
+			StartCoroutine(RefreshPlayoffPanel());
+			playoffRound++;
+			SetPlayoffs();
+			
+			// After advancing round, show Continue button to let user review and advance
+			playButton.gameObject.SetActive(false);
+			simButton.gameObject.SetActive(false);
+			contButton.gameObject.SetActive(true);
+			break;
 
-			default:
+		default:
 				SetPlayoffs();
 				break;
 

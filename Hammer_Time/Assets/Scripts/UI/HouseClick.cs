@@ -21,21 +21,46 @@ public class HouseClick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Handle mouse clicks (for PC/Editor)
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePos = topCam.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-            if (hit.collider == col)
+            if (CheckRaycastHit(Input.mousePosition))
             {
                 StartCoroutine(IsPressed());
-                Debug.Log(hit.collider.gameObject.name);
             }
         }
 
-        
+        // Handle touch input (for mobile/tablet)
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (CheckRaycastHit(touch.position))
+                {
+                    StartCoroutine(IsPressed());
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks if a screen position hits the house view button collider
+    /// Works with both mouse and touch input
+    /// </summary>
+    private bool CheckRaycastHit(Vector3 screenPosition)
+    {
+        Vector3 worldPos = topCam.ScreenToWorldPoint(screenPosition);
+        Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+
+        RaycastHit2D hit = Physics2D.Raycast(worldPos2D, Vector2.zero);
+
+        if (hit.collider == col)
+        {
+            Debug.Log(hit.collider.gameObject.name);
+            return true;
+        }
+        return false;
     }
 
     IEnumerator IsPressed()

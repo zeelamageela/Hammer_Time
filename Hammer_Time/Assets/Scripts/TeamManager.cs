@@ -262,11 +262,11 @@ public class TeamManager : MonoBehaviour
             for (int j = 0; j < teamYellow.Length; j++)
             {
                 teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.yellowTeam.players[j].draw);
-                teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.redTeam.players[j].takeOut);
-                teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.redTeam.players[j].guard);
-                teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.redTeam.players[j].sweepStrength);
-                teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.redTeam.players[j].sweepEnduro);
-                teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.redTeam.players[j].sweepCohesion);
+                teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.yellowTeam.players[j].takeOut);
+                teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.yellowTeam.players[j].guard);
+                teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.yellowTeam.players[j].sweepStrength);
+                teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.yellowTeam.players[j].sweepEnduro);
+                teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.yellowTeam.players[j].sweepCohesion);
                 //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
                 //+ teamYellow[j].charStats.guardAccuracy.GetValue());
             }
@@ -281,6 +281,12 @@ public class TeamManager : MonoBehaviour
             sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[0].shooter;
             gm.shooterAnimYellow = teamYellow[0].shooter;
+            
+            // Call OnShoot for the active shooter (AI only)
+            if (redTurn && gm.aiTeamRed)
+                teamRed[0].charStats.OnShoot();
+            else if (!redTurn && gm.aiTeamYellow)
+                teamYellow[0].charStats.OnShoot();
         }
         else if (rockCurrent < 8)
         {
@@ -292,6 +298,12 @@ public class TeamManager : MonoBehaviour
             sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[1].shooter;
             gm.shooterAnimYellow = teamYellow[1].shooter;
+            
+            // Call OnShoot for the active shooter (AI only)
+            if (redTurn && gm.aiTeamRed)
+                teamRed[1].charStats.OnShoot();
+            else if (!redTurn && gm.aiTeamYellow)
+                teamYellow[1].charStats.OnShoot();
         }
         else if (rockCurrent < 12)
         {
@@ -303,6 +315,12 @@ public class TeamManager : MonoBehaviour
             sm.sweeperYellowTee = teamYellow[3].sweeperL;
             gm.shooterAnimRed = teamRed[2].shooter;
             gm.shooterAnimYellow = teamYellow[2].shooter;
+            
+            // Call OnShoot for the active shooter (AI only)
+            if (redTurn && gm.aiTeamRed)
+                teamRed[2].charStats.OnShoot();
+            else if (!redTurn && gm.aiTeamYellow)
+                teamYellow[2].charStats.OnShoot();
         }
         else
         {
@@ -314,6 +332,12 @@ public class TeamManager : MonoBehaviour
             sm.sweeperYellowTee = teamYellow[2].sweeperL;
             gm.shooterAnimRed = teamRed[3].shooter;
             gm.shooterAnimYellow = teamYellow[3].shooter;
+            
+            // Call OnShoot for the active shooter (AI only)
+            if (redTurn && gm.aiTeamRed)
+                teamRed[3].charStats.OnShoot();
+            else if (!redTurn && gm.aiTeamYellow)
+                teamYellow[3].charStats.OnShoot();
         }
     }
 }

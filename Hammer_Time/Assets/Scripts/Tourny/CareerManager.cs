@@ -164,6 +164,11 @@ public class CareerManager : MonoBehaviour
             return;
         }
 
+        // Add debug quick test game component (press Q anywhere to test)
+        if (GetComponent<QuickTestGame>() == null)
+        {
+            gameObject.AddComponent<QuickTestGame>();
+        }
     }
 
     private void Start()

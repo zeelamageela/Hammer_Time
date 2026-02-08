@@ -374,6 +374,9 @@ public class Rock_Flick : MonoBehaviour
         this.enabled = false;
 
         yield return new WaitForFixedUpdate();
+        
+        // DEBUG: Log actual velocity after spring release for trajectory calibration
+        Debug.Log($"[Rock Release] SpringDist: {springDistance:F2}, ActualVel: {rb.linearVelocity.magnitude:F2}, VelVector: ({rb.linearVelocity.x:F2}, {rb.linearVelocity.y:F2})");
 
         //tFollowTarget = gameObject.transform;
         //vcam.LookAt = tFollowTarget;

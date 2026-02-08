@@ -57,6 +57,13 @@ public class AIManager : MonoBehaviour
     {
         inturn = rm.inturn;
 
+        // W KEY: Start AI vs AI game for testing AI takeouts and strategy
+        //if (Input.GetKeyDown(KeyCode.W))
+        //{
+        //    Debug.Log("[AIManager] W pressed - Starting AI vs AI game");
+        //    StartCoroutine(StartAIvsAIGame());
+        //}
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
@@ -70,9 +77,6 @@ public class AIManager : MonoBehaviour
             }
 
             aiShoot.OnShot(testing, gm.rockCurrent);
-            //StartCoroutine(Shot(testing));
-            //StartCoroutine(TickShot(gm.rockCurrent));
-            //StartCoroutine(Shot("Take Out"));
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -87,9 +91,6 @@ public class AIManager : MonoBehaviour
             }
 
             aiTarg.OnTarget(testingTakeOut, gm.rockCurrent, testingRockNumber);
-            //StartCoroutine(Shot(testing));
-            //StartCoroutine(TickShot(gm.rockCurrent));
-            //StartCoroutine(TapTarget(gm.rockCurrent, testingRockNumber));
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -104,9 +105,6 @@ public class AIManager : MonoBehaviour
             }
 
             aiTarg.OnTarget("Player Draw", gm.rockCurrent, 0);
-            //StartCoroutine(Shot(testing));
-            //StartCoroutine(TakeOutAutoTarget(gm.rockCurrent));
-            //StartCoroutine(Shot("Take Out"));
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
@@ -121,9 +119,6 @@ public class AIManager : MonoBehaviour
             }
 
             aiTarg.OnTarget("Auto Draw Four Foot", gm.rockCurrent, 0);
-            //StartCoroutine(DrawFourFoot(gm.rockCurrent));
-            //StartCoroutine(TickShot(gm.rockCurrent));
-            //StartCoroutine(Shot("Take Out"));
         }
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -138,9 +133,50 @@ public class AIManager : MonoBehaviour
             }
 
             aiTarg.OnTarget("Auto Draw Twelve Foot", gm.rockCurrent, 0);
-            //StartCoroutine(DrawTwelveFoot(gm.rockCurrent));
-            //StartCoroutine(TickShot(gm.rockCurrent));
-            //StartCoroutine(Shot("Take Out"));
+        }
+    }
+    
+    /// <summary>
+    /// Starts an AI vs AI game for testing purposes (press W)
+    /// Both teams are controlled by AI so you can observe strategy and targeting
+    /// </summary>
+    IEnumerator StartAIvsAIGame()
+    {
+        // Set both teams to AI
+        gm.aiTeamRed = true;
+        gm.aiTeamYellow = true;
+        
+        Debug.Log("[AIManager] AI vs AI mode enabled - Red: AI, Yellow: AI");
+        
+        // Wait a frame to ensure settings are applied
+        yield return new WaitForEndOfFrame();
+        
+        // Trigger the current turn based on who should be shooting
+        if (gm.rockCurrent % 2 == 0)
+        {
+            if (gm.redHammer)
+            {
+                Debug.Log("[AIManager] Starting Yellow AI turn");
+                gm.OnYellowTurn();
+            }
+            else
+            {
+                Debug.Log("[AIManager] Starting Red AI turn");
+                gm.OnRedTurn();
+            }
+        }
+        else
+        {
+            if (gm.redHammer)
+            {
+                Debug.Log("[AIManager] Starting Red AI turn");
+                gm.OnRedTurn();
+            }
+            else
+            {
+                Debug.Log("[AIManager] Starting Yellow AI turn");
+                gm.OnYellowTurn();
+            }
         }
     }
 
@@ -148,6 +184,13 @@ public class AIManager : MonoBehaviour
 
     public void OnShot(int rockCurrent)
     {
+        // Clear trajectory from previous turn
+        TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectoryLine.ClearTrajectory();
+        }
+        
         rockInfo = gm.rockList[rockCurrent].rockInfo;
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
@@ -173,8 +216,8 @@ public class AIManager : MonoBehaviour
 
         }
 
-        aiStrat.SimpleAIShoot(rockCurrent);
-        //aiStrat.OnShot(rockCurrent);
+        //aiStrat.SimpleAIShoot(rockCurrent);
+        aiStrat.OnShot(rockCurrent);
     }
 
 }

@@ -32,10 +32,7 @@ public class CharacterStats : MonoBehaviour
     {
         sweepHealth = 100f;
         sweepMax = 100f;
-        if (!GetComponent<SweeperParent>())
-        {
-            OnShoot();
-        }
+        // Don't call OnShoot() here - it should be called explicitly when the character is shooting
     }
 
     private void Update()
@@ -59,9 +56,9 @@ public class CharacterStats : MonoBehaviour
     public void OnSweepFatigue(float fatigue)
     {
         fatigue -= 0.01f * (100f - sweepEndurance.GetValue());
-        Debug.Log("Fatigue is " + fatigue);
+        //Debug.Log("Fatigue is " + fatigue);
         sweepHealth -= fatigue;
-        Debug.Log("Sweep Health is " + fatigue);
+        //Debug.Log("Sweep Health is " + fatigue);
 
         if (sweepHealth <= 0)
         {

@@ -21,6 +21,8 @@ public class RockManager : MonoBehaviour
     }
 
     // Update is called once per frame
+    private int lastRockIndex = -1; // Track which rock we last set the turn for
+    
     void FixedUpdate()
     {
         if (gm.rockList.Count != 0)
@@ -30,13 +32,47 @@ public class RockManager : MonoBehaviour
                 //Debug.Log("Rock List Count is " + gm.rockList.Count);
                 rock = gm.rockList[gm.rockCurrent].rock;
                 rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
-                if (inturn)
+                
+                // CRITICAL FIX: Only set flipAxis for AI turns, NEVER for player turns
+                // Player turns are handled by:
+                //   1. GameManager.OnRedTurn/OnYellowTurn initializes rm.inturn = false
+                //   2. TurnAnim.ToggleTurn() updates BOTH rm.inturn AND flipAxis when button is clicked
+                // RockManager should only manage AI rock turn setup
+                bool isAITurn = (gm.rockCurrent % 2 == 0) 
+                    ? (gm.redHammer ? gm.aiTeamYellow : gm.aiTeamRed) 
+                    : (gm.redHammer ? gm.aiTeamRed : gm.aiTeamYellow);
+                
+                Rock_Flick rockFlick = rock.GetComponent<Rock_Flick>();
+                Rock_Force rockForce = rock.GetComponent<Rock_Force>();
+                
+                // Check if rock is being actively shot
+                bool rockIsActiveForShooting = (rockFlick != null && 
+                    (rockFlick.isPressed || rockFlick.isPressedAI || rockFlick.mouseUp || rockInfo.released));
+                
+                // Check if Rock_Force component is not enabled yet
+                bool rockNotYetActivated = (rockForce != null && !rockForce.enabled);
+                
+                // ONLY set flipAxis for AI turns (never player turns) when rock is ready
+                if (isAITurn && lastRockIndex != gm.rockCurrent && !rockIsActiveForShooting && !rockNotYetActivated)
                 {
-                    rock.GetComponent<Rock_Force>().flipAxis = true;
+                    // ONLY set flipAxis when rock is newly activated, enabled, and NOT being shot
+                    if (inturn)
+                    {
+                        rock.GetComponent<Rock_Force>().flipAxis = true;
+                    }
+                    else
+                    {
+                        rock.GetComponent<Rock_Force>().flipAxis = false;
+                    }
+                    lastRockIndex = gm.rockCurrent;
+                    Debug.Log($"[RockManager] AI Turn - Set rock #{gm.rockCurrent} flipAxis to: {(inturn ? "IN-TURN" : "OUT-TURN")}");
                 }
-                else
+                
+                // For player turns, only update lastRockIndex to prevent re-checking
+                if (!isAITurn && lastRockIndex != gm.rockCurrent)
                 {
-                    rock.GetComponent<Rock_Force>().flipAxis = false;
+                    lastRockIndex = gm.rockCurrent;
+                    Debug.Log($"[RockManager] Player Turn - rock #{gm.rockCurrent} - flipAxis controlled by TurnAnim button");
                 }
 
                 //if (rock.transform.position.y >= -4f)

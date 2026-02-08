@@ -728,128 +728,32 @@ public class AI_Sweeper : MonoBehaviour
 
             #region Take Outs
             case "Peel":
-                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 8.35f)
-                    sm.SweepWeight(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 7f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 5.75f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 4.45f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 3.9f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
+                // DISABLED FOR PHYSICS-BASED SHOTS
+                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Peel shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
 
             case "Take Out":
-                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 7.5f)
-                    sm.SweepWeight(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 6f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 4.8f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 3.5f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 2.75f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
+                // DISABLED FOR PHYSICS-BASED SHOTS
+                // Physics-based targeting calculates exact velocity needed
+                // Sweeping interferes with the predicted trajectory
+                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Take Out shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
 
             case "Tick":
-
+                // DISABLED FOR PHYSICS-BASED SHOTS
+                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Tick shot");
+                yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
+                sm.SweepWhoa(true);
                 break;
 
             case "Raise":
-                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 6f)
-                    sm.SweepWeight(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 4.65f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
-                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 3.4f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 2f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-                yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
-                if (rockRB.linearVelocity.y <= 1.45f)
-                    sm.SweepWeight(true);
-                else
-                    sm.SweepWhoa(true);
-
+                // DISABLED FOR PHYSICS-BASED SHOTS
+                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Raise shot");
+                yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
             #endregion

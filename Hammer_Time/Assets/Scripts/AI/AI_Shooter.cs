@@ -16,6 +16,8 @@ public class AI_Shooter : MonoBehaviour
     Rock_Info rockInfo;
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
+    
+    int currentRockNumber;
 
     public Vector2 centreGuard;
     public Vector2 tightCentreGuard;
@@ -73,6 +75,7 @@ public class AI_Shooter : MonoBehaviour
         rockInfo = gm.rockList[rockCurrent].rockInfo;
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
+        currentRockNumber = rockCurrent;
 
         StartCoroutine(Shot(aiShotType, rm.inturn));
     }
@@ -86,6 +89,17 @@ public class AI_Shooter : MonoBehaviour
         takeOutY = aiTarg.takeOutY;
 
         aiSweep.OnSweep(true, aiShotType, aiTarg.targetPos, inturn);
+        
+        // CRITICAL FIX: Set BOTH flipAxis AND rm.inturn to keep everything synchronized!
+        // This ensures the button, trajectory, and actual shot all match
+        GameObject rock = gm.rockList[currentRockNumber].rock;
+        Rock_Force rockForce = rock.GetComponent<Rock_Force>();
+        if (rockForce != null)
+        {
+            rockForce.flipAxis = inturn;
+            rm.inturn = inturn;  // SYNC rm.inturn with the AI's choice!
+            Debug.Log($"[AI_Shooter] Set flipAxis AND rm.inturn = {inturn} for {aiShotType}");
+        }
 
         yield return new WaitForSeconds(0.5f);
 
@@ -96,327 +110,381 @@ public class AI_Shooter : MonoBehaviour
         {
             #region Centre Guards
             case "Centre Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    shotX = centreGuard.x + error.x;
+                    shotY = centreGuard.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
-                }
-
-                shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Tight Centre Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    shotX = tightCentreGuard.x + error.x;
+                    shotY = tightCentreGuard.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "High Centre Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    shotX = highCentreGuard.x + error.x;
+                    shotY = highCentreGuard.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
             #endregion
 
             #region Corner Guards
             case "Left Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? rightCornerGuard : leftCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Left Tight Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? rightTightCornerGuard : leftTightCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Left High Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? rightHighCornerGuard : leftHighCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Right Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? leftCornerGuard : rightCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Right Tight Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? leftTightCornerGuard : rightTightCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+                    
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Right High Corner Guard":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    Vector2 targetPos = inturn ? leftHighCornerGuard : rightHighCornerGuard;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
             #endregion
 
             #region Twelve Foot Draws
             case "Top Twelve Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(topTwelveFoot.y + drawAccu.y, topTwelveFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    shotX = topTwelveFoot.x + error.x;
+                    shotY = topTwelveFoot.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Left Twelve Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(leftTwelveFoot.x + drawAccu.x, leftTwelveFoot.x - drawAccu.x);
-                }
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    Vector2 targetPos = inturn ? rightTwelveFoot : leftTwelveFoot;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                shotY = Random.Range(leftTwelveFoot.y + drawAccu.y, leftTwelveFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Back Twelve Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(backTwelveFoot.x + drawAccu.x, backTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(backTwelveFoot.x + drawAccu.x, backTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(backTwelveFoot.y + drawAccu.y, backTwelveFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    shotX = backTwelveFoot.x + error.x;
+                    shotY = backTwelveFoot.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Right Twelve Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(leftTwelveFoot.x + drawAccu.x, leftTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(rightTwelveFoot.y + drawAccu.y, rightTwelveFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    Vector2 targetPos = inturn ? leftTwelveFoot : rightTwelveFoot;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
             #endregion
 
             #region Four Foot Draws
             case "Button":
-
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                }
-                shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    shotX = button.x + error.x;
+                    shotY = button.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Left Four Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(rightFourFoot.x + drawAccu.x, rightFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(leftFourFoot.y + drawAccu.y, leftFourFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    Vector2 targetPos = inturn ? rightFourFoot : leftFourFoot;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Right Four Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    Vector2 targetPos = inturn ? leftFourFoot : rightFourFoot;
+                    shotX = targetPos.x + error.x;
+                    shotY = targetPos.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
+
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
                 }
-                else
-                {
-                    shotX = Random.Range(rightFourFoot.x + drawAccu.x, rightFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(rightFourFoot.y + drawAccu.y, rightFourFoot.y - drawAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
                 break;
 
             case "Top Four Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(topFourFoot.y + drawAccu.y, topFourFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    shotX = topFourFoot.x + error.x;
+                    shotY = topFourFoot.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             case "Back Four Foot":
-                if (inturn)
                 {
-                    shotX = -1f * Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(backFourFoot.y + drawAccu.y, backFourFoot.y - drawAccu.y);
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    
+                    shotX = backFourFoot.x + error.x;
+                    shotY = backFourFoot.y + error.y;
+                    
+                    if (inturn)
+                        shotX = -shotX;
 
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    yield return new WaitForFixedUpdate();
+                    rockFlick.mouseUp = true;
+                }
                 break;
             #endregion
 
             #region Take Outs
             case "Peel":
+                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
+                // DO NOT apply error again here - just use the calculated position directly!
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + peelOffset;
-                    shotY = Random.Range(peel.y + toAccu.y, peel.y - toAccu.y);
+                    shotX = takeOutX;
+                    shotY = takeOutY;
                 }
                 else
                 {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+                    // Fallback: use draw accuracy if no target calculated
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    shotX = button.x + error.x;
+                    shotY = button.y + error.y;
                 }
 
                 rockFlick.rb.isKinematic = true;
@@ -428,24 +496,28 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Take Out":
-
+                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
+                // DO NOT apply error again here - just use the calculated position directly!
                 if (takeOutX != 0f)
                 {
-                    //if (inturn)
-                    //{
-                    //    takeOutOffset = -takeOutOffset;
-                    //}
-
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + takeOutOffset;
-                    shotY = Random.Range(takeOut.y + toAccu.y, takeOut.y - toAccu.y);
+                    shotX = takeOutX;
+                    shotY = takeOutY;
+                    
+                    Debug.Log($"[AI_Shooter] Take Out - Using physics-calculated position: ({shotX:F3}, {shotY:F3})");
                 }
                 else
                 {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+                    // Fallback: use draw accuracy if no target calculated
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    shotX = button.x + error.x;
+                    shotY = button.y + error.y;
+                    
+                    Debug.LogWarning($"[AI_Shooter] Take Out fallback - No physics position available");
                 }
 
-                rockFlick.rb.isKinematic = true;
+                rockRB.isKinematic = true;
                 rockRB.position = new Vector2(shotX, shotY);
 
                 Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
@@ -454,17 +526,21 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Tick":
-
-
+                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
+                // DO NOT apply error again here - just use the calculated position directly!
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + tickOffset;
-                    shotY = Random.Range(tick.y + toAccu.y, tick.y - toAccu.y);
+                    shotX = takeOutX;
+                    shotY = takeOutY;
                 }
                 else
                 {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+                    // Fallback
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.1f);
+                    shotX = button.x + error.x;
+                    shotY = button.y + error.y;
                 }
 
                 rockFlick.rb.isKinematic = true;
@@ -476,17 +552,21 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Raise":
-
-
+                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
+                // DO NOT apply error again here - just use the calculated position directly!
                 if (takeOutX != 0f)
                 {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + raiseOffset;
-                    shotY = Random.Range(raise.y + toAccu.y, raise.y - toAccu.y);
+                    shotX = takeOutX;
+                    shotY = takeOutY;
                 }
                 else
                 {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
+                    // Fallback
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.takeOutAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
+                    shotX = button.x + error.x;
+                    shotY = button.y + error.y;
                 }
 
                 rockFlick.rb.isKinematic = true;
@@ -512,16 +592,18 @@ public class AI_Shooter : MonoBehaviour
                 break;
 
             case "Guard To Target":
+                {
+                    CharacterStats stats = GetShooterStats();
+                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
+                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
+                    
+                    shotX = takeOutX + error.x;
+                    shotY = takeOutY + error.y;
 
-                //shotX = takeOutX;
-                //shotY = takeOutY;
-
-                shotX = Random.Range(takeOutX + guardAccu.x, takeOutX - guardAccu.x);
-                shotY = Random.Range(takeOutY + guardAccu.y, takeOutY - guardAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                rockFlick.mouseUp = true;
+                    rockFlick.rb.isKinematic = true;
+                    rockRB.position = new Vector2(shotX, shotY);
+                    rockFlick.mouseUp = true;
+                }
                 break;
 
             default:
@@ -531,427 +613,41 @@ public class AI_Shooter : MonoBehaviour
     }
 
 
-    IEnumerator TargetShot(string aiShotType, bool inturn)
+    /// <summary>
+    /// Get character stats for the current shooter
+    /// </summary>
+    private CharacterStats GetShooterStats()
     {
-        Debug.Log("AI Shot " + aiShotType);
-        gm.dbText.text = aiShotType;
-        rockFlick.isPressedAI = true;
-        takeOutX = aiTarg.takeOutX;
-        takeOutY = aiTarg.takeOutY;
-        yield return new WaitForSeconds(0.5f);
-
-        float shotX;
-        float shotY;
-
-        switch (aiShotType)
-        {
-            #region Centre Guards
-            case "Centre Guard":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(centreGuard.x + guardAccu.x, centreGuard.x - guardAccu.x);
-                }
-
-                shotY = Random.Range(centreGuard.y + guardAccu.y, centreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Tight Centre Guard":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(tightCentreGuard.x + guardAccu.x, tightCentreGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(tightCentreGuard.y + guardAccu.y, tightCentreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "High Centre Guard":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(highCentreGuard.x + guardAccu.x, highCentreGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(highCentreGuard.y + guardAccu.y, highCentreGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            #region Corner Guards
-            case "Left Corner Guard":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
-                }
-                shotY = Random.Range(leftCornerGuard.y + guardAccu.y, leftCornerGuard.y - guardAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Left Tight Corner Guard":
-                shotX = Random.Range(leftTightCornerGuard.x + guardAccu.x, leftTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(leftTightCornerGuard.y + guardAccu.y, leftTightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Left High Corner Guard":
-                shotX = Random.Range(leftHighCornerGuard.x + guardAccu.x, leftHighCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(leftHighCornerGuard.y + guardAccu.y, leftHighCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Right Corner Guard":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(leftCornerGuard.x + guardAccu.x, leftCornerGuard.x - guardAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
-                }
-                shotX = Random.Range(rightCornerGuard.x + guardAccu.x, rightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(rightCornerGuard.y + guardAccu.y, rightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Right Tight Corner Guard":
-                shotX = Random.Range(rightTightCornerGuard.x + guardAccu.x, rightTightCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(rightTightCornerGuard.y + guardAccu.y, rightTightCornerGuard.y - guardAccu.y);
-                yield return new WaitForFixedUpdate();
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Right High Corner Guard":
-                shotX = Random.Range(rightHighCornerGuard.x + guardAccu.x, rightHighCornerGuard.x - guardAccu.x);
-                shotY = Random.Range(rightHighCornerGuard.y + guardAccu.y, rightHighCornerGuard.y - guardAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            #region Twelve Foot Draws
-            case "Top Twelve Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(topTwelveFoot.x + drawAccu.x, topTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(topTwelveFoot.y + drawAccu.y, topTwelveFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Left Twelve Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(leftTwelveFoot.x + drawAccu.x, leftTwelveFoot.x - drawAccu.x);
-                }
-
-                shotY = Random.Range(leftTwelveFoot.y + drawAccu.y, leftTwelveFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Back Twelve Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(backTwelveFoot.x + drawAccu.x, backTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(backTwelveFoot.x + drawAccu.x, backTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(backTwelveFoot.y + drawAccu.y, backTwelveFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Right Twelve Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(leftTwelveFoot.x + drawAccu.x, leftTwelveFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(rightTwelveFoot.x + drawAccu.x, rightTwelveFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(rightTwelveFoot.y + drawAccu.y, rightTwelveFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            #region Four Foot Draws
-            case "Button":
-                aiTarg.aiTarget.transform.position = new Vector2(0f, 6.5f);
-
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                }
-                shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Left Four Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(rightFourFoot.x + drawAccu.x, rightFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(leftFourFoot.y + drawAccu.y, leftFourFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Right Four Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(leftFourFoot.x + drawAccu.x, leftFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(rightFourFoot.x + drawAccu.x, rightFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(rightFourFoot.y + drawAccu.y, rightFourFoot.y - drawAccu.y);
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Top Four Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(topFourFoot.x + drawAccu.x, topFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(topFourFoot.y + drawAccu.y, topFourFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Back Four Foot":
-                if (inturn)
-                {
-                    shotX = -1f * Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
-                }
-                else
-                {
-                    shotX = Random.Range(backFourFoot.x + drawAccu.x, backFourFoot.x - drawAccu.x);
-                }
-                shotY = Random.Range(backFourFoot.y + drawAccu.y, backFourFoot.y - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            #region Take Outs
-            case "Peel":
-                if (takeOutX != 0f)
-                {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + peelOffset;
-                    shotY = Random.Range(peel.y + toAccu.y, peel.y - toAccu.y);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Peel Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Take Out":
-
-                if (takeOutX != 0f)
-                {
-                    //if (inturn)
-                    //{
-                    //    takeOutOffset = -takeOutOffset;
-                    //}
-
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + takeOutOffset;
-                    shotY = Random.Range(takeOut.y + toAccu.y, takeOut.y - toAccu.y);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Tick":
-
-
-                if (takeOutX != 0f)
-                {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + tickOffset;
-                    shotY = Random.Range(tick.y + toAccu.y, tick.y - toAccu.y);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Tick Shot Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Raise":
-
-
-                if (takeOutX != 0f)
-                {
-                    shotX = Random.Range(takeOutX + toAccu.x, takeOutX - toAccu.x) + raiseOffset;
-                    shotY = Random.Range(raise.y + toAccu.y, raise.y - toAccu.y);
-                }
-                else
-                {
-                    shotX = Random.Range(button.x + drawAccu.x, button.x - drawAccu.x);
-                    shotY = Random.Range(button.y + drawAccu.y, button.y - drawAccu.y);
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Raise Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            case "Draw To Target":
-
-                shotX = takeOutX;
-                shotY = takeOutY;
-
-                //shotX = Random.Range(takeOutX + drawAccu.x, takeOutX - drawAccu.x);
-                //shotY = Random.Range(takeOutY + drawAccu.y, takeOutY - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Guard To Target":
-
-                //shotX = takeOutX;
-                //shotY = takeOutY;
-
-                shotX = Random.Range(takeOutX + guardAccu.x, takeOutX - guardAccu.x);
-                shotY = Random.Range(takeOutY + guardAccu.y, takeOutY - guardAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                rockFlick.mouseUp = true;
-                break;
-
-            default:
-                break;
-        }
-
+        TeamManager tm = FindObjectOfType<TeamManager>();
+        if (tm == null) return null;
+        
+        int memberIndex = currentRockNumber / 4;
+        memberIndex = Mathf.Clamp(memberIndex, 0, 3);
+        
+        bool isRedTeam = (currentRockNumber % 2 == 0) ? gm.redHammer : !gm.redHammer;
+        
+        if (isRedTeam && tm.teamRed != null && memberIndex < tm.teamRed.Length)
+            return tm.teamRed[memberIndex].charStats;
+        else if (!isRedTeam && tm.teamYellow != null && memberIndex < tm.teamYellow.Length)
+            return tm.teamYellow[memberIndex].charStats;
+        
+        return null;
     }
+    
+    /// <summary>
+    /// Apply character-based accuracy using realistic distribution
+    /// Returns error offset to add to target position
+    /// </summary>
+    private Vector2 GetAccuracyError(float accuracy, float baseMaxError)
+    {
+        // Convert accuracy from 0-100 to 0-1 scale
+        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        
+        // Calculate max error based on accuracy (better accuracy = less error)
+        float maxError = baseMaxError * (1f - accuracyRatio);
+        
+        // Use circular distribution for natural shot spread
+        return Random.insideUnitCircle * maxError;
+    }
+
 }

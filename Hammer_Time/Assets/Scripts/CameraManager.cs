@@ -70,7 +70,7 @@ public class CameraManager : MonoBehaviour
         house.depth = -1;
         ui.depth = 3;
 
-        aim.orthographicSize = Mathf.Lerp(3.5f, 5f, (trajTarget.position.y) / 10f);
+        aim.orthographicSize = Mathf.Lerp(3.5f, 4.2f, (trajTarget.position.y) / 10f);
 
         if (trajTarget.position.y > 5.75f)
         {
@@ -111,7 +111,7 @@ public class CameraManager : MonoBehaviour
 
     public void RockFollow(Transform tFollowTarget)
     {
-        Debug.Log("Rock Follow");
+        //Debug.Log("Rock Follow");
         vcam_ft.m_SoftZoneWidth = 2f;
         aim.depth = -1;
         main.depth = 1;

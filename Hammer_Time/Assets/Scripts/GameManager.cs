@@ -188,7 +188,8 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitUntil(() => rockList.Count == 16);
 
-            if (endCurrent == 0)
+            // Only show intro for tournament games (not quick/cash/debug games) on the first end
+            if (endCurrent == 0 && !gsp.cashGame && !gsp.debug)
                 yield return StartCoroutine(TournyIntro());
 
             if (rockCurrent > 0)
@@ -425,7 +426,28 @@ public class GameManager : MonoBehaviour
     #region Turns
     public void OnRedTurn()
     {
-            cm.ShotSetup();
+        // PLAYER TURN: Don't reset rm.inturn! Preserve it from previous turn or toggle button
+        // Player controls turn direction ONLY via toggle button (TurnAnim.ToggleTurn)
+        if (!aiTeamRed)
+        {
+            // DO NOT set rm.inturn here - it's controlled by the toggle button!
+            Debug.Log($"[GameManager] Player Red Turn - using rm.inturn={rm.inturn} (preserved)");
+        }
+        
+        // Clear trajectory from previous turn
+        TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectoryLine.ClearTrajectory();
+            
+            // Only enable line renderer if this is a player turn (not AI)
+            if (!aiTeamRed)
+            {
+                trajectoryLine.ShowTrajectoryLine();
+            }
+        }
+        
+        cm.ShotSetup();
 
         state = GameState.REDTURN;
         //Debug.Log("Red Turn");
@@ -449,6 +471,15 @@ public class GameManager : MonoBehaviour
         redRock_1.GetComponent<Rock_Release>().enabled = true;
         redRock_1.GetComponent<Rock_Force>().enabled = true;
         redRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        
+        // CRITICAL: For player turns, initialize flipAxis from rm.inturn immediately after enabling Rock_Force
+        // This ensures the rock starts with the correct default turn before the player can toggle it
+        if (!aiTeamRed)
+        {
+            redRock_1.GetComponent<Rock_Force>().flipAxis = rm.inturn;
+            Debug.Log($"[GameManager.OnRedTurn] Initialized rock flipAxis={rm.inturn} for player");
+        }
+        
         boardCollider.enabled = false;
         launchCollider.enabled = false;
         //StartCoroutine(SaveGame());
@@ -457,9 +488,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RedTurn()
     {
-
-        rm.inturn = false;
-        
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
         redRock = redRock_1.GetComponent<Rock_Info>();
@@ -540,6 +568,13 @@ public class GameManager : MonoBehaviour
         rm.GetComponent<Sweep>().ExitSweepZone();
 
         Debug.Log("redRock at Rest");
+        
+        // Hide trajectory line at end of turn (will be redrawn when next player turn starts)
+        TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectoryLine.HideTrajectoryLine();
+        }
         //vcam.enabled = false;
 
         StartCoroutine(AllStopped());
@@ -567,6 +602,27 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
+        // PLAYER TURN: Don't reset rm.inturn! Preserve it from previous turn or toggle button
+        // Player controls turn direction ONLY via toggle button (TurnAnim.ToggleTurn)
+        if (!aiTeamYellow)
+        {
+            // DO NOT set rm.inturn here - it's controlled by the toggle button!
+            Debug.Log($"[GameManager] Player Yellow Turn - using rm.inturn={rm.inturn} (preserved)");
+        }
+        
+        // Clear trajectory from previous turn
+        TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectoryLine.ClearTrajectory();
+            
+            // Only enable line renderer if this is a player turn (not AI)
+            if (!aiTeamYellow)
+            {
+                trajectoryLine.ShowTrajectoryLine();
+            }
+        }
+        
         state = GameState.YELLOWTURN;
         Debug.Log("Yellow Turn");
 
@@ -591,6 +647,15 @@ public class GameManager : MonoBehaviour
         yellowRock_1.GetComponent<Rock_Release>().enabled = true;
         yellowRock_1.GetComponent<Rock_Force>().enabled = true;
         yellowRock_1.GetComponent<Rock_Colliders>().enabled = true;
+        
+        // CRITICAL: For player turns, initialize flipAxis from rm.inturn immediately after enabling Rock_Force
+        // This ensures the rock starts with the correct default turn before the player can toggle it
+        if (!aiTeamYellow)
+        {
+            yellowRock_1.GetComponent<Rock_Force>().flipAxis = rm.inturn;
+            Debug.Log($"[GameManager.OnYellowTurn] Initialized rock flipAxis={rm.inturn} for player");
+        }
+        
         boardCollider.enabled = false;
         launchCollider.enabled = false;
 
@@ -602,8 +667,6 @@ public class GameManager : MonoBehaviour
     IEnumerator YellowTurn()
     {
         GameObject yellowRock_1 = rockList[rockCurrent].rock;
-
-        rm.inturn = false;
         //Debug.Log("rmInturn is " + rm.inturn);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
@@ -686,6 +749,13 @@ public class GameManager : MonoBehaviour
         }
 
         rm.GetComponent<Sweep>().ExitSweepZone();
+
+        // Hide trajectory line at end of turn (will be redrawn when next player turn starts)
+        TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectoryLine.HideTrajectoryLine();
+        }
 
         //vcam.enabled = false;
 
@@ -1156,7 +1226,9 @@ public class GameManager : MonoBehaviour
         //gsp.loadGame = false;
         yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
 
-        if (gsp.playoffRound < 2)
+        // Show intro only for tournament games (not quick/cash/debug games) 
+        // and only on first game (playoffRound < 2) or when not loading from save
+        if (gsp.playoffRound < 2 && !gsp.cashGame && !gsp.debug)
             yield return StartCoroutine(TournyIntro());
 
         if (rockCurrent > 0)

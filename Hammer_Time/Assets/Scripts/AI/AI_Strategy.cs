@@ -33,6 +33,25 @@ public class AI_Strategy : MonoBehaviour
     Rock_Info closestRockInfo;
 
     string phase;
+    
+    /// <summary>
+    /// Helper: Check if a guard is blocking a target rock
+    /// </summary>
+    private bool IsGuardBlocking(Transform guard, GameObject targetRock, float tolerance = 0.1f)
+    {
+        if (guard == null || targetRock == null) return false;
+        return Mathf.Abs(guard.position.x - targetRock.transform.position.x) <= tolerance;
+    }
+    
+    /// <summary>
+    /// Helper: Get the rock index for a transform (guard or house rock)
+    /// </summary>
+    private int GetRockIndex(Transform rockTransform)
+    {
+        if (rockTransform == null) return -1;
+        Rock_Info info = rockTransform.GetComponent<Rock_Info>();
+        return info != null ? info.rockIndex : -1;
+    }
 
     public string activeTeamName;
     public int activeTeamScore;
@@ -48,6 +67,16 @@ public class AI_Strategy : MonoBehaviour
     }
     public void SimpleAIShoot(int rockCurrent)
     {
+        // Initialize active team name based on rock number and hammer
+        if (rockCurrent % 2 == 0)
+        {
+            activeTeamName = gm.redHammer ? gm.yellowTeamName : gm.redTeamName;
+        }
+        else
+        {
+            activeTeamName = gm.redHammer ? gm.redTeamName : gm.yellowTeamName;
+        }
+        
         int valuableRockIndex = GetMostValuableOpponentRockIndex(activeTeamName);
 
         if (valuableRockIndex >= 0)
@@ -93,6 +122,640 @@ public class AI_Strategy : MonoBehaviour
         }
         return bestIndex;
     }
+    
+    #region HELPER METHODS FOR INTENT-BASED STRATEGY
+    
+    /// <summary>
+    /// Find the biggest threat to my team (opponent rock closest to button)
+    /// Returns houseList index, or -1 if no threats found
+    /// </summary>
+    private int FindBiggestThreat(string myTeamName)
+    {
+        int bestThreat = -1;
+        float bestThreatValue = float.MinValue;
+        
+        for (int i = 0; i < gm.houseList.Count; i++)
+        {
+            var rockEntry = gm.houseList[i];
+            
+            // Only opponent rocks are threats
+            if (rockEntry.rockInfo.teamName == myTeamName)
+                continue;
+            
+            // Score threat based on distance to button
+            float distToButton = Vector2.Distance(rockEntry.rock.transform.position, new Vector2(0f, 6.5f));
+            float threatValue = 10f - distToButton; // Closer = higher threat
+            
+            // BONUS: If rock is guarded, it's an even bigger threat (harder to remove)
+            if (IsGuardBlocking(cenGuard, rockEntry.rock) || 
+                IsGuardBlocking(lCornGuard, rockEntry.rock) || 
+                IsGuardBlocking(rCornGuard, rockEntry.rock))
+            {
+                threatValue += 3f; // Guarded rocks are +30% more threatening
+            }
+            
+            if (threatValue > bestThreatValue)
+            {
+                bestThreatValue = threatValue;
+                bestThreat = rockEntry.rockInfo.rockIndex;
+            }
+        }
+        
+        return bestThreat;
+    }
+    
+    /// <summary>
+    /// Count how many of my rocks are in scoring position
+    /// </summary>
+    private int CountMyRocksInScoring(string myTeamName)
+    {
+        int count = 0;
+        foreach (var rockEntry in gm.houseList)
+        {
+            if (rockEntry.rockInfo.teamName == myTeamName)
+            {
+                float distToButton = Vector2.Distance(rockEntry.rock.transform.position, new Vector2(0f, 6.5f));
+                if (distToButton < 1.83f) // Within 12-foot circle
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    /// <summary>
+    /// Check if I have a good lead to protect (multiple scoring rocks)
+    /// </summary>
+    private bool HasStrongLead(string myTeamName)
+    {
+        int myRocks = CountMyRocksInScoring(myTeamName);
+        
+        // Need at least 2 rocks in scoring AND be ahead
+        if (myRocks < 2) return false;
+        if (activeTeamScore <= oppTeamScore) return false;
+        
+        return true;
+    }
+    
+    #region INTENT-BASED SHOT SELECTION METHODS
+    
+    /// <summary>
+    /// ?? PROOF-OF-CONCEPT: Intent-based shot selection for ConservativeSteal
+    /// This demonstrates the NEW architecture - simple, clear, smart!
+    /// </summary>
+    private bool TryIntentBasedShot_ConservativeSteal(int rockCurrent, string phase)
+    {
+        Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;
+        
+        Debug.Log($"[IntentBased] ConservativeSteal - {phase} phase");
+        
+        // PHASE 1: Identify the situation
+        int threatRock = FindBiggestThreat(activeTeamName);
+        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
+        bool hasGuards = (gm.gList.Count > 0);
+        
+        // PHASE 2: Decide intent based on situation
+        ShotContext context;
+        
+        // EARLY PHASE: Setup game
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+            {
+                // They have a rock in play - remove it
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false; // Conservative - only if good shot available
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (!hasGuards)
+            {
+                // No threats, build defense
+                context = new ShotContext(ShotIntent.CreateOpportunity);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Guards in play, draw behind them
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // MIDDLE PHASE: Build position or remove threats
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove biggest threat
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = (myRocksInHouse > 0); // More risk if we have rocks
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 1)
+            {
+                // We're in good shape - protect lead
+                context = new ShotContext(ShotIntent.ProtectLead);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Keep building
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // LATE PHASE: Aggressive removal or protect lead
+        else if (phase == "late")
+        {
+            if (threatRock >= 0 && myRocksInHouse == 0)
+            {
+                // Must remove threat if we have nothing
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true; // More aggressive late
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0 && threatRock >= 0)
+            {
+                // Evaluate: remove threat vs draw another
+                float threatDist = Vector2.Distance(
+                    gm.rockList[threatRock].rock.transform.position,
+                    new Vector2(0f, 6.5f)
+                );
+                
+                if (threatDist < 1.0f) // Threat is very close to button
+                {
+                    // Remove it!
+                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                    context.acceptRisk = true;
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+                else
+                {
+                    // Draw another rock (multi-point potential)
+                    context = new ShotContext(ShotIntent.ScorePoints);
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+            }
+            else
+            {
+                // No threats - just score!
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // Unknown phase - use fallback
+        return false;
+    }
+    
+    /// <summary>
+    /// ?? Intent-based: AggressiveHammer - Steal at all costs with hammer advantage
+    /// </summary>
+    private bool TryIntentBasedShot_AggressiveHammer(int rockCurrent, string phase)
+    {
+        Debug.Log($"[IntentBased] AggressiveHammer - {phase} phase");
+        
+        int threatRock = FindBiggestThreat(activeTeamName);
+        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
+        int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
+        
+        ShotContext context;
+        
+        // EARLY: Build aggressive setup
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove any opposition rock immediately
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true; // Aggressive!
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Build guards for corner game
+                context = new ShotContext(ShotIntent.CreateOpportunity);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // MIDDLE: Aggressive removal or setup multi-point end
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+            {
+                // Always remove threats when aggressive
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse >= 1)
+            {
+                // Build on our position
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Keep setting up
+                context = new ShotContext(ShotIntent.CreateOpportunity);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // LATE: Go for the steal or setup
+        else if (phase == "late")
+        {
+            if (threatRock >= 0 && oppRocksInHouse >= 2)
+            {
+                // They're building points - must remove
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse == 0 && threatRock < 0)
+            {
+                // Clean house - draw for steal
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Complex situation - score or protect
+                if (myRocksInHouse > oppRocksInHouse)
+                {
+                    context = new ShotContext(ShotIntent.ProtectLead);
+                }
+                else
+                {
+                    context = new ShotContext(ShotIntent.ScorePoints);
+                }
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// ?? Intent-based: ConservativeScoreTwoOrBlankHammer - Need 2 points or keep hammer
+    /// </summary>
+    private bool TryIntentBasedShot_ScoreTwoOrBlank(int rockCurrent, string phase)
+    {
+        Debug.Log($"[IntentBased] ScoreTwoOrBlank - {phase} phase");
+        
+        int threatRock = FindBiggestThreat(activeTeamName);
+        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
+        
+        ShotContext context;
+        
+        // Strategy: Clear any threats, build multiple scoring rocks
+        
+        // EARLY: Remove threats immediately, build corners
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+            {
+                // Can't let them have anything - remove it
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false; // Don't risk blank
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Draw to corners for 2-point setup
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // MIDDLE: Keep clearing, spread rocks
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove anything in our way
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse >= 2)
+            {
+                // We have 2+ rocks - protect them!
+                context = new ShotContext(ShotIntent.ProtectLead);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Keep building
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // LATE: Final decision - score 2 or blank
+        else if (phase == "late")
+        {
+            if (myRocksInHouse >= 2 && threatRock < 0)
+            {
+                // We have 2+ and no threats - DONE! Just add more
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (threatRock >= 0)
+            {
+                // Remove final threat
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse == 1)
+            {
+                // Only 1 rock - can't score 2, try to blank
+                context = new ShotContext(ShotIntent.ForceBlank);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Draw for points
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// ?? Intent-based: AggressiveNotHammer - Steal at all costs without hammer
+    /// </summary>
+    private bool TryIntentBasedShot_AggressiveNotHammer(int rockCurrent, string phase)
+    {
+        Debug.Log($"[IntentBased] AggressiveNotHammer - {phase} phase");
+        
+        int threatRock = FindBiggestThreat(activeTeamName);
+        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
+        bool hasGuards = (gm.gList.Count > 0);
+        
+        ShotContext context;
+        
+        // EARLY: Aggressive setup or removal
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove immediately - can't let them build
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true; // Very aggressive
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (!hasGuards)
+            {
+                // Build tight guards for corner draw setup
+                context = new ShotContext(ShotIntent.CreateOpportunity);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Draw behind guards
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // MIDDLE: Keep pressure, remove threats
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+            {
+                // Always remove when aggressive
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0)
+            {
+                // Build on position
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Keep setting up
+                context = new ShotContext(ShotIntent.CreateOpportunity);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // LATE: All-in for steal
+        else if (phase == "late")
+        {
+            if (threatRock >= 0 && myRocksInHouse == 0)
+            {
+                // Must remove to have any chance
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = true;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0 && threatRock >= 0)
+            {
+                // Decide: protect or attack
+                float myBestDist = 999f;
+                float theirBestDist = 999f;
+                
+                foreach (var rock in gm.houseList)
+                {
+                    float dist = Vector2.Distance(rock.rock.transform.position, new Vector2(0f, 6.5f));
+                    if (rock.rockInfo.teamName == activeTeamName && dist < myBestDist)
+                        myBestDist = dist;
+                    else if (rock.rockInfo.teamName != activeTeamName && dist < theirBestDist)
+                        theirBestDist = dist;
+                }
+                
+                if (theirBestDist < myBestDist)
+                {
+                    // They're closer - attack!
+                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                    context.acceptRisk = true;
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+                else
+                {
+                    // We're ahead - add more
+                    context = new ShotContext(ShotIntent.ScorePoints);
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+            }
+            else
+            {
+                // Just score
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// ?? Intent-based: ConservativeStealOrBlank - Force them to 1 or blank the end
+    /// </summary>
+    private bool TryIntentBasedShot_StealOrBlank(int rockCurrent, string phase)
+    {
+        Debug.Log($"[IntentBased] StealOrBlank - {phase} phase");
+        
+        int threatRock = FindBiggestThreat(activeTeamName);
+        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
+        int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
+        
+        ShotContext context;
+        
+        // Strategy: Deny them points, steal if possible, blank acceptable
+        
+        // EARLY: Remove any threats, don't build unless safe
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove it - can't let them build
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false; // Conservative
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0)
+            {
+                // We have rocks - guard them
+                context = new ShotContext(ShotIntent.ProtectLead);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Draw for steal attempt
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // MIDDLE: Keep clearing, build cautiously
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+            {
+                // Remove threats
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0)
+            {
+                // Protect what we have
+                context = new ShotContext(ShotIntent.ProtectLead);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Draw cautiously
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        // LATE: Final decision - steal, blank, or limit damage
+        else if (phase == "late")
+        {
+            if (oppRocksInHouse >= 2)
+            {
+                // They have 2+ rocks - we MUST remove or blank
+                if (threatRock >= 0)
+                {
+                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                    context.acceptRisk = false;
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+                else
+                {
+                    // Try to blank (draw wide or throw away)
+                    context = new ShotContext(ShotIntent.ForceBlank);
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+            }
+            else if (threatRock >= 0)
+            {
+                // Remove final threat
+                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                context.acceptRisk = false;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (myRocksInHouse > 0)
+            {
+                // We might steal - protect!
+                context = new ShotContext(ShotIntent.ProtectLead);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else
+            {
+                // Blank is fine
+                context = new ShotContext(ShotIntent.ForceBlank);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    #endregion
+    
+    #endregion // INTENT-BASED SHOT SELECTION METHODS
 
     public void OnShot(int rockCurrent)
     {
@@ -159,7 +822,7 @@ public class AI_Strategy : MonoBehaviour
             {
                 if (activeTeamScore - oppTeamScore >= 2)
                     AggressiveNotHammer(rockCurrent, phase);
-                if (activeTeamScore <= oppTeamScore)
+                else if (activeTeamScore <= oppTeamScore)
                     ConservativeStealOrBlank(rockCurrent, phase);
                 else
                     ConservativeSteal(rockCurrent, phase);
@@ -196,9 +859,9 @@ public class AI_Strategy : MonoBehaviour
             else
             {
                 if (activeTeamScore < oppTeamScore)
-                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
-                else
                     AggressiveHammer(rockCurrent, phase);
+                else
+                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
             }
                 
         }
@@ -219,6 +882,15 @@ public class AI_Strategy : MonoBehaviour
         Debug.Log("Conservative Steal - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
+        if (TryIntentBasedShot_ConservativeSteal(rockCurrent, phase))
+        {
+            Debug.Log("[ConservativeSteal] ? Intent-based shot selected!");
+            return;
+        }
+        
+        Debug.Log("[ConservativeSteal] ? Intent-based failed, using legacy logic...");
 
         switch (phase)
         {
@@ -238,7 +910,7 @@ public class AI_Strategy : MonoBehaviour
                         //if it's in the centre
                         if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
                         {
-                            if (cenGuard | tCenGuard)
+                            if (cenGuard || tCenGuard)
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                             else
                                 aiTarg.OnTarget("Tap Back", rockCurrent, closestRockInfo.rockIndex);
@@ -253,7 +925,7 @@ public class AI_Strategy : MonoBehaviour
                 //if there's guards
                 else if (gm.gList.Count != 0)
                 {
-                    if (cenGuard | tCenGuard)
+                    if (cenGuard || tCenGuard)
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                     else
                         aiShoot.OnShot("Centre Guard", rockCurrent);
@@ -265,7 +937,7 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Middle Not Hammer
-            case "middle hammer":
+            case "middle":
 
                 if (gm.houseList.Count != 0)
                 {
@@ -278,29 +950,33 @@ public class AI_Strategy : MonoBehaviour
                             {
                                 if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f)
                                 {
-                                    if (cenGuard | tCenGuard)
+                                    if (cenGuard || tCenGuard)
                                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                     else
                                         aiShoot.OnShot("Centre Guard", rockCurrent);
                                 }
                                 else if (gm.houseList[1].rock.transform.position.x < 0)
                                 {
-                                    if (lCornGuard)
-                                        aiTarg.OnTarget("Peel", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                    else
-                                        aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                                if (lCornGuard)
+                                    aiTarg.OnTarget("Peel", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                else if (gm.houseList.Count > 1)
+                                    aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                else
+                                    aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                 }
                                 else
                                 {
                                     if (rCornGuard)
                                         aiTarg.OnTarget("Peel", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                                    else if (gm.houseList.Count > 1)
+                                        aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                                     else
-                                        aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
+                                        aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                 }
                             }
                             else
                             {
-                                if (cenGuard | tCenGuard)
+                                if (cenGuard || tCenGuard)
                                 {
                                     if (lCornGuard)
                                         aiTarg.OnTarget("Peel", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
@@ -315,7 +991,7 @@ public class AI_Strategy : MonoBehaviour
                         }
                         else
                         {
-                            if (cenGuard | tCenGuard)
+                            if (cenGuard || tCenGuard)
                             {
                                 if (lCornGuard)
                                     aiTarg.OnTarget("Peel", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
@@ -334,15 +1010,15 @@ public class AI_Strategy : MonoBehaviour
                         //if it's in the centre
                         if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
                         {
-                            if (cenGuard | tCenGuard)
+                            if (cenGuard || tCenGuard)
                             {
-                                if (Mathf.Abs(cenGuard.position.x - closestRock.transform.position.x) <= 0.1f | Mathf.Abs(cenGuard.position.x - closestRock.transform.position.x) <= 0.1f)
+                                if (IsGuardBlocking(cenGuard, closestRock) || IsGuardBlocking(tCenGuard, closestRock))
                                 {
                                     if (gm.houseList.Count > 1)
                                     {
                                         if (gm.houseList[1].rockInfo.teamName != rockInfo.teamName)
                                         {
-                                            if (Mathf.Abs(cenGuard.position.x - gm.houseList[1].rock.transform.position.x) <= 0.1f | Mathf.Abs(cenGuard.position.x - gm.houseList[1].rock.transform.position.x) <= 0.1f)
+                                            if (gm.houseList.Count > 1 && (IsGuardBlocking(cenGuard, gm.houseList[1].rock) || IsGuardBlocking(tCenGuard, gm.houseList[1].rock)))
                                             {
                                                 if (cenGuard)
                                                     aiTarg.OnTarget("Peel", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
@@ -351,7 +1027,7 @@ public class AI_Strategy : MonoBehaviour
                                                 else
                                                     aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                                             }
-                                            else
+                                            else if (gm.houseList.Count > 1)
                                             {
                                                 if (gm.houseList[1].rock.transform.position.x < 0)
                                                 {
@@ -368,19 +1044,25 @@ public class AI_Strategy : MonoBehaviour
                                                         aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                                                 }
                                             }
+                                            else
+                                            {
+                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                                            }
                                         }
                                         else
                                             aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                     }
-                                    else
-                                    {
-                                        if (cenGuard)
-                                            aiTarg.OnTarget("Peel", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else if (tCenGuard)
-                                            aiTarg.OnTarget("Peel", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                        else
-                                            aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
-                                    }
+                else
+                {
+                    if (cenGuard)
+                        aiTarg.OnTarget("Peel", rockCurrent, cenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                    else if (tCenGuard)
+                        aiTarg.OnTarget("Peel", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
+                    else if (gm.houseList.Count > 1)
+                        aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                    else
+                        aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                }
                                 }
                                 else
                                     aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
@@ -428,14 +1110,14 @@ public class AI_Strategy : MonoBehaviour
             #endregion
 
             #region Late Not Hammer
-            case "late hammer":
+            case "late":
                 //there's rocks in the house
                 if (gm.houseList.Count != 0)
                 {
                     //They have shot rock
                     if (closestRockInfo.teamName != rockInfo.teamName)
                     {
-                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f && cenGuard | tCenGuard)
+                        if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f && (cenGuard || tCenGuard))
                         {
                             if (cenGuard)
                             {
@@ -456,7 +1138,7 @@ public class AI_Strategy : MonoBehaviour
                         //there's a centre guard
 
                         //it's on the left wing
-                        else if (closestRock.transform.position.x < 0 & lCornGuard)
+                        else if (closestRock.transform.position.x < 0 && lCornGuard)
                         {
                             if (Mathf.Abs(lCornGuard.position.x - closestRock.transform.position.x) > 0.1f)
                                 aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
@@ -464,7 +1146,7 @@ public class AI_Strategy : MonoBehaviour
                                 aiTarg.OnTarget("Peel", rockCurrent, lCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
                         }
                         //it's on the right wing
-                        else if (closestRock.transform.position.x > 0 & rCornGuard)
+                        else if (closestRock.transform.position.x > 0 && rCornGuard)
                         {
                             if (Mathf.Abs(rCornGuard.position.x - closestRock.transform.position.x) > 0.1f)
                                 aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
@@ -488,7 +1170,7 @@ public class AI_Strategy : MonoBehaviour
                                     aiShoot.OnShot("Left Corner Guard", rockCurrent);
                                 else if (gm.houseList[1].rock.transform.position.x > 0f)
                                     aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                                else if (cenGuard | tCenGuard)
+                                else if (cenGuard || tCenGuard)
                                     aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                 else
                                     aiShoot.OnShot("Centre Guard", rockCurrent);
@@ -528,7 +1210,7 @@ public class AI_Strategy : MonoBehaviour
                         {
                             if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
                             {
-                                if (cenGuard | tCenGuard)
+                                if (cenGuard || tCenGuard)
                                     aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                 else
                                     aiShoot.OnShot("Centre Guard", rockCurrent);
@@ -564,6 +1246,15 @@ public class AI_Strategy : MonoBehaviour
         Debug.Log("Aggressive Hammer - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
+        if (TryIntentBasedShot_AggressiveHammer(rockCurrent, phase))
+        {
+            Debug.Log("[AggressiveHammer] ? Intent-based shot selected!");
+            return;
+        }
+        
+        Debug.Log("[AggressiveHammer] ? Intent-based failed, using legacy logic...");
 
         switch (phase)
         {
@@ -589,7 +1280,7 @@ public class AI_Strategy : MonoBehaviour
                     aiTarg.OnTarget("Tick Shot", rockCurrent, tCenGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
                 }
                 //left and right corner guard
-                else if (rCornGuard & lCornGuard)
+                else if (rCornGuard && lCornGuard)
                 {
                     aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
                 }
@@ -621,7 +1312,7 @@ public class AI_Strategy : MonoBehaviour
                         aiShoot.OnShot("Left Corner Guard", rockCurrent);
                     }
                     //centre and tight centre guards
-                    else if (lCornGuard & rCornGuard)
+                    else if (lCornGuard && rCornGuard)
                     {
                         aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
                     }
@@ -731,7 +1422,7 @@ public class AI_Strategy : MonoBehaviour
                     else if (gm.houseList.Count > 1)
                     {
                         //if the second shot is mine
-                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                         {
 
                             aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
@@ -769,7 +1460,7 @@ public class AI_Strategy : MonoBehaviour
                             aiShoot.OnShot("Right Twelve Foot", rockCurrent);
                         }
                         //right corner and left corner guards
-                        else if (lCornGuard & rCornGuard)
+                        else if (lCornGuard && rCornGuard)
                         {
                             aiTarg.OnTarget("Auto Draw Twelve Foot", rockCurrent, rockCurrent);
                         }
@@ -854,7 +1545,7 @@ public class AI_Strategy : MonoBehaviour
                         if (gm.houseList.Count > 1)
                         {
                             //if the second shot is mine
-                            if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                            if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                             {
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                             }
@@ -912,7 +1603,7 @@ public class AI_Strategy : MonoBehaviour
                         else if (gm.houseList.Count > 1)
                         {
                             //if the second shot is mine
-                            if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                            if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                             {
 
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
@@ -953,6 +1644,15 @@ public class AI_Strategy : MonoBehaviour
         Debug.Log("Score Two or Blank - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
+        if (TryIntentBasedShot_ScoreTwoOrBlank(rockCurrent, phase))
+        {
+            Debug.Log("[ScoreTwoOrBlank] ? Intent-based shot selected!");
+            return;
+        }
+        
+        Debug.Log("[ScoreTwoOrBlank] ? Intent-based failed, using legacy logic...");
 
         switch (phase)
         {
@@ -1204,6 +1904,15 @@ public class AI_Strategy : MonoBehaviour
         Debug.Log("Aggressive Not Hammer - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
+        if (TryIntentBasedShot_AggressiveNotHammer(rockCurrent, phase))
+        {
+            Debug.Log("[AggressiveNotHammer] ? Intent-based shot selected!");
+            return;
+        }
+        
+        Debug.Log("[AggressiveNotHammer] ? Intent-based failed, using legacy logic...");
 
         switch (phase)
         {
@@ -1224,7 +1933,7 @@ public class AI_Strategy : MonoBehaviour
                         aiShoot.OnShot("Tight Centre Guard", rockCurrent);
                     }
                     //centre and tight centre guards
-                    else if (cenGuard & tCenGuard)
+                    else if (cenGuard && tCenGuard)
                     {
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, rockCurrent);
                     }
@@ -1266,7 +1975,7 @@ public class AI_Strategy : MonoBehaviour
                         }
                     }
                     //centre and tight centre guards
-                    else if (cenGuard & tCenGuard)
+                    else if (cenGuard && tCenGuard)
                     {
                         if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
                         {
@@ -1297,24 +2006,27 @@ public class AI_Strategy : MonoBehaviour
                         //if there's guards
                         if (gm.gList.Count != 0)
                         {
-                            if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f)
+                            // Check if guard is blocking - if not, take out the rock
+                            if (!IsGuardBlocking(cenGuard, closestRock))
                             {
-                                aiTarg.OnTarget("Auto Take Out", rockCurrent, rockCurrent);
+                                aiTarg.OnTarget("Take Out", rockCurrent, closestRockInfo.rockIndex);
                             }
                             else
+                            {
                                 aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
-                            aiTarg.OnTarget("Auto Take Out", rockCurrent, rockCurrent);
+                            }
                         }
                     }
                     else if (gm.houseList.Count >= 2)
                     {
-                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                         {
                             aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                         }
                         else
                         {
-                            aiTarg.OnTarget("Auto Take Out", rockCurrent, rockCurrent);
+                            // Physics-based takeout of second closest rock
+                            aiTarg.OnTarget("Take Out", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                         }
                     }
                     else
@@ -1341,7 +2053,7 @@ public class AI_Strategy : MonoBehaviour
                         aiShoot.OnShot("Tight Centre Guard", rockCurrent);
                     }
                     //centre and tight centre guards
-                    else if (cenGuard & tCenGuard)
+                    else if (cenGuard && tCenGuard)
                     {
                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                     }
@@ -1378,7 +2090,7 @@ public class AI_Strategy : MonoBehaviour
                         }
                     }
                     //centre and tight centre guards
-                    else if (cenGuard & tCenGuard)
+                    else if (cenGuard && tCenGuard)
                     {
                         //if closest is in the four foot
                         if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.5f)
@@ -1444,7 +2156,7 @@ public class AI_Strategy : MonoBehaviour
                             else aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                         }
                         //centre and tight centre guards
-                        else if (cenGuard & tCenGuard)
+                        else if (cenGuard && tCenGuard)
                         {
                             //if the centre and tight centre guards are not covering it
                             if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f & Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
@@ -1462,7 +2174,7 @@ public class AI_Strategy : MonoBehaviour
                     else if (gm.houseList.Count > 1)
                     {
                         //if the second shot is mine
-                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                         {
 
                             aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
@@ -1621,7 +2333,7 @@ public class AI_Strategy : MonoBehaviour
                                             }
                                         }
                                         //centre and tight centre guards
-                                        else if (cenGuard & tCenGuard)
+                                        else if (cenGuard && tCenGuard)
                                         {
                                             //if the centre and tight centre guards are not covering it
                                             if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f & Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
@@ -1744,7 +2456,7 @@ public class AI_Strategy : MonoBehaviour
                             }
                         }
                         //centre and tight centre guards
-                        else if (cenGuard & tCenGuard)
+                        else if (cenGuard && tCenGuard)
                         {
                             //if the centre and tight centre guards are not covering it
                             if (Mathf.Abs(closestRock.transform.position.x - cenGuard.position.x) >= 0.1f & Mathf.Abs(closestRock.transform.position.x - tCenGuard.position.x) >= 0.1f)
@@ -1781,7 +2493,7 @@ public class AI_Strategy : MonoBehaviour
                     else if (gm.houseList.Count > 1)
                     {
                         //if the second shot is mine
-                        if (gm.houseList[1].rockInfo.teamName == closestRockInfo.teamName)
+                        if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
                         {
 
                             aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
@@ -1826,6 +2538,15 @@ public class AI_Strategy : MonoBehaviour
             Debug.Log("Steal or Force - " + phase);
 
             aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+            
+            // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
+            if (TryIntentBasedShot_StealOrBlank(rockCurrent, phase))
+            {
+                Debug.Log("[StealOrBlank] ? Intent-based shot selected!");
+                return;
+            }
+            
+            Debug.Log("[StealOrBlank] ? Intent-based failed, using legacy logic...");
 
             switch (phase)
             {
@@ -1954,10 +2675,11 @@ public class AI_Strategy : MonoBehaviour
                                         {
                                             if (rCornGuard)
                                                 aiTarg.OnTarget("Peel", rockCurrent, rCornGuard.gameObject.GetComponent<Rock_Info>().rockIndex);
-                                            else
+                                            else if (gm.houseList.Count > 1)
                                                 aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
+                                            else
+                                                aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                         }
-                                            aiTarg.OnTarget("Tap Back", rockCurrent, gm.houseList[1].rockInfo.rockIndex);
                                     }
                                         
                                 }
@@ -1967,7 +2689,7 @@ public class AI_Strategy : MonoBehaviour
                             {
                                 if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
                                 {
-                                    if (cenGuard | tCenGuard)
+                                    if (cenGuard || tCenGuard)
                                         aiTarg.OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                                     else
                                         aiShoot.OnShot("Centre Guard", rockCurrent);
