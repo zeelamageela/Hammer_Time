@@ -116,12 +116,26 @@ public class GameManager : MonoBehaviour
     #region "Setup and Reset"
     IEnumerator SetupGame()
     {
-        //gHUD.SetHUD(redRock);
-        Debug.Log("Game Start");
-
-
         gsp = FindFirstObjectByType<GameSettingsPersist>();
+        //gHUD.SetHUD(redRock);
+        Debug.Log("[GameManager] Game Start - loadGame: " + (gsp.loadGame ? "TRUE" : "FALSE"));
+
+
         Rock_Placement rp = FindFirstObjectByType<Rock_Placement>();
+        
+        
+        // CRITICAL FIX: Don't set gameInProgress here if loading from save!
+        // LoadGame() will handle the loaded game state
+        if (!gsp.loadGame)
+        {
+            gsp.gameInProgress = true;
+            Debug.Log("[GameManager] NEW game - set gameInProgress = true");
+        }
+        else
+        {
+            gsp.LoadTourny();
+            Debug.Log("[GameManager] LOADING game - gameInProgress preserved from save: " + gsp.gameInProgress);
+        }
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
@@ -131,10 +145,15 @@ public class GameManager : MonoBehaviour
         aiTeamYellow = gsp.aiYellow;
         aiTeamRed = gsp.aiRed;
         mixed = gsp.mixed;
-        gsp.gameInProgress = true;
+
+
         rockCurrent = 2 * (8 - gsp.rocks);
-        if (gsp.score.Length < 1)
+        // CRITICAL FIX: Initialize score array if null or wrong size
+        if (gsp.score == null || gsp.score.Length < (endTotal + 1))
+        {
+            Debug.Log($"[GameManager] Initializing score array for {endTotal + 1} ends");
             gsp.score = new Vector2Int[endTotal + 1];
+        }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
         {
@@ -1118,11 +1137,14 @@ public class GameManager : MonoBehaviour
             endCurrent++;
             gsp.endCurrent = endCurrent;
             gsp.LoadFromGM();
+            
+            // CRITICAL FIX: When end finishes (not game), keep gameInProgress = true for next end
+            gsp.gameInProgress = true;
+            Debug.Log("[GameManager] End finished - gameInProgress remains true for next end");
+            
             SaveGame();
-            //yield return StartCoroutine(SaveGame());
             yield return new WaitForEndOfFrame();
             SceneManager.LoadScene("End_Menu_Tourny_1");
-            //StartCoroutine(ResetGame());
         }
         else if (endCurrent >= endTotal)
         {
@@ -1140,7 +1162,13 @@ public class GameManager : MonoBehaviour
         endCurrent++;
 
         gsp.LoadFromGM();
+        
+        // CRITICAL FIX: Clear game state when game ends
         gsp.loadGame = false;
+        gsp.gameInProgress = false;
+        Debug.Log("[GameManager] Game ended - cleared gameInProgress and loadGame flags");
+        Debug.Log($"[GameManager] Final score: {redTeamName} {redScore} - {yellowTeamName} {yellowScore}");
+        
         SaveGame();
         SceneManager.LoadScene("End_Menu_Tourny_1");
     }
@@ -1184,6 +1212,7 @@ public class GameManager : MonoBehaviour
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
         endCurrent = gsp.endCurrent;
+        rockCurrent = gsp.rockCurrent;
         //rockTotal = myFile.GetInt("Rocks Per Team") * 2;
         aiTeamRed = gsp.aiRed;
         aiTeamYellow = gsp.aiYellow;

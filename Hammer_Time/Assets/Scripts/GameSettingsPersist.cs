@@ -63,6 +63,7 @@ public class GameSettingsPersist : MonoBehaviour
     public bool careerLoad;
     public bool tournyInProgress;
     public bool gameInProgress;
+    public bool justFinishedGame;  // NEW: Flag to indicate a game just finished (vs loading between games)
 
     public List<Team_List> teamList;
     public Team[] teams;
@@ -335,12 +336,21 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournySetup(int btn = 0)
     {
-        Debug.Log("Tourny Setup GSP");
+        Debug.Log("[GSP] TournySetup called");
         TournyManager tm = FindFirstObjectByType<TournyManager>();
         PlayoffManager pm = FindFirstObjectByType<PlayoffManager>();
         PlayoffManager_SingleK pm1k = FindFirstObjectByType<PlayoffManager_SingleK>();
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         CashGames cg = FindFirstObjectByType<CashGames>();
+        
+        // CRITICAL: Reset game state flags when setting up NEW game
+        gameInProgress = false;
+        loadGame = false;
+        rockCurrent = 0;
+        endCurrent = 0;
+        redScore = 0;
+        yellowScore = 0;
+        
         careerLoad = false;
         if (cg != null)
         {
@@ -580,10 +590,22 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTourny()
     {
-        Debug.Log("Load Tourny GSP");
+        Debug.Log("[GameSettingsPersist] LoadTourny called");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        cm.LoadCareer(this);
+        // CRITICAL FIX: Don't reload career if tournament is already in progress
+        // The flags (justFinishedGame, tournyInProgress, etc.) are already set correctly in memory
+        // Reloading would overwrite them with stale data
+        if (!tournyInProgress)
+        {
+            Debug.Log("[GameSettingsPersist] Loading career for tournament setup");
+            cm.LoadCareer(this);
+        }
+        else
+        {
+            Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
+        }
+        
         bg = cm.currentTourny.BG;
         crowdDensity = cm.currentTourny.crowdDensity;
         prize = cm.currentTourny.prizeMoney;

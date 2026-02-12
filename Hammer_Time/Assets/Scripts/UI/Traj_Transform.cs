@@ -14,7 +14,6 @@ public class Traj_Transform : MonoBehaviour
     public float weightScale;
     public float weight;
     float angle;
-    //bool flipAxis = false;
 
     public GameObject aimUI;
     public Transform point1;
@@ -28,56 +27,67 @@ public class Traj_Transform : MonoBehaviour
 
     void Update()
     {
-        //if the rock list has rocks in it
-        if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
+        // CRITICAL FIX: Add comprehensive null checks
+        if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
+            return;
+        
+        if (gm.rockCurrent >= gm.rockList.Count)
+            return;
+        
+        if (gm.rockList[gm.rockCurrent] == null || gm.rockList[gm.rockCurrent].rock == null)
+            return;
+        
+        rock = gm.rockList[gm.rockCurrent].rock;
+        
+        if (rock == null)
+            return;
+        
+        Rock_Flick rockFlick = rock.GetComponent<Rock_Flick>();
+        if (rockFlick == null)
+            return;
+
+        springDistance = rockFlick.springDistance;
+        springDirection = rockFlick.springDirection;
+
+        angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
+
+        weight = (weightScale * springDistance) / 4f;
+
+        if (!rm.inturn)
         {
-
-            //fetch the current rock from gm
-            rock = gm.rockList[gm.rockCurrent].rock;
-
-            //compute the distance and direction
-            springDistance = rock.GetComponent<Rock_Flick>().springDistance;
-            springDirection = rock.GetComponent<Rock_Flick>().springDirection;
-
-            //convert the direction to an angle and rotate the trajectory
-            angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));
-
-            //scale the line based on the weight of the shot
-            weight = (weightScale * springDistance) / 4f;
-            //weight = (weightScale);
-
-            // FIXED: Visual Bezier curve should match physics simulation convention
-            // rm.inturn = true ? flipAxis = true ? LEFT curl (negative X scale)
-            // rm.inturn = false ? flipAxis = false ? RIGHT curl (positive X scale)
-            // This matches TrajectoryLine.cs physics simulation and Rock_Force.flipAxis
-            if (!rm.inturn)
-            {
-                transform.localScale = new Vector3(-1f, weight, 1f);
-            }
-            else
-            {
-                transform.localScale = new Vector3(1f, weight, 1f);
-            }
-            
-
-            
+            transform.localScale = new Vector3(-1f, weight, 1f);
         }
+        else
+        {
+            transform.localScale = new Vector3(1f, weight, 1f);
+        }
+        
+        if (trajLine == null || trajLine.aimCircle == null || trajLine.shootKnob == null || trajLine.curlPointGO == null)
+            return;
+        
+        SpriteRenderer aimCircleRenderer = trajLine.aimCircle.GetComponent<SpriteRenderer>();
+        if (aimCircleRenderer == null)
+            return;
+        
+        SpriteRenderer shootKnobRenderer = trajLine.shootKnob.GetComponent<SpriteRenderer>();
+        if (shootKnobRenderer == null)
+            return;
 
-        if (trajLine.aimCircle.GetComponent<SpriteRenderer>().enabled)
+        if (aimCircleRenderer.enabled)
         {
             lr.enabled = true;
             lrY.enabled = true;
 
             point1.localPosition = new Vector3(trajLine.aimCircle.transform.position.x, 0f, 0f);
             point2.localPosition = new Vector3(trajLine.curlPointGO.transform.position.x, 0f, 0f);
-            lr.startColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
-            lr.endColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+            lr.startColor = shootKnobRenderer.color;
+            lr.endColor = shootKnobRenderer.color;
 
             pointY1.localPosition = new Vector3(0f, trajLine.aimCircle.transform.position.y, 0f);
             pointY2.localPosition = new Vector3(0f, 0f, 0f);
-            lrY.startColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
-            lrY.endColor = trajLine.shootKnob.GetComponent<SpriteRenderer>().color;
+            lrY.startColor = shootKnobRenderer.color;
+            lrY.endColor = shootKnobRenderer.color;
 
             Vector3[] aimX = new Vector3[2] { point1.transform.position, point2.transform.position };
             lr.SetPositions(aimX);

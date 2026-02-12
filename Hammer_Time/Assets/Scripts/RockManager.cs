@@ -25,13 +25,19 @@ public class RockManager : MonoBehaviour
     
     void FixedUpdate()
     {
-        if (gm.rockList.Count != 0)
+        // CRITICAL FIX: Check if GameManager exists and rockList is initialized
+        if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
+            return;
+        
+        if (gm.rockCurrent < gm.rockList.Count)
         {
-            if (gm.rockCurrent < gm.rockList.Count)
-            {
-                //Debug.Log("Rock List Count is " + gm.rockList.Count);
-                rock = gm.rockList[gm.rockCurrent].rock;
-                rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            // Additional null check for the rock itself
+            if (gm.rockList[gm.rockCurrent] == null || gm.rockList[gm.rockCurrent].rock == null)
+                return;
+            
+            //Debug.Log("Rock List Count is " + gm.rockList.Count);
+            rock = gm.rockList[gm.rockCurrent].rock;
+            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
                 
                 // CRITICAL FIX: Only set flipAxis for AI turns, NEVER for player turns
                 // Player turns are handled by:
@@ -87,10 +93,7 @@ public class RockManager : MonoBehaviour
                     cm.top.depth = -1;
                     cm.InPlayZoom(dist);
                 }
-
             }
-            
-        }
     }
 
 }

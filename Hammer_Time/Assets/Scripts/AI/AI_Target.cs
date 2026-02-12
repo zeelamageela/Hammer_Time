@@ -40,7 +40,16 @@ public class AI_Target : MonoBehaviour
     // Physics-based targeting
     private TrajectorySimulator trajectorySimulator;
     public float iceFriction = 2.5f;
-    public float curlStrength = 0.3f;
+    
+    [Header("Curl Tuning - MUST MATCH TrajectoryLine!")]
+    [Tooltip("Curl strength for AI simulation. CRITICAL: This must match the curlStrength in TrajectoryLine.cs!\n" +
+             "If AI shots miss laterally (curl too much/little), adjust this to match player trajectory.\n" +
+             "Example values:\n" +
+             "0.3 = old weak curl\n" +
+             "13.8 = strong visible curl\n" +
+             "Simulation curl = this value * 0.01 (multiplier in TrajectorySimulator)")]
+    public float curlStrength = 13.8f;  // INCREASED to match stronger curl! Was 0.3, now matches player preview
+    
     public float lateBreakingIntensity = 2.0f;
     public float lateBreakingCurve = 0.8f;
     
@@ -170,14 +179,14 @@ public class AI_Target : MonoBehaviour
             float offsetMultiplier = tryInTurn ? 1f : -1f; // REVERSED!
             
             // TWO-PHASE APPROACH:
-            // Phase 1: Coarse sweep to find general region (-0.6 to +0.6 in 0.1 steps)
-            // Phase 2: Fine sweep around best coarse result (±0.1 in 0.01 steps)
+            // Phase 1: Coarse sweep to find general region (-1.2 to +1.2 in 0.15 steps) - WIDENED for stronger curl
+            // Phase 2: Fine sweep around best coarse result (±0.15 in 0.015 steps)
             
             float bestCoarseOffset = 0f;
             float bestCoarseScore = float.MinValue;
             
-            // PHASE 1: COARSE SWEEP (13 positions)
-            for (float lateralOffsetBase = -0.6f; lateralOffsetBase <= 0.6f; lateralOffsetBase += 0.1f)
+            // PHASE 1: COARSE SWEEP (17 positions) - WIDENED from -0.6/+0.6 to -1.2/+1.2
+            for (float lateralOffsetBase = -1.2f; lateralOffsetBase <= 1.2f; lateralOffsetBase += 0.15f)
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
@@ -208,11 +217,11 @@ public class AI_Target : MonoBehaviour
                 }
             }
             
-            // PHASE 2: FINE SWEEP around best coarse result (21 positions)
-            float fineStart = Mathf.Max(-0.6f, bestCoarseOffset - 0.1f);
-            float fineEnd = Mathf.Min(0.6f, bestCoarseOffset + 0.1f);
+            // PHASE 2: FINE SWEEP around best coarse result (21 positions) - WIDENED to match new range
+            float fineStart = Mathf.Max(-1.2f, bestCoarseOffset - 0.15f);
+            float fineEnd = Mathf.Min(1.2f, bestCoarseOffset + 0.15f);
             
-            for (float lateralOffsetBase = fineStart; lateralOffsetBase <= fineEnd; lateralOffsetBase += 0.01f)
+            for (float lateralOffsetBase = fineStart; lateralOffsetBase <= fineEnd; lateralOffsetBase += 0.015f)
             {
                 // Apply multiplier based on turn direction
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
@@ -1247,14 +1256,17 @@ public class AI_Target : MonoBehaviour
                 
                 Debug.Log($"[AI_Target] Shooter takeout skill: {accuracy}/100");
                 
-                // Scale error: 100 skill = 0.00 max error (PERFECT!), 50 skill = 0.15 max error, 0 skill = 0.25 max error
-                // Formula: maxError = 0.25 * (1 - accuracy/100)
-                // This gives: 100 skill → 0.00, 75 skill → 0.0625, 50 skill → 0.125, 25 skill → 0.1875, 0 skill → 0.25
-                float maxError = 0.25f * (1f - (accuracy / 100f));
+                // Bidirectional error: Can be positive OR negative (sometimes makes shot better!)
+                // Higher skill = smaller error range (more consistent)
+                // Formula: errorRange = 0.05 * (1 - accuracy/100)
+                // This gives: 100 skill → 0.00 range, 75 skill → 0.0125 range, 50 skill → 0.025 range, 0 skill → 0.05 range
+                float errorRange = 0.05f * (1f - (accuracy / 100f));
                 
-                if (maxError > 0f)
+                if (errorRange > 0f)
                 {
-                    Vector2 errorOffset = Random.insideUnitCircle * maxError;
+                    // Random offset within ±errorRange (can improve OR worsen the shot!)
+                    // insideUnitCircle gives random point in circle, scaled by errorRange
+                    Vector2 errorOffset = Random.insideUnitCircle * errorRange;
                     
                     // CRITICAL FIX: Lateral error must respect turn direction
                     // IN-TURN (curls right): pullback on LEFT (negative X) -> negative lateral error moves it MORE left (away from curl)
@@ -1265,7 +1277,8 @@ public class AI_Target : MonoBehaviour
                     
                     pullbackPos += errorOffset;
                     
-                    Debug.Log($"[AI_Target] Accuracy error applied - Max: {maxError:F3}, Actual: {errorOffset.magnitude:F3}\n" +
+                    Debug.Log($"[AI_Target] Accuracy error applied - Range: ±{errorRange:F3}, Actual: {errorOffset.magnitude:F3}\n" +
+                              $"Error offset: ({errorOffset.x:F3}, {errorOffset.y:F3})\n" +
                               $"Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
                               $"Original pullback: {originalPullback}\n" +
                               $"Final pullback: {pullbackPos}\n" +

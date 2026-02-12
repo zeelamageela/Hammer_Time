@@ -26,8 +26,16 @@ public class DrawFormatList : MonoBehaviour
 
     public void DrawSelector(int numberOfTeams, int gameLength, int games)
     {
-        //Debug.Log("Number of Teams is " + numberOfTeams);
-        //Debug.Log("Games is " + games);
+        Debug.Log($"[DrawFormatList] DrawSelector called - numberOfTeams={numberOfTeams}, gameLength={gameLength}, games={games}");
+        
+        // CRITICAL: Verify that the team arrays are populated in the Inspector
+        if (numberOfTeams == 8 && (team8 == null || team8.Length == 0))
+        {
+            Debug.LogError("[DrawFormatList] CRITICAL: team8 array is null or empty! This must be set in the Unity Inspector!");
+            currentFormat = null;
+            return;
+        }
+        
         DrawFormat[] shorterFormat;
         //DrawFormat[] shortestFormat;
 
@@ -94,6 +102,8 @@ public class DrawFormatList : MonoBehaviour
 
         else if (gameLength >= 1)
         {
+            Debug.Log($"[DrawFormatList] gameLength >= 1 branch - about to create shorterFormat with games={games}");
+            
             switch (numberOfTeams)
             {
                 case 5:
@@ -128,12 +138,25 @@ public class DrawFormatList : MonoBehaviour
 
                 case 8:
                     currentFormat = team8;
+                    Debug.Log($"[DrawFormatList] team8 assigned - team8.Length={team8?.Length ?? 0}");
+                    
+                    if (games <= 0)
+                    {
+                        Debug.LogError($"[DrawFormatList] CRITICAL: games parameter is {games}! Cannot create shorterFormat with length <= 0!");
+                        Debug.LogError("[DrawFormatList] This will result in drawFormat.Length = 0. Check gsp.games value!");
+                        currentFormat = null;
+                        break;
+                    }
+                    
                     shorterFormat = new DrawFormat[games];
+                    Debug.Log($"[DrawFormatList] Created shorterFormat with length={games}");
+                    
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
                     }
                     currentFormat = shorterFormat;
+                    Debug.Log($"[DrawFormatList] currentFormat set to shorterFormat - length={currentFormat.Length}");
                     break;
 
                 case 9:
@@ -223,7 +246,14 @@ public class DrawFormatList : MonoBehaviour
             }
         }
 
-        Debug.Log("currentFormat Length is " + currentFormat.Length);
+        Debug.Log("currentFormat Length is " + (currentFormat?.Length ?? 0));
+        
+        if (currentFormat == null || currentFormat.Length == 0)
+        {
+            Debug.LogError($"[DrawFormatList] CRITICAL ERROR: currentFormat is null or empty after DrawSelector!");
+            Debug.LogError($"[DrawFormatList] This usually means the team{numberOfTeams} array is not set up in the Unity Inspector!");
+            Debug.LogError($"[DrawFormatList] Please check the DrawFormatList component in the Tourny_Home scene!");
+        }
     }
 }
 

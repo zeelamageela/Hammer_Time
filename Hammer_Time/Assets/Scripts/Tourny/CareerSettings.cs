@@ -85,6 +85,16 @@ public class CareerSettings : MonoBehaviour
             am.PlayBG(3);
 
         cm.LoadCareer();
+        
+        // Check if we're coming from Main Menu Continue button
+        // If career exists and careerLoad flag is set, auto-load to correct scene
+        if (cm.SaveFileExists() && gsp.careerLoad)
+        {
+            Debug.Log("[CareerSettings] Auto-loading saved career...");
+            LoadToCM();
+            return; // Don't show UI, just load
+        }
+        
         Player(!cm.gameOver);
     }
     // Update is called once per frame
@@ -110,28 +120,42 @@ public class CareerSettings : MonoBehaviour
     {
         cm = FindFirstObjectByType<CareerManager>();
         cm.LoadSettings();
-        ginProg = gsp.loadGame;
+        
+        Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, week: {cm.week}");
 
-        if (gsp.tournyInProgress)
+        // CRITICAL FIX: Check flags in correct priority order:
+        // 1. Mid-game save (highest priority) - load directly into game
+        // 2. Tournament in progress - load tournament home
+        // 3. Normal career - load arena selector
+        
+        if (gsp.gameInProgress)
         {
-            if (ginProg)
-            {
-                SceneManager.LoadScene("TournyGame");
-            }
+            // Mid-game save - load directly into game
+            Debug.Log("[CareerSettings] Loading mid-game save ? TournyGame");
+            gsp.loadGame = true; // Signal to GameManager to load saved positions
+            SceneManager.LoadScene("TournyGame");
+        }
+        else if (gsp.tournyInProgress)
+        {
+            // Tournament in progress but between games - load tournament home
+            Debug.Log("[CareerSettings] Loading tournament (between games) ? Tournament Home");
+            gsp.loadGame = false; // Don't try to load a game, just tournament state
+            
+            if (gsp.KO3)
+                SceneManager.LoadScene("Tourny_Home_3K");
+            else if (gsp.KO1)
+                SceneManager.LoadScene("Tourny_Home_SingleK");
             else
-            {
-                if (gsp.KO3)
-                    SceneManager.LoadScene("Tourny_Home_3K");
-                else if (gsp.KO1)
-                    SceneManager.LoadScene("Tourny_Home_SingleK");
-                else
-                    SceneManager.LoadScene("Tourny_Home_1");
-            }
+                SceneManager.LoadScene("Tourny_Home_1");
         }
         else
+        {
+            // No tournament or game in progress - normal arena selector
+            Debug.Log("[CareerSettings] No tournament/game in progress ? Arena Selector");
+            gsp.loadGame = false;
+            gsp.gameInProgress = false;
             SceneManager.LoadScene("Arena_Selector");
-
-        
+        }
     }
 
     public void Player(bool loadPlayer)
@@ -216,14 +240,27 @@ public class CareerSettings : MonoBehaviour
         cm.gameOver = false;
         nextButton.transform.parent.gameObject.SetActive(true);
 
+        // CRITICAL FIX: Clear ALL game/tournament state flags when starting new career
         gsp.careerLoad = false;
+        gsp.loadGame = false;
+        gsp.gameInProgress = false;
+        gsp.tournyInProgress = false;
+        gsp.draw = 0;
+        gsp.playoffRound = 0;
+        gsp.rockCurrent = 0;
+        gsp.endCurrent = 0;
+        gsp.redScore = 0;
+        gsp.yellowScore = 0;
+        gsp.rockPos = null;
+        gsp.rockInPlay = null;
+        gsp.score = null;
+        
+        Debug.Log("[CareerSettings] New career - cleared all game state flags");
+        
         record = Vector2.zero;
         week = 0;
         season = 0;
         cm.cash = 1000f;
-        gsp.draw = 0;
-        gsp.playoffRound = 0;
-        gsp.tournyInProgress = false;
         cm.inProgress = false;
 
         cm.inventoryID = null;

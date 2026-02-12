@@ -164,10 +164,21 @@ public class MainMenu : MonoBehaviour
 
     public void Continue()
     {
-        gsp.loadGame = true;
-        Debug.Log("Load Game is " + gsp.loadGame);
+        // CRITICAL FIX: Set careerLoad flag to trigger auto-load in CareerSettings
+        Debug.Log("[MainMenu] Continue clicked - setting careerLoad flag and loading Career Menu");
+        
+        if (gsp != null)
+        {
+            gsp.careerLoad = true; // Signal to CareerSettings to auto-load
+        }
+        
         am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene("AIGame");
-        am.Play("Theme");
+        if (am != null)
+        {
+            am.Play("Theme");
+        }
+        
+        // Load career menu which will auto-load the correct scene via CareerSettings.Start()
+        SceneManager.LoadScene("Career_Menu");
     }
 }

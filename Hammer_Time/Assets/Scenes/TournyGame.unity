@@ -8918,6 +8918,7 @@ MonoBehaviour:
   careerLoad: 0
   tournyInProgress: 0
   gameInProgress: 0
+  justFinishedGame: 0
   teams: []
   playoffTeams: []
   cgp: []
@@ -17457,11 +17458,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.01
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.13
+      value: 7.57
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.z
@@ -25316,7 +25317,7 @@ MonoBehaviour:
   lookAheadCount: 5
   usePhysicsSimulation: 1
   iceFriction: 0.38
-  curlStrength: 13.8
+  curlStrength: 4
   lateBreakingIntensity: 0.01
   lateBreakingCurve: 0.01
   collisionMarker: {fileID: 1058954659}
@@ -43882,7 +43883,7 @@ PrefabInstance:
       objectReference: {fileID: 1268648312}
     - target: {fileID: 945653343, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: curlStrength
-      value: 0.38
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 945653343, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: playerTarget

@@ -375,10 +375,26 @@ public class CareerManager : MonoBehaviour
                 RestoreTournamentState(saveData.currentTournamentState, gsp);
             }
             
-            // Restore game state if game was in progress
-            if (saveData.currentGameState != null && saveData.currentGameState.gameInProgress && gsp != null)
+            // CRITICAL FIX: Always restore game state flags, even if game is not in progress
+            // This ensures tournyInProgress and justFinishedGame are restored correctly
+            if (saveData.currentGameState != null && gsp != null)
             {
-                RestoreGameState(saveData.currentGameState, gsp);
+                // Always restore these flags
+                gsp.tournyInProgress = saveData.currentGameState.tournyInProgress;
+                gsp.justFinishedGame = saveData.currentGameState.justFinishedGame;
+                
+                Debug.Log($"[CareerManager] Restored flags from save - tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}");
+                Debug.Log($"[CareerManager] Save data had - tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
+                
+                // Only restore full game state if game was in progress
+                if (saveData.currentGameState.gameInProgress)
+                {
+                    RestoreGameState(saveData.currentGameState, gsp);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[CareerManager] Could not restore flags - currentGameState is null: {saveData.currentGameState == null}, gsp is null: {gsp == null}");
             }
             
             Debug.Log("[CareerManager] Career loaded successfully from JSON");
@@ -617,13 +633,15 @@ public class CareerManager : MonoBehaviour
             // Convert current state to save data
             CareerSaveData saveData = ToSaveData();
             
-            // Add current game state if in progress
-            if (gsp != null && gsp.gameInProgress)
+            // CRITICAL FIX: Save game state if EITHER game is in progress OR tournament is in progress
+            // This ensures we save justFinishedGame and tournyInProgress flags even after game ends
+            if (gsp != null && (gsp.gameInProgress || gsp.tournyInProgress))
             {
                 saveData.currentGameState = new GameStateData
                 {
                     gameInProgress = gsp.gameInProgress,
                     tournyInProgress = gsp.tournyInProgress,
+                    justFinishedGame = gsp.justFinishedGame,  // CRITICAL: Save justFinishedGame flag!
                     isTournyGame = gsp.tourny,
                     ends = gsp.ends,
                     currentEnd = gsp.endCurrent,
@@ -1722,6 +1740,22 @@ public class CareerManager : MonoBehaviour
         // Tournament Results
         if (tournyResults != null) data.tournamentResults.AddRange(tournyResults);
         
+        // Active Tournaments (offered this week)
+        if (activeTournies != null && activeTournies.Length > 0)
+        {
+            foreach (var tourny in activeTournies)
+            {
+                if (tourny != null)
+                {
+                    data.activeTournamentIDs.Add(tourny.id);
+                }
+                else
+                {
+                    data.activeTournamentIDs.Add(-1); // Empty slot
+                }
+            }
+        }
+        
         // Dialogue Flags
         data.dialogueFlags = new DialogueFlagsData
         {
@@ -1887,6 +1921,10 @@ public class CareerManager : MonoBehaviour
         
         // Tournament Results
         tournyResults = new List<int>(data.tournamentResults);
+        
+        // Active Tournaments - will be restored by TournySelector.SetActiveTournies()
+        activeTournies = new Tourny[data.activeTournamentIDs.Count];
+        // Tournament arrays (tournies, tour, prov) are restored by TournySelector
         
         // Dialogue Flags
         coachDialogue = data.dialogueFlags.coachDialogue;
@@ -2067,7 +2105,7 @@ public class CareerManager : MonoBehaviour
                 if (poolPlayer.id == data.id)
                 {
                     player.image = poolPlayer.image;
-                    Debug.Log($"[CareerManager] Restored image for player {data.name} (ID: {data.id})");
+                    //Debug.Log($"[CareerManager] Restored image for player {data.name} (ID: {data.id})");
                     break;
                 }
             }
@@ -2122,6 +2160,9 @@ public class CareerManager : MonoBehaviour
             tournamentState.prize = tm.prize;
             tournamentState.oppTeam = tm.oppTeam;
             tournamentState.playoffRound = tm.playoffRound;
+            tournamentState.games = gsp.games;  // CRITICAL: Save games parameter for DrawFormat!
+            tournamentState.ends = gsp.ends;    // CRITICAL: Save ends for tournament settings!
+            tournamentState.rocks = gsp.rocks;  // CRITICAL: Save rocks for tournament settings!
             
             if (tm.teams != null && tm.teams.Length > 0)
             {
@@ -2261,7 +2302,12 @@ public class CareerManager : MonoBehaviour
             gsp.KO3 = currentTourny.tour;
             gsp.draw = tournamentState.draw;
             gsp.playoffRound = tournamentState.playoffRound;
+            gsp.games = tournamentState.games;  // CRITICAL: Restore games parameter!
+            gsp.ends = tournamentState.ends;    // CRITICAL: Restore ends for tournament!
+            gsp.rocks = tournamentState.rocks;  // CRITICAL: Restore rocks for tournament!
             gsp.teams = currentTournyTeams;
+            
+            Debug.Log($"[CareerManager] Restored tournament settings - games={gsp.games}, ends={gsp.ends}, rocks={gsp.rocks}");
         }
         
         Debug.Log($"[CareerManager] Tournament state restored: {currentTournyTeams?.Length ?? 0} teams, playoff round {tournamentState.playoffRound}");

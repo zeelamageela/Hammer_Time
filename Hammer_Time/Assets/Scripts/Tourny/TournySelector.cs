@@ -246,6 +246,40 @@ public class TournySelector : MonoBehaviour
     {
         weekText.text = "Week " + cm.week.ToString();
         mode = cm.debug;
+        
+        // CRITICAL FIX: Check if loading from save with activeTournies already set
+        bool loadedFromSave = false;
+        if (cm.activeTournies != null && cm.activeTournies.Length > 0)
+        {
+            // Check if any tournament in activeTournies is not null/empty
+            foreach (var t in cm.activeTournies)
+            {
+                if (t != null && t.name != emptyTourny.name)
+                {
+                    loadedFromSave = true;
+                    Debug.Log($"[TournySelector] Detected saved activeTournies - restoring week {cm.week} tournaments from save");
+                    break;
+                }
+            }
+        }
+        
+        if (loadedFromSave)
+        {
+            // Restore activeTournies from save data
+            activeTournies = cm.activeTournies;
+            Debug.Log($"[TournySelector] Restored activeTournies from save:");
+            for (int i = 0; i < activeTournies.Length; i++)
+            {
+                Debug.Log($"  Panel {i}: {activeTournies[i]?.name ?? "null"}");
+            }
+            
+            SetPanels();
+            cm.SaveCareer(); // Save after setting panels
+            return; // Skip re-generation
+        }
+        
+        // Otherwise, generate new activeTournies as usual
+        Debug.Log($"[TournySelector] Generating new activeTournies for week {cm.week}");
 
         bool tourniesComplete = false;
         bool tourComplete = false;
@@ -804,6 +838,10 @@ public class TournySelector : MonoBehaviour
         cm.champ[0] = tourChampionship;
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
+        
+        // Save activeTournies IDs for later restoration
+        cm.SaveCareer();
+        
         cm.cash -= cm.currentTourny.entryFee;
         cm.cash -= cm.costPerWeek;
         tm.CashDeltaText(-(cm.costPerWeek + cm.currentTourny.entryFee));

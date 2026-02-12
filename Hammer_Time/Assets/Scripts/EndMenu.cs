@@ -255,25 +255,29 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
                 Debug.Log("I IS " + i);
 
-                if (gsp.endCurrent - 1 > gsp.score.Length)
+                // CRITICAL FIX: Check if score array is null before accessing .Length
+                if (gsp.score == null || gsp.endCurrent - 1 > gsp.score.Length)
                 {
-                    Vector2Int[] tempScore = new Vector2Int[gsp.endCurrent];
-                    for (int j = 0; j < gsp.endCurrent; j++)
+                    // Initialize or resize score array
+                    int requiredSize = Mathf.Max(gsp.endCurrent, ends);
+                    Vector2Int[] tempScore = new Vector2Int[requiredSize];
+                    
+                    // Copy existing scores if any
+                    if (gsp.score != null)
                     {
-                        if (j <= gsp.score.Length)
-                            tempScore[j] = gsp.score[j];
-                        else
+                        for (int j = 0; j < Mathf.Min(gsp.score.Length, tempScore.Length); j++)
                         {
-                            tempScore[j].x = gsp.redScore;
-                            tempScore[j].y = gsp.yellowScore;
+                            tempScore[j] = gsp.score[j];
                         }
                     }
-
-                    gsp.score = new Vector2Int[tempScore.Length];
-                    for (int j = 0; j < gsp.score.Length; j++)
+                    
+                    // Initialize any new entries
+                    for (int j = gsp.score != null ? gsp.score.Length : 0; j < tempScore.Length; j++)
                     {
-                        gsp.score[j] = tempScore[j];
+                        tempScore[j] = new Vector2Int(0, 0);
                     }
+
+                    gsp.score = tempScore;
                 }
 
                 redTeamName.text = gsp.redTeamName;
@@ -811,34 +815,60 @@ public class EndMenu : MonoBehaviour
 
         if (gsp.tourny)
         {
-            //if (gsp.aiRed)
-            //{
-            //    if (gsp.redScore > gsp.yellowScore)
-            //        gsp.record.y += 1;
-
-            //    if (gsp.redScore < gsp.yellowScore)
-            //        gsp.record.x += 1;
-            //}
-            //if (gsp.aiYellow)
-            //{
-            //    if (gsp.redScore > gsp.yellowScore)
-            //        gsp.record.x += 1;
-
-            //    if (gsp.redScore < gsp.yellowScore)
-            //        gsp.record.y += 1;
-            //}
-
+            // CRITICAL FIX: Only call LoadFromEndMenu for PLAYOFFS
+            // Regular tournaments handle wins/losses in TournyManager.ProcessPlayerMatchResult()
             if (gsp.playoffRound > 0)
             {
-                //gsp.playoffRound++;
-                Debug.Log("Play off Round - " + gsp.playoffRound);
+                // Playoffs: Update team records in GSP
+                gsp.LoadFromEndMenu();
+                Debug.Log("[EndMenu] Playoff game - updated team records via LoadFromEndMenu");
             }
             else
+            {
+                // Regular tournament: Don't update here - TournyManager will handle it
+                Debug.Log("[EndMenu] Regular tournament - TournyManager will process player match result");
+            }
+            
+            // CRITICAL FIX: Don't simulate other games here!
+            // For regular tournaments, TournyManager.SimRestDraw() handles ALL AI game simulation
+            // For playoffs, there are no "other games" to simulate (single-elimination bracket)
+            // Simulating here would cause DOUBLE simulation for regular tournaments!
+            
+            // CRITICAL FIX: Set justFinishedGame flag so managers know to process result
+            gsp.justFinishedGame = true;
+            Debug.Log("[EndMenu] Game finished - set justFinishedGame = true");
+            
+            // Clear gameInProgress flag - we're done with this game
+            gsp.gameInProgress = false;
+            Debug.Log("[EndMenu] Game finished - cleared gameInProgress flag");
+            
+            // Keep tournyInProgress = true so we route back to tournament home
+            gsp.tournyInProgress = true;
+            
+            if (gsp.playoffRound > 0)
+            {
+                Debug.Log("[EndMenu] Playoff Round - " + gsp.playoffRound);
+            }
+            else
+            {
                 gsp.draw++;
-            //gsp.tournyInProgress = false;
-            //gsp.gameInProgress = false;
-            cm.SaveCareer();
+                Debug.Log("[EndMenu] Incremented draw to " + gsp.draw);
+            }
+            
+            // Save with updated team records AND simulated games
+            if (cm != null)
+            {
+                Debug.Log("[EndMenu] Saving career with all game results...");
+                cm.SaveCareer();
+                Debug.Log("[EndMenu] Save complete - loading tournament home scene");
+            }
+            else
+            {
+                Debug.LogWarning("[EndMenu] CareerManager not found - skipping save (non-career mode?)");
+            }
         }
+        
+        // Load appropriate tournament home scene
         if (gsp.KO3)
         {
             SceneManager.LoadScene("Tourny_Home_3K");
@@ -849,5 +879,95 @@ public class EndMenu : MonoBehaviour
         }
         else
             SceneManager.LoadScene("Tourny_Home_1");
+    }
+    
+    /// <summary>
+    /// Simulates games for all OTHER teams in the current draw (excluding player's game)
+    /// </summary>
+    private void SimulateOtherGames()
+    {
+        if (cm == null || cm.currentTourny == null || gsp.teams == null)
+        {
+            Debug.LogWarning("[EndMenu] Cannot simulate other games - missing data");
+            return;
+        }
+        
+        Debug.Log($"[EndMenu] Simulating other teams' games for draw {gsp.draw}");
+        
+        // Track which teams have been processed to avoid double-counting
+        HashSet<string> processedTeams = new HashSet<string>();
+        
+        // Find player's team and opponent to skip them
+        Team playerTeam = null;
+        Team playerOpp = null;
+        
+        foreach (var team in gsp.teams)
+        {
+            if (team.player)
+            {
+                playerTeam = team;
+                // Find the opponent
+                foreach (var t in gsp.teams)
+                {
+                    if (t.name == playerTeam.nextOpp)
+                    {
+                        playerOpp = t;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        
+        if (playerTeam != null && playerOpp != null)
+        {
+            processedTeams.Add(playerTeam.name);
+            processedTeams.Add(playerOpp.name);
+            Debug.Log($"[EndMenu] Skipping player game: {playerTeam.name} vs {playerOpp.name}");
+        }
+        
+        // Simulate remaining games
+        foreach (var team1 in gsp.teams)
+        {
+            // Skip if already processed
+            if (processedTeams.Contains(team1.name))
+                continue;
+            
+            // Find this team's opponent
+            Team team2 = null;
+            foreach (var t in gsp.teams)
+            {
+                if (t.name == team1.nextOpp)
+                {
+                    team2 = t;
+                    break;
+                }
+            }
+            
+            if (team2 != null && !processedTeams.Contains(team2.name))
+            {
+                // Simulate this game based on team strength
+                bool team1Wins = Random.Range(0, team1.strength) > Random.Range(0, team2.strength);
+                
+                if (team1Wins)
+                {
+                    team1.wins++;
+                    team2.loss++;
+                    Debug.Log($"[EndMenu] Simulated: {team1.name} defeats {team2.name}");
+                }
+                else
+                {
+                    team2.wins++;
+                    team1.loss++;
+                    Debug.Log($"[EndMenu] Simulated: {team2.name} defeats {team1.name}");
+                }
+                
+                // Mark both teams as processed
+                processedTeams.Add(team1.name);
+                processedTeams.Add(team2.name);
+            }
+        }
+        
+        Debug.Log($"[EndMenu] Simulation complete - processed {processedTeams.Count} teams");
     }
 }

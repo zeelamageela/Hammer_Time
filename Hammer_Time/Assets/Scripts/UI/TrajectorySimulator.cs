@@ -18,7 +18,7 @@ public class TrajectorySimulator
     // Rock_Force.cs uses: force = curl * (angularVelocity * scaleFactor)
     // With curl.x = -0.323, scaleFactor = 0.1, angularVelocity ? 60 rad/s
     private float curlAmount = 0.3f; // Legacy - now using angularVelocityCurl instead
-    private float lateBreakingIntensity = 2.0f; // How much curl increases at end (0.0 = no late breaking, 3.0 = dramatic)
+    private float lateBreakingIntensity = 1.0f; // How much curl increases at end (0.0 = no late breaking, 3.0 = dramatic)
     private float lateBreakingCurve = 0.8f; // Shape of curl curve (0.5 = very subtle, 1.0 = linear, 2.0 = exponential)
     
     // NEW: Angular velocity curl model (matches Rock_Force.cs exactly)
@@ -161,6 +161,7 @@ public class TrajectorySimulator
                             
                             if (tempVel.magnitude > 0.1f)
                             {
+                                // Use curlAmount from TrajectoryLine!
                                 Vector2 curlDirection = isInTurn 
                                     ? new Vector2(tempVel.y, -tempVel.x).normalized 
                                     : new Vector2(-tempVel.y, tempVel.x).normalized;
@@ -169,7 +170,7 @@ public class TrajectorySimulator
                                 float slowdownFactor = 1.0f - velocityRatio;
                                 float curveFactor = Mathf.Pow(slowdownFactor, lateBreakingCurve);
                                 float normalizedMultiplier = curveFactor * (1.0f + lateBreakingIntensity);
-                                float baseCurlStrength = curlAmount * 0.003f;
+                                float baseCurlStrength = curlAmount * 0.01f; // INCREASED: Match main curl calculation!
                                 float curlStrength = baseCurlStrength * normalizedMultiplier;
                                 Vector2 curlForce = curlDirection * curlStrength;
                                 
@@ -269,22 +270,31 @@ public class TrajectorySimulator
             // We need to match this exactly
             float dampingFactor = 1.0f - (linearDamping * TIME_STEP);
             
-            // Apply curl (CALIBRATED TO MATCH ROCK_FORCE.CS BEHAVIOR)
-            // Rock_Force.cs: Vector2 vel = new Vector2(angularVelocity * scaleFactor, 0);
-            //                body.AddForce(curl * vel, ForceMode2D.Force);
-            // 
-            // Unity's AddForce: acceleration = force / mass, then velocity += acceleration * deltaTime
-            // For a 19.96kg rock: velocity += (force / 19.96) * deltaTime
+            // Apply curl (USING curlAmount from TrajectoryLine!)
+            // curlAmount now directly controls curl strength
             if (speed > 0.1f && Mathf.Abs(angularVelocity) > 0.1f) // Only curl when moving and spinning
             {
-                // Calculate the force vector (matching Rock_Force.cs exactly)
-                Vector2 angularVel = new Vector2(angularVelocity * scaleFactor, 0f);
-                Vector2 curlForce = new Vector2(curlVector.x * angularVel.x, curlVector.y * angularVel.y);
+                // SIMPLE: Apply curl force perpendicular to velocity
+                // isInTurn = true ? curl LEFT (positive X)
+                // isInTurn = false ? curl RIGHT (negative X)
+                Vector2 curlDirection = isInTurn 
+                    ? new Vector2(velocity.y, -velocity.x).normalized  // LEFT curl
+                    : new Vector2(-velocity.y, velocity.x).normalized; // RIGHT curl
                 
-                // Convert force to velocity change (Unity physics: a = F/m, v += a*dt)
-                // Scale by curlForceScale to match the actual game's curl behavior
-                float acceleration = (curlForce.x / rockMass) * curlForceScale;
-                velocity.x += acceleration * TIME_STEP;
+                // curlAmount from TrajectoryLine directly controls strength!
+                // Higher curlAmount = more curl
+                float curlStrength = curlAmount * 0.01f; // INCREASED: Was 0.003, now 0.01 for more visible curl
+                
+                // Apply late breaking: curl increases as rock slows down
+                float velocityRatio = velocity.magnitude / initialVelocity.magnitude;
+                float slowdownFactor = 1.0f - velocityRatio;
+                float curveFactor = Mathf.Pow(slowdownFactor, lateBreakingCurve);
+                float normalizedMultiplier = curveFactor * (1.0f + lateBreakingIntensity);
+                
+                curlStrength *= normalizedMultiplier;
+                
+                Vector2 curlForce = curlDirection * curlStrength;
+                velocity += curlForce * TIME_STEP;
                 
                 // Apply angular damping (spin decays over time)
                 angularVelocity *= (1.0f - angularDamping * TIME_STEP);

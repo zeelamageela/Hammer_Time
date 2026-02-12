@@ -68,6 +68,9 @@ public class CareerSaveData
         public bool tourChampionshipComplete;
         public bool provChampionshipComplete;
         
+        // Active Tournaments (offered this week)
+        public List<int> activeTournamentIDs;
+        
         // Tournament Results
         public List<int> tournamentResults;
         
@@ -103,6 +106,7 @@ public class CareerSaveData
             tournamentResults = new List<int>();
             allTimeTrophies = new List<bool>();
             currentSeasonTrophies = new List<bool>();
+            activeTournamentIDs = new List<int>();
         }
     }
     
@@ -292,6 +296,7 @@ public class CareerSaveData
     {
         public bool gameInProgress;
         public bool tournyInProgress;
+        public bool justFinishedGame;  // NEW: Flag to indicate a game just finished
         public bool isTournyGame;
         public int ends;
         public int currentEnd;
@@ -366,6 +371,9 @@ public class CareerSaveData
         public int prize;
         public int oppTeam;
         public int playoffRound;
+        public int games;  // CRITICAL: Number of games in draw format
+        public int ends;   // CRITICAL: Number of ends per game
+        public int rocks;  // CRITICAL: Number of rocks per team
         public List<TeamData> teams;
         public List<Vector2Data> gameList;
         

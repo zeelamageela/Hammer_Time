@@ -117,28 +117,44 @@ public class TournySettings : MonoBehaviour
 
     public void Settings()
     {
-        tournyGO.SetActive(true);
-        if (cm)
-        {
-            gsp.tournyEarnings = 0;
+		tournyGO.SetActive(true);
+		if (cm)
+		{
+			gsp.tournyEarnings = 0;
 
-            teams = cm.currentTournyTeams.Length;
-            format = cm.currentTourny.format;
-            entryFee = cm.currentTourny.entryFee;
-            prize = cm.currentTourny.prizeMoney;
-            trophy.sprite = cm.currentTourny.image;
-            location = cm.currentTourny.location;
-        }
+			teams = cm.currentTournyTeams.Length;
+			format = cm.currentTourny.format;
+			entryFee = cm.currentTourny.entryFee;
+			prize = cm.currentTourny.prizeMoney;
+			trophy.sprite = cm.currentTourny.image;
+			location = cm.currentTourny.location;
+		}
 
-        if (gsp.cashGame)
-        {
-            endSlider.value = gsp.ends;
-            rockSlider.value = 2;
-            gameSlider.value = 1;
-            endSlider.transform.parent.gameObject.SetActive(false);
-            rockSlider.interactable = false;
-            gameSlider.transform.parent.gameObject.SetActive(false);
-        }
+		// CRITICAL FIX: If tournament is in progress, restore settings from save
+		// Otherwise, settings get reset to slider defaults
+		if (gsp.tournyInProgress)
+		{
+			// Restore tournament settings from save
+			ends = gsp.ends;
+			rocks = gsp.rocks;
+			games = gsp.games;
+			
+			// Update sliders to match saved values
+			endSlider.value = ends;
+			rockSlider.value = rocks;
+			gameSlider.value = games;
+			
+			Debug.Log($"[TournySettings] Restored tournament settings from save - ends={ends}, rocks={rocks}, games={games}");
+		}
+		else if (gsp.cashGame)
+		{
+			endSlider.value = gsp.ends;
+			rockSlider.value = 2;
+			gameSlider.value = 1;
+			endSlider.transform.parent.gameObject.SetActive(false);
+			rockSlider.interactable = false;
+			gameSlider.transform.parent.gameObject.SetActive(false);
+		}
         //if (cm.week == 1)
         //{
         //    //Help();

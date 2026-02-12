@@ -170,12 +170,9 @@ public class TournyManager : MonoBehaviour
 		row = new GameObject[teams.Length];
 		//Debug.Log("Setup Stand Team Length is " + teams.Length);
 		yield return new WaitUntil(() => teams.Length > 0);
-		dfList.DrawSelector(teams.Length, 1, gsp.games);
-
-		yield return new WaitForEndOfFrame();
-
-		drawFormat = dfList.currentFormat;
-
+		
+		// CRITICAL FIX: Always initialize drawFormat, even when loading saved tournament
+		// This was skipped when draw > 0, causing drawFormat.Length = 0
 		for (int i = 0; i < teams.Length; i++)
 		{
 			row[i] = Instantiate(standTextRow, standTextParent);
@@ -189,19 +186,91 @@ public class TournyManager : MonoBehaviour
 			standDisplay[i] = rv.standDisplay;
 		}
 
-		if (gsp.draw > 0)
-		{
-			playoffRound = gsp.playoffRound;
-			teamList = gsp.teamList;
-			teams = gsp.teams;
-			draw = gsp.draw;
+        if (gsp.draw > 0)
+        {
+            playoffRound = gsp.playoffRound;
+            teams = gsp.teams;
+            draw = gsp.draw;
 
-			Debug.Log("draw is " + draw);
+            // Rebuild teamList from loaded teams
+            teamList = new List<Team_List>();
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i] != null)
+                {
+                    teamList.Add(new Team_List(teams[i]));
+                }
+            }
+            Debug.Log($"[TournyManager] Rebuilt teamList from save - {teamList.Count} teams");
 
-			if (playoffRound > 0)
-			{
+            // CRITICAL: Find player team by player flag, not by index
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].player)
+                {
+                    playerTeam = i;
+                    Debug.Log($"[TournyManager] Found player team at index {playerTeam}: {teams[i].name}");
+                    break;
+                }
+            }
+
+            // Find opponent team
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i].name == teams[playerTeam].nextOpp)
+                {
+                    oppTeam = i;
+                    Debug.Log($"[TournyManager] Found opponent team at index {oppTeam}: {teams[i].name}");
+                    break;
+                }
+            }
+
+            // Initialize drawFormat
+            Debug.Log($"[TournyManager.SetupStandings] Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
+            dfList.DrawSelector(teams.Length, 1, gsp.games);
+            yield return new WaitForEndOfFrame();
+            drawFormat = dfList.currentFormat;
+
+            Debug.Log($"[TournyManager.SetupStandings] draw={draw}, drawFormat.Length={drawFormat?.Length ?? 0}, teamList.Count={teamList.Count}");
+
+            // CRITICAL: Sync cm.record with tournament stats
+            if (cm != null)
+            {
+                cm.record.x = teams[playerTeam].seasonWins;
+                cm.record.y = teams[playerTeam].seasonLosses;
+                Debug.Log($"[TournyManager] Synced cm.record to {cm.record.x}-{cm.record.y}");
+            }
+
+            if (playoffRound > 0)
+            {
 				pm.enabled = true;
 				standings.SetActive(false);
+			}
+			else if (gsp.justFinishedGame)
+			{
+				// CRITICAL FIX: Game just finished - process the result and update standings
+				Debug.Log("[TournyManager] Just finished game - processing result");
+				gsp.justFinishedGame = false;  // Clear the flag
+				
+				// Find player and opponent teams
+				for (int i = 0; i < teams.Length; i++)
+				{
+					if (teams[i].player)
+						playerTeam = i;
+				}
+				for (int i = 0; i < teams.Length; i++)
+				{
+					if (teams[i].name == teams[playerTeam].nextOpp)
+						oppTeam = i;
+				}
+				Debug.Log("PlayerTeam is " + playerTeam);
+				Debug.Log("OppTeam is " + oppTeam);
+
+				// Process player's match result and update wins/losses
+				ProcessPlayerMatchResult();
+				
+				// Simulate remaining games in the current draw
+				StartCoroutine(SimRestDraw());
 			}
 			else if (gsp.gameInProgress)
 			{
@@ -274,6 +343,13 @@ public class TournyManager : MonoBehaviour
 			teams = cm.currentTournyTeams;
 			gsp.teams = teams;
 			cm.teamRecords = new Vector4[teams.Length];
+			
+			// CRITICAL FIX: Initialize drawFormat for NEW tournament
+			Debug.Log($"[TournyManager.SetupStandings] NEW tournament - Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
+			dfList.DrawSelector(teams.Length, 1, gsp.games);
+			yield return new WaitForEndOfFrame();
+			drawFormat = dfList.currentFormat;
+			Debug.Log($"[TournyManager.SetupStandings] drawFormat.Length={drawFormat?.Length ?? 0}");
 
 			for (int i = 0; i < teams.Length; i++)
 			{
@@ -518,7 +594,7 @@ public class TournyManager : MonoBehaviour
 		// Note: gsp.draw was already incremented by EndMenu.EndGame(), so we need to decrement it
 		// to get back to the draw that was just played
 		int tempDraw = draw - 1;
-		Debug.Log("Temp Draw " + tempDraw);
+		Debug.Log($"[SimRestDraw] Starting - draw={draw}, tempDraw={tempDraw}, teams.Length={teams.Length}, drawFormat.Length={drawFormat.Length}");
 		Team[] games = new Team[teams.Length];
 		
 		// Build games array from draw format
@@ -573,7 +649,7 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator DrawScoring()
     {
-		Debug.Log("Draw Scoring draw is " + draw);
+		Debug.Log($"[DrawScoring] draw={draw}, drawFormat.Length={drawFormat.Length}");
 		if (draw < drawFormat.Length)
 		{
 			Debug.Log("Draw number " + draw);

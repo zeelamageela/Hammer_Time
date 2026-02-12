@@ -120,11 +120,11 @@ public class QuickTestGame : MonoBehaviour
             Debug.Log("[QuickTestGame] Player vs AI mode");
         }
         
-        // 🔒 LOCKED SCENARIO: Always 1-1, red has hammer
+        // 🔒 LOCKED SCENARIO: Always 1-5, red has hammer
         gsp.redHammer = true;
         gsp.redScore = 1;
-        gsp.yellowScore = 1;
-        Debug.Log($"[QuickTestGame] 🔒 LOCKED: Score 1-1, RED has hammer");
+        gsp.yellowScore = 5;
+        Debug.Log($"[QuickTestGame] 🔒 LOCKED: Score 1-5, RED has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];

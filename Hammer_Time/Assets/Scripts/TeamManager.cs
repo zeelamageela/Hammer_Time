@@ -59,69 +59,11 @@ public class TeamManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gm.rockList.Count != 0)
-        {
-            #region Target
-            //if (gm.rockCurrent <= 11)
-            //{
-            //    if (gm.redHammer && gm.rockList[gm.rockCurrent].rockInfo.teamName == gm.rockList[1].rockInfo.teamName)
-            //    {
-            //        if (!gm.aiTeamRed)
-            //            gm.target = true;
-            //        else
-            //            gm.target = false;
-            //    }
-            //    else if (gm.redHammer && gm.rockList[gm.rockCurrent].rockInfo.teamName == gm.rockList[0].rockInfo.teamName)
-            //    {
-            //        if (!gm.aiTeamYellow)
-            //            gm.target = true;
-            //        else
-            //            gm.target = false;
-            //    }
-            //    else if (!gm.redHammer && gm.rockList[gm.rockCurrent].rockInfo.teamName == gm.rockList[0].rockInfo.teamName)
-            //    {
-            //        if (!gm.aiTeamRed)
-            //            gm.target = true;
-            //        else
-            //            gm.target = false;
-            //    }
-            //    else if (!gm.redHammer && gm.rockList[gm.rockCurrent].rockInfo.teamName == gm.rockList[1].rockInfo.teamName)
-            //    {
-            //        if (!gm.aiTeamYellow)
-            //            gm.target = true;
-            //        else
-            //            gm.target = false;
-            //    }
-            //    else
-            //        gm.target = false;
-            //}
-            //else
-            //    gm.target = false;
-
-            //if (gm.rockCurrent <= 3)
-            //{
-            //    gm.shooterAnimRed = leadGO[0];
-            //    gm.shooterAnimYellow = leadGO[1];
-
-            //}
-            //else if (gm.rockCurrent <= 7)
-            //{
-            //    gm.shooterAnimRed = secondGO[0];
-            //    gm.shooterAnimYellow = secondGO[1];
-            //}
-            //else if (gm.rockCurrent <= 11)
-            //{
-            //    gm.shooterAnimRed = thirdGO[0];
-            //    gm.shooterAnimYellow = thirdGO[1];
-            //}
-            //else
-            //{
-            //    gm.shooterAnimRed = skipGO[0];
-            //    gm.shooterAnimYellow = skipGO[1];
-            //}
-            #endregion
-        }
-
+        // CRITICAL FIX: Add null checks
+        if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
+            return;
+        
+        // Rest of the Update code is commented out anyway, so just return
     }
 
     void Shuffle(TeamMember[] a)

@@ -55,24 +55,24 @@ public class TrajectoryLine : MonoBehaviour
     
     [Header("Physics Tuning")]
     [Tooltip("Ice friction - MUST MATCH Rock rigidbody linearDamping (0.38)")]
-    public float iceFriction = 0.38f;
+    public float iceFriction = 0.42f;  // TUNED: Increased for more friction (rocks stop sooner)
     
     [Tooltip("Curl strength - base lateral force multiplier")]
-    public float curlStrength = 0.3f;
+    public float curlStrength = 0.25f;  // TUNED: Reduced from 0.3 for less curl
     
     [Tooltip("How much curl increases at the end (0.0 = no late breaking, 3.0 = very dramatic)")]
     [Range(0f, 5f)]
-    public float lateBreakingIntensity = 2.0f;
+    public float lateBreakingIntensity = 1.5f;  // TUNED: Reduced from 2.0 for less dramatic late breaking
     
     [Tooltip("Shape of the late breaking curve (0.01 = extremely subtle, 1.0 = linear, 2.0 = very exponential/late)")]
     [Range(0.01f, 2.5f)]
     public float lateBreakingCurve = 0.8f;
     
     // Track previous values to detect changes
-    private float lastIceFriction;
-    private float lastCurlStrength;
-    private float lastLateBreakingIntensity;
-    private float lastLateBreakingCurve;
+    private float lastIceFriction = -1f; // FIXED: Initialize to -1 to force first update
+    private float lastCurlStrength = -1f;
+    private float lastLateBreakingIntensity = -1f;
+    private float lastLateBreakingCurve = -1f;
     
     [Header("Collision Visualization")]
     public GameObject collisionMarker; // Assign in inspector
@@ -163,43 +163,53 @@ public class TrajectoryLine : MonoBehaviour
 
     private void Update()
     {
-        if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
+        // CRITICAL FIX: Add comprehensive null checks
+        if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
+            return;
+        
+        if (gm.rockCurrent >= gm.rockList.Count)
+            return;
+        
+        if (gm.rockList[gm.rockCurrent] == null || gm.rockList[gm.rockCurrent].rock == null)
+            return;
+        
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+        rock = gm.rockList[gm.rockCurrent].rock;
+        rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+        
+        if (gm.aiTeamRed)
         {
-            rock = gm.rockList[gm.rockCurrent].rock;
-            rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
-            if (gm.aiTeamRed)
+            if (gm.redHammer)
             {
-                if (gm.redHammer)
-                {
-                    if (gm.rockCurrent % 2 == 0)
-                        aiTurn = false;
-                    else
-                        aiTurn = true;
-                }
+                if (gm.rockCurrent % 2 == 0)
+                    aiTurn = false;
                 else
-                {
-                    if (gm.rockCurrent % 2 == 0)
-                        aiTurn = true;
-                    else
-                        aiTurn = false;
-                }
+                    aiTurn = true;
             }
-            else if (gm.aiTeamYellow)
+            else
             {
-                if (gm.redHammer)
-                {
-                    if (gm.rockCurrent % 2 == 0)
-                        aiTurn = true;
-                    else
-                        aiTurn = false;
-                }
+                if (gm.rockCurrent % 2 == 0)
+                    aiTurn = true;
                 else
-                {
-                    if (gm.rockCurrent % 2 == 0)
-                        aiTurn = false;
-                    else
-                        aiTurn = true;
-                }
+                    aiTurn = false;
+            }
+        }
+        else if (gm.aiTeamYellow)
+        {
+            if (gm.redHammer)
+            {
+                if (gm.rockCurrent % 2 == 0)
+                    aiTurn = true;
+                else
+                    aiTurn = false;
+            }
+            else
+            {
+                if (gm.rockCurrent % 2 == 0)
+                    aiTurn = false;
+                else
+                    aiTurn = true;
             }
         }
 

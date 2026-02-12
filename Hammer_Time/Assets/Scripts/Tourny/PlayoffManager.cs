@@ -47,21 +47,39 @@ public class PlayoffManager : MonoBehaviour
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
 
-		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
-		if (gsp.careerLoad)
-        {
-            Debug.Log("LOADING HERE");
-            LoadPlayoffs();
-		}
-		else if (playoffRound > 0)
+		Debug.Log($"[PlayoffManager.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
+
+		// CRITICAL FIX: Handle four distinct scenarios:
+		// 1. Fresh tournament start (playoffRound == 0)
+		// 2. Returning from a completed game (justFinishedGame == true, need to advance)
+		// 3. Loading saved tournament between games (careerLoad == true, !justFinishedGame)
+		// 4. Unexpected fallback
+
+		if (gsp.justFinishedGame)
 		{
-			Debug.Log("LOADING HERE");
+			// Scenario 2: Just returned from completing a game - need to process result and advance
+			// This takes priority over careerLoad because we MUST process the game result
+			Debug.Log("[PlayoffManager.Start] SCENARIO 2: Returning from completed game - advancing playoffs");
 			LoadAndAdvancePlayoffs();
+			gsp.justFinishedGame = false; // Clear flag after processing
+		}
+		else if (gsp.careerLoad)
+		{
+			// Scenario 3: Loading saved tournament, player is between games - just restore state
+			Debug.Log("[PlayoffManager.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
+			LoadPlayoffs();
+		}
+		else if (playoffRound == 0)
+		{
+			// Scenario 1: Fresh tournament start
+			Debug.Log("[PlayoffManager.Start] SCENARIO 1: Fresh tournament start - setting seeding");
+			SetSeeding(tm.teams.Length);
 		}
 		else
 		{
-			Debug.Log("LOADING HERE");
-			SetSeeding(tm.teams.Length);
+			// Fallback: Unexpected state - try to load current playoff state
+			Debug.LogWarning($"[PlayoffManager.Start] FALLBACK: Unexpected state - loading playoff state (playoffRound={playoffRound})");
+			LoadPlayoffs();
 		}
 	}
 
@@ -410,27 +428,30 @@ public class PlayoffManager : MonoBehaviour
 		}
 	}
 
-	void LoadPlayoffs()
+    void LoadPlayoffs()
     {
+		Debug.Log($"[LoadPlayoffs] Starting - playoffRound={playoffRound}");
+
+		// CRITICAL: This method should ONLY restore saved state, NOT advance rounds
+		// Round advancement is handled by LoadAndAdvancePlayoffs() via justFinishedGame flag
         gsp.careerLoad = false;
 
-        if (gsp.gameInProgress)
-		{
-			playoffRound++;
-		}
-        //playoffRound--;
-        Debug.Log("Load Playoffs - Round " + playoffRound);
+        Debug.Log($"[LoadPlayoffs] Restoring playoff state for round {playoffRound}");
 		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
 
 		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
 		{
+			Debug.Log($"[LoadPlayoffs] Loading {gsp.playoffTeams.Length} teams from saved playoff bracket");
 			for (int i = 0; i < gsp.playoffTeams.Length; i++)
 			{
-				if (i < 4)
+				// CRITICAL: Don't overwrite rank! The saved team already has the correct rank
+				// Only set rank = i+1 if the team's rank is 0 or invalid
+				if (i < 4 && gsp.playoffTeams[i].rank == 0)
 				{
 					gsp.playoffTeams[i].rank = i + 1;
 				}
 				playoffTeams[i] = gsp.playoffTeams[i];
+				Debug.Log($"[LoadPlayoffs] Position {i}: {playoffTeams[i].name} (rank {playoffTeams[i].rank})");
 			}
 		}
 		else
@@ -533,12 +554,21 @@ public class PlayoffManager : MonoBehaviour
                 
                 DisplayPagePlayoffTeams(7, highlightPlayer: true);
                 bool playerActive2 = SetupPagePlayoffVsDisplay();
-                
-                // Special case: BYE handling
-                // If player is at position 4 (winner of 1v2), they have a BYE to finals
-                // Player has no game to play - show only Sim button (to simulate other games)
-                bool hasActualGame = tm.vsDisplay[1].name.text != "BYE TO FINALS";
-                
+
+				// Special case: BYE handling
+				// If player is at position 4 (winner of 1v2), they have a BYE to finals
+				// Player has no game to play - show only Sim button (to simulate other games)
+				bool hasActualGame = false;
+
+                if (playerActive2)
+				{
+					hasActualGame = tm.vsDisplay[1].name.text != "BYE TO FINALS";
+				}
+				else
+				{
+					hasActualGame = false;
+                }
+
                 ConfigurePagePlayoffButtons(hasActualGame);
                 
                 playoffs.SetActive(true);
@@ -725,11 +755,6 @@ public class PlayoffManager : MonoBehaviour
 				StartCoroutine(RefreshPlayoffPanel());
 				playoffRound++;
 				SetPlayoffs();
-				
-				// After advancing round, show Continue button to let user review and advance
-				playButton.gameObject.SetActive(false);
-				simButton.gameObject.SetActive(false);
-				contButton.gameObject.SetActive(true);
 				break;
 
 			case 2:
@@ -763,11 +788,6 @@ public class PlayoffManager : MonoBehaviour
 			StartCoroutine(RefreshPlayoffPanel());
 			playoffRound++;
 			SetPlayoffs();
-			
-			// After advancing round, show Continue button to let user review and advance
-			playButton.gameObject.SetActive(false);
-			simButton.gameObject.SetActive(false);
-			contButton.gameObject.SetActive(true);
 			break;
 
 		case 3:
@@ -794,11 +814,6 @@ public class PlayoffManager : MonoBehaviour
 			StartCoroutine(RefreshPlayoffPanel());
 			playoffRound++;
 			SetPlayoffs();
-			
-			// After advancing round, show Continue button to let user review and advance
-			playButton.gameObject.SetActive(false);
-			simButton.gameObject.SetActive(false);
-			contButton.gameObject.SetActive(true);
 			break;
 
 		default:
