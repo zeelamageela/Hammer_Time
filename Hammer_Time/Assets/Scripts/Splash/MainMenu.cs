@@ -25,8 +25,8 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         // Check if save exists and enable/disable Continue button
-        CareerManager cm = FindFirstObjectByType<CareerManager>();
-        if (cm != null && cm.SaveFileExists())
+        // Access save service directly (CareerManager doesn't exist in splash scene)
+        if (CareerSaveService.SaveExists())
         {
             contButton.SetActive(true);
             Debug.Log("[MainMenu] Save file found - Continue button enabled");

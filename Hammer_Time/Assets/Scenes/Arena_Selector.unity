@@ -56200,12 +56200,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 1
     crowdDensity: 4
@@ -56217,12 +56217,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 2
     crowdDensity: 5
@@ -56234,12 +56234,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 2
     crowdDensity: 4
@@ -56251,12 +56251,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 2
     crowdDensity: 8
@@ -56268,12 +56268,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 1
     crowdDensity: 5
@@ -56285,12 +56285,12 @@ MonoBehaviour:
     teams: 16
     prizeMoney: 40000
     entryFee: 500
-    format: Triple Knockout
+    format: Round Robin
     championship: 0
     qualifier: 0
     tour: 1
     complete: 0
-    ko3: 1
+    ko3: 0
     ko1: 0
     BG: 2
     crowdDensity: 10
@@ -69370,6 +69370,7 @@ MonoBehaviour:
   careerLoad: 0
   tournyInProgress: 0
   gameInProgress: 0
+  justFinishedGame: 0
   teams: []
   playoffTeams: []
   cgp: []

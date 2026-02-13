@@ -351,6 +351,10 @@ public class GameSettingsPersist : MonoBehaviour
         redScore = 0;
         yellowScore = 0;
         
+        // CRITICAL FIX: Also clear score array for new game!
+        score = null;
+        Debug.Log("[GSP] TournySetup - cleared scores and score array");
+        
         careerLoad = false;
         if (cg != null)
         {

@@ -1097,8 +1097,9 @@ public class EquipmentManager : MonoBehaviour
 
     public int[] DistributePoints(float cost, int categories = 3)
     {
-
-        int availPts = Mathf.RoundToInt(cost / 1000f);
+        // EQUIPMENT STATS: $10,000 equipment = 60 stat points distributed
+        // cost / 1000 * 6 = points (e.g. $10k / 1000 * 6 = 60 points)
+        int availPts = Mathf.RoundToInt((cost / 1000f) * 6f);
         int[] cats = new int[categories];
 
         for (int i = 0; i < cats.Length; i++)

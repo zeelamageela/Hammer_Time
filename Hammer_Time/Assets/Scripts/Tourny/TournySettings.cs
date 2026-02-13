@@ -100,14 +100,29 @@ public class TournySettings : MonoBehaviour
         //myFile.Add("Career Record", new Vector2(0, 0));
 
         //myFile.Save();
+        
+        // TOUR EVENTS: Respect tournament settings for team count
+        // Previously hardcoded to 4 teams (Page Playoff) - now uses actual tournament team count
         if (gsp.KO3)
-            SceneManager.LoadScene("Tourny_Home_3K");
-        else if (gsp.KO1)
-            SceneManager.LoadScene("Tourny_Home_SingleK");
-        else if (gsp.cashGame)
-            SceneManager.LoadScene("Tourny_Home_2");
-        else
+        {
+            Debug.Log($"[TournySettings] Triple-K format with {gsp.numberOfTeams} teams");
             SceneManager.LoadScene("Tourny_Home_1");
+        }
+        else if (gsp.KO1)
+        {
+            Debug.Log($"[TournySettings] Single-K format with {gsp.numberOfTeams} teams");
+            SceneManager.LoadScene("Tourny_Home_SingleK");
+        }
+        else if (gsp.cashGame)
+        {
+            Debug.Log($"[TournySettings] Cash game");
+            SceneManager.LoadScene("Tourny_Home_2");
+        }
+        else
+        {
+            Debug.Log($"[TournySettings] Standard tournament with {gsp.numberOfTeams} teams");
+            SceneManager.LoadScene("Tourny_Home_1");
+        }
     }
 
     public void Player()
@@ -116,18 +131,21 @@ public class TournySettings : MonoBehaviour
     }
 
     public void Settings()
-    {
+	{
 		tournyGO.SetActive(true);
 		if (cm)
 		{
 			gsp.tournyEarnings = 0;
 
-			teams = cm.currentTournyTeams.Length;
+			// Use tournament's team count from Tourny scriptable object
+			teams = cm.currentTourny.teams;
 			format = cm.currentTourny.format;
 			entryFee = cm.currentTourny.entryFee;
 			prize = cm.currentTourny.prizeMoney;
 			trophy.sprite = cm.currentTourny.image;
 			location = cm.currentTourny.location;
+			
+			Debug.Log($"[TournySettings] Tournament '{cm.currentTourny.name}' has {teams} teams (from Tourny.teams)");
 		}
 
 		// CRITICAL FIX: If tournament is in progress, restore settings from save
@@ -154,18 +172,23 @@ public class TournySettings : MonoBehaviour
 			endSlider.transform.parent.gameObject.SetActive(false);
 			rockSlider.interactable = false;
 			gameSlider.transform.parent.gameObject.SetActive(false);
-		}
+        }
         //if (cm.week == 1)
         //{
         //    //Help();
         //}
 
-        if (gsp.KO3 || gsp.KO1)
+        if (gsp.KO3)
+        {
+            endSlider.minValue = 4;
+            endSlider.value = 4;
+        }
+
+        if (gsp.KO1)
         {
             gameText.gameObject.SetActive(false);
             gameSlider.gameObject.SetActive(false);
             gameSlider.transform.parent.gameObject.SetActive(false);
-
         }
         else
         {
@@ -186,16 +209,19 @@ public class TournySettings : MonoBehaviour
             }
             gameSlider.maxValue = teams - 1;
         }
+
         tournyName.text = cm.currentTourny.name;
         tournyInfoText[0].text = teams.ToString();
         tournyInfoText[1].text = format;
         tournyInfoText[2].text = "$" + prize.ToString("n0");
         tournyInfoText[3].text = "$" + entryFee.ToString("n0");
         tournyInfoText[4].text = location;
+
         if (gsp.ends <= 0)
             ends = 2;
         else
             ends = gsp.ends;
+
         rocks = gsp.rocks;
         rockSlider.interactable = true;
         endSlider.interactable = true;

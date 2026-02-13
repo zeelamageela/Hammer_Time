@@ -60,6 +60,10 @@ public class EndMenu : MonoBehaviour
 
             if (gsp.endCurrent == 0)
             {
+                // CRITICAL FIX: Reset scores at start of new game
+                gsp.redScore = 0;
+                gsp.yellowScore = 0;
+                
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
                 simButton.gameObject.SetActive(true);
@@ -343,8 +347,9 @@ public class EndMenu : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
     }
 
-    public void SimEnd()
-    {
+	public void SimEnd()
+	{
+		Debug.Log("[EndMenu] SimEnd called - simulating to end of game");
         gsp.endCurrent++;
         gsp.gameInProgress = true;
 
@@ -749,7 +754,14 @@ public class EndMenu : MonoBehaviour
         gsp.redScore = (int)tempTotal.x;
         yellowTotalScore.text = tempTotal.y.ToString();
         gsp.yellowScore = (int)tempTotal.y;
-        //gsp.LoadFromEndMenu();
+        
+        // CRITICAL FIX: If game is over after simulation, show the End Game button
+        // Player clicks it manually to see the result before advancing
+        if (gsp.endCurrent >= gsp.ends && gsp.redScore != gsp.yellowScore)
+        {
+            Debug.Log("[EndMenu.SimEnd] Game complete after simulation - player must click End Game button");
+            // The button is already visible from the UI logic above, player clicks it to continue
+        }
     }
 
     Vector2Int SimScore(int xx, Team redTeam, Team yellowTeam)
@@ -786,6 +798,10 @@ public class EndMenu : MonoBehaviour
     }
     public void EndGame()
     {
+        // CRITICAL FIX: Set justFinishedGame flag FIRST, before any scene loading
+        // This ensures playoff managers know to process the game result
+        gsp.justFinishedGame = true;
+        Debug.Log("[EndMenu.EndGame] Set justFinishedGame = true");
 
         if (gsp.cashGame)
         {
@@ -834,10 +850,6 @@ public class EndMenu : MonoBehaviour
             // For playoffs, there are no "other games" to simulate (single-elimination bracket)
             // Simulating here would cause DOUBLE simulation for regular tournaments!
             
-            // CRITICAL FIX: Set justFinishedGame flag so managers know to process result
-            gsp.justFinishedGame = true;
-            Debug.Log("[EndMenu] Game finished - set justFinishedGame = true");
-            
             // Clear gameInProgress flag - we're done with this game
             gsp.gameInProgress = false;
             Debug.Log("[EndMenu] Game finished - cleared gameInProgress flag");
@@ -869,16 +881,19 @@ public class EndMenu : MonoBehaviour
         }
         
         // Load appropriate tournament home scene
+        // CRITICAL FIX: Use correct scene names matching TournySettings
         if (gsp.KO3)
         {
-            SceneManager.LoadScene("Tourny_Home_3K");
+            SceneManager.LoadScene("Tourny_Home_1");  // Triple-K uses standard home
         }
         else if (gsp.KO1)
         {
             SceneManager.LoadScene("Tourny_Home_SingleK");
         }
         else
+        {
             SceneManager.LoadScene("Tourny_Home_1");
+        }
     }
     
     /// <summary>

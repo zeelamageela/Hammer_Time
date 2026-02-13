@@ -10,6 +10,19 @@ public class Rock_Force : MonoBehaviour
     public float turnValue = 60f;
     public Vector2 curl;
     public float scaleFactor;
+    
+    [Header("Physics Tuning")]
+    [Tooltip("Spring tension multiplier - affects initial velocity from same pull distance. 0.5 = half tension, 1.0 = normal")]
+    public float springTensionMultiplier = 1.0f;
+    
+    [Tooltip("Ice friction multiplier - lower = less friction. Tune this to match distance at lower spring tension.")]
+    public float iceFrictionMultiplier = 1.0f;
+    
+    [Tooltip("Curl force multiplier - tune this to maintain trajectory shape at different speeds")]
+    public float curlForceMultiplier = 1.0f;
+    
+    [Tooltip("Base linear damping from Rigidbody2D (auto-captured on start)")]
+    [SerializeField] private float baseDamping = 0.38f;
 
     float velX = 0f;
     float velY = 0f;
@@ -30,9 +43,14 @@ public class Rock_Force : MonoBehaviour
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
-
-        //trajLineGO = GameObject.Find("TrajectoryLine");
-        //trajLine = trajLineGO.GetComponent<TrajectoryLine>();
+        
+        // Capture the base damping from Rigidbody2D component
+        baseDamping = body.linearDamping;
+        
+        // Apply ice friction multiplier to damping
+        body.linearDamping = baseDamping * iceFrictionMultiplier;
+        
+        Debug.Log($"[Rock_Force] Base Damping: {baseDamping:F3}, Ice Friction Mult: {iceFrictionMultiplier:F2}, Final Damping: {body.linearDamping:F3}");
 
         am = FindFirstObjectByType<AudioManager>();
         rockSounds = GetComponents<AudioSource>();
@@ -48,6 +66,15 @@ public class Rock_Force : MonoBehaviour
         Debug.Log("flipAxis is " + flipAxis);
 
         GetComponent<SpriteRenderer>().enabled = true;
+        
+        // Apply spring tension multiplier to initial velocity from spring
+        // This allows same pullback distance to produce less velocity
+        if (springTensionMultiplier != 1.0f)
+        {
+            body.linearVelocity *= springTensionMultiplier;
+            Debug.Log($"[Rock_Force] Spring tension: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
+        }
+        
         turnStart = true;
         forceStart = true;
         //debugVertex = true;
@@ -80,7 +107,10 @@ public class Rock_Force : MonoBehaviour
         if (forceStart == true)
         {
             //Debug.Log("Curl Force");
-            body.AddForce(curl * vel, ForceMode2D.Force);
+            // Apply curl force multiplier for trajectory tuning
+            Vector2 scaledCurl = curl * curlForceMultiplier;
+            body.AddForce(scaledCurl * vel, ForceMode2D.Force);
+            
             //Debug.Log("curl is " + curl.x);
             if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
             {

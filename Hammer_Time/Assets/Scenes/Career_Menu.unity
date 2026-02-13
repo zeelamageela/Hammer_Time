@@ -835,6 +835,7 @@ MonoBehaviour:
   careerLoad: 0
   tournyInProgress: 0
   gameInProgress: 0
+  justFinishedGame: 0
   teams: []
   playoffTeams: []
   cgp: []

@@ -120,11 +120,16 @@ public class TournySelector : MonoBehaviour
 
         if (cm.week == 0)
         {
+            // CRITICAL FIX: Starting new career - don't try to load save data
+            Debug.Log("[TournySelector] New career (week 0) - calling NewSeason()");
             cm.NewSeason();
         }
         else
         {
-            cm.LoadCareer();
+            // CRITICAL FIX: Pass 'this' to LoadCareer so it can set tournament completion status
+            // BEFORE SetActiveTournies() is called
+            Debug.Log("[TournySelector] Existing career (week > 0) - calling LoadCareer()");
+            cm.LoadCareer(tSel: this);
         }
 
         teamMenu.TeamMenuOpen();
@@ -247,40 +252,10 @@ public class TournySelector : MonoBehaviour
         weekText.text = "Week " + cm.week.ToString();
         mode = cm.debug;
         
-        // CRITICAL FIX: Check if loading from save with activeTournies already set
-        bool loadedFromSave = false;
-        if (cm.activeTournies != null && cm.activeTournies.Length > 0)
-        {
-            // Check if any tournament in activeTournies is not null/empty
-            foreach (var t in cm.activeTournies)
-            {
-                if (t != null && t.name != emptyTourny.name)
-                {
-                    loadedFromSave = true;
-                    Debug.Log($"[TournySelector] Detected saved activeTournies - restoring week {cm.week} tournaments from save");
-                    break;
-                }
-            }
-        }
+        // CRITICAL FIX: Use seeded random based on week number
+        // This ensures the same week always generates the same tournaments
+        UnityEngine.Random.InitState(cm.week * 1000 + cm.season);
         
-        if (loadedFromSave)
-        {
-            // Restore activeTournies from save data
-            activeTournies = cm.activeTournies;
-            Debug.Log($"[TournySelector] Restored activeTournies from save:");
-            for (int i = 0; i < activeTournies.Length; i++)
-            {
-                Debug.Log($"  Panel {i}: {activeTournies[i]?.name ?? "null"}");
-            }
-            
-            SetPanels();
-            cm.SaveCareer(); // Save after setting panels
-            return; // Skip re-generation
-        }
-        
-        // Otherwise, generate new activeTournies as usual
-        Debug.Log($"[TournySelector] Generating new activeTournies for week {cm.week}");
-
         bool tourniesComplete = false;
         bool tourComplete = false;
         bool provQualComplete = false;

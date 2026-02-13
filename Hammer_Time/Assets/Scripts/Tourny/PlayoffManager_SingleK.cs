@@ -54,20 +54,51 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[31];
 
-		//Debug.Log("Career Earnings before playoffs - $ " + gsp.earnings.ToString());
-		//if (gsp.tournyInProgress)
-		//{
-		//	Debug.Log("LOADING HERE");
-		//	LoadPlayoffs();
-		//}
-		if (playoffRound > 0)
+		Debug.Log($"[SingleK.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
+
+		// CRITICAL FIX: Handle five distinct scenarios:
+		// 1. Returning from a completed game (justFinishedGame == true, need to advance)
+		// 2. Fresh tournament start (playoffRound == 0 OR teams not yet seeded)
+		// 3. Loading saved tournament between games (careerLoad == true, !justFinishedGame)
+		// 4. Normal round display (playoffRound > 0, teams seeded, just viewing bracket)
+
+		if (gsp.justFinishedGame)
 		{
-			Debug.Log("LOADING HERE");
+			// Scenario 1: Just returned from completing a game - need to process result and advance
+			Debug.Log("[SingleK.Start] SCENARIO 1: Returning from completed game - advancing playoffs");
 			LoadAndAdvancePlayoffs();
+			gsp.justFinishedGame = false; // Clear flag after processing
+		}
+		else if (playoffRound == 0 || gsp.playoffTeams == null || gsp.playoffTeams.Length == 0 || gsp.playoffTeams[0] == null)
+		{
+			// Scenario 2: Fresh tournament start OR teams not yet seeded
+			Debug.Log("[SingleK.Start] SCENARIO 2: Fresh tournament start - setting seeding");
+			StartCoroutine(SetSeeding(tm.teams.Length));
+		}
+		else if (gsp.careerLoad)
+		{
+			// Scenario 3: Loading saved tournament, player is between games - just restore state
+			Debug.Log("[SingleK.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
+			LoadPlayoffs();
+		}
+		else if (playoffTeams != null && playoffTeams.Length > 0 && playoffTeams[0] != null)
+		{
+			// Scenario 4: Normal viewing - teams are seeded, just display current round
+			Debug.Log($"[SingleK.Start] SCENARIO 4: Viewing round {playoffRound} - displaying bracket");
+			
+			// Load teams from gsp first if not already loaded
+			if (playoffTeams[0] == tm.tTeamList.nullTeam || playoffTeams[0].name == "")
+			{
+				for (int i = 0; i < playoffTeams.Length; i++)
+					playoffTeams[i] = gsp.playoffTeams[i];
+			}
+			
+			StartCoroutine(SetPlayoffs());
 		}
 		else
 		{
-			Debug.Log("LOADING HERE");
+			// Fallback: Teams not ready - initialize them
+			Debug.LogWarning("[SingleK.Start] FALLBACK: Teams not ready - initializing");
 			StartCoroutine(SetSeeding(tm.teams.Length));
 		}
 	}
@@ -317,15 +348,30 @@ public class PlayoffManager_SingleK : MonoBehaviour
         if (playerWon)
         {
             Debug.Log($"Player won! Advancing to next round at index {nextRoundStart + playerGame}");
+            
+            // Copy player's team to next round
             playoffTeams[nextRoundStart + playerGame] = playoffTeams[playerTeam];
-            playoffTeams[playerTeam].wins++;
+            
+            // CRITICAL FIX: Transfer player flag to new position
+            playoffTeams[nextRoundStart + playerGame].player = true;
+            playoffTeams[playerTeam].player = false;  // Clear from old position
+            
+            // Update stats
+            playoffTeams[nextRoundStart + playerGame].wins++;
             playoffTeams[oppTeam].loss++;
             playoffTeams[oppTeam].rank = eliminationRank;
         }
         else
         {
             Debug.Log($"Player lost. Opponent advancing to next round at index {nextRoundStart + playerGame}");
+            
+            // Copy opponent's team to next round
             playoffTeams[nextRoundStart + playerGame] = playoffTeams[oppTeam];
+            
+            // Player flag stays with player team (at their old position - they're eliminated)
+            // Opponent doesn't get player flag
+            
+            // Update stats
             playoffTeams[oppTeam].wins++;
             playoffTeams[playerTeam].loss++;
             playoffTeams[playerTeam].rank = eliminationRank;
@@ -416,40 +462,82 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
     void LoadAndAdvancePlayoffs()
     {
-        Debug.Log($"[LoadAndAdvancePlayoffs] Loading playoffs - Round {playoffRound}");
+        Debug.Log($"[SingleK] Loading playoffs - Round {playoffRound}");
 
-        // Load saved teams from persistent storage
+        // Load saved teams
         for (int i = 0; i < playoffTeams.Length; i++)
             playoffTeams[i] = gsp.playoffTeams[i];
 
-        // Find player team using helper
-        playerTeam = SharedTournamentLogic.FindPlayerTeamIndex(playoffTeams);
+        // Get round config
+        int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
+        int startIdx = config[0];
+        int matchCount = config[1];
+        int nextRoundStart = config[2];
+        int elimRank = SharedTournamentLogic.GetSingleEliminationRank(playoffRound);
+
+        Debug.Log($"[SingleK] Round {playoffRound}: start={startIdx}, matches={matchCount}, next={nextRoundStart}");
+
+        // Find player in current round
+        playerTeam = -1;
+        for (int i = 0; i < matchCount * 2; i++)
+        {
+            int idx = startIdx + i;
+            if (playoffTeams[idx] != null && playoffTeams[idx].player)
+            {
+                playerTeam = idx;
+                oppTeam = (i % 2 == 0) ? idx + 1 : idx - 1;
+                playerGame = i / 2;
+                break;
+            }
+        }
+
         if (playerTeam == -1)
         {
-            Debug.LogError("[LoadAndAdvancePlayoffs] Player team not found!");
+            Debug.LogError($"[SingleK] Player not found in round {playoffRound}!");
             return;
         }
 
-        // Find opponent using pairing logic
-        oppTeam = GetPlayerOpponentIndex();
-        Debug.Log($"[LoadAndAdvancePlayoffs] PlayerTeam index: {playerTeam}, OppTeam index: {oppTeam}");
+        Debug.Log($"[SingleK] Player at {playerTeam} vs {oppTeam}, game {playerGame}");
 
-        // Get round configuration
-        int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
-        int startIndex = config[0];
-        int nextRoundStart = config[2];
-        int eliminationRank = SharedTournamentLogic.GetSingleEliminationRank(playoffRound);
-
-        // Determine player game number
-        playerGame = CalculatePlayerGameNumber(playerTeam, startIndex);
-
-        // Process player's match result
+        // Determine winner and advance
         bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
-        ProcessPlayerMatchResult(playerWon, nextRoundStart, eliminationRank);
+        int winnerIdx = playerWon ? playerTeam : oppTeam;
+        int loserIdx = playerWon ? oppTeam : playerTeam;
+        int nextIdx = nextRoundStart + playerGame;
 
-        Debug.Log($"Game {playerGame} - {gsp.redTeamName} ({gsp.redScore}) vs {gsp.yellowTeamName} ({gsp.yellowScore}) - Player won: {playerWon}");
+        Debug.Log($"[SingleK] Player {(playerWon ? "WON" : "LOST")} - advancing {playoffTeams[winnerIdx].name}");
 
-        // Continue simulation
+        // CRITICAL FIX: Set player flag BEFORE copying, since the copy creates a reference
+        // If player won, the Team object needs player=true
+        if (playerWon)
+        {
+            playoffTeams[winnerIdx].player = true;  // Ensure winner team has flag
+            Debug.Log($"[SingleK] Set player flag on winner team: {playoffTeams[winnerIdx].name}");
+        }
+        
+        // Update wins/losses
+        playoffTeams[winnerIdx].wins++;
+        playoffTeams[loserIdx].loss++;
+        playoffTeams[loserIdx].rank = elimRank;
+
+        // Copy winner to next round (creates a reference to the same Team object)
+        playoffTeams[nextIdx] = playoffTeams[winnerIdx];
+        
+        // Clear player flag from loser's team if player lost
+        if (!playerWon)
+        {
+            playoffTeams[playerTeam].player = false;
+        }
+
+        Debug.Log($"[SingleK] Advanced {playoffTeams[nextIdx].name} to index {nextIdx} with {playoffTeams[nextIdx].wins} wins (player={playoffTeams[nextIdx].player})");
+
+        // CRITICAL: Save to gsp BEFORE simulating
+        gsp.playoffTeams = playoffTeams;
+        
+        Debug.Log($"[SingleK] Calling SimPlayoff to finish Round {playoffRound} (player game {playerGame} already played)");
+        
+        // Continue simulation - this will simulate OTHER games in the CURRENT round
+        // IMPORTANT: Don't increment playoffRound yet - SimPlayoff will do it!
         StartCoroutine(SimPlayoff(playerGame));
     }
 
@@ -777,7 +865,22 @@ public class PlayoffManager_SingleK : MonoBehaviour
 										  finalsDisplay;
 
 		// Simulate matches for this round (skipping player's game)
+		Debug.Log($"[SimPlayoff] About to simulate Round {playoffRound}: playerGame={playerGame}, startIndex={startIndex}, nextRoundStart={nextRoundStart}");
 		SimulateRoundMatches(currentDisplay, startIndex, nextRoundStart, playerGame, eliminationRank);
+		
+		// Log what got populated
+		for (int i = 0; i < 8; i++)
+		{
+			int idx = nextRoundStart + i;
+			if (idx < playoffTeams.Length && playoffTeams[idx] != null)
+			{
+				Debug.Log($"[SimPlayoff] After simulation - Round {playoffRound + 1} slot {idx}: {playoffTeams[idx].name} (player={playoffTeams[idx].player})");
+			}
+			else
+			{
+				Debug.LogWarning($"[SimPlayoff] After simulation - Round {playoffRound + 1} slot {idx}: NULL or empty!");
+			}
+		}
 
 		// Update all bracket displays up to current round
 		UpdateBracketDisplay(roundOf16Display, 0, 0, 9);
@@ -863,8 +966,12 @@ public class PlayoffManager_SingleK : MonoBehaviour
 			row[30].SetActive(false);
 		}
 
-		// Advance to next round
+		// ALWAYS increment round after simulating (both "Sim All" and "Return from game" scenarios)
 		playoffRound++;
+		gsp.playoffRound = playoffRound;
+		tm.playoffRound = playoffRound;
+		Debug.Log($"[SimPlayoff] Advanced to Round {playoffRound}");
+		
 		simButton.gameObject.SetActive(false);
 		contButton.gameObject.SetActive(true);
 		StartCoroutine(SetPlayoffs());

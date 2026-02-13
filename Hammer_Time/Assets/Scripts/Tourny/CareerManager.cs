@@ -38,8 +38,11 @@ public class CareerManager : MonoBehaviour
     private const float XP_PER_LOSS = 1f;
     
     // Team Generation Constants
-    private const int BASE_STAT_TOTAL = 150;
-    private const int MAX_STAT_TOTAL = 240;
+    // DIFFICULTY TUNING: Starting opponents are harder (170 base instead of 150)
+    // but progression is slower (20 points/week instead of 30)
+    // This creates a challenging early game with steady difficulty ramp
+    private const int BASE_STAT_TOTAL = 170;  // Harder starting opponents
+    private const int MAX_STAT_TOTAL = 250;   // Slightly higher ceiling
     private const int STAT_VARIATION = 5;
     private const int PLAYERS_PER_TEAM = 4;
     private const int NUM_STATS = 6;
@@ -177,7 +180,10 @@ public class CareerManager : MonoBehaviour
         provRankList = new List<Standings_List>();
         tournyResults = new List<int>();
         
-        LoadCareer();
+        // CRITICAL FIX: Don't auto-load career here
+        // Let TournySelector.SetUp() handle loading when it's ready
+        // This prevents trying to load before save is deleted for new careers
+        Debug.Log("[CareerManager] Start() - initialization complete, waiting for TournySelector");
     }
 
     private void Update()
@@ -269,7 +275,12 @@ public class CareerManager : MonoBehaviour
         record = cs.record;
         totalTourTeams = 16;
         provTeams = 16;
-        SaveCareer();
+        
+        // CRITICAL FIX: Don't save here! This was overwriting the save file with empty tournament data
+        // LoadSettings() is called from CareerSettings.LoadToCM() BEFORE entering the arena
+        // At this point, TournySelector doesn't exist yet, so ToSaveData() gets zero tournaments
+        // The save will happen naturally when entering the arena scene
+        Debug.Log("[CareerManager] LoadSettings complete - NOT saving (to preserve tournament data)");
     }
 
     public void LoadCareer(
@@ -331,14 +342,15 @@ public class CareerManager : MonoBehaviour
             
             Debug.Log($"[CareerManager] Loading career save from {saveData.saveDate}");
             
-            // Apply save data to CareerManager
-            LoadFromSaveData(saveData);
-            
-            // Apply tournament data to TournySelector
+            // CRITICAL FIX: Apply tournament data to TournySelector FIRST
+            // This ensures tournament completion status is restored before SetActiveTournies() is called
             if (tSel != null)
             {
                 ApplyTournamentData(tSel, saveData);
             }
+            
+            // Apply save data to CareerManager
+            LoadFromSaveData(saveData);
             
             // Apply dialogue data to StorylineManager
             if (slm != null && saveData.dialogueFlags != null)
@@ -412,9 +424,18 @@ public class CareerManager : MonoBehaviour
     /// </summary>
     private void ApplyTournamentData(TournySelector tSel, CareerSaveData saveData)
     {
+        if (tSel == null)
+        {
+            Debug.LogWarning("[CareerManager] TournySelector is null in ApplyTournamentData");
+            return;
+        }
+        
+        Debug.Log($"[CareerManager] ApplyTournamentData - Restoring tournament completion status...");
+        
         // Apply provincial tournaments
         if (saveData.provincialTournaments != null && tSel.provQual != null)
         {
+            Debug.Log($"[CareerManager] Restoring {saveData.provincialTournaments.Count} provincial tournaments");
             for (int i = 0; i < saveData.provincialTournaments.Count && i < tSel.provQual.Length; i++)
             {
                 var data = saveData.provincialTournaments[i];
@@ -424,6 +445,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tSel.provQual[j].complete = data.complete;
                         tSel.provQual[j].trophyWon = data.trophyWon;
+                        Debug.Log($"  ProvQual[{j}] '{tSel.provQual[j].name}' (ID {data.id}): complete={data.complete}");
                         break;
                     }
                 }
@@ -433,6 +455,7 @@ public class CareerManager : MonoBehaviour
         // Apply tour tournaments
         if (saveData.tourTournaments != null && tSel.tour != null)
         {
+            Debug.Log($"[CareerManager] Restoring {saveData.tourTournaments.Count} tour tournaments");
             for (int i = 0; i < saveData.tourTournaments.Count && i < tSel.tour.Length; i++)
             {
                 var data = saveData.tourTournaments[i];
@@ -442,6 +465,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tSel.tour[j].complete = data.complete;
                         tSel.tour[j].trophyWon = data.trophyWon;
+                        Debug.Log($"  Tour[{j}] '{tSel.tour[j].name}' (ID {data.id}): complete={data.complete}");
                         break;
                     }
                 }
@@ -451,6 +475,7 @@ public class CareerManager : MonoBehaviour
         // Apply regular tournaments
         if (saveData.regularTournaments != null && tSel.tournies != null)
         {
+            Debug.Log($"[CareerManager] Restoring {saveData.regularTournaments.Count} regular tournaments");
             for (int i = 0; i < saveData.regularTournaments.Count && i < tSel.tournies.Length; i++)
             {
                 var data = saveData.regularTournaments[i];
@@ -460,6 +485,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tSel.tournies[j].complete = data.complete;
                         tSel.tournies[j].trophyWon = data.trophyWon;
+                        Debug.Log($"  Tournies[{j}] '{tSel.tournies[j].name}' (ID {data.id}): complete={data.complete}");
                         break;
                     }
                 }
@@ -470,11 +496,15 @@ public class CareerManager : MonoBehaviour
         if (tSel.tourChampionship != null)
         {
             tSel.tourChampionship.complete = saveData.tourChampionshipComplete;
+            Debug.Log($"[CareerManager] Tour Championship: complete={saveData.tourChampionshipComplete}");
         }
         if (tSel.provChampionship != null)
         {
             tSel.provChampionship.complete = saveData.provChampionshipComplete;
+            Debug.Log($"[CareerManager] Prov Championship: complete={saveData.provChampionshipComplete}");
         }
+        
+        Debug.Log("[CareerManager] Tournament completion status restored successfully");
     }
 
     private void ClearRankLists()
@@ -490,6 +520,7 @@ public class CareerManager : MonoBehaviour
 
     /// <summary>
     /// Save high score to persistent leaderboard (survives career deletion)
+    /// This is called both during career progression AND at career end
     /// </summary>
     IEnumerator SaveHighScore()
     {
@@ -527,6 +558,82 @@ public class CareerManager : MonoBehaviour
         );
         
         Debug.Log($"[CareerManager] High score saved: {fullName} - ${earnings:N0}");
+    }
+    
+    /// <summary>
+    /// Update high score immediately (called after tournaments, week progression, etc.)
+    /// This allows players to appear on the leaderboard even if they don't finish their career
+    /// </summary>
+    public void UpdateHighScore()
+    {
+        // Don't save if career hasn't really started yet
+        if (week < 1 || earnings <= 0)
+        {
+            return;
+        }
+        
+        // Update current trophy list from tournaments
+        UpdateCurrentTrophyList();
+        
+        // Save to high score service immediately (no coroutine needed)
+        HighScoreService.AddCareerEntry(
+            playerName: playerName,
+            teamName: teamName,
+            earnings: earnings,
+            season: season,
+            wins: (int)record.x,
+            losses: (int)record.y,
+            trophies: currentTrophyList
+        );
+        
+        Debug.Log($"[CareerManager] High score updated: {playerName} {teamName} - ${earnings:N0}, {record.x}-{record.y}");
+    }
+    
+    /// <summary>
+    /// Update current trophy list from tournament completion status
+    /// </summary>
+    private void UpdateCurrentTrophyList()
+    {
+        currentTrophyList = new List<bool>();
+        
+        // Add regular tournament trophies
+        if (tournies != null)
+        {
+            foreach (var tourny in tournies)
+            {
+                if (tourny != null)
+                {
+                    currentTrophyList.Add(tourny.trophyWon);
+                }
+            }
+        }
+        
+        // Add tour tournament trophies
+        if (tour != null)
+        {
+            foreach (var tourny in tour)
+            {
+                if (tourny != null)
+                {
+                    currentTrophyList.Add(tourny.trophyWon);
+                }
+            }
+        }
+        
+        // Add championship trophies
+        if (champ != null && champ.Length >= 2)
+        {
+            if (champ[0] != null)
+            {
+                currentTrophyList.Add(champ[0].trophyWon);
+            }
+            if (champ[1] != null)
+            {
+                currentTrophyList.Add(champ[1].trophyWon);
+            }
+        }
+        
+        Debug.Log($"[CareerManager] Updated trophy list: {currentTrophyList.Count(t => t)}/{currentTrophyList.Count} won");
     }
 
     public void SaveTournyState(object tournyStateManager = null, GameSettingsPersist gsp = null)
@@ -1037,6 +1144,11 @@ public class CareerManager : MonoBehaviour
         week++;
         RebalanceTeamStrength();
         Debug.Log("CM Tourny Results week is " + week);
+        
+        // CRITICAL: Update high score after tournament completion
+        // This ensures players appear on leaderboard even if they don't finish their career
+        UpdateHighScore();
+        
         SaveCareer();
     }
 
@@ -1094,6 +1206,10 @@ public class CareerManager : MonoBehaviour
                 }
             }
         }
+        
+        // Update high score after progressing to next week
+        // This ensures continuous leaderboard updates
+        UpdateHighScore();
         
         SaveCareer();
         //tSel.SetUp();
@@ -1385,8 +1501,16 @@ public class CareerManager : MonoBehaviour
     {
         System.Random rand = new System.Random();
 
-        int baseStatTotal = 180 + (week * 30);
-        int maxStatTotal = 240 + (week * 30);
+        // DIFFICULTY CURVE: Steady ramp-up with championship spike
+        // Week 1-6: Gradual increase (+20 stats/week = slower progression)
+        // Championship weeks: +50 stat spike for elite competition
+        bool isChampionshipWeek = (currentTourny != null && currentTourny.championship);
+        
+        int weeklyIncrease = isChampionshipWeek ? 50 : 20;  // Championship spike!
+        int baseStatTotal = 170 + (week * weeklyIncrease);
+        int maxStatTotal = 250 + (week * weeklyIncrease);
+        
+        Debug.Log($"[CareerManager] Week {week} opponent stats: {baseStatTotal}-{maxStatTotal} (Championship: {isChampionshipWeek})");
 
         // Find min and max strength in the league for scaling
         int minStrength = teams.Min(t => t.strength);
@@ -1676,64 +1800,138 @@ public class CareerManager : MonoBehaviour
         if (playedCardIDList != null) data.playedCardIDs.AddRange(playedCardIDList);
         if (activeCardLengthList != null) data.activeCardLengths.AddRange(activeCardLengthList);
         
-        // Tournaments - Add null checks for individual tournament objects
-        if (prov != null)
+        // CRITICAL FIX: Get tournament data from TournySelector (the source of truth)
+        // Not from cm.tournies/tour/prov which are only set during PlayTourny()
+        TournySelector tSel = FindFirstObjectByType<TournySelector>();
+        
+        if (tSel != null)
         {
-            foreach (var tourny in prov)
+            // Save provincial tournaments from TournySelector
+            if (tSel.provQual != null)
             {
-                if (tourny != null)
+                foreach (var tourny in tSel.provQual)
                 {
-                    data.provincialTournaments.Add(new TournamentProgressData
+                    if (tourny != null)
                     {
-                        id = tourny.id,
-                        complete = tourny.complete,
-                        trophyWon = tourny.trophyWon
-                    });
+                        data.provincialTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
                 }
             }
-        }
-        
-        if (tour != null)
-        {
-            foreach (var tourny in tour)
+            
+            // Save tour tournaments from TournySelector
+            if (tSel.tour != null)
             {
-                if (tourny != null)
+                foreach (var tourny in tSel.tour)
                 {
-                    data.tourTournaments.Add(new TournamentProgressData
+                    if (tourny != null)
                     {
-                        id = tourny.id,
-                        complete = tourny.complete,
-                        trophyWon = tourny.trophyWon
-                    });
+                        data.tourTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
                 }
             }
-        }
-        
-        if (tournies != null)
-        {
-            foreach (var tourny in tournies)
+            
+            // Save regular tournaments from TournySelector
+            if (tSel.tournies != null)
             {
-                if (tourny != null)
+                foreach (var tourny in tSel.tournies)
                 {
-                    data.regularTournaments.Add(new TournamentProgressData
+                    if (tourny != null)
                     {
-                        id = tourny.id,
-                        complete = tourny.complete,
-                        trophyWon = tourny.trophyWon
-                    });
+                        data.regularTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
                 }
             }
-        }
-        
-        if (champ != null && champ.Length >= 2)
-        {
-            if (champ[0] != null)
+            
+            // Save championships from TournySelector
+            if (tSel.tourChampionship != null)
             {
-                data.tourChampionshipComplete = champ[0].complete;
+                data.tourChampionshipComplete = tSel.tourChampionship.complete;
             }
-            if (champ[1] != null)
+            if (tSel.provChampionship != null)
             {
-                data.provChampionshipComplete = champ[1].complete;
+                data.provChampionshipComplete = tSel.provChampionship.complete;
+            }
+            
+            Debug.Log($"[CareerManager] Saved {data.provincialTournaments.Count} prov, {data.tourTournaments.Count} tour, {data.regularTournaments.Count} regular tournaments");
+        }
+        else
+        {
+            Debug.LogWarning("[CareerManager] TournySelector not found - tournament completion data will not be saved!");
+            
+            // Fallback: Try to save from cm arrays if they exist
+            if (prov != null)
+            {
+                foreach (var tourny in prov)
+                {
+                    if (tourny != null)
+                    {
+                        data.provincialTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
+                }
+            }
+            
+            if (tour != null)
+            {
+                foreach (var tourny in tour)
+                {
+                    if (tourny != null)
+                    {
+                        data.tourTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
+                }
+            }
+            
+            if (tournies != null)
+            {
+                foreach (var tourny in tournies)
+                {
+                    if (tourny != null)
+                    {
+                        data.regularTournaments.Add(new TournamentProgressData
+                        {
+                            id = tourny.id,
+                            complete = tourny.complete,
+                            trophyWon = tourny.trophyWon
+                        });
+                    }
+                }
+            }
+            
+            if (champ != null && champ.Length >= 2)
+            {
+                if (champ[0] != null)
+                {
+                    data.tourChampionshipComplete = champ[0].complete;
+                }
+                if (champ[1] != null)
+                {
+                    data.provChampionshipComplete = champ[1].complete;
+                }
             }
         }
         
