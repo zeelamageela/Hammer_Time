@@ -34,16 +34,13 @@ public class AI_Sweeper : MonoBehaviour
         {
             #region Centre Guards
             case "Centre Guard":
-                
-                break;
-
             case "Tight Centre Guard":
-                
-                break;
-
             case "High Centre Guard":
-                
-                break;
+                // PHYSICS-BASED GUARDS: Sweeping handled by Guard To Target callback
+                // These legacy names are intercepted and redirected, so this case is never actually reached
+                // But kept for safety - just pass through to Guard To Target logic
+                Debug.Log("[AI_Sweeper] Legacy guard name detected, should have been redirected. Passing through.");
+                goto case "Guard To Target";
             #endregion
 
             #region Corner Guards
@@ -820,7 +817,38 @@ public class AI_Sweeper : MonoBehaviour
                 break;
 
             case "Guard To Target":
+                // PHYSICS-BASED GUARD: Light sweeping to help it reach guard zone (Y=2.5-4.5)
+                // Target velocity should be ~50-70% of button velocity
+                yield return new WaitUntil(() => rock.transform.position.y >= -7f);
+                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                if (rockRB.linearVelocity.y <= 3.5f)  // Guard needs less speed than draws
+                    sm.SweepWeight(true);
 
+                yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
+                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                if (rockRB.linearVelocity.y <= 2.2f)
+                    sm.SweepWeight(true);
+                else
+                    sm.SweepWhoa(true);
+
+                yield return new WaitUntil(() => rock.transform.position.y >= 0f);
+                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                if (rockRB.linearVelocity.y <= 1.2f)
+                    sm.SweepWeight(true);
+                else
+                    sm.SweepWhoa(true);
+                
+                yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
+                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                if (rockRB.linearVelocity.y <= 0.6f)
+                    sm.SweepWeight(true);
+                else
+                    sm.SweepWhoa(true);
+                
+                // Guards should stop in guard zone (Y=2.5-4.5), so whoa at Y=2.5
+                yield return new WaitUntil(() => rock.transform.position.y >= 2.5f);
+                Debug.Log("y = 2.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                sm.SweepWhoa(true);  // STOP! We're in guard zone
                 break;
 
             default:

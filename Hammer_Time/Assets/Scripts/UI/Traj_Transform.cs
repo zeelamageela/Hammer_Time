@@ -54,13 +54,18 @@ public class Traj_Transform : MonoBehaviour
 
         weight = (weightScale * springDistance) / 4f;
 
-        if (!rm.inturn)
+        // CORRECT: Match ACTUAL simulator convention
+        // TrajectorySimulator line 245: int dirMult = isInTurn ? -1 : 1;
+        //   In-turn (true) ? dirMult=-1 ? force = -0.323 * -1 = +0.323 ? RIGHT curl
+        //   Out-turn (false) ? dirMult=1 ? force = -0.323 * 1 = -0.323 ? LEFT curl
+        // Visual convention: negative X scale = flipped
+        if (rm.inturn)
         {
-            transform.localScale = new Vector3(-1f, weight, 1f);
+            transform.localScale = new Vector3(-1f, weight, 1f);  // In-turn ? RIGHT ? flip to show right
         }
         else
         {
-            transform.localScale = new Vector3(1f, weight, 1f);
+            transform.localScale = new Vector3(1f, weight, 1f);   // Out-turn ? LEFT ? no flip
         }
         
         if (trajLine == null || trajLine.aimCircle == null || trajLine.shootKnob == null || trajLine.curlPointGO == null)

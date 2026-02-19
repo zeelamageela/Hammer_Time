@@ -96,9 +96,9 @@ public class AI_Strategy : MonoBehaviour
         // If no high-value takeout, play a guard if few guards, else draw to button
         int guardsInPlay = gm.gList.Count;
         if (guardsInPlay < 2)
-            aiShoot.OnShot("Centre Guard", rockCurrent);
+            aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
         else
-            aiShoot.OnShot("Button", rockCurrent);
+            aiTarg.OnTarget("Manual Draw", rockCurrent, 0);
     }
 
     private int GetMostValuableOpponentRockIndex(string myTeam)
@@ -296,6 +296,7 @@ public class AI_Strategy : MonoBehaviour
                     // Remove it!
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
+                    context.mustScore = true; // Need to score on this shot to win
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -383,7 +384,15 @@ public class AI_Strategy : MonoBehaviour
         // LATE: Go for the steal or setup
         else if (phase == "late")
         {
-            if (threatRock >= 0 && oppRocksInHouse >= 2)
+            if (activeTeamScore < oppTeamScore)
+            {
+                // Desperation time - must remove if any threats, even if risky
+                context = new ShotContext(ShotIntent.Desperation, threatRock);
+                context.acceptRisk = true;
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
+            }
+            else if (threatRock >= 0 && oppRocksInHouse >= 2)
             {
                 // They're building points - must remove
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
@@ -403,11 +412,12 @@ public class AI_Strategy : MonoBehaviour
                 // Complex situation - score or protect
                 if (myRocksInHouse > oppRocksInHouse)
                 {
-                    context = new ShotContext(ShotIntent.ProtectLead);
+                    context = new ShotContext(ShotIntent.ScorePoints);
                 }
                 else
                 {
-                    context = new ShotContext(ShotIntent.ScorePoints);
+                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                    context.acceptRisk = true; 
                 }
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
@@ -496,17 +506,17 @@ public class AI_Strategy : MonoBehaviour
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
-            else if (myRocksInHouse == 1)
+            else if (myRocksInHouse >= 1)
             {
-                // Only 1 rock - can't score 2, try to blank
-                context = new ShotContext(ShotIntent.ForceBlank);
+                // Draw for points
+                context = new ShotContext(ShotIntent.ScorePoints);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
             else
             {
-                // Draw for points
-                context = new ShotContext(ShotIntent.ScorePoints);
+                // Only 1 rock - can't score 2, try to blank
+                context = new ShotContext(ShotIntent.ForceBlank);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -607,18 +617,39 @@ public class AI_Strategy : MonoBehaviour
                     else if (rock.rockInfo.teamName != activeTeamName && dist < theirBestDist)
                         theirBestDist = dist;
                 }
-                
+
                 if (theirBestDist < myBestDist)
                 {
                     // They're closer - attack!
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    if (rockCurrent >= 6) // Last rock - must score or remove
+                    {
+                        if (activeTeamScore <= oppTeamScore)
+                        {
+                            context = new ShotContext(ShotIntent.Desperation, threatRock);
+                            context.acceptRisk = true;
+                            context.mustScore = true; // Need to score to win
+                            aiTarg.ExecuteIntent(context, rockCurrent);
+                            return true;
+                        }
+                        else
+                        {
+                            context = new ShotContext(ShotIntent.ScorePoints, threatRock);
+                            context.acceptRisk = true;
+                            aiTarg.ExecuteIntent(context, rockCurrent);
+                            return true;
+                        }
+                    }
+                    else 
+                    { 
+                        context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                        context.acceptRisk = true;
+                        aiTarg.ExecuteIntent(context, rockCurrent);
+                        return true;
+                    }
                 }
                 else
                 {
-                    // We're ahead - add more
+                    // We're closer - add more
                     context = new ShotContext(ShotIntent.ScorePoints);
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
@@ -902,7 +933,7 @@ public class AI_Strategy : MonoBehaviour
                     //if I have shot rock
                     if (closestRockInfo.teamName == rockInfo.teamName)
                     {
-                        aiShoot.OnShot("Centre Guard", rockCurrent);
+                        aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
                     }
                     //if they have shot rock
                     else
@@ -1264,12 +1295,12 @@ public class AI_Strategy : MonoBehaviour
                 //left corner guard
                 if (lCornGuard)
                 {
-                    aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                    aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
                 }
                 //right corner guard
                 else if (rCornGuard)
                 {
-                    aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                    aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
                 }
                 else if (cenGuard)
                 {
@@ -1304,12 +1335,12 @@ public class AI_Strategy : MonoBehaviour
                     //tight centre and no centre guard
                     if (lCornGuard && !rCornGuard)
                     {
-                        aiShoot.OnShot("Right Corner Guard", rockCurrent);
+                        aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
                     }
                     //centre and no tight centre guard
                     else if (rCornGuard && !lCornGuard)
                     {
-                        aiShoot.OnShot("Left Corner Guard", rockCurrent);
+                        aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
                     }
                     //centre and tight centre guards
                     else if (lCornGuard && rCornGuard)

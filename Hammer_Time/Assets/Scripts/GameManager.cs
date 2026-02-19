@@ -445,12 +445,11 @@ public class GameManager : MonoBehaviour
     #region Turns
     public void OnRedTurn()
     {
-        // PLAYER TURN: Don't reset rm.inturn! Preserve it from previous turn or toggle button
-        // Player controls turn direction ONLY via toggle button (TurnAnim.ToggleTurn)
+        // PLAYER TURN: Initialize to default out-turn, player can toggle via button
         if (!aiTeamRed)
         {
-            // DO NOT set rm.inturn here - it's controlled by the toggle button!
-            Debug.Log($"[GameManager] Player Red Turn - using rm.inturn={rm.inturn} (preserved)");
+            rm.inturn = false;  // Default to out-turn for player turns
+            Debug.Log($"[GameManager] Player Red Turn - initialized rm.inturn=false (OUT-TURN default)");
         }
         
         // Clear trajectory from previous turn
@@ -493,10 +492,15 @@ public class GameManager : MonoBehaviour
         
         // CRITICAL: For player turns, initialize flipAxis from rm.inturn immediately after enabling Rock_Force
         // This ensures the rock starts with the correct default turn before the player can toggle it
+        // BOTH values must be synchronized from the start!
         if (!aiTeamRed)
         {
-            redRock_1.GetComponent<Rock_Force>().flipAxis = rm.inturn;
-            Debug.Log($"[GameManager.OnRedTurn] Initialized rock flipAxis={rm.inturn} for player");
+            Rock_Force redRockForce = redRock_1.GetComponent<Rock_Force>();
+            if (redRockForce != null)
+            {
+                redRockForce.flipAxis = rm.inturn;
+                Debug.Log($"[GameManager.OnRedTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
+            }
         }
         
         boardCollider.enabled = false;
@@ -621,12 +625,11 @@ public class GameManager : MonoBehaviour
 
     public void OnYellowTurn()
     {
-        // PLAYER TURN: Don't reset rm.inturn! Preserve it from previous turn or toggle button
-        // Player controls turn direction ONLY via toggle button (TurnAnim.ToggleTurn)
+        // PLAYER TURN: Initialize to default out-turn, player can toggle via button
         if (!aiTeamYellow)
         {
-            // DO NOT set rm.inturn here - it's controlled by the toggle button!
-            Debug.Log($"[GameManager] Player Yellow Turn - using rm.inturn={rm.inturn} (preserved)");
+            rm.inturn = false;  // Default to out-turn for player turns
+            Debug.Log($"[GameManager] Player Yellow Turn - initialized rm.inturn=false (OUT-TURN default)");
         }
         
         // Clear trajectory from previous turn
@@ -669,10 +672,15 @@ public class GameManager : MonoBehaviour
         
         // CRITICAL: For player turns, initialize flipAxis from rm.inturn immediately after enabling Rock_Force
         // This ensures the rock starts with the correct default turn before the player can toggle it
+        // BOTH values must be synchronized from the start!
         if (!aiTeamYellow)
         {
-            yellowRock_1.GetComponent<Rock_Force>().flipAxis = rm.inturn;
-            Debug.Log($"[GameManager.OnYellowTurn] Initialized rock flipAxis={rm.inturn} for player");
+            Rock_Force yellowRockForce = yellowRock_1.GetComponent<Rock_Force>();
+            if (yellowRockForce != null)
+            {
+                yellowRockForce.flipAxis = rm.inturn;
+                Debug.Log($"[GameManager.OnYellowTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
+            }
         }
         
         boardCollider.enabled = false;

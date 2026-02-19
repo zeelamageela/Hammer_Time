@@ -41,6 +41,35 @@ public class RandomRockPlacerment : MonoBehaviour
 
     private bool lastShotWasTakeout = false;
     private GameObject lastTakeoutTarget = null;
+    
+    // AI SYSTEM INTEGRATION
+    [Header("AI Systems (Auto-assigned)")]
+    private AI_Strategy aiStrategy;
+    private AI_Target aiTarget;
+    private TrajectorySimulator trajectorySimulator;
+    
+    [Header("Smart Placement Settings")]
+    [Tooltip("Use AI systems for realistic rock placement")]
+    public bool useSmartPlacement = true;
+    
+    [Header("Trajectory Visualization")]
+    [Tooltip("Show trajectory paths for placed rocks")]
+    public bool showTrajectoryLines = true;
+    
+    [Tooltip("How long to display trajectory lines (seconds)")]
+    public float trajectoryDisplayDuration = 2.0f;
+    
+    [Tooltip("Line width for trajectory visualization")]
+    public float trajectoryLineWidth = 0.02f;
+    
+    [Tooltip("Red team trajectory color")]
+    public Color redTeamTrajectoryColor = new Color(1f, 0.2f, 0.2f, 0.6f);
+    
+    [Tooltip("Yellow team trajectory color")]
+    public Color yellowTeamTrajectoryColor = new Color(1f, 1f, 0.2f, 0.6f);
+    
+    // Trajectory line tracking
+    private List<GameObject> activeTrajectoryLines = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -50,6 +79,26 @@ public class RandomRockPlacerment : MonoBehaviour
         HapticController.Play();
         Debug.Log("fldfdbk is " + fltFdbk);
         fltText = fltFdbk.GetFeedbackOfType<MMF_FloatingText>();
+        
+        // Initialize AI systems
+        aiStrategy = FindObjectOfType<AI_Strategy>();
+        aiTarget = FindObjectOfType<AI_Target>();
+        
+        // Initialize trajectory simulator (same physics as live game)
+        TrajectoryLine trajectoryLine = FindObjectOfType<TrajectoryLine>();
+        if (trajectoryLine != null)
+        {
+            trajectorySimulator = new TrajectorySimulator(
+                trajectoryLine.iceFriction,
+                trajectoryLine.curlStrength
+            );
+            Debug.Log($"[RandomRockPlacement] Trajectory simulator initialized with friction={trajectoryLine.iceFriction}, curl={trajectoryLine.curlStrength}");
+        }
+        else
+        {
+            Debug.LogWarning("[RandomRockPlacement] TrajectoryLine not found - smart placement will be disabled");
+            useSmartPlacement = false;
+        }
     }
 
     public Coroutine OnRockPlace(int rockCrnt, bool redTeam, bool mixed = false)
@@ -326,9 +375,161 @@ public class RandomRockPlacerment : MonoBehaviour
                       // Fallback: random between draw and guard
         return (Random.value < 0.5f) ? 0 : 3;
     }
+    
+    /// <summary>
+    /// SMART PLACEMENT: Use AI systems to determine realistic rock placement
+    /// This simulates what AI would actually shoot, then places result
+    /// </summary>
+    IEnumerator SmartPlacement(bool redTeam)
+    {
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        Debug.Log("[SmartPlacement] Starting smart placement for rock " + rockCurrent);
+        
+        gm.houseList.Sort();
+        Random.InitState(System.DateTime.Now.Millisecond);
+        
+        // Get team info
+        int shooter = Mathf.FloorToInt(rockCurrent / 4);
+        string activeTeamName;
+        string otherTeamName;
+        int activeScore;
+        int otherScore;
+        CharacterStats activeCharStats;
+        
+        // Determine teams
+        if (rockCurrent % 2 == 0)
+        {
+            if (gm.redHammer)
+            {
+                activeTeamName = gsp.yellowTeamName;
+                otherTeamName = gsp.redTeamName;
+                activeScore = gsp.yellowScore;
+                otherScore = gsp.redScore;
+                activeCharStats = tm.teamYellow[shooter].charStats;
+            }
+            else
+            {
+                activeTeamName = gsp.redTeamName;
+                otherTeamName = gsp.yellowTeamName;
+                activeScore = gsp.redScore;
+                otherScore = gsp.yellowScore;
+                activeCharStats = tm.teamRed[shooter].charStats;
+            }
+        }
+        else
+        {
+            if (gm.redHammer)
+            {
+                activeTeamName = gsp.redTeamName;
+                otherTeamName = gsp.yellowTeamName;
+                activeScore = gsp.redScore;
+                otherScore = gsp.yellowScore;
+                activeCharStats = tm.teamRed[shooter].charStats;
+            }
+            else
+            {
+                activeTeamName = gsp.yellowTeamName;
+                otherTeamName = gsp.redTeamName;
+                activeScore = gsp.yellowScore;
+                otherScore = gsp.redScore;
+                activeCharStats = tm.teamYellow[shooter].charStats;
+            }
+        }
+        
+        // Build shot context (simplified - just use local variables)
+        bool isBehind = activeScore < otherScore;
+        bool hasHammer = (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
+        int rocksInHouse = gm.houseList.Count;
+        int guardsInPlay = gm.gList.Count;
+        
+        // STEP 1: Determine shot type
+        string shotType = DetermineSmartShotTypeSimple(isBehind, hasHammer, rocksInHouse, guardsInPlay);
+        Debug.Log($"[SmartPlacement] AI chose shot type: {shotType}");
+        
+        // STEP 2: Calculate position based on shot type
+        Vector2 targetPosition = Vector2.zero;
+        
+        switch (shotType)
+        {
+            case "Draw":
+            case "Draw Four Foot":
+                targetPosition = CalculateDrawPosition(activeCharStats);
+                fltText.Value = "Draw";
+                break;
+                
+            case "Guard":
+            case "Centre Guard":
+            case "Corner Guard":
+                targetPosition = CalculateGuardPosition(activeCharStats);
+                fltText.Value = "Guard";
+                break;
+                
+            case "Take Out":
+                // Find best takeout target
+                int targetRock = FindBestTakeoutTarget(activeTeamName);
+                if (targetRock >= 0)
+                {
+                    Vector2 shooterPos, targetPos;
+                    if (CalculateTakeoutPositions(targetRock, activeCharStats, out shooterPos, out targetPos))
+                    {
+                        targetPosition = shooterPos;
+                        rockPos[targetRock] = targetPos; // Update target rock position
+                        lastShotWasTakeout = true;
+                        if (targetRock < gm.rockList.Count)
+                        {
+                            lastTakeoutTarget = gm.rockList[targetRock].rock;
+                        }
+                        fltText.Value = "Takeout";
+                        Debug.Log($"[SmartPlacement] Takeout target {targetRock}: shooter={shooterPos}, target={targetPos}");
+                    }
+                    else
+                    {
+                        // Fallback to draw
+                        targetPosition = CalculateDrawPosition(activeCharStats);
+                        fltText.Value = "Draw";
+                    }
+                }
+                else
+                {
+                    // No target available, draw instead
+                    targetPosition = CalculateDrawPosition(activeCharStats);
+                    fltText.Value = "Draw";
+                }
+                break;
+                
+            default:
+                // Out of play
+                targetPosition = placePos[10];
+                fltText.Value = "Out";
+                break;
+        }
+        
+        // STEP 3: Apply character accuracy variance
+        float accuracy = GetAccuracyForShot(shotType, activeCharStats);
+        float baseError = GetBaseErrorForShot(shotType);
+        Vector2 error = GetAccuracyError(accuracy, baseError);
+        
+        rockPos[rockCurrent] = targetPosition + error;
+        
+        Debug.Log($"[SmartPlacement] Final position for rock {rockCurrent}: {rockPos[rockCurrent]} (error: {error})");
+        
+        placed = true;
+        yield return StartCoroutine(CompletePlacement());
+    }
 
     IEnumerator Placement(bool redTeam)
     {
+        // USE SMART PLACEMENT if enabled and AI systems available
+        if (useSmartPlacement && aiStrategy != null && trajectorySimulator != null)
+        {
+            Debug.Log("[Placement] Using SMART PLACEMENT (AI-driven)");
+            yield return StartCoroutine(SmartPlacement(redTeam));
+            yield break;
+        }
+        
+        // FALLBACK: Original placement logic
+        Debug.Log("[Placement] Using LEGACY PLACEMENT (random)");
+        
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         Debug.Log("RedTeam is " + redTeam);
         gm.houseList.Sort();
@@ -2301,4 +2502,808 @@ public class RandomRockPlacerment : MonoBehaviour
         
         return shotSelector;
     }
+    
+    #region SMART PLACEMENT HELPERS
+    
+    /// <summary>
+    /// Determine if current rock is red team (for trajectory color)
+    /// </summary>
+    private bool DetermineIfRedTeam()
+    {
+        // Even rocks (0, 2, 4...) are one team, odd (1, 3, 5...) are other
+        // Which team depends on who has hammer
+        if (rockCurrent % 2 == 0)
+        {
+            return !gm.redHammer; // Even rocks are red if red doesn't have hammer
+        }
+        else
+        {
+            return gm.redHammer; // Odd rocks are red if red has hammer
+        }
+    }
+    
+    /// <summary>
+    /// Get all rocks currently in play (for trajectory simulation obstacles)
+    /// </summary>
+    private List<GameObject> GetRocksInPlay()
+    {
+        List<GameObject> rocks = new List<GameObject>();
+        
+        for (int i = 0; i < rockCurrent; i++)
+        {
+            if (i < gm.rockList.Count && gm.rockList[i].rockInfo.inPlay)
+            {
+                rocks.Add(gm.rockList[i].rock);
+            }
+        }
+        
+        return rocks;
+    }
+    
+    /// <summary>
+    /// Get accuracy stat for shot type
+    /// </summary>
+    private float GetAccuracyForShot(string shotType, CharacterStats stats)
+    {
+        if (stats == null) return 70f;
+        
+        switch (shotType)
+        {
+            case "Guard":
+            case "Centre Guard":
+            case "Corner Guard":
+                return stats.guardAccuracy.GetValue();
+                
+            case "Take Out":
+            case "Freeze":
+                return stats.takeOutAccuracy.GetValue();
+                
+            case "Draw":
+            case "Draw Four Foot":
+            default:
+                return stats.drawAccuracy.GetValue();
+        }
+    }
+    
+    /// <summary>
+    /// Get base error for shot type
+    /// </summary>
+    private float GetBaseErrorForShot(string shotType)
+    {
+        switch (shotType)
+        {
+            case "Guard":
+            case "Centre Guard":
+            case "Corner Guard":
+                return 0.15f;
+            case "Take Out":
+                return 0.35f;
+            case "Draw":
+            case "Draw Four Foot":
+                return 0.12f;
+            case "Freeze":
+                return 0.10f;
+            default:
+                return 0.15f;
+        }
+    }
+    
+    /// <summary>
+    /// Apply accuracy error (circular distribution)
+    /// </summary>
+    private Vector2 GetAccuracyError(float accuracy, float baseMaxError)
+    {
+        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        float maxError = baseMaxError * (1f - accuracyRatio);
+        return Random.insideUnitCircle * maxError;
+    }
+    
+    /// <summary>
+    /// Determine shot type based on current game state (simplified strategy)
+    /// </summary>
+    private string DetermineSmartShotTypeSimple(bool isBehind, bool hasHammer, int rocksInHouse, int guardsInPlay)
+    {
+        // Early rocks: build position
+        if (rockCurrent < 4)
+        {
+            if (rocksInHouse == 0)
+                return "Draw";
+            else if (guardsInPlay < 2)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        
+        // Late rocks: more aggressive
+        if (rockCurrent > 12)
+        {
+            if (rocksInHouse > 0)
+                return "Take Out";
+            else
+                return "Draw";
+        }
+        
+        // Mid-game: balanced
+        if (isBehind)
+        {
+            // Behind: aggressive
+            if (rocksInHouse > 0)
+                return "Take Out";
+            else if (guardsInPlay < 2)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        else
+        {
+            // Ahead or tied: build position
+            if (guardsInPlay < 2 && rocksInHouse < 3)
+                return "Guard";
+            else if (rocksInHouse > 3)
+                return "Take Out";
+            else
+                return "Draw";
+        }
+    }
+    
+    /// <summary>
+    /// Calculate draw position using FULL PHYSICS SIMULATION
+    /// Simulates the actual shot trajectory to get realistic final position
+    /// </summary>
+    private Vector2 CalculateDrawPosition(CharacterStats stats)
+    {
+        if (trajectorySimulator == null)
+        {
+            // Fallback to simple calculation
+            Vector2 target = placePos[9]; // Button
+            if (gm.houseList.Count > 3)
+            {
+                target += Random.insideUnitCircle * 0.5f;
+            }
+            return target;
+        }
+        
+        // STEP 1: Determine target location
+        Vector2 desiredTarget;
+        
+        if (gm.houseList.Count > 3)
+        {
+            // Crowded house: aim for four-foot circle
+            desiredTarget = placePos[9]; // Button
+        }
+        else if (gm.gList.Count > 1)
+        {
+            // Guards present: draw behind them
+            desiredTarget = new Vector2(0f, 7.0f); // Back of house
+        }
+        else
+        {
+            // Open house: button
+            desiredTarget = placePos[9];
+        }
+        
+        // STEP 2: Calculate velocity needed to reach target
+        Vector2 launcherPos = new Vector2(0f, -25f);
+        List<GameObject> obstacles = GetRocksInPlay();
+        
+        Vector2 bestFinalPos = desiredTarget;
+        float bestScore = -1000f;
+        List<Vector2> bestPath = null; // Track best path for visualization
+        
+        // Try both turn directions
+        foreach (bool tryInTurn in new[] { true, false })
+        {
+            // Try a few lateral offsets to find clearest path
+            for (float lateralOffset = -0.1f; lateralOffset <= 0.1f; lateralOffset += 0.05f)
+            {
+                Vector2 aimPoint = desiredTarget + new Vector2(lateralOffset, 0f);
+                
+                // Calculate velocity
+                Vector2 velocity = trajectorySimulator.CalculateVelocityToTarget(
+                    launcherPos,
+                    aimPoint,
+                    tryInTurn
+                );
+                
+                // Simulate full trajectory
+                List<Vector2> path = trajectorySimulator.SimulateTrajectory(
+                    launcherPos,
+                    velocity,
+                    tryInTurn,
+                    250,
+                    obstacles,
+                    forPlayerPreview: false
+                );
+                
+                if (path.Count == 0) continue;
+                
+                Vector2 finalPos = path[path.Count - 1];
+                
+                // Score this path
+                float score = ScoreDrawPath(path, desiredTarget, obstacles);
+                
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestFinalPos = finalPos;
+                    bestPath = path; // Save best path
+                }
+            }
+        }
+        
+        // Draw trajectory visualization
+        if (bestPath != null)
+        {
+            bool isRedTeam = DetermineIfRedTeam();
+            DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
+        }
+        
+        Debug.Log($"[SmartPlacement] Physics draw: target={desiredTarget}, final={bestFinalPos}, score={bestScore:F2}");
+        
+        return bestFinalPos;
+    }
+    
+    /// <summary>
+    /// Score a draw path based on quality
+    /// </summary>
+    private float ScoreDrawPath(List<Vector2> path, Vector2 target, List<GameObject> obstacles)
+    {
+        if (path.Count == 0) return -1000f;
+        
+        Vector2 finalPos = path[path.Count - 1];
+        
+        // Base score: distance to target (closer = better)
+        float distanceToTarget = Vector2.Distance(finalPos, target);
+        float score = 10f - distanceToTarget * 2f;
+        
+        // BONUS: Rock stops in house
+        if (finalPos.y > 5.0f && finalPos.y < 8.0f)
+        {
+            score += 3f;
+        }
+        
+        // BONUS: Close to button
+        float distanceToButton = Vector2.Distance(finalPos, placePos[9]);
+        if (distanceToButton < 0.5f)
+        {
+            score += 2f;
+        }
+        
+        // PENALTY: Hit any rocks along path
+        bool hitRock = false;
+        foreach (var rock in obstacles)
+        {
+            if (rock == null) continue;
+            
+            foreach (var point in path)
+            {
+                if (Vector2.Distance(point, rock.transform.position) < 0.28f)
+                {
+                    hitRock = true;
+                    score -= 3f;
+                    break;
+                }
+            }
+            if (hitRock) break;
+        }
+        
+        // PENALTY: Goes out of play
+        if (finalPos.y > 8.0f)
+        {
+            score -= 10f;
+        }
+        
+        return score;
+    }
+    
+    /// <summary>
+    /// Calculate guard position using FULL PHYSICS SIMULATION
+    /// Simulates the actual shot trajectory to place guard realistically
+    /// </summary>
+    private Vector2 CalculateGuardPosition(CharacterStats stats)
+    {
+        // STEP 1: Determine guard strategy
+        int guardSelect;
+        
+        if (rockCurrent % 2 == 1)
+        {
+            guardSelect = Random.value < 0.5f ? 1 : 3; // Left or Right
+        }
+        else
+        {
+            guardSelect = 2; // Center
+        }
+        
+        int placeSelector;
+        switch (guardSelect)
+        {
+            case 1:
+                placeSelector = Random.Range(0, 3); // Left guards
+                break;
+            case 2:
+                placeSelector = Random.Range(3, 6); // Center guards
+                break;
+            case 3:
+                placeSelector = Random.Range(6, 9); // Right guards
+                break;
+            default:
+                placeSelector = 4;
+                break;
+        }
+        
+        Vector2 targetGuardPos = placePos[placeSelector];
+        
+        // STEP 2: If physics available, simulate the shot
+        if (trajectorySimulator != null)
+        {
+            Vector2 launcherPos = new Vector2(0f, -25f);
+            List<GameObject> obstacles = GetRocksInPlay();
+            
+            Vector2 bestFinalPos = targetGuardPos;
+            float bestScore = -1000f;
+            List<Vector2> bestPath = null; // Track best path for visualization
+            
+            // Try both turn directions
+            foreach (bool tryInTurn in new[] { true, false })
+            {
+                // Calculate velocity for guard shot (lighter weight)
+                Vector2 velocity = trajectorySimulator.CalculateVelocityToTarget(
+                    launcherPos,
+                    targetGuardPos,
+                    tryInTurn
+                );
+                
+                // Guards are lighter weight - reduce velocity
+                velocity *= 0.85f;
+                
+                // Simulate trajectory
+                List<Vector2> path = trajectorySimulator.SimulateTrajectory(
+                    launcherPos,
+                    velocity,
+                    tryInTurn,
+                    250,
+                    obstacles,
+                    forPlayerPreview: false
+                );
+                
+                if (path.Count == 0) continue;
+                
+                Vector2 finalPos = path[path.Count - 1];
+                
+                // Score this path
+                float score = ScoreGuardPath(path, targetGuardPos, obstacles);
+                
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestFinalPos = finalPos;
+                    bestPath = path; // Save best path
+                }
+            }
+            
+            // Draw trajectory visualization
+            if (bestPath != null)
+            {
+                bool isRedTeam = DetermineIfRedTeam();
+                DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
+            }
+            
+            Debug.Log($"[SmartPlacement] Physics guard: target={targetGuardPos}, final={bestFinalPos}, score={bestScore:F2}");
+            
+            return bestFinalPos;
+        }
+        
+        // Fallback: simple placement
+        return targetGuardPos;
+    }
+    
+    /// <summary>
+    /// Score a guard path based on quality
+    /// </summary>
+    private float ScoreGuardPath(List<Vector2> path, Vector2 target, List<GameObject> obstacles)
+    {
+        if (path.Count == 0) return -1000f;
+        
+        Vector2 finalPos = path[path.Count - 1];
+        
+        // Base score: distance to target
+        float distanceToTarget = Vector2.Distance(finalPos, target);
+        float score = 10f - distanceToTarget * 3f;
+        
+        // BONUS: Rock stops in guard zone (Y between 3.0 and 6.5)
+        if (finalPos.y > 3.0f && finalPos.y < 6.5f)
+        {
+            score += 5f;
+        }
+        
+        // BONUS: Not too close to existing guards (spacing)
+        bool tooClose = false;
+        foreach (var rock in obstacles)
+        {
+            if (rock == null) continue;
+            
+            float dist = Vector2.Distance(finalPos, rock.transform.position);
+            if (dist < 0.5f)
+            {
+                tooClose = true;
+                score -= 2f;
+            }
+        }
+        
+        // PENALTY: Goes into house (too long)
+        if (finalPos.y > 6.5f)
+        {
+            score -= 5f;
+        }
+        
+        // PENALTY: Too short (doesn't reach guard zone)
+        if (finalPos.y < 3.0f)
+        {
+            score -= 8f;
+        }
+        
+        // PENALTY: Goes out of play
+        if (finalPos.y > 8.0f)
+        {
+            score -= 15f;
+        }
+        
+        return score;
+    }
+    
+    /// <summary>
+    /// Calculate takeout positions using ENHANCED PHYSICS
+    /// Simulates hit-and-roll outcomes based on collision physics
+    /// </summary>
+    private bool CalculateTakeoutPositions(int targetRockIndex, CharacterStats stats, out Vector2 shooterPos, out Vector2 targetPos)
+    {
+        shooterPos = placePos[10]; // Default: out
+        targetPos = placePos[10];
+        
+        if (targetRockIndex < 0 || targetRockIndex >= rockPos.Length)
+            return false;
+        
+        Vector2 targetRockPos = rockPos[targetRockIndex];
+        
+        // Check if we have physics simulator
+        if (trajectorySimulator != null)
+        {
+            // PHYSICS-BASED TAKEOUT SIMULATION
+            Vector2 launcherPos = new Vector2(0f, -25f);
+            List<GameObject> obstacles = GetRocksInPlay();
+            
+            float bestScore = -1000f;
+            bool foundGoodShot = false;
+            List<Vector2> bestPath = null; // Track best path for visualization
+            
+            // Try different approaches
+            foreach (bool tryInTurn in new[] { true, false })
+            {
+                // Try aiming directly at target
+                Vector2 velocity = trajectorySimulator.CalculateVelocityToTarget(
+                    launcherPos,
+                    targetRockPos,
+                    tryInTurn
+                );
+                
+                // Takeout weight (faster than draw)
+                velocity *= 1.15f;
+                
+                // Simulate trajectory
+                List<Vector2> path = trajectorySimulator.SimulateTrajectory(
+                    launcherPos,
+                    velocity,
+                    tryInTurn,
+                    250,
+                    obstacles,
+                    forPlayerPreview: false
+                );
+                
+                if (path.Count == 0) continue;
+                
+                // Check if we hit the target
+                bool hitTarget = false;
+                int collisionIndex = -1;
+                
+                for (int i = 0; i < path.Count; i++)
+                {
+                    float distToTarget = Vector2.Distance(path[i], targetRockPos);
+                    if (distToTarget < 0.28f) // Rock diameter
+                    {
+                        hitTarget = true;
+                        collisionIndex = i;
+                        break;
+                    }
+                }
+                
+                if (hitTarget)
+                {
+                    // COLLISION PHYSICS: Calculate post-collision positions
+                    Vector2 collisionPoint = path[collisionIndex];
+                    Vector2 approachDir = (collisionPoint - targetRockPos).normalized;
+                    
+                    // Shooter rock continues forward (reduced momentum)
+                    Vector2 shooterFinal = collisionPoint + approachDir * 0.4f;
+                    
+                    // Target rock pushed forward
+                    Vector2 targetFinal = targetRockPos + approachDir * 0.6f;
+                    
+                    // Apply skill check
+                    float hitChance = stats.takeOutAccuracy.GetValue();
+                    bool successfulHit = Random.Range(0f, 100f) < hitChance;
+                    
+                    if (successfulHit)
+                    {
+                        // Good hit - target likely removed
+                        if (Random.Range(0f, 100f) < hitChance * 0.8f)
+                        {
+                            targetFinal = placePos[10]; // Out of play
+                        }
+                        
+                        // Score this outcome
+                        float score = 10f;
+                        if (targetFinal == placePos[10])
+                            score += 5f; // Bonus for removing target
+                        
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            shooterPos = shooterFinal;
+                            targetPos = targetFinal;
+                            foundGoodShot = true;
+                            bestPath = path; // Save best path
+                        }
+                    }
+                }
+            }
+            
+            // Draw trajectory visualization
+            if (bestPath != null && foundGoodShot)
+            {
+                bool isRedTeam = DetermineIfRedTeam();
+                DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
+            }
+            
+            if (foundGoodShot)
+            {
+                Debug.Log($"[SmartPlacement] Physics takeout: shooter={shooterPos}, target={targetPos}, score={bestScore:F2}");
+                return true;
+            }
+        }
+        
+        // FALLBACK: Simple skill-based calculation
+        if (Random.Range(0f, 100f) < stats.takeOutAccuracy.GetValue())
+        {
+            // Hit and roll - shooter stays near target
+            shooterPos = targetRockPos + Random.insideUnitCircle * 0.5f;
+        }
+        else
+        {
+            // Miss - shooter goes out
+            shooterPos = placePos[10];
+        }
+        
+        // Target rock position based on accuracy
+        if (Random.Range(0f, 100f) < stats.takeOutAccuracy.GetValue())
+        {
+            // Target removed
+            targetPos = placePos[10];
+        }
+        else
+        {
+            // Target moved but stays in
+            targetPos = targetRockPos + Random.insideUnitCircle * 0.75f;
+        }
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Find best opponent rock to take out (ENHANCED with path checking)
+    /// Considers guards and shot difficulty
+    /// </summary>
+    private int FindBestTakeoutTarget(string activeTeam)
+    {
+        int bestTarget = -1;
+        float bestScore = -1000f;
+        
+        // Evaluate each opponent rock in house
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName == activeTeam)
+                continue; // Skip own rocks
+            
+            int rockIndex = houseRock.rockInfo.rockIndex;
+            Vector2 rockPos = houseRock.rock.transform.position;
+            
+            float score = 0f;
+            
+            // BONUS: Closer rocks are better (shot rock likely to stay)
+            float distanceToButton = Vector2.Distance(rockPos, placePos[9]);
+            score += (2.0f - distanceToButton) * 2f;
+            
+            // BONUS: Rock is unguarded
+            bool guarded = false;
+            float guardDistance = 999f;
+            
+            foreach (var guard in gm.gList)
+            {
+                float lateralDist = Mathf.Abs(guard.lastTransform.position.x - rockPos.x);
+                if (lateralDist < 0.5f)
+                {
+                    guarded = true;
+                    guardDistance = Mathf.Min(guardDistance, Vector2.Distance(guard.lastTransform.position, rockPos));
+                }
+            }
+            
+            if (!guarded)
+            {
+                score += 5f; // Big bonus for unguarded
+            }
+            else
+            {
+                // Penalty based on how well guarded
+                score -= (3f / guardDistance); // Closer guard = harder shot
+            }
+            
+            // BONUS: If this is shot rock (closest)
+            if (gm.houseList.Count > 0 && gm.houseList[0].rockInfo.rockIndex == rockIndex)
+            {
+                score += 3f; // Priority: remove shot rock
+            }
+            
+            // PHYSICS CHECK: Can we actually hit this rock?
+            if (trajectorySimulator != null)
+            {
+                Vector2 launcherPos = new Vector2(0f, -25f);
+                List<GameObject> obstacles = GetRocksInPlay();
+                
+                bool canHit = false;
+                
+                // Try both turns
+                foreach (bool tryInTurn in new[] { true, false })
+                {
+                    Vector2 velocity = trajectorySimulator.CalculateVelocityToTarget(
+                        launcherPos,
+                        rockPos,
+                        tryInTurn
+                    );
+                    
+                    velocity *= 1.15f; // Takeout weight
+                    
+                    List<Vector2> path = trajectorySimulator.SimulateTrajectory(
+                        launcherPos,
+                        velocity,
+                        tryInTurn,
+                        100, // Shorter sim for speed
+                        obstacles,
+                        forPlayerPreview: false
+                    );
+                    
+                    // Check if path gets close to target
+                    foreach (var point in path)
+                    {
+                        if (Vector2.Distance(point, rockPos) < 0.35f)
+                        {
+                            canHit = true;
+                            break;
+                        }
+                    }
+                    
+                    if (canHit) break;
+                }
+                
+                if (!canHit)
+                {
+                    score -= 10f; // Huge penalty if we can't physically hit it
+                }
+            }
+            
+            Debug.Log($"[SmartPlacement] Target eval: rock {rockIndex} @ {rockPos}, guarded={guarded}, score={score:F2}");
+            
+            if (score > bestScore)
+            {
+                bestScore = score;
+                bestTarget = rockIndex;
+            }
+        }
+        
+        if (bestTarget >= 0)
+        {
+            Debug.Log($"[SmartPlacement] Best takeout target: rock {bestTarget}, score={bestScore:F2}");
+        }
+        
+        return bestTarget;
+    }
+    
+    #endregion
+    
+    #region TRAJECTORY VISUALIZATION
+    
+    /// <summary>
+    /// Draw a trajectory line for a placed rock's simulated path
+    /// </summary>
+    private void DrawTrajectoryForPlacedRock(List<Vector2> path, bool isRedTeam)
+    {
+        if (!showTrajectoryLines || path == null || path.Count < 2)
+            return;
+        
+        // Create line renderer object
+        GameObject lineObj = new GameObject($"PlacementTrajectory_Rock{rockCurrent}");
+        lineObj.transform.SetParent(transform);
+        
+        LineRenderer lineRenderer = lineObj.AddComponent<LineRenderer>();
+        
+        // Configure line appearance
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = isRedTeam ? redTeamTrajectoryColor : yellowTeamTrajectoryColor;
+        lineRenderer.endColor = isRedTeam ? redTeamTrajectoryColor : yellowTeamTrajectoryColor;
+        lineRenderer.startWidth = trajectoryLineWidth;
+        lineRenderer.endWidth = trajectoryLineWidth;
+        lineRenderer.positionCount = path.Count;
+        lineRenderer.useWorldSpace = true;
+        lineRenderer.sortingLayerName = "Default";
+        lineRenderer.sortingOrder = 5; // Above rocks
+        
+        // Set positions
+        Vector3[] positions = new Vector3[path.Count];
+        for (int i = 0; i < path.Count; i++)
+        {
+            positions[i] = new Vector3(path[i].x, path[i].y, -0.1f); // Slightly in front
+        }
+        lineRenderer.SetPositions(positions);
+        
+        // Track for cleanup
+        activeTrajectoryLines.Add(lineObj);
+        
+        // Fade out and destroy after duration
+        StartCoroutine(FadeAndDestroyTrajectory(lineObj, lineRenderer));
+        
+        Debug.Log($"[TrajectoryViz] Drew trajectory for rock {rockCurrent}: {path.Count} points, team={(isRedTeam ? "Red" : "Yellow")}");
+    }
+    
+    /// <summary>
+    /// Fade out and destroy a trajectory line
+    /// </summary>
+    private IEnumerator FadeAndDestroyTrajectory(GameObject lineObj, LineRenderer lineRenderer)
+    {
+        float elapsed = 0f;
+        Color startColor = lineRenderer.startColor;
+        Color endColor = lineRenderer.endColor;
+        
+        // Wait for display duration
+        yield return new WaitForSeconds(trajectoryDisplayDuration);
+        
+        // Fade out over 0.5 seconds
+        float fadeTime = 0.5f;
+        while (elapsed < fadeTime)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = 1f - (elapsed / fadeTime);
+            
+            lineRenderer.startColor = new Color(startColor.r, startColor.g, startColor.b, startColor.a * alpha);
+            lineRenderer.endColor = new Color(endColor.r, endColor.g, endColor.b, endColor.a * alpha);
+            
+            yield return null;
+        }
+        
+        // Cleanup
+        activeTrajectoryLines.Remove(lineObj);
+        Destroy(lineObj);
+    }
+    
+    /// <summary>
+    /// Clear all active trajectory lines
+    /// </summary>
+    private void ClearAllTrajectories()
+    {
+        foreach (var lineObj in activeTrajectoryLines)
+        {
+            if (lineObj != null)
+                Destroy(lineObj);
+        }
+        activeTrajectoryLines.Clear();
+    }
+    
+    #endregion
 }

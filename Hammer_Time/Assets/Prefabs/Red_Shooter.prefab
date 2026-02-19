@@ -237,8 +237,8 @@ MonoBehaviour:
   curl: {x: -0.323, y: 0}
   scaleFactor: 0.1
   springTensionMultiplier: 1
-  iceFrictionMultiplier: 1.01
-  curlForceMultiplier: 1.375
+  iceFrictionMultiplier: 1
+  curlForceMultiplier: 1
   baseDamping: 0.38
   flipAxis: 0
   slideHap: {fileID: -8404250095460277587, guid: f7201d9cdb3ce48338e0d5a2e3c5a483, type: 3}

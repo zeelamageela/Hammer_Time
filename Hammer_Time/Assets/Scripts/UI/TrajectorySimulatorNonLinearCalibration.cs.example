@@ -1,0 +1,37 @@
+// EXAMPLE: Non-linear calibration for distance-dependent accuracy
+// Replace the simple calibration line in TrajectorySimulator.cs with this logic
+
+// BEFORE (simple linear):
+// float calibrationFactor = 0.63f;
+
+// AFTER (distance-dependent):
+float calibrationFactor;
+if (springDistance < 1.5f)
+{
+    // Very short shots: Spring barely releases, high friction dominance
+    // Need LESS energy prediction (more damping effect)
+    calibrationFactor = 0.58f;
+}
+else if (springDistance < 2.0f)
+{
+    // Short-medium shots: Baseline calibration
+    calibrationFactor = 0.61f;
+}
+else if (springDistance < 2.5f)
+{
+    // Medium shots: Standard calibration
+    calibrationFactor = 0.63f;
+}
+else if (springDistance < 3.0f)
+{
+    // Heavy shots: More momentum, overcomes friction better
+    calibrationFactor = 0.65f;
+}
+else
+{
+    // Very heavy shots: Maximum efficiency
+    calibrationFactor = 0.67f;
+}
+
+// Optional: Log which calibration tier was used
+Debug.Log($"[Calibration] Using factor {calibrationFactor:F2} for distance {springDistance:F2}");

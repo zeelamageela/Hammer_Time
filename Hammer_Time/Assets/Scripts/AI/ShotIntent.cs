@@ -41,6 +41,7 @@ public struct ShotContext
     public Vector2 idealFinalPosition; // Desired end position (for draws)
     public float aggressiveness;       // 0-1: How aggressive to be (affects weight)
     public bool acceptRisk;            // Allow risky shots?
+    public bool mustScore;             // MUST score on this shot (desperation)
     
     public ShotContext(ShotIntent intent, int targetRock = -1)
     {
@@ -50,5 +51,6 @@ public struct ShotContext
         this.idealFinalPosition = new Vector2(0f, 6.5f); // Default to button
         this.aggressiveness = 0.5f; // Medium
         this.acceptRisk = false;
+        this.mustScore = false;
     }
 }

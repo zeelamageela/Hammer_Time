@@ -39,24 +39,59 @@ public class TurnAnim : MonoBehaviour
         {
             am.Play("Button");
             
-            // Toggle the turn
+            // CRITICAL FIX: Toggle BOTH rm.inturn AND animator immediately (synchronously)
+            // This ensures trajectory reads the correct value during drag
             rm.inturn = !rm.inturn;
             
-            // CRITICAL FIX: Also update the rock's flipAxis immediately!
-            // This prevents RockManager from overriding the player's choice
+            // Update animator IMMEDIATELY (not in coroutine)
+            if (rm.inturn)
+            {
+                anim.SetBool("inturn", true);
+            }
+            else
+            {
+                anim.SetBool("inturn", false);
+            }
+            
+            // Also update the rock's flipAxis immediately
             rock = gm.rockList[gm.rockCurrent].rock;
             Rock_Force rockForce = rock.GetComponent<Rock_Force>();
             if (rockForce != null)
             {
                 rockForce.flipAxis = rm.inturn;
-                Debug.Log($"[TurnAnim] Turn toggled - set rm.inturn={rm.inturn} AND rock.flipAxis={rockForce.flipAxis}");
+                Debug.Log($"?? [TurnAnim] Updated flipAxis = {rm.inturn} ({(rm.inturn ? "IN-TURN (LEFT)" : "OUT-TURN (RIGHT)")})");
             }
             
-            // Start animation
-            StartCoroutine(IsPressed(rm.inturn));
+            // CRITICAL: Force trajectory redraw so player sees immediate visual feedback
+            // ALWAYS redraw when toggle is clicked, regardless of drag state!
+            // The trajectory line persists even when not dragging, so we need to update it
+            TrajectoryLine trajLine = FindObjectOfType<TrajectoryLine>();
+            if (trajLine != null)
+            {
+                Debug.Log($"?? [TurnAnim] Forcing trajectory redraw NOW (toggle clicked)");
+                trajLine.DrawTrajectory();
+                Debug.Log($"?? [TurnAnim] Trajectory redraw COMPLETE");
+            }
+            else
+            {
+                Debug.LogWarning($"?? [TurnAnim] Cannot redraw trajectory - trajLine is NULL!");
+            }
             
-            Debug.Log($"Turn toggled to: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
+            // Start coroutine ONLY for collider enable/disable timing (animation protection)
+            StartCoroutine(ToggleColliderDelay());
+            
+            Debug.Log($"[TurnAnim] Turn toggled IMMEDIATELY - rm.inturn={rm.inturn}, flipAxis={rockForce?.flipAxis}, animator={rm.inturn}");
         }
+    }
+    
+    /// <summary>
+    /// Helper coroutine to prevent double-clicks during animation
+    /// </summary>
+    private IEnumerator ToggleColliderDelay()
+    {
+        col.enabled = false;
+        yield return new WaitForSeconds(0.25f);
+        col.enabled = true;
     }
     
     void Update()
@@ -109,9 +144,15 @@ public class TurnAnim : MonoBehaviour
 
             if (turnAI)
             {
-                // AI sets rm.inturn directly, animate with ORIGINAL inversion
-                // The IsPressed coroutine will invert it for the animator
-                StartCoroutine(IsPressed(rm.inturn));
+                // AI sets rm.inturn directly, update animator immediately to match
+                if (rm.inturn)
+                {
+                    anim.SetBool("inturn", true);
+                }
+                else
+                {
+                    anim.SetBool("inturn", false);
+                }
                 turnAI = false;
             }
         }
@@ -131,31 +172,10 @@ public class TurnAnim : MonoBehaviour
         return (hit.collider == col);
     }
 
-    IEnumerator IsPressed(bool inturn)
-    {
-        col.enabled = false;
-
-        // FIXED: Animator should match rm.inturn directly (not inverted)
-        // rm.inturn = true ? animator "inturn" = true ? shows IN-TURN (LEFT curl) graphic
-        // rm.inturn = false ? animator "inturn" = false ? shows OUT-TURN (RIGHT curl) graphic
-        // This matches the physics convention: rm.inturn = flipAxis
-        if (inturn)
-        {
-            anim.SetBool("inturn", true);
-        }
-        else
-        {
-            anim.SetBool("inturn", false);
-        }
-
-        yield return new WaitForSeconds(0.25f);
-        col.enabled = true;
-    }
-
     public void SetTurn(bool inturn)
     {
         // FIXED: Animator should match rm.inturn directly (not inverted)
-        // Must match IsPressed() to stay consistent
+        // Must match ToggleTurn() to stay consistent
         if (inturn)
         {
             anim.SetBool("inturn", true);

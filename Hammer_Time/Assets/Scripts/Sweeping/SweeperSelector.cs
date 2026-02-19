@@ -40,6 +40,10 @@ public class SweeperSelector : MonoBehaviour
             Vector3 followSpot = new Vector3((rockRB.position.x), (rockRB.position.y), 0f);
             transform.position = followSpot;
 
+            // AUTO-DETECT OPPONENT ROCKS BEHIND T-LINE
+            // Check if ANY opponent rock crossed the T-line and auto-attach sweeper
+            CheckForOpponentRocksBehindTLine();
+
             if (rock2RB != null)
             {
             Vector3 followSpot2 = new Vector3((rock2RB.position.x), (rock2RB.position.y), 0f);
@@ -194,5 +198,73 @@ public class SweeperSelector : MonoBehaviour
         sweeperRedTee = sm.sweeperRedTee;
         sweeperYellowTee = sm.sweeperYellowTee;
         sweeperTeeCol = sweeperRedTee.GetComponent<BoxCollider2D>();
+    }
+    
+    /// <summary>
+    /// AUTO-DETECT: Check if any opponent rocks are behind T-line and need sweeping
+    /// Called every frame to automatically attach T-line sweeper
+    /// </summary>
+    private void CheckForOpponentRocksBehindTLine()
+    {
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        if (gm == null) return;
+        
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        if (gsp == null) return;
+        
+        // Get the currently shooting team (whose rock is in rockRB)
+        GameObject currentRock = rockRB.gameObject;
+        Rock_Info currentRockInfo = currentRock.GetComponent<Rock_Info>();
+        string currentTeam = currentRockInfo.teamName;
+        
+        // Check all rocks to find opponent rocks behind T-line
+        foreach (var rockEntry in gm.rockList)
+        {
+            if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy)
+                continue;
+            
+            Rock_Info rockInfo = rockEntry.rockInfo;
+            
+            // Skip if not moving
+            if (!rockInfo.moving)
+                continue;
+            
+            // Skip if same team as current shooter
+            if (rockInfo.teamName == currentTeam)
+                continue;
+            
+            // Check if rock is behind T-line (Y > 6.5)
+            if (rockEntry.rock.transform.position.y > 6.5f)
+            {
+                // FOUND OPPONENT ROCK BEHIND T-LINE!
+                // Activate appropriate T-line sweeper
+                
+                if (rockInfo.teamName == gsp.yellowTeamName)
+                {
+                    // Yellow rock behind T-line ? Red team sweeps it
+                    if (!sweeperRedTee.gameObject.activeSelf)
+                    {
+                        sweeperRedTee.gameObject.SetActive(true);
+                        rock2RB = rockEntry.rock.GetComponent<Rigidbody2D>();
+                        tSweepParent.SetActive(true);
+                        Debug.Log($"[T-Line Sweep] AUTO-ACTIVATED Red sweeper for opponent Yellow rock at Y={rockEntry.rock.transform.position.y:F2}");
+                    }
+                }
+                else if (rockInfo.teamName == gsp.redTeamName)
+                {
+                    // Red rock behind T-line ? Yellow team sweeps it
+                    if (!sweeperYellowTee.gameObject.activeSelf)
+                    {
+                        sweeperYellowTee.gameObject.SetActive(true);
+                        rock2RB = rockEntry.rock.GetComponent<Rigidbody2D>();
+                        tSweepParent.SetActive(true);
+                        Debug.Log($"[T-Line Sweep] AUTO-ACTIVATED Yellow sweeper for opponent Red rock at Y={rockEntry.rock.transform.position.y:F2}");
+                    }
+                }
+                
+                // Only attach to first opponent rock found
+                break;
+            }
+        }
     }
 }

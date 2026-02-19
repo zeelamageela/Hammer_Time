@@ -25,6 +25,9 @@ public class QuickTestGame : MonoBehaviour
     [Tooltip("Hotkey to trigger takeout practice mode (default: W) - Sets up 4 red rocks in house, forces yellow AI to take them out")]
     public KeyCode takeoutPracticeKey = KeyCode.W;
     
+    [Tooltip("Hotkey to trigger runback practice mode (default: E) - Sets up a guarded target rock, forces yellow AI to run it back through the guard")]
+    public KeyCode runbackPracticeKey = KeyCode.E;
+    
     [Tooltip("Number of rocks per team")]
     public int rocksPerTeam = 4;
     
@@ -68,6 +71,20 @@ public class QuickTestGame : MonoBehaviour
                 Debug.Log("[QuickTestGame] ?? Takeout practice mode (W) only works during a game! Press Q to start a test game first.");
             }
         }
+        
+        // Check for runback practice mode hotkey (only works in-game)
+        if (Input.GetKeyDown(runbackPracticeKey))
+        {
+            GameManager gm = FindFirstObjectByType<GameManager>();
+            if (gm != null && SceneManager.GetActiveScene().name == "TournyGame")
+            {
+                StartCoroutine(ActivateRunbackPracticeMode(gm));
+            }
+            else
+            {
+                Debug.Log("[QuickTestGame] ?? Runback practice mode (E) only works during a game! Press Q to start a test game first.");
+            }
+        }
     }
     
     /// <summary>
@@ -94,7 +111,7 @@ public class QuickTestGame : MonoBehaviour
         gsp.cashGame = false;
         gsp.loadGame = false;
         gsp.tutorial = false;
-        gsp.debug = true; // Mark as debug/quick test game
+        gsp.debug = true; // Mark as debug/quick test game - CRITICAL for deterministic physics!
         
         // Set up test game parameters
         gsp.rocks = rocksPerTeam;
@@ -120,11 +137,11 @@ public class QuickTestGame : MonoBehaviour
             Debug.Log("[QuickTestGame] Player vs AI mode");
         }
         
-        // 🔒 LOCKED SCENARIO: Always 1-5, red has hammer
-        gsp.redHammer = true;
-        gsp.redScore = 1;
-        gsp.yellowScore = 5;
-        Debug.Log($"[QuickTestGame] 🔒 LOCKED: Score 1-5, RED has hammer");
+        // 🔒 LOCKED SCENARIO: Always 3-3, yellow has hammer
+        gsp.redHammer = false;
+        gsp.redScore = 3;
+        gsp.yellowScore = 3;
+        Debug.Log($"[QuickTestGame] 🔒 LOCKED: Score 3-3, YELLOW has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];
@@ -162,35 +179,35 @@ public class QuickTestGame : MonoBehaviour
             });
         }
         
-        // Create player team with default stats
+        // ⭐ CRITICAL: Create player team with 100 stats for PERFECT DETERMINISTIC SHOTS!
+        // NO randomness, NO skill penalties - pure physics for trajectory tuning
         Team playerTeam = new Team
         {
-            name = "Test Player",
-            strength = 50,
-            draw = 50,
-            guard = 50,
-            takeOut = 50,
-            sweepStrength = 50,
-            sweepEnduro = 50,
-            sweepCohesion = 50,
+            name = "Test Player (100% Accuracy)",
+            strength = 100,  // LOCKED: Perfect stats for trajectory tuning
+            draw = 100,
+            guard = 100,
+            takeOut = 100,
+            sweepStrength = 100,
+            sweepEnduro = 100,
+            sweepCohesion = 100,
             player = true,
             players = new List<Player>()
         };
         
-        // Add 4 players to the team
-        // TeamManager.SetCharacter() will read these values
+        // Add 4 players to the team - ALL with 100 stats
         for (int i = 0; i < 4; i++)
         {
             playerTeam.players.Add(new Player
             {
                 id = i,
-                name = $"Test Player {i + 1}",
-                draw = 50,
-                guard = 50,
-                takeOut = 50,
-                sweepStrength = 50,
-                sweepEnduro = 50,
-                sweepCohesion = 50
+                name = $"Test Player {i + 1} (Perfect)",
+                draw = 100,      // ⭐ NO RANDOMNESS
+                guard = 100,
+                takeOut = 100,
+                sweepStrength = 100,
+                sweepEnduro = 100,
+                sweepCohesion = 100
             });
         }
         
@@ -201,13 +218,13 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
-            // Set player stats to reasonable defaults for testing
-            cm.cStats.drawAccuracy = 50;
-            cm.cStats.guardAccuracy = 50;
-            cm.cStats.takeOutAccuracy = 50;
-            cm.cStats.sweepStrength = 50;
-            cm.cStats.sweepEndurance = 50;
-            cm.cStats.sweepCohesion = 50;
+            // ⭐ CRITICAL: Set player stats to 100 for ZERO randomness!
+            cm.cStats.drawAccuracy = 100;
+            cm.cStats.guardAccuracy = 100;
+            cm.cStats.takeOutAccuracy = 100;
+            cm.cStats.sweepStrength = 100;
+            cm.cStats.sweepEndurance = 100;
+            cm.cStats.sweepCohesion = 100;
             
             // Max out opponent stats
             cm.oppStats.drawAccuracy = opponentStatValue;
@@ -218,9 +235,23 @@ public class QuickTestGame : MonoBehaviour
             cm.oppStats.sweepCohesion = opponentStatValue;
         }
         
+        // ⭐ CRITICAL: Set flag for 100% deterministic player physics (no multipliers!)
+        PlayerPrefs.SetInt("QuickTestMode", 1);
+        
+        // ⭐ CRITICAL: Disable sweeping in test mode for perfect determinism
+        // Sweeping introduces timing-based variance (when/how long you sweep)
+        // For trajectory tuning, we want PURE pullback → distance relationship
+        PlayerPrefs.SetInt("DisableSweeping", 1);
+        
+        PlayerPrefs.Save();
+        
         // Load the game scene
         SceneManager.LoadScene("TournyGame");
         
+        Debug.Log($"[QuickTestGame] ⭐ DETERMINISTIC MODE ENABLED!");
+        Debug.Log($"[QuickTestGame] Player stats: 100/100 (NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
+        Debug.Log($"[QuickTestGame] ⭐ SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
     }
     
@@ -365,6 +396,208 @@ public class QuickTestGame : MonoBehaviour
         else
         {
             Debug.LogWarning("?? [TAKEOUT PRACTICE] No yellow rocks available to shoot! Start a new game (Q) and try again.");
+        }
+    }
+    
+    /// <summary>
+    /// RUNBACK PRACTICE MODE: Sets up a guard rock protecting a target, forces yellow AI to run it back
+    /// Perfect for testing the new runback shot system!
+    /// Press E during a game to activate
+    /// </summary>
+    private IEnumerator ActivateRunbackPracticeMode(GameManager gm)
+    {
+        Debug.Log("?? [RUNBACK PRACTICE MODE] Activated! Setting up guard-protected target...");
+        Debug.Log("?? Yellow AI will attempt to HIT THE GUARD THROUGH to remove the target!");
+        Debug.Log("?? Press E again to reset and try different alignments");
+        
+        // 1. CLEAR THE HOUSE - Remove all rocks currently in play
+        foreach (var rockEntry in gm.rockList)
+        {
+            if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy)
+            {
+                // Move rock out of play
+                rockEntry.rock.transform.position = new Vector3(0f, 20f, 0f);
+                rockEntry.rockInfo.inPlay = false;
+                rockEntry.rockInfo.inHouse = false;
+                rockEntry.rockInfo.outOfPlay = true;
+                rockEntry.rock.SetActive(false);
+            }
+        }
+        
+        yield return new WaitForFixedUpdate();
+        
+        // 2. PLACE RED TARGET ROCK (the one we want to remove)
+        Vector2 targetPosition = new Vector2(0.1f, 6.5f);  // Slightly off-center button
+        
+        // Find first red rock
+        int targetRockIndex = -1;
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            var rockEntry = gm.rockList[i];
+            bool isRedRock = rockEntry.rockInfo.teamName == gm.redTeamName;
+            
+            if (isRedRock)
+            {
+                targetRockIndex = i;
+                break;
+            }
+        }
+        
+        if (targetRockIndex >= 0)
+        {
+            var targetRock = gm.rockList[targetRockIndex];
+            
+            // Activate and position the target rock
+            targetRock.rock.SetActive(true);
+            targetRock.rock.transform.position = targetPosition;
+            
+            // Enable physics components
+            targetRock.rock.GetComponent<CircleCollider2D>().enabled = true;
+            targetRock.rock.GetComponent<CircleCollider2D>().radius = 0.14f;
+            targetRock.rock.GetComponent<SpriteRenderer>().enabled = true;
+            
+            // Set rock state
+            targetRock.rockInfo.inPlay = true;
+            targetRock.rockInfo.inHouse = true;
+            targetRock.rockInfo.outOfPlay = false;
+            targetRock.rockInfo.placed = true;
+            targetRock.rockInfo.shotTaken = true;
+            targetRock.rockInfo.released = true;
+            targetRock.rockInfo.rest = true;
+            targetRock.rockInfo.stopped = true;
+            targetRock.rockInfo.moving = false;
+            
+            // Reset velocity
+            Rigidbody2D rb = targetRock.rock.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+            
+            Debug.Log($"?? Placed RED TARGET at {targetPosition} (the rock we want to remove)");
+        }
+        
+        yield return new WaitForFixedUpdate();
+        
+        // 3. PLACE RED GUARD ROCK (protecting the target - AI must hit THIS rock)
+        // Position guard between launcher and target for good alignment
+        Vector2 guardPosition = new Vector2(0.05f, 3.5f);  // Well-aligned with target
+        
+        // Find second red rock for guard
+        int guardRockIndex = -1;
+        int redCount = 0;
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            var rockEntry = gm.rockList[i];
+            bool isRedRock = rockEntry.rockInfo.teamName == gm.redTeamName;
+            
+            if (isRedRock)
+            {
+                redCount++;
+                if (redCount == 2)
+                {
+                    guardRockIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        if (guardRockIndex >= 0)
+        {
+            var guardRock = gm.rockList[guardRockIndex];
+            
+            // Activate and position the guard rock
+            guardRock.rock.SetActive(true);
+            guardRock.rock.transform.position = guardPosition;
+            
+            // Enable physics components
+            guardRock.rock.GetComponent<CircleCollider2D>().enabled = true;
+            guardRock.rock.GetComponent<CircleCollider2D>().radius = 0.14f;
+            guardRock.rock.GetComponent<SpriteRenderer>().enabled = true;
+            
+            // Set rock state
+            guardRock.rockInfo.inPlay = true;
+            guardRock.rockInfo.inHouse = false;  // Guard is outside house
+            guardRock.rockInfo.outOfPlay = false;
+            guardRock.rockInfo.placed = true;
+            guardRock.rockInfo.shotTaken = true;
+            guardRock.rockInfo.released = true;
+            guardRock.rockInfo.rest = true;
+            guardRock.rockInfo.stopped = true;
+            guardRock.rockInfo.moving = false;
+            
+            // Reset velocity
+            Rigidbody2D rb = guardRock.rock.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+            
+            Debug.Log($"?? Placed RED GUARD at {guardPosition} (AI must hit THIS rock to run back)");
+        }
+        
+        yield return new WaitForFixedUpdate();
+        
+        // 4. FORCE YELLOW AI TO SHOOT (runback mode)
+        // Find the first yellow rock that's not yet shot
+        int yellowRockToShoot = -1;
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            var rockEntry = gm.rockList[i];
+            bool isYellowRock = rockEntry.rockInfo.teamName == gm.yellowTeamName;
+            
+            if (isYellowRock && !rockEntry.rockInfo.shotTaken)
+            {
+                yellowRockToShoot = i;
+                break;
+            }
+        }
+        
+        if (yellowRockToShoot >= 0)
+        {
+            // Update game state
+            gm.rockCurrent = yellowRockToShoot;
+            gm.houseList.Clear();
+            gm.gList.Clear();
+            
+            // Rebuild house list with target rock
+            foreach (var rockEntry in gm.rockList)
+            {
+                if (rockEntry.rockInfo.inHouse && rockEntry.rockInfo.inPlay)
+                {
+                    gm.houseList.Add(new House_List(rockEntry.rock, rockEntry.rockInfo));
+                }
+            }
+            
+            // Rebuild guard list with guard rock
+            foreach (var rockEntry in gm.rockList)
+            {
+                if (rockEntry.rockInfo.inPlay && !rockEntry.rockInfo.inHouse && rockEntry.rockInfo.placed)
+                {
+                    // Guard_List constructor expects: (int rockIndex, bool freeGuard, Transform transform)
+                    gm.gList.Add(new Guard_List(rockEntry.rockInfo.rockIndex, false, rockEntry.rock.transform));
+                }
+            }
+            
+            Debug.Log($"?? House list: {gm.houseList.Count} rocks (target)");
+            Debug.Log($"?? Guard list: {gm.gList.Count} rocks (obstruction)");
+            Debug.Log($"?? Forcing Yellow AI to shoot rock #{yellowRockToShoot}...");
+            
+            // Force yellow turn
+            gm.aiTeamYellow = true; // Ensure yellow is AI controlled
+            gm.OnYellowTurn();
+            
+            Debug.Log("?? [RUNBACK PRACTICE] Yellow AI will now evaluate runback shot!");
+            Debug.Log("?? Watch for: 'Option 5: Runback' in console logs");
+            Debug.Log("?? AI should hit the GUARD (red rock at y=3.5) with extra velocity");
+            Debug.Log("?? to drive through and remove the TARGET (red rock at button)");
+            Debug.Log("?? Press E again after shot completes to practice more!");
+        }
+        else
+        {
+            Debug.LogWarning("?? [RUNBACK PRACTICE] No yellow rocks available to shoot! Start a new game (Q) and try again.");
         }
     }
 }

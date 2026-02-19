@@ -54,8 +54,9 @@ public class TrajectoryLine : MonoBehaviour
     public bool usePhysicsSimulation = true;
     
     [Header("Physics Tuning")]
-    [Tooltip("Ice friction - MUST MATCH Rock rigidbody linearDamping (0.38)")]
-    public float iceFriction = 0.42f;  // TUNED: Increased for more friction (rocks stop sooner)
+    [Tooltip("EFFECTIVE ice friction for trajectory prediction - Higher = shorter distance. Rock has 0.38 but ACTUAL effective damping is ~0.62 due to angular drag + other factors. Tune this to match reality!")]
+    [Range(0.3f, 1.0f)]
+    public float iceFriction = 0.62f;  // TUNED: Increased from 0.38 to match ACTUAL rock behavior (travels ~60% of predicted distance)
     
     [Tooltip("Curl strength - base lateral force multiplier")]
     public float curlStrength = 0.25f;  // TUNED: Reduced from 0.3 for less curl
@@ -67,6 +68,27 @@ public class TrajectoryLine : MonoBehaviour
     [Tooltip("Shape of the late breaking curve (0.01 = extremely subtle, 1.0 = linear, 2.0 = very exponential/late)")]
     [Range(0.01f, 2.5f)]
     public float lateBreakingCurve = 0.8f;
+    
+    [Header("Velocity Tuning - Player Feel")]
+    [Tooltip("Velocity multiplier for pullback calculation. Higher = more speed from same pullback. Default 5.0 matches original feel.")]
+    [Range(3.0f, 8.0f)]
+    public float velocityMultiplier = 5.0f;
+    
+    [Tooltip("Minimum pullback distance before trajectory shows. Too low = accidental throws.")]
+    [Range(0.1f, 1.0f)]
+    public float minPullbackDistance = 0.5f;
+    
+    [Tooltip("Maximum pullback distance allowed. Limits max shot power.")]
+    [Range(2.0f, 4.0f)]
+    public float maxPullbackDistance = 2.75f;
+    
+    [Tooltip("Minimum velocity (m/s) from smallest valid pullback. Controls weakest possible shot.")]
+    [Range(1.0f, 5.0f)]
+    public float minVelocity = 3.0f;
+    
+    [Tooltip("Maximum velocity (m/s) from largest pullback. Controls strongest possible shot.")]
+    [Range(10.0f, 25.0f)]
+    public float maxVelocity = 18.0f;
     
     // Track previous values to detect changes
     private float lastIceFriction = -1f; // FIXED: Initialize to -1 to force first update
@@ -148,6 +170,8 @@ public class TrajectoryLine : MonoBehaviour
         
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
+        
+        Debug.Log($"[TrajectoryLine] Physics initialized (original working version - no scaling)");
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -312,18 +336,24 @@ public class TrajectoryLine : MonoBehaviour
 
         springDistance = trajTransform.springDistance;
         
-        // PERFORMANCE: Only update simulator if settings actually changed (not every frame)
-        bool settingsChanged = iceFriction != lastIceFriction 
+        // PERFORMANCE: Only update simulator if PHYSICS settings changed (not turn direction!)
+        // Turn direction is passed to SimulateTrajectory() every time, so no simulator update needed
+        bool physicsSettingsChanged = iceFriction != lastIceFriction 
             || curlStrength != lastCurlStrength 
             || lateBreakingIntensity != lastLateBreakingIntensity 
             || lateBreakingCurve != lastLateBreakingCurve;
         
-        if (settingsChanged)
+        if (physicsSettingsChanged)
         {
             UpdateSimulator();
+            lastIceFriction = iceFriction;
+            lastCurlStrength = curlStrength;
+            
+            Debug.Log($"⚠️ PHYSICS SETTINGS CHANGED! Updated simulator.");
         }
         
-        Debug.Log($"Drawing trajectory - springDistance: {springDistance}, usePhysics: {usePhysicsSimulation}, settingsChanged: {settingsChanged}");
+        Debug.Log($"[DrawTrajectory] START - springDistance: {springDistance}, usePhysics: {usePhysicsSimulation}, " +
+                  $"physicsChanged: {physicsSettingsChanged}");
         
         if (springDistance < 1f)
         {
@@ -346,8 +376,9 @@ public class TrajectoryLine : MonoBehaviour
             Rock_Flick rockFlick = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Flick>();
             RockManager rm = FindObjectOfType<RockManager>();
             
-            // Pass rm.inturn directly - matches Rock_Force.flipAxis
-            // rm.inturn = true ? flipAxis = true ? negative torque ? LEFT curl
+            // CRITICAL FIX: Use rm.inturn as SINGLE SOURCE OF TRUTH
+            // GameManager and TurnAnim ensure rm.inturn and rock.flipAxis are ALWAYS synchronized
+            // Reading rm.inturn is simpler and more reliable than reading rock.flipAxis
             bool isInTurn = rm.inturn;
             
             // Debug.Log($"[Trajectory] rm.inturn={rm.inturn}, flipAxis will be={isInTurn}");
@@ -364,20 +395,40 @@ public class TrajectoryLine : MonoBehaviour
                 gm.rockList[gm.rockCurrent].rock.transform.position.y
             );
             
-            // Debug.Log($"[TrajectoryLine] Launcher pos: {launcherPos}, Pullback pos: {pullbackPos}, Displacement: {launcherPos - pullbackPos}");
+            // CRITICAL FIX: Calculate pullback distance (for logging), but velocity comes from ROCK calculation
+            // This ensures trajectory uses EXACT same velocity as the rock will use when released
+            Vector2 displacement = launcherPos - pullbackPos;
+            float pullbackDistance = displacement.magnitude;
             
-            // Get spring parameters from the rock's SpringJoint2D
-            SpringJoint2D springJoint = gm.rockList[gm.rockCurrent].rock.GetComponent<SpringJoint2D>();
-            float springFrequency = springJoint != null ? springJoint.frequency : 1.5f;
-            float springDamping = springJoint != null ? springJoint.dampingRatio : 0.2f;
-            
-            // Calculate velocity from spring physics (matches actual rock behavior)
-            Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromSpring(
+            // DETERMINISTIC: Get velocity that Rock_Flick WILL use (use same calculation for consistency during preview)
+            // NOTE: This is ONLY for preview! Actual rock velocity is set in Rock_Flick.Release()
+            // Pass inspector parameters so trajectory calculation matches player feel settings
+            Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromPullback(
                 pullbackPos,
                 launcherPos,
-                springFrequency,
-                springDamping
+                velocityMultiplier,
+                minPullbackDistance,
+                maxPullbackDistance,
+                minVelocity,
+                maxVelocity
             );
+            
+            Debug.Log($"[TrajectoryLine] Preview velocity: {initialVelocity.magnitude:F2} m/s (pullback: {pullbackDistance:F3} units)");
+            
+            // NOW log everything AFTER variables are declared
+            Debug.Log($"🎯 [TrajectoryLine] SIMULATING TRAJECTORY:");
+            Debug.Log($"   rm.inturn = {rm.inturn}");
+            Debug.Log($"   isInTurn (USED FOR SIMULATION) = {isInTurn}");
+            Debug.Log($"   Launcher position: {launcherPos}");
+            Debug.Log($"   Pullback position: {pullbackPos}");
+            Debug.Log($"   Lateral offset (X): {pullbackPos.x:F4} units");
+            Debug.Log($"   Pullback distance (Y): {pullbackPos.y:F4} units");
+            Debug.Log($"   Spring displacement: ({(launcherPos.x - pullbackPos.x):F4}, {(launcherPos.y - pullbackPos.y):F4})");
+            Debug.Log($"   Initial velocity: {initialVelocity}");
+            Debug.Log($"   Velocity magnitude: {initialVelocity.magnitude:F3}");
+            Debug.Log($"   Lateral velocity (X): {initialVelocity.x:F4} units/s");
+            Debug.Log($"   If isInTurn=true → Rock curls LEFT");
+            Debug.Log($"   If isInTurn=false → Rock curls RIGHT");
             
             // Debug.Log($"Pullback: {pullbackPos}, Launcher: {launcherPos}, InitVel: {initialVelocity.magnitude}");
             
@@ -480,7 +531,7 @@ public class TrajectoryLine : MonoBehaviour
                     postCollisionLine.SetPosition(0, new Vector3(collisionPoint.x, collisionPoint.y, 0f));
                     postCollisionLine.SetPosition(1, new Vector3(arrowEnd.x, arrowEnd.y, 0f));
                     
-                    Debug.Log($"[Collision Viz] Shooter DEFLECTION arrow (ORANGE): {collisionPoint} ? {arrowEnd} (angle: {Mathf.Atan2(deflectionDirection.y, deflectionDirection.x) * Mathf.Rad2Deg:F1}�)");
+                    Debug.Log($"[Collision Viz] Shooter DEFLECTION arrow (ORANGE): {collisionPoint} ? {arrowEnd} (angle: {Mathf.Atan2(deflectionDirection.y, deflectionDirection.x) * Mathf.Rad2Deg:F1}°)");
                     Debug.Log($"[Collision Viz] Orange line enabled: {postCollisionLine.enabled}, material: {postCollisionLine.material != null}, color: {postCollisionLine.startColor}");
                 }
                 else
@@ -505,7 +556,7 @@ public class TrajectoryLine : MonoBehaviour
                     hitRockPostCollisionLine.SetPosition(0, new Vector3(hitRockStart.x, hitRockStart.y, 0f));
                     hitRockPostCollisionLine.SetPosition(1, new Vector3(hitArrowEnd.x, hitArrowEnd.y, 0f));
                     
-                    Debug.Log($"[Collision Viz] Hit rock EXIT arrow (YELLOW): {hitRockStart} ? {hitArrowEnd} (angle: {Mathf.Atan2(exitDirection.y, exitDirection.x) * Mathf.Rad2Deg:F1}�)");
+                    Debug.Log($"[Collision Viz] Hit rock EXIT arrow (YELLOW): {hitRockStart} ? {hitArrowEnd} (angle: {Mathf.Atan2(exitDirection.y, exitDirection.x) * Mathf.Rad2Deg:F1}°)");
                     Debug.Log($"[Collision Viz] Yellow line enabled: {hitRockPostCollisionLine.enabled}, material: {hitRockPostCollisionLine.material != null}, color: {hitRockPostCollisionLine.startColor}");
                 }
                 else
@@ -645,9 +696,10 @@ public class TrajectoryLine : MonoBehaviour
             // FIXED: Simulate trajectory WITHOUT rocks to get ideal target position
             // This makes aiming consistent regardless of what rocks are in play
             
-            Rock_Info rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            // CRITICAL: Use flipAxis from the rock, NOT rm.inturn!
+            Rock_Force aimRockForce = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Force>();
             RockManager rm = FindObjectOfType<RockManager>();
-            bool isInTurn = rm.inturn;
+            bool isInTurn = aimRockForce != null ? aimRockForce.flipAxis : (rm != null ? rm.inturn : false);
             
             Vector2 launcherPos = new Vector2(launcher.transform.position.x, launcher.transform.position.y);
             Vector2 pullbackPos = new Vector2(
@@ -655,12 +707,15 @@ public class TrajectoryLine : MonoBehaviour
                 gm.rockList[gm.rockCurrent].rock.transform.position.y
             );
             
-            SpringJoint2D springJoint = gm.rockList[gm.rockCurrent].rock.GetComponent<SpringJoint2D>();
-            float springFrequency = springJoint != null ? springJoint.frequency : 1.5f;
-            float springDamping = springJoint != null ? springJoint.dampingRatio : 0.2f;
-            
-            Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromSpring(
-                pullbackPos, launcherPos, springFrequency, springDamping
+            // DETERMINISTIC: Use direct calculation with inspector parameters
+            Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromPullback(
+                pullbackPos,
+                launcherPos,
+                velocityMultiplier,
+                minPullbackDistance,
+                maxPullbackDistance,
+                minVelocity,
+                maxVelocity
             );
             
             // Simulate WITHOUT any rocks (empty list) to get ideal position
@@ -694,11 +749,8 @@ public class TrajectoryLine : MonoBehaviour
     // Helper method to recreate the simulator when settings change
     private void UpdateSimulator()
     {
-        trajectorySimulator = new TrajectorySimulator(iceFriction, curlStrength, lateBreakingIntensity, lateBreakingCurve);
-        lastIceFriction = iceFriction;
-        lastCurlStrength = curlStrength;
-        lastLateBreakingIntensity = lateBreakingIntensity;
-        lastLateBreakingCurve = lateBreakingCurve;
+        // SIMPLIFIED: No late breaking parameters
+        trajectorySimulator = new TrajectorySimulator(iceFriction, curlStrength);
     }
 
     public void Release()

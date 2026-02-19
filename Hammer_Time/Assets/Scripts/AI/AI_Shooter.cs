@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -77,6 +77,16 @@ public class AI_Shooter : MonoBehaviour
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
         currentRockNumber = rockCurrent;
 
+        // CRITICAL FIX: Lock flipAxis IMMEDIATELY to prevent RockManager from overriding!
+        // AI_Target has already set rm.inturn, so use that value NOW
+        GameObject rock = gm.rockList[currentRockNumber].rock;
+        Rock_Force rockForce = rock.GetComponent<Rock_Force>();
+        if (rockForce != null)
+        {
+            rockForce.flipAxis = rm.inturn;
+            Debug.Log($"[AI_Shooter.OnShot] LOCKED flipAxis = {rm.inturn} immediately for {aiShotType}");
+        }
+
         StartCoroutine(Shot(aiShotType, rm.inturn));
     }
 
@@ -91,525 +101,73 @@ public class AI_Shooter : MonoBehaviour
         aiSweep.OnSweep(true, aiShotType, aiTarg.targetPos, inturn);
         
         // CRITICAL FIX: Set BOTH flipAxis AND rm.inturn to keep everything synchronized!
-        // This ensures the button, trajectory, and actual shot all match
         GameObject rock = gm.rockList[currentRockNumber].rock;
         Rock_Force rockForce = rock.GetComponent<Rock_Force>();
         if (rockForce != null)
         {
             rockForce.flipAxis = inturn;
-            rm.inturn = inturn;  // SYNC rm.inturn with the AI's choice!
+            rm.inturn = inturn;
             Debug.Log($"[AI_Shooter] Set flipAxis AND rm.inturn = {inturn} for {aiShotType}");
         }
 
         yield return new WaitForSeconds(0.5f);
 
+        
+        
+        // UNIFIED SHOT HANDLING: All physics-based shots use the same logic
+        // AI_Target has already calculated the exact pullback position WITH accuracy error applied
+        // Just use that position directly - no need for shot-specific handling!
+        
         float shotX;
         float shotY;
-
-        switch (aiShotType)
+        
+        // Check if physics calculation succeeded (non-zero position)
+        if (takeOutX != 0f || takeOutY != 0f)
         {
-            #region Centre Guards
-            case "Centre Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    shotX = centreGuard.x + error.x;
-                    shotY = centreGuard.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Tight Centre Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    shotX = tightCentreGuard.x + error.x;
-                    shotY = tightCentreGuard.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "High Centre Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    shotX = highCentreGuard.x + error.x;
-                    shotY = highCentreGuard.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-            #endregion
-
-            #region Corner Guards
-            case "Left Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? rightCornerGuard : leftCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Left Tight Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? rightTightCornerGuard : leftTightCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Left High Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? rightHighCornerGuard : leftHighCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Right Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? leftCornerGuard : rightCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Right Tight Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? leftTightCornerGuard : rightTightCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-                    
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Right High Corner Guard":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    Vector2 targetPos = inturn ? leftHighCornerGuard : rightHighCornerGuard;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-            #endregion
-
-            #region Twelve Foot Draws
-            case "Top Twelve Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    shotX = topTwelveFoot.x + error.x;
-                    shotY = topTwelveFoot.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Left Twelve Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    Vector2 targetPos = inturn ? rightTwelveFoot : leftTwelveFoot;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Back Twelve Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    shotX = backTwelveFoot.x + error.x;
-                    shotY = backTwelveFoot.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Right Twelve Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    Vector2 targetPos = inturn ? leftTwelveFoot : rightTwelveFoot;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-            #endregion
-
-            #region Four Foot Draws
-            case "Button":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    shotX = button.x + error.x;
-                    shotY = button.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Left Four Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    Vector2 targetPos = inturn ? rightFourFoot : leftFourFoot;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Right Four Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    Vector2 targetPos = inturn ? leftFourFoot : rightFourFoot;
-                    shotX = targetPos.x + error.x;
-                    shotY = targetPos.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Top Four Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    shotX = topFourFoot.x + error.x;
-                    shotY = topFourFoot.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            case "Back Four Foot":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    
-                    shotX = backFourFoot.x + error.x;
-                    shotY = backFourFoot.y + error.y;
-                    
-                    if (inturn)
-                        shotX = -shotX;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    yield return new WaitForFixedUpdate();
-                    rockFlick.mouseUp = true;
-                }
-                break;
-            #endregion
-
-            #region Take Outs
-            case "Peel":
-                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
-                // DO NOT apply error again here - just use the calculated position directly!
-                if (takeOutX != 0f)
-                {
-                    shotX = takeOutX;
-                    shotY = takeOutY;
-                }
-                else
-                {
-                    // Fallback: use draw accuracy if no target calculated
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    shotX = button.x + error.x;
-                    shotY = button.y + error.y;
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Peel Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Take Out":
-                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
-                // DO NOT apply error again here - just use the calculated position directly!
-                if (takeOutX != 0f)
-                {
-                    shotX = takeOutX;
-                    shotY = takeOutY;
-                    
-                    Debug.Log($"[AI_Shooter] Take Out - Using physics-calculated position: ({shotX:F3}, {shotY:F3})");
-                }
-                else
-                {
-                    // Fallback: use draw accuracy if no target calculated
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    shotX = button.x + error.x;
-                    shotY = button.y + error.y;
-                    
-                    Debug.LogWarning($"[AI_Shooter] Take Out fallback - No physics position available");
-                }
-
-                rockRB.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Take Out Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Tick":
-                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
-                // DO NOT apply error again here - just use the calculated position directly!
-                if (takeOutX != 0f)
-                {
-                    shotX = takeOutX;
-                    shotY = takeOutY;
-                }
-                else
-                {
-                    // Fallback
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.1f);
-                    shotX = button.x + error.x;
-                    shotY = button.y + error.y;
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Tick Shot Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Raise":
-                // Physics-based shot: AI_Target already calculated shot position WITH accuracy error applied
-                // DO NOT apply error again here - just use the calculated position directly!
-                if (takeOutX != 0f)
-                {
-                    shotX = takeOutX;
-                    shotY = takeOutY;
-                }
-                else
-                {
-                    // Fallback
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.takeOutAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.12f);
-                    shotX = button.x + error.x;
-                    shotY = button.y + error.y;
-                }
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-
-                Debug.Log("Raise Position is (" + rockRB.position.x + " ," + rockRB.position.y + ")");
-                yield return new WaitForFixedUpdate();
-                rockFlick.mouseUp = true;
-                break;
-            #endregion
-
-            case "Draw To Target":
-
-                shotX = takeOutX;
-                shotY = takeOutY;
-
-                //shotX = Random.Range(takeOutX + drawAccu.x, takeOutX - drawAccu.x);
-                //shotY = Random.Range(takeOutY + drawAccu.y, takeOutY - drawAccu.y);
-
-                rockFlick.rb.isKinematic = true;
-                rockRB.position = new Vector2(shotX, shotY);
-                rockFlick.mouseUp = true;
-                break;
-
-            case "Guard To Target":
-                {
-                    CharacterStats stats = GetShooterStats();
-                    float accuracy = stats != null ? stats.guardAccuracy.GetValue() : 70f;
-                    Vector2 error = GetAccuracyError(accuracy, 0.15f);
-                    
-                    shotX = takeOutX + error.x;
-                    shotY = takeOutY + error.y;
-
-                    rockFlick.rb.isKinematic = true;
-                    rockRB.position = new Vector2(shotX, shotY);
-                    rockFlick.mouseUp = true;
-                }
-                break;
-
-            default:
-                break;
+            // SUCCESS: Use physics-calculated position (accuracy error already applied by AI_Target)
+            shotX = takeOutX;
+            shotY = takeOutY;
+            
+            Debug.Log($"[AI_Shooter] {aiShotType} - Using physics position: ({shotX:F3}, {shotY:F3})");
         }
+        else
+        {
+            // FALLBACK: Physics failed, draw to button with accuracy error
+            // This should rarely happen - indicates a problem with AI_Target
+            Debug.LogWarning($"[AI_Shooter] {aiShotType} FALLBACK - No physics position available!");
+            
+            CharacterStats stats = GetShooterStats();
+            float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+            Vector2 error = GetAccuracyError(accuracy, 0.15f);
+            
+            shotX = button.x + error.x;
+            shotY = button.y + error.y;
+        }
+        
+        // Execute shot: Set position and trigger release
+        rockFlick.rb.isKinematic = true;
+        rockRB.position = new Vector2(shotX, shotY);
+        
+        Debug.Log($"[AI_Shooter] {aiShotType} final position: ({rockRB.position.x:F3}, {rockRB.position.y:F3})");
+        
+        yield return new WaitForFixedUpdate();
+        rockFlick.mouseUp = true;
 
+        // Wait for rock to actually be released and have velocity
+        yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
+
+        // Start AI sweeping coroutine
+        if (gm != null && rm != null && aiSweep.sm != null)
+        {
+            Vector2 initialVelocity = rockRB.linearVelocity;
+            Vector2 targetPosition = aiTarg.targetPos;
+            bool isInTurn = inturn;
+
+            Debug.Log($"[AI_Shooter] Starting sweeping monitor: velocity={initialVelocity.magnitude:F2} m/s, target={targetPosition}, inTurn={isInTurn}");
+
+            StartCoroutine(MonitorAndSweepCoroutine(rockRB, initialVelocity, isInTurn, targetPosition, aiShotType));
+        }
     }
 
 
@@ -649,5 +207,237 @@ public class AI_Shooter : MonoBehaviour
         // Use circular distribution for natural shot spread
         return Random.insideUnitCircle * maxError;
     }
+    /// <summary>
+    /// Monitor rock position vs predicted trajectory and make sweeping decisions
+    /// </summary>
+    private IEnumerator MonitorAndSweepCoroutine(Rigidbody2D rockRB, Vector2 initialVelocity, bool isInTurn, Vector2 targetPosition, string shotType)
+    {
+        GameObject rock = gm.rockList[currentRockNumber].rock;
+        if (rock == null)
+        {
+            Debug.LogWarning("[AI_Sweeper] No active rock found!");
+            yield break;
+        }
 
+        Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
+
+        bool isOpponentRock = (rockInfo.teamName != gm.rockList[currentRockNumber].rockInfo.teamName);
+        bool pastTLine = (rock.transform.position.y > 6.5f);
+
+        // Get trajectory simulator
+        TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+        TrajectorySimulator trajectorySimulator = null;
+
+        if (playerTrajectory != null)
+        {
+            trajectorySimulator = new TrajectorySimulator(
+                playerTrajectory.iceFriction,
+                playerTrajectory.curlStrength
+            );
+        }
+        else
+        {
+            Debug.LogWarning("[AI_Sweeper] TrajectoryLine not found!");
+            yield break;
+        }
+
+        // Generate predicted path
+        Vector2 launcherPos = new Vector2(0f, -25f);
+        List<GameObject> rocksInPlay = new List<GameObject>();
+        foreach (var rockEntry in gm.rockList)
+        {
+            if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy && rockEntry.rockInfo.inPlay)
+            {
+                rocksInPlay.Add(rockEntry.rock);
+            }
+        }
+
+        List<Vector2> predictedPath = trajectorySimulator.SimulateTrajectory(
+            launcherPos,
+            initialVelocity,
+            isInTurn,
+            250,
+            rocksInPlay,
+            forPlayerPreview: false
+        );
+
+        Debug.Log($"[AI_Sweeper] Monitoring started - predicted path has {predictedPath.Count} points");
+
+        // Wait until rock crosses hog line (Y > -16.15)
+        while (rock.transform.position.y < -16.15f)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        Debug.Log($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
+
+        // Sweeping thresholds
+        float lateralErrorThreshold = 0.12f; // 12cm lateral error
+        float distanceErrorThreshold = 0.25f; // 25cm distance error
+        float predictionLookahead = 1.5f; // Look 1.5 units ahead
+
+        string currentSweepState = "None";
+
+        // Monitor rock until it stops
+        while (rockInfo != null && !rockInfo.stopped && rockRB.linearVelocity.magnitude > 0.01f)
+        {
+            Vector2 currentPos = rock.transform.position;
+
+            // Find predicted position at same Y coordinate
+            Vector2 predictedPosAtCurrentY = GetPredictedPositionAtY(predictedPath, currentPos.y);
+            Vector2 predictedPosAhead = GetPredictedPositionAtY(predictedPath, currentPos.y + predictionLookahead);
+
+            // Calculate errors
+            float lateralError = currentPos.x - predictedPosAtCurrentY.x;
+            float distanceToTarget = targetPosition.y - currentPos.y;
+            float predictedShortfall = targetPosition.y - predictedPosAhead.y;
+
+            // Get sweeper skill
+            float sweepSkill = GetSweeperSkill();
+            float skillMultiplier = 1.0f - (0.3f * (1.0f - sweepSkill)); // Better skill = more aggressive
+
+            // Adjust thresholds based on skill
+            float lateralThreshold = lateralErrorThreshold * skillMultiplier;
+            float distanceThreshold = distanceErrorThreshold * skillMultiplier;
+
+            // DECISION LOGIC
+            string desiredState = "None";
+
+            // Modified decision logic:
+            if (isOpponentRock && pastTLine)
+            {
+                // STRATEGY: Make opponent rock go TOO FAR
+                // Always sweep for weight to push it past their target
+                desiredState = "Weight";
+
+                Debug.Log($"[AI_Sweeper] Opponent rock past T-line - sweeping to overshoot!");
+            }
+
+            // PRIORITY 1: CRITICAL DISTANCE (rock won't reach target!)
+            if (predictedShortfall > 1.0f)
+            {
+                desiredState = "Critical";
+            }
+            // PRIORITY 2: SIGNIFICANT SHORTFALL
+            else if (predictedShortfall > distanceThreshold)
+            {
+                desiredState = "Weight";
+            }
+            // PRIORITY 3: LATERAL ERROR
+            else if (Mathf.Abs(lateralError) > lateralThreshold)
+            {
+                if (isInTurn)
+                {
+                    // IN-TURN curls RIGHT
+                    desiredState = (lateralError > 0f) ? "Line" : "Curl";
+                }
+                else
+                {
+                    // OUT-TURN curls LEFT
+                    desiredState = (lateralError < 0f) ? "Line" : "Curl";
+                }
+            }
+
+            // Apply sweeping if state changed
+            if (desiredState != currentSweepState)
+            {
+                ApplySweepState(desiredState, isInTurn);
+                currentSweepState = desiredState;
+
+                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}");
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        // Rock stopped - whoa
+        if (currentSweepState != "None")
+        {
+            aiSweep.sm.SweepWhoa(true);
+            Debug.Log($"[AI_Sweeper] Rock stopped - WHOA");
+        }
+    }
+
+    /// <summary>
+    /// Find predicted position at given Y coordinate
+    /// </summary>
+    private Vector2 GetPredictedPositionAtY(List<Vector2> predictedPath, float targetY)
+    {
+        if (predictedPath == null || predictedPath.Count < 2)
+            return Vector2.zero;
+
+        // Find two points that bracket the target Y
+        for (int i = 0; i < predictedPath.Count - 1; i++)
+        {
+            Vector2 p1 = predictedPath[i];
+            Vector2 p2 = predictedPath[i + 1];
+
+            // Check if target Y is between these two points
+            if ((p1.y <= targetY && p2.y >= targetY) || (p1.y >= targetY && p2.y <= targetY))
+            {
+                // Interpolate X position at target Y
+                float t = (targetY - p1.y) / (p2.y - p1.y);
+                float interpolatedX = Mathf.Lerp(p1.x, p2.x, t);
+
+                return new Vector2(interpolatedX, targetY);
+            }
+        }
+
+        // If target Y is beyond predicted path, return last point
+        if (predictedPath.Count > 0)
+            return predictedPath[predictedPath.Count - 1];
+
+        return Vector2.zero;
+    }
+
+    /// <summary>
+    /// Apply the desired sweeping state
+    /// </summary>
+    private void ApplySweepState(string state, bool isInTurn)
+    {
+        switch (state)
+        {
+            case "None":
+                aiSweep.sm.SweepWhoa(true);
+                break;
+
+            case "Weight":
+            case "Critical":
+                // Both sweepers - maximum distance extension
+                aiSweep.sm.SweepWeight(true);
+                break;
+
+            case "Line":
+                // One sweeper on curl side - straighten the rock
+                if (isInTurn)
+                    aiSweep.sm.SweepLeft(true);  // IN-TURN: Left sweeper
+                else
+                    aiSweep.sm.SweepRight(true); // OUT-TURN: Right sweeper
+                break;
+
+            case "Curl":
+                // One sweeper on opposite side - increase curl
+                if (isInTurn)
+                    aiSweep.sm.SweepRight(true); // IN-TURN: Right sweeper
+                else
+                    aiSweep.sm.SweepLeft(true);  // OUT-TURN: Left sweeper
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Get combined sweeper skill (0-1 scale)
+    /// </summary>
+    private float GetSweeperSkill()
+    {
+        if (aiSweep.sm.swprLStats == null || aiSweep.sm.swprRStats == null)
+            return 0.5f; // Default medium skill
+
+        // Combine sweep strength (accuracy) and endurance
+        float leftSkill = (aiSweep.sm.swprLStats.sweepStrength.GetValue() / 100f + aiSweep.sm.swprLStats.sweepEndurance.GetValue() / 100f) * 0.5f;
+        float rightSkill = (aiSweep.sm.swprRStats.sweepStrength.GetValue() / 100f + aiSweep.sm.swprRStats.sweepEndurance.GetValue() / 100f) * 0.5f;
+
+        // Average both sweepers
+        return (leftSkill + rightSkill) * 0.5f;
+    }
 }

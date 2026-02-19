@@ -25301,6 +25301,7 @@ MonoBehaviour:
   gm: {fileID: 197219300}
   cm: {fileID: 57450608}
   tm: {fileID: 805824338}
+  rm: {fileID: 545177317}
   springDistance: 0
   springDirection: {x: 0, y: 0, z: 0}
   angle: 0
@@ -25316,10 +25317,15 @@ MonoBehaviour:
   shootKnob: {fileID: 1832400535}
   lookAheadCount: 5
   usePhysicsSimulation: 1
-  iceFriction: 0.38
-  curlStrength: 4
-  lateBreakingIntensity: 0.01
-  lateBreakingCurve: 0.01
+  iceFriction: 0.459
+  curlStrength: 13.8
+  lateBreakingIntensity: 0.1
+  lateBreakingCurve: 0.1
+  velocityMultiplier: 5
+  minPullbackDistance: 1
+  maxPullbackDistance: 2.75
+  minVelocity: 5
+  maxVelocity: 11
   collisionMarker: {fileID: 1058954659}
   hitRockGhost: {fileID: 2097664716}
   showCollisionPrediction: 1
@@ -26604,6 +26610,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hog_Line
       objectReference: {fileID: 0}
+    - target: {fileID: 5338720094798337512, guid: 5897c972fa3e58742af322640deb984b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338720094798337513, guid: 5897c972fa3e58742af322640deb984b, type: 3}
+      propertyPath: m_Size.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338720094798337513, guid: 5897c972fa3e58742af322640deb984b, type: 3}
+      propertyPath: m_Size.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338720094798337513, guid: 5897c972fa3e58742af322640deb984b, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338720094798337513, guid: 5897c972fa3e58742af322640deb984b, type: 3}
+      propertyPath: m_Offset.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5338720094798337526, guid: 5897c972fa3e58742af322640deb984b, type: 3}
       propertyPath: m_RootOrder
       value: 33
@@ -26614,7 +26640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5338720094798337526, guid: 5897c972fa3e58742af322640deb984b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -16.03
+      value: -16.15
       objectReference: {fileID: 0}
     - target: {fileID: 5338720094798337526, guid: 5897c972fa3e58742af322640deb984b, type: 3}
       propertyPath: m_LocalPosition.z
