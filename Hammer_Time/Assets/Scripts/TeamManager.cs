@@ -175,42 +175,87 @@ public class TeamManager : MonoBehaviour
     }
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
+        // CRITICAL: Null safety checks for loaded games
+        if (gsp == null)
+        {
+            Debug.LogError("[TeamManager] gsp is null!");
+            return;
+        }
+        
         if (redTurn)
         {
+            // Null check for team arrays
+            if (teamRed == null || teamRed.Length == 0)
+            {
+                Debug.LogError("[TeamManager] teamRed is null or empty!");
+                return;
+            }
+            
+            if (gsp.redTeam == null || gsp.redTeam.players == null || gsp.redTeam.players.Count == 0)
+            {
+                Debug.LogError("[TeamManager] gsp.redTeam or players is null/empty!");
+                return;
+            }
+            
             for (int i = 0; i < teamRed.Length; i++)
             {
-                teamRed[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamRedColour);
+                if (teamRed[i] != null && teamRed[i].shooter != null)
+                {
+                    CharColourChanger colourChanger = teamRed[i].shooter.GetComponent<CharColourChanger>();
+                    if (colourChanger != null)
+                        colourChanger.TeamColour(teamRedColour);
+                }
             }
 
-            for (int j = 0; j < teamRed.Length; j++)
+            for (int j = 0; j < teamRed.Length && j < gsp.redTeam.players.Count; j++)
             {
-                teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.redTeam.players[j].draw);
-                teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.redTeam.players[j].takeOut);
-                teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.redTeam.players[j].guard);
-                teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.redTeam.players[j].sweepStrength);
-                teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.redTeam.players[j].sweepEnduro);
-                teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.redTeam.players[j].sweepCohesion);
-                //Debug.Log("Red Turn PLAYER stats " + j + " - "
-                //+ teamRed[j].charStats.guardAccuracy.GetValue());
+                if (teamRed[j] != null && teamRed[j].charStats != null && gsp.redTeam.players[j] != null)
+                {
+                    teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.redTeam.players[j].draw);
+                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.redTeam.players[j].takeOut);
+                    teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.redTeam.players[j].guard);
+                    teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.redTeam.players[j].sweepStrength);
+                    teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.redTeam.players[j].sweepEnduro);
+                    teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.redTeam.players[j].sweepCohesion);
+                }
             }
         }
         else
         {
+            // Null check for team arrays
+            if (teamYellow == null || teamYellow.Length == 0)
+            {
+                Debug.LogError("[TeamManager] teamYellow is null or empty!");
+                return;
+            }
+            
+            if (gsp.yellowTeam == null || gsp.yellowTeam.players == null || gsp.yellowTeam.players.Count == 0)
+            {
+                Debug.LogError("[TeamManager] gsp.yellowTeam or players is null/empty!");
+                return;
+            }
+            
             for (int i = 0; i < teamYellow.Length; i++)
             {
-                teamYellow[i].shooter.GetComponent<CharColourChanger>().TeamColour(teamYellowColour);
+                if (teamYellow[i] != null && teamYellow[i].shooter != null)
+                {
+                    CharColourChanger colourChanger = teamYellow[i].shooter.GetComponent<CharColourChanger>();
+                    if (colourChanger != null)
+                        colourChanger.TeamColour(teamYellowColour);
+                }
             }
 
-            for (int j = 0; j < teamYellow.Length; j++)
+            for (int j = 0; j < teamYellow.Length && j < gsp.yellowTeam.players.Count; j++)
             {
-                teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.yellowTeam.players[j].draw);
-                teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.yellowTeam.players[j].takeOut);
-                teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.yellowTeam.players[j].guard);
-                teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.yellowTeam.players[j].sweepStrength);
-                teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.yellowTeam.players[j].sweepEnduro);
-                teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.yellowTeam.players[j].sweepCohesion);
-                //Debug.Log("Yellow Turn PLAYER stats " + j + " - "
-                //+ teamYellow[j].charStats.guardAccuracy.GetValue());
+                if (teamYellow[j] != null && teamYellow[j].charStats != null && gsp.yellowTeam.players[j] != null)
+                {
+                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.yellowTeam.players[j].draw);
+                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.yellowTeam.players[j].takeOut);
+                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.yellowTeam.players[j].guard);
+                    teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.yellowTeam.players[j].sweepStrength);
+                    teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.yellowTeam.players[j].sweepEnduro);
+                    teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.yellowTeam.players[j].sweepCohesion);
+                }
             }
         }
         if (rockCurrent < 4)

@@ -57,12 +57,12 @@ public class Sweep : MonoBehaviour
 
     public void OnSweep()
     {
-        // ? QUICK TEST MODE: Disable sweeping for perfect determinism
-        if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
-        {
-            Debug.Log("[Sweep] ? QUICK TEST MODE: Sweeping disabled for deterministic testing");
-            return;
-        }
+        //// ? QUICK TEST MODE: Disable sweeping for perfect determinism
+        //if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
+        //{
+        //    Debug.Log("[Sweep] ? QUICK TEST MODE: Sweeping disabled for deterministic testing");
+        //    return;
+        //}
         
         statCalc = sm.swprLStats.sweepStrength.GetValue() + sm.swprRStats.sweepStrength.GetValue();
         statEndur = sm.swprLStats.sweepEndurance.GetValue() + sm.swprRStats.sweepEndurance.GetValue();
@@ -74,12 +74,12 @@ public class Sweep : MonoBehaviour
 
     public void OnHard()
     {
-        // ? QUICK TEST MODE: Disable sweeping for perfect determinism
-        if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
-        {
-            Debug.Log("[Sweep] ? QUICK TEST MODE: Hard sweep disabled");
-            return;
-        }
+        //// ? QUICK TEST MODE: Disable sweeping for perfect determinism
+        //if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
+        //{
+        //    Debug.Log("[Sweep] ? QUICK TEST MODE: Hard sweep disabled");
+        //    return;
+        //}
 
         statCalc = sm.swprLStats.sweepStrength.GetValue() + sm.swprRStats.sweepStrength.GetValue();
         StartCoroutine(SweepHard());
@@ -87,12 +87,12 @@ public class Sweep : MonoBehaviour
 
     public void OnLeft()
     {
-        // ? QUICK TEST MODE: Disable sweeping for perfect determinism
-        if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
-        {
-            Debug.Log("[Sweep] ? QUICK TEST MODE: Left sweep disabled");
-            return;
-        }
+        //// ? QUICK TEST MODE: Disable sweeping for perfect determinism
+        //if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
+        //{
+        //    Debug.Log("[Sweep] ? QUICK TEST MODE: Left sweep disabled");
+        //    return;
+        //}
         
         statCalc = sm.swprLStats.sweepStrength.GetValue();
         if (!rm.inturn)
@@ -108,12 +108,12 @@ public class Sweep : MonoBehaviour
 
     public void OnRight()
     {
-        // ? QUICK TEST MODE: Disable sweeping for perfect determinism
-        if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
-        {
-            Debug.Log("[Sweep] ? QUICK TEST MODE: Right sweep disabled");
-            return;
-        }
+        //// ? QUICK TEST MODE: Disable sweeping for perfect determinism
+        //if (PlayerPrefs.GetInt("DisableSweeping", 0) == 1)
+        //{
+        //    Debug.Log("[Sweep] ? QUICK TEST MODE: Right sweep disabled");
+        //    return;
+        //}
         
         statCalc = sm.swprRStats.sweepStrength.GetValue();
         if (!rm.inturn)

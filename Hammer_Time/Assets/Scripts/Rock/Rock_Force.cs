@@ -146,6 +146,9 @@ public class Rock_Force : MonoBehaviour
             }
             frameCounter++;
             
+            // Keep constant friction - no progressive stickiness
+            // The linearDamping was set at hog line and stays constant
+            
             //Debug.Log("Curl Force");
             // Apply curl force multiplier for trajectory tuning
             Vector2 scaledCurl = curl * curlForceMultiplier;

@@ -1912,6 +1912,11 @@ public class RandomRockPlacerment : MonoBehaviour
 
     IEnumerator CompletePlacement()
     {
+        // MINIMUM SPACING: Ensure rocks don't touch when placed
+        const float ROCK_RADIUS = 0.14f;
+        const float MIN_SPACING_GAP = 0.08f; // Small gap between rocks (adjustable)
+        const float MIN_SAFE_DISTANCE = (ROCK_RADIUS * 2f) + MIN_SPACING_GAP; // 0.28 + 0.08 = 0.36 units
+
         for (int i = 0; i < rockCurrent + 1; i++)
         {
 
@@ -1927,6 +1932,53 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rock.transform.parent = null;
             //rm.rb.DeadRock(i);
             //yield return new WaitForEndOfFrame();
+            
+            // SPACING CHECK: Ensure this rock doesn't touch any previously placed rocks
+            bool tooClose = true;
+            int maxAttempts = 10;
+            int attempt = 0;
+            Vector2 originalPos = rockPos[i];
+            
+            while (tooClose && attempt < maxAttempts)
+            {
+                tooClose = false;
+                
+                // Check distance to all previously placed rocks
+                for (int j = 0; j < i; j++)
+                {
+                    if (rockPos[j].y < 8f) // Only check rocks that are in play
+                    {
+                        float distance = Vector2.Distance(rockPos[i], rockPos[j]);
+                        
+                        if (distance < MIN_SAFE_DISTANCE)
+                        {
+                            tooClose = true;
+                            
+                            // Nudge the rock away from the collision
+                            Vector2 awayDirection = (rockPos[i] - rockPos[j]).normalized;
+                            if (awayDirection.magnitude < 0.01f)
+                            {
+                                // If rocks are exactly overlapping, push in random direction
+                                awayDirection = Random.insideUnitCircle.normalized;
+                            }
+                            
+                            // Move rock to safe distance
+                            rockPos[i] = rockPos[j] + (awayDirection * MIN_SAFE_DISTANCE);
+                            
+                            Debug.Log($"[Placement] Rock {i} too close to rock {j} (dist={distance:F3}), adjusting: {originalPos} -> {rockPos[i]}");
+                            break; // Recheck all rocks after adjustment
+                        }
+                    }
+                }
+                
+                attempt++;
+            }
+            
+            if (attempt >= maxAttempts)
+            {
+                Debug.LogWarning($"[Placement] Rock {i} couldn't find safe spacing after {maxAttempts} attempts, using best position");
+            }
+            
             //Debug.Log("Rock Position " + i + " " + rockPos[i]);
             gm.rockList[i].rock.transform.position = rockPos[i];
 
@@ -2589,13 +2641,25 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// Apply accuracy error (circular distribution)
+    /// Apply accuracy error (realistic curling distribution)
+    /// Most errors are in WEIGHT (Y-axis), with minor LINE errors (X-axis)
     /// </summary>
     private Vector2 GetAccuracyError(float accuracy, float baseMaxError)
     {
         float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
         float maxError = baseMaxError * (1f - accuracyRatio);
-        return Random.insideUnitCircle * maxError;
+        
+        // REALISTIC CURLING ERROR DISTRIBUTION:
+        // Weight (Y) errors are 4-5x more common than line (X) errors
+        // Professional curlers can control line very well, but weight is hard!
+        
+        // Generate separate X and Y errors
+        float yError = Random.Range(-maxError, maxError); // Full range for weight
+        float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+        
+        // Result: Y errors dominate (80% of variance)
+        // X errors are minimal (20% of variance)
+        return new Vector2(xError, yError);
     }
     
     /// <summary>
@@ -2603,6 +2667,35 @@ public class RandomRockPlacerment : MonoBehaviour
     /// </summary>
     private string DetermineSmartShotTypeSimple(bool isBehind, bool hasHammer, int rocksInHouse, int guardsInPlay)
     {
+        // SPECIAL CASE: 0-0 tie - randomly choose aggressive or conservative
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        if (gsp.redScore == 0 && gsp.yellowScore == 0)
+        {
+            bool playAggressive = Random.value < 0.5f; // 50/50 split
+            Debug.Log($"[SmartPlacement] 0-0 tie: playing {(playAggressive ? "AGGRESSIVE" : "CONSERVATIVE")}");
+            
+            if (playAggressive)
+            {
+                // Aggressive: build position early, attack later
+                if (rockCurrent < 4)
+                    return "Draw";
+                else if (rocksInHouse > 0)
+                    return "Take Out";
+                else
+                    return "Guard";
+            }
+            else
+            {
+                // Conservative: guards early, careful draws
+                if (rockCurrent < 4)
+                    return guardsInPlay < 2 ? "Guard" : "Draw";
+                else if (rocksInHouse > 2)
+                    return "Take Out";
+                else
+                    return "Guard";
+            }
+        }
+        
         // Early rocks: build position
         if (rockCurrent < 4)
         {
@@ -2832,6 +2925,31 @@ public class RandomRockPlacerment : MonoBehaviour
         }
         
         Vector2 targetGuardPos = placePos[placeSelector];
+        
+        // IMPROVED CORNER GUARD POSITIONS: Make them actually block!
+        // Old corner guards at (1.33, 1.22) don't block anything
+        // New positions at (~0.75, 3.0) create effective blocks
+        if (guardSelect == 1) // Left guards
+        {
+            // Place between center line and house, good Y coverage
+            targetGuardPos = new Vector2(
+                Random.Range(-0.85f, -0.65f), // X: Left side blocking position
+                Random.Range(2.8f, 3.2f)       // Y: Guard zone (blocks path to house)
+            );
+        }
+        else if (guardSelect == 3) // Right guards
+        {
+            // Mirror left guards
+            targetGuardPos = new Vector2(
+                Random.Range(0.65f, 0.85f),    // X: Right side blocking position
+                Random.Range(2.8f, 3.2f)       // Y: Guard zone
+            );
+        }
+        else // Center guards (guardSelect == 2)
+        {
+            // Keep center guard logic (already good)
+            targetGuardPos = placePos[placeSelector];
+        }
         
         // STEP 2: If physics available, simulate the shot
         if (trajectorySimulator != null)

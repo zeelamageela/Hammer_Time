@@ -344,6 +344,25 @@ public class AI_Shooter : MonoBehaviour
                 ApplySweepState(desiredState, isInTurn);
                 currentSweepState = desiredState;
 
+                //switch (desiredState)
+                //{
+                //    case "None":
+                //        TextCalloutManager.Instance.ShowRockCallout(rock, "Whoa!!");
+                //        break;
+                //    case "Weight":
+                //        TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep!!");
+                //        break;
+                //    case "Line":
+                //        TextCalloutManager.Instance.ShowRockCallout(rock, "Line!!");
+                //        break;
+                //    case "Curl":
+                //        TextCalloutManager.Instance.ShowRockCallout(rock, "Curl!!");
+                //        break;
+                //    case "Critical":
+                //        TextCalloutManager.Instance.ShowRockCallout(rock, "HARD!!!");
+                //        break;
+                //}
+
                 Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}");
             }
 

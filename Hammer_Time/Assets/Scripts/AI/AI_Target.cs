@@ -1416,33 +1416,37 @@ public class AI_Target : MonoBehaviour
                 
                 Debug.Log($"[AI_Target] Shooter takeout skill: {accuracy}/100");
                 
-                // Bidirectional error: Can be positive OR negative (sometimes makes shot better!)
-                // Higher skill = smaller error range (more consistent)
-                // Formula: errorRange = 0.05 * (1 - accuracy/100)
-                // This gives: 100 skill → 0.00 range, 75 skill → 0.0125 range, 50 skill → 0.025 range, 0 skill → 0.05 range
-                float errorRange = 0.05f * (1f - (accuracy / 100f));
+                // REALISTIC CURLING ERROR DISTRIBUTION:
+                // Weight (Y) errors are 4-5x more common than line (X) errors
+                // Professional curlers can control line very well, but weight is hard!
                 
-                if (errorRange > 0f)
+                float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+                float baseMaxError = 0.05f;
+                float maxError = baseMaxError * (1f - accuracyRatio);
+                
+                if (maxError > 0f)
                 {
-                    // Random offset within ±errorRange (can improve OR worsen the shot!)
-                    // insideUnitCircle gives random point in circle, scaled by errorRange
-                    Vector2 errorOffset = Random.insideUnitCircle * errorRange;
+                    // Generate separate X and Y errors with weight-dominant distribution
+                    float yError = Random.Range(-maxError, maxError); // Full range for weight
+                    float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                    
+                    Vector2 errorOffset = new Vector2(xError, yError);
                     
                     // CRITICAL FIX: Lateral error must respect turn direction
                     // IN-TURN (curls right): pullback on LEFT (negative X) -> negative lateral error moves it MORE left (away from curl)
                     // OUT-TURN (curls left): pullback on RIGHT (positive X) -> positive lateral error moves it MORE right (away from curl)
-                    // This ensures error doesn't flip the shot direction
                     float lateralErrorSign = useInTurn ? -1f : 1f;
                     errorOffset.x *= lateralErrorSign;
                     
                     pullbackPos += errorOffset;
                     
-                    Debug.Log($"[AI_Target] Accuracy error applied - Range: ±{errorRange:F3}, Actual: {errorOffset.magnitude:F3}\n" +
-                              $"Error offset: ({errorOffset.x:F3}, {errorOffset.y:F3})\n" +
-                              $"Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
-                              $"Original pullback: {originalPullback}\n" +
-                              $"Final pullback: {pullbackPos}\n" +
-                              $"Pullback lateral offset: {pullbackPos.x:F3}");
+                    Debug.Log($"[AI_Target] Realistic error applied (80% weight / 20% line)\n" +
+                              $"  Max error: ±{maxError:F3}\n" +
+                              $"  Y error (weight): {yError:F3} (100% range)\n" +
+                              $"  X error (line): {xError:F3} (20% range)\n" +
+                              $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                              $"  Original pullback: {originalPullback}\n" +
+                              $"  Final pullback: {pullbackPos}");
                 }
                 else
                 {

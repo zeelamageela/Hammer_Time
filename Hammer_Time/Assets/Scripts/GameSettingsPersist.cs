@@ -614,10 +614,51 @@ public class GameSettingsPersist : MonoBehaviour
         crowdDensity = cm.currentTourny.crowdDensity;
         prize = cm.currentTourny.prizeMoney;
         numberOfTeams = cm.currentTourny.teams;
-        //cm.LoadCareer(this);
         teamList = new List<Team_List>();
-        //inProgress = true;
-        //cm.LoadTournyState();
+        
+        // CRITICAL FIX: Restore team objects from teams array based on team names
+        // This is needed for mid-game loads where TournySetup() hasn't run
+        if (teams != null && teams.Length > 0)
+        {
+            Debug.Log($"[GameSettingsPersist] Restoring team objects - redTeam: {redTeamName}, yellowTeam: {yellowTeamName}");
+            
+            // Find and restore red team
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i] != null && teams[i].name == redTeamName)
+                {
+                    redTeam = teams[i];
+                    Debug.Log($"[GameSettingsPersist] Found redTeam: {redTeam.name} with {redTeam.players.Count} players");
+                    break;
+                }
+            }
+            
+            // Find and restore yellow team
+            for (int i = 0; i < teams.Length; i++)
+            {
+                if (teams[i] != null && teams[i].name == yellowTeamName)
+                {
+                    yellowTeam = teams[i];
+                    Debug.Log($"[GameSettingsPersist] Found yellowTeam: {yellowTeam.name} with {yellowTeam.players.Count} players");
+                    break;
+                }
+            }
+            
+            // Safety check
+            if (redTeam == null)
+            {
+                Debug.LogError($"[GameSettingsPersist] Could not find redTeam '{redTeamName}' in teams array!");
+            }
+            
+            if (yellowTeam == null)
+            {
+                Debug.LogError($"[GameSettingsPersist] Could not find yellowTeam '{yellowTeamName}' in teams array!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[GameSettingsPersist] teams array is null or empty - cannot restore team objects");
+        }
         
         Debug.Log("teamList Count is " + teamList.Count);
     }

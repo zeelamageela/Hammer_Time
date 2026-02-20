@@ -946,22 +946,40 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Next Turn");
 
-        rockCurrent++;
-        //Debug.Log("Current Rock is " + rockCurrent);
+        // CRITICAL FIX: Save rock positions BEFORE incrementing rockCurrent
+        // This ensures we save the CURRENT state (rocks 0 to rockCurrent that have been played)
+        // THEN increment for the next turn
         
-        //gsp.AutoSave();
         if (rm.rrp.placed)
         {
+            // Save current game state BEFORE incrementing rockCurrent
             gsp.loadGame = true;
             gsp.rockPos = new Vector2[rockList.Count];
             gsp.rockInPlay = new bool[rockList.Count];
+            
             for(int i = 0; i < rockList.Count; i++)
             {
                 gsp.rockPos[i] = new Vector2(rockList[i].rock.transform.position.x, rockList[i].rock.transform.position.y);
                 gsp.rockInPlay[i] = rockList[i].rockInfo.inPlay;
             }
-
+            
+            // CRITICAL: Save gsp.rockCurrent as the LAST rock that was played (0-indexed)
+            // Don't increment it yet - that happens AFTER save
+            gsp.rockCurrent = rockCurrent;
+            
+            Debug.Log($"[GM.NextTurn] Saving game state: rockCurrent={rockCurrent}, rocksPlayed={rockCurrent + 1}");
+            
             SaveGame();
+        }
+        
+        // NOW increment rockCurrent for the next turn
+        rockCurrent++;
+        
+        //Debug.Log("Current Rock is " + rockCurrent);
+        
+        //gsp.AutoSave();
+        if (rm.rrp.placed)
+        {
             if (rockCurrent % 2 == 1)
             {
                 if (redHammer)
@@ -1248,16 +1266,14 @@ public class GameManager : MonoBehaviour
 
         rockBar.ResetBar(redHammer);
         rockBar.EndUpdate(yellowScore, redScore);
-        //yield return StartCoroutine(WaitForClick());
-        rockCurrent = gsp.rockCurrent - 1;
-        if (rockCurrent < 0)
-        {
-            rockCurrent = 0;
-        }
-        //lg.enabled = true;
-
-        //yield return new WaitUntil(() => lg.rocksPlaced == true);
-        Debug.Log("Current Rock is " + rockCurrent);
+        
+        // CRITICAL FIX: Don't subtract 1 from rockCurrent when loading!
+        // gsp.rockCurrent is already the LAST rock that was played (0-indexed)
+        // We need to restore ALL rocks from 0 to rockCurrent
+        // The saved rockCurrent already represents the index of the last played rock
+        rockCurrent = gsp.rockCurrent;
+        
+        Debug.Log($"[GameManager.LoadGame] Restoring rocks 0 to {rockCurrent} (total: {rockCurrent + 1} rocks)");
 
         //yield return StartCoroutine(WaitForClick());
         //gsp.loadGame = false;
@@ -1268,7 +1284,7 @@ public class GameManager : MonoBehaviour
         if (gsp.playoffRound < 2 && !gsp.cashGame && !gsp.debug)
             yield return StartCoroutine(TournyIntro());
 
-        if (rockCurrent > 0)
+        if (rockCurrent >= 0)
         {
             yield return StartCoroutine(PlaceRocks());
 
@@ -1381,59 +1397,102 @@ public class GameManager : MonoBehaviour
 
     IEnumerator PlaceRocks()
     {
-        //yield return new WaitForSeconds(3.5f);
+        // SAFETY CHECKS
+        if (gsp.rockPos == null || gsp.rockPos.Length == 0)
+        {
+            Debug.LogError("[GameManager] PlaceRocks() - gsp.rockPos is NULL or empty! Cannot place rocks!");
+            yield break;
+        }
+        
+        if (gsp.rockInPlay == null || gsp.rockInPlay.Length == 0)
+        {
+            Debug.LogError("[GameManager] PlaceRocks() - gsp.rockInPlay is NULL or empty! Cannot place rocks!");
+            yield break;
+        }
+        
+        Debug.Log($"[GameManager] PlaceRocks() - Restoring {rockCurrent + 1} rocks from save");
+        Debug.Log($"[GameManager] gsp.loadGame = {gsp.loadGame}");
+        Debug.Log($"[GameManager] gsp.rockPos.Length = {gsp.rockPos.Length}");
+        Debug.Log($"[GameManager] gsp.rockInPlay.Length = {gsp.rockInPlay.Length}");
+        Debug.Log($"[GameManager] rockList.Count = {rockList.Count}");
 
+        // Mark rocks as placed
         for (int i = 0; i <= rockCurrent; i++)
         {
-            rockList[i].rockInfo.placed = true;
+            if (i < rockList.Count)
+            {
+                rockList[i].rockInfo.placed = true;
+            }
         }
 
         yield return new WaitForEndOfFrame();
 
+        // Configure rocks and restore positions
         for (int i = 0; i <= rockCurrent; i++)
         {
+            if (i >= rockList.Count)
+            {
+                Debug.LogError($"[GameManager] Rock index {i} out of bounds (rockList.Count = {rockList.Count})");
+                continue;
+            }
+
+            // Basic rock setup
             rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
-            rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
             rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             rockList[i].rock.transform.parent = null;
-            //rockBar.DeadRock(i);
+            
             yield return new WaitForEndOfFrame();
 
-            if (gsp.loadGame && gsp.rockInPlay[i])
+            // CRITICAL: Restore position from save data
+            if (gsp.loadGame && i < gsp.rockInPlay.Length && i < gsp.rockPos.Length)
             {
-                Vector2 rockTrans = gsp.rockPos[i];
-                Debug.Log("Placing Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
-                rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
-
-                rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
-                rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
-                rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
-                rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
-                rockList[i].rockInfo.inPlay = true;
-                rockList[i].rockInfo.outOfPlay = false;
-                rockList[i].rockInfo.moving = false;
-                rockList[i].rockInfo.shotTaken = true;
-                rockList[i].rockInfo.released = true;
-                rockList[i].rockInfo.stopped = true;
-                rockList[i].rockInfo.rest = true;
-                Debug.Log("i is equal to " + i);
+                if (gsp.rockInPlay[i])
+                {
+                    // Rock is IN PLAY - restore position
+                    Vector2 rockTrans = gsp.rockPos[i];
+                    Debug.Log($"[GameManager] Restoring Rock {i}: pos=({rockTrans.x:F2}, {rockTrans.y:F2}), inPlay=true");
+                    
+                    rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
+                    rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
+                    rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
+                    rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
+                    rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
+                    rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
+                    
+                    rockList[i].rockInfo.inPlay = true;
+                    rockList[i].rockInfo.outOfPlay = false;
+                    rockList[i].rockInfo.moving = false;
+                    rockList[i].rockInfo.shotTaken = true;
+                    rockList[i].rockInfo.released = true;
+                    rockList[i].rockInfo.stopped = true;
+                    rockList[i].rockInfo.rest = true;
+                }
+                else
+                {
+                    // Rock is OUT OF PLAY - hide it
+                    Debug.Log($"[GameManager] Rock {i} is OUT OF PLAY - hiding");
+                    rockList[i].rock.SetActive(false);
+                    rockList[i].rockInfo.inPlay = false;
+                    rockList[i].rockInfo.outOfPlay = true;
+                }
             }
             else
             {
+                // No save data or index out of range - mark as out of play
+                Debug.LogWarning($"[GameManager] No save data for rock {i} - marking as out of play");
                 rockList[i].rock.SetActive(false);
                 rockList[i].rockInfo.inPlay = false;
                 rockList[i].rockInfo.outOfPlay = true;
-
             }
 
-            //rockBar.ShotUpdate(rockCurrent, rockList[i].rockInfo.outOfPlay);
             yield return new WaitForEndOfFrame();
         }
 
         yield return new WaitForEndOfFrame();
         rm.rrp.placed = true;
-
+        
+        Debug.Log("[GameManager] PlaceRocks() complete - all rocks restored");
     }
 
     IEnumerator TournyIntro()

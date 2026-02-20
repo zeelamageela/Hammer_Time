@@ -307,7 +307,7 @@ public class TrajectorySimulator
             }
             
             // CRITICAL: Match Rock_Force behavior - increase damping when rock is nearly stopped!
-            // Rock_Force.cs increases linearDamping from 0.38 to 0.55 when speed < 0.01
+            // Rock_Force.cs increases linearDamping to 0.75 when speed < 0.01
             // This makes the rock "stick" to the ice at the end for a more realistic stop
             if (speed < 0.01f && currentDamping < 0.55f)
             {

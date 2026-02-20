@@ -149,6 +149,98 @@ public class Rock_Colliders : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Rock"))
         {
+            // REAL CURLING PHYSICS: Check for frozen rocks (rocks touching each other)
+            // A "frozen" rock is one that's stationary AND very close to another rock
+            Rigidbody2D thisRB = GetComponent<Rigidbody2D>();
+            Rigidbody2D otherRB = collision.rigidbody;
+            Rock_Info otherRockInfo = collision.gameObject.GetComponent<Rock_Info>();
+            
+            bool thisWasStationary = thisRB.linearVelocity.magnitude < 0.1f;
+            bool otherWasStationary = otherRB.linearVelocity.magnitude < 0.1f;
+            
+            // FROZEN ROCK DETECTION: Check if there's ANOTHER rock touching the one we just hit
+            // This indicates a "frozen pair" - two rocks sitting together
+            bool otherRockIsFrozen = false;
+            GameObject frozenPartner = null;
+            
+            if (otherWasStationary)
+            {
+                // Check for nearby rocks (within touching distance)
+                Collider2D[] nearbyColliders = Physics2D.OverlapCircleAll(
+                    collision.transform.position, 
+                    0.32f, // Slightly more than 2x rock radius (0.14 * 2 = 0.28)
+                    LayerMask.GetMask("Default") // Adjust layer if needed
+                );
+                
+                foreach (Collider2D nearby in nearbyColliders)
+                {
+                    if (nearby.gameObject == collision.gameObject || nearby.gameObject == gameObject)
+                        continue; // Skip self and the rock we just hit
+                    
+                    if (nearby.CompareTag("Rock"))
+                    {
+                        Rock_Info nearbyInfo = nearby.GetComponent<Rock_Info>();
+                        if (nearbyInfo != null && nearbyInfo.inPlay && nearbyInfo.stopped)
+                        {
+                            otherRockIsFrozen = true;
+                            frozenPartner = nearby.gameObject;
+                            Debug.Log($"[Frozen Rock] Detected frozen pair: {collision.gameObject.name} + {nearby.gameObject.name}");
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // FROZEN ROCK COLLISION RESPONSE
+            if (otherRockIsFrozen && frozenPartner != null)
+            {
+                Debug.Log($"[Frozen Rock] Applying realistic frozen rock physics");
+                
+                // Get collision data
+                Vector2 collisionNormal = collision.GetContact(0).normal;
+                Vector2 impactVelocity = thisRB.linearVelocity;
+                float impactSpeed = impactVelocity.magnitude;
+                
+                // REALISTIC FROZEN ROCK BEHAVIOR:
+                // 1. Struck rock (other) stays mostly still (absorbs ~15% of momentum)
+                // 2. Frozen partner (third rock) receives ~70% of momentum
+                // 3. Shooting rock (this) bounces back with ~15% momentum
+                
+                // Calculate momentum transfer
+                Vector2 impactDirection = impactVelocity.normalized;
+                
+                // 1. STRUCK ROCK: Minimal movement (just slides a tiny bit)
+                otherRB.linearVelocity = impactDirection * (impactSpeed * 0.15f);
+                
+                // 2. FROZEN PARTNER: Receives most of the momentum
+                Rigidbody2D partnerRB = frozenPartner.GetComponent<Rigidbody2D>();
+                if (partnerRB != null)
+                {
+                    // Direction from struck rock to partner
+                    Vector2 toPartner = (frozenPartner.transform.position - collision.transform.position).normalized;
+                    partnerRB.linearVelocity = toPartner * (impactSpeed * 0.65f);
+                    
+                    // Wake up the frozen partner
+                    Rock_Info partnerInfo = frozenPartner.GetComponent<Rock_Info>();
+                    if (partnerInfo != null)
+                    {
+                        partnerInfo.moving = true;
+                        partnerInfo.stopped = false;
+                        partnerInfo.rest = false;
+                    }
+                    
+                    Debug.Log($"[Frozen Rock] Partner velocity: {partnerRB.linearVelocity.magnitude:F2} m/s");
+                }
+                
+                // 3. SHOOTING ROCK: Bounces back with reduced velocity
+                thisRB.linearVelocity = -impactDirection * (impactSpeed * 0.20f);
+                
+                Debug.Log($"[Frozen Rock] Struck rock velocity: {otherRB.linearVelocity.magnitude:F2} m/s | Shooter bounce: {thisRB.linearVelocity.magnitude:F2} m/s");
+            }
+            
+            // NORMAL COLLISION (not frozen)
+            // Let Unity's physics handle it, but we can fine-tune if needed
+            
             //sm.SweepHit(false);
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
             collision.gameObject.GetComponent<Rock_Info>().stopped = false;
