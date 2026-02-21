@@ -237,7 +237,6 @@ MonoBehaviour:
   curl: {x: -0.323, y: 0}
   scaleFactor: 0.1
   springTensionMultiplier: 1
-  iceFrictionMultiplier: 1
   curlForceMultiplier: 1
   baseDamping: 0.38
   flipAxis: 0

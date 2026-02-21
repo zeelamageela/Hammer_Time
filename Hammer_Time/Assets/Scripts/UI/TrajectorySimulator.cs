@@ -303,7 +303,7 @@ public class TrajectorySimulator
                 // Don't negate based on isInTurn here, or it will double-negate with dirMult
                 angularVelocity = initialAngularVelocity;  // Always positive!
                 
-                Debug.Log($"[Trajectory] Passed hog line at Y={position.y:F2}, enabling damping: {currentDamping}, spin: {angularVelocity} (dirMult will apply turn direction)");
+                //Debug.Log($"[Trajectory] Passed hog line at Y={position.y:F2}, enabling damping: {currentDamping}, spin: {angularVelocity} (dirMult will apply turn direction)");
             }
             
             // CRITICAL: Match Rock_Force behavior - increase damping when rock is nearly stopped!
@@ -363,7 +363,7 @@ public class TrajectorySimulator
                 // Debug curl at key velocity points
                 if (speed < 1.0f && iterationCount % 10 == 0)
                 {
-                    Debug.Log($"[Curl @ slow] speed={speed:F2}, angVel={angularVelocity:F2}, velX={velX:F3}, curlForce={curlForce}, velChange={velocityChange}");
+                    //Debug.Log($"[Curl @ slow] speed={speed:F2}, angVel={angularVelocity:F2}, velX={velX:F3}, curlForce={curlForce}, velChange={velocityChange}");
                 }
             }
             

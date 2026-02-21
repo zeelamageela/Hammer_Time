@@ -1519,7 +1519,18 @@ public class GameManager : MonoBehaviour
         else
             tournyIntroGO.SetActive(false);
 
-        yield return new WaitForSeconds(6f);
+        // Wait for 6 seconds OR click to skip
+        float elapsed = 0f;
+        while (elapsed < 6f && !Input.GetMouseButtonDown(0))
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("[TournyIntro] Skipped by click at " + elapsed.ToString("F2") + "s");
+        }
 
         tournyIntroGO.SetActive(false);
     }

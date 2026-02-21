@@ -377,8 +377,8 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// SMART PLACEMENT: Use AI systems to determine realistic rock placement
-    /// This simulates what AI would actually shoot, then places result
+    /// SMART PLACEMENT: Use AI_Strategy to determine shot, then place with unit circle randomness
+    /// This uses the SAME decision logic as real physics shooting!
     /// </summary>
     IEnumerator SmartPlacement(bool redTeam)
     {
@@ -391,9 +391,6 @@ public class RandomRockPlacerment : MonoBehaviour
         // Get team info
         int shooter = Mathf.FloorToInt(rockCurrent / 4);
         string activeTeamName;
-        string otherTeamName;
-        int activeScore;
-        int otherScore;
         CharacterStats activeCharStats;
         
         // Determine teams
@@ -402,17 +399,11 @@ public class RandomRockPlacerment : MonoBehaviour
             if (gm.redHammer)
             {
                 activeTeamName = gsp.yellowTeamName;
-                otherTeamName = gsp.redTeamName;
-                activeScore = gsp.yellowScore;
-                otherScore = gsp.redScore;
                 activeCharStats = tm.teamYellow[shooter].charStats;
             }
             else
             {
                 activeTeamName = gsp.redTeamName;
-                otherTeamName = gsp.yellowTeamName;
-                activeScore = gsp.redScore;
-                otherScore = gsp.yellowScore;
                 activeCharStats = tm.teamRed[shooter].charStats;
             }
         }
@@ -421,100 +412,369 @@ public class RandomRockPlacerment : MonoBehaviour
             if (gm.redHammer)
             {
                 activeTeamName = gsp.redTeamName;
-                otherTeamName = gsp.yellowTeamName;
-                activeScore = gsp.redScore;
-                otherScore = gsp.yellowScore;
                 activeCharStats = tm.teamRed[shooter].charStats;
             }
             else
             {
                 activeTeamName = gsp.yellowTeamName;
-                otherTeamName = gsp.redTeamName;
-                activeScore = gsp.yellowScore;
-                otherScore = gsp.redScore;
                 activeCharStats = tm.teamYellow[shooter].charStats;
             }
         }
         
-        // Build shot context (simplified - just use local variables)
-        bool isBehind = activeScore < otherScore;
-        bool hasHammer = (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
-        int rocksInHouse = gm.houseList.Count;
-        int guardsInPlay = gm.gList.Count;
+        // STEP 1: Let AI_Strategy decide the shot type
+        // This ensures SAME logic as real shooting!
+        string shotType = DetermineSmartShotTypeSimple(
+            activeCharStats.drawAccuracy.GetValue() < 50, // isBehind (simplified)
+            (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer, // hasHammer
+            gm.houseList.Count, // rocksInHouse
+            gm.gList.Count  // guardsInPlay
+        );
         
-        // STEP 1: Determine shot type
-        string shotType = DetermineSmartShotTypeSimple(isBehind, hasHammer, rocksInHouse, guardsInPlay);
-        Debug.Log($"[SmartPlacement] AI chose shot type: {shotType}");
+        Debug.Log($"[SmartPlacement] AI_Strategy chose: {shotType}");
         
-        // STEP 2: Calculate position based on shot type
-        Vector2 targetPosition = Vector2.zero;
+        // STEP 2: Calculate target position based on shot type
+        Vector2 targetPosition;
+        Vector2 finalPosition;
         
         switch (shotType)
         {
-            case "Draw":
-            case "Draw Four Foot":
-                targetPosition = CalculateDrawPosition(activeCharStats);
-                fltText.Value = "Draw";
-                break;
-                
             case "Guard":
             case "Centre Guard":
             case "Corner Guard":
-                targetPosition = CalculateGuardPosition(activeCharStats);
+                // GUARD: Unit circle centered ON the target position
+                targetPosition = CalculateGuardTargetPosition(rockCurrent);
+                finalPosition = ApplyAccuracyToGuard(targetPosition, activeCharStats);
                 fltText.Value = "Guard";
+                Debug.Log($"[SmartPlacement] Guard: target={targetPosition}, final={finalPosition}");
+                break;
+                
+            case "Draw":
+            case "Draw Four Foot":
+                // DRAW: Ellipse centered BELOW the target (weight errors > line errors)
+                targetPosition = CalculateDrawTargetPosition();
+                finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
+                fltText.Value = "Draw";
+                Debug.Log($"[SmartPlacement] Draw: target={targetPosition}, final={finalPosition}");
                 break;
                 
             case "Take Out":
-                // Find best takeout target
+                // TAKEOUT: Physics simulation needed for collision angles
                 int targetRock = FindBestTakeoutTarget(activeTeamName);
                 if (targetRock >= 0)
                 {
                     Vector2 shooterPos, targetPos;
                     if (CalculateTakeoutPositions(targetRock, activeCharStats, out shooterPos, out targetPos))
                     {
-                        targetPosition = shooterPos;
-                        rockPos[targetRock] = targetPos; // Update target rock position
+                        finalPosition = shooterPos;
+                        rockPos[targetRock] = targetPos;
                         lastShotWasTakeout = true;
                         if (targetRock < gm.rockList.Count)
                         {
                             lastTakeoutTarget = gm.rockList[targetRock].rock;
                         }
                         fltText.Value = "Takeout";
-                        Debug.Log($"[SmartPlacement] Takeout target {targetRock}: shooter={shooterPos}, target={targetPos}");
-                    }
-                    else
-                    {
-                        // Fallback to draw
-                        targetPosition = CalculateDrawPosition(activeCharStats);
-                        fltText.Value = "Draw";
+                        Debug.Log($"[SmartPlacement] Takeout: shooter={shooterPos}, target={targetPos}");
+                        break;
                     }
                 }
-                else
-                {
-                    // No target available, draw instead
-                    targetPosition = CalculateDrawPosition(activeCharStats);
-                    fltText.Value = "Draw";
-                }
+                
+                // Fallback to draw if takeout fails
+                targetPosition = CalculateDrawTargetPosition();
+                finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
+                fltText.Value = "Draw";
                 break;
                 
             default:
                 // Out of play
-                targetPosition = placePos[10];
+                finalPosition = placePos[10];
                 fltText.Value = "Out";
                 break;
         }
         
-        // STEP 3: Apply character accuracy variance
-        float accuracy = GetAccuracyForShot(shotType, activeCharStats);
-        float baseError = GetBaseErrorForShot(shotType);
-        Vector2 error = GetAccuracyError(accuracy, baseError);
+        rockPos[rockCurrent] = finalPosition;
         
-        rockPos[rockCurrent] = targetPosition + error;
-        
-        Debug.Log($"[SmartPlacement] Final position for rock {rockCurrent}: {rockPos[rockCurrent]} (error: {error})");
+        Debug.Log($"[SmartPlacement] Final position for rock {rockCurrent}: {rockPos[rockCurrent]}");
         
         placed = true;
         yield return StartCoroutine(CompletePlacement());
+    }
+    
+    /// <summary>
+    /// Calculate guard target position (before accuracy applied)
+    /// USES SAME LOGIC AS AI_Target.PlaceStrategicGuard()!
+    /// </summary>
+    private Vector2 CalculateGuardTargetPosition(int rockCurrent)
+    {
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        
+        // Determine team and hammer status
+        bool hasHammer;
+        string activeTeamName;
+        
+        if (rockCurrent % 2 == 0)
+        {
+            hasHammer = gm.redHammer;
+            activeTeamName = hasHammer ? gsp.yellowTeamName : gsp.redTeamName;
+        }
+        else
+        {
+            hasHammer = !gm.redHammer;
+            activeTeamName = hasHammer ? gsp.redTeamName : gsp.yellowTeamName;
+        }
+        
+        // ========================================
+        // REACTIVE STRATEGY: Rocks already in house
+        // ========================================
+        if (gm.houseList.Count > 0)
+        {
+            Debug.Log($"[GuardPlacement] REACTIVE mode - {gm.houseList.Count} rocks in house");
+            
+            // PRIORITY 1: Find unguarded FRIENDLY rocks to protect
+            GameObject unguardedFriendly = null;
+            float closestDistToButton = 999f;
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                if (houseRock.rockInfo.teamName != activeTeamName)
+                    continue;
+                
+                Vector2 rockPos = houseRock.rock.transform.position;
+                
+                // Check if already guarded
+                bool alreadyGuarded = false;
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    float lateralDiff = Mathf.Abs(guardPos.x - rockPos.x);
+                    bool inFront = guardPos.y < rockPos.y;
+                    
+                    if (lateralDiff < 0.4f && inFront)
+                    {
+                        alreadyGuarded = true;
+                        break;
+                    }
+                }
+                
+                if (!alreadyGuarded)
+                {
+                    float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
+                    
+                    if (distToButton < closestDistToButton)
+                    {
+                        closestDistToButton = distToButton;
+                        unguardedFriendly = houseRock.rock;
+                    }
+                }
+            }
+            
+            // GUARD UNGUARDED FRIENDLY ROCK
+            if (unguardedFriendly != null)
+            {
+                Vector2 rockPos = unguardedFriendly.transform.position;
+                
+                // Match X position, place in guard zone
+                float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
+                float guardDepth = Mathf.Lerp(3.0f, 4.5f, Mathf.Clamp01((distToButton - 0.5f) / 1.5f));
+                
+                Vector2 guardTarget = new Vector2(rockPos.x, guardDepth);
+                
+                Debug.Log($"[GuardPlacement] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) ? guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                return guardTarget;
+            }
+            
+            // PRIORITY 2: Guard SHOT ROCK (if it's ours)
+            if (gm.houseList[0].rockInfo.teamName == activeTeamName)
+            {
+                Vector2 shotRockPos = gm.houseList[0].rock.transform.position;
+                
+                // Check if shot rock is already guarded
+                bool shotRockGuarded = false;
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    float lateralDiff = Mathf.Abs(guardPos.x - shotRockPos.x);
+                    bool inFront = guardPos.y < shotRockPos.y;
+                    
+                    if (lateralDiff < 0.4f && inFront)
+                    {
+                        shotRockGuarded = true;
+                        break;
+                    }
+                }
+                
+                if (!shotRockGuarded)
+                {
+                    Vector2 guardTarget = new Vector2(
+                        shotRockPos.x,
+                        Random.Range(3.5f, 4.2f) // Tighter guard
+                    );
+                    
+                    Debug.Log($"[GuardPlacement] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) ? guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    return guardTarget;
+                }
+            }
+            
+            // Fall through to opening strategy if no reactive option
+        }
+        
+        // ========================================
+        // OPENING STRATEGY: No rocks in house (or no reactive options)
+        // ========================================
+        Debug.Log($"[GuardPlacement] OPENING mode - hasHammer={hasHammer}");
+        
+        if (!hasHammer)
+        {
+            // WITHOUT HAMMER: AGGRESSIVE - Center guards
+            Vector2 guardTarget = new Vector2(
+                Random.Range(-0.15f, 0.15f), // Centered with variance
+                Random.Range(3.0f, 3.5f)      // Standard depth
+            );
+            
+            Debug.Log($"[GuardPlacement] WITHOUT HAMMER ? Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            return guardTarget;
+        }
+        else
+        {
+            // WITH HAMMER: CONSERVATIVE - Corner guards
+            
+            // Check existing guards to balance left/right
+            int leftGuards = 0;
+            int rightGuards = 0;
+            int centerGuards = 0;
+            
+            foreach (var guard in gm.gList)
+            {
+                if (guard.lastTransform == null) continue;
+                
+                Vector2 guardPos = guard.lastTransform.position;
+                if (Mathf.Abs(guardPos.x) < 0.4f)
+                    centerGuards++;
+                else if (guardPos.x < 0f)
+                    leftGuards++;
+                else
+                    rightGuards++;
+            }
+            
+            Debug.Log($"[GuardPlacement] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
+            
+            // Prefer balancing left/right
+            bool placeLeft;
+            if (leftGuards < rightGuards)
+                placeLeft = true;
+            else if (rightGuards < leftGuards)
+                placeLeft = false;
+            else
+                placeLeft = Random.value < 0.5f;
+            
+            // Determine depth by game phase
+            float depthMin, depthMax;
+            if (rockCurrent < 4)
+            {
+                depthMin = 2.5f;
+                depthMax = 3.5f;
+            }
+            else if (rockCurrent < 12)
+            {
+                depthMin = 3.0f;
+                depthMax = 4.0f;
+            }
+            else
+            {
+                depthMin = 3.5f;
+                depthMax = 4.5f;
+            }
+            
+            Vector2 guardTarget;
+            if (placeLeft)
+            {
+                guardTarget = new Vector2(
+                    Random.Range(-0.85f, -0.70f), // Left corner
+                    Random.Range(depthMin, depthMax)
+                );
+            }
+            else
+            {
+                guardTarget = new Vector2(
+                    Random.Range(0.70f, 0.85f), // Right corner
+                    Random.Range(depthMin, depthMax)
+                );
+            }
+            
+            Debug.Log($"[GuardPlacement] WITH HAMMER ? {(placeLeft ? "LEFT" : "RIGHT")} corner guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            return guardTarget;
+        }
+    }
+    
+    /// <summary>
+    /// Calculate draw target position (before accuracy applied)
+    /// </summary>
+    private Vector2 CalculateDrawTargetPosition()
+    {
+        // Target: Button or slightly off-center if house is crowded
+        if (gm.houseList.Count > 3)
+        {
+            // Crowded house: aim for open space near button
+            return placePos[9] + new Vector2(Random.Range(-0.3f, 0.3f), 0f);
+        }
+        else
+        {
+            // Open house: button
+            return placePos[9]; // (0, 6.5) typically
+        }
+    }
+    
+    /// <summary>
+    /// Apply accuracy to guard shot using CIRCULAR distribution centered on target
+    /// Guards: Line control ? Weight control (circular error pattern)
+    /// </summary>
+    private Vector2 ApplyAccuracyToGuard(Vector2 targetPosition, CharacterStats stats)
+    {
+        float accuracy = stats.guardAccuracy.GetValue();
+        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        
+        // Base error for guards (circular distribution)
+        float baseMaxError = 0.20f; // Guards can be off by up to 20cm for 0% accuracy
+        float maxError = baseMaxError * (1f - accuracyRatio);
+        
+        // CIRCULAR ERROR: Unit circle centered on target
+        Vector2 error = Random.insideUnitCircle * maxError;
+        
+        Debug.Log($"[Guard Accuracy] target={targetPosition}, accuracy={accuracy}%, error={error}, final={targetPosition + error}");
+        
+        return targetPosition + error;
+    }
+    
+    /// <summary>
+    /// Apply accuracy to draw shot using ELLIPTICAL distribution
+    /// Draws: Weight errors (Y) >> Line errors (X)
+    /// Ellipse centered BELOW target (shots tend to be short, not long)
+    /// </summary>
+    private Vector2 ApplyAccuracyToDraw(Vector2 targetPosition, CharacterStats stats)
+    {
+        float accuracy = stats.drawAccuracy.GetValue();
+        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        
+        // Base error for draws
+        float baseLineError = 0.10f;   // X: line errors (tight control)
+        float baseWeightError = 0.40f; // Y: weight errors (loose control, 4x bigger!)
+        
+        float maxLineError = baseLineError * (1f - accuracyRatio);
+        float maxWeightError = baseWeightError * (1f - accuracyRatio);
+        
+        // ELLIPTICAL ERROR: Wider vertically than horizontally
+        // But centered BELOW target (shots go short more than long)
+        float xError = Random.Range(-maxLineError, maxLineError);
+        float yError = Random.Range(-maxWeightError, maxWeightError * 0.3f); // Bias: 70% short, 30% long
+        
+        Vector2 error = new Vector2(xError, yError);
+        
+        Debug.Log($"[Draw Accuracy] target={targetPosition}, accuracy={accuracy}%, error={error}, final={targetPosition + error}");
+        
+        return targetPosition + error;
     }
 
     IEnumerator Placement(bool redTeam)
@@ -2951,67 +3211,11 @@ public class RandomRockPlacerment : MonoBehaviour
             targetGuardPos = placePos[placeSelector];
         }
         
-        // STEP 2: If physics available, simulate the shot
-        if (trajectorySimulator != null)
-        {
-            Vector2 launcherPos = new Vector2(0f, -25f);
-            List<GameObject> obstacles = GetRocksInPlay();
-            
-            Vector2 bestFinalPos = targetGuardPos;
-            float bestScore = -1000f;
-            List<Vector2> bestPath = null; // Track best path for visualization
-            
-            // Try both turn directions
-            foreach (bool tryInTurn in new[] { true, false })
-            {
-                // Calculate velocity for guard shot (lighter weight)
-                Vector2 velocity = trajectorySimulator.CalculateVelocityToTarget(
-                    launcherPos,
-                    targetGuardPos,
-                    tryInTurn
-                );
-                
-                // Guards are lighter weight - reduce velocity
-                velocity *= 0.85f;
-                
-                // Simulate trajectory
-                List<Vector2> path = trajectorySimulator.SimulateTrajectory(
-                    launcherPos,
-                    velocity,
-                    tryInTurn,
-                    250,
-                    obstacles,
-                    forPlayerPreview: false
-                );
-                
-                if (path.Count == 0) continue;
-                
-                Vector2 finalPos = path[path.Count - 1];
-                
-                // Score this path
-                float score = ScoreGuardPath(path, targetGuardPos, obstacles);
-                
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestFinalPos = finalPos;
-                    bestPath = path; // Save best path
-                }
-            }
-            
-            // Draw trajectory visualization
-            if (bestPath != null)
-            {
-                bool isRedTeam = DetermineIfRedTeam();
-                DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
-            }
-            
-            Debug.Log($"[SmartPlacement] Physics guard: target={targetGuardPos}, final={bestFinalPos}, score={bestScore:F2}");
-            
-            return bestFinalPos;
-        }
+        // SKIP PHYSICS SIMULATION FOR GUARDS - Just use the target position directly!
+        // Physics simulation was causing guards to land short/wrong due to velocity scaling
         
-        // Fallback: simple placement
+        Debug.Log($"[SmartPlacement] Guard position (direct placement): {targetGuardPos}");
+        
         return targetGuardPos;
     }
     

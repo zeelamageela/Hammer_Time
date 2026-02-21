@@ -2681,7 +2681,10 @@ public class AI_Target : MonoBehaviour
             OnTarget("Auto Draw Four Foot", rockCurrent, 0);
             return;
         }
-        
+
+        GameObject currentRock = gm.rockList[rockCurrent].rock;
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+
         GameObject targetRock = gm.rockList[context.targetRockIndex].rock;
         if (targetRock == null || !targetRock.activeInHierarchy)
         {
@@ -2699,78 +2702,58 @@ public class AI_Target : MonoBehaviour
         // OPTION 2: Peel the guard (if there's one blocking)
         float peelScore = 0f;
         int guardToPeel = -1;
-        
-        if (IsGuardBlocking(cenGuard, targetRock))
+
+        for (int i = 0; i < gm.gList.Count; i++)
         {
-            guardToPeel = GetRockIndex(cenGuard);
-            peelScore = SimulatePeel(cenGuard.gameObject, guardToPeel, rockCurrent);
-            Debug.Log($"  Option 2: Peel center guard - Score: {peelScore:F2}");
+            var guard = gm.gList[i];
+            if (guard.lastTransform == null)
+                continue;
+
+            Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+            if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                continue; // Skip our own guards
+
+            if (IsGuardBlocking(guard.lastTransform, targetRock))
+            {
+                guardToPeel = guardInfo.rockIndex;
+                peelScore = SimulatePeel(guard.lastTransform.gameObject, guardToPeel, rockCurrent);
+                Debug.Log($"  Option 2: Peel through guard #{guardToPeel} - Score: {peelScore:F2}");
+            }
         }
-        else if (IsGuardBlocking(lCornGuard, targetRock))
-        {
-            guardToPeel = GetRockIndex(lCornGuard);
-            peelScore = SimulatePeel(lCornGuard.gameObject, guardToPeel, rockCurrent);
-            Debug.Log($"  Option 2: Peel left guard - Score: {peelScore:F2}");
-        }
-        else if (IsGuardBlocking(rCornGuard, targetRock))
-        {
-            guardToPeel = GetRockIndex(rCornGuard);
-            peelScore = SimulatePeel(rCornGuard.gameObject, guardToPeel, rockCurrent);
-            Debug.Log($"  Option 2: Peel right guard - Score: {peelScore:F2}");
-        }
-        
-        // OPTION 3: Raise a friendly rock into the threat
-        float raiseScore = 0f;
-        int rockToRaise = FindBestRaiseTarget(targetRock, rockCurrent);
-        if (rockToRaise >= 0)
-        {
-            raiseScore = SimulateRaise(targetRock, rockToRaise, rockCurrent);
-            Debug.Log($"  Option 3: Raise rock #{rockToRaise} - Score: {raiseScore:F2}");
-        }
-        
-        // OPTION 4: Tick it out sideways
-        float tickScore = SimulateTick(targetRock, context.targetRockIndex, rockCurrent);
-        Debug.Log($"  Option 4: Tick shot - Score: {tickScore:F2}");
-        
-        // OPTION 5: Runback - hit guard through to target
+
+        // OPTION 3: Runback - hit guard through to target
         float runbackScore = 0f;
         int guardToRunback = -1;
 
-        if (IsGuardBlocking(cenGuard, targetRock))
+        for (int i = 0; i < gm.gList.Count; i++)
         {
-            guardToRunback = GetRockIndex(cenGuard);
-            runbackScore = SimulateRunback(cenGuard.gameObject, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
-            Debug.Log($"  Option 5: Runback (center guard) - Score: {runbackScore:F2}");
-        }
-        else if (IsGuardBlocking(lCornGuard, targetRock))
-        {
-            guardToRunback = GetRockIndex(lCornGuard);
-            runbackScore = SimulateRunback(lCornGuard.gameObject, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
-            Debug.Log($"  Option 5: Runback (left guard) - Score: {runbackScore:F2}");
-        }
-        else if (IsGuardBlocking(rCornGuard, targetRock))
-        {
-            guardToRunback = GetRockIndex(rCornGuard);
-            runbackScore = SimulateRunback(rCornGuard.gameObject, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
-            Debug.Log($"  Option 5: Runback (right guard) - Score: {runbackScore:F2}");
+            var guard = gm.gList[i];
+            if (guard.lastTransform == null)
+                continue;
+
+            Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+            if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                continue; // Skip our own guards
+
+            if (IsGuardBlocking(guard.lastTransform, targetRock))
+            {
+                guardToRunback = guardInfo.rockIndex;
+                runbackScore = SimulateRunback(guard.lastTransform.gameObject, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
+                Debug.Log($"  Option 3: Runback through guard #{guardToRunback} - Score: {runbackScore:F2}");
+            }
         }
 
-        // OPTION 6: Freeze on opponent rock behind button
-        float freezeScore = 0f;
-        int rockToFreeze = FindBestFreezeTarget(targetRock, rockCurrent, out freezeScore);
-        
-        if (rockToFreeze >= 0)
-        {
-            Debug.Log($"  Option 6: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2}");
-        }
+        // OPTION 4: Tick it out sideways
+        float tickScore = SimulateTick(targetRock, context.targetRockIndex, rockCurrent);
+        Debug.Log($"  Option 4: Tick shot - Score: {tickScore:F2}");
 
         // PICK THE BEST OPTION!
-        float bestScore = Mathf.Max(takeoutScore, peelScore, raiseScore, tickScore, runbackScore, freezeScore);
+        float bestScore = Mathf.Max(takeoutScore, peelScore, tickScore, runbackScore);
         
         if (bestScore <= 0f)
         {
             Debug.LogWarning("[AI_Target] No good removal options found, drawing instead");
-            OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+            EvaluateScoringOptions(context, rockCurrent);
             return;
         }
         
@@ -2785,11 +2768,6 @@ public class AI_Target : MonoBehaviour
             Debug.Log($"[AI_Target] ✓ SELECTED: Peel Guard (score: {peelScore:F2})");
             OnTarget("Peel", rockCurrent, guardToPeel);
         }
-        else if (raiseScore == bestScore && raiseScore > 0f)
-        {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Raise Rock (score: {raiseScore:F2})");
-            OnTarget("Tap Back", rockCurrent, rockToRaise); // Raise uses tap back mechanics
-        }
         else if (tickScore == bestScore && tickScore > 0f)
         {
             Debug.Log($"[AI_Target] ✓ SELECTED: Tick Shot (score: {tickScore:F2})");
@@ -2799,11 +2777,6 @@ public class AI_Target : MonoBehaviour
         {
             Debug.Log($"[AI_Target] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Hit guard through to target!");
             OnTarget("Runback", rockCurrent, guardToRunback);
-        }
-        else if (freezeScore == bestScore && freezeScore > 0f)
-        {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - Draw beside opponent rock!");
-            OnTarget("Freeze", rockCurrent, rockToFreeze);
         }
     }
     
@@ -2828,7 +2801,7 @@ public class AI_Target : MonoBehaviour
         if (gm.houseList.Count > 0)
         {
             // Find best opponent rock to freeze on (already has out parameter for score)
-            rockToFreeze = FindBestFreezeTarget(null, rockCurrent, out freezeScore);
+            rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
             
             if (rockToFreeze >= 0)
             {
@@ -2845,30 +2818,7 @@ public class AI_Target : MonoBehaviour
             Debug.Log($"  Option 3: Raise rock #{rockToRaiseForScore} toward button - Score: {raiseScore:F2}");
         }
         
-        // OPTION 4: Tick opponent rock into scoring position (steal their rock!)
-        float tickScore = 0f;
-        int rockToTick = FindBestRockToTickIntoHouse(rockCurrent, out tickScore);
-        
-        if (rockToTick >= 0)
-        {
-            Debug.Log($"  Option 4: Tick rock #{rockToTick} into house - Score: {tickScore:F2}");
-        }
-        
-        // OPTION 5: Draw around opponent guard to bury a rock (use their guard as protection!)
-        float buryDrawScore = 0f;
-        Vector2 buryDrawTarget = Vector2.zero;
-        
-        if (gm.gList.Count > 0)
-        {
-            buryDrawTarget = FindBestBuryPositionBehindOpponentGuard(rockCurrent, out buryDrawScore);
-            
-            if (buryDrawScore > 0f)
-            {
-                Debug.Log($"  Option 5: Bury draw behind opponent guard at ({buryDrawTarget.x:F2}, {buryDrawTarget.y:F2}) - Score: {buryDrawScore:F2}");
-            }
-        }
-        
-        // OPTION 6: Draw behind existing guard for protection
+        // OPTION 4: Draw behind existing guard for protection
         float protectedDrawScore = 0f;
         Vector2 protectedDrawTarget = Vector2.zero;
         
@@ -2883,11 +2833,12 @@ public class AI_Target : MonoBehaviour
         }
         
         // PICK THE BEST SCORING OPTION!
-        float bestScore = Mathf.Max(drawScore, freezeScore, raiseScore, tickScore, buryDrawScore, protectedDrawScore);
+        float bestScore = Mathf.Max(drawScore, freezeScore, raiseScore, protectedDrawScore);
         
         if (bestScore <= 0f)
         {
             Debug.LogWarning("[AI_Target] No good scoring options found, defaulting to button draw");
+            
             OnTarget("Auto Draw Four Foot", rockCurrent, 0);
             return;
         }
@@ -2907,16 +2858,6 @@ public class AI_Target : MonoBehaviour
         {
             Debug.Log($"[AI_Target] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - Promote to shot rock!");
             OnTarget("Tap Back", rockCurrent, rockToRaiseForScore);
-        }
-        else if (tickScore == bestScore && tickScore > 0f)
-        {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Tick shot (score: {tickScore:F2}) - Push into house!");
-            OnTarget("Tick Shot", rockCurrent, rockToTick);
-        }
-        else if (buryDrawScore == bestScore && buryDrawScore > 0f)
-        {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Bury draw (score: {buryDrawScore:F2}) - Behind opponent guard!");
-            StartCoroutine(DrawTarget(rockCurrent, buryDrawTarget));
         }
         else if (protectedDrawScore == bestScore && protectedDrawScore > 0f)
         {
@@ -2960,31 +2901,26 @@ public class AI_Target : MonoBehaviour
             // OPTION 2: Runback through guard (PREFERRED - removes 2 rocks)
             float runbackScore = 0f;
             int guardToRunback = -1;
-            
-            if (IsGuardBlocking(cenGuard, opponentThreat))
+
+            for (int i = 0; i < gm.gList.Count; i++)
             {
-                guardToRunback = GetRockIndex(cenGuard);
-                runbackScore = SimulateRunback(cenGuard.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
-                Debug.Log($"  Option 2: Runback (center guard) - Score: {runbackScore:F2}");
+                var guard = gm.gList[i];
+                if (guard.lastTransform == null)
+                    continue;
+
+                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                    continue; // Skip our own guards
+
+                if (IsGuardBlocking(guard.lastTransform, opponentThreat))
+                {
+                    guardToRunback = guardInfo.rockIndex;
+                    runbackScore = SimulateRunback(guard.lastTransform.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
+                    Debug.Log($"  Option 2: Runback through guard #{guardToRunback} - Score: {runbackScore:F2}");
+                }
             }
-            else if (IsGuardBlocking(lCornGuard, opponentThreat))
-            {
-                guardToRunback = GetRockIndex(lCornGuard);
-                runbackScore = SimulateRunback(lCornGuard.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
-                Debug.Log($"  Option 2: Runback (left guard) - Score: {runbackScore:F2}");
-            }
-            else if (IsGuardBlocking(rCornGuard, opponentThreat))
-            {
-                guardToRunback = GetRockIndex(rCornGuard);
-                runbackScore = SimulateRunback(rCornGuard.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
-                Debug.Log($"  Option 2: Runback (right guard) - Score: {runbackScore:F2}");
-            }
-            
-            // OPTION 3: Tick it out (ACCEPTABLE - less reliable)
-            float tickScore = SimulateTick(opponentThreat, opponentThreatIndex, rockCurrent);
-            Debug.Log($"  Option 3: Tick shot - Score: {tickScore:F2}");
-            
-            // OPTION 4: Raise friendly rock into it (LAST RESORT)
+
+            // OPTION 3: Raise friendly rock into it (LAST RESORT)
             float raiseScore = 0f;
             int rockToRaise = FindBestRaiseTarget(opponentThreat, rockCurrent);
             if (rockToRaise >= 0)
@@ -2994,7 +2930,7 @@ public class AI_Target : MonoBehaviour
             }
             
             // PICK BEST REMOVAL OPTION (prefer takeout/runback)
-            float bestScore = Mathf.Max(takeoutScore, runbackScore, tickScore, raiseScore);
+            float bestScore = Mathf.Max(takeoutScore, runbackScore, raiseScore);
             
             if (takeoutScore == bestScore && takeoutScore > 0f)
             {
@@ -3005,11 +2941,6 @@ public class AI_Target : MonoBehaviour
             {
                 Debug.Log($"[Protect Lead] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Remove guard + threat!");
                 OnTarget("Runback", rockCurrent, guardToRunback);
-            }
-            else if (tickScore == bestScore && tickScore > 0f)
-            {
-                Debug.Log($"[Protect Lead] ✓ SELECTED: Tick shot (score: {tickScore:F2}) - Nudge it out!");
-                OnTarget("Tick Shot", rockCurrent, opponentThreatIndex);
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
             {
@@ -3325,7 +3256,7 @@ public class AI_Target : MonoBehaviour
                 
                 // OPTION 3: Freeze (steal shot rock, maybe get 2)
                 float freezeScore = 0f;
-                int rockToFreeze = FindBestFreezeTarget(null, rockCurrent, out freezeScore);
+                int rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
                 freezeScore += 35f;
                 
                 float bestScore = Mathf.Max(raiseScore, buryScore, freezeScore);
@@ -3362,7 +3293,7 @@ public class AI_Target : MonoBehaviour
                 
                 // OPTION 2: Freeze (still safe, might be better position)
                 float freezeScore = 0f;
-                int rockToFreeze = FindBestFreezeTarget(null, rockCurrent, out freezeScore);
+                int rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
                 freezeScore += 25f;
                 
                 // OPTION 3: Protected draw (safest of all)
@@ -4006,16 +3937,15 @@ public class AI_Target : MonoBehaviour
             if (guardInfo == null)
                 continue;
             
-            // Only use OUR OWN guards for protection!
-            if (guardInfo.teamName != currentRockInfo.teamName)
-                continue;
-            
             Vector2 guardPos = guard.lastTransform.position;
-            
+
             // Calculate ideal protected position: behind guard, toward button
             // Position should be roughly 60% of the way from guard to button
-            Vector2 guardToButton = button - guardPos;
-            Vector2 protectedPos = guardPos + guardToButton * 0.6f;
+            float guardToButton = button.y - guardPos.y;
+            float drawHeight = 6.5f;
+            if (guardToButton < 3f)
+                drawHeight += 3f - guardToButton;
+            Vector2 protectedPos = new(guardPos.x, drawHeight);
             
             // Score based on:
             // 1. How close final position is to button
@@ -4276,7 +4206,7 @@ public class AI_Target : MonoBehaviour
     /// Ideal target: Just behind button (Y > 6.5), close enough to draw beside it
     /// Returns rock index, or -1 if none found. Score is returned via out parameter.
     /// </summary>
-    private int FindBestFreezeTarget(GameObject threatRock, int currentRockIndex, out float bestScore)
+    private int FindBestFreezeTarget(int currentRockIndex, out float bestScore)
     {
         Rock_Info currentRockInfo = gm.rockList[currentRockIndex].rockInfo;
         Vector2 button = new Vector2(0f, 6.5f);
@@ -4300,20 +4230,20 @@ public class AI_Target : MonoBehaviour
             
             // Score components (all normalized to 0-100 range):
             
-            // 1. BEHIND BUTTON QUALITY (40 points max)
-            // Ideal: 0.3-0.6 units behind button (one rock diameter)
+            // 1. BEHIND BUTTON QUALITY (60 points max)
+            // Ideal: 0.15-0.6 units behind button (one rock diameter)
             // Too close: Hard to draw beside without hitting
             // Too far: Not threatening shot rock position
-            float idealBehindDist = 0.45f; // Sweet spot: half a rock behind button
+            float idealBehindDist = 0.15f; // Sweet spot: half a rock behind button
             float behindDeviation = Mathf.Abs(distBehindButton - idealBehindDist);
             float behindQuality = Mathf.Clamp01(1f - (behindDeviation / 0.6f)); // Within 0.6 units is acceptable
-            float behindScore = behindQuality * 40f;
+            float behindScore = behindQuality * 60f;
             
-            // 2. LATERAL DISTANCE TO BUTTON (40 points max)
+            // 2. LATERAL DISTANCE TO BUTTON (20 points max)
             // Closer to center = better (easier to draw beside and be shot rock)
             float lateralDist = Mathf.Abs(rockPos.x - button.x);
             float lateralQuality = Mathf.Clamp01(1f - (lateralDist / 1.2f)); // Within 1.2 units is acceptable
-            float lateralScore = lateralQuality * 40f;
+            float lateralScore = lateralQuality * 20f;
             
             // 3. TOTAL DISTANCE TO BUTTON (20 points max)
             // Closer overall = more valuable position
@@ -4349,22 +4279,374 @@ public class AI_Target : MonoBehaviour
         return bestRock;
     }
     /// <summary>
-    /// Place a guard strategically based on context
+    /// Place a guard strategically based on comprehensive curling strategy
+    /// 
+    /// OPENING STRATEGY (no rocks in house):
+    /// - WITHOUT HAMMER (aggressive): Center guards (X ≈ 0, Y = 3.0-3.5) to clutter button
+    /// - WITH HAMMER (conservative): Corner guards (X = 0.7-0.85, Y = 1.5-4.5) to clear center
+    /// 
+    /// REACTIVE STRATEGY (rocks in house):
+    /// - Protect unguarded friendly rock: Low guard matching X (Y = 3.0-4.5)
+    /// - Guard shot rock (closest to button)
+    /// - Counter opponent's guard placement
+    /// - Late game: Tight guards (Y = 4.0-4.5)
     /// </summary>
     private void PlaceStrategicGuard(ShotContext context, int rockCurrent)
     {
-        // Determine best guard position based on rocks in house
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+        bool hasHammer = (rockCurrent % 2 == 1) ? gm.redHammer : !gm.redHammer;
+        
+        Vector2 guardTarget = Vector2.zero;
+        string guardType = "Center Guard"; // For logging
+        bool useOpeningStrategy = false;
+        
+        // ========================================
+        // REACTIVE STRATEGY: Rocks already in house
+        // ========================================
         if (gm.houseList.Count > 0)
         {
-            GameObject closestRock = gm.houseList[0].rock;
-            Vector2 closestPos = closestRock.transform.position;
+            Debug.Log($"[Strategic Guard] REACTIVE mode - {gm.houseList.Count} rocks in house");
             
-            // Guard in front of closest rock
-            if (Mathf.Abs(closestPos.x) < 0.5f)
+            // PRIORITY 1: Find unguarded FRIENDLY rocks to protect
+            GameObject unguardedFriendly = null;
+            float closestDistToButton = 999f;
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                // Must be our rock
+                if (houseRock.rockInfo.teamName != currentRockInfo.teamName)
+                    continue;
+                
+                Vector2 rockPos = houseRock.rock.transform.position;
+                
+                // Check if already guarded
+                bool alreadyGuarded = false;
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    float lateralDiff = Mathf.Abs(guardPos.x - rockPos.x);
+                    bool inFront = guardPos.y < rockPos.y;
+                    
+                    if (lateralDiff < 0.4f && inFront) // Guard is blocking this rock
+                    {
+                        alreadyGuarded = true;
+                        break;
+                    }
+                }
+                
+                if (!alreadyGuarded)
+                {
+                    float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
+                    
+                    // Prefer guarding rocks closest to button (highest value)
+                    if (distToButton < closestDistToButton)
+                    {
+                        closestDistToButton = distToButton;
+                        unguardedFriendly = houseRock.rock;
+                    }
+                }
+            }
+            
+            // GUARD UNGUARDED FRIENDLY ROCK
+            if (unguardedFriendly != null)
+            {
+                Vector2 rockPos = unguardedFriendly.transform.position;
+                
+                // STRATEGY: Match X position, place in guard zone (Y = 3.0-4.5)
+                // Closer rocks get LOWER guards (Y = 3.0-3.5), farther rocks get HIGHER guards (Y = 3.5-4.5)
+                float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
+                float guardDepth = Mathf.Lerp(3.0f, 4.5f, Mathf.Clamp01((distToButton - 0.5f) / 1.5f));
+                
+                guardTarget = new Vector2(
+                    rockPos.x, // Match X exactly (with slight randomness below)
+                    guardDepth
+                );
+                
+                guardType = $"Protective Guard (matching rock at X={rockPos.x:F2})";
+                Debug.Log($"[Strategic Guard] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            }
+            
+            // PRIORITY 2: If no unguarded friendlies, guard SHOT ROCK (if it's ours)
+            else if (gm.houseList[0].rockInfo.teamName == currentRockInfo.teamName)
+            {
+                Vector2 shotRockPos = gm.houseList[0].rock.transform.position;
+                
+                // Check if shot rock is already guarded
+                bool shotRockGuarded = false;
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    float lateralDiff = Mathf.Abs(guardPos.x - shotRockPos.x);
+                    bool inFront = guardPos.y < shotRockPos.y;
+                    
+                    if (lateralDiff < 0.4f && inFront)
+                    {
+                        shotRockGuarded = true;
+                        break;
+                    }
+                }
+                
+                if (!shotRockGuarded)
+                {
+                    // GUARD THE SHOT ROCK - most valuable position!
+                    guardTarget = new Vector2(
+                        shotRockPos.x,
+                        Random.Range(3.5f, 4.2f) // Tighter guard (closer to house)
+                    );
+                    
+                    guardType = "Shot Rock Guard";
+                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                }
+                else
+                {
+                    // Shot rock already guarded - use opening strategy
+                    useOpeningStrategy = true;
+                }
+            }
+            
+            // PRIORITY 3: Counter opponent's guards (block their draw lanes)
+            else
+            {
+                Debug.Log($"[Strategic Guard] No friendly rocks to protect - checking opponent guards");
+                
+                // Find opponent's most dangerous guard (closest to house, best X position)
+                Transform bestOpponentGuard = null;
+                float bestOpponentGuardScore = 0f;
+                
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                    if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                        continue; // Skip our guards
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    
+                    // Score: Centered guards + closer to house = more dangerous
+                    float centeredness = 1.0f - Mathf.Abs(guardPos.x) / 1.5f;
+                    float proximity = Mathf.Clamp01((guardPos.y - 2.0f) / 3.0f);
+                    float score = centeredness * 50f + proximity * 50f;
+                    
+                    if (score > bestOpponentGuardScore)
+                    {
+                        bestOpponentGuardScore = score;
+                        bestOpponentGuard = guard.lastTransform;
+                    }
+                }
+                
+                if (bestOpponentGuard != null)
+                {
+                    // COUNTER-GUARD: Block their lane
+                    Vector2 opponentGuardPos = bestOpponentGuard.position;
+                    
+                    guardTarget = new Vector2(
+                        opponentGuardPos.x, // Match their X
+                        Random.Range(2.5f, 3.5f) // Place HIGHER (closer to launcher)
+                    );
+                    
+                    guardType = "Counter-Guard (blocking opponent lane)";
+                    Debug.Log($"[Strategic Guard] COUNTER opponent guard at ({opponentGuardPos.x:F2}, {opponentGuardPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                }
+                else
+                {
+                    // No opponent guards either - use opening strategy
+                    useOpeningStrategy = true;
+                }
+            }
+        }
+        else
+        {
+            // No rocks in house - definitely use opening strategy
+            useOpeningStrategy = true;
+        }
+        
+        // ========================================
+        // OPENING STRATEGY: No rocks in house yet (or no reactive options)
+        // ========================================
+        if (useOpeningStrategy)
+        {
+            Debug.Log($"[Strategic Guard] OPENING mode - hasHammer={hasHammer}");
+            
+            if (!hasHammer)
+            {
+                // ========================================
+                // WITHOUT HAMMER: AGGRESSIVE - Center guards to clutter button
+                // ========================================
+                guardTarget = new Vector2(
+                    Random.Range(-0.15f, 0.15f), // Centered with variance
+                    Random.Range(3.0f, 3.5f)      // Standard center guard depth
+                );
+                
+                guardType = "Aggressive Center Guard (clutter center)";
+                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            }
+            else
+            {
+                // ========================================
+                // WITH HAMMER: CONSERVATIVE - Corner guards to clear center
+                // ========================================
+                
+                // Check existing guards to balance left/right
+                int leftGuards = 0;
+                int rightGuards = 0;
+                int centerGuards = 0;
+                
+                foreach (var guard in gm.gList)
+                {
+                    if (guard.lastTransform == null) continue;
+                    
+                    Vector2 guardPos = guard.lastTransform.position;
+                    if (Mathf.Abs(guardPos.x) < 0.4f)
+                        centerGuards++;
+                    else if (guardPos.x < 0f)
+                        leftGuards++;
+                    else
+                        rightGuards++;
+                }
+                
+                Debug.Log($"[Strategic Guard] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
+                
+                // Prefer balancing left/right, avoid center
+                bool placeLeft;
+                if (leftGuards < rightGuards)
+                    placeLeft = true;
+                else if (rightGuards < leftGuards)
+                    placeLeft = false;
+                else
+                    placeLeft = Random.value < 0.5f; // Balanced, random choice
+                
+                // CORNER GUARD POSITIONING:
+                // X = 0.70-0.85 (blocking position, not too wide)
+                // Y = 1.5-4.5 (varies by game phase)
+                //   - Early game (rock 0-3): Y = 2.5-3.5 (medium depth)
+                //   - Mid game (rock 4-11): Y = 3.0-4.0 (standard)
+                //   - Late game (rock 12-15): Y = 3.5-4.5 (tight, closer to house)
+                
+                float depthMin, depthMax;
+                if (rockCurrent < 4)
+                {
+                    depthMin = 2.5f;
+                    depthMax = 3.5f;
+                    guardType = "Early Corner Guard";
+                }
+                else if (rockCurrent < 12)
+                {
+                    depthMin = 3.0f;
+                    depthMax = 4.0f;
+                    guardType = "Mid-Game Corner Guard";
+                }
+                else
+                {
+                    depthMin = 3.5f;
+                    depthMax = 4.5f;
+                    guardType = "Late Corner Guard (tight)";
+                }
+                
+                if (placeLeft)
+                {
+                    guardTarget = new Vector2(
+                        Random.Range(-0.85f, -0.70f), // Left corner
+                        Random.Range(depthMin, depthMax)
+                    );
+                    guardType = "LEFT " + guardType;
+                }
+                else
+                {
+                    guardTarget = new Vector2(
+                        Random.Range(0.70f, 0.85f), // Right corner
+                        Random.Range(depthMin, depthMax)
+                    );
+                    guardType = "RIGHT " + guardType;
+                }
+                
+                Debug.Log($"[Strategic Guard] WITH HAMMER → {guardType} at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            }
+        }
+        
+        // ========================================
+        // EXECUTION: Physics-based draw to target + accuracy adjustments
+        // ========================================
+        Debug.Log($"[Strategic Guard] Final target: ({guardTarget.x:F2}, {guardTarget.y:F2}) - {guardType}");
+        
+        Vector2 pullbackPos;
+        bool useInTurn;
+        bool foundShot = CalculatePhysicsBasedGuardShot(guardTarget, out pullbackPos, out useInTurn);
+        
+        if (foundShot)
+        {
+            // STEP 1: Get shooter stats for accuracy
+            CharacterStats shooterStats = GetShooterStats(rockCurrent);
+            
+            if (shooterStats != null)
+            {
+                float accuracy = shooterStats.guardAccuracy.GetValue(); // 0-100
+                float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+                
+                // STEP 2: Apply unit circle accuracy error (SAME as RandomRockPlacement!)
+                // This ensures consistent guard placement between placed and shot guards
+                float baseMaxError = 0.20f; // Guards can be off by up to 20cm for 0% accuracy
+                float maxError = baseMaxError * (1f - accuracyRatio);
+                
+                // CIRCULAR ERROR: Unit circle centered on target
+                Vector2 targetError = Random.insideUnitCircle * maxError;
+                
+                // Apply error to TARGET position (not pullback!)
+                Vector2 adjustedTarget = guardTarget + targetError;
+                
+                Debug.Log($"[Guard Accuracy] Original target: {guardTarget}, Accuracy: {accuracy}%, Error: {targetError}, Adjusted target: {adjustedTarget}");
+                
+                // STEP 3: Recalculate pullback for adjusted target
+                Vector2 adjustedPullback;
+                bool adjustedInTurn;
+                bool foundAdjusted = CalculatePhysicsBasedGuardShot(adjustedTarget, out adjustedPullback, out adjustedInTurn);
+                
+                if (foundAdjusted)
+                {
+                    pullbackPos = adjustedPullback;
+                    useInTurn = adjustedInTurn;
+                    Debug.Log($"[Guard Accuracy] Recalculated for adjusted target: pullback={pullbackPos}, inTurn={useInTurn}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Guard Accuracy] Recalculation failed, using original pullback with small error");
+                    // Fallback: Just add small error to original pullback
+                    pullbackPos += targetError * 0.1f; // Scale down error for pullback space
+                }
+            }
+            else
+            {
+                Debug.Log($"[Guard Accuracy] No shooter stats - using perfect accuracy (no error)");
+            }
+            
+            // STEP 4: Set pullback and execute
+            rm.inturn = useInTurn;
+            takeOutX = pullbackPos.x;
+            takeOutY = pullbackPos.y;
+            
+            Debug.Log($"[Strategic Guard] ✓ EXECUTING {guardType}\n" +
+                      $"  Target: ({guardTarget.x:F2}, {guardTarget.y:F2})\n" +
+                      $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
+                      $"  Turn: {(useInTurn ? "IN-TURN (curl right)" : "OUT-TURN (curl left)")}\n" +
+                      $"  Has Hammer: {hasHammer}");
+            
+            aiShoot.OnShot("Guard To Target", rockCurrent);
+        }
+        else
+        {
+            // FALLBACK: Physics failed - use direct shot names
+            Debug.LogWarning($"[Strategic Guard] Physics calculation failed for {guardType}, using direct shot name");
+            
+            // Determine shot name based on target position
+            if (Mathf.Abs(guardTarget.x) < 0.4f)
             {
                 aiShoot.OnShot("Centre Guard", rockCurrent);
             }
-            else if (closestPos.x < 0f)
+            else if (guardTarget.x < 0f)
             {
                 aiShoot.OnShot("Left Corner Guard", rockCurrent);
             }
@@ -4372,11 +4654,6 @@ public class AI_Target : MonoBehaviour
             {
                 aiShoot.OnShot("Right Corner Guard", rockCurrent);
             }
-        }
-        else
-        {
-            // No rocks yet - place center guard
-            aiShoot.OnShot("Centre Guard", rockCurrent);
         }
     }
     
