@@ -311,7 +311,8 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTournySettings(TournySettings ts)
     {
-
+        Debug.Log($"[GSP.LoadTournySettings] BEFORE: games={games}, ts.games={ts.games}");
+        
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         Debug.Log("Loading Tourny Settings to GSP");
@@ -329,9 +330,15 @@ public class GameSettingsPersist : MonoBehaviour
         prize = ts.prize;
         draw = 0;
         playoffRound = 0;
+        
+        Debug.Log($"[GSP.LoadTournySettings] AFTER: games={games}, ends={ends}, rocks={rocks}");
+        Debug.Log($"[GSP.LoadTournySettings] Calling cm.SaveCareer() to persist tournament settings...");
+        
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
         cm.SaveCareer(this);
+        
+        Debug.Log($"[GSP.LoadTournySettings] Save complete - games={games} should now be in save file");
     }
 
     public void TournySetup(int btn = 0)
@@ -343,7 +350,8 @@ public class GameSettingsPersist : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         CashGames cg = FindFirstObjectByType<CashGames>();
         
-        // CRITICAL: Reset game state flags when setting up NEW game
+        // CRITICAL: Reset GAME state flags when setting up NEW game
+        // DO NOT reset TOURNAMENT settings (games, ends, rocks) - they come from TournySettings!
         gameInProgress = false;
         loadGame = false;
         rockCurrent = 0;
@@ -353,7 +361,8 @@ public class GameSettingsPersist : MonoBehaviour
         
         // CRITICAL FIX: Also clear score array for new game!
         score = null;
-        Debug.Log("[GSP] TournySetup - cleared scores and score array");
+        Debug.Log("[GSP] TournySetup - cleared game state (scores, rockCurrent, endCurrent)");
+        Debug.Log($"[GSP] TournySetup - preserved tournament settings: games={games}, ends={ends}, rocks={rocks}");
         
         careerLoad = false;
         if (cg != null)

@@ -61,10 +61,10 @@ public class CareerSaveData
         public List<int> playedCardIDs;
         public List<int> activeCardLengths;
         
-        // Tournaments
-        public List<TournamentProgressData> provincialTournaments;
-        public List<TournamentProgressData> tourTournaments;
-        public List<TournamentProgressData> regularTournaments;
+        // Tournament completion tracking - SIMPLE ID LISTS ONLY!
+        // Source of truth: TournySelector arrays (marked complete before each save)
+        public List<int> completedTournamentIDs;
+        public List<int> trophyWonIDs;
         public bool tourChampionshipComplete;
         public bool provChampionshipComplete;
         
@@ -100,9 +100,8 @@ public class CareerSaveData
             activeCardIDs = new List<int>();
             playedCardIDs = new List<int>();
             activeCardLengths = new List<int>();
-            provincialTournaments = new List<TournamentProgressData>();
-            tourTournaments = new List<TournamentProgressData>();
-            regularTournaments = new List<TournamentProgressData>();
+            completedTournamentIDs = new List<int>();
+            trophyWonIDs = new List<int>();
             tournamentResults = new List<int>();
             allTimeTrophies = new List<bool>();
             currentSeasonTrophies = new List<bool>();

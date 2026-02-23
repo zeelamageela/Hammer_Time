@@ -192,22 +192,44 @@ public class TournySettings : MonoBehaviour
         }
         else
         {
+            // Set slider min/max values and DEFAULT games value
+            // CRITICAL: Only set the DEFAULT if tournament is NOT in progress!
+            // If tournament is in progress, games was already restored above
             if (teams > 12)
             {
                 gameSlider.minValue = 4;
-                games = 5;
+                if (!gsp.tournyInProgress) // Only set default for NEW tournament
+                    games = 5;
             }
             else if (teams > 8)
             {
                 gameSlider.minValue = 3;
-                games = 4;
+                if (!gsp.tournyInProgress) // Only set default for NEW tournament
+                    games = 4;
             }
             else
             {
                 gameSlider.minValue = 2;
-                games = 3;
+                if (!gsp.tournyInProgress) // Only set default for NEW tournament
+                    games = 3;
             }
             gameSlider.maxValue = teams - 1;
+            
+            // SAFETY CHECK: If games is still 0 or invalid after restore, calculate it
+            if (gsp.tournyInProgress && games <= 0)
+            {
+                Debug.LogWarning($"[TournySettings] Restored games={games} is invalid! Calculating from team count {teams}");
+                
+                if (teams > 12)
+                    games = 5;
+                else if (teams > 8)
+                    games = 4;
+                else
+                    games = 3;
+                
+                gsp.games = games; // Update gsp with corrected value
+                Debug.Log($"[TournySettings] Corrected games to {games}");
+            }
         }
 
         tournyName.text = cm.currentTourny.name;

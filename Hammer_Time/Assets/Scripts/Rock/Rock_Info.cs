@@ -5,6 +5,7 @@ using UnityEngine;
 public class Rock_Info : MonoBehaviour
 {
     public string teamName;
+    public Color rockColour;
     public int rockNumber;
     public int rockIndex;
 

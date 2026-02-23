@@ -126,6 +126,10 @@ public class AI_Target : MonoBehaviour
         if (targetRockIndex >= 0 && gm.rockList[targetRockIndex].rock != null)
         {
             Debug.Log($"[AI_Target] Target rock reference: {gm.rockList[targetRockIndex].rock.name} at {gm.rockList[targetRockIndex].rock.transform.position}");
+            
+            // CRITICAL: Verify target is in the obstacles list
+            bool targetInObstacles = rocksInPlay.Contains(gm.rockList[targetRockIndex].rock);
+            Debug.Log($"[AI_Target] Target rock IS in obstacles list: {targetInObstacles}");
         }
         
         float bestScore = float.MinValue;
@@ -144,25 +148,86 @@ public class AI_Target : MonoBehaviour
         Vector2 targetImpactPoint; // Where we want shooter to be at collision
         Vector2 velocityAimPoint;  // Far point used to calculate required velocity
         
-        if (shotType == "Take Out" || shotType == "Peel")
+        if (shotType == "Take Out" || shotType == "Peel" || shotType == "Runback")
         {
-            // Target Impact Point: Position the SHOOTER before the target
-            // FIXED: Use EXACT collision distance (2 * radius), not multiplier!
-            // When two circles collide, distance between centers = 2 * radius
-            float impactOffset = 2f * rockRadius;  // Exact collision distance = 0.28 units
-            targetImpactPoint = new Vector2(
-                targetRockPosition.x,
-                targetRockPosition.y - impactOffset
-            );
-            
-            // VELOCITY AIM POINT: Use DESIRED PULLBACK to calculate velocity
-            // This ensures AI uses SAME velocity calculation as player!
-            // Target pullback: 2.1 units (heavier weight for drive-through)
-            float desiredPullbackDistance = 2.1f;
-            
             // Get TrajectoryLine parameters
             TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
             float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+            
+            // CRITICAL: Shot weight calibration!
+            // Reference: House draws converge at ~8.7 m/s (proven by physics)
+            // Takeout/Peel/Runback must be HEAVIER than draws!
+            float desiredPullbackDistance;
+            
+            if (shotType == "Runback")
+            {
+                // RUNBACK: HEAVIEST weight - must drive through 2 rocks!
+                // Strategy: Hit guard with massive momentum to blast through to target behind
+                desiredPullbackDistance = 4.9f; // MAXIMUM weight → 13.5 m/s
+                
+                // Nose hit on guard, rely on momentum to carry through
+                float impactOffset = 2f * rockRadius; // Standard collision distance
+                targetImpactPoint = new Vector2(
+                    targetRockPosition.x,
+                    targetRockPosition.y - impactOffset
+                );
+                
+                Debug.Log($"[AI_Target] RUNBACK: Maximum drive-through\n" +
+                          $"  Target (guard): {targetRockPosition}\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2} (MAXIMUM)\n" +
+                          $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
+                          $"  Strategy: Blast through guard to remove target behind");
+            }
+            else if (shotType == "Peel")
+            {
+                // PEEL: HEAVY weight + 45° angled hit
+                // Strategy: Glancing blow at angle to send both rocks sideways
+                // Must be heavier than takeout to ensure both rocks exit
+                desiredPullbackDistance = 4.4f; // Heavy → 12.1 m/s for drive-through
+                
+                // ANGLED HIT: Aim at SIDE of rock (45° approach) for glancing blow
+                float angleOffset = rockRadius * 0.7f; // Offset by ~70% of radius
+                
+                // Alternate sides based on target X
+                if (targetRockPosition.x > 0f)
+                {
+                    angleOffset = -angleOffset; // Target on right, hit from left
+                }
+                
+                targetImpactPoint = new Vector2(
+                    targetRockPosition.x + angleOffset, // SIDE impact (not center)
+                    targetRockPosition.y - rockRadius * 1.5f // Slightly behind
+                );
+                
+                Debug.Log($"[AI_Target] PEEL: 45° angled hit + heavy weight\n" +
+                          $"  Target: {targetRockPosition}\n" +
+                          $"  Angle offset: {angleOffset:F3}\n" +
+                          $"  Impact point: {targetImpactPoint}\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2} (HEAVY)\n" +
+                          $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s");
+            }
+            else // "Take Out"
+            {
+                // TAKEOUT: Hit and stay weight
+                // Strategy: Nose hit with enough momentum to remove target, shooter stays in play
+                // Must be > draw weight (8.7) but < peel weight (12.1)
+                desiredPullbackDistance = 3.6f; // Hit-and-stay → 9.9 m/s
+                
+                // NOSE HIT: Center-to-center collision
+                float impactOffset = 2f * rockRadius; // Exact collision distance
+                targetImpactPoint = new Vector2(
+                    targetRockPosition.x,
+                    targetRockPosition.y - impactOffset
+                );
+                
+                Debug.Log($"[AI_Target] TAKEOUT: Nose hit + controlled weight\n" +
+                          $"  Target: {targetRockPosition}\n" +
+                          $"  Impact offset: {impactOffset:F3}\n" +
+                          $"  Impact point: {targetImpactPoint}\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2}\n" +
+                          $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
+                          $"  Strategy: Hit and stay in play");
+            }
             
             // Calculate velocity using PLAYER'S formula: velocity = pullback * multiplier
             float desiredVelocityMagnitude = desiredPullbackDistance * velocityMultiplier;
@@ -173,19 +238,34 @@ public class AI_Target : MonoBehaviour
                 launcherPos.y + desiredVelocityMagnitude  // Simple: start + velocity magnitude
             );
             
-            Debug.Log($"[AI_Target] Takeout velocity calculation:\n" +
-                      $"  Target rock: {targetRockPosition}\n" +
+            Debug.Log($"[AI_Target] {shotType} velocity calculation:\n" +
                       $"  Desired pullback: {desiredPullbackDistance:F3}\n" +
                       $"  Velocity multiplier: {velocityMultiplier:F2}\n" +
                       $"  Desired velocity: {desiredVelocityMagnitude:F2} m/s\n" +
-                      $"  Impact offset: {impactOffset:F3} (2 × radius {rockRadius})\n" +
                       $"  Target impact point: {targetImpactPoint}\n" +
                       $"  Velocity aim point: {velocityAimPoint}");
         }
         else if (shotType == "Tap Back" || shotType == "Raise")
         {
+            // TAP/RAISE: Very light weight - just nudge the rock forward
+            // Much lighter than takeout, just enough to move target without blasting it
+            TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+            float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+            float desiredPullbackDistance = 2.8f; // Light touch → ~7.7 m/s
+            float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
+            
+            // Aim directly at target (no offset needed for light contact)
             targetImpactPoint = targetRockPosition;
-            velocityAimPoint = new Vector2(targetRockPosition.x, Mathf.Min(targetRockPosition.y + 2f, 9f));
+            velocityAimPoint = new Vector2(
+                targetRockPosition.x,
+                launcherPos.y + velocityMagnitude
+            );
+            
+            Debug.Log($"[AI_Target] TAP/RAISE: Light touch shot\n" +
+                      $"  Target: {targetRockPosition}\n" +
+                      $"  Pullback: {desiredPullbackDistance:F2}\n" +
+                      $"  Expected velocity: {velocityMagnitude:F2} m/s\n" +
+                      $"  Strategy: Gentle push, both rocks stay in play");
         }
         else // Tick, etc
         {
@@ -205,10 +285,10 @@ public class AI_Target : MonoBehaviour
             
             // LATERAL SWEEP: Test different lateral offsets to find the best approach angle
             // CURL COMPENSATION LOGIC:
-            // IN-TURN (curls RIGHT): Aim LEFT of target (NEGATIVE offset) to compensate
-            // OUT-TURN (curls LEFT): Aim RIGHT of target (POSITIVE offset) to compensate
+            // IN-TURN (curls LEFT ←): Aim RIGHT of target (POSITIVE offset) to compensate
+            // OUT-TURN (curls RIGHT →): Aim LEFT of target (NEGATIVE offset) to compensate
             // This is the OPPOSITE of the curl direction!
-            float offsetMultiplier = tryInTurn ? -1f : 1f; // IN-TURN = negative (left), OUT-TURN = positive (right)
+            float offsetMultiplier = tryInTurn ? 1f : -1f; // IN-TURN = positive (right), OUT-TURN = negative (left)
             
             Debug.Log($"[AI_Target] Offset multiplier for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {offsetMultiplier}");
             
@@ -228,11 +308,11 @@ public class AI_Target : MonoBehaviour
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                // DETERMINISTIC VELOCITY: Use player's formula (pullback * multiplier)
-                // Calculate velocity magnitude from desired pullback distance
+                // DETERMINISTIC VELOCITY: Recalibrated shot weights
+                // Draw: 8.7 m/s | Takeout: 9.9 m/s | Peel: 12.1 m/s | Runback: 13.5 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = 2.1f; // Increased for more drive-through power (was 1.916)
+                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Create velocity vector pointing toward target with lateral offset
@@ -275,10 +355,10 @@ public class AI_Target : MonoBehaviour
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                // DETERMINISTIC VELOCITY: Use player's formula
+                // DETERMINISTIC VELOCITY: Recalibrated weights
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = 2.1f; // Heavier weight for drive-through
+                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -320,10 +400,10 @@ public class AI_Target : MonoBehaviour
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                // DETERMINISTIC VELOCITY: Use player's formula
+                // DETERMINISTIC VELOCITY: Recalibrated weights
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = 2.1f; // Heavier weight for drive-through
+                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -365,11 +445,11 @@ public class AI_Target : MonoBehaviour
                 
                 Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
                 
-                // DETERMINISTIC VELOCITY: Use player's formula (pullback * multiplier)
-                // This ensures AI uses EXACT SAME calculation as player!
+                // DETERMINISTIC VELOCITY: Recalibrated weights!
+                // Takeout: 3.6 → 9.9 m/s | Peel: 4.4 → 12.1 m/s | Runback: 4.9 → 13.5 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = 2.1f; // Heavier weight for drive-through power
+                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Aim toward target with lateral offset
@@ -404,7 +484,13 @@ public class AI_Target : MonoBehaviour
                     GameObject hitRockGameObject = collisionInfo.hitRock;
                     GameObject targetRockGameObject = gm.rockList[targetRockIndex].rock;
                     
-                    if (hitRockGameObject == targetRockGameObject)
+                    // CRITICAL FIX: Compare by rock name (more reliable than GameObject reference)
+                    string hitRockName = hitRockGameObject.name;
+                    string targetRockName = targetRockGameObject.name;
+                    
+                    Debug.Log($"[Hit Detection] Hit rock: '{hitRockName}' vs Target rock: '{targetRockName}'");
+                    
+                    if (hitRockName == targetRockName || hitRockGameObject == targetRockGameObject)
                     {
                         // HIT! Calculate quality based on how centered the hit is
                         Vector2 liveTargetPos = targetRockGameObject.transform.position;
@@ -421,12 +507,18 @@ public class AI_Target : MonoBehaviour
                         
                         // CRITICAL: Must hit from behind (below the target)
                         // Y offset should be NEGATIVE (hitting from below = approaching from behind)
+                        // EXCEPTION: Tap/Raise shots can hit from ANY angle (lighter contact)
                         bool isFromBehind = hitVector.y < -0.05f; // Must be approaching from below
                         
-                        if (!isFromBehind)
+                        if (!isFromBehind && shotType != "Tap Back" && shotType != "Raise")
                         {
                             Debug.Log($"[AI_Target] ⚠️ REJECTED - Not hitting from behind! Y offset={hitVector.y:F3} (need Y < -0.05)");
                             continue; // Skip this hit
+                        }
+                        
+                        if (!isFromBehind && (shotType == "Tap Back" || shotType == "Raise"))
+                        {
+                            Debug.Log($"[AI_Target] ℹ️ Tap/Raise from angle - Y offset={hitVector.y:F3} (ANY angle OK for light contact)");
                         }
                         
                         // STRATEGIC DEFLECTION SCORING: Analyze post-collision outcomes
@@ -477,7 +569,7 @@ public class AI_Target : MonoBehaviour
                         // 🔍 COMPREHENSIVE DEBUG: ALL INFO IN ONE PLACE
                         Debug.Log($"🎯 HIT DIAGNOSTIC (HYBRID SCORING)\n" +
                                   $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-                                  $"TURN: {(tryInTurn ? "IN-TURN (curls RIGHT)" : "OUT-TURN (curls LEFT)")}\n" +
+                                  $"TURN: {(tryInTurn ? "IN-TURN (curls LEFT ←)" : "OUT-TURN (curls RIGHT →)")}\n" +
                                   $"TARGETING:\n" +
                                   $"  • Lateral Offset: {lateralOffset:F3}\n" +
                                   $"  • Target with Offset: ({targetRockPosition.x + lateralOffset:F3}, {targetRockPosition.y:F3}) (aim point)\n" +
@@ -526,7 +618,7 @@ public class AI_Target : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log($"❌ Hit OBSTACLE: {hitRockGameObject.name} (not target) at lateral offset {lateralOffset:F2}");
+                        Debug.Log($"❌ Hit DIFFERENT ROCK: {hitRockName} (target is {targetRockName}) at lateral offset {lateralOffset:F2}");
                     }
                 }
             }
@@ -747,8 +839,6 @@ public class AI_Target : MonoBehaviour
                 break;
         }
     }
-
-    
 
     IEnumerator GuardReading(int rockCurrent)
     {
@@ -1433,9 +1523,9 @@ public class AI_Target : MonoBehaviour
                     Vector2 errorOffset = new Vector2(xError, yError);
                     
                     // CRITICAL FIX: Lateral error must respect turn direction
-                    // IN-TURN (curls right): pullback on LEFT (negative X) -> negative lateral error moves it MORE left (away from curl)
-                    // OUT-TURN (curls left): pullback on RIGHT (positive X) -> positive lateral error moves it MORE right (away from curl)
-                    float lateralErrorSign = useInTurn ? -1f : 1f;
+                    // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error moves it MORE right (away from curl)
+                    // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error moves it MORE left (away from curl)
+                    float lateralErrorSign = useInTurn ? 1f : -1f;
                     errorOffset.x *= lateralErrorSign;
                     
                     pullbackPos += errorOffset;
@@ -1469,8 +1559,8 @@ public class AI_Target : MonoBehaviour
                       $"Target: {targetRockPos}\n" +
                       $"Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
                       $"Shot direction: {shotDirection} (angle: {shotAngle:F1}°)\n" +
-                      $"Turn: {(useInTurn ? "IN-TURN (curl RIGHT)" : "OUT-TURN (curl LEFT)")}\n" +
-                      $"Expected curl direction: {(useInTurn ? "positive X (right)" : "negative X (left)")}\n" +
+                      $"Turn: {(useInTurn ? "IN-TURN (curl LEFT ←)" : "OUT-TURN (curl RIGHT →)")}\n" +
+                      $"Expected curl direction: {(useInTurn ? "negative X (left)" : "positive X (right)")}\n" +
                       $"========== TAKEOUT DEBUG END ==========\n");
         }
         else
@@ -1555,46 +1645,362 @@ public class AI_Target : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        // PHYSICS-BASED: Peel requires high speed to remove rock completely
-        // Unlike takeout, we don't care if our rock stays in play
+        // PHYSICS-BASED PEEL: Scan angles to maximize CHAOS (secondary collisions)
+        // Strategy: Hit primary target at angle that causes most disruption to other rocks
         Vector2 targetRockPos = gm.rockList[rockTarget].rock.transform.position;
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         
-        Vector2 pullbackPos;
-        bool useInTurn;
-        bool foundShot = CalculatePhysicsBasedShot(targetRockPos, out pullbackPos, out useInTurn, "Peel", rockTarget);
+        Debug.Log($"[AI_Target] 🎯 PEEL CHAOS MODE - Scanning angles to maximize secondary damage");
         
-        if (foundShot)
+        // Collect ALL rocks in play (potential secondary targets)
+        List<GameObject> rocksInPlay = new List<GameObject>();
+        List<GameObject> secondaryTargets = new List<GameObject>();
+        
+        for (int i = 0; i < gm.rockList.Count; i++)
         {
-            // CRITICAL: Set rm.inturn from physics calculation ONCE
-            rm.inturn = useInTurn;
-            takeOutX = pullbackPos.x;
-            takeOutY = pullbackPos.y;
+            var rockEntry = gm.rockList[i];
+            if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy && rockEntry.rockInfo.inPlay)
+            {
+                rocksInPlay.Add(rockEntry.rock);
+                
+                // Track potential secondary targets (other rocks, especially opponents)
+                if (i != rockTarget && rockEntry.rock != gm.rockList[rockTarget].rock)
+                {
+                    secondaryTargets.Add(rockEntry.rock);
+                }
+            }
+        }
+        
+        Debug.Log($"[Peel Chaos] Primary target: {targetRockPos}, Secondary targets: {secondaryTargets.Count}");
+        
+        // ANGLE SWEEP: Try hitting target from different angles (-45° to +45° from direct)
+        // More angles = more CPU but better chaos detection
+        float[] angleSweep = new float[] { 
+            0f,     // Direct hit (baseline)
+            -15f,   // Slight left
+            15f,    // Slight right
+            -30f,   // More left
+            30f,    // More right
+            -45f,   // Far left (glancing)
+            45f     // Far right (glancing)
+        };
+        
+        float bestChaosScore = 0f;
+        Vector2 bestPullback = Vector2.zero;
+        bool bestInTurn = false;
+        float bestAngle = 0f;
+        
+        foreach (float angle in angleSweep)
+        {
+            // Calculate aim point with angular offset
+            Vector2 launcherPos = new Vector2(0f, -25f);
+            Vector2 toLauncher = (launcherPos - targetRockPos).normalized;
             
-            Debug.Log($"[AI_Target] Peel SUCCESS - InTurn: {useInTurn}, Target: {targetRockPos}, Pullback: {pullbackPos}");
+            // Rotate aim direction by angle
+            float angleRad = angle * Mathf.Deg2Rad;
+            Vector2 rotatedAim = new Vector2(
+                toLauncher.x * Mathf.Cos(angleRad) - toLauncher.y * Mathf.Sin(angleRad),
+                toLauncher.x * Mathf.Sin(angleRad) + toLauncher.y * Mathf.Cos(angleRad)
+            );
+            
+            // Aim point is offset from target in this direction
+            Vector2 angledTarget = targetRockPos + rotatedAim * 0.15f; // 15cm offset for angle
+            
+            // Try physics shot at this angle
+            Vector2 pullbackPos;
+            bool useInTurn;
+            bool foundShot = CalculatePhysicsBasedShot(angledTarget, out pullbackPos, out useInTurn, "Peel", rockTarget);
+            
+            if (!foundShot)
+                continue;
+            
+            // SCORE BASED ON CHAOS: How many rocks get disrupted?
+            float chaosScore = ScorePeelChaos(
+                currentRockInfo,
+                targetRockPos,
+                secondaryTargets,
+                pullbackPos,
+                useInTurn
+            );
+            
+            Debug.Log($"[Peel Chaos] Angle: {angle:F1}° → Chaos Score: {chaosScore:F1}");
+            
+            if (chaosScore > bestChaosScore)
+            {
+                bestChaosScore = chaosScore;
+                bestPullback = pullbackPos;
+                bestInTurn = useInTurn;
+                bestAngle = angle;
+            }
+        }
+        
+        // Use best chaos shot if found
+        if (bestChaosScore > 0f)
+        {
+            rm.inturn = bestInTurn;
+            takeOutX = bestPullback.x;
+            takeOutY = bestPullback.y;
+            
+            Debug.Log($"[AI_Target] 🎯 PEEL CHAOS SUCCESS!\n" +
+                      $"  Angle: {bestAngle:F1}°\n" +
+                      $"  Chaos Score: {bestChaosScore:F1}\n" +
+                      $"  Turn: {(bestInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                      $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
         }
         else
         {
-            // Fallback - use existing turn state, don't override with magic numbers
-            Debug.LogWarning($"[AI_Target] Peel physics FAILED - using fallback position for target: {targetRockPos}");
-            targetX = targetRockPos.x;
-            targetY = targetRockPos.y;
-
-            // Calculate fallback pullback using existing turn direction
-            if (rm.inturn)
+            // FALLBACK PHASE 1: Try SECONDARY opponent rocks in the house
+            Debug.LogWarning($"[AI_Target] Primary chaos failed - trying secondary targets");
+            
+            // Build list of opponent rocks in house (sorted by priority)
+            List<GameObject> opponentRocksInHouse = new List<GameObject>();
+            
+            foreach (var houseRock in gm.houseList)
             {
-                takeOutX = (-0.219f * ((targetX + 1.35f) / 2.7f)) + 0.122f;
-            }
-            else
-            {
-                takeOutX = (-0.222f * ((targetX + 1.35f) / 2.7f)) + 0.102f;
+                if (houseRock.rockInfo.teamName != currentRockInfo.teamName && 
+                    houseRock.rock != gm.rockList[rockTarget].rock) // Not primary target
+                {
+                    opponentRocksInHouse.Add(houseRock.rock);
+                }
             }
             
-            Debug.LogWarning($"[AI_Target] Fallback - Using existing turn state: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
+            Debug.Log($"[Peel Fallback] Found {opponentRocksInHouse.Count} secondary opponent rocks in house");
+            
+            bool foundSecondaryShot = false;
+            
+            // Try each secondary target
+            foreach (GameObject secondaryRock in opponentRocksInHouse)
+            {
+                if (secondaryRock == null || !secondaryRock.activeInHierarchy)
+                    continue;
+                
+                Vector2 secondaryPos = secondaryRock.transform.position;
+                Debug.Log($"[Peel Fallback] Trying secondary target at ({secondaryPos.x:F2}, {secondaryPos.y:F2})");
+                
+                // Try direct peel on this rock
+                Vector2 pullbackPos;
+                bool useInTurn;
+                bool foundShot = CalculatePhysicsBasedShot(secondaryPos, out pullbackPos, out useInTurn, "Peel", GetRockIndex(secondaryRock.transform));
+                
+                if (foundShot)
+                {
+                    rm.inturn = useInTurn;
+                    takeOutX = pullbackPos.x;
+                    takeOutY = pullbackPos.y;
+                    
+                    Debug.Log($"[AI_Target] ✓ SECONDARY TARGET SUCCESS!\n" +
+                              $"  Secondary rock at ({secondaryPos.x:F2}, {secondaryPos.y:F2})\n" +
+                              $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                              $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                    
+                    foundSecondaryShot = true;
+                    break; // Found a good secondary shot!
+                }
+            }
+            
+            if (!foundSecondaryShot)
+            {
+                // FALLBACK PHASE 2: Try direct peel on original target
+                Debug.LogWarning($"[AI_Target] Secondary targets failed - trying direct peel on primary");
+                
+                Vector2 pullbackPos;
+                bool useInTurn;
+                bool foundShot = CalculatePhysicsBasedShot(targetRockPos, out pullbackPos, out useInTurn, "Peel", rockTarget);
+                
+                if (foundShot)
+                {
+                    rm.inturn = useInTurn;
+                    takeOutX = pullbackPos.x;
+                    takeOutY = pullbackPos.y;
+                    
+                    Debug.Log($"[AI_Target] Peel direct hit - InTurn: {useInTurn}, Pullback: {pullbackPos}");
+                }
+                else
+                {
+                    // FALLBACK PHASE 3: Magic number fallback (last resort)
+                    Debug.LogWarning($"[AI_Target] ALL PHYSICS FAILED - using magic number fallback");
+                    targetX = targetRockPos.x;
+                    targetY = targetRockPos.y;
+
+                    if (rm.inturn)
+                    {
+                        takeOutX = (-0.219f * ((targetX + 1.35f) / 2.7f)) + 0.122f;
+                    }
+                    else
+                    {
+                        takeOutX = (-0.222f * ((targetX + 1.35f) / 2.7f)) + 0.102f;
+                    }
+                }
+            }
         }
 
         aiShoot.OnShot("Peel", rockCurrent);
         Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
+    }
+    
+    /// <summary>
+    /// Score a peel shot based on CHAOS factor - how much disruption does it cause?
+    /// High score = removes multiple rocks, especially opponents
+    /// </summary>
+    private float ScorePeelChaos(
+        Rock_Info currentRockInfo,
+        Vector2 primaryTargetPos,
+        List<GameObject> secondaryTargets,
+        Vector2 pullbackPos,
+        bool useInTurn)
+    {
+        // Simulate the peel shot to see what happens
+        Vector2 launcherPos = new Vector2(0f, -25f);
+        
+        // Calculate velocity from pullback (peel uses heavy weight)
+        TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+        float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+        float peelPullbackDistance = 4.4f; // Heavy peel weight
+        float velocityMagnitude = peelPullbackDistance * velocityMultiplier;
+        
+        Vector2 direction = (primaryTargetPos - launcherPos).normalized;
+        Vector2 velocity = direction * velocityMagnitude;
+        
+        // Simulate WITH all rocks in play to detect secondary collisions
+        List<GameObject> allRocks = new List<GameObject>();
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            var rockEntry = gm.rockList[i];
+            if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy && rockEntry.rockInfo.inPlay)
+            {
+                allRocks.Add(rockEntry.rock);
+            }
+        }
+        
+        List<Vector2> path = trajectorySimulator.SimulateTrajectory(
+            launcherPos,
+            velocity,
+            useInTurn,
+            250,
+            allRocks,
+            forPlayerPreview: false
+        );
+        
+        if (path.Count == 0)
+            return 0f;
+        
+        TrajectorySimulator.CollisionInfo collision = trajectorySimulator.GetCollisionInfo();
+        
+        // SCORING SYSTEM: Chaos = disruption
+        float chaosScore = 0f;
+        
+        // 1. Did we hit the PRIMARY target? (REQUIRED - baseline 30 points)
+        if (!collision.hasCollision)
+        {
+            Debug.Log($"[Peel Chaos] MISS - no collision detected");
+            return 0f; // Complete miss
+        }
+        
+        // Check if we hit the right rock
+        bool hitPrimaryTarget = Vector2.Distance(collision.collisionPoint, primaryTargetPos) < 0.5f;
+        if (!hitPrimaryTarget)
+        {
+            Debug.Log($"[Peel Chaos] HIT WRONG ROCK - collision at {collision.collisionPoint}, target at {primaryTargetPos}");
+            return 5f; // Small consolation prize for hitting something
+        }
+        
+        chaosScore += 30f; // Baseline: hit the primary target
+        
+        // 2. Where does PRIMARY TARGET end up? (OUT OF PLAY = GOOD!)
+        float primaryTargetFinalY = collision.hitRockFinalPosition.y;
+        
+        if (primaryTargetFinalY > 10f || primaryTargetFinalY < -5f)
+        {
+            chaosScore += 40f; // PRIMARY REMOVED! (best outcome)
+            Debug.Log($"[Peel Chaos] ✓ PRIMARY REMOVED (Y={primaryTargetFinalY:F2})");
+        }
+        else if (primaryTargetFinalY < 5f)
+        {
+            chaosScore += 20f; // Pushed out of house (good)
+            Debug.Log($"[Peel Chaos] ✓ PRIMARY PUSHED OUT (Y={primaryTargetFinalY:F2})");
+        }
+        else
+        {
+            chaosScore += 5f; // Still in house (not ideal)
+            Debug.Log($"[Peel Chaos] ⚠️ PRIMARY STILL IN HOUSE (Y={primaryTargetFinalY:F2})");
+        }
+        
+        // 3. Check SECONDARY COLLISIONS along the hit rock's path
+        // The hit rock might collide with OTHER rocks on its way out!
+        List<Vector2> hitRockPath = collision.hitRockPostCollisionPath;
+        
+        if (hitRockPath != null && hitRockPath.Count > 0)
+        {
+            int secondaryHits = 0;
+            int opponentSecondaryHits = 0;
+            
+            // Check distance from hit rock's path to each secondary target
+            foreach (GameObject secondaryRock in secondaryTargets)
+            {
+                if (secondaryRock == null || !secondaryRock.activeInHierarchy)
+                    continue;
+                
+                Vector2 secondaryPos = secondaryRock.transform.position;
+                Rock_Info secondaryInfo = secondaryRock.GetComponent<Rock_Info>();
+                
+                // Check if hit rock's path gets close to this rock
+                float closestDist = float.MaxValue;
+                foreach (Vector2 pathPoint in hitRockPath)
+                {
+                    float dist = Vector2.Distance(pathPoint, secondaryPos);
+                    if (dist < closestDist)
+                        closestDist = dist;
+                }
+                
+                // If within collision range (2 rock radii = ~0.28), count it
+                if (closestDist < 0.35f) // Generous threshold for detection
+                {
+                    secondaryHits++;
+                    
+                    bool isOpponent = secondaryInfo != null && secondaryInfo.teamName != currentRockInfo.teamName;
+                    if (isOpponent)
+                    {
+                        opponentSecondaryHits++;
+                        chaosScore += 15f; // BONUS: Hit opponent's rock!
+                        Debug.Log($"[Peel Chaos] ✓ SECONDARY HIT: {secondaryRock.name} (opponent) at dist {closestDist:F3}");
+                    }
+                    else
+                    {
+                        chaosScore += 5f; // Hit our own rock (still disruption)
+                        Debug.Log($"[Peel Chaos] ⚠️ SECONDARY HIT: {secondaryRock.name} (friendly) at dist {closestDist:F3}");
+                    }
+                }
+            }
+            
+            // BONUS for multiple secondary hits (CHAOS MULTIPLIER!)
+            if (secondaryHits >= 2)
+            {
+                chaosScore += 20f; // Multi-rock chaos!
+                Debug.Log($"[Peel Chaos] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits");
+            }
+        }
+        
+        // 4. Where does SHOOTER end up? (Ideally OUT OF PLAY for clean removal)
+        float shooterFinalY = collision.finalPosition.y;
+        
+        if (shooterFinalY > 10f || shooterFinalY < -5f)
+        {
+            chaosScore += 10f; // Shooter removed too (clean peel)
+            Debug.Log($"[Peel Chaos] ✓ SHOOTER REMOVED (Y={shooterFinalY:F2})");
+        }
+        else if (shooterFinalY < 5f)
+        {
+            chaosScore += 5f; // Shooter out of house (acceptable)
+            Debug.Log($"[Peel Chaos] ✓ SHOOTER OUT OF HOUSE (Y={shooterFinalY:F2})");
+        }
+        else
+        {
+            chaosScore -= 5f; // Shooter stays in house (not ideal for peel)
+            Debug.Log($"[Peel Chaos] ⚠️ SHOOTER IN HOUSE (Y={shooterFinalY:F2})");
+        }
+        
+        return chaosScore;
     }
 
     IEnumerator TapManualTarget(int rockCurrent)
@@ -1619,41 +2025,151 @@ public class AI_Target : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        // PHYSICS-BASED: Tap back requires lighter weight - move rock but keep both in play
-        // Goal: Tap rock back, have shooter stop in front with separation
+        // PHYSICS-BASED TAP WITH OPTIMAL ANGLE CALCULATION
+        // Strategy: Calculate the best angle to deflect target rock toward button
         Vector2 targetRockPos = gm.rockList[rockTarget].rock.transform.position;
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+        Vector2 button = new Vector2(0f, 6.5f);
+        Vector2 launcherPos = new Vector2(0f, -25f);
         
+        Debug.Log($"[Tap Angle] Calculating optimal tap angle for rock at ({targetRockPos.x:F2}, {targetRockPos.y:F2})");
+        
+        // STEP 1: Determine IDEAL FINAL POSITION for target (closer to button)
+        Vector2 targetToButton = button - targetRockPos;
+        float distToButton = targetToButton.magnitude;
+        
+        // Ideal: Push target 60-80% of the way to button (don't overshoot)
+        float pushRatio = Mathf.Clamp01(0.7f - (distToButton / 3.0f)); // Closer rocks = lighter push
+        Vector2 idealFinalPos = targetRockPos + targetToButton * pushRatio;
+        
+        Debug.Log($"[Tap Angle] Target dist to button: {distToButton:F2}, Push ratio: {pushRatio:F2}, Ideal final: ({idealFinalPos.x:F2}, {idealFinalPos.y:F2})");
+        
+        // STEP 2: Calculate DEFLECTION ANGLE needed
+        // This is the direction target should move after being hit
+        Vector2 desiredDeflection = (idealFinalPos - targetRockPos).normalized;
+        float deflectionAngle = Mathf.Atan2(desiredDeflection.y, desiredDeflection.x) * Mathf.Rad2Deg;
+        
+        Debug.Log($"[Tap Angle] Desired deflection direction: {desiredDeflection}, Angle: {deflectionAngle:F1}°");
+        
+        // STEP 3: Calculate APPROACH ANGLE for shooter
+        // Physics: For elastic collision, approach angle determines deflection
+        // For a tap (light hit), target deflects ~60-70° from shooter's approach direction
+        // So approach_angle + 70° ≈ desired_deflection_angle
+        
+        float tapDeflectionOffset = 70f; // Typical deflection angle for light glancing hit
+        float requiredApproachAngle = deflectionAngle - tapDeflectionOffset;
+        
+        // Convert back to direction vector
+        float approachRad = requiredApproachAngle * Mathf.Deg2Rad;
+        Vector2 approachDirection = new Vector2(Mathf.Cos(approachRad), Mathf.Sin(approachRad));
+        
+        Debug.Log($"[Tap Angle] Required approach angle: {requiredApproachAngle:F1}°, Direction: {approachDirection}");
+        
+        // STEP 4: Calculate AIM POINT (where shooter needs to hit on target rock's circumference)
+        // For glancing tap, aim at edge of rock, not center
+        float rockRadius = 0.14f;
+        Vector2 aimPointOffset = -approachDirection * rockRadius * 0.8f; // Aim at 80% of radius (slight glance)
+        Vector2 aimPoint = targetRockPos + aimPointOffset;
+        
+        Debug.Log($"[Tap Angle] Aim point: ({aimPoint.x:F2}, {aimPoint.y:F2}) - offset by {aimPointOffset}");
+        
+        // STEP 5: Calculate VELOCITY (light tap = 2.8 pullback = ~7.7 m/s)
+        TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+        float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+        float tapPullback = 2.8f;
+        float tapVelocity = tapPullback * velocityMultiplier;
+        
+        // Direction from launcher to aim point
+        Vector2 launcherToAim = (aimPoint - launcherPos).normalized;
+        Vector2 desiredVelocity = launcherToAim * tapVelocity;
+        
+        Debug.Log($"[Tap Angle] Velocity: {tapVelocity:F2} m/s, Direction: {launcherToAim}");
+        
+        // STEP 6: Determine TURN DIRECTION (in-turn vs out-turn)
+        // Choose turn that naturally curls TOWARD the aim point
+        float aimPointX = aimPoint.x;
+        
+        // IN-TURN curls LEFT (negative X), OUT-TURN curls RIGHT (positive X)
+        // If aim point is LEFT of launcher (negative X), use IN-TURN
+        // If aim point is RIGHT of launcher (positive X), use OUT-TURN
+        bool useInTurn = (aimPointX < launcherPos.x);
+        
+        Debug.Log($"[Tap Angle] Aim point X={aimPointX:F2}, Launcher X={launcherPos.x:F2} → Turn: {(useInTurn ? "IN-TURN (curl left)" : "OUT-TURN (curl right)")}");
+        
+        // STEP 7: Try physics simulation with calculated angle
         Vector2 pullbackPos;
-        bool useInTurn;
-        bool foundShot = CalculatePhysicsBasedShot(targetRockPos, out pullbackPos, out useInTurn, "Tap Back", rockTarget);
+        bool foundShot = CalculatePhysicsBasedShot(aimPoint, out pullbackPos, out useInTurn, "Tap Back", rockTarget);
         
         if (foundShot)
         {
-            // CRITICAL: Set rm.inturn from physics calculation ONCE
             rm.inturn = useInTurn;
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[AI_Target] Tap Back SUCCESS - InTurn: {useInTurn}, Target: {targetRockPos}, Pullback: {pullbackPos}");
+            Debug.Log($"[Tap Angle] ✓ SUCCESS! Optimal angle tap shot\n" +
+                      $"  Approach angle: {requiredApproachAngle:F1}°\n" +
+                      $"  Expected deflection: {deflectionAngle:F1}°\n" +
+                      $"  Target will move toward: ({idealFinalPos.x:F2}, {idealFinalPos.y:F2})\n" +
+                      $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
+                      $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}");
         }
         else
         {
-            // Fallback - use existing turn state
-            Debug.LogWarning($"[AI_Target] Tap Back physics FAILED - using fallback position for target: {targetRockPos}");
-            targetX = targetRockPos.x;
-            targetY = targetRockPos.y;
-
-            // Calculate fallback pullback using existing turn direction
-            if (rm.inturn)
+            // FALLBACK 1: Try direct tap (nose hit) as simpler alternative
+            Debug.LogWarning($"[Tap Angle] Optimal angle failed, trying direct tap");
+            
+            foundShot = CalculatePhysicsBasedShot(targetRockPos, out pullbackPos, out useInTurn, "Tap Back", rockTarget);
+            
+            if (foundShot)
             {
-                takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+                rm.inturn = useInTurn;
+                takeOutX = pullbackPos.x;
+                takeOutY = pullbackPos.y;
+                
+                Debug.Log($"[Tap Angle] ✓ Direct tap SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
             }
             else
             {
-                takeOutX = (-0.178f * ((targetX + 1.35f) / 2.7f)) + 0.056f;
+                // FALLBACK 2: Draw beside target
+                Debug.LogWarning($"[Tap Angle] Direct tap failed - trying DRAW BESIDE as alternative");
+                
+                Vector2 drawBesideTarget = new Vector2(
+                    targetRockPos.x + (targetRockPos.x > 0 ? -0.3f : 0.3f),
+                    targetRockPos.y - 0.2f
+                );
+                
+                drawBesideTarget.x = Mathf.Clamp(drawBesideTarget.x, -1.5f, 1.5f);
+                drawBesideTarget.y = Mathf.Clamp(drawBesideTarget.y, 5.5f, 8.5f);
+                
+                bool foundDrawShot = CalculatePhysicsBasedDrawShot(drawBesideTarget, out pullbackPos, out useInTurn);
+                
+                if (foundDrawShot)
+                {
+                    rm.inturn = useInTurn;
+                    takeOutX = pullbackPos.x;
+                    takeOutY = pullbackPos.y;
+                    
+                    Debug.Log($"[Tap Angle] ✓ DRAW BESIDE SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
+                    
+                    aiShoot.OnShot("Draw To Target", rockCurrent);
+                    Debug.Log($"TapBack → Draw Beside - Near {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
+                    yield break;
+                }
+                
+                // LAST RESORT: Magic numbers
+                Debug.LogWarning($"[Tap Angle] ALL PHYSICS FAILED - magic number fallback");
+                targetX = targetRockPos.x;
+                targetY = targetRockPos.y;
+
+                if (rm.inturn)
+                {
+                    takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+                }
+                else
+                {
+                    takeOutX = (-0.178f * ((targetX + 1.35f) / 2.7f)) + 0.056f;
+                }
             }
-            
-            Debug.LogWarning($"[AI_Target] Fallback - Using existing turn state: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
         }
         
         aiShoot.OnShot("Raise", rockCurrent);
@@ -1837,58 +2353,103 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Physics-based draw shot calculation - SWEEPS laterally to find CLEAR path to target
-    /// Like takeouts, this searches multiple lateral offsets to find the best approach
-    /// TRUSTS the target position from strategy layer - just finds HOW to get there
+    /// Physics-based draw shot calculation - RADIAL SWEEP around guards to find PROTECTED SCORING positions
+    /// STRATEGY: Protected + Scoring > Clean path + Far away
+    /// Prioritizes: 1) Behind guards, 2) Closer to button than opponents, 3) Minor bumps near target OK
     /// </summary>
     private bool CalculatePhysicsBasedDrawShot(Vector2 targetPosition, out Vector2 pullbackPosition, out bool useInTurn)
     {
         Vector2 launcherPos = new Vector2(0f, -25f);
+        Vector2 button = new Vector2(0f, 6.5f);
+        Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
         
-        Debug.Log($"[Physics Draw] Target from strategy: ({targetPosition.x:F2}, {targetPosition.y:F2})");
+        Debug.Log($"[Physics Draw] RADIAL SWEEP for protected scoring - Target: ({targetPosition.x:F2}, {targetPosition.y:F2})");
         
-        // Get rocks in play (guards and house rocks are obstacles)
+        // Get rocks in play (guards and house rocks)
         List<GameObject> rocksInPlay = new List<GameObject>();
+        List<GameObject> guards = new List<GameObject>();
+        List<GameObject> opponentRocks = new List<GameObject>();
+        float closestOpponentDistToButton = 999f;
+        
         foreach (var rockEntry in gm.rockList)
         {
             if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy && rockEntry.rockInfo.inPlay)
             {
                 rocksInPlay.Add(rockEntry.rock);
+                
+                Vector2 rockPos = rockEntry.rock.transform.position;
+                
+                // Identify guards (Y < 5.0, in front of house)
+                if (rockPos.y > 0f && rockPos.y < 5.0f)
+                {
+                    guards.Add(rockEntry.rock);
+                }
+                
+                // Track opponent rocks and find closest to button
+                if (rockEntry.rockInfo.teamName != currentRockInfo.teamName && rockPos.y > 5.0f)
+                {
+                    opponentRocks.Add(rockEntry.rock);
+                    float distToButton = Vector2.Distance(rockPos, button);
+                    if (distToButton < closestOpponentDistToButton)
+                    {
+                        closestOpponentDistToButton = distToButton;
+                    }
+                }
             }
         }
         
-        Debug.Log($"[Physics Draw] Obstacles in play: {rocksInPlay.Count}");
+        Debug.Log($"[Physics Draw] Obstacles: {rocksInPlay.Count} total, {guards.Count} guards, {opponentRocks.Count} opponent rocks");
+        Debug.Log($"[Physics Draw] Closest opponent dist to button: {closestOpponentDistToButton:F2}");
         
         float bestScore = float.MinValue;
         Vector2 bestPullback = Vector2.zero;
         bool bestInTurn = false;
+        Vector2 bestFinalPos = Vector2.zero;
         
-        // LATERAL SWEEP: Try different lateral offsets to find CLEAR path around guards!
-        // This is the same approach as takeouts - find the best angle to avoid obstacles
+        // COMPREHENSIVE RADIAL SWEEP: Test positions around TARGET (not guards!)
+        // Goal: Get as CLOSE AS POSSIBLE to target position
+        // Strategy: Try multiple radii and angles to find cleanest path
+        List<Vector2> candidateTargets = new List<Vector2>();
         
-        // Try both turn directions
+        // CANDIDATE 1: Direct to target (baseline - MUST try this!)
+        candidateTargets.Add(targetPosition);
+        
+        // CANDIDATE 2-N: FULL RADIAL SWEEP around TARGET
+        // Radii kept tight (max 1.0m from target) to stay close to desired position
+        float[] radii = new float[] { 0.15f, 0.3f, 0.5f, 0.7f, 1.0f }; // Tight clustering around target
+        float[] angles = new float[] { 0f, 30f, 60f, 90f, 120f, 150f, 180f, 210f, 240f, 270f, 300f, 330f }; // Every 30° = 12 positions per radius
+        
+        foreach (float radius in radii)
+        {
+            foreach (float angleDeg in angles)
+            {
+                float angleRad = angleDeg * Mathf.Deg2Rad;
+                Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
+                Vector2 candidatePos = targetPosition + offset; // Offset from TARGET, not button!
+                
+                // Must be in playable area (within sheet bounds and house)
+                if (candidatePos.y > 5.0f && candidatePos.y < 9.0f && Mathf.Abs(candidatePos.x) < 2.0f)
+                {
+                    candidateTargets.Add(candidatePos);
+                }
+            }
+        }
+        
+        Debug.Log($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 1.0m of target)");
+        
+        // TEST EACH CANDIDATE POSITION
         for (int turnDir = 0; turnDir < 2; turnDir++)
         {
             bool tryInTurn = (turnDir == 0);
             
             Debug.Log($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN" : "OUT-TURN")} ---");
             
-            // CURL COMPENSATION: IN-TURN curls RIGHT, so aim LEFT
-            float offsetMultiplier = tryInTurn ? -1f : 1f;
-            
-            // SWEEP: Test lateral offsets from 0 to ±0.6 (60cm each side)
-            // Draw shots need less lateral sweep than takeouts (don't need nose hits)
-            for (float lateralOffsetBase = 0f; lateralOffsetBase <= 0.6f; lateralOffsetBase += 0.1f)
+            foreach (Vector2 candidateTarget in candidateTargets)
             {
-                float lateralOffset = lateralOffsetBase * offsetMultiplier;
-                
-                // Aim at target position with lateral offset
-                Vector2 aimTarget = new Vector2(targetPosition.x + lateralOffset, targetPosition.y);
-                
-                // Calculate required velocity to reach aim target
+                // Calculate required velocity
                 Vector2 requiredVelocity = trajectorySimulator.CalculateVelocityToTarget(
                     launcherPos,
-                    aimTarget,
+                    candidateTarget,
                     tryInTurn
                 );
                 
@@ -1897,7 +2458,7 @@ public class AI_Target : MonoBehaviour
                 
                 Vector2 testPullback = CalculatePullbackFromVelocity(requiredVelocity, launcherPos, tryInTurn);
                 
-                // Simulate to see if we reach target cleanly
+                // Simulate trajectory
                 List<Vector2> simulatedPath = trajectorySimulator.SimulateTrajectory(
                     launcherPos,
                     requiredVelocity,
@@ -1910,69 +2471,261 @@ public class AI_Target : MonoBehaviour
                 if (simulatedPath.Count == 0) continue;
                 
                 Vector2 finalPos = simulatedPath[simulatedPath.Count - 1];
-                float distanceToTarget = Vector2.Distance(finalPos, targetPosition);
-                
-                // SCORING SYSTEM: Prioritize CLEAN PATH over PERFECT ACCURACY
-                // Philosophy: Better to be 2 units away with clean path than 0.5 units away after hitting guard!
-                
                 TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
                 
-                // Base score: Distance penalty (scaled down from 10x to 3x)
-                // This makes distance less punishing - we care more about avoiding obstacles
-                float distanceScore = -distanceToTarget * 3f; // REDUCED from 10x
+                // ========================================
+                // SOPHISTICATED SCORING SYSTEM
+                // ========================================
                 
-                // Collision handling
-                float collisionScore = 0f;
-                if (collisionInfo.hasCollision)
+                float score = 0f;
+                
+                // PART 1: PROXIMITY TO TARGET (60 points max) - HIGHEST PRIORITY!
+                // Goal: Get as CLOSE AS POSSIBLE to the requested target position
+                float distToTarget = Vector2.Distance(finalPos, candidateTarget);
+                float proximityScore = 0f;
+                
+                if (distToTarget < 0.1f)
                 {
-                    collisionScore = -15f; // Moderate penalty (reduced from -20)
-                    Debug.Log($"[Physics Draw] {(tryInTurn ? "IN-TURN" : "OUT-TURN")} offset {lateralOffset:F2}: HIT obstacle at {collisionInfo.collisionPoint}, dist: {distanceToTarget:F2}");
+                    proximityScore = 60f; // Very close (<10cm) = excellent!
+                }
+                else if (distToTarget < 0.3f)
+                {
+                    proximityScore = 50f; // Close (<30cm) = very good
+                }
+                else if (distToTarget < 0.6f)
+                {
+                    proximityScore = 35f; // Acceptable (<60cm) = good
+                }
+                else if (distToTarget < 1.0f)
+                {
+                    proximityScore = 20f; // Within 1m = okay
                 }
                 else
                 {
-                    collisionScore = +15f; // BONUS for clean path (increased from +10)
-                    Debug.Log($"[Physics Draw] {(tryInTurn ? "IN-TURN" : "OUT-TURN")} offset {lateralOffset:F2}: CLEAN path! Final: ({finalPos.x:F2}, {finalPos.y:F2}), dist: {distanceToTarget:F2}");
+                    proximityScore = 10f * Mathf.Max(0f, 1f - (distToTarget / 2.0f)); // Further = worse
                 }
                 
-                // BONUS: If we land IN THE HOUSE (Y > 5.0), extra points!
-                float houseBonus = 0f;
-                if (finalPos.y > 5.0f)
+                score += proximityScore;
+                
+                // PART 2: GUARD PROTECTION (15 points max) - Small bonus for ANY guard
+                // Philosophy: ALL guards (friendly OR opponent) provide some protection
+                // Being under a guard makes you harder to remove, regardless of who placed it
+                float protectionScore = 0f;
+                GameObject protectingGuard = null;
+                
+                foreach (GameObject guard in guards)
                 {
-                    houseBonus = +10f; // Reward for reaching house
-                    if (finalPos.y > 6.0f) houseBonus += 5f; // Extra for deep positioning
+                    Vector2 guardPos = guard.transform.position;
+                    
+                    // Check if guard is protecting this position
+                    // Protection = guard is BETWEEN launcher and final position
+                    bool inFront = guardPos.y < finalPos.y; // Guard is closer to launcher
+                    float lateralAlignment = Mathf.Abs(guardPos.x - finalPos.x); // How aligned laterally
+                    float depthSeparation = finalPos.y - guardPos.y; // How far behind guard
+                    
+                    // Good protection: Guard in front, good lateral alignment, reasonable depth
+                    if (inFront && lateralAlignment < 0.6f && depthSeparation > 0.3f && depthSeparation < 3.0f)
+                    {
+                        // Score protection quality
+                        float alignmentQuality = 1.0f - Mathf.Clamp01(lateralAlignment / 0.6f);
+                        float depthQuality = 1.0f - Mathf.Clamp01(Mathf.Abs(depthSeparation - 1.5f) / 1.5f); // Ideal: 1.5 units behind
+                        
+                        float guardProtectionQuality = alignmentQuality * 0.6f + depthQuality * 0.4f;
+                        
+                        if (guardProtectionQuality > protectionScore)
+                        {
+                            protectionScore = guardProtectionQuality;
+                            protectingGuard = guard;
+                        }
+                    }
+                }               
+                score += protectionScore * 15f; // Up to 15 points for ANY guard protection (friendly or opponent)
+                
+                // PART 2: SCORING POSITION (30 points max) - Get in scoring position!
+                // Philosophy: MULTIPLE rocks score in curling - being 2nd/3rd shot is still valuable!
+                float scoringPositionScore = 0f;
+                
+                float myDistToButton = Vector2.Distance(finalPos, button);
+                
+                // Are we closer than opponent's best rock?
+                if (myDistToButton < closestOpponentDistToButton)
+                {
+                    // YES! We'd be shot rock!
+                    float beatMargin = closestOpponentDistToButton - myDistToButton;
+                    
+                    // More margin = better (harder for them to steal)
+                    scoringPositionScore = Mathf.Clamp01(beatMargin / 1.0f); // Beat by 1 unit = 100%
+                    
+                    // BONUS: Beat by a lot = huge advantage
+                    if (beatMargin > 0.5f) scoringPositionScore += 0.5f; // Big lead
+                    
+                    scoringPositionScore = Mathf.Min(1.0f, scoringPositionScore); // Cap at 1.0
+                }
+                else if (closestOpponentDistToButton > 900f)
+                {
+                    // NO OPPONENT ROCKS - Score based on distance to button
+                    // Closer = better, but any position in house is acceptable
+                    scoringPositionScore = Mathf.Clamp01(1.0f - (myDistToButton / 2.0f)); // Within 2 units = positive
+                }
+                else
+                {
+                    // We're NOT shot rock - SOFTER penalty (multiple rocks score!)
+                    // Philosophy: 2nd shot, 3rd shot still count for points in curling
+                    float deficit = myDistToButton - closestOpponentDistToButton;
+                    
+                    // GENTLE SCALING: Small deficits barely penalized
+                    if (deficit < 0.5f)
+                    {
+                        // Very close to opponent (<0.5 units behind) = Minor penalty
+                        scoringPositionScore = -0.05f; // Just -1.5 points
+                    }
+                    else if (deficit < 1.0f)
+                    {
+                        // Moderate deficit (0.5-1.0 behind) = Moderate penalty
+                        scoringPositionScore = -0.2f; // -6 points
+                    }
+                    else
+                    {
+                        // Large deficit (>1.0 behind) = Still accept if in house!
+                        scoringPositionScore = -0.4f; // -12 points (was -40!)
+                    }
                 }
                 
-                // TOTAL SCORE
-                float score = distanceScore + collisionScore + houseBonus;
+                score += scoringPositionScore * 30f; // Up to 30 points for scoring position
                 
-                Debug.Log($"  → Scoring: Distance={distanceScore:F1}, Collision={collisionScore:F1}, House={houseBonus:F1}, TOTAL={score:F1}");
+                // PART 3: COLLISION CONTEXT (variable penalty) - WHERE and WHEN matters!
+                float collisionPenalty = 0f;
+                
+                if (collisionInfo.hasCollision)
+                {
+                    Vector2 collisionPoint = collisionInfo.collisionPoint;
+                    GameObject hitRock = collisionInfo.hitRock;
+                    
+                    // Calculate collision distance from launcher (how far into trajectory)
+                    float collisionDistFromLauncher = Vector2.Distance(launcherPos, collisionPoint);
+                    float totalPathLength = Vector2.Distance(launcherPos, finalPos);
+                    float collisionRatio = collisionDistFromLauncher / totalPathLength; // 0 = early, 1 = late
+                    
+                    // EARLY COLLISION (first 60% of path) = BIG PENALTY
+                    if (collisionRatio < 0.6f)
+                    {
+                        collisionPenalty = -25f; // Early collision is bad - disrupts path significantly
+                    }
+                    // MID COLLISION (60-80% of path) = MINOR PENALTY
+                    else if (collisionRatio < 0.8f)
+                    {
+                        collisionPenalty = -8f; // Acceptable if final position is still good
+                    }
+                    // LATE COLLISION (last 20% of path) = VERY MINOR or ACCEPTABLE
+                    else // collisionRatio >= 0.8 (last 20% of path)
+                    {
+                        collisionPenalty = -2f; // Small bumps near target are OK!
+                    }
+                    
+                    Debug.Log($"[Collision Context] Hit {hitRock.name} at ratio {collisionRatio:F2} ({(collisionRatio < 0.6f ? "EARLY" : collisionRatio < 0.8f ? "MID" : "LATE")}), Penalty={collisionPenalty:F1}");
+                }
+                else
+                {
+                    collisionPenalty = +5f; // Small bonus for completely clean path
+                }
+                
+                score += collisionPenalty;
+                
+                
+                // PART 4: IN-HOUSE BONUS (20 points) - Reward shots that land in scoring position
+                float houseBonus = 0f;
+                if (finalPos.y >= 5.0f && finalPos.y <= 9.0f) // In the house
+                {
+                    float distToButton = Vector2.Distance(finalPos, button);
+                    
+                    if (distToButton < 0.6f) // 4-foot
+                        houseBonus = 20f;
+                    else if (distToButton < 1.2f) // 8-foot
+                        houseBonus = 15f;
+                    else if (distToButton < 1.83f) // 12-foot
+                        houseBonus = 10f;
+                }
+                
+                score += houseBonus;
+                
+                // ========================================
+                // LOG COMPREHENSIVE SCORING BREAKDOWN
+                // ========================================
+                Debug.Log($"[Physics Draw] Candidate: ({candidateTarget.x:F2}, {candidateTarget.y:F2}) → Final: ({finalPos.x:F2}, {finalPos.y:F2}), Turn: {(tryInTurn ? "IN" : "OUT")}\n" +
+                          $"  Proximity to Target: {proximityScore:F1}/60 (dist: {distToTarget:F2}m)\n" +
+                          $"  Guard Protection: {protectionScore * 15f:F1}/15 {(protectingGuard != null ? $"(under {protectingGuard.name})" : "(exposed)")}\n" +
+                          $"  Scoring Position: {scoringPositionScore * 30f:F1}/30 (dist to button: {myDistToButton:F2}, opponent closest: {closestOpponentDistToButton:F2})\n" +
+                          $"  Collision Context: {collisionPenalty:F1} {(collisionInfo.hasCollision ? $"(hit {collisionInfo.hitRock.name})" : "(clean)")}\n" +
+                          $"  In-House Bonus: {houseBonus:F1}/20\n" +
+                          $"  TOTAL SCORE: {score:F1}/130");
                 
                 if (score > bestScore)
                 {
                     bestScore = score;
                     bestPullback = testPullback;
                     bestInTurn = tryInTurn;
+                    bestFinalPos = finalPos;
                     
-                    Debug.Log($"  ⭐ NEW BEST: offset {lateralOffset:F2}, score {score:F2}, pullback: {testPullback}");
+                    Debug.Log($"  ⭐ NEW BEST: score {score:F1}, protected={protectingGuard != null}, scoring={(scoringPositionScore > 0)}");
                 }
             }
         }
         
-        // Accept if we found a decent path
-        // NEW THRESHOLD: Score > -10 (was -5)
-        // This allows:
-        //   - Clean path + 3 units away: (-9 distance) + (+15 clean) + (+10 house) = +16 ✅
-        //   - Hit obstacle + 1 unit away: (-3 distance) + (-15 collision) = -18 ❌
-        //   - Clean path + 2 units away: (-6 distance) + (+15 clean) + (+10 house) = +19 ✅
-        if (bestScore > float.MinValue && bestScore > -10f)
+        // ========================================
+        // ACCEPTANCE CRITERIA: Accept ANY reasonable draw attempt
+        // ========================================
+        // Lowered threshold: 15.0 (was 20.0) to accept more attempts
+        // With 60-70 candidates tested, we should find SOMETHING decent!
+        if (bestScore > float.MinValue && bestScore >= 15f)
         {
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
-            Debug.Log($"[Physics Draw] SUCCESS! Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3}), InTurn: {bestInTurn}, Score: {bestScore:F2}");
+            
+            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/130\n" +
+                      $"  Final position: ({bestFinalPos.x:F2}, {bestFinalPos.y:F2})\n" +
+                      $"  Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3})\n" +
+                      $"  Turn: {(bestInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
+                      $"  Tested {candidateTargets.Count} candidates\n" +
+                      $"  Strategy: Proximity to target prioritized, late collisions OK");
             return true;
         }
         
-        Debug.LogWarning($"[Physics Draw] FAILED - bestScore {bestScore:F2} too low (need > -10.0)");
+        // IMPROVED FALLBACK: Try direct physics to button as last resort
+        Debug.LogWarning($"[Physics Draw] All candidates scored low (best: {bestScore:F1}), trying direct button fallback");
+        
+        // Try out-turn first (curls LEFT ←)
+        Vector2 directButtonVelocity = trajectorySimulator.CalculateVelocityToTarget(
+            launcherPos,
+            button,
+            false // OUT-TURN
+        );
+        
+        if (directButtonVelocity.magnitude > 3f && directButtonVelocity.magnitude < 20f)
+        {
+            pullbackPosition = CalculatePullbackFromVelocity(directButtonVelocity, launcherPos, false);
+            useInTurn = false;
+            
+            Debug.Log($"[Physics Draw] ✓ FALLBACK: Direct button shot (OUT-TURN, curls LEFT ←), pullback: {pullbackPosition}");
+            return true;
+        }
+        
+        // Try in-turn as last resort (curls RIGHT →)
+        directButtonVelocity = trajectorySimulator.CalculateVelocityToTarget(
+            launcherPos,
+            button,
+            true // IN-TURN
+        );
+        
+        if (directButtonVelocity.magnitude > 3f && directButtonVelocity.magnitude < 20f)
+        {
+            pullbackPosition = CalculatePullbackFromVelocity(directButtonVelocity, launcherPos, true);
+            useInTurn = true;
+            
+            Debug.Log($"[Physics Draw] ✓ FALLBACK: Direct button shot (IN-TURN, curls RIGHT →), pullback: {pullbackPosition}");
+            return true;
+        }
+        
+        Debug.LogError($"[Physics Draw] COMPLETE FAILURE - even direct button shot failed! Tested {candidateTargets.Count} candidates");
         pullbackPosition = launcherPos + new Vector2(0f, -2f);
         useInTurn = false;
         return false;

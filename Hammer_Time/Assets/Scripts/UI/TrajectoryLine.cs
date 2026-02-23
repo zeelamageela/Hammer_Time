@@ -71,24 +71,24 @@ public class TrajectoryLine : MonoBehaviour
     
     [Header("Velocity Tuning - Player Feel")]
     [Tooltip("Velocity multiplier for pullback calculation. Higher = more speed from same pullback. Default 5.0 matches original feel.")]
-    [Range(3.0f, 8.0f)]
+    [Range(0.1f, 30.0f)]
     public float velocityMultiplier = 5.0f;
     
     [Tooltip("Minimum pullback distance before trajectory shows. Too low = accidental throws.")]
-    [Range(0.1f, 1.0f)]
-    public float minPullbackDistance = 0.5f;
+    [Range(0.1f, 2.0f)]
+    public float minPullbackDistance = 1f;
     
     [Tooltip("Maximum pullback distance allowed. Limits max shot power.")]
-    [Range(2.0f, 4.0f)]
+    [Range(2.0f, 6.0f)]
     public float maxPullbackDistance = 2.75f;
     
     [Tooltip("Minimum velocity (m/s) from smallest valid pullback. Controls weakest possible shot.")]
-    [Range(1.0f, 5.0f)]
-    public float minVelocity = 3.0f;
+    [Range(4.0f, 5.0f)]
+    public float minVelocity = 5f;
     
     [Tooltip("Maximum velocity (m/s) from largest pullback. Controls strongest possible shot.")]
     [Range(10.0f, 25.0f)]
-    public float maxVelocity = 18.0f;
+    public float maxVelocity = 11.0f;
     
     // Track previous values to detect changes
     private float lastIceFriction = -1f; // FIXED: Initialize to -1 to force first update

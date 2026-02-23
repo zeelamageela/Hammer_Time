@@ -130,6 +130,11 @@ public class TournySelector : MonoBehaviour
             // BEFORE SetActiveTournies() is called
             Debug.Log("[TournySelector] Existing career (week > 0) - calling LoadCareer()");
             cm.LoadCareer(tSel: this);
+            
+            // CRITICAL FIX: After loading, sync completion status from CareerManager arrays
+            // This handles the case where we just returned from a tournament
+            // and TournySelector was recreated (fresh ScriptableObjects)
+            SyncCompletionFromCareerManager();
         }
 
         teamMenu.TeamMenuOpen();
@@ -141,6 +146,81 @@ public class TournySelector : MonoBehaviour
         //Debug.Log("Skill Points are " + xpm.skillPoints);
 
         SetActiveTournies();
+    }
+    
+    /// <summary>
+    /// Syncs tournament completion status from CareerManager arrays to TournySelector arrays
+    /// This is needed when TournySelector is recreated after a tournament
+    /// </summary>
+    private void SyncCompletionFromCareerManager()
+    {
+        Debug.Log("[TournySelector] Syncing completion status from CareerManager arrays...");
+        
+        // Sync regular tournaments
+        if (cm.tournies != null && tournies != null)
+        {
+            for (int i = 0; i < cm.tournies.Length && i < tournies.Length; i++)
+            {
+                if (cm.tournies[i] != null && tournies[i] != null && cm.tournies[i].id == tournies[i].id)
+                {
+                    tournies[i].complete = cm.tournies[i].complete;
+                    tournies[i].trophyWon = cm.tournies[i].trophyWon;
+                    if (cm.tournies[i].complete)
+                        Debug.Log($"  ? Synced tournies[{i}] '{tournies[i].name}' - complete");
+                }
+            }
+        }
+        
+        // Sync tour tournaments
+        if (cm.tour != null && tour != null)
+        {
+            for (int i = 0; i < cm.tour.Length && i < tour.Length; i++)
+            {
+                if (cm.tour[i] != null && tour[i] != null && cm.tour[i].id == tour[i].id)
+                {
+                    tour[i].complete = cm.tour[i].complete;
+                    tour[i].trophyWon = cm.tour[i].trophyWon;
+                    if (cm.tour[i].complete)
+                        Debug.Log($"  ? Synced tour[{i}] '{tour[i].name}' - complete");
+                }
+            }
+        }
+        
+        // Sync provincial qualifiers
+        if (cm.prov != null && provQual != null)
+        {
+            for (int i = 0; i < cm.prov.Length && i < provQual.Length; i++)
+            {
+                if (cm.prov[i] != null && provQual[i] != null && cm.prov[i].id == provQual[i].id)
+                {
+                    provQual[i].complete = cm.prov[i].complete;
+                    provQual[i].trophyWon = cm.prov[i].trophyWon;
+                    if (cm.prov[i].complete)
+                        Debug.Log($"  ? Synced provQual[{i}] '{provQual[i].name}' - complete");
+                }
+            }
+        }
+        
+        // Sync championships
+        if (cm.champ != null && cm.champ.Length >= 2)
+        {
+            if (cm.champ[0] != null && tourChampionship != null)
+            {
+                tourChampionship.complete = cm.champ[0].complete;
+                tourChampionship.trophyWon = cm.champ[0].trophyWon;
+                if (cm.champ[0].complete)
+                    Debug.Log($"  ? Synced tourChampionship - complete");
+            }
+            if (cm.champ[1] != null && provChampionship != null)
+            {
+                provChampionship.complete = cm.champ[1].complete;
+                provChampionship.trophyWon = cm.champ[1].trophyWon;
+                if (cm.champ[1].complete)
+                    Debug.Log($"  ? Synced provChampionship - complete");
+            }
+        }
+        
+        Debug.Log("[TournySelector] ? Completion sync complete");
     }
 
     IEnumerator WaitForDialogue()
@@ -746,6 +826,10 @@ public class TournySelector : MonoBehaviour
 
     public void PlayTourny()
     {
+        // CRITICAL FIX: Mark tournament as complete in TournySelector arrays
+        // This ensures completion status is captured when SaveCareer() is called
+        Debug.Log($"[TournySelector] PlayTourny - Marking {currentTourny.name} as complete");
+        
         for (int i = 0; i < tournies.Length; i++)
         {
             for (int j = 0; j < activeTournies.Length; j++)
@@ -753,6 +837,7 @@ public class TournySelector : MonoBehaviour
                 if (activeTournies[j].id == tournies[i].id)
                 {
                     tournies[i].complete = true;
+                    Debug.Log($"[TournySelector] Marked tournies[{i}] ({tournies[i].name}) as complete");
                 }
             }
         }
@@ -764,6 +849,7 @@ public class TournySelector : MonoBehaviour
                 if (activeTournies[j].id == tour[i].id)
                 {
                     tour[i].complete = true;
+                    Debug.Log($"[TournySelector] Marked tour[{i}] ({tour[i].name}) as complete");
                 }
             }
         }
@@ -775,6 +861,7 @@ public class TournySelector : MonoBehaviour
                 if (activeTournies[j].id == provQual[i].id)
                 {
                     provQual[i].complete = true;
+                    Debug.Log($"[TournySelector] Marked provQual[{i}] ({provQual[i].name}) as complete");
                 }
             }
         }
@@ -786,6 +873,7 @@ public class TournySelector : MonoBehaviour
                 if (activeTournies[j].id == singleKOs[i].id)
                 {
                     singleKOs[i].complete = true;
+                    Debug.Log($"[TournySelector] Marked singleKOs[{i}] ({singleKOs[i].name}) as complete");
                 }
             }
         }
@@ -793,9 +881,15 @@ public class TournySelector : MonoBehaviour
         if (currentTourny.championship)
         {
             if (currentTourny.name == tourChampionship.name)
+            {
                 tourChampionship.complete = true;
+                Debug.Log($"[TournySelector] Marked tourChampionship as complete");
+            }
             if (currentTourny.name == provChampionship.name)
+            {
                 provChampionship.complete = true;
+                Debug.Log($"[TournySelector] Marked provChampionship as complete");
+            }
         }
 
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
@@ -806,6 +900,8 @@ public class TournySelector : MonoBehaviour
 
         Debug.Log("TSel Current Tourny Name is " + currentTourny.name);
 
+        // CRITICAL FIX: Sync CareerManager arrays with TournySelector arrays
+        // This ensures completion status is saved even when TournySelector doesn't exist later
         cm.tournies = tournies;
         cm.tour = tour;
         cm.prov = provQual;
@@ -813,6 +909,8 @@ public class TournySelector : MonoBehaviour
         cm.champ[0] = tourChampionship;
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
+        
+        Debug.Log($"[TournySelector] Synced CM arrays - tournies: {cm.tournies?.Length ?? 0}, tour: {cm.tour?.Length ?? 0}, prov: {cm.prov?.Length ?? 0}");
         
         // Save activeTournies IDs for later restoration
         cm.SaveCareer();

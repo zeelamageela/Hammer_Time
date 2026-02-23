@@ -128,7 +128,7 @@ public class TrajectorySimulator
         float totalSimDistance = 0f;
         Vector2 lastSimPosition = position;
         
-        Debug.Log($"[Trajectory SIM START] InitVel: {initialVelocity.magnitude:F3} m/s | StartPos: {startPosition}");
+        //Debug.Log($"[Trajectory SIM START] InitVel: {initialVelocity.magnitude:F3} m/s | StartPos: {startPosition}");
         
         while (currentTime < MAX_SIMULATION_TIME && trajectoryPoints.Count < maxPoints)
         {
@@ -590,11 +590,11 @@ public class TrajectorySimulator
     public static Vector2 CalculateInitialVelocityFromPullback(
         Vector2 pullbackPosition, 
         Vector2 launcherPosition,
-        float velocityMultiplier = 5.0f,
-        float minPullbackDistance = 0.15f,
-        float maxPullbackDistance = 2.52f,
+        float velocityMultiplier = 2.75f,
+        float minPullbackDistance = 1.5f,
+        float maxPullbackDistance = 5f,
         float minVelocity = 5.0f,
-        float maxVelocity = 11.0f)
+        float maxVelocity = 12.0f)
     {
         // Calculate pullback distance
         Vector2 displacement = launcherPosition - pullbackPosition;
@@ -781,8 +781,8 @@ public class TrajectorySimulator
             maxSpeed = 10.0f;
         }
         
-        const int MAX_ITERATIONS = 10;
-        const float TOLERANCE = 0.3f; // Accept within 30cm of target
+        const int MAX_ITERATIONS = 42;
+        const float TOLERANCE = 0.6f; // Accept within 60cm of target
         
         float bestSpeed = minSpeed;
         float bestDistanceError = float.MaxValue;

@@ -254,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamName: Red
+  rockColour: {r: 0, g: 0, b: 0, a: 0}
   rockNumber: 1
   rockIndex: 0
   stopped: 0

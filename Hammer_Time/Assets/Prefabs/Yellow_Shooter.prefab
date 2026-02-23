@@ -145,7 +145,7 @@ SpringJoint2D:
   m_Anchor: {x: 0, y: 0}
   m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 1
-  m_Distance: 2.9864206
+  m_Distance: 0.005
   m_DampingRatio: 0.2
   m_Frequency: 1.5
 --- !u!58 &2101470087804577612
@@ -236,6 +236,9 @@ MonoBehaviour:
   turnValue: 485.91
   curl: {x: -0.323, y: 0}
   scaleFactor: 0.1
+  springTensionMultiplier: 1
+  curlForceMultiplier: 1
+  baseDamping: 0.38
   flipAxis: 0
   slideHap: {fileID: -8404250095460277587, guid: f7201d9cdb3ce48338e0d5a2e3c5a483, type: 3}
 --- !u!114 &-3200148751317697448
@@ -251,6 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teamName: Yellow
+  rockColour: {r: 0, g: 0, b: 0, a: 0}
   rockNumber: 0
   rockIndex: 0
   stopped: 0
