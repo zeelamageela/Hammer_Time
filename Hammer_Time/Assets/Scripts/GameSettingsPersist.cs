@@ -618,14 +618,45 @@ public class GameSettingsPersist : MonoBehaviour
         {
             Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
             
-            // CRITICAL FIX: Even when skipping full reload, we MUST restore KO1/KO3 flags!
-            // These determine which scene we route to after the game
+            // CRITICAL FIX: Even when skipping full reload, we MUST restore KO1/KO3 flags AND playoffTeams!
+            // These determine which scene we route to after the game and enable bracket advancement
             CareerSaveData saveData = CareerSaveService.LoadCareer();
             if (saveData != null && saveData.currentTournamentState != null)
             {
                 KO1 = saveData.currentTournamentState.KO1;
                 KO3 = saveData.currentTournamentState.KO3;
                 Debug.Log($"[GameSettingsPersist] Restored tournament type flags: KO1={KO1}, KO3={KO3}");
+                
+                // CRITICAL FIX: Restore playoff bracket teams for Single-K/Triple-K
+                if (saveData.currentTournamentState.playoffTeams != null && 
+                    saveData.currentTournamentState.playoffTeams.Count > 0)
+                {
+                    Debug.Log($"[GameSettingsPersist] Found {saveData.currentTournamentState.playoffTeams.Count} playoff teams in save");
+                    playoffTeams = new Team[saveData.currentTournamentState.playoffTeams.Count];
+                    for (int i = 0; i < saveData.currentTournamentState.playoffTeams.Count; i++)
+                    {
+                        playoffTeams[i] = cm.DataToTeam(saveData.currentTournamentState.playoffTeams[i]);
+                    }
+                    Debug.Log($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from save");
+                }
+                else if ((saveData.currentTournamentState.KO1 || saveData.currentTournamentState.KO3) && 
+                         saveData.currentTournamentState.teams != null && 
+                         saveData.currentTournamentState.teams.Count > 0)
+                {
+                    // FALLBACK: Old save format - playoff bracket was saved to 'teams' list
+                    // This handles saves created before the playoffTeams field was added
+                    Debug.LogWarning($"[GameSettingsPersist] Old save format detected - using 'teams' as playoff bracket ({saveData.currentTournamentState.teams.Count} teams)");
+                    playoffTeams = new Team[saveData.currentTournamentState.teams.Count];
+                    for (int i = 0; i < saveData.currentTournamentState.teams.Count; i++)
+                    {
+                        playoffTeams[i] = cm.DataToTeam(saveData.currentTournamentState.teams[i]);
+                    }
+                    Debug.Log($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from legacy format");
+                }
+                else
+                {
+                    Debug.Log("[GameSettingsPersist] No playoff bracket teams in save - regular tournament");
+                }
             }
             else
             {

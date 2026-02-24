@@ -65,18 +65,30 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		// CRITICAL FIX: Check if playoff teams are seeded
 		bool teamsNotSeeded = (gsp.playoffTeams == null || gsp.playoffTeams.Length == 0 || gsp.playoffTeams[0] == null);
 		
-	// CRITICAL FIX: If loading from save AND returning from game, check if bracket exists
-	// This handles the case where we just completed a game but bracket isn't in memory yet
+	// CRITICAL FIX: If loading from save AND returning from game, check if bracket was restored
+	// This handles the case where we just completed a game and bracket should be in gsp.playoffTeams
 	if (gsp.careerLoad && gsp.justFinishedGame && playoffRound > 0 && teamsNotSeeded)
 	{
-		Debug.LogWarning($"[SingleK.Start] SPECIAL: Bracket not in memory after save load (Round {playoffRound})");
-		Debug.LogWarning($"[SingleK.Start] Cannot advance without bracket data - will display fresh bracket");
-		// CRITICAL: We can't advance playoffs without the previous bracket state
-		// The game result is stored in team wins/losses, but we don't know bracket positions
-		// Best we can do is re-seed and let player continue from current state
-		gsp.justFinishedGame = false;  // Clear flag - can't process without data
-		StartCoroutine(SetSeeding(tm.teams.Length));
-		return;
+		Debug.Log($"[SingleK.Start] SPECIAL: Loading from save after completing game (Round {playoffRound})");
+		
+		// Check if GSP has the bracket data now (loaded by GameSettingsPersist.LoadTourny)
+		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0 && gsp.playoffTeams[0] != null)
+		{
+			Debug.Log($"[SingleK.Start] Found {gsp.playoffTeams.Length} bracket teams in gsp - loading and advancing");
+			// Bracket was restored from save - proceed with advancing
+			LoadAndAdvancePlayoffs();
+			gsp.justFinishedGame = false;
+			return;
+		}
+		else
+		{
+			Debug.LogWarning($"[SingleK.Start] Bracket not in gsp.playoffTeams - cannot advance without bracket data");
+			Debug.LogWarning($"[SingleK.Start] Will re-seed bracket - game result may be lost!");
+			// Fallback: Re-seed (will lose bracket progress)
+			gsp.justFinishedGame = false;
+			StartCoroutine(SetSeeding(tm.teams.Length));
+			return;
+		}
 	}
 		
 		// If returning from a game but teams aren't seeded yet, we need to seed FIRST

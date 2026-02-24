@@ -2533,7 +2533,7 @@ public class CareerManager : MonoBehaviour
     /// <summary>
     /// Converts TeamData to Team
     /// </summary>
-    private Team DataToTeam(TeamData data)
+    public Team DataToTeam(TeamData data)
     {
         Team team = new Team
         {
@@ -2736,14 +2736,21 @@ public class CareerManager : MonoBehaviour
             // CRITICAL FIX: Save playoff bracket to playoffTeams list (not regular teams list)
             if (pmSingle.playoffTeams != null && pmSingle.playoffTeams.Length > 0)
             {
+                Debug.Log($"[CareerManager] Found pmSingle.playoffTeams with {pmSingle.playoffTeams.Length} slots");
+                int nonNullCount = 0;
                 foreach (var team in pmSingle.playoffTeams)
                 {
                     if (team != null)
                     {
                         tournamentState.playoffTeams.Add(TeamToData(team));
+                        nonNullCount++;
                     }
                 }
-                Debug.Log($"[CareerManager] Saved {tournamentState.playoffTeams.Count} playoff bracket teams for Single-K");
+                Debug.Log($"[CareerManager] Saved {nonNullCount}/{pmSingle.playoffTeams.Length} playoff bracket teams for Single-K");
+            }
+            else
+            {
+                Debug.LogWarning($"[CareerManager] pmSingle.playoffTeams is null or empty! Cannot save bracket.");
             }
         }
         else if (manager is PlayoffManager_TripleK pmTriple)
