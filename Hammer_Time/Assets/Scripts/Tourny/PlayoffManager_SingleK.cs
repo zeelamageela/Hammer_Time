@@ -62,17 +62,47 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		// 3. Loading saved tournament between games (careerLoad == true, !justFinishedGame)
 		// 4. Normal round display (playoffRound > 0, teams seeded, just viewing bracket)
 
-		if (gsp.justFinishedGame)
+		// CRITICAL FIX: Check if playoff teams are seeded
+		bool teamsNotSeeded = (gsp.playoffTeams == null || gsp.playoffTeams.Length == 0 || gsp.playoffTeams[0] == null);
+		
+	// CRITICAL FIX: If loading from save AND returning from game, check if bracket exists
+	// This handles the case where we just completed a game but bracket isn't in memory yet
+	if (gsp.careerLoad && gsp.justFinishedGame && playoffRound > 0 && teamsNotSeeded)
+	{
+		Debug.LogWarning($"[SingleK.Start] SPECIAL: Bracket not in memory after save load (Round {playoffRound})");
+		Debug.LogWarning($"[SingleK.Start] Cannot advance without bracket data - will display fresh bracket");
+		// CRITICAL: We can't advance playoffs without the previous bracket state
+		// The game result is stored in team wins/losses, but we don't know bracket positions
+		// Best we can do is re-seed and let player continue from current state
+		gsp.justFinishedGame = false;  // Clear flag - can't process without data
+		StartCoroutine(SetSeeding(tm.teams.Length));
+		return;
+	}
+		
+		// If returning from a game but teams aren't seeded yet, we need to seed FIRST
+		// This happens in debug mode where we jump straight to a game without initial seeding
+		if (teamsNotSeeded && gsp.justFinishedGame && playoffRound > 0)
+		{
+			Debug.LogWarning($"[SingleK.Start] SPECIAL CASE: Returning from game but bracket not seeded - will seed then show results");
+			// Seed the bracket first - this will populate the initial bracket
+			StartCoroutine(SetSeeding(tm.teams.Length));
+			// Note: We DON'T process the game result here - player will need to view bracket
+			// then manually advance. This is a rare edge case (debug mode only)
+			gsp.justFinishedGame = false; // Clear flag
+		}
+		// Check playoffRound > 0 before advancing - if 0, this is a FRESH tournament
+		else if (gsp.justFinishedGame && playoffRound > 0 && !teamsNotSeeded)
 		{
 			// Scenario 1: Just returned from completing a game - need to process result and advance
 			Debug.Log("[SingleK.Start] SCENARIO 1: Returning from completed game - advancing playoffs");
 			LoadAndAdvancePlayoffs();
 			gsp.justFinishedGame = false; // Clear flag after processing
 		}
-		else if (playoffRound == 0 || gsp.playoffTeams == null || gsp.playoffTeams.Length == 0 || gsp.playoffTeams[0] == null)
+		else if (playoffRound == 0 || teamsNotSeeded)
 		{
 			// Scenario 2: Fresh tournament start OR teams not yet seeded
 			Debug.Log("[SingleK.Start] SCENARIO 2: Fresh tournament start - setting seeding");
+			gsp.justFinishedGame = false; // Clear stale flag if present
 			StartCoroutine(SetSeeding(tm.teams.Length));
 		}
 		else if (gsp.careerLoad)
@@ -570,6 +600,14 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
             for (int i = 0; i < playoffTeams.Length; i++)
             {
+                // CRITICAL FIX: Check if team slot is initialized before accessing it
+                if (playoffTeams[i] == null)
+                {
+                    Debug.LogWarning($"[LoadPlayoffs] playoffTeams[{i}] is null - skipping");
+                    gsp.playoffTeams[i] = tm.tTeamList.nullTeam;  // Use null team placeholder
+                    continue;
+                }
+                
                 for (int j = 0; j < teamList.Count; j++)
                 {
                     if (playoffTeams[i].id == teamList[j].team.id)

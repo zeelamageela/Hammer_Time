@@ -117,6 +117,19 @@ public class TournySelector : MonoBehaviour
         SponsorManager pm = FindFirstObjectByType<SponsorManager>();
 
         Debug.Log("TSel cm.week is " + cm.week);
+        Debug.Log($"[TournySelector] SetUp() - Checking tournament arrays BEFORE any loading:");
+        
+        // DEBUG: Check initial state of tournament arrays
+        if (tournies != null)
+        {
+            for (int i = 0; i < tournies.Length; i++)
+            {
+                if (tournies[i] != null)
+                {
+                    Debug.Log($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
+                }
+            }
+        }
 
         if (cm.week == 0)
         {
@@ -131,10 +144,28 @@ public class TournySelector : MonoBehaviour
             Debug.Log("[TournySelector] Existing career (week > 0) - calling LoadCareer()");
             cm.LoadCareer(tSel: this);
             
+            // CRITICAL FIX: Apply any pending completion data that was stored during load
+            // This handles the case where LoadCareer() was called from CareerSettings (before TournySelector existed)
+            cm.ApplyPendingCompletionData(this);
+            
             // CRITICAL FIX: After loading, sync completion status from CareerManager arrays
             // This handles the case where we just returned from a tournament
             // and TournySelector was recreated (fresh ScriptableObjects)
             SyncCompletionFromCareerManager();
+            
+            Debug.Log($"[TournySelector] SetUp() - Checking tournament arrays AFTER loading/syncing:");
+            
+            // DEBUG: Check state after loading
+            if (tournies != null)
+            {
+                for (int i = 0; i < tournies.Length; i++)
+                {
+                    if (tournies[i] != null)
+                    {
+                        Debug.Log($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
+                    }
+                }
+            }
         }
 
         teamMenu.TeamMenuOpen();

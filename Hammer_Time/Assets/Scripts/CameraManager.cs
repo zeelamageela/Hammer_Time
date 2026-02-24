@@ -61,6 +61,18 @@ public class CameraManager : MonoBehaviour
             HouseView();
         }
 
+        // CRITICAL: Lock camera X position to 0 when following a rock
+        // This prevents runaway camera when rocks go out of bounds
+        if (vcam != null && vcam.enabled && vcam.Target.TrackingTarget != launcher)
+        {
+            Vector3 camPos = vcam.transform.position;
+            if (Mathf.Abs(camPos.x) > 0.01f) // If camera drifted from center
+            {
+                camPos.x = 0f; // Force back to center
+                vcam.transform.position = camPos;
+            }
+        }
+
         // Update screen position dynamically ONLY when not actively following a rock
         // This prevents constant composition changes that cause jitter
         if (vcam_ft != null && vcam.Target.TrackingTarget == launcher)
@@ -194,10 +206,17 @@ public class CameraManager : MonoBehaviour
     {
         //Debug.Log("Rock Follow");
         
+        // CRITICAL: Lock camera X position to 0 IMMEDIATELY
+        // This prevents Cinemachine from tracking rock's X position
+        Vector3 camPos = vcam.transform.position;
+        camPos.x = 0f;
+        vcam.transform.position = camPos;
+        
         // Cinemachine 3.x: Configure to follow rock AND keep entire play area visible!
         if (vcam_ft != null)
         {
             // LOCKED X-AXIS: Camera stays centered (X=0), only follows Y-axis
+            // Damping X=9999 means camera will NEVER follow X axis
             vcam_ft.Damping = new Vector3(9999f, 0f, 9999f); // X/Z locked completely, Y follows instantly
             
             // Configure composition to keep entire play area in frame

@@ -373,7 +373,10 @@ public class CareerSaveData
         public int games;  // CRITICAL: Number of games in draw format
         public int ends;   // CRITICAL: Number of ends per game
         public int rocks;  // CRITICAL: Number of rocks per team
+        public bool KO1;   // CRITICAL: Single-elimination playoff flag
+        public bool KO3;   // CRITICAL: Triple-knockout playoff flag
         public List<TeamData> teams;
+        public List<TeamData> playoffTeams;  // CRITICAL: Playoff bracket teams for Single-K/Triple-K (31 or 9 teams)
         public List<Vector2Data> gameList;
         
         // Current tournament info
@@ -389,6 +392,7 @@ public class CareerSaveData
         public TournamentStateData()
         {
             teams = new List<TeamData>();
+            playoffTeams = new List<TeamData>();  // Initialize playoff bracket list
             gameList = new List<Vector2Data>();
         }
     }

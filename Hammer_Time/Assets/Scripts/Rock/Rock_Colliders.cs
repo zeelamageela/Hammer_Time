@@ -18,6 +18,7 @@ public class Rock_Colliders : MonoBehaviour
     public bool inHouse = false;
     public bool shotTaken = false;
     public bool guard = false;
+    private bool outOfPlayCoroutineStarted = false;  // NEW: Track if coroutine already running
     private float fixedDeltaTime;
 
     AudioManager am;
@@ -30,35 +31,47 @@ public class Rock_Colliders : MonoBehaviour
     public HapticClip hitHap;
 
 // Start is called before the first frame update
-    void Awake()
-    {
-        body = GetComponent<Rigidbody2D>();
+void Awake()
+{
+    body = GetComponent<Rigidbody2D>();
 
-        GameObject InPlay = GameObject.Find("InPlay_Collider");
-        InPlay_Collider = InPlay.GetComponent<Collider2D>();
+    GameObject InPlay = GameObject.Find("InPlay_Collider");
+    InPlay_Collider = InPlay.GetComponent<Collider2D>();
 
-        GameObject boards = GameObject.Find("BG/Boards_CREATED");
-        boards_collider = boards.GetComponent<Collider2D>();
+    GameObject boards = GameObject.Find("BG/Boards_CREATED");
+    boards_collider = boards.GetComponent<Collider2D>();
 
-        GameObject house = GameObject.Find("House");
-        house_collider = house.GetComponent<Collider2D>();
+    GameObject house = GameObject.Find("House");
+    house_collider = house.GetComponent<Collider2D>();
 
-        GameObject launch = GameObject.Find("Launcher");
-        launchCollider = launch.GetComponent<Collider2D>();
-        launchCollider.enabled = false;
+    GameObject launch = GameObject.Find("Launcher");
+    launchCollider = launch.GetComponent<Collider2D>();
+    launchCollider.enabled = false;
 
-        rockSounds = GetComponents<AudioSource>();
-        am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
-        sm = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
-        gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
-        fixedDeltaTime = Time.fixedDeltaTime;
-    }
+    rockSounds = GetComponents<AudioSource>();
+    am = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<AudioManager>();
+    sm = GameObject.FindGameObjectWithTag("SweeperManager").GetComponent<SweeperManager>();
+    gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+    fixedDeltaTime = Time.fixedDeltaTime;
+}
+    
+/// <summary>
+/// Reset flags when rock is re-enabled (pooled rocks get reused)
+/// </summary>
+void OnEnable()
+{
+    outOfPlayCoroutineStarted = false;
+    outOfPlay = false;
+}
 
     // Update is called once per frame
     void Update()
     {
-        if (outOfPlay)
+        // CRITICAL FIX: Only start OutOfPlay coroutine ONCE
+        // Don't call it every frame - it causes RockFollow() to be called repeatedly
+        if (outOfPlay && !outOfPlayCoroutineStarted)
         {
+            outOfPlayCoroutineStarted = true;
             StartCoroutine(OutOfPlay());
         }
 
@@ -72,8 +85,10 @@ public class Rock_Colliders : MonoBehaviour
         //    Debug.Log("-3 velocity is " + GetComponent<Rigidbody2D>().velocity.x + ", " + GetComponent<Rigidbody2D>().velocity.y);
         //}
 
-        if (GetComponent<Rock_Info>().shotTaken && GetComponent<Rock_Info>().stopped && transform.position.y < 0f)
+        // CRITICAL FIX: Only start OutOfPlay ONCE when rock stops past y=0
+        if (GetComponent<Rock_Info>().shotTaken && GetComponent<Rock_Info>().stopped && transform.position.y < 0f && !outOfPlayCoroutineStarted)
         {
+            outOfPlayCoroutineStarted = true;
             StartCoroutine(OutOfPlay());
         }
     }

@@ -617,6 +617,20 @@ public class GameSettingsPersist : MonoBehaviour
         else
         {
             Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
+            
+            // CRITICAL FIX: Even when skipping full reload, we MUST restore KO1/KO3 flags!
+            // These determine which scene we route to after the game
+            CareerSaveData saveData = CareerSaveService.LoadCareer();
+            if (saveData != null && saveData.currentTournamentState != null)
+            {
+                KO1 = saveData.currentTournamentState.KO1;
+                KO3 = saveData.currentTournamentState.KO3;
+                Debug.Log($"[GameSettingsPersist] Restored tournament type flags: KO1={KO1}, KO3={KO3}");
+            }
+            else
+            {
+                Debug.LogWarning("[GameSettingsPersist] Could not restore KO1/KO3 flags - no save data available!");
+            }
         }
         
         bg = cm.currentTourny.BG;

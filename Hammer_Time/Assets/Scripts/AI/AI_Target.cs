@@ -1565,23 +1565,130 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // Fallback to old method ONLY for pullback position
-            Debug.LogWarning($"[AI_Target] Take Out physics FAILED - using fallback position for target: {targetRockPos}");
+            // ========================================
+            // COMPREHENSIVE FALLBACK SYSTEM
+            // ========================================
+            Debug.LogWarning($"[AI_Target] Take Out physics FAILED - trying comprehensive fallback for target: {targetRockPos}");
             
-            targetX = targetRockPos.x;
-            targetY = targetRockPos.y;
-
-            // Calculate fallback pullback position without changing rm.inturn
-            if (rm.inturn)
+            // FALLBACK 1: Try PEEL instead (different shot mechanics might work)
+            Debug.Log($"[Fallback 1] Trying PEEL on same target");
+            Vector2 peelPullback;
+            bool peelInTurn;
+            bool foundPeel = CalculatePhysicsBasedShot(targetRockPos, out peelPullback, out peelInTurn, "Peel", rockTarget);
+            
+            if (foundPeel)
             {
-                takeOutX = (-0.19f * ((targetX + 1.35f) / 2.7f)) + 0.11f;
-            }
-            else
-            {
-                takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
+                rm.inturn = peelInTurn;
+                takeOutX = peelPullback.x;
+                takeOutY = peelPullback.y;
+                
+                Debug.Log($"[Fallback 1] ✓ PEEL succeeded! Turn: {(peelInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                
+                aiShoot.OnShot("Peel", rockCurrent);
+                Debug.Log($"Fallback Peel - {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
+                yield break;
             }
             
-            Debug.LogWarning($"[AI_Target] Fallback - Using existing turn state: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
+            // FALLBACK 2: Try ANY other opponent rock in the house
+            Debug.Log($"[Fallback 2] Trying other opponent rocks in house");
+            Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                if (houseRock.rock == null || !houseRock.rock.activeInHierarchy)
+                    continue;
+                
+                if (houseRock.rockInfo.teamName == currentRockInfo.teamName)
+                    continue; // Skip our own rocks
+                
+                if (houseRock.rockInfo.rockIndex == rockTarget)
+                    continue; // Skip original target (already failed)
+                
+                Vector2 altTargetPos = houseRock.rock.transform.position;
+                Debug.Log($"[Fallback 2] Trying alternative rock #{houseRock.rockInfo.rockIndex} at ({altTargetPos.x:F2}, {altTargetPos.y:F2})");
+                
+                Vector2 altPullback;
+                bool altInTurn;
+                bool foundAlt = CalculatePhysicsBasedShot(altTargetPos, out altPullback, out altInTurn, "Take Out", houseRock.rockInfo.rockIndex);
+                
+                if (foundAlt)
+                {
+                    rm.inturn = altInTurn;
+                    takeOutX = altPullback.x;
+                    takeOutY = altPullback.y;
+                    
+                    Debug.Log($"[Fallback 2] ✓ Alternative rock succeeded! Turn: {(altInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                    
+                    aiShoot.OnShot("Take Out", rockCurrent);
+                    Debug.Log($"Fallback Alternative - {houseRock.rockInfo.teamName} #{houseRock.rockInfo.rockIndex}");
+                    yield break;
+                }
+            }
+            
+            // FALLBACK 3: Try removing ANY opponent guard blocking the center
+            Debug.Log($"[Fallback 3] Trying opponent guards");
+            
+            foreach (var guard in gm.gList)
+            {
+                if (guard.lastTransform == null)
+                    continue;
+                
+                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                    continue; // Skip our own guards
+                
+                Vector2 guardPos = guard.lastTransform.position;
+                Debug.Log($"[Fallback 3] Trying guard #{guardInfo.rockIndex} at ({guardPos.x:F2}, {guardPos.y:F2})");
+                
+                Vector2 guardPullback;
+                bool guardInTurn;
+                bool foundGuard = CalculatePhysicsBasedShot(guardPos, out guardPullback, out guardInTurn, "Take Out", guardInfo.rockIndex);
+                
+                if (foundGuard)
+                {
+                    rm.inturn = guardInTurn;
+                    takeOutX = guardPullback.x;
+                    takeOutY = guardPullback.y;
+                    
+                    Debug.Log($"[Fallback 3] ✓ Guard takeout succeeded! Turn: {(guardInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                    
+                    aiShoot.OnShot("Take Out", rockCurrent);
+                    Debug.Log($"Fallback Guard - {guardInfo.teamName} #{guardInfo.rockIndex}");
+                    yield break;
+                }
+            }
+            
+            // FALLBACK 4: Draw to button instead (can't remove anything)
+            Debug.Log($"[Fallback 4] All takeout options exhausted - trying draw to button");
+            
+            Vector2 button = new Vector2(0f, 6.5f);
+            Vector2 drawPullback;
+            bool drawInTurn;
+            bool foundDraw = CalculatePhysicsBasedDrawShot(button, out drawPullback, out drawInTurn);
+            
+            if (foundDraw)
+            {
+                rm.inturn = drawInTurn;
+                takeOutX = drawPullback.x;
+                takeOutY = drawPullback.y;
+                
+                Debug.Log($"[Fallback 4] ✓ Draw succeeded! Turn: {(drawInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                
+                aiShoot.OnShot("Draw To Target", rockCurrent);
+                Debug.Log($"Fallback Draw - Can't remove anything, drawing to button");
+                yield break;
+            }
+            
+            
+            // FALLBACK 5: ABSOLUTE LAST RESORT - Just throw away the rock
+            Debug.LogError($"[Fallback 5] CATASTROPHIC: Even draw failed - THROWING AWAY ROCK");
+            
+            // Throw to corner out of bounds
+            rm.inturn = (targetRockPos.x < 0f); // In-turn if target is left, out-turn if target is right
+            takeOutX = (targetRockPos.x < 0f) ? -1.5f : 1.5f;
+            takeOutY = -27.0f;
+            
+            Debug.LogError($"[Fallback 5] Throwing away - Turn: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
         }
 
         aiShoot.OnShot("Take Out", rockCurrent);
@@ -1817,18 +1924,171 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    // FALLBACK PHASE 3: Magic number fallback (last resort)
-                    Debug.LogWarning($"[AI_Target] ALL PHYSICS FAILED - using magic number fallback");
-                    targetX = targetRockPos.x;
-                    targetY = targetRockPos.y;
-
-                    if (rm.inturn)
+                    // FALLBACK PHASE 3: Try to remove guards blocking rocks in the house
+                    Debug.LogWarning($"[AI_Target] Direct peel failed - searching for guards blocking house rocks");
+                    
+                    bool foundGuardTakeout = false;
+                    
+                    // Look for opponent guards that are blocking rocks in the house
+                    foreach (var guard in gm.gList)
                     {
-                        takeOutX = (-0.219f * ((targetX + 1.35f) / 2.7f)) + 0.122f;
+                        if (guard.lastTransform == null)
+                            continue;
+                        
+                        Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                        if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                            continue; // Skip our own guards
+                        
+                        Vector2 guardPos = guard.lastTransform.position;
+                        
+                        // Check if this guard is blocking access to ANY rock in the house
+                        bool blocksHouseRock = false;
+                        foreach (var houseRock in gm.houseList)
+                        {
+                            Vector2 houseRockPos = houseRock.rock.transform.position;
+                            float lateralAlignment = Mathf.Abs(guardPos.x - houseRockPos.x);
+                            bool inFront = guardPos.y < houseRockPos.y;
+                            
+                            if (lateralAlignment < 0.5f && inFront)
+                            {
+                                blocksHouseRock = true;
+                                Debug.Log($"[Fallback Guard] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) blocks house rock at ({houseRockPos.x:F2}, {houseRockPos.y:F2})");
+                                break;
+                            }
+                        }
+                        
+                        if (blocksHouseRock)
+                        {
+                            // Try to take out this blocking guard
+                            int guardIndex = guardInfo.rockIndex;
+                            Debug.Log($"[Fallback Guard] Attempting takeout of blocking guard #{guardIndex}");
+                            
+                            bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
+                            
+                            if (foundGuardShot)
+                            {
+                                rm.inturn = useInTurn;
+                                takeOutX = pullbackPos.x;
+                                takeOutY = pullbackPos.y;
+                                
+                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout guard #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                          $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                                          $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
+                                          $"  Strategy: Clear path to house rocks");
+                                
+                                foundGuardTakeout = true;
+                                break; // Found a guard to take out
+                            }
+                        }
                     }
-                    else
+                    
+                    if (!foundGuardTakeout)
                     {
-                        takeOutX = (-0.222f * ((targetX + 1.35f) / 2.7f)) + 0.102f;
+                        // FALLBACK PHASE 4: No blocking guards found - try any opponent guard
+                        Debug.LogWarning($"[AI_Target] No blocking guards found - trying ANY opponent guard");
+                        
+                        foreach (var guard in gm.gList)
+                        {
+                            if (guard.lastTransform == null)
+                                continue;
+                            
+                            Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                            if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                                continue; // Skip our own guards
+                            
+                            Vector2 guardPos = guard.lastTransform.position;
+                            int guardIndex = guardInfo.rockIndex;
+                            
+                            Debug.Log($"[Fallback Guard] Attempting takeout of any opponent guard #{guardIndex}");
+                            
+                            bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
+                            
+                            if (foundGuardShot)
+                            {
+                                rm.inturn = useInTurn;
+                                takeOutX = pullbackPos.x;
+                                takeOutY = pullbackPos.y;
+                                
+                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout ANY guard #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                          $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                                          $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                                
+                                foundGuardTakeout = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!foundGuardTakeout)
+                    {
+                        // FALLBACK PHASE 5: Try to hit ANY opponent rock (guards or house)
+                        Debug.LogWarning($"[AI_Target] No guards available - trying ANY opponent rock");
+                        
+                        foreach (var rockEntry in gm.rockList)
+                        {
+                            if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy || !rockEntry.rockInfo.inPlay)
+                                continue;
+                            
+                            if (rockEntry.rockInfo.teamName == currentRockInfo.teamName)
+                                continue; // Skip our own rocks
+                            
+                            Vector2 rockPos = rockEntry.rock.transform.position;
+                            int rockIndex = rockEntry.rockInfo.rockIndex;
+                            
+                            Debug.Log($"[Fallback Any Rock] Attempting takeout of opponent rock #{rockIndex}");
+                            
+                            bool foundAnyShot = CalculatePhysicsBasedShot(rockPos, out pullbackPos, out useInTurn, "Take Out", rockIndex);
+                            
+                            if (foundAnyShot)
+                            {
+                                rm.inturn = useInTurn;
+                                takeOutX = pullbackPos.x;
+                                takeOutY = pullbackPos.y;
+                                
+                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout opponent rock #{rockIndex} at ({rockPos.x:F2}, {rockPos.y:F2})\n" +
+                                          $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                                          $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                                
+                                foundGuardTakeout = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!foundGuardTakeout)
+                    {
+                        // LAST RESORT: Draw to button instead of using magic numbers
+                        Debug.LogWarning($"[AI_Target] ALL TAKEOUT OPTIONS FAILED - falling back to draw shot");
+                        
+                        Vector2 drawPullback;
+                        bool drawInTurn;
+                        bool foundDrawShot = CalculatePhysicsBasedDrawShot(new Vector2(0f, 6.5f), out drawPullback, out drawInTurn);
+                        
+                        if (foundDrawShot)
+                        {
+                            rm.inturn = drawInTurn;
+                            takeOutX = drawPullback.x;
+                            takeOutY = drawPullback.y;
+                            
+                            Debug.Log($"[AI_Target] ✓ FINAL FALLBACK: Draw to button\n" +
+                                      $"  Turn: {(drawInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+                                      $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                            
+                            aiShoot.OnShot("Draw To Target", rockCurrent);
+                            Debug.Log("Peel FAILED - Drawing to button instead");
+                            yield break;
+                        }
+                        else
+                        {
+                            // ABSOLUTE LAST RESORT: Throw away the rock (total failure)
+                            Debug.LogError($"[AI_Target] CATASTROPHIC: Even draw shot failed - throwing away rock");
+                            
+                            rm.inturn = (targetRockPos.x < 0f);
+                            takeOutX = (targetRockPos.x < 0f) ? -1.5f : 1.5f;
+                            takeOutY = -27.0f;
+                            
+                            Debug.LogError($"[AI_Target] Throwing away - Turn: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                        }
                     }
                 }
             }
@@ -2156,18 +2416,31 @@ public class AI_Target : MonoBehaviour
                     yield break;
                 }
                 
-                // LAST RESORT: Magic numbers
-                Debug.LogWarning($"[Tap Angle] ALL PHYSICS FAILED - magic number fallback");
-                targetX = targetRockPos.x;
-                targetY = targetRockPos.y;
-
-                if (rm.inturn)
+                
+                
+                // LAST RESORT: Draw to button instead of magic numbers
+                Debug.LogWarning($"[Tap Angle] ALL PHYSICS FAILED - drawing to button as emergency fallback");
+                
+                Vector2 drawPullback;
+                bool drawInTurn;
+                bool foundDrawFallback = CalculatePhysicsBasedDrawShot(new Vector2(0f, 6.5f), out drawPullback, out drawInTurn);
+                
+                if (foundDrawFallback)
                 {
-                    takeOutX = (-0.18f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+                    rm.inturn = drawInTurn;
+                    takeOutX = drawPullback.x;
+                    takeOutY = drawPullback.y;
+                    
+                    Debug.Log($"[Tap Angle] Tap → Draw fallback SUCCESS");
                 }
                 else
                 {
-                    takeOutX = (-0.178f * ((targetX + 1.35f) / 2.7f)) + 0.056f;
+                    // CATASTROPHIC: Throw away the rock
+                    Debug.LogError($"[Tap Angle] CATASTROPHIC FAILURE - throwing rock away");
+                    
+                    rm.inturn = Random.value > 0.5f;
+                    takeOutX = Random.Range(-1.5f, 1.5f);
+                    takeOutY = -27.0f;
                 }
             }
         }
@@ -2218,22 +2491,31 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // Fallback - use existing turn state
-            Debug.LogWarning($"[AI_Target] Tick physics FAILED - using fallback position for target: {targetRockPos}");
-            targetX = targetRockPos.x;
-            targetY = targetRockPos.y;
-
-            // Calculate fallback pullback using existing turn direction
-            if (rm.inturn)
+            // FALLBACK: Try direct takeout if tick fails
+            Debug.LogWarning($"[AI_Target] Tick physics FAILED - trying direct takeout on target: {targetRockPos}");
+            
+            Vector2 takeoutPullback;
+            bool takeoutInTurn;
+            bool foundTakeout = CalculatePhysicsBasedShot(targetRockPos, out takeoutPullback, out takeoutInTurn, "Take Out", rockTarget);
+            
+            if (foundTakeout)
             {
-                takeOutX = (-0.039f * ((targetX + 0.4f) / 0.8f)) + 0.042f;
+                rm.inturn = takeoutInTurn;
+                takeOutX = takeoutPullback.x;
+                takeOutY = takeoutPullback.y;
+                
+                Debug.Log($"[AI_Target] Tick → Takeout fallback SUCCESS - InTurn: {takeoutInTurn}, Pullback: {takeoutPullback}");
             }
             else
             {
-                takeOutX = (-0.04f * ((targetX + 0.4f) / 0.8f)) - 0.005f;
+                // LAST RESORT: Just throw it away (can't hit the target)
+                Debug.LogError($"[AI_Target] Tick AND Takeout BOTH FAILED - throwing away rock");
+                
+                // Throw to corner out of bounds
+                rm.inturn = (targetRockPos.x < 0f);
+                takeOutX = (targetRockPos.x < 0f) ? -1.5f : 1.5f;
+                takeOutY = -27.0f;
             }
-            
-            Debug.LogWarning($"[AI_Target] Fallback - Using existing turn state: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
         }
 
         aiShoot.OnShot("Tick", rockCurrent);
@@ -2270,20 +2552,45 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // Fallback - treat as heavy takeout on guard position
-            Debug.LogWarning($"[AI_Target] Runback physics FAILED - using fallback heavy takeout on guard: {guardRockPos}");
-            targetX = guardRockPos.x;
-            targetY = guardRockPos.y;
-
-            // Calculate fallback pullback using existing turn direction
-            // Use slightly more power than normal takeout
-            if (rm.inturn)
+            // FALLBACK: Try peel on guard if runback fails
+            Debug.LogWarning($"[AI_Target] Runback physics FAILED - trying peel on guard: {guardRockPos}");
+            
+            Vector2 peelPullback;
+            bool peelInTurn;
+            bool foundPeel = CalculatePhysicsBasedShot(guardRockPos, out peelPullback, out peelInTurn, "Peel", rockTarget);
+            
+            if (foundPeel)
             {
-                takeOutX = (-0.20f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+                rm.inturn = peelInTurn;
+                takeOutX = peelPullback.x;
+                takeOutY = peelPullback.y;
+                
+                Debug.Log($"[AI_Target] Runback → Peel fallback SUCCESS - InTurn: {peelInTurn}, Pullback: {peelPullback}");
             }
             else
             {
-                takeOutX = (-0.22f * ((targetX + 1.35f) / 2.7f)) + 0.10f;
+                // LAST RESORT: Try regular takeout on guard
+                Debug.LogWarning($"[AI_Target] Runback AND Peel FAILED - trying regular takeout on guard");
+                
+                Vector2 takeoutPullback;
+                bool takeoutInTurn;
+                bool foundTakeout = CalculatePhysicsBasedShot(guardRockPos, out takeoutPullback, out takeoutInTurn, "Take Out", rockTarget);
+                
+                if (foundTakeout)
+                {
+                    rm.inturn = takeoutInTurn;
+                    takeOutX = takeoutPullback.x;
+                    takeOutY = takeoutPullback.y;
+                    
+                    Debug.Log($"[AI_Target] Runback → Takeout fallback SUCCESS");
+                }
+                else
+                {
+                    // ABSOLUTE FAILURE: Draw to button
+                    Debug.LogError($"[AI_Target] ALL runback fallbacks FAILED - drawing to button");
+                    OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+                    yield break;
+                }
             }
             
             Debug.LogWarning($"[AI_Target] Fallback - Using existing turn state: {(rm.inturn ? "IN-TURN" : "OUT-TURN")}");
@@ -2327,25 +2634,56 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // Fallback to old method
-            Debug.LogWarning("[Physics Draw] Failed, using fallback");
-            targetX = targetPos.x;
-            targetY = targetPos.y;
-
-            takeOutY = (-0.21f * ((targetY - 5.225f) / 2.55f)) - 26.9f;
-
-            if (rm.inturn == false)
+            // FALLBACK: Draw shot failed - try guard shot instead (lighter weight might work)
+            Debug.LogWarning("[Physics Draw] Failed, trying guard shot as fallback");
+            
+            Vector2 guardPullback;
+            bool guardInTurn;
+            bool foundGuard = CalculatePhysicsBasedGuardShot(targetPosition, out guardPullback, out guardInTurn);
+            
+            if (foundGuard)
             {
-                takeOutX = (-0.169f * ((targetX + 1.35f) / 2.7f)) + 0.021f;
+                rm.inturn = guardInTurn;
+                takeOutX = guardPullback.x;
+                takeOutY = guardPullback.y;
+                
+                Debug.Log($"[Physics Draw] Draw → Guard fallback SUCCESS - InTurn: {guardInTurn}, Pullback: {guardPullback}");
             }
             else
             {
-                takeOutX = (-0.15f * ((targetX + 1.35f) / 2.7f)) + 0.12f;
+                // LAST RESORT: Just place a guard in the open (can't reach target)
+                Debug.LogError($"[Physics Draw] Draw AND Guard BOTH FAILED - placing emergency center guard");
+                
+                // Emergency guard placement - center, medium depth
+                rm.inturn = Random.value > 0.5f; // Random turn
+                
+                Vector2 emergencyGuardTarget = new Vector2(
+                    Random.Range(-0.15f, 0.15f), // Center with slight variance
+                    Random.Range(3.0f, 3.5f)      // Standard guard depth
+                );
+                
+                Vector2 emergencyPullback;
+                bool emergencyInTurn;
+                bool foundEmergency = CalculatePhysicsBasedGuardShot(emergencyGuardTarget, out emergencyPullback, out emergencyInTurn);
+                
+                if (foundEmergency)
+                {
+                    rm.inturn = emergencyInTurn;
+                    takeOutX = emergencyPullback.x;
+                    takeOutY = emergencyPullback.y;
+                    
+                    Debug.Log($"[Physics Draw] Emergency guard placement - InTurn: {emergencyInTurn}");
+                }
+                else
+                {
+                    // CATASTROPHIC: Can't even place a guard - throw it away
+                    Debug.LogError($"[Physics Draw] CATASTROPHIC FAILURE - throwing rock away");
+                    
+                    rm.inturn = Random.value > 0.5f;
+                    takeOutX = Random.Range(-1.5f, 1.5f);
+                    takeOutY = -27.0f; // Very light (will sail past)
+                }
             }
-
-            float angle = Vector2.Angle(Vector2.zero, new Vector2(takeOutX, takeOutY));
-            float distance = Vector2.Distance(new Vector2(takeOutX, takeOutY), new Vector2(0f, -25f));
-            takeOutX += (distance * Mathf.Sin(angle));
         }
 
         aiShoot.OnShot("Draw To Target", rockCurrent);
@@ -2414,10 +2752,11 @@ public class AI_Target : MonoBehaviour
         // CANDIDATE 1: Direct to target (baseline - MUST try this!)
         candidateTargets.Add(targetPosition);
         
-        // CANDIDATE 2-N: FULL RADIAL SWEEP around TARGET
-        // Radii kept tight (max 1.0m from target) to stay close to desired position
-        float[] radii = new float[] { 0.15f, 0.3f, 0.5f, 0.7f, 1.0f }; // Tight clustering around target
-        float[] angles = new float[] { 0f, 30f, 60f, 90f, 120f, 150f, 180f, 210f, 240f, 270f, 300f, 330f }; // Every 30° = 12 positions per radius
+        // CANDIDATE 2-N: TIGHTER RADIAL SWEEP around TARGET
+        // PRECISION TARGETING: Radii kept VERY tight (max 0.4m from target)
+        // Philosophy: We want to hit EXACTLY where we aim, not "close enough"
+        float[] radii = new float[] { 0.10f, 0.20f, 0.30f, 0.40f }; // Much tighter - within 40cm max
+        float[] angles = new float[] { 0f, 45f, 90f, 135f, 180f, 225f, 270f, 315f }; // Every 45° = 8 positions per radius (fewer tests)
         
         foreach (float radius in radii)
         {
@@ -2435,23 +2774,67 @@ public class AI_Target : MonoBehaviour
             }
         }
         
-        Debug.Log($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 1.0m of target)");
+        Debug.Log($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 0.4m of target - TIGHT PRECISION)");
+        
+        // Get velocity multiplier for draw weight calculation
+        TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+        float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
         
         // TEST EACH CANDIDATE POSITION
         for (int turnDir = 0; turnDir < 2; turnDir++)
         {
             bool tryInTurn = (turnDir == 0);
             
-            Debug.Log($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN" : "OUT-TURN")} ---");
+            Debug.Log($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")} ---");
+            
+            // STEP 1: Measure curl for this turn direction at draw weight
+            // Simulate straight shot to target to see how much curl we get
+            float targetDistFromLauncher = Vector2.Distance(launcherPos, targetPosition);
+            float desiredPullbackDistance;
+            
+            if (targetDistFromLauncher < 28f) desiredPullbackDistance = 3.0f;
+            else if (targetDistFromLauncher < 32f) desiredPullbackDistance = 3.2f;
+            else desiredPullbackDistance = 3.4f;
+            
+            float drawVelocity = desiredPullbackDistance * velocityMultiplier;
+            
+            Vector2 straightDirection = (targetPosition - launcherPos).normalized;
+            Vector2 straightVelocity = straightDirection * drawVelocity;
+            
+            List<Vector2> curlTestPath = trajectorySimulator.SimulateTrajectory(
+                launcherPos, straightVelocity, tryInTurn, 250, rocksInPlay, forPlayerPreview: false);
+            
+            float curlOffset = 0f;
+            if (curlTestPath.Count > 0)
+            {
+                Vector2 straightFinal = curlTestPath[curlTestPath.Count - 1];
+                curlOffset = straightFinal.x - targetPosition.x; // Measured curl amount
+                
+                Debug.Log($"[Curl Measurement] 🎯 DETAILED CURL ANALYSIS:\n" +
+                          $"  Turn: {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
+                          $"  Aim: Straight at target X={targetPosition.x:F3}\n" +
+                          $"  Result: Landed at X={straightFinal.x:F3}\n" +
+                          $"  Measured Curl: {curlOffset:F3} ({(curlOffset > 0 ? "RIGHT →" : "LEFT ←")})\n" +
+                          $"  Compensation: Aim at X={(targetPosition.x - curlOffset):F3} (offset {-curlOffset:F3})\n" +
+                          $"  Logic: If shot curls {curlOffset:F3}, aim OPPOSITE {-curlOffset:F3} to hit target");
+            }
+            
+            Debug.Log($"[Physics Draw] Curl compensation for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {curlOffset:F3} (will aim {-curlOffset:F3} to compensate)");
             
             foreach (Vector2 candidateTarget in candidateTargets)
             {
-                // Calculate required velocity
-                Vector2 requiredVelocity = trajectorySimulator.CalculateVelocityToTarget(
-                    launcherPos,
-                    candidateTarget,
-                    tryInTurn
-                );
+                // Apply curl compensation to this candidate
+                Vector2 compensatedTarget = new Vector2(candidateTarget.x - curlOffset, candidateTarget.y);
+                
+                Debug.Log($"[Curl Compensation] 🎯 APPLYING TO CANDIDATE:\n" +
+                          $"  Original target: ({candidateTarget.x:F3}, {candidateTarget.y:F3})\n" +
+                          $"  Curl offset: {curlOffset:F3}\n" +
+                          $"  Compensated aim: ({compensatedTarget.x:F3}, {compensatedTarget.y:F3})\n" +
+                          $"  Expected: Curl will bring it back to ({candidateTarget.x:F3}, {candidateTarget.y:F3})");
+                
+                // Calculate velocity toward COMPENSATED target
+                Vector2 direction = (compensatedTarget - launcherPos).normalized;
+                Vector2 requiredVelocity = direction * drawVelocity;
                 
                 if (requiredVelocity.magnitude < 3f || requiredVelocity.magnitude > 20f)
                     continue;
@@ -2473,6 +2856,20 @@ public class AI_Target : MonoBehaviour
                 Vector2 finalPos = simulatedPath[simulatedPath.Count - 1];
                 TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
                 
+                // VERIFICATION: Did compensation work?
+                float actualError = finalPos.x - candidateTarget.x;
+                float expectedError = 0f; // Should be minimal if compensation worked
+                float compensationEffectiveness = 1f - Mathf.Abs(actualError / Mathf.Max(0.01f, Mathf.Abs(curlOffset)));
+                
+                Debug.Log($"[Curl Verification] 🎯 COMPENSATION RESULT:\n" +
+                          $"  Aimed at: ({compensatedTarget.x:F3}, {compensatedTarget.y:F3})\n" +
+                          $"  Landed at: ({finalPos.x:F3}, {finalPos.y:F3})\n" +
+                          $"  Target was: ({candidateTarget.x:F3}, {candidateTarget.y:F3})\n" +
+                          $"  Error from target: {actualError:F3}\n" +
+                          $"  Original curl: {curlOffset:F3}\n" +
+                          $"  Compensation effectiveness: {(compensationEffectiveness * 100f):F1}%\n" +
+                          $"  {(Mathf.Abs(actualError) < 0.1f ? "✅ GOOD" : Mathf.Abs(actualError) < 0.3f ? "⚠️ ACCEPTABLE" : "❌ POOR")}");
+                
                 // ========================================
                 // SOPHISTICATED SCORING SYSTEM
                 // ========================================
@@ -2481,28 +2878,37 @@ public class AI_Target : MonoBehaviour
                 
                 // PART 1: PROXIMITY TO TARGET (60 points max) - HIGHEST PRIORITY!
                 // Goal: Get as CLOSE AS POSSIBLE to the requested target position
+                // TIGHTER SCORING: More demanding accuracy requirements
                 float distToTarget = Vector2.Distance(finalPos, candidateTarget);
                 float proximityScore = 0f;
                 
-                if (distToTarget < 0.1f)
+                if (distToTarget < 0.08f)
                 {
-                    proximityScore = 60f; // Very close (<10cm) = excellent!
+                    proximityScore = 60f; // EXCELLENT (<8cm) = pinpoint accuracy!
                 }
-                else if (distToTarget < 0.3f)
+                else if (distToTarget < 0.15f)
                 {
-                    proximityScore = 50f; // Close (<30cm) = very good
+                    proximityScore = 55f; // Very close (<15cm) = excellent
                 }
-                else if (distToTarget < 0.6f)
+                else if (distToTarget < 0.25f)
                 {
-                    proximityScore = 35f; // Acceptable (<60cm) = good
+                    proximityScore = 48f; // Close (<25cm) = very good
                 }
-                else if (distToTarget < 1.0f)
+                else if (distToTarget < 0.40f)
                 {
-                    proximityScore = 20f; // Within 1m = okay
+                    proximityScore = 38f; // Acceptable (<40cm) = good
+                }
+                else if (distToTarget < 0.60f)
+                {
+                    proximityScore = 25f; // Moderate (<60cm) = okay
+                }
+                else if (distToTarget < 0.80f)
+                {
+                    proximityScore = 15f; // Far (<80cm) = poor
                 }
                 else
                 {
-                    proximityScore = 10f * Mathf.Max(0f, 1f - (distToTarget / 2.0f)); // Further = worse
+                    proximityScore = 5f * Mathf.Max(0f, 1f - (distToTarget / 1.5f)); // Very far = worse
                 }
                 
                 score += proximityScore;
@@ -2672,21 +3078,29 @@ public class AI_Target : MonoBehaviour
         }
         
         // ========================================
-        // ACCEPTANCE CRITERIA: Accept ANY reasonable draw attempt
+        // ACCEPTANCE CRITERIA: Demand HIGH QUALITY draw shots
         // ========================================
-        // Lowered threshold: 15.0 (was 20.0) to accept more attempts
-        // With 60-70 candidates tested, we should find SOMETHING decent!
-        if (bestScore > float.MinValue && bestScore >= 15f)
+        // RAISED threshold: 40.0 (was 15.0) to demand precision
+        // With tighter radii (0.4m max), we should find accurate shots!
+        // Score breakdown for reference:
+        //   60 points = proximity (<8cm = 60, <15cm = 55, <25cm = 48)
+        //   30 points = scoring position (beat opponent, close to button)
+        //   15 points = guard protection
+        //   20 points = in-house bonus
+        //   -25 to +5 = collision context
+        // Threshold of 40 requires: <15cm proximity + decent scoring OR <25cm + guard protection
+        if (bestScore > float.MinValue && bestScore >= 40f)
         {
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
             
-            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/130\n" +
+            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/130 (threshold: 40)\n" +
                       $"  Final position: ({bestFinalPos.x:F2}, {bestFinalPos.y:F2})\n" +
+                      $"  Distance to target: {Vector2.Distance(bestFinalPos, targetPosition):F3}m\n" +
                       $"  Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3})\n" +
                       $"  Turn: {(bestInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
-                      $"  Tested {candidateTargets.Count} candidates\n" +
-                      $"  Strategy: Proximity to target prioritized, late collisions OK");
+                      $"  Tested {candidateTargets.Count} candidates (tight 0.4m radius)\n" +
+                      $"  Strategy: PRECISION targeting, proximity prioritized, late collisions OK");
             return true;
         }
         
