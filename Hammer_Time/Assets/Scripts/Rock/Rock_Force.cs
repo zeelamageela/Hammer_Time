@@ -17,9 +17,6 @@ public class Rock_Force : MonoBehaviour
     
     [Tooltip("Curl force multiplier - tune this to maintain trajectory shape at different speeds")]
     public float curlForceMultiplier = 1.0f;
-    
-    [Tooltip("Base linear damping from Rigidbody2D (read-only, for reference)")]
-    [SerializeField] private float baseDamping = 0.38f;
 
     float velX = 0f;
     float velY = 0f;
@@ -41,10 +38,6 @@ public class Rock_Force : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         
-        // DON'T modify linearDamping - use it directly as-is
-        // The Rigidbody2D linearDamping value IS the ice friction
-        baseDamping = body.linearDamping;
-        
         // ? QUICK TEST MODE: Lock all physics multipliers to 1.0 for perfect determinism!
         // This ensures trajectory is 100% predictable and matches the visual preview exactly
         bool isQuickTestMode = PlayerPrefs.GetInt("QuickTestMode", 0) == 1;
@@ -54,12 +47,6 @@ public class Rock_Force : MonoBehaviour
             curlForceMultiplier = 1.0f;
             Debug.Log($"[Rock_Force] ? QUICK TEST MODE: Physics multipliers LOCKED to 1.0 (perfect determinism)");
         }
-        else
-        {
-            Debug.Log($"[Rock_Force] Using configured multipliers: springTension={springTensionMultiplier:F2}, curlForce={curlForceMultiplier:F2}");
-        }
-        
-        Debug.Log($"[Rock_Force] Using linearDamping: {body.linearDamping:F3}");
 
         am = FindFirstObjectByType<AudioManager>();
         rockSounds = GetComponents<AudioSource>();
@@ -77,15 +64,16 @@ public class Rock_Force : MonoBehaviour
         
         // DETERMINISTIC: Restore damping NOW (was disabled during launch)
         // This is when the rock "officially" starts experiencing ice friction
-        body.linearDamping = baseDamping;
+        body.linearDamping = 0.38f;
+        body.angularDamping = 0.32f;
         
-        Debug.Log($"[Rock_Force Release] Velocity: {body.linearVelocity.magnitude:F2} m/s, flipAxis: {flipAxis}, damping restored to: {baseDamping}");
+        Debug.Log($"[Rock_Force Release] Velocity: {body.linearVelocity.magnitude:F2} m/s, flipAxis: {flipAxis}");
         
         // Apply spring tension multiplier if configured (for variance tuning later)
         if (springTensionMultiplier != 1.0f)
         {
             body.linearVelocity *= springTensionMultiplier;
-            Debug.Log($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Final: {body.linearVelocity.magnitude:F2} m/s");
+            Debug.Log($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
         }
         
         // REAL CURLING: Apply spin NOW (at hog line, not at launch!)
@@ -116,7 +104,6 @@ public class Rock_Force : MonoBehaviour
         if (turnStart == true)
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
-            //Debug.Log("Rotate");
             turnStart = false;
             
             // DIAGNOSTIC: Start frame-by-frame logging after hog line

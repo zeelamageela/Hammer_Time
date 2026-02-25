@@ -171,7 +171,7 @@ public class TrajectoryLine : MonoBehaviour
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
         
-        Debug.Log($"[TrajectoryLine] Physics initialized (original working version - no scaling)");
+        Debug.Log($"[TrajectoryLine] Physics initialized - trajectory will use tuned damping ratio");
     }
 
     void OnTriggerEnter2D(Collider2D collider)

@@ -5152,11 +5152,13 @@ public class AI_Target : MonoBehaviour
     
     /// <summary>
     /// Simulate a direct takeout - returns quality score (0-100)
+    /// NOW WITH MULTI-ROCK DETECTION: Bonus score if takeout causes secondary collisions!
     /// </summary>
     private float SimulateTakeout(GameObject targetRock, int targetRockIndex, int rockCurrent)
     {
         Vector2 targetPos = targetRock.transform.position;
         Vector2 launcherPos = new Vector2(0f, -25f);
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         
         Vector2 pullbackPos;
         bool useInTurn;
@@ -5164,10 +5166,114 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
-            // Score is based on how well physics simulation found a hit
-            // CalculatePhysicsBasedShot returns bestScore (0-100)
-            // For simplicity, if we found a shot, assume it's at least 50% quality
-            return 60f; // Good option
+            // Base score: Successfully found a takeout shot
+            float baseScore = 60f;
+            
+            // MULTI-ROCK DETECTION: Check if hit rock will collide with other rocks!
+            // Get the post-collision path of the HIT rock (where it goes after being struck)
+            TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
+            
+            if (collisionInfo.hasCollision && collisionInfo.hitRockPostCollisionPath != null && collisionInfo.hitRockPostCollisionPath.Count > 0)
+            {
+                List<Vector2> hitRockPath = collisionInfo.hitRockPostCollisionPath;
+                float rockRadius = 0.14f; // Standard rock radius
+                
+                // Get all OTHER rocks that might be in the way
+                List<GameObject> otherRocksInPlay = new List<GameObject>();
+                
+                for (int i = 0; i < gm.rockList.Count; i++)
+                {
+                    var rockEntry = gm.rockList[i];
+                    
+                    // Skip if not in play
+                    if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy || !rockEntry.rockInfo.inPlay)
+                        continue;
+                    
+                    // Skip the PRIMARY target rock (already hitting it)
+                    if (i == targetRockIndex)
+                        continue;
+                    
+                    // Skip the SHOOTER rock (it's the one doing the hitting)
+                    if (i == rockCurrent)
+                        continue;
+                    
+                    // This is a potential SECONDARY target!
+                    otherRocksInPlay.Add(rockEntry.rock);
+                }
+                
+                Debug.Log($"[Multi-Rock Takeout] Checking {otherRocksInPlay.Count} potential secondary targets for hit rock path with {hitRockPath.Count} points");
+                
+                // Check if hit rock's path gets close to any other rocks
+                int secondaryHits = 0;
+                int opponentSecondaryHits = 0;
+                float totalChaos = 0f;
+                
+                foreach (GameObject secondaryRock in otherRocksInPlay)
+                {
+                    Vector2 secondaryPos = secondaryRock.transform.position;
+                    Rock_Info secondaryInfo = secondaryRock.GetComponent<Rock_Info>();
+                    
+                    // Find closest approach distance along hit rock's path
+                    float closestDist = float.MaxValue;
+                    
+                    foreach (Vector2 pathPoint in hitRockPath)
+                    {
+                        float dist = Vector2.Distance(pathPoint, secondaryPos);
+                        if (dist < closestDist)
+                        {
+                            closestDist = dist;
+                        }
+                    }
+                    
+                    // Collision threshold: 2 rock radii = ~0.28 units
+                    // Use generous threshold since simulation might not be pixel-perfect
+                    float collisionThreshold = rockRadius * 2.5f; // ~0.35 units
+                    
+                    if (closestDist < collisionThreshold)
+                    {
+                        secondaryHits++;
+                        
+                        bool isOpponentRock = (secondaryInfo != null && secondaryInfo.teamName != currentRockInfo.teamName);
+                        
+                        if (isOpponentRock)
+                        {
+                            opponentSecondaryHits++;
+                            totalChaos += 25f; // BIG BONUS: Hit opponent's rock!
+                            Debug.Log($"[Multi-Rock] ✓ SECONDARY HIT (opponent): {secondaryRock.name} at dist {closestDist:F3} - CHAOS +25!");
+                        }
+                        else
+                        {
+                            totalChaos += 10f; // Smaller bonus: Hit our own rock (still disrupts ice)
+                            Debug.Log($"[Multi-Rock] ⚠️ SECONDARY HIT (friendly): {secondaryRock.name} at dist {closestDist:F3} - chaos +10");
+                        }
+                    }
+                }
+                
+                // MULTI-ROCK CHAOS MULTIPLIER!
+                if (secondaryHits >= 3)
+                {
+                    totalChaos += 30f; // HUGE BONUS: 3+ rocks affected (CHAOS MADNESS!)
+                    Debug.Log($"[Multi-Rock] 🎯 CHAOS MADNESS! {secondaryHits} secondary hits - BONUS +30!");
+                }
+                else if (secondaryHits >= 2)
+                {
+                    totalChaos += 20f; // Big bonus: 2+ rocks affected
+                    Debug.Log($"[Multi-Rock] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits - BONUS +20!");
+                }
+                
+                // Apply chaos bonus to base score
+                float finalScore = baseScore + totalChaos;
+                
+                if (secondaryHits > 0)
+                {
+                    Debug.Log($"[Multi-Rock Takeout] PRIMARY hit + {secondaryHits} SECONDARY hits ({opponentSecondaryHits} opponent) → TOTAL SCORE: {finalScore:F1}/100 (base: {baseScore:F1}, chaos: +{totalChaos:F1})");
+                }
+                
+                return Mathf.Min(100f, finalScore); // Cap at 100
+            }
+            
+            // No secondary collisions detected - return base score
+            return baseScore;
         }
         
         return 0f; // Can't find a clear shot

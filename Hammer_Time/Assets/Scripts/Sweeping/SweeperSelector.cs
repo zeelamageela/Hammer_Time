@@ -32,6 +32,11 @@ public class SweeperSelector : MonoBehaviour
 
     public Vector2 moveDirection;
     public Vector2 moveDirection2;
+    
+    // Auto-follow collision detection
+    private Vector2 houseCenter = new Vector2(0f, 6.5f);
+    private float lastCollisionCheckTime = 0f;
+    private const float COLLISION_CHECK_INTERVAL = 0.1f;
 
     private void Update()
     {
@@ -39,10 +44,6 @@ public class SweeperSelector : MonoBehaviour
         {
             Vector3 followSpot = new Vector3((rockRB.position.x), (rockRB.position.y), 0f);
             transform.position = followSpot;
-
-            // AUTO-DETECT OPPONENT ROCKS BEHIND T-LINE
-            // Check if ANY opponent rock crossed the T-line and auto-attach sweeper
-            CheckForOpponentRocksBehindTLine();
 
             if (rock2RB != null)
             {
@@ -112,6 +113,9 @@ public class SweeperSelector : MonoBehaviour
             }
 
             }
+            // Auto-follow collision detection
+            CheckForStrategicRockSwitch();
+            
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
@@ -148,38 +152,41 @@ public class SweeperSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ReAttachToRock - Handles tapping rocks to switch sweepers
+    /// - Player's own rocks: Switch regular sweepers to follow this rock
+    /// - Opponent rocks behind T-line: Handled by TeeSweeperController
+    /// </summary>
     public void ReAttachToRock(GameObject rock)
     {
-        //panel.SetActive(true);
         Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
-        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
-
-        if (rockInfo.moving)
+        if (rockInfo == null || !rockInfo.moving)
         {
-            if (rockInfo.teamName == gsp.yellowTeamName)
-            {
-                if (rock.transform.position.y > 6.5f)
-                {
-                    sweeperRedTee.gameObject.SetActive(true);
-                    rock2RB = rock.GetComponent<Rigidbody2D>();
-                }
-            }
-            else if (rockInfo.teamName == gsp.redTeamName)
-            {
-                if (rock.transform.position.y > 6.5f)
-                {
-                    sweeperYellowTee.gameObject.SetActive(true);
-                    rock2RB = rock.GetComponent<Rigidbody2D>();
-                }
-            }
-            else
-            {
-                if (rock.transform.position.y > 6.5f)
-                {
-                    sweeperRedTee.gameObject.SetActive(true);
-                    rock2RB = rock.GetComponent<Rigidbody2D>();
-                }
-            }
+            Debug.Log("[SweeperSelector] Rock not moving or no Rock_Info");
+            return;
+        }
+        
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        
+        if (gsp == null || cm == null) return;
+        
+        // Check if this is player's own rock
+        bool isPlayerRock = (rockInfo.teamName == cm.teamName);
+        
+        if (isPlayerRock)
+        {
+            // Player tapped their own rock - switch regular sweepers to follow it
+            Debug.Log($"[SweeperSelector] Switching regular sweepers to follow {rock.name}");
+            rockRB = rock.GetComponent<Rigidbody2D>();
+            
+            // Keep sweepers active - don't interrupt current sweeping state
+            // Player can continue sweeping the new rock
+        }
+        else if (rock.transform.position.y > 6.5f)
+        {
+            // Opponent rock behind T-line - let TeeSweeperController handle it
+            Debug.Log("[SweeperSelector] Opponent rock behind T-line - TeeSweeperController will handle");
         }
     }
 
@@ -201,69 +208,87 @@ public class SweeperSelector : MonoBehaviour
     }
     
     /// <summary>
-    /// AUTO-DETECT: Check if any opponent rocks are behind T-line and need sweeping
-    /// Called every frame to automatically attach T-line sweeper
+    /// Check if we should auto-switch to a more strategic rock after collision
+    /// Used for tap-backs, run-backs, and double takeouts
     /// </summary>
-    private void CheckForOpponentRocksBehindTLine()
+    void CheckForStrategicRockSwitch()
     {
+        // Only check periodically to avoid performance issues
+        if (Time.time - lastCollisionCheckTime < COLLISION_CHECK_INTERVAL) return;
+        lastCollisionCheckTime = Time.time;
+        
+        if (rockRB == null) return;
+        
         GameManager gm = FindFirstObjectByType<GameManager>();
-        if (gm == null) return;
+        if (gm == null || gm.rockList == null) return;
         
-        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
-        if (gsp == null) return;
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        if (cm == null) return;
         
-        // Get the currently shooting team (whose rock is in rockRB)
         GameObject currentRock = rockRB.gameObject;
         Rock_Info currentRockInfo = currentRock.GetComponent<Rock_Info>();
-        string currentTeam = currentRockInfo.teamName;
+        if (currentRockInfo == null || !currentRockInfo.moving) return;
         
-        // Check all rocks to find opponent rocks behind T-line
+        // Get current rock's distance to house center
+        float currentDistToHouse = Vector2.Distance(rockRB.position, houseCenter);
+        
+        // Find all moving rocks of player's team
+        GameObject bestRock = null;
+        float bestScore = float.MinValue;
+        
         foreach (var rockEntry in gm.rockList)
         {
-            if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy)
-                continue;
+            if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy) continue;
+            if (rockEntry.rock == currentRock) continue;  // Skip current rock
             
             Rock_Info rockInfo = rockEntry.rockInfo;
+            if (rockInfo == null || !rockInfo.moving) continue;
             
-            // Skip if not moving
-            if (!rockInfo.moving)
-                continue;
+            // Only consider player's own rocks
+            if (rockInfo.teamName != cm.teamName) continue;
             
-            // Skip if same team as current shooter
-            if (rockInfo.teamName == currentTeam)
-                continue;
+            Rigidbody2D otherRB = rockEntry.rock.GetComponent<Rigidbody2D>();
+            if (otherRB == null) continue;
             
-            // Check if rock is behind T-line (Y > 6.5)
-            if (rockEntry.rock.transform.position.y > 6.5f)
+            // Check if this rock is moving towards the house
+            Vector2 toHouse = houseCenter - otherRB.position;
+            float dotProduct = Vector2.Dot(otherRB.linearVelocity.normalized, toHouse.normalized);
+            
+            // Only consider rocks moving towards house (dot > 0.5 = roughly 60 degrees)
+            if (dotProduct < 0.5f) continue;
+            
+            // Calculate strategic score:
+            // - Higher score for rocks closer to house center
+            // - Higher score for rocks moving faster
+            // - Higher score for rocks heading more directly towards center
+            float distToHouse = Vector2.Distance(otherRB.position, houseCenter);
+            float velocity = otherRB.linearVelocity.magnitude;
+            
+            // Strategic score: prioritize rocks that:
+            // 1. Are moving towards house (dotProduct weight)
+            // 2. Are closer to house center (inverse distance)
+            // 3. Are moving with decent velocity
+            float strategicScore = dotProduct * 2f + (1f / (distToHouse + 1f)) * 3f + velocity * 0.5f;
+            
+            // CRITICAL: Only switch if other rock is significantly MORE strategic
+            // Must be heading closer to center than current rock
+            if (distToHouse < currentDistToHouse - 0.3f && strategicScore > bestScore)
             {
-                // FOUND OPPONENT ROCK BEHIND T-LINE!
-                // Activate appropriate T-line sweeper
-                
-                if (rockInfo.teamName == gsp.yellowTeamName)
-                {
-                    // Yellow rock behind T-line ? Red team sweeps it
-                    if (!sweeperRedTee.gameObject.activeSelf)
-                    {
-                        sweeperRedTee.gameObject.SetActive(true);
-                        rock2RB = rockEntry.rock.GetComponent<Rigidbody2D>();
-                        tSweepParent.SetActive(true);
-                        Debug.Log($"[T-Line Sweep] AUTO-ACTIVATED Red sweeper for opponent Yellow rock at Y={rockEntry.rock.transform.position.y:F2}");
-                    }
-                }
-                else if (rockInfo.teamName == gsp.redTeamName)
-                {
-                    // Red rock behind T-line ? Yellow team sweeps it
-                    if (!sweeperYellowTee.gameObject.activeSelf)
-                    {
-                        sweeperYellowTee.gameObject.SetActive(true);
-                        rock2RB = rockEntry.rock.GetComponent<Rigidbody2D>();
-                        tSweepParent.SetActive(true);
-                        Debug.Log($"[T-Line Sweep] AUTO-ACTIVATED Yellow sweeper for opponent Red rock at Y={rockEntry.rock.transform.position.y:F2}");
-                    }
-                }
-                
-                // Only attach to first opponent rock found
-                break;
+                bestScore = strategicScore;
+                bestRock = rockEntry.rock;
+            }
+        }
+        
+        // If we found a more strategic rock, switch to it
+        if (bestRock != null)
+        {
+            Debug.Log($"[SweeperSelector] AUTO-FOLLOW: Switching from {currentRock.name} to {bestRock.name} (more strategic)");
+            rockRB = bestRock.GetComponent<Rigidbody2D>();
+            
+            // Notify player via callout
+            if (sm != null)
+            {
+                sm.CallOut("Sweep");  // "SWEEP!" callout to alert player
             }
         }
     }

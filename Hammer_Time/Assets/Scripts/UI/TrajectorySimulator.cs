@@ -15,6 +15,7 @@ public class TrajectorySimulator
     // Empirical data: Rock travels ~60% of distance that 0.38 damping would predict
     // Solution: Use HIGHER damping value in simulation to match reality
     // Unity applies: velocity *= (1 - linearDamping * Time.fixedDeltaTime)
+    private float baseDamping = 0.62f; // Base damping (before global speed scaling)
     private float linearDamping = 0.62f; // TUNED: Increased from 0.38 to match ACTUAL behavior (rock stops sooner than 0.38 predicts)
     private float lateralFriction = 0.002f;  // Reduced accordingly
     
@@ -26,7 +27,7 @@ public class TrajectorySimulator
     public float scaleFactor = 0.1f;
     public float initialAngularVelocity = 60f; // This is the REAL value that works!
     public float angularDamping = 0.32f; // FIXED: Was 0.05, Rigidbody2D uses 0.32!
-    public float curlForceScale = 0.9f; // TUNED: Increased from 0.5 to compensate for mass fix (0.5 * 19.96/19.96 was working, now need ~0.5 * 145/19.96 ≈ 3.6)
+    public float curlForceScale = 0.9f; // TUNED: Increased from 0.5 to compensate for mass fix
     
     // Rock properties
     private float rockMass = 145f; // FIXED: Matches actual rock Rigidbody2D mass (was 19.96 - wrong!)
@@ -68,9 +69,12 @@ public class TrajectorySimulator
     
     public TrajectorySimulator(float friction, float curl)
     {
+        baseDamping = friction;
         linearDamping = friction;
         curlAmount = curl;
         
+        // NO SCALING! The tuned ratio (0.62 / 0.38 = 1.63x) already accounts for everything
+        // This ratio was carefully calibrated and should NOT be changed
         Debug.Log($"[TrajectorySimulator] Initialized with friction: {friction:F3} (Rock's actual linearDamping=0.38, but effective damping is higher)");
     }
     

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -96,26 +96,126 @@ public class TeamManager : MonoBehaviour
 
         if (aiTurn)
         {
-            sweeperL.name = "AI Sweeper Left";
-            sweeperR.name = "AI Sweeper Right";
-            sweeperT.name = "AI Sweeper Tee";
-            sweeperL.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
-            sweeperR.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
-            sweeperT.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
-            sweeperL.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
-            sweeperR.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
-            sweeperT.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
-            sweeperL.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
-            sweeperR.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
-            sweeperT.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+            // AI's turn - they're shooting, so we need AI stats for their sweepers
+            // Find opponent team's stats
+            Team opponentTeam = null;
+            for (int i = 0; i < cm.currentTournyTeams.Length; i++)
+            {
+                if (cm.currentTournyTeams[i].name == cm.playerTeam.nextOpp)
+                {
+                    opponentTeam = cm.currentTournyTeams[i];
+                    // Use team average sweep strength as base AI stats
+                    aiStats = opponentTeam.sweepStrength;
+                    break;
+                }
+            }
+            
+            // NULL CHECK: If opponent team not found, use fallback
+            if (opponentTeam == null || opponentTeam.players == null || opponentTeam.players.Count < 4)
+            {
+                Debug.LogWarning("[TeamManager] Opponent team or players not found - using fallback stats");
+                sweeperL.name = "AI Sweeper Left";
+                sweeperR.name = "AI Sweeper Right";
+                sweeperT.name = "AI Skip";
+                sweeperL.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+                sweeperR.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(aiStats + gsp.oppStats.sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+                sweeperR.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+                sweeperT.sweepEndurance.SetBaseValue(aiStats + gsp.oppStats.sweepEndurance);
+                sweeperL.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+                sweeperR.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(aiStats + gsp.oppStats.sweepCohesion);
+                return;
+            }
+
+            // Set sweeper names and stats based on rock position
+            if (rockCurrent > 11)
+            {
+                // Skip shooting (13-16) → Lead + Second sweep, Third sweeps T-line
+                sweeperL.name = opponentTeam.players[0].name;
+                sweeperL.sweepStrength.SetBaseValue(opponentTeam.players[0].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(opponentTeam.players[0].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperL.sweepCohesion.SetBaseValue(opponentTeam.players[0].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperR.name = opponentTeam.players[1].name;
+                sweeperR.sweepStrength.SetBaseValue(opponentTeam.players[1].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperR.sweepEndurance.SetBaseValue(opponentTeam.players[1].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperR.sweepCohesion.SetBaseValue(opponentTeam.players[1].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperT.name = opponentTeam.players[2].name;  // Third sweeps T-line when skip is shooting
+                sweeperT.sweepStrength.SetBaseValue(opponentTeam.players[2].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperT.sweepEndurance.SetBaseValue(opponentTeam.players[2].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperT.sweepCohesion.SetBaseValue(opponentTeam.players[2].sweepCohesion + gsp.oppStats.sweepCohesion);
+            }
+            else if (rockCurrent > 7)
+            {
+                // Third shooting (9-12) → Lead + Second sweep, Skip sweeps T-line
+                sweeperL.name = opponentTeam.players[0].name;
+                sweeperL.sweepStrength.SetBaseValue(opponentTeam.players[0].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(opponentTeam.players[0].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperL.sweepCohesion.SetBaseValue(opponentTeam.players[0].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperR.name = opponentTeam.players[1].name;
+                sweeperR.sweepStrength.SetBaseValue(opponentTeam.players[1].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperR.sweepEndurance.SetBaseValue(opponentTeam.players[1].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperR.sweepCohesion.SetBaseValue(opponentTeam.players[1].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperT.name = opponentTeam.players[3].name;  // Skip sweeps T-line
+                sweeperT.sweepStrength.SetBaseValue(opponentTeam.players[3].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperT.sweepEndurance.SetBaseValue(opponentTeam.players[3].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperT.sweepCohesion.SetBaseValue(opponentTeam.players[3].sweepCohesion + gsp.oppStats.sweepCohesion);
+            }
+            else if (rockCurrent > 3)
+            {
+                // Second shooting (5-8) → Lead + Third sweep, Skip sweeps T-line
+                sweeperL.name = opponentTeam.players[0].name;
+                sweeperL.sweepStrength.SetBaseValue(opponentTeam.players[0].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(opponentTeam.players[0].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperL.sweepCohesion.SetBaseValue(opponentTeam.players[0].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperR.name = opponentTeam.players[2].name;  // Third sweeps right
+                sweeperR.sweepStrength.SetBaseValue(opponentTeam.players[2].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperR.sweepEndurance.SetBaseValue(opponentTeam.players[2].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperR.sweepCohesion.SetBaseValue(opponentTeam.players[2].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperT.name = opponentTeam.players[3].name;  // Skip sweeps T-line
+                sweeperT.sweepStrength.SetBaseValue(opponentTeam.players[3].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperT.sweepEndurance.SetBaseValue(opponentTeam.players[3].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperT.sweepCohesion.SetBaseValue(opponentTeam.players[3].sweepCohesion + gsp.oppStats.sweepCohesion);
+            }
+            else
+            {
+                // Lead shooting (1-4) → Second + Third sweep, Skip sweeps T-line
+                sweeperL.name = opponentTeam.players[1].name;  // Second sweeps left
+                sweeperL.sweepStrength.SetBaseValue(opponentTeam.players[1].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperL.sweepEndurance.SetBaseValue(opponentTeam.players[1].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperL.sweepCohesion.SetBaseValue(opponentTeam.players[1].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperR.name = opponentTeam.players[2].name;  // Third sweeps right
+                sweeperR.sweepStrength.SetBaseValue(opponentTeam.players[2].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperR.sweepEndurance.SetBaseValue(opponentTeam.players[2].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperR.sweepCohesion.SetBaseValue(opponentTeam.players[2].sweepCohesion + gsp.oppStats.sweepCohesion);
+                
+                sweeperT.name = opponentTeam.players[3].name;  // Skip sweeps T-line
+                sweeperT.sweepStrength.SetBaseValue(opponentTeam.players[3].sweepStrength + gsp.oppStats.sweepStrength);
+                sweeperT.sweepEndurance.SetBaseValue(opponentTeam.players[3].sweepEnduro + gsp.oppStats.sweepEndurance);
+                sweeperT.sweepCohesion.SetBaseValue(opponentTeam.players[3].sweepCohesion + gsp.oppStats.sweepCohesion);
+            }
+            
+            Debug.Log($"[TeamManager] AI Sweepers - L: {sweeperL.name}, R: {sweeperR.name}, T: {sweeperT.name}");
         }
         else
         {
+            // Player's turn - determine which players are sweeping based on who's shooting
+            // T-line sweeper is ALWAYS the skip (for player team, that's cm.playerCharacter at index 3)
+
             if (rockCurrent > 11)
             {
+                // Skip is shooting (rocks 13-16) → Lead + Second sweep
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[0].name;
-                sweeperT.name = cm.activePlayers[2].name;
+                sweeperT.name = cm.activePlayers[2].name;  // Third sweeps behind T-line
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
                 sweeperT.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
@@ -128,51 +228,58 @@ public class TeamManager : MonoBehaviour
             }
             else if (rockCurrent > 7)
             {
+                // Third is shooting (rocks 9-12) → Lead + Second sweep, Skip sweeps T-line
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[0].name;
-                sweeperT.name = cm.playerName + " " + cm.teamName;
+                sweeperT.name = cm.playerName + " " + cm.teamName;  // Skip (player) sweeps T-line
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);  // Skip's stats
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);  // Skip's stats
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
+                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
             else if (rockCurrent > 3)
             {
+                // Second is shooting (rocks 5-8) → Third + Lead sweep, Skip sweeps T-line
                 sweeperL.name = cm.activePlayers[2].name;
                 sweeperR.name = cm.activePlayers[0].name;
-                sweeperT.name = cm.playerName + " " + cm.teamName;
+                sweeperT.name = cm.playerName + " " + cm.teamName;  // Skip (player) sweeps T-line
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[0].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);  // Skip's stats
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[0].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);  // Skip's stats
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
+                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
             else
             {
+                // Lead is shooting (rocks 1-4) → Second + Third sweep, Skip sweeps T-line
                 sweeperL.name = cm.activePlayers[1].name;
                 sweeperR.name = cm.activePlayers[2].name;
-                sweeperT.name = cm.playerName + " " + cm.teamName;
+                sweeperT.name = cm.playerName + " " + cm.teamName;  // Skip (player) sweeps T-line
                 sweeperL.sweepStrength.SetBaseValue(cm.activePlayers[1].sweepStrength);
                 sweeperR.sweepStrength.SetBaseValue(cm.activePlayers[2].sweepStrength);
-                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);
+                sweeperT.sweepStrength.SetBaseValue(cm.cStats.sweepStrength);  // Skip's stats
                 sweeperL.sweepEndurance.SetBaseValue(cm.activePlayers[1].sweepEnduro);
                 sweeperR.sweepEndurance.SetBaseValue(cm.activePlayers[2].sweepEnduro);
-                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);
+                sweeperT.sweepEndurance.SetBaseValue(cm.cStats.sweepEndurance);  // Skip's stats
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
-                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);
+                sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
+                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
         }
     }
+
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
         // CRITICAL: Null safety checks for loaded games

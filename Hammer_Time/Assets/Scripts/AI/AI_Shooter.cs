@@ -275,6 +275,11 @@ public class AI_Shooter : MonoBehaviour
         float lateralErrorThreshold = 0.12f; // 12cm lateral error
         float distanceErrorThreshold = 0.25f; // 25cm distance error
         float predictionLookahead = 1.5f; // Look 1.5 units ahead
+        
+        // COLLISION AVOIDANCE: Check if trajectory will collide with obstacles
+        bool collisionImminent = false;
+        float collisionDistance = float.MaxValue;
+        Vector2 collisionPoint = Vector2.zero;
 
         string currentSweepState = "None";
 
@@ -291,6 +296,36 @@ public class AI_Shooter : MonoBehaviour
             float lateralError = currentPos.x - predictedPosAtCurrentY.x;
             float distanceToTarget = targetPosition.y - currentPos.y;
             float predictedShortfall = targetPosition.y - predictedPosAhead.y;
+            
+            // COLLISION LOOKAHEAD: Check if rock will hit obstacles in next 2 meters
+            collisionImminent = false;
+            float collisionLookaheadDistance = 2.0f; // Check 2m ahead
+            
+            // Re-simulate from current position to check for imminent collisions
+            List<Vector2> lookaheadPath = trajectorySimulator.SimulateTrajectory(
+                currentPos,
+                rockRB.linearVelocity,
+                isInTurn,
+                100, // Short sim
+                rocksInPlay,
+                forPlayerPreview: false
+            );
+            
+            TrajectorySimulator.CollisionInfo lookaheadCollision = trajectorySimulator.GetCollisionInfo();
+            
+            if (lookaheadCollision.hasCollision)
+            {
+                // Check if collision is imminent (within lookahead distance)
+                collisionDistance = Vector2.Distance(currentPos, lookaheadCollision.collisionPoint);
+                
+                if (collisionDistance < collisionLookaheadDistance)
+                {
+                    collisionImminent = true;
+                    collisionPoint = lookaheadCollision.collisionPoint;
+                    
+                    Debug.Log($"[AI_Sweeper] COLLISION IMMINENT! Distance: {collisionDistance:F2}m at {collisionPoint}");
+                }
+            }
 
             // Get sweeper skill
             float sweepSkill = GetSweeperSkill();
@@ -303,18 +338,67 @@ public class AI_Shooter : MonoBehaviour
             // DECISION LOGIC
             string desiredState = "None";
 
-            // Modified decision logic:
-            if (isOpponentRock && pastTLine)
+            // OPPONENT ROCK INTERFERENCE: Help them fail!
+            if (isOpponentRock)
             {
-                // STRATEGY: Make opponent rock go TOO FAR
-                // Always sweep for weight to push it past their target
-                desiredState = "Weight";
-
-                Debug.Log($"[AI_Sweeper] Opponent rock past T-line - sweeping to overshoot!");
+                // Strategy: DON'T sweep (let their shot fail naturally)
+                // Exception: If they're going to succeed AND we can make them overshoot, sweep them OUT
+                if (pastTLine && predictedShortfall < 0.5f) // They're on target!
+                {
+                    // Make them go TOO FAR by sweeping weight
+                    desiredState = "Weight";
+                    Debug.Log($"[AI_Sweeper] Opponent rock on target - sweeping to make them overshoot!");
+                }
+                else
+                {
+                    // They're failing on their own - don't help them!
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] Opponent rock failing - doing nothing");
+                }
             }
-
+            // YOUR ROCKS: Help them succeed!
+            // PRIORITY 0: COLLISION AVOIDANCE (highest priority!)
+            else if (collisionImminent && !isOpponentRock)
+            {
+                // Check if sweeping can help avoid collision
+                // If rock is going straight into obstacle, sweep hard to either:
+                // 1. Get there faster (reach target before collision)
+                // 2. Adjust line to miss obstacle
+                
+                // Determine if collision is on path to target or off-target
+                float collisionOffsetX = collisionPoint.x - targetPosition.x;
+                
+                if (Mathf.Abs(collisionOffsetX) > 0.3f)
+                {
+                    // Collision is off-line - try to adjust line to avoid it
+                    if (collisionOffsetX > 0f)
+                    {
+                        // Obstacle is right of target - sweep to pull rock LEFT
+                        desiredState = isInTurn ? "Curl" : "Line";
+                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line LEFT (obstacle right of target)");
+                    }
+                    else
+                    {
+                        // Obstacle is left of target - sweep to push rock RIGHT
+                        desiredState = isInTurn ? "Line" : "Curl";
+                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT (obstacle left of target)");
+                    }
+                }
+                else if (collisionDistance < distanceToTarget * 0.8f)
+                {
+                    // Collision is on-path and before target - try to get past it faster
+                    desiredState = "Critical";
+                    Debug.Log($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
+                }
+                else
+                {
+                    // Collision is on-path and near/past target - can't avoid, just optimize
+                    desiredState = "Weight";
+                    Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
+                }
+            }
             // PRIORITY 1: CRITICAL DISTANCE (rock won't reach target!)
-            if (predictedShortfall > 1.0f)
+            else if (predictedShortfall > 1.0f)
             {
                 desiredState = "Critical";
             }
@@ -328,12 +412,12 @@ public class AI_Shooter : MonoBehaviour
             {
                 if (isInTurn)
                 {
-                    // IN-TURN curls RIGHT
+                    // IN-TURN curls LEFT (negative X)
                     desiredState = (lateralError > 0f) ? "Line" : "Curl";
                 }
                 else
                 {
-                    // OUT-TURN curls LEFT
+                    // OUT-TURN curls RIGHT (positive X)
                     desiredState = (lateralError < 0f) ? "Line" : "Curl";
                 }
             }
@@ -363,7 +447,7 @@ public class AI_Shooter : MonoBehaviour
                 //        break;
                 //}
 
-                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}");
+                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}");
             }
 
             yield return new WaitForFixedUpdate();

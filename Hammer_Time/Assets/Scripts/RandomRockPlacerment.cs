@@ -377,8 +377,8 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// SMART PLACEMENT: Use AI_Strategy to determine shot, then place with unit circle randomness
-    /// This uses the SAME decision logic as real physics shooting!
+    /// SMART PLACEMENT: Use AI_Strategy to determine shot type, matching SAME strategic logic as live gameplay!
+    /// This ensures random rock placement is realistic and strategically sound.
     /// </summary>
     IEnumerator SmartPlacement(bool redTeam)
     {
@@ -421,14 +421,8 @@ public class RandomRockPlacerment : MonoBehaviour
             }
         }
         
-        // STEP 1: Let AI_Strategy decide the shot type
-        // This ensures SAME logic as real shooting!
-        string shotType = DetermineSmartShotTypeSimple(
-            activeCharStats.drawAccuracy.GetValue() < 50, // isBehind (simplified)
-            (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer, // hasHammer
-            gm.houseList.Count, // rocksInHouse
-            gm.gList.Count  // guardsInPlay
-        );
+        // STEP 1: Use AI_Strategy to decide shot type (SAME logic as live gameplay!)
+        string shotType = DetermineSmartShotTypeUsingAIStrategy(rockCurrent);
         
         Debug.Log($"[SmartPlacement] AI_Strategy chose: {shotType}");
         
@@ -441,6 +435,7 @@ public class RandomRockPlacerment : MonoBehaviour
             case "Guard":
             case "Centre Guard":
             case "Corner Guard":
+            case "Manual Guard":
                 // GUARD: Unit circle centered ON the target position
                 targetPosition = CalculateGuardTargetPosition(rockCurrent);
                 finalPosition = ApplyAccuracyToGuard(targetPosition, activeCharStats);
@@ -450,6 +445,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 
             case "Draw":
             case "Draw Four Foot":
+            case "Manual Draw":
                 // DRAW: Ellipse centered BELOW the target (weight errors > line errors)
                 targetPosition = CalculateDrawTargetPosition();
                 finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
@@ -458,6 +454,8 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
                 
             case "Take Out":
+            case "Peel":
+            case "Hit And Roll":
                 // TAKEOUT: Physics simulation needed for collision angles
                 int targetRock = FindBestTakeoutTarget(activeTeamName);
                 if (targetRock >= 0)
@@ -484,6 +482,24 @@ public class RandomRockPlacerment : MonoBehaviour
                 fltText.Value = "Draw";
                 break;
                 
+            case "Freeze":
+                // FREEZE: Place close to target rock
+                int freezeTarget = FindBestTakeoutTarget(activeTeamName);
+                if (freezeTarget >= 0)
+                {
+                    Vector2 freezePos = rockPos[freezeTarget];
+                    finalPosition = ApplyAccuracyToFreeze(freezePos, activeCharStats);
+                    fltText.Value = "Freeze";
+                    Debug.Log($"[SmartPlacement] Freeze: target={freezePos}, final={finalPosition}");
+                    break;
+                }
+                
+                // Fallback to draw
+                targetPosition = CalculateDrawTargetPosition();
+                finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
+                fltText.Value = "Draw";
+                break;
+                
             default:
                 // Out of play
                 finalPosition = placePos[10];
@@ -497,6 +513,422 @@ public class RandomRockPlacerment : MonoBehaviour
         
         placed = true;
         yield return StartCoroutine(CompletePlacement());
+    }
+    
+    /// <summary>
+    /// Use AI_Strategy's actual strategic logic to determine shot type
+    /// This calls the SAME methods that the AI uses during live gameplay!
+    /// </summary>
+    private string DetermineSmartShotTypeUsingAIStrategy(int rockCurrent)
+    {
+        if (aiStrategy == null)
+        {
+            Debug.LogWarning("[SmartPlacement] AI_Strategy not found - using fallback logic");
+            return DetermineSmartShotTypeSimple(false, false, gm.houseList.Count, gm.gList.Count);
+        }
+        
+        // Set up AI_Strategy context (same as OnShot does)
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        
+        // Determine teams
+        if (rockCurrent % 2 == 0)
+        {
+            if (gm.redHammer)
+            {
+                aiStrategy.activeTeamName = gsp.yellowTeamName;
+                aiStrategy.activeTeamScore = gsp.yellowScore;
+                aiStrategy.oppTeamName = gsp.redTeamName;
+                aiStrategy.oppTeamScore = gsp.redScore;
+            }
+            else
+            {
+                aiStrategy.activeTeamName = gsp.redTeamName;
+                aiStrategy.activeTeamScore = gsp.redScore;
+                aiStrategy.oppTeamName = gsp.yellowTeamName;
+                aiStrategy.oppTeamScore = gsp.yellowScore;
+            }
+        }
+        else
+        {
+            if (gm.redHammer)
+            {
+                aiStrategy.activeTeamName = gsp.redTeamName;
+                aiStrategy.activeTeamScore = gsp.redScore;
+                aiStrategy.oppTeamName = gsp.yellowTeamName;
+                aiStrategy.oppTeamScore = gsp.yellowScore;
+            }
+            else
+            {
+                aiStrategy.activeTeamName = gsp.yellowTeamName;
+                aiStrategy.activeTeamScore = gsp.yellowScore;
+                aiStrategy.oppTeamName = gsp.redTeamName;
+                aiStrategy.oppTeamScore = gsp.redScore;
+            }
+        }
+        
+        // Determine phase
+        string phase;
+        if (rockCurrent < 4)
+            phase = "early";
+        else if (rockCurrent < 10)
+            phase = "middle";
+        else
+            phase = "late";
+        
+        // Use AI_Strategy's intent-based methods to get shot type
+        // These methods internally call aiTarg.ExecuteIntent() which determines the shot
+        
+        // Track what shot AI_Target would choose by temporarily hooking into it
+        string chosenShot = "Draw"; // Default
+        
+        // Call appropriate strategy method based on game situation
+        bool hasHammer = (rockCurrent % 2 == 1);
+        
+        if (hasHammer)
+        {
+            // With hammer - conservative or aggressive?
+            if (gm.endTotal - gm.endCurrent >= 1)
+            {
+                // Try ConservativeScoreTwoOrBlankHammer logic
+                chosenShot = SimulateStrategyShot_ScoreTwoOrBlank(rockCurrent, phase);
+            }
+            else
+            {
+                if (aiStrategy.activeTeamScore < aiStrategy.oppTeamScore)
+                {
+                    // Behind in last end - aggressive!
+                    chosenShot = SimulateStrategyShot_AggressiveHammer(rockCurrent, phase);
+                }
+                else
+                {
+                    chosenShot = SimulateStrategyShot_ScoreTwoOrBlank(rockCurrent, phase);
+                }
+            }
+        }
+        else
+        {
+            // Without hammer
+            if (gm.endTotal - gm.endCurrent >= 2)
+            {
+                if (aiStrategy.activeTeamScore - aiStrategy.oppTeamScore >= 2)
+                {
+                    chosenShot = SimulateStrategyShot_AggressiveNotHammer(rockCurrent, phase);
+                }
+                else if (aiStrategy.activeTeamScore <= aiStrategy.oppTeamScore)
+                {
+                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                }
+                else
+                {
+                    chosenShot = SimulateStrategyShot_ConservativeSteal(rockCurrent, phase);
+                }
+            }
+            else if (gm.endTotal - gm.endCurrent == 1)
+            {
+                if (aiStrategy.activeTeamScore - aiStrategy.oppTeamScore <= 1)
+                {
+                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                }
+                else
+                {
+                    chosenShot = SimulateStrategyShot_AggressiveNotHammer(rockCurrent, phase);
+                }
+            }
+            else
+            {
+                if (aiStrategy.activeTeamScore < aiStrategy.oppTeamScore)
+                {
+                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                }
+                else
+                {
+                    chosenShot = SimulateStrategyShot_AggressiveNotHammer(rockCurrent, phase);
+                }
+            }
+        }
+        
+        Debug.Log($"[SmartPlacement] AI_Strategy simulation chose: {chosenShot} for rock {rockCurrent} ({phase} phase, hammer={hasHammer})");
+        
+        return chosenShot;
+    }
+    
+    /// <summary>
+    /// Simulate ConservativeSteal strategy to determine shot type
+    /// </summary>
+    private string SimulateStrategyShot_ConservativeSteal(int rockCurrent, string phase)
+    {
+        int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
+        int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
+        
+        // EARLY: Remove threats or draw
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else
+                return "Draw";
+        }
+        
+        // MIDDLE: Remove threats, protect lead, or draw
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse > 1)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        
+        // LATE: Strategic decisions
+        else
+        {
+            int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
+            
+            if (myRocksInHouse == 0 && threatRock >= 0)
+                return "Take Out"; // Must remove to steal
+            else if (myRocksInHouse > 0 && myRocksInHouse > oppRocksInHouse)
+                return "Guard"; // Protect steal
+            else if (threatRock >= 0)
+                return "Take Out"; // Remove threat
+            else
+                return "Draw"; // Score points
+        }
+    }
+    
+    /// <summary>
+    /// Simulate AggressiveHammer strategy
+    /// </summary>
+    private string SimulateStrategyShot_AggressiveHammer(int rockCurrent, string phase)
+    {
+        int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
+        int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
+        
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else
+                return "Guard"; // Build aggressive setup
+        }
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse >= 1)
+                return "Draw";
+            else
+                return "Guard";
+        }
+        else // late
+        {
+            bool isLastRock = (rockCurrent >= 15);
+            
+            if (isLastRock)
+            {
+                if (threatRock < 0)
+                    return "Draw"; // Easy draw
+                else
+                    return "Take Out"; // Remove and score
+            }
+            
+            if (threatRock >= 0)
+                return "Take Out";
+            else
+                return "Draw";
+        }
+    }
+    
+    /// <summary>
+    /// Simulate ScoreTwoOrBlank strategy
+    /// </summary>
+    private string SimulateStrategyShot_ScoreTwoOrBlank(int rockCurrent, string phase)
+    {
+        int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
+        int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
+        
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else
+                return "Draw"; // Build for 2
+        }
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse >= 2)
+                return "Guard"; // Protect 2
+            else
+                return "Draw";
+        }
+        else // late
+        {
+            bool isLastRock = (rockCurrent >= 15);
+            
+            if (isLastRock)
+            {
+                if (myRocksInHouse >= 2)
+                    return "Draw"; // Add more
+                else if (threatRock >= 0)
+                    return "Take Out";
+                else
+                    return "Draw";
+            }
+            
+            if (myRocksInHouse >= 2)
+            {
+                if (threatRock < 0)
+                    return "Draw";
+                else
+                    return "Guard";
+            }
+            else if (myRocksInHouse == 1)
+            {
+                if (threatRock >= 0)
+                    return "Take Out";
+                else
+                    return "Draw";
+            }
+            else
+            {
+                return "Guard"; // Force blank
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Simulate AggressiveNotHammer strategy
+    /// </summary>
+    private string SimulateStrategyShot_AggressiveNotHammer(int rockCurrent, string phase)
+    {
+        int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
+        int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
+        bool hasGuards = (gm.gList.Count > 0);
+        
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (!hasGuards)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse > 0)
+                return "Draw";
+            else
+                return "Guard";
+        }
+        else // late
+        {
+            if (myRocksInHouse == 0 && threatRock >= 0)
+                return "Take Out"; // Desperate
+            else if (myRocksInHouse > 0 && threatRock >= 0)
+                return "Take Out"; // Remove threat
+            else if (myRocksInHouse > 0)
+                return "Draw"; // Build steal
+            else
+                return "Draw"; // Clean house draw
+        }
+    }
+    
+    /// <summary>
+    /// Simulate StealOrBlank strategy
+    /// </summary>
+    private string SimulateStrategyShot_StealOrBlank(int rockCurrent, string phase)
+    {
+        int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
+        int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
+        int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
+        
+        if (phase == "early")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse > 0)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        else if (phase == "middle")
+        {
+            if (threatRock >= 0)
+                return "Take Out";
+            else if (myRocksInHouse > 0)
+                return "Guard";
+            else
+                return "Draw";
+        }
+        else // late
+        {
+            if (oppRocksInHouse >= 2)
+            {
+                if (threatRock >= 0)
+                    return "Take Out"; // Reduce to 1 point
+                else
+                    return "Guard"; // Force blank
+            }
+            else if (oppRocksInHouse == 1)
+            {
+                if (myRocksInHouse > 0)
+                    return "Guard"; // Protect steal
+                else if (threatRock >= 0)
+                    return "Take Out";
+                else
+                    return "Draw";
+            }
+            else if (myRocksInHouse > 0)
+            {
+                return "Guard"; // Protect steal
+            }
+            else
+            {
+                return "Guard"; // Force blank
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Count rocks in house for a team
+    /// </summary>
+    private int CountRocksInHouse(string teamName)
+    {
+        int count = 0;
+        foreach (var rockEntry in gm.houseList)
+        {
+            if (rockEntry.rockInfo.teamName == teamName)
+                count++;
+        }
+        return count;
+    }
+    
+    /// <summary>
+    /// Apply accuracy to freeze shot
+    /// </summary>
+    private Vector2 ApplyAccuracyToFreeze(Vector2 targetRockPos, CharacterStats stats)
+    {
+        float accuracy = stats.drawAccuracy.GetValue();
+        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        
+        // Freeze: Very tight circular error (must be close)
+        float baseMaxError = 0.15f;
+        float maxError = baseMaxError * (1f - accuracyRatio);
+        
+        // Place slightly in front of target (Y offset)
+        Vector2 freezeTarget = new Vector2(targetRockPos.x, targetRockPos.y - 0.25f);
+        
+        // Circular error
+        Vector2 error = Random.insideUnitCircle * maxError;
+        
+        Debug.Log($"[Freeze Accuracy] target={freezeTarget}, accuracy={accuracy}%, error={error}, final={freezeTarget + error}");
+        
+        return freezeTarget + error;
     }
     
     /// <summary>
@@ -617,15 +1049,33 @@ public class RandomRockPlacerment : MonoBehaviour
                     return guardTarget;
                 }
             }
-            
+
             // Fall through to opening strategy if no reactive option
         }
-        
+
         // ========================================
         // OPENING STRATEGY: No rocks in house (or no reactive options)
         // ========================================
         Debug.Log($"[GuardPlacement] OPENING mode - hasHammer={hasHammer}");
-        
+
+        // Check existing guards to balance left/right
+        int leftGuards = 0;
+        int rightGuards = 0;
+        int centerGuards = 0;
+
+        foreach (var guard in gm.gList)
+        {
+            if (guard.lastTransform == null) continue;
+
+            Vector2 guardPos = guard.lastTransform.position;
+            if (Mathf.Abs(guardPos.x) < 0.4f)
+                centerGuards++;
+            else if (guardPos.x < 0f)
+                leftGuards++;
+            else
+                rightGuards++;
+        }
+
         if (!hasHammer)
         {
             // WITHOUT HAMMER: AGGRESSIVE - Center guards
@@ -633,7 +1083,6 @@ public class RandomRockPlacerment : MonoBehaviour
                 Random.Range(-0.15f, 0.15f), // Centered with variance
                 Random.Range(3.0f, 3.5f)      // Standard depth
             );
-            
             Debug.Log($"[GuardPlacement] WITHOUT HAMMER ? Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             return guardTarget;
         }
@@ -641,23 +1090,7 @@ public class RandomRockPlacerment : MonoBehaviour
         {
             // WITH HAMMER: CONSERVATIVE - Corner guards
             
-            // Check existing guards to balance left/right
-            int leftGuards = 0;
-            int rightGuards = 0;
-            int centerGuards = 0;
             
-            foreach (var guard in gm.gList)
-            {
-                if (guard.lastTransform == null) continue;
-                
-                Vector2 guardPos = guard.lastTransform.position;
-                if (Mathf.Abs(guardPos.x) < 0.4f)
-                    centerGuards++;
-                else if (guardPos.x < 0f)
-                    leftGuards++;
-                else
-                    rightGuards++;
-            }
             
             Debug.Log($"[GuardPlacement] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
             
@@ -674,17 +1107,17 @@ public class RandomRockPlacerment : MonoBehaviour
             float depthMin, depthMax;
             if (rockCurrent < 4)
             {
-                depthMin = 2.5f;
+                depthMin = 1.5f;
                 depthMax = 3.5f;
             }
             else if (rockCurrent < 12)
             {
-                depthMin = 3.0f;
+                depthMin = 2.5f;
                 depthMax = 4.0f;
             }
             else
             {
-                depthMin = 3.5f;
+                depthMin = 3.0f;
                 depthMax = 4.5f;
             }
             
@@ -2961,7 +3394,7 @@ public class RandomRockPlacerment : MonoBehaviour
         {
             if (rocksInHouse == 0)
                 return "Draw";
-            else if (guardsInPlay < 2)
+            else if (guardsInPlay < 4)
                 return "Guard";
             else
                 return "Draw";
