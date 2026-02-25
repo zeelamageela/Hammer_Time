@@ -1145,20 +1145,20 @@ public class AI_Strategy : MonoBehaviour
             //two or more ends left
             if (gm.endTotal - gm.endCurrent >= 2)
             {
-                if (activeTeamScore - oppTeamScore >= 2)
+                if (activeTeamScore < (oppTeamScore + 1))
                     AggressiveNotHammer(rockCurrent, phase);
-                else if (activeTeamScore <= oppTeamScore)
-                    ConservativeStealOrBlank(rockCurrent, phase);
-                else
+                else if (activeTeamScore < oppTeamScore)
                     ConservativeSteal(rockCurrent, phase);
+                else
+                    ConservativeStealOrBlank(rockCurrent, phase);
             }
             //one end left
             else if (gm.endTotal - gm.endCurrent == 1)
             {
-                if (activeTeamScore - oppTeamScore <= 1)
-                    ConservativeStealOrBlank(rockCurrent, phase);
-                else
+                if (activeTeamScore < oppTeamScore)
                     AggressiveNotHammer(rockCurrent, phase);
+                else
+                    ConservativeStealOrBlank(rockCurrent, phase);
             }
             else if (activeTeamScore < oppTeamScore)
                 ConservativeStealOrBlank(rockCurrent, phase);
@@ -1167,20 +1167,13 @@ public class AI_Strategy : MonoBehaviour
         }
         else
         {
-            if (gm.endTotal - gm.endCurrent >= 1)
-            {
-                ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
-            }
+            if (activeTeamScore < oppTeamScore)
+                AggressiveHammer(rockCurrent, phase);
             else
-            {
-                if (activeTeamScore < oppTeamScore)
-                    AggressiveHammer(rockCurrent, phase);
-                else
-                    ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
-            }
-                
+                ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
+
         }
-        Debug.Log("Phase is " + phase);
+        Debug.Log("[AI_Strategy]Phase is " + phase);
     }
 
     public void ConservativeSteal(int rockCurrent, string phase)
@@ -1274,14 +1267,12 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Aggressive Not Hammer - " + phase);
-
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_AggressiveNotHammer(rockCurrent, phase))
         {
-            Debug.Log("[AggressiveNotHammer] ? Intent-based shot selected!");
+            Debug.Log("[AggressiveNotHammer] ? Intent-based shot selected! -- phase is " + phase);
             return;
         }
         

@@ -921,550 +921,6 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
-    /// <summary>
-    /// DEPRECATED: Legacy auto-targeting using magic number formulas
-    /// This method makes strategic decisions AND uses magic numbers - bad separation of concerns
-    /// Kept for backwards compatibility only. New code should use AI_Strategy + physics-based targeting
-    /// </summary>
-    IEnumerator TakeOutAutoTarget(int rockCurrent)
-    {
-        yield return StartCoroutine(GuardReading(rockCurrent));
-        yield return new WaitForEndOfFrame();
-        #region House Has Rocks
-        //if the house has rocks in it
-        if (gm.houseList.Count != 0)
-        {
-            Debug.Log("houseList is not 0");
-            //if the closest rock is not my team
-            if (closestRockInfo.teamName != rockInfo.teamName)
-            {
-                //if it's in the four foot
-                if (Vector2.Distance(closestRock.transform.position, new Vector2(0f, 6.5f)) <= 0.6f)
-                {
-                    //if there's no centre guard
-                    if (!cenGuard)
-                    {
-                        targetX = closestRock.transform.position.x;
-                        if (targetX > 0f)
-                        {
-                            rm.inturn = false;
-                            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
-                        }
-                        else
-                        {
-                            rm.inturn = true;
-                            takeOutX = (0.15f * ((targetX - 1.35f) / -2.7f)) - 0.05f;
-                        }
-                        aiShoot.OnShot("Take Out", rockCurrent);
-                        Debug.Log(closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                        yield break;
-                    }
-                    else
-                    {
-                        //if the centre guard is mine
-                        if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                        {
-                            //let's run it back
-                            targetX = cenGuard.position.x;
-                            if (targetX > 0f)
-                            {
-                                rm.inturn = false;
-                                takeOutX = (-0.142f * ((targetX) / 1.65f)) - 0.011f;
-                            }
-                            else
-                            {
-                                rm.inturn = true;
-                                takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
-                            }
-                            aiShoot.OnShot("Take Out", rockCurrent);
-                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                            yield break;
-                        }
-                        //if the centre guard is not mine
-                        else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                        {
-                            //let's take it out
-                            targetX = cenGuard.position.x;
-                            if (targetX > 0f)
-                            {
-                                rm.inturn = false;
-                                takeOutX = (-0.142f * ((targetX) / 1.65f)) - 0.011f;
-                            }
-                            else
-                            {
-                                rm.inturn = true;
-                                takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
-                            }
-                            aiShoot.OnShot("Peel", rockCurrent);
-                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                            yield break;
-                        }
-                    }
-                }
-                //if it's not in the four foot
-                else
-                {
-                    //if there's a centre guard and the closest rock is in the middle
-                    if (cenGuard & Mathf.Abs(closestRock.transform.position.x) <= 0.5f)
-                    {
-                        targetX = cenGuard.position.x;
-                        if (targetX > 0f)
-                        {
-                            rm.inturn = false;
-                            takeOutX = (-0.142f * ((targetX) / 1.65f)) - 0.011f;
-                        }
-                        else
-                        {
-                            rm.inturn = true;
-                            takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
-                        }
-                        aiShoot.OnShot("Raise", rockCurrent);
-                        Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                        yield break;
-                    }
-                    //if the closest rock is to the right and there's a right guard
-                    else if (rCornGuard & closestRock.transform.position.x > 0f)
-                    {
-                        targetX = rCornGuard.position.x;
-                        if (targetX > 0f)
-                        {
-                            rm.inturn = false;
-                            takeOutX = (-0.142f * ((targetX) / 1.65f)) - 0.011f;
-                        }
-                        else
-                        {
-                            rm.inturn = true;
-                            takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
-                        }
-                        aiShoot.OnShot("Peel", rockCurrent);
-                        Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                        yield break;
-                    }
-                    //if there's a left guard and the closest rock is to the left
-                    else if (lCornGuard & closestRock.transform.position.x < 0f)
-                    {
-                        targetX = lCornGuard.position.x;
-                        if (targetX > 0f)
-                        {
-                            rm.inturn = false;
-                            takeOutX = (-0.142f * ((targetX) / 1.65f)) - 0.011f;
-                        }
-                        else
-                        {
-                            rm.inturn = true;
-                            takeOutX = (0.13f * (targetX / -1.65f)) + 0.015f;
-                        }
-                        aiShoot.OnShot("Peel", rockCurrent);
-                        Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                        yield break;
-                    }
-                    else
-                    {
-                        Debug.Log("House List Count is " + gm.houseList.Count);
-                        targetX = closestRock.transform.position.x;
-                        if (targetX > 0f)
-                        {
-                            rm.inturn = false;
-                            takeOutX = (-0.205f * ((targetX + 1.35f) / 2.7f)) + 0.087f;
-                        }
-                        else
-                        {
-                            rm.inturn = true;
-                            takeOutX = (0.15f * ((targetX - 1.35f) / -2.7f)) - 0.05f;
-                        }
-                        aiShoot.OnShot("Take Out", rockCurrent);
-                        Debug.Log("Target is " + closestRockInfo.teamName + " " + closestRockInfo.rockNumber);
-                        yield break;
-                    }
-                }
-            }
-            //if the closest rock is my team
-            else if (closestRockInfo.teamName == rockInfo.teamName)
-            {
-                //if there's more than one rock in the house
-                if (gm.houseList.Count >= 2)
-                {
-                    //if the second rock is mine
-                    if (gm.houseList[1].rockInfo.teamName == rockInfo.teamName)
-                    {
-                        //if the second rock is not guarded
-                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f & !cenGuard)
-                        {
-                            aiShoot.OnShot("Left Centre Guard", rockCurrent);
-                            Debug.Log("Centre Guard");
-                            yield break;
-                        }
-                        else if (gm.houseList[1].rock.transform.position.x < 0f & !lCornGuard)
-                        {
-                            aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                            Debug.Log("Left Corner Guard");
-                            yield break;
-                        }
-                        else if (gm.houseList[1].rock.transform.position.x > 0f & !rCornGuard)
-                        {
-                            aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                            Debug.Log("Right Corner Guard");
-                            yield break;
-                        }
-                        else
-                        {
-                            if (gm.houseList.Count >= 3 && gm.houseList[2].rockInfo.teamName != rockInfo.teamName)
-                            {
-
-                            }
-                            yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
-                            Debug.Log("Drawing Four Foot");
-                            yield break;
-                        }
-                    }
-                    //if the second rock is not mine
-                    else
-                    {
-                        //if the second rock is guarded
-                        if (Mathf.Abs(gm.houseList[1].rock.transform.position.x) <= 0.5f && cenGuard)
-                        {
-                            targetX = cenGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                            aiShoot.OnShot("Peel", rockCurrent);
-                            Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                            yield break;
-                        }
-                        else if (gm.houseList[1].rock.transform.position.x < 0f && lCornGuard)
-                        {
-                            targetX = lCornGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                            aiShoot.OnShot("Peel", rockCurrent);
-                            Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                            yield break;
-                        }
-                        else if (gm.houseList[1].rock.transform.position.x > 0f && rCornGuard)
-                        {
-                            targetX = rCornGuard.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                            aiShoot.OnShot("Peel", rockCurrent);
-                            Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                            yield break;
-                        }
-                        //if the second rock is not guarded
-                        else
-                        {
-                            targetX = gm.houseList[1].rock.transform.position.x;
-                            takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                            aiShoot.OnShot("Take Out", rockCurrent);
-                            Debug.Log(gm.houseList[1].rockInfo.teamName + " " + gm.houseList[1].rockInfo.rockNumber);
-                            yield break;
-                        }
-                    }
-                }
-                //if there's not more that one rock in the house
-                else
-                {
-                    //if the rock is not guarded
-                    if (Mathf.Abs(closestRock.transform.position.x) <= 0.5f & !cenGuard)
-                    {
-                        aiShoot.OnShot("Left Centre Guard", rockCurrent);
-                        Debug.Log("Centre Guard");
-                        yield break;
-                    }
-                    else if (closestRock.transform.position.x < 0f & !lCornGuard)
-                    {
-                        aiShoot.OnShot("Left Corner Guard", rockCurrent);
-                        Debug.Log("Left Corner Guard");
-                        yield break;
-                    }
-                    else if (closestRock.transform.position.x > 0f & !rCornGuard)
-                    {
-                        aiShoot.OnShot("Right Corner Guard", rockCurrent);
-                        Debug.Log("Right Corner Guard");
-                        yield break;
-                    }
-                    else
-                    {
-                        yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
-                        Debug.Log("Drawing Four Foot");
-                        yield break;
-                    }
-                }
-
-            }
-        }
-        #endregion
-
-        #region No rocks in House, but Guards
-        //if there's guards
-        else if (gm.gList.Count != 0)
-        {
-            //centre, left and right guards
-            if (cenGuard && rCornGuard && lCornGuard)
-            {
-                //centre guard is mine
-                if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //right corner guard is not mine
-                else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //left corner guard is not mine
-                else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                else
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-            }
-            //right guard only
-            else if (rCornGuard & !cenGuard & !lCornGuard)
-            {
-                //guard is mine
-                if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //guard is not mine
-                else
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1.65f) / 3.3f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-            }
-            //left guard only
-            else if (!cenGuard & !rCornGuard & lCornGuard)
-            {
-                //guard is mine
-                if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //guard is not mine
-                else
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-            }
-            //right and left guards
-            else if (!cenGuard & rCornGuard & lCornGuard)
-            {
-                //left guard is not mine
-                if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //right guard is not mine
-                else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //left guard is mine
-                else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //right guard is mine
-                else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                else
-                {
-                    targetX = 0f;
-                    takeOutX = 0f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log("No Targets available - Button");
-                    yield break;
-                }
-            }
-            //centre and right guards
-            else if (cenGuard & rCornGuard & !lCornGuard)
-            {
-                //centre guard is not mine
-                if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //right guard is not mine
-                else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //centre guard is mine
-                else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //right guard is mine
-                else if (rCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = rCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(rCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + rCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                else
-                {
-                    targetX = 0f;
-                    takeOutX = 0f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log("No Targets available - Button");
-                    yield break;
-                }
-            }
-            //centre and left guards
-            else if (cenGuard & !rCornGuard & lCornGuard)
-            {
-                //left guard is not mine
-                if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //centre guard is not mine
-                else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName != rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //left guard is mine
-                else if (lCornGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = lCornGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(lCornGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + lCornGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //centre guard is mine
-                else if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                else
-                {
-                    aiShoot.OnShot("Button", rockCurrent);
-                    Debug.Log("No Targets available - Button");
-                    yield break;
-                }
-            }
-            //centre guard only
-            else if (cenGuard & !rCornGuard & !lCornGuard)
-            {
-                //if it's mine
-                if (cenGuard.gameObject.GetComponent<Rock_Info>().teamName == rockInfo.teamName)
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Raise", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-                //if it's theirs
-                else
-                {
-                    targetX = cenGuard.position.x;
-                    takeOutX = (-0.2f * ((targetX + 1f) / 2f)) + 0.1f;
-                    aiShoot.OnShot("Peel", rockCurrent);
-                    Debug.Log(cenGuard.gameObject.GetComponent<Rock_Info>().teamName + " " + cenGuard.gameObject.GetComponent<Rock_Info>().rockNumber);
-                    yield break;
-                }
-            }
-            else
-            {
-                targetX = 0f;
-                takeOutX = 0f;
-                yield return StartCoroutine(DrawFourFoot(gm.rockCurrent));
-                Debug.Log("No Targets available - Drawing Four Foot");
-                yield break;
-            }
-        }
-        #endregion
-
-        #region No guards or rocks in House
-        else
-        {
-            targetX = 0f;
-            takeOutX = 0f;
-            aiShoot.OnShot("Peel", rockCurrent);
-            Debug.Log("No Targets available - Button");
-            yield break;
-        }
-        #endregion
-
-    }
-
     IEnumerator TakeOutTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
@@ -2876,35 +2332,35 @@ public class AI_Target : MonoBehaviour
                 
                 float score = 0f;
                 
-                // PART 1: PROXIMITY TO TARGET (60 points max) - HIGHEST PRIORITY!
+                // PART 1: PROXIMITY TO TARGET (70 points max) - INCREASED FROM 60!
                 // Goal: Get as CLOSE AS POSSIBLE to the requested target position
-                // TIGHTER SCORING: More demanding accuracy requirements
+                // This should be the DOMINANT factor in tie-breaking
                 float distToTarget = Vector2.Distance(finalPos, candidateTarget);
                 float proximityScore = 0f;
                 
                 if (distToTarget < 0.08f)
                 {
-                    proximityScore = 60f; // EXCELLENT (<8cm) = pinpoint accuracy!
+                    proximityScore = 70f; // EXCELLENT (<8cm) = pinpoint accuracy! (was 60)
                 }
                 else if (distToTarget < 0.15f)
                 {
-                    proximityScore = 55f; // Very close (<15cm) = excellent
+                    proximityScore = 65f; // Very close (<15cm) = excellent (was 55)
                 }
                 else if (distToTarget < 0.25f)
                 {
-                    proximityScore = 48f; // Close (<25cm) = very good
+                    proximityScore = 56f; // Close (<25cm) = very good (was 48)
                 }
                 else if (distToTarget < 0.40f)
                 {
-                    proximityScore = 38f; // Acceptable (<40cm) = good
+                    proximityScore = 44f; // Acceptable (<40cm) = good (was 38)
                 }
                 else if (distToTarget < 0.60f)
                 {
-                    proximityScore = 25f; // Moderate (<60cm) = okay
+                    proximityScore = 29f; // Moderate (<60cm) = okay (was 25)
                 }
                 else if (distToTarget < 0.80f)
                 {
-                    proximityScore = 15f; // Far (<80cm) = poor
+                    proximityScore = 17f; // Far (<80cm) = poor (was 15)
                 }
                 else
                 {
@@ -2945,7 +2401,7 @@ public class AI_Target : MonoBehaviour
                         }
                     }
                 }               
-                score += protectionScore * 15f; // Up to 15 points for ANY guard protection (friendly or opponent)
+                score += protectionScore * 12f; // Up to 12 points for ANY guard protection (reduced from 15 to make proximity dominate)
                 
                 // PART 2: SCORING POSITION (30 points max) - Get in scoring position!
                 // Philosophy: MULTIPLE rocks score in curling - being 2nd/3rd shot is still valuable!
@@ -2997,7 +2453,7 @@ public class AI_Target : MonoBehaviour
                     }
                 }
                 
-                score += scoringPositionScore * 30f; // Up to 30 points for scoring position
+                score += scoringPositionScore * 25f; // Up to 25 points for scoring position (reduced from 30 to make proximity dominate)
                 
                 // PART 3: COLLISION CONTEXT (variable penalty) - WHERE and WHEN matters!
                 float collisionPenalty = 0f;
@@ -3038,18 +2494,18 @@ public class AI_Target : MonoBehaviour
                 score += collisionPenalty;
                 
                 
-                // PART 4: IN-HOUSE BONUS (20 points) - Reward shots that land in scoring position
+                // PART 4: IN-HOUSE BONUS (15 points) - Reward shots that land in scoring position (reduced from 20 to make proximity dominate)
                 float houseBonus = 0f;
                 if (finalPos.y >= 5.0f && finalPos.y <= 9.0f) // In the house
                 {
                     float distToButton = Vector2.Distance(finalPos, button);
                     
                     if (distToButton < 0.6f) // 4-foot
-                        houseBonus = 20f;
+                        houseBonus = 15f; // (was 20)
                     else if (distToButton < 1.2f) // 8-foot
-                        houseBonus = 15f;
+                        houseBonus = 11f; // (was 15)
                     else if (distToButton < 1.83f) // 12-foot
-                        houseBonus = 10f;
+                        houseBonus = 8f; // (was 10)
                 }
                 
                 score += houseBonus;
@@ -3058,12 +2514,12 @@ public class AI_Target : MonoBehaviour
                 // LOG COMPREHENSIVE SCORING BREAKDOWN
                 // ========================================
                 Debug.Log($"[Physics Draw] Candidate: ({candidateTarget.x:F2}, {candidateTarget.y:F2}) → Final: ({finalPos.x:F2}, {finalPos.y:F2}), Turn: {(tryInTurn ? "IN" : "OUT")}\n" +
-                          $"  Proximity to Target: {proximityScore:F1}/60 (dist: {distToTarget:F2}m)\n" +
-                          $"  Guard Protection: {protectionScore * 15f:F1}/15 {(protectingGuard != null ? $"(under {protectingGuard.name})" : "(exposed)")}\n" +
-                          $"  Scoring Position: {scoringPositionScore * 30f:F1}/30 (dist to button: {myDistToButton:F2}, opponent closest: {closestOpponentDistToButton:F2})\n" +
+                          $"  Proximity to Target: {proximityScore:F1}/70 (dist: {distToTarget:F2}m) ← DOMINANT FACTOR\n" +
+                          $"  Guard Protection: {protectionScore * 12f:F1}/12 {(protectingGuard != null ? $"(under {protectingGuard.name})" : "(exposed)")}\n" +
+                          $"  Scoring Position: {scoringPositionScore * 25f:F1}/25 (dist to button: {myDistToButton:F2}, opponent closest: {closestOpponentDistToButton:F2})\n" +
                           $"  Collision Context: {collisionPenalty:F1} {(collisionInfo.hasCollision ? $"(hit {collisionInfo.hitRock.name})" : "(clean)")}\n" +
-                          $"  In-House Bonus: {houseBonus:F1}/20\n" +
-                          $"  TOTAL SCORE: {score:F1}/130");
+                          $"  In-House Bonus: {houseBonus:F1}/15\n" +
+                          $"  TOTAL SCORE: {score:F1}/122");
                 
                 if (score > bestScore)
                 {
@@ -3080,27 +2536,27 @@ public class AI_Target : MonoBehaviour
         // ========================================
         // ACCEPTANCE CRITERIA: Demand HIGH QUALITY draw shots
         // ========================================
-        // RAISED threshold: 40.0 (was 15.0) to demand precision
-        // With tighter radii (0.4m max), we should find accurate shots!
+        // Threshold: 45.0 (out of 122 max) to demand precision
+        // With tighter radii (0.4m max) + proximity-dominant scoring, we should find accurate shots!
         // Score breakdown for reference:
-        //   60 points = proximity (<8cm = 60, <15cm = 55, <25cm = 48)
-        //   30 points = scoring position (beat opponent, close to button)
-        //   15 points = guard protection
-        //   20 points = in-house bonus
+        //   70 points = proximity (<8cm = 70, <15cm = 65, <25cm = 56) ← DOMINANT!
+        //   25 points = scoring position (beat opponent, close to button)
+        //   12 points = guard protection
+        //   15 points = in-house bonus
         //   -25 to +5 = collision context
-        // Threshold of 40 requires: <15cm proximity + decent scoring OR <25cm + guard protection
-        if (bestScore > float.MinValue && bestScore >= 40f)
+        // Threshold of 45 requires: <15cm proximity (65 pts) OR <25cm + good scoring/house
+        if (bestScore > float.MinValue && bestScore >= 45f)
         {
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
             
-            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/130 (threshold: 40)\n" +
+            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/122 (threshold: 45)\n" +
                       $"  Final position: ({bestFinalPos.x:F2}, {bestFinalPos.y:F2})\n" +
                       $"  Distance to target: {Vector2.Distance(bestFinalPos, targetPosition):F3}m\n" +
                       $"  Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3})\n" +
                       $"  Turn: {(bestInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
                       $"  Tested {candidateTargets.Count} candidates (tight 0.4m radius)\n" +
-                      $"  Strategy: PRECISION targeting, proximity prioritized, late collisions OK");
+                      $"  Strategy: PROXIMITY-DOMINANT scoring (70/122 pts), late collisions OK");
             return true;
         }
         
@@ -3838,7 +3294,17 @@ public class AI_Target : MonoBehaviour
     
     /// <summary>
     /// Evaluate ALL options for removing a threat rock, pick the best one
-    /// Options: Direct takeout, peel guard, raise friendly rock, tick it out
+    /// STRATEGIC PRIORITY (NEW):
+    /// 1. Direct takeout (highest value - removes rock immediately)
+    /// 2. Runback (removes 2 rocks! guard + target)
+    /// 3. Alternate targets (if primary blocked, try others)
+    /// 4. Tick shot (creative removal)
+    /// 5. Peel guard (LAST RESORT - only removes blocker, target stays)
+    /// 
+    /// Context-aware bonuses:
+    /// - Late game (rock 12+): Runback/alternates get BIG bonuses, peel gets PENALTY
+    /// - Multiple rocks in house: Runback gets bonus (clears more)
+    /// - Last rock of end: Peel is almost never correct (huge penalty)
     /// </summary>
     private void EvaluateRemovalOptions(ShotContext context, int rockCurrent)
     {
@@ -3860,41 +3326,39 @@ public class AI_Target : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[AI_Target] Evaluating removal options for rock #{context.targetRockIndex} at {targetRock.transform.position}");
+        // CONTEXT ANALYSIS: What phase are we in?
+        bool isLateGame = rockCurrent >= 12; // Last 4 rocks
+        bool isLastRock = rockCurrent >= 15; // Absolute last rock
+        int rocksInHouse = gm.houseList.Count;
         
-        // OPTION 1: Direct takeout (always available)
+        Debug.Log($"[AI_Target] ========== REMOVAL OPTIONS EVALUATION ==========");
+        Debug.Log($"[AI_Target] Target: Rock #{context.targetRockIndex} at {targetRock.transform.position}");
+        Debug.Log($"[AI_Target] Context: Rock {rockCurrent}/16, Late={isLateGame}, Last={isLastRock}, House={rocksInHouse}");
+        
+        // ========================================
+        // PRIORITY 1: DIRECT TAKEOUT (always try first!)
+        // ========================================
         float takeoutScore = SimulateTakeout(targetRock, context.targetRockIndex, rockCurrent);
-        Debug.Log($"  Option 1: Direct Takeout - Score: {takeoutScore:F2}");
         
-        // OPTION 2: Peel the guard (if there's one blocking)
-        float peelScore = 0f;
-        int guardToPeel = -1;
-
-        for (int i = 0; i < gm.gList.Count; i++)
+        // BONUS: Late game direct takeouts are more valuable (no time to waste)
+        if (isLateGame && takeoutScore > 0f)
         {
-            var guard = gm.gList[i];
-            if (guard.lastTransform == null)
-                continue;
-
-            Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
-            if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
-                continue; // Skip our own guards
-
-            if (IsGuardBlocking(guard.lastTransform, targetRock))
-            {
-                guardToPeel = guardInfo.rockIndex;
-                peelScore = SimulatePeel(guard.lastTransform.gameObject, guardToPeel, rockCurrent);
-                Debug.Log($"  Option 2: Peel through guard #{guardToPeel} - Score: {peelScore:F2}");
-            }
+            takeoutScore += 15f;
+            Debug.Log($"[Removal] LATE GAME BONUS: Takeout +15 → {takeoutScore:F2}");
         }
-
-        // OPTION 3: Runback - hit guard through to target
+        
+        Debug.Log($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY");
+        
+        // ========================================
+        // PRIORITY 2: RUNBACK (removes 2 rocks! guard + target)
+        // ========================================
         float runbackScore = 0f;
         int guardToRunback = -1;
+        GameObject guardRockForRunback = null;
 
-        for (int i = 0; i < gm.gList.Count; i++)
+        // Check ALL guards (not just cenGuard)
+        foreach (var guard in gm.gList)
         {
-            var guard = gm.gList[i];
             if (guard.lastTransform == null)
                 continue;
 
@@ -3902,63 +3366,291 @@ public class AI_Target : MonoBehaviour
             if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
                 continue; // Skip our own guards
 
-            if (IsGuardBlocking(guard.lastTransform, targetRock))
+            // Check if THIS guard is blocking the target
+            if (IsGuardBlocking(guard.lastTransform, targetRock, tolerance: 0.5f)) // Generous tolerance
             {
                 guardToRunback = guardInfo.rockIndex;
-                runbackScore = SimulateRunback(guard.lastTransform.gameObject, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
-                Debug.Log($"  Option 3: Runback through guard #{guardToRunback} - Score: {runbackScore:F2}");
+                guardRockForRunback = guard.lastTransform.gameObject;
+                
+                float thisRunbackScore = SimulateRunback(guardRockForRunback, targetRock, guardToRunback, context.targetRockIndex, rockCurrent);
+                
+                // RUNBACK BASE BONUS: Removes 2 rocks instead of 1!
+                thisRunbackScore += 25f; // Big bonus for double removal
+                
+                // CONTEXT BONUSES:
+                if (isLateGame && thisRunbackScore > 0f)
+                {
+                    thisRunbackScore += 20f; // Late game: CRITICAL to remove multiple rocks
+                    Debug.Log($"[Removal] LATE GAME RUNBACK BONUS: +20 → {thisRunbackScore:F2}");
+                }
+                
+                if (rocksInHouse >= 3 && thisRunbackScore > 0f)
+                {
+                    thisRunbackScore += 15f; // Multiple rocks: clearing is URGENT
+                    Debug.Log($"[Removal] MULTIPLE ROCKS BONUS: +15 → {thisRunbackScore:F2}");
+                }
+                
+                if (thisRunbackScore > runbackScore)
+                {
+                    runbackScore = thisRunbackScore;
+                }
+                
+                Debug.Log($"[Removal] Option 2: RUNBACK through guard #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL");
             }
         }
-
-        // OPTION 4: Tick it out sideways
+        
+        // ========================================
+        // PRIORITY 3: ALTERNATE TARGETS (if primary blocked/hard)
+        // ========================================
+        float bestAlternateScore = 0f;
+        int bestAlternateTarget = -1;
+        
+        // Only search for alternates if:
+        // - Direct takeout failed/low score (< 40)
+        // - OR target is heavily guarded
+        // - OR late game (want options!)
+        bool shouldSearchAlternates = (takeoutScore < 40f) || isLateGame;
+        
+        if (shouldSearchAlternates)
+        {
+            Debug.Log($"[Removal] Searching for ALTERNATE TARGETS (primary score={takeoutScore:F2})");
+            
+            // Search through ALL rocks in house (not just target)
+            foreach (var houseRock in gm.houseList)
+            {
+                // Skip primary target (already evaluated)
+                if (houseRock.rockInfo.rockIndex == context.targetRockIndex)
+                    continue;
+                
+                // Must be opponent rock
+                if (houseRock.rockInfo.teamName == currentRockInfo.teamName)
+                    continue;
+                
+                // Try takeout on this alternate
+                float altScore = SimulateTakeout(houseRock.rock, houseRock.rockInfo.rockIndex, rockCurrent);
+                
+                if (altScore > 0f)
+                {
+                    // BONUS: Closer to button = more valuable alternate
+                    Vector2 button = new Vector2(0f, 6.5f);
+                    float distToButton = Vector2.Distance(houseRock.rock.transform.position, button);
+                    float proximityBonus = Mathf.Clamp01(1f - (distToButton / 2f)) * 20f;
+                    
+                    altScore += proximityBonus;
+                    
+                    // CONTEXT BONUS: Late game alternates are valuable
+                    if (isLateGame)
+                    {
+                        altScore += 15f;
+                        Debug.Log($"[Removal] LATE GAME ALTERNATE BONUS: +15");
+                    }
+                    
+                    Debug.Log($"[Removal] Option 3: ALTERNATE target #{houseRock.rockInfo.rockIndex} - Score: {altScore:F2} (proximity +{proximityBonus:F1})");
+                    
+                    if (altScore > bestAlternateScore)
+                    {
+                        bestAlternateScore = altScore;
+                        bestAlternateTarget = houseRock.rockInfo.rockIndex;
+                    }
+                }
+            }
+            
+            if (bestAlternateTarget >= 0)
+            {
+                Debug.Log($"[Removal] ✓ BEST ALTERNATE: Rock #{bestAlternateTarget} with score {bestAlternateScore:F2}");
+            }
+            else
+            {
+                Debug.Log($"[Removal] ✗ NO viable alternates found");
+            }
+        }
+        
+        // ========================================
+        // PRIORITY 4: TICK SHOT (creative removal)
+        // ========================================
         float tickScore = SimulateTick(targetRock, context.targetRockIndex, rockCurrent);
-        Debug.Log($"  Option 4: Tick shot - Score: {tickScore:F2}");
+        
+        if (tickScore > 0f && isLateGame)
+        {
+            tickScore += 10f; // Small late game bonus
+            Debug.Log($"[Removal] LATE GAME TICK BONUS: +10 → {tickScore:F2}");
+        }
+        
+        Debug.Log($"[Removal] Option 4: TICK SHOT - Score: {tickScore:F2}");
+        
+        // ========================================
+        // PRIORITY 5: PEEL GUARD (LAST RESORT!)
+        // ========================================
+        float peelScore = 0f;
+        int guardToPeel = -1;
+        
+        // Only consider peel if:
+        // - NOT last rock (wasteful!)
+        // - NOT late game with multiple rocks (need to clear house, not guards)
+        // - Target is actually blocked by a guard
+        bool shouldConsiderPeel = !isLastRock && !(isLateGame && rocksInHouse >= 2);
+        
+        if (shouldConsiderPeel)
+        {
+            // Find blocking guard
+            foreach (var guard in gm.gList)
+            {
+                if (guard.lastTransform == null)
+                    continue;
 
+                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                    continue; // Skip our own guards
+
+                if (IsGuardBlocking(guard.lastTransform, targetRock, tolerance: 0.3f))
+                {
+                    guardToPeel = guardInfo.rockIndex;
+                    peelScore = SimulatePeel(guard.lastTransform.gameObject, guardToPeel, rockCurrent);
+                    
+                    // PENALTIES FOR PEEL:
+                    if (isLateGame && peelScore > 0f)
+                    {
+                        peelScore -= 20f; // Late game: peel is WEAK option
+                        Debug.Log($"[Removal] LATE GAME PEEL PENALTY: -20 → {peelScore:F2}");
+                    }
+                    
+                    if (rocksInHouse >= 2 && peelScore > 0f)
+                    {
+                        peelScore -= 15f; // Multiple rocks: peel doesn't help clear house
+                        Debug.Log($"[Removal] MULTIPLE ROCKS PEEL PENALTY: -15 → {peelScore:F2}");
+                    }
+                    
+                    Debug.Log($"[Removal] Option 5: PEEL GUARD #{guardToPeel} - Score: {peelScore:F2} ⚠️ LAST RESORT");
+                    break; // Only need one guard to peel
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"[Removal] Option 5: PEEL GUARD - SKIPPED (last={isLastRock}, late+multiple={isLateGame && rocksInHouse >= 2})");
+        }
+
+        // ========================================
         // PICK THE BEST OPTION!
-        float bestScore = Mathf.Max(takeoutScore, peelScore, tickScore, runbackScore);
+        // ========================================
+        Debug.Log($"[Removal] ========== FINAL SCORES ==========");
+        Debug.Log($"[Removal]   Direct Takeout: {takeoutScore:F2}");
+        Debug.Log($"[Removal]   Runback: {runbackScore:F2}");
+        Debug.Log($"[Removal]   Alternate Target: {bestAlternateScore:F2}");
+        Debug.Log($"[Removal]   Tick Shot: {tickScore:F2}");
+        Debug.Log($"[Removal]   Peel Guard: {peelScore:F2}");
+        
+        float bestScore = Mathf.Max(takeoutScore, runbackScore, bestAlternateScore, tickScore, peelScore);
         
         if (bestScore <= 0f)
         {
-            Debug.LogWarning("[AI_Target] No good removal options found, drawing instead");
+            Debug.LogError("[AI_Target] ❌ ALL REMOVAL OPTIONS FAILED - This should NOT happen with rocks in house!");
+            Debug.LogError($"[AI_Target] Context: {rocksInHouse} rocks in house, opponent likely scoring!");
+            
+            // CRITICAL: If ALL physics-based removal failed, something is VERY wrong
+            // Strategy said "RemoveThreat" but we can't remove anything
+            // This is a STRATEGIC DISASTER - opponent has rocks, we can't hit them!
+            
+            // LAST RESORT: Try hitting ANYTHING opponent has with RELAXED constraints
+            Debug.LogWarning("[AI_Target] 🚨 DESPERATE MODE: Trying ANY opponent rock with relaxed physics");
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                if (houseRock.rockInfo.teamName == currentRockInfo.teamName)
+                    continue; // Skip our rocks
+                
+                // Try basic takeout with NO physics validation (just aim and shoot!)
+                Debug.LogWarning($"[DESPERATE] Attempting rock #{houseRock.rockInfo.rockIndex} at {houseRock.rock.transform.position}");
+                
+                // Force a shot even if physics says it's bad
+                OnTarget("Take Out", rockCurrent, houseRock.rockInfo.rockIndex);
+                return; // Take the shot!
+            }
+            
+            // If STILL no rocks found (impossible?), try guards
+            foreach (var guard in gm.gList)
+            {
+                if (guard.lastTransform == null)
+                    continue;
+                
+                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+                if (guardInfo != null && guardInfo.teamName != currentRockInfo.teamName)
+                {
+                    Debug.LogWarning($"[DESPERATE] Attempting guard #{guardInfo.rockIndex} at {guard.lastTransform.position}");
+                    OnTarget("Take Out", rockCurrent, guardInfo.rockIndex);
+                    return;
+                }
+            }
+            
+            // ABSOLUTE LAST RESORT: If we're here, opponent has NO rocks (shouldn't happen with RemoveThreat intent)
+            Debug.LogError("[AI_Target] 🚨 CATASTROPHIC: Can't find ANY opponent rocks to hit!");
+            Debug.LogError("[AI_Target] Switching to scoring as absolute last resort");
             EvaluateScoringOptions(context, rockCurrent);
             return;
         }
         
-        // Execute best option
-        if (takeoutScore == bestScore && takeoutScore > 0f)
+        // Execute best option (priority order if tied)
+        if (runbackScore == bestScore && runbackScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Direct Takeout (score: {takeoutScore:F2})");
+            Debug.Log($"[AI_Target] ✅ SELECTED: RUNBACK (score: {runbackScore:F2}) 🎯 REMOVE TWO ROCKS!");
+            OnTarget("Runback", rockCurrent, guardToRunback);
+        }
+        else if (takeoutScore == bestScore && takeoutScore > 0f)
+        {
+            Debug.Log($"[AI_Target] ✅ SELECTED: DIRECT TAKEOUT (score: {takeoutScore:F2}) ⭐");
             OnTarget("Take Out", rockCurrent, context.targetRockIndex);
         }
-        else if (peelScore == bestScore && peelScore > 0f)
+        else if (bestAlternateScore == bestScore && bestAlternateScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Peel Guard (score: {peelScore:F2})");
-            OnTarget("Peel", rockCurrent, guardToPeel);
+            Debug.Log($"[AI_Target] ✅ SELECTED: ALTERNATE TARGET #{bestAlternateTarget} (score: {bestAlternateScore:F2}) 🔄");
+            OnTarget("Take Out", rockCurrent, bestAlternateTarget);
         }
         else if (tickScore == bestScore && tickScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Tick Shot (score: {tickScore:F2})");
+            Debug.Log($"[AI_Target] ✅ SELECTED: TICK SHOT (score: {tickScore:F2}) 🎯");
             OnTarget("Tick Shot", rockCurrent, context.targetRockIndex);
         }
-        else if (runbackScore == bestScore && runbackScore > 0f)
+        else if (peelScore == bestScore && peelScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Hit guard through to target!");
-            OnTarget("Runback", rockCurrent, guardToRunback);
+            Debug.Log($"[AI_Target] ✅ SELECTED: PEEL GUARD #{guardToPeel} (score: {peelScore:F2}) ⚠️ FALLBACK");
+            OnTarget("Peel", rockCurrent, guardToPeel);
         }
+        
+        Debug.Log($"[Removal] ==========================================");
     }
     
     /// <summary>
     /// Evaluate ALL options for scoring points, pick the best one
     /// Options: Draw to button, freeze on opponent rock, raise friendly rock, tick opponent into house, remove blocker
+    /// 
+    /// CRITICAL: If called from RemoveThreat intent, drawing is VERY BAD (opponent has rocks!)
+    /// Apply penalties to discourage scoring when we should be removing
     /// </summary>
     private void EvaluateScoringOptions(ShotContext context, int rockCurrent)
     {
         Debug.Log($"[AI_Target] Evaluating scoring options for rock #{rockCurrent}");
         
+        // CONTEXT CHECK: Why are we scoring?
+        bool calledFromRemovalFailure = (context.intent == ShotIntent.RemoveThreat);
+        
+        if (calledFromRemovalFailure)
+        {
+            Debug.LogWarning($"[Scoring] ⚠️ CALLED FROM REMOVAL FAILURE - opponent has rocks, drawing is RISKY!");
+            Debug.LogWarning($"[Scoring] Applying penalties to all draw options (we should be removing, not scoring!)");
+        }
+        
         Vector2 button = new Vector2(0f, 6.5f);
         
         // OPTION 1: Direct draw to button (always available)
         float drawScore = SimulateDraw(button, rockCurrent);
+        
+        // PENALTY if called from removal failure
+        if (calledFromRemovalFailure)
+        {
+            drawScore -= 30f; // Massive penalty - drawing when opponent has rocks is BAD
+            Debug.Log($"[Scoring] REMOVAL FAILURE PENALTY: Draw -30 → {drawScore:F2}");
+        }
+        
         Debug.Log($"  Option 1: Draw to button - Score: {drawScore:F2}");
         
         // OPTION 2: Freeze on opponent's best rock
@@ -3969,6 +3661,13 @@ public class AI_Target : MonoBehaviour
         {
             // Find best opponent rock to freeze on (already has out parameter for score)
             rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
+            
+            // PENALTY if called from removal failure (freeze is better than draw, but still not ideal)
+            if (calledFromRemovalFailure && freezeScore > 0f)
+            {
+                freezeScore -= 15f; // Smaller penalty - freeze at least contests their rock
+                Debug.Log($"[Scoring] REMOVAL FAILURE PENALTY: Freeze -15 → {freezeScore:F2}");
+            }
             
             if (rockToFreeze >= 0)
             {
