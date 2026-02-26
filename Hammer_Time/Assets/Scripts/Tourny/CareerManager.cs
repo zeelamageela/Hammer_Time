@@ -2260,15 +2260,15 @@ public class CareerManager : MonoBehaviour
                 }
             }
             
-            if (cmCompletedIDs.Count > 0 || cmTrophyIDs.Count > 0)
-            {
-                Debug.Log($"[CareerManager] ? MERGED {cmCompletedIDs.Count} new completions from CM arrays: [{string.Join(", ", cmCompletedIDs)}]");
-                Debug.Log($"[CareerManager] ? MERGED {cmTrophyIDs.Count} new trophies from CM arrays: [{string.Join(", ", cmTrophyIDs)}]");
-            }
+            //if (cmCompletedIDs.Count > 0 || cmTrophyIDs.Count > 0)
+            //{
+            //    Debug.Log($"[CareerManager] ? MERGED {cmCompletedIDs.Count} new completions from CM arrays: [{string.Join(", ", cmCompletedIDs)}]");
+            //    Debug.Log($"[CareerManager] ? MERGED {cmTrophyIDs.Count} new trophies from CM arrays: [{string.Join(", ", cmTrophyIDs)}]");
+            //}
             
-            Debug.Log($"[CareerManager] ? FINAL save data: {data.completedTournamentIDs.Count} completed IDs, {data.trophyWonIDs.Count} trophy IDs");
-            Debug.Log($"[SAVE DEBUG] Completed IDs saved (MERGED): [{string.Join(", ", data.completedTournamentIDs)}]");
-            Debug.Log($"[SAVE DEBUG] Trophy IDs saved (MERGED): [{string.Join(", ", data.trophyWonIDs)}]");
+            //Debug.Log($"[CareerManager] ? FINAL save data: {data.completedTournamentIDs.Count} completed IDs, {data.trophyWonIDs.Count} trophy IDs");
+            //Debug.Log($"[SAVE DEBUG] Completed IDs saved (MERGED): [{string.Join(", ", data.completedTournamentIDs)}]");
+            //Debug.Log($"[SAVE DEBUG] Trophy IDs saved (MERGED): [{string.Join(", ", data.trophyWonIDs)}]");
         }
         
         // Tournament Results

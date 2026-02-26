@@ -152,13 +152,14 @@ public class Sweep : MonoBehaviour
 
         Debug.Log("Sweep Amount is " + (statCalc * sweepAmt));
 
-        // Reduce linear damping (rock goes farther)
-        rb.linearDamping -= (statCalc * sweepAmt);
+        // DOUBLED SWEEPING STRENGTH: 2x multiplier on all damping reductions
+        // Reduce linear damping (rock goes farther) - 2X STRENGTH
+        rb.linearDamping -= (statCalc * sweepAmt * 2f);
         
-        // Reduce angular damping (rock stays straighter - spin decay slowed)
-        rb.angularDamping -= (statCalc * sweepAmt * 0.8f); // 80% effect on angular
+        // Reduce angular damping (rock stays straighter - spin decay slowed) - 2X STRENGTH
+        rb.angularDamping -= (statCalc * sweepAmt * 0.8f * 2f); // 80% effect on angular, doubled
         
-        Debug.Log($"Weight Sweep: linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}");
+        Debug.Log($"Weight Sweep (2X STRENGTH): linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}");
     }
 
     IEnumerator SweepHard()
@@ -172,15 +173,15 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepTime);
         
-        // HARD SWEEP: Aggressive reduction of BOTH dampings
+        // HARD SWEEP: Aggressive reduction of BOTH dampings - 2X STRENGTH
         // Effect: Rock goes MUCH farther and stays straighter
-        rb.linearDamping = (rb.linearDamping - (1.5f * sweepAmt));
-        rb.angularDamping -= (1.2f * sweepAmt); // Significant angular reduction too
+        rb.linearDamping = (rb.linearDamping - (1.5f * sweepAmt * 2f));
+        rb.angularDamping -= (1.2f * sweepAmt * 2f); // Significant angular reduction too, doubled
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + ((statCalc / 2f) * sweepAmt);
         rock.GetComponent<Rock_Force>().curl.x = curl;
 
-        Debug.Log($"Hard Sweep: linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}, curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
+        Debug.Log($"Hard Sweep (2X STRENGTH): linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}, curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
     }
 
     IEnumerator SweepLine(bool inturn)
@@ -201,15 +202,15 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepTime);
 
-        // LINE SWEEP (one sweeper): Reduces LINEAR damping ONLY
+        // LINE SWEEP (one sweeper): Reduces LINEAR damping ONLY - 2X STRENGTH
         // Effect: Rock goes FARTHER but curl is unaffected
-        rb.linearDamping -= sweepAmt * statCalc / 4f;
+        rb.linearDamping -= sweepAmt * statCalc / 4f * 2f; // Doubled strength
         // NO angular damping change!
 
         float curl = rock.GetComponent<Rock_Force>().curl.x + (statCalc * sweepAmt * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
         
-        Debug.Log($"Line Sweep: linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3} (unchanged), curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
+        Debug.Log($"Line Sweep (2X STRENGTH): linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3} (unchanged), curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
 
     }
 
@@ -229,15 +230,15 @@ public class Sweep : MonoBehaviour
 
         yield return new WaitForSeconds(sweepAmt);
 
-        // CURL SWEEP (one sweeper): Reduces ANGULAR damping ONLY
+        // CURL SWEEP (one sweeper): Reduces ANGULAR damping ONLY - 2X STRENGTH
         // Effect: Rock CURLS MORE (spin maintained longer)
-        rb.angularDamping -= sweepAmt * statCalc / 4f;
+        rb.angularDamping -= sweepAmt * statCalc / 4f * 2f; // Doubled strength
         // NO linear damping change!
 
         float curl = rock.GetComponent<Rock_Force>().curl.x - (sweepAmt * statCalc * 5f);
         rock.GetComponent<Rock_Force>().curl.x = curl;
         
-        Debug.Log($"Curl Sweep: linearDamping={rb.linearDamping:F3} (unchanged), angularDamping={rb.angularDamping:F3}, curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
+        Debug.Log($"Curl Sweep (2X STRENGTH): linearDamping={rb.linearDamping:F3} (unchanged), angularDamping={rb.angularDamping:F3}, curl={rock.GetComponent<Rock_Force>().curl.x:F3}");
 
     }
 

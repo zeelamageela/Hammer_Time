@@ -286,6 +286,12 @@ public class TrajectoryLine : MonoBehaviour
             actualPathLine.enabled = false;
         }
         
+        // CRITICAL FIX: Clear the actual path line positions too (prevents black line artifact)
+        if (actualPathLine != null)
+        {
+            actualPathLine.positionCount = 0;
+        }
+        
         // Clean up collision markers and arrows
         if (currentCollisionMarker != null)
         {
@@ -306,6 +312,7 @@ public class TrajectoryLine : MonoBehaviour
             hitRockPostCollisionLine.enabled = false;
         }
         
+        // CRITICAL FIX: Also hide the main trajectory line renderer
         lr.enabled = false;
     }
     
@@ -323,6 +330,8 @@ public class TrajectoryLine : MonoBehaviour
     {
         if (lr != null)
         {
+            // CRITICAL FIX: Clear positions BEFORE enabling to prevent showing old trajectory
+            lr.positionCount = 0;
             lr.enabled = true;
         }
     }

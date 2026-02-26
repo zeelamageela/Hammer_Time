@@ -136,6 +136,13 @@ public class AI_Target : MonoBehaviour
         Vector2 bestPullback = Vector2.zero;
         bool bestInTurn = false;
         
+        // CRITICAL FIX: Fallback scores AND phase scores must persist ACROSS both turn attempts!
+        // Otherwise OUT-TURN resets data from IN-TURN
+        float globalBestFallbackScore = float.MinValue;
+        float globalBestFallbackOffset = 0f;
+        float bestCoarseScore = float.MinValue;  // MOVED OUTSIDE LOOP!
+        float bestCoarseOffset = 0f;              // MOVED OUTSIDE LOOP!
+        
         Debug.Log($"[AI_Target] ========== STARTING GEOMETRIC AIM POINT SWEEP ==========");
         Debug.Log($"[AI_Target] Shot type: {shotType}, Target: {targetRockPosition}");
         Debug.Log($"[AI_Target] Launcher: {launcherPos}, Obstacles: {rocksInPlay.Count}");
@@ -283,12 +290,11 @@ public class AI_Target : MonoBehaviour
             
             Debug.Log($"[AI_Target] --- Testing {(tryInTurn ? "IN-TURN" : "OUT-TURN")} ---");
             
-            // LATERAL SWEEP: Test different lateral offsets to find the best approach angle
-            // CURL COMPENSATION LOGIC:
-            // IN-TURN (curls LEFT ←): Aim RIGHT of target (POSITIVE offset) to compensate
-            // OUT-TURN (curls RIGHT →): Aim LEFT of target (NEGATIVE offset) to compensate
-            // This is the OPPOSITE of the curl direction!
-            float offsetMultiplier = tryInTurn ? 1f : -1f; // IN-TURN = positive (right), OUT-TURN = negative (left)
+            // CRITICAL FIX: Lateral offsets must COMPENSATE for curl direction!
+            // IN-TURN curls RIGHT (positive X) → aim LEFT (negative offsets) to compensate
+            // OUT-TURN curls LEFT (negative X) → aim RIGHT (positive offsets) to compensate
+            // This is OPPOSITE of the curl direction!
+            int offsetMultiplier = tryInTurn ? -1 : 1; // FLIPPED from previous (1 : -1)
             
             Debug.Log($"[AI_Target] Offset multiplier for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {offsetMultiplier}");
             
@@ -300,13 +306,26 @@ public class AI_Target : MonoBehaviour
             // Total: ~54 simulations for SUB-MILLIMETER precision (0.5mm!)
             // NOTE: lateralOffsetBase is UNSIGNED (0 to +1.2), offsetMultiplier determines direction
             
-            float bestCoarseOffset = 0f;
-            float bestCoarseScore = float.MinValue;
-            
             // PHASE 1: COARSE SWEEP (11 positions) - Find general region
+            int phase1Tested = 0;
+            int phase1PathFailed = 0;
+            int phase1NoCollision = 0;
+            int phase1WrongRock = 0;
+            int phase1WrongSide = 0;
+            
+            // CRITICAL: Use GLOBAL fallback variables (shared across both turn attempts)
+            // These were initialized outside the turn loop above
+            
+            // DEBUG: Track where trajectories are landing (for no-collision debugging)
+            List<string> noCollisionDebug = new List<string>();
+            
             for (float lateralOffsetBase = 0f; lateralOffsetBase <= 1.2f; lateralOffsetBase += 0.12f)
             {
+                phase1Tested++;
+                
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
+                
+                Debug.Log($"[Phase 1] Testing offset {lateralOffsetBase:F2} (multiplied: {lateralOffset:F2})");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated shot weights
                 // Draw: 8.7 m/s | Takeout: 9.9 m/s | Peel: 12.1 m/s | Runback: 13.5 m/s
@@ -326,13 +345,74 @@ public class AI_Target : MonoBehaviour
                 List<Vector2> path = trajectorySimulator.SimulateTrajectory(launcherPos, baseVelocity, tryInTurn, 250, rocksInPlay, forPlayerPreview: false);
                 TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
                 
-                if (path.Count == 0) continue;
-                if (!collisionInfo.hasCollision || targetRockIndex < 0 || collisionInfo.hitRock == null) continue;
-                if (collisionInfo.hitRock != gm.rockList[targetRockIndex].rock) continue;
+                if (path.Count == 0)
+                {
+                    phase1PathFailed++;
+                    continue;
+                }
+                
+                // DEBUG: Log where trajectory ended if no collision
+                Vector2 finalPos = path[path.Count - 1];
+                float distToTarget = Vector2.Distance(finalPos, targetRockPosition);
+                
+                if (!collisionInfo.hasCollision || targetRockIndex < 0 || collisionInfo.hitRock == null)
+                {
+                    phase1NoCollision++;
+                    noCollisionDebug.Add($"offset={lateralOffset:F3}, vel={velocityMagnitude:F1}, final=({finalPos.x:F2},{finalPos.y:F2}), distToTarget={distToTarget:F2}");
+                    
+                    // FALLBACK SCORING: Even if no collision, score based on how CLOSE we got
+                    float proximityScore = Mathf.Max(0f, 1f - (distToTarget / 2.0f)) * 20f; // Up to 20 points for getting close
+                    
+                    if (proximityScore > globalBestFallbackScore)
+                    {
+                        globalBestFallbackScore = proximityScore;
+                        globalBestFallbackOffset = lateralOffsetBase;
+                        Debug.Log($"[Phase 1 FALLBACK] No collision, but close! Dist={distToTarget:F2}, Score={proximityScore:F1}, Offset={lateralOffsetBase:F3}");
+                    }
+                    
+                    continue;
+                }
+                
+                if (collisionInfo.hitRock != gm.rockList[targetRockIndex].rock)
+                {
+                    phase1WrongRock++;
+                    
+                    // FALLBACK SCORING: Hit WRONG rock, but score based on how close hit was to target
+                    Vector2 hitPos = collisionInfo.collisionPoint;
+                    float distHitToTarget = Vector2.Distance(hitPos, targetRockPosition);
+                    float wrongRockScore = Mathf.Max(0f, 1f - (distHitToTarget / 1.0f)) * 35f; // Up to 35 points for close hit
+                    
+                    if (wrongRockScore > globalBestFallbackScore)
+                    {
+                        globalBestFallbackScore = wrongRockScore;
+                        globalBestFallbackOffset = lateralOffsetBase;
+                        Debug.Log($"[Phase 1 FALLBACK] Wrong rock, but close! HitDist={distHitToTarget:F2}, Score={wrongRockScore:F1}, Offset={lateralOffsetBase:F3}");
+                    }
+                    
+                    continue;
+                }
                 
                 Vector2 hitVector = collisionInfo.collisionPoint - (Vector2)gm.rockList[targetRockIndex].rock.transform.position;
-                if (hitVector.y >= -0.05f) continue; // Must hit from behind
+                if (hitVector.y >= -0.05f)
+                {
+                    phase1WrongSide++;
+                    
+                    // FALLBACK SCORING: Hit from WRONG SIDE, but still a valid hit (lower score)
+                    float wrongSideLateralError = Mathf.Abs(hitVector.x);
+                    float wrongSideHitQuality = 1.0f - Mathf.Clamp01(wrongSideLateralError / 0.15f);
+                    float wrongSideScore = 50f * wrongSideHitQuality; // Max 50 points (penalty for wrong side)
+                    
+                    if (wrongSideScore > globalBestFallbackScore)
+                    {
+                        globalBestFallbackScore = wrongSideScore;
+                        globalBestFallbackOffset = lateralOffsetBase;
+                        Debug.Log($"[Phase 1 FALLBACK] Wrong side hit, Score={wrongSideScore:F1}, Offset={lateralOffsetBase:F3}");
+                    }
+                    
+                    continue; // Must hit from behind for primary scoring
+                }
                 
+                // SUCCESS: Perfect hit from behind on correct rock!
                 float lateralError = Mathf.Abs(hitVector.x);
                 float hitQuality = 1.0f - Mathf.Clamp01(lateralError / 0.1f);
                 float score = 100f * hitQuality;
@@ -341,6 +421,27 @@ public class AI_Target : MonoBehaviour
                 {
                     bestCoarseScore = score;
                     bestCoarseOffset = lateralOffsetBase;
+                }
+            }
+            
+            
+            // CRITICAL FIX: If NO perfect hits found, use FALLBACK score/offset
+            if (bestCoarseScore <= 0f && globalBestFallbackScore > float.MinValue)
+            {
+                bestCoarseScore = globalBestFallbackScore;
+                bestCoarseOffset = globalBestFallbackOffset;
+                Debug.LogWarning($"[Phase 1 COARSE] NO PERFECT HITS - Using fallback! Score={bestCoarseScore:F2}, Offset={bestCoarseOffset:F3}, Turn={(tryInTurn ? "IN" : "OUT")}");
+            }
+            
+            Debug.Log($"[Phase 1 COARSE] Tested: {phase1Tested}, PathFailed: {phase1PathFailed}, NoCollision: {phase1NoCollision}, WrongRock: {phase1WrongRock}, WrongSide: {phase1WrongSide}, BestScore: {bestCoarseScore:F2}, BestOffset: {bestCoarseOffset:F3}");
+            
+            // DEBUG: Log no-collision trajectories to diagnose why they're missing
+            if (noCollisionDebug.Count > 0)
+            {
+                Debug.Log($"[Phase 1 NO COLLISION DEBUG] Target at ({targetRockPosition.x:F2}, {targetRockPosition.y:F2}), {noCollisionDebug.Count} trajectories missed:");
+                foreach (var debug in noCollisionDebug)
+                {
+                    Debug.Log($"  {debug}");
                 }
             }
             
@@ -435,15 +536,18 @@ public class AI_Target : MonoBehaviour
             }
             
             // PHASE 4: MICROSCOPIC SWEEP around best fine result (9 positions) - 0.5mm precision! 🔬
-            float microStart = Mathf.Max(0f, bestFineOffset - 0.002f);
-            float microEnd = Mathf.Min(1.2f, bestFineOffset + 0.002f);
-            
-            for (float lateralOffsetBase = microStart; lateralOffsetBase <= microEnd; lateralOffsetBase += 0.0005f)
+            // CRITICAL: Only run if we found SOMETHING in previous phases!
+            if (bestFineScore > float.MinValue)
             {
-                // Apply multiplier based on turn direction
-                float lateralOffset = lateralOffsetBase * offsetMultiplier;
+                float microStart = Mathf.Max(0f, bestFineOffset - 0.002f);
+                float microEnd = Mathf.Min(1.2f, bestFineOffset + 0.002f);
                 
-                Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
+                for (float lateralOffsetBase = microStart; lateralOffsetBase <= microEnd; lateralOffsetBase += 0.0005f)
+                {
+                    // Apply multiplier based on turn direction
+                    float lateralOffset = lateralOffsetBase * offsetMultiplier;
+                    
+                    Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated weights!
                 // Takeout: 3.6 → 9.9 m/s | Peel: 4.4 → 12.1 m/s | Runback: 4.9 → 13.5 m/s
@@ -619,6 +723,95 @@ public class AI_Target : MonoBehaviour
                     else
                     {
                         Debug.Log($"❌ Hit DIFFERENT ROCK: {hitRockName} (target is {targetRockName}) at lateral offset {lateralOffset:F2}");
+                    }
+                }
+                }  // End of Phase 4 for-loop
+            }  // End of Phase 4 if-guard
+            else
+            {
+                Debug.LogWarning($"[AI_Target] Phase 4 SKIPPED - No hits found in Phases 1-3 (bestFineScore={bestFineScore})");
+            }
+        }  // End of turn loop
+        
+        // EXTENDED SWEEP: If no good hits found (score < 50), try WIDER lateral offsets
+        // This runs AFTER both turn directions have been tried
+        if (bestScore < 50f)
+        {
+            Debug.LogWarning($"[EXTENDED SWEEP] Low score ({bestScore:F2}) after both turns - trying WIDER offsets (1.32 to 2.4)");
+            
+            // Try BOTH turn directions with wider offsets
+            for (int turnDir = 0; turnDir < 2; turnDir++)
+            {
+                bool tryInTurn = (turnDir == 0);
+                int offsetMultiplier = tryInTurn ? 1 : -1;
+                
+                for (float lateralOffsetBase = 1.32f; lateralOffsetBase <= 2.4f; lateralOffsetBase += 0.12f)
+                {
+                    float lateralOffset = lateralOffsetBase * offsetMultiplier;
+                    
+                    TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+                    float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+                    float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                    float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
+                    
+                    Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
+                    Vector2 direction = (targetWithOffset - launcherPos).normalized;
+                    Vector2 baseVelocity = direction * velocityMagnitude;
+                    
+                    if (baseVelocity.magnitude < 3f || baseVelocity.magnitude > 20f) continue;
+                    
+                    Vector2 testPullback = CalculatePullbackFromVelocity(baseVelocity, launcherPos, tryInTurn);
+                    List<Vector2> path = trajectorySimulator.SimulateTrajectory(launcherPos, baseVelocity, tryInTurn, 250, rocksInPlay, forPlayerPreview: false);
+                    TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
+                    
+                    if (path.Count == 0) continue;
+                    if (!collisionInfo.hasCollision || targetRockIndex < 0 || collisionInfo.hitRock == null) continue;
+                    if (collisionInfo.hitRock != gm.rockList[targetRockIndex].rock) continue;
+                    
+                    // CRITICAL FIX: Extended sweep uses WIDE lateral offsets (1.32-2.4m)
+                    // At these angles, we're hitting from the SIDE, not from behind!
+                    // ACCEPT ANY HIT ANGLE - we just need to contact the rock!
+                    Vector2 hitVector = collisionInfo.collisionPoint - (Vector2)gm.rockList[targetRockIndex].rock.transform.position;
+                    
+                    // Calculate hit angle to determine shot quality
+                    float hitAngle = Mathf.Atan2(hitVector.y, hitVector.x) * Mathf.Rad2Deg;
+                    
+                    // Score based on hit type:
+                    // - Behind hit (Y < 0, angle ~-90°): Best (100 pts) - nose hit
+                    // - Side hit (Y ≈ 0, angle ~0° or ±180°): Good (70 pts) - glancing/tick
+                    // - Front hit (Y > 0, angle ~+90°): Acceptable (40 pts) - desperate contact
+                    float angleQuality;
+                    if (hitVector.y < -0.05f)
+                    {
+                        // From behind - excellent!
+                        angleQuality = 1.0f;
+                        Debug.Log($"[EXTENDED SWEEP] BEHIND HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (excellent!)");
+                    }
+                    else if (Mathf.Abs(hitVector.y) < 0.15f)
+                    {
+                        // Side hit - good for wide angles!
+                        angleQuality = 0.7f;
+                        Debug.Log($"[EXTENDED SWEEP] SIDE HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (glancing)");
+                    }
+                    else
+                    {
+                        // Front hit - desperate but valid
+                        angleQuality = 0.4f;
+                        Debug.Log($"[EXTENDED SWEEP] FRONT HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (desperate contact)");
+                    }
+                    
+                    // SUCCESS in extended range!
+                    float lateralError = Mathf.Abs(hitVector.x);
+                    float lateralQuality = 1.0f - Mathf.Clamp01(lateralError / 0.2f); // More tolerance for wide hits
+                    float hitQuality = angleQuality * lateralQuality;
+                    float score = 100f * hitQuality;
+                    
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        bestPullback = testPullback;
+                        bestInTurn = tryInTurn;
+                        Debug.Log($"[EXTENDED SWEEP] ✅ Found hit! Score={score:F2}, Offset={lateralOffsetBase:F3}, Turn={(tryInTurn ? "IN" : "OUT")}");
                     }
                 }
             }
@@ -3336,6 +3529,193 @@ public class AI_Target : MonoBehaviour
         Debug.Log($"[AI_Target] Context: Rock {rockCurrent}/16, Late={isLateGame}, Last={isLastRock}, House={rocksInHouse}");
         
         // ========================================
+        // PRIORITY 0: DOUBLE TAKEOUT (removes 2 rocks! HIGHEST VALUE!)
+        // ========================================
+        float doubleTakeoutScore = 0f;
+        int doublePrimaryTarget = -1;
+        int doubleSecondaryTarget = -1;
+        Vector2 doublePullback = Vector2.zero;
+        bool doubleInTurn = false;
+        
+        // Build list of opponent rocks for double takeout evaluation
+        List<GameObject> opponentRocks = new List<GameObject>();
+        List<int> opponentRockIndices = new List<int>();
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName != currentRockInfo.teamName)
+            {
+                opponentRocks.Add(houseRock.rock);
+                opponentRockIndices.Add(houseRock.rockInfo.rockIndex);
+            }
+        }
+        
+        // Need at least 2 opponent rocks for a double takeout
+        if (opponentRocks.Count >= 2)
+        {
+            Debug.Log($"[Double Takeout] Evaluating {opponentRocks.Count} opponent rocks for double takeout opportunities");
+            
+            // Try all combinations of primary + secondary targets
+            for (int i = 0; i < opponentRocks.Count; i++)
+            {
+                GameObject primaryRock = opponentRocks[i];
+                int primaryIndex = opponentRockIndices[i];
+                Vector2 primaryPos = primaryRock.transform.position;
+                
+                for (int j = 0; j < opponentRocks.Count; j++)
+                {
+                    if (i == j) continue; // Can't use same rock as both targets
+                    
+                    GameObject secondaryRock = opponentRocks[j];
+                    int secondaryIndex = opponentRockIndices[j];
+                    Vector2 secondaryPos = secondaryRock.transform.position;
+                    
+                    // Simulate takeout on primary rock
+                    Vector2 testPullback;
+                    bool testInTurn;
+                    bool foundPrimaryShot = CalculatePhysicsBasedShot(primaryPos, out testPullback, out testInTurn, "Take Out", primaryIndex);
+                    
+                    if (!foundPrimaryShot) continue;
+                    
+                    // Get collision info to see where shooter ends up
+                    TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
+                    
+                    if (!collisionInfo.hasCollision) continue;
+                    
+                    // Check if shooter's final path gets close to secondary rock
+                    Vector2 shooterFinalPos = collisionInfo.finalPosition;
+                    float rockRadius = 0.14f;
+                    
+                    // Check if shooter's POST-COLLISION path intersects secondary rock
+                    bool hitsSecondary = false;
+                    float closestDistToSecondary = float.MaxValue;
+                    
+                    // Shooter's path after hitting primary
+                    List<Vector2> shooterPath = collisionInfo.hitRockPostCollisionPath; // This is actually the HIT rock's path
+                    // We need the SHOOTER's path after collision - use finalPosition as approximation
+                    
+                    // SIMPLE CHECK: Does shooter end up near secondary rock?
+                    float distToSecondary = Vector2.Distance(shooterFinalPos, secondaryPos);
+                    
+                    if (distToSecondary < rockRadius * 3.0f) // Within 3 rock radii (generous)
+                    {
+                        hitsSecondary = true;
+                        closestDistToSecondary = distToSecondary;
+                    }
+                    
+                    if (!hitsSecondary) continue; // Shooter doesn't get near secondary
+                    
+                    // SCORE THE DOUBLE TAKEOUT OPPORTUNITY!
+                    float score = 0f;
+                    
+                    // PART 1: Primary hit quality (50 pts)
+                    Vector2 primaryHitVector = collisionInfo.collisionPoint - primaryPos;
+                    bool primaryFromBehind = primaryHitVector.y < -0.05f;
+                    
+                    if (primaryFromBehind)
+                    {
+                        float primaryLateralError = Mathf.Abs(primaryHitVector.x);
+                        float primaryQuality = 1.0f - Mathf.Clamp01(primaryLateralError / 0.15f);
+                        score += primaryQuality * 50f;
+                    }
+                    else
+                    {
+                        score += 20f; // Penalty: not ideal hit, but might still work
+                    }
+                    
+                    // PART 2: Deflection angle toward secondary (30 pts)
+                    Vector2 shooterDeflection = shooterFinalPos - collisionInfo.collisionPoint;
+                    Vector2 toSecondary = secondaryPos - collisionInfo.collisionPoint;
+                    
+                    // Dot product: 1 = perfect alignment, 0 = perpendicular
+                    float alignment = Vector2.Dot(shooterDeflection.normalized, toSecondary.normalized);
+                    float angleQuality = Mathf.Clamp01((alignment + 0.5f) / 1.5f); // -0.5 to 1.0 → 0 to 1
+                    score += angleQuality * 30f;
+                    
+                    // PART 3: Secondary collision quality (40 pts)
+                    float secondaryProximity = 1.0f - Mathf.Clamp01(closestDistToSecondary / (rockRadius * 3.0f));
+                    score += secondaryProximity * 40f;
+                    
+                    // PART 4: Final positions - both out of play? (80 pts)
+                    Vector2 button = new Vector2(0f, 6.5f);
+                    float houseRadius = 1.83f; // 12-foot
+                    
+                    Vector2 primaryFinalPos = collisionInfo.hitRockFinalPosition;
+                    float primaryDistToButton = Vector2.Distance(primaryFinalPos, button);
+                    bool primaryOutOfHouse = primaryDistToButton > houseRadius;
+                    bool primaryOutOfPlay = primaryFinalPos.y > 9.5f || primaryFinalPos.y < 4.5f;
+                    
+                    float secondaryDistToButton = Vector2.Distance(shooterFinalPos, secondaryPos);
+                    bool secondaryOutOfHouse = secondaryDistToButton > houseRadius;
+                    bool secondaryOutOfPlay = shooterFinalPos.y > 9.5f || shooterFinalPos.y < 4.5f;
+                    
+                    // Scoring: Out of play > Out of house > In house
+                    float primaryPositionScore = 0f;
+                    if (primaryOutOfPlay) primaryPositionScore = 40f;
+                    else if (primaryOutOfHouse) primaryPositionScore = 25f;
+                    else primaryPositionScore = 10f;
+                    
+                    float secondaryPositionScore = 0f;
+                    if (secondaryOutOfPlay) secondaryPositionScore = 40f;
+                    else if (secondaryOutOfHouse) secondaryPositionScore = 25f;
+                    else secondaryPositionScore = 10f;
+                    
+                    score += primaryPositionScore + secondaryPositionScore;
+                    
+                    // MEGA BONUS: Both rocks removed completely!
+                    if (primaryOutOfPlay && secondaryOutOfPlay)
+                    {
+                        score += 50f; // HUGE bonus for double removal!
+                        Debug.Log($"[Double Takeout] 🎯 BOTH ROCKS OUT OF PLAY! Mega bonus +50!");
+                    }
+                    
+                    // CONTEXT BONUSES
+                    if (isLateGame)
+                    {
+                        score += 30f; // Late game: double removal is CRITICAL
+                    }
+                    
+                    if (rocksInHouse >= 3)
+                    {
+                        score += 25f; // Multiple rocks: clearing 2 is huge
+                    }
+                    
+                    Debug.Log($"[Double Takeout] Primary #{primaryIndex} → Secondary #{secondaryIndex}:\n" +
+                              $"  Primary hit: {(primaryFromBehind ? "from behind" : "angled")} (quality: {(score >= 50 ? "good" : "ok")})\n" +
+                              $"  Deflection angle: {alignment:F2} (quality: {angleQuality:F2})\n" +
+                              $"  Secondary proximity: {closestDistToSecondary:F2} (quality: {secondaryProximity:F2})\n" +
+                              $"  Primary final: {(primaryOutOfPlay ? "OUT OF PLAY" : primaryOutOfHouse ? "OUT OF HOUSE" : "in house")}\n" +
+                              $"  Secondary final: {(secondaryOutOfPlay ? "OUT OF PLAY" : secondaryOutOfHouse ? "OUT OF HOUSE" : "in house")}\n" +
+                              $"  TOTAL SCORE: {score:F1}/250");
+                    
+                    if (score > doubleTakeoutScore)
+                    {
+                        doubleTakeoutScore = score;
+                        doublePrimaryTarget = primaryIndex;
+                        doubleSecondaryTarget = secondaryIndex;
+                        doublePullback = testPullback;
+                        doubleInTurn = testInTurn;
+                    }
+                }
+            }
+            
+            if (doubleTakeoutScore > 0f)
+            {
+                Debug.Log($"[Double Takeout] ✓ BEST: Primary #{doublePrimaryTarget} → Secondary #{doubleSecondaryTarget} with score {doubleTakeoutScore:F1}/250 🎯 DOUBLE REMOVAL!");
+            }
+            else
+            {
+                Debug.Log($"[Double Takeout] ✗ NO viable double takeout found");
+            }
+        }
+        else
+        {
+            Debug.Log($"[Double Takeout] SKIPPED - Only {opponentRocks.Count} opponent rock(s) (need 2+)");
+        }
+        
+        Debug.Log($"[Removal] Option 0: DOUBLE TAKEOUT - Score: {doubleTakeoutScore:F2} 🎯🎯 REMOVES TWO ROCKS!");
+        
+        // ========================================
         // PRIORITY 1: DIRECT TAKEOUT (always try first!)
         // ========================================
         float takeoutScore = SimulateTakeout(targetRock, context.targetRockIndex, rockCurrent);
@@ -3534,13 +3914,14 @@ public class AI_Target : MonoBehaviour
         // PICK THE BEST OPTION!
         // ========================================
         Debug.Log($"[Removal] ========== FINAL SCORES ==========");
+        Debug.Log($"[Removal]   Double Takeout: {doubleTakeoutScore:F2} 🎯🎯");
         Debug.Log($"[Removal]   Direct Takeout: {takeoutScore:F2}");
         Debug.Log($"[Removal]   Runback: {runbackScore:F2}");
         Debug.Log($"[Removal]   Alternate Target: {bestAlternateScore:F2}");
         Debug.Log($"[Removal]   Tick Shot: {tickScore:F2}");
         Debug.Log($"[Removal]   Peel Guard: {peelScore:F2}");
         
-        float bestScore = Mathf.Max(takeoutScore, runbackScore, bestAlternateScore, tickScore, peelScore);
+        float bestScore = Mathf.Max(doubleTakeoutScore, takeoutScore, runbackScore, bestAlternateScore, tickScore, peelScore);
         
         if (bestScore <= 0f)
         {
@@ -3590,7 +3971,23 @@ public class AI_Target : MonoBehaviour
         }
         
         // Execute best option (priority order if tied)
-        if (runbackScore == bestScore && runbackScore > 0f)
+        if (doubleTakeoutScore == bestScore && doubleTakeoutScore > 0f)
+        {
+            Debug.Log($"[AI_Target] ✅ SELECTED: DOUBLE TAKEOUT (score: {doubleTakeoutScore:F2}) 🎯🎯 REMOVE TWO ROCKS!");
+            Debug.Log($"[AI_Target] Primary target: #{doublePrimaryTarget} at {gm.rockList[doublePrimaryTarget].rock.transform.position}");
+            Debug.Log($"[AI_Target] Secondary target: #{doubleSecondaryTarget} at {gm.rockList[doubleSecondaryTarget].rock.transform.position}");
+            Debug.Log($"[AI_Target] Pullback: ({doublePullback.x:F3}, {doublePullback.y:F3}), Turn: {(doubleInTurn ? "IN-TURN" : "OUT-TURN")}");
+            
+            // Set pullback manually (bypass OnTarget which would recalculate)
+            rm.inturn = doubleInTurn;
+            takeOutX = doublePullback.x;
+            takeOutY = doublePullback.y;
+            
+            // Execute shot
+            aiShoot.OnShot("Take Out", rockCurrent);
+            Debug.Log($"Double Takeout - Primary: {gm.rockList[doublePrimaryTarget].rockInfo.teamName} #{doublePrimaryTarget}, Secondary: {gm.rockList[doubleSecondaryTarget].rockInfo.teamName} #{doubleSecondaryTarget}");
+        }
+        else if (runbackScore == bestScore && runbackScore > 0f)
         {
             Debug.Log($"[AI_Target] ✅ SELECTED: RUNBACK (score: {runbackScore:F2}) 🎯 REMOVE TWO ROCKS!");
             OnTarget("Runback", rockCurrent, guardToRunback);
