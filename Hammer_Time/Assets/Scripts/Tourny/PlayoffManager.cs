@@ -325,9 +325,17 @@ public class PlayoffManager : MonoBehaviour
 	{
 		Debug.Log($"[LoadAndAdvancePlayoffs] Loading playoffs - Round {playoffRound}");
 		
-		// Load saved teams from persistent storage
-		for (int i = 0; i < playoffTeams.Length; i++)
-			playoffTeams[i] = gsp.playoffTeams[i];
+		// CRITICAL FIX: Check if playoff teams exist before loading (can be null from fresh round robin)
+		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
+		{
+			for (int i = 0; i < playoffTeams.Length && i < gsp.playoffTeams.Length; i++)
+				playoffTeams[i] = gsp.playoffTeams[i];
+			Debug.Log($"[LoadAndAdvancePlayoffs] Loaded {gsp.playoffTeams.Length} teams from save");
+		}
+		else
+		{
+			Debug.LogWarning("[LoadAndAdvancePlayoffs] No saved playoff teams - just advanced from round robin");
+		}
 		//playoffTeams = gsp.playoffTeams;
 
 		for (int i = 0; i < tm.teams.Length; i++)
@@ -335,14 +343,48 @@ public class PlayoffManager : MonoBehaviour
 			if (tm.teams[i].player)
 				playerTeam = i;
 		}
-		for (int i = 0; i < tm.teams.Length; i++)
-		{
-			if (tm.teams[i].name == tm.teams[playerTeam].nextOpp)
-				oppTeam = i;
-	}
-	Debug.Log("OppTeam is " + oppTeam);
-	
-	bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
+        // CRITICAL FIX: Find opponent using game scores instead of nextOpp
+        oppTeam = -1;
+
+        if (playerTeam >= 0 && playerTeam < tm.teams.Length)
+        {
+            string playerTeamName = tm.teams[playerTeam].name;
+
+            if (playerTeamName == gsp.redTeamName)
+            {
+                for (int i = 0; i < tm.teams.Length; i++)
+                {
+                    if (tm.teams[i].name == gsp.yellowTeamName)
+                    {
+                        oppTeam = i;
+                        break;
+                    }
+                }
+            }
+            else if (playerTeamName == gsp.yellowTeamName)
+            {
+                for (int i = 0; i < tm.teams.Length; i++)
+                {
+                    if (tm.teams[i].name == gsp.redTeamName)
+                    {
+                        oppTeam = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (oppTeam < 0)
+        {
+            Debug.LogError("[LoadAndAdvancePlayoffs] Could not find opponent!");
+            playoffRound++;
+            SetPlayoffs();
+            return;
+        }
+
+        Debug.Log("OppTeam is " + oppTeam);
+
+        bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
 	
 	switch (playoffRound)
 		{

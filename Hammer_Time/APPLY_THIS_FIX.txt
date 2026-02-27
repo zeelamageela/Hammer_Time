@@ -1,0 +1,100 @@
+=====================================================
+PLAYOFF OPPONENT FINDING FIX - MANUAL APPLICATION
+=====================================================
+
+STEP 1: Open the file
+---------------------
+Open: Assets\Scripts\Tourny\PlayoffManager.cs
+
+
+STEP 2: Find the broken code
+-----------------------------
+Go to approximately line 333-342 and find this code:
+
+	for (int i = 0; i < tm.teams.Length; i++)
+	{
+		if (tm.teams[i].player)
+			playerTeam = i;
+	}
+	for (int i = 0; i < tm.teams.Length; i++)
+	{
+		if (tm.teams[i].name == tm.teams[playerTeam].nextOpp)
+			oppTeam = i;
+	}
+	Debug.Log("OppTeam is " + oppTeam);
+
+
+STEP 3: Delete the second for-loop and replace with this
+---------------------------------------------------------
+Delete these lines:
+
+	for (int i = 0; i < tm.teams.Length; i++)
+	{
+		if (tm.teams[i].name == tm.teams[playerTeam].nextOpp)
+			oppTeam = i;
+	}
+	Debug.Log("OppTeam is " + oppTeam);
+
+
+And replace with:
+
+	// CRITICAL FIX: Find opponent using game scores instead of nextOpp
+	oppTeam = -1;
+	
+	if (playerTeam >= 0 && playerTeam < tm.teams.Length)
+	{
+		string playerTeamName = tm.teams[playerTeam].name;
+		
+		if (playerTeamName == gsp.redTeamName)
+		{
+			for (int i = 0; i < tm.teams.Length; i++)
+			{
+				if (tm.teams[i].name == gsp.yellowTeamName)
+				{
+					oppTeam = i;
+					break;
+				}
+			}
+		}
+		else if (playerTeamName == gsp.yellowTeamName)
+		{
+			for (int i = 0; i < tm.teams.Length; i++)
+			{
+				if (tm.teams[i].name == gsp.redTeamName)
+				{
+					oppTeam = i;
+					break;
+				}
+			}
+		}
+	}
+	
+	if (oppTeam < 0)
+	{
+		Debug.LogError("[LoadAndAdvancePlayoffs] Could not find opponent!");
+		playoffRound++;
+		SetPlayoffs();
+		return;
+	}
+	
+	Debug.Log("OppTeam is " + oppTeam);
+
+
+STEP 4: Save the file
+---------------------
+Save PlayoffManager.cs
+
+
+STEP 5: Test
+------------
+1. Play a playoff game
+2. Save and quit
+3. Load and finish the game
+4. Should NOT crash anymore!
+
+=====================================================
+WHY THIS FIXES IT:
+The old code tried to use tm.teams[playerTeam].nextOpp which was
+NULL after loading. The new code uses gsp.redTeamName and 
+gsp.yellowTeamName which are ALWAYS set after a game completes.
+=====================================================

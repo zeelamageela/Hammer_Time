@@ -1597,8 +1597,8 @@ public class CareerManager : MonoBehaviour
         tourTeams = new Team[totalTourTeams];
         Debug.Log("provRankList Count is " + provRankList.Count);
 
-        string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron" };
-        string[] lastNames = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King" };
+        string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron", "Karun", "Avery", "Blake", "Cameron", "Dakota", "Emerson", "Finley", "Gray", "Harper", "Indigo" };
+        string[] lastNames = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King", "Little", "O'Connor", "Peterson", "Reed", "Harris", "Lewis", "Walker", "Robinson", "Wright", "Scott" };
 
         int playersPerTeam = PLAYERS_PER_TEAM;
 
@@ -2715,15 +2715,25 @@ public class CareerManager : MonoBehaviour
             tournamentState.oppTeam = pm.oppTeam;
             tournamentState.playoffRound = pm.playoffRound;
             
+            // CRITICAL FIX: Save playoff bracket to playoffTeams list (not regular teams list)
+            // This matches the fix for Single-K/Triple-K and ensures playoffTeams can be restored
             if (pm.playoffTeams != null && pm.playoffTeams.Length > 0)
             {
+                Debug.Log($"[CareerManager] Found pm.playoffTeams with {pm.playoffTeams.Length} slots");
+                int nonNullCount = 0;
                 foreach (var team in pm.playoffTeams)
                 {
                     if (team != null)
                     {
-                        tournamentState.teams.Add(TeamToData(team));
+                        tournamentState.playoffTeams.Add(TeamToData(team));
+                        nonNullCount++;
                     }
                 }
+                Debug.Log($"[CareerManager] Saved {nonNullCount}/{pm.playoffTeams.Length} playoff bracket teams for Page Playoff");
+            }
+            else
+            {
+                Debug.LogWarning($"[CareerManager] pm.playoffTeams is null or empty! Cannot save bracket.");
             }
         }
         else if (manager is PlayoffManager_SingleK pmSingle)

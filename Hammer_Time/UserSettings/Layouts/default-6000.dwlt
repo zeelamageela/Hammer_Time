@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 4128
     height: 1644.8
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Hierarchy
   m_RootView: {fileID: 7}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 25
+  controlID: 178
   draggingID: 0
 --- !u!114 &5
 MonoBehaviour:
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 26
+  controlID: 51
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 27
+  controlID: 52
   draggingID: 0
 --- !u!114 &12
 MonoBehaviour:
@@ -493,7 +493,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts/AI
+    - Assets/Scripts/Debug
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -503,16 +503,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 66
   m_LastFolders:
-  - Assets/Scripts/AI
+  - Assets/Scripts/Debug
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\zackl\Documents\Hammer_Time\Hammer_Time
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 120}
-    m_SelectedIDs: 34880300
-    m_LastClickedID: 231476
-    m_ExpandedIDs: 00000000dcd40000
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 86d50000
+    m_LastClickedID: 54662
+    m_ExpandedIDs: 00000000cece0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -541,7 +541,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000dcd40000
+    m_ExpandedIDs: 00000000cece0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -569,7 +569,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000a6320100c2400100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -689,7 +689,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: d28d21fefa8e21fe54d721fe54e755fe542356fe28d675fe9ee193fea40494feac9f97fede1851fffa4a79ffb22a80ff66578aff005da8ff2cc0d0ffa66fd1ff36add1ff58e1d1ff70e1d1ff00fbffffd43603007e3803005e520300ba7a0300f4cf03006c93040058a404009ca307009ea70700fef70700
+      m_ExpandedIDs: 16f5ffffb4bd000090c000003ac4000082c5000010c6000032c60000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1185,7 +1185,7 @@ MonoBehaviour:
       scrollOffset: 0
     m_OverlaysVisible: 1
   m_WindowGUID: cc27987af1a868c49b0894db9c0f5429
-  m_Gizmos: 0
+  m_Gizmos: 1
   m_OverrideSceneCullingMask: 6917529027641081856
   m_SceneIsLit: 1
   m_SceneLighting: 1
@@ -1195,9 +1195,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -5.1731772, y: 252.07402, z: 37.82218}
+    m_Target: {x: -777.699, y: 1386.1667, z: -13.007066}
     speed: 2
-    m_Value: {x: -5.1731772, y: 252.07402, z: 37.82218}
+    m_Value: {x: -777.699, y: 1386.1667, z: -13.007066}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1247,9 +1247,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 2015.8336
+    m_Target: 1725.7072
     speed: 2
-    m_Value: 2015.8336
+    m_Value: 1725.7072
   m_Ortho:
     m_Target: 1
     speed: 2

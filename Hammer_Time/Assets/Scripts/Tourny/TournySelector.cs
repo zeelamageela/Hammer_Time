@@ -479,7 +479,206 @@ public class TournySelector : MonoBehaviour
             provQualComplete = true;
         switch (mode)
         {
+            case "cash":
+                #region Cash
+                if (cm.week == 1)
+                {
+                    slm.FirstFiveTrigger();
+                }
 
+                if (cm.week == 1)
+                {
+                    cm.cash = 100000;
+                    slm.skipTutorials = true;
+                    slm.FirstFiveTrigger();
+                    //tournies[0].complete = true;
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = tournies[nextTourny];
+                    activeTournies[2] = emptyTourny;
+
+                }
+                else if (cm.week == 2)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = emptyTourny;
+                    activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = tournies[nextTourny];
+                }
+                else if (cm.week == 3)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = emptyTourny;
+                    if (provQualComplete)
+                        activeTournies[1] = tournies[nextTourny];
+                    else
+                        activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = emptyTourny;
+                }
+                else if (cm.week == 4)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    if (provQualComplete)
+                        activeTournies[1] = tournies[nextTourny2];
+                    else
+                        activeTournies[1] = provQual[nextProvQual];
+                    activeTournies[2] = tournies[nextTourny];
+                }
+                else if (cm.week == 5)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    activeTournies[1] = tournies[nextTourny];
+                    if (provQualComplete)
+                        activeTournies[2] = tournies[nextTourny2];
+                    else
+                        activeTournies[2] = provQual[nextProvQual];
+                }
+                else if (cm.week == 6)
+                {
+                    slm.FirstFiveTrigger();
+                    activeTournies[0] = locals[localSelect];
+                    if (cm.provQual)
+                        activeTournies[1] = tour[nextTour];
+                    else
+                        activeTournies[1] = tournies[nextTourny];
+                    if (cm.provQual)
+                        activeTournies[2] = emptyTourny;
+                    else
+                        activeTournies[2] = tournies[nextTourny2];
+                }
+                else
+                {
+                    Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
+                    if (!cm.provQual)
+                        tourComplete = true;
+
+                    if (tourChampionship.complete & provChampionship.complete)
+                    {
+                        slm.EndOfGame(4);
+                        cm.gameOver = true;
+                        StartCoroutine(EndOfSeason());
+                    }
+                    else if (tourniesComplete && tourComplete)
+                    {
+                        if (cm.provQual)
+                        {
+                            for (int i = 0; i < cm.tourRankList.Count; i++)
+                            {
+                                if (cm.playerTeam.id == cm.tourRankList[i].team.id)
+                                {
+                                    if (i < 6)
+                                        cm.tourQual = true;
+                                }
+                            }
+                        }
+                        else tourChampionship.complete = true;
+
+                        bool champQual = false;
+                        for (int i = 0; i < provStandings.teams.Length; i++)
+                        {
+                            if (provStandings.teams[i].player)
+                            {
+                                if (i < 16)
+                                {
+                                    champQual = true;
+                                    break;
+                                }
+
+                            }
+                        }
+
+                        if (cm.tourQual)
+                            tourChampionship.complete = false;
+                        else
+                            tourChampionship.complete = true;
+
+                        if (champQual)
+                            provChampionship.complete = false;
+                        else
+                            tourChampionship.complete = true;
+
+                        if (tourChampionship.complete & provChampionship.complete)
+                        {
+                            if (!cm.tourQual && !champQual && !cm.provQual)
+                                slm.EndOfGame(0);
+                            else if (!cm.tourQual && !champQual)
+                                slm.EndOfGame(1);
+                            else if (cm.tourQual && !champQual)
+                                slm.EndOfGame(2);
+                            else if (!cm.tourQual && champQual)
+                                slm.EndOfGame(3);
+                            else if (cm.tourQual && champQual)
+                                slm.EndOfGame(4);
+                            cm.gameOver = true;
+                            StartCoroutine(EndOfSeason());
+                        }
+
+                        if (!tourChampionship.complete)
+                            activeTournies[rnd[0]] = tourChampionship;
+                        else
+                            activeTournies[rnd[0]] = emptyTourny;
+
+                        activeTournies[rnd[1]] = emptyTourny;
+
+                        if (!provChampionship.complete)
+                            activeTournies[rnd[2]] = provChampionship;
+                        else
+                            activeTournies[rnd[2]] = emptyTourny;
+                    }
+                    else if (tourniesComplete && !tourComplete)
+                    {
+                        activeTournies[rnd[0]] = emptyTourny;
+                        activeTournies[rnd[1]] = tour[nextTour];
+                        activeTournies[rnd[2]] = emptyTourny;
+                    }
+                    else if (!tourniesComplete && tourComplete)
+                    {
+                        activeTournies[rnd[0]] = emptyTourny;
+                        activeTournies[rnd[1]] = tournies[nextTourny];
+                        if (nextTourny2 == 0)
+                            activeTournies[rnd[2]] = emptyTourny;
+                        else
+                            activeTournies[rnd[2]] = tournies[nextTourny2];
+                    }
+                    else
+                    {
+                        if (week % 2 == 0)
+                        {
+                            activeTournies[0] = tournies[nextTourny];
+                            activeTournies[1] = tour[nextTour];
+                            if (nextTourny2 == 0)
+                                activeTournies[2] = emptyTourny;
+                            else
+                                activeTournies[2] = tournies[nextTourny2];
+                        }
+                        else
+                        {
+                            activeTournies[0] = emptyTourny;
+                            activeTournies[1] = tour[nextTour];
+                            activeTournies[2] = tournies[nextTourny];
+                        }
+                    }
+
+
+                    if (activeTournies[1].name == emptyTourny.name)
+                        activeTournies[1] = locals[localSelect];
+                    else if (activeTournies[0].name == emptyTourny.name)
+                        activeTournies[0] = locals[localSelect];
+                    else if (activeTournies[2].name == emptyTourny.name)
+                        activeTournies[2] = locals[localSelect];
+                }
+
+                // Only check for bankruptcy if the game has progressed (not a fresh start)
+                if (cm.week > 1 && cm.cash < cm.costPerWeek)
+                {
+                    slm.EndOfGame(5);
+                    cm.gameOver = true;
+
+                    StartCoroutine(EndOfSeason());
+                }
+                #endregion
+                break;
             case "tour":
                 #region Tour
                 if (cm.week == 1)
