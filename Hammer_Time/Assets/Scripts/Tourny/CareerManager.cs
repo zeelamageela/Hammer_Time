@@ -1713,6 +1713,18 @@ public class CareerManager : MonoBehaviour
         gsp.playerTeamIndex = playerTeamIndex;
         playerTeam = teams[0];
         Shuffle(teams);
+        
+        // CRITICAL FIX: After shuffle, find player team again and ensure strength is updated
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i] != null && teams[i].id == playerTeamIndex)
+            {
+                playerTeam = teams[i];
+                Debug.Log($"[CareerManager] Found player team after shuffle at index {i}, strength: {playerTeam.strength}");
+                break;
+            }
+        }
+        
         bool inList = true;
 
         for (int i = 0; i < totalTourTeams; i++)
@@ -1891,6 +1903,44 @@ public class CareerManager : MonoBehaviour
             if (team.id == playerTeamIndex)
                 return team.loss;
         return 0;
+    }
+    
+    /// <summary>
+    /// Recalculates player team strength from current stats + equipment
+    /// Call this whenever equipment/players change!
+    /// </summary>
+    public void UpdatePlayerTeamStrength()
+    {
+        if (teams == null || teams.Length == 0)
+        {
+            Debug.LogWarning("[CareerManager] Cannot update player team - teams array is null/empty");
+            return;
+        }
+        
+        // Find player team
+        Team playerTeamData = null;
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i] != null && teams[i].player)
+            {
+                playerTeamData = teams[i];
+                break;
+            }
+        }
+        
+        if (playerTeamData == null)
+        {
+            Debug.LogWarning("[CareerManager] Could not find player team to update strength");
+            return;
+        }
+        
+        // Update player character stats (includes equipment bonuses)
+        UpdateCharacter();
+        
+        // Recalculate team strength from all players
+        playerTeamData.UpdateTeamSkillsFromPlayers();
+        
+        Debug.Log($"[CareerManager] Updated player team strength: {playerTeamData.strength} (after equipment/upgrades)");
     }
     
     #region JSON SAVE/LOAD CONVERSION METHODS
@@ -2799,6 +2849,30 @@ public class CareerManager : MonoBehaviour
                 {
                     tournamentState.teams.Add(TeamToData(team));
                 }
+            }
+        }
+        
+        // CRITICAL FIX: If we're in playoffs and no manager exists (saving from game scene),
+        // save gsp.playoffTeams to preserve the playoff bracket!
+        if (gsp != null && gsp.playoffRound > 0 && tournamentState.playoffTeams.Count == 0)
+        {
+            if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
+            {
+                Debug.Log($"[CareerManager] Saving playoff bracket from gsp.playoffTeams ({gsp.playoffTeams.Length} teams)");
+                int nonNullCount = 0;
+                foreach (var team in gsp.playoffTeams)
+                {
+                    if (team != null)
+                    {
+                        tournamentState.playoffTeams.Add(TeamToData(team));
+                        nonNullCount++;
+                    }
+                }
+                Debug.Log($"[CareerManager] Saved {nonNullCount}/{gsp.playoffTeams.Length} playoff bracket teams from gsp");
+            }
+            else
+            {
+                Debug.LogWarning($"[CareerManager] playoffRound={gsp.playoffRound} but gsp.playoffTeams is null/empty!");
             }
         }
         

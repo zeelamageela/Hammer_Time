@@ -60,9 +60,17 @@ public class EndMenu : MonoBehaviour
 
             if (gsp.endCurrent == 0)
             {
-                // CRITICAL FIX: Reset scores at start of new game
+                // CRITICAL FIX: Reset scores AND score array at start of new game
                 gsp.redScore = 0;
                 gsp.yellowScore = 0;
+                
+                // Clear previous game's score array
+                gsp.score = new Vector2Int[ends];
+                for (int i = 0; i < ends; i++)
+                {
+                    gsp.score[i] = new Vector2Int(0, 0);
+                }
+                Debug.Log($"[EndMenu] New game - cleared score array ({ends} ends)");
                 
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
@@ -257,40 +265,42 @@ public class EndMenu : MonoBehaviour
 
                 scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
-                Debug.Log("I IS " + i);
-
-                // CRITICAL FIX: Check if score array is null before accessing .Length
-                if (gsp.score == null || gsp.endCurrent - 1 > gsp.score.Length)
+            }
+            
+            // CRITICAL FIX: Ensure score array exists and is sized correctly BEFORE accessing it
+            if (gsp.score == null)
+            {
+                Debug.LogWarning($"[EndMenu] Score array was null - initializing to {ends} ends");
+                gsp.score = new Vector2Int[ends];
+                for (int j = 0; j < ends; j++)
                 {
-                    // Initialize or resize score array
-                    int requiredSize = Mathf.Max(gsp.endCurrent, ends);
-                    Vector2Int[] tempScore = new Vector2Int[requiredSize];
-                    
-                    // Copy existing scores if any
-                    if (gsp.score != null)
-                    {
-                        for (int j = 0; j < Mathf.Min(gsp.score.Length, tempScore.Length); j++)
-                        {
-                            tempScore[j] = gsp.score[j];
-                        }
-                    }
-                    
-                    // Initialize any new entries
-                    for (int j = gsp.score != null ? gsp.score.Length : 0; j < tempScore.Length; j++)
-                    {
-                        tempScore[j] = new Vector2Int(0, 0);
-                    }
-
-                    gsp.score = tempScore;
+                    gsp.score[j] = new Vector2Int(0, 0);
                 }
+            }
+            else if (gsp.score.Length < ends)
+            {
+                Debug.LogWarning($"[EndMenu] Score array too small ({gsp.score.Length} vs {ends}) - resizing");
+                Vector2Int[] newScore = new Vector2Int[ends];
+                for (int j = 0; j < gsp.score.Length; j++)
+                {
+                    newScore[j] = gsp.score[j];
+                }
+                for (int j = gsp.score.Length; j < ends; j++)
+                {
+                    newScore[j] = new Vector2Int(0, 0);
+                }
+                gsp.score = newScore;
+            }
 
-                redTeamName.text = gsp.redTeamName;
-                yellowTeamName.text = gsp.yellowTeamName;
-                //redTotalScore.text = gsp.redScore.ToString();
-                //yellowTotalScore.text = gsp.yellowScore.ToString();
+            redTeamName.text = gsp.redTeamName;
+            yellowTeamName.text = gsp.yellowTeamName;
 
+            // Now populate the scoreboard UI
+            for (int i = 0; i < ends; i++)
+            {
                 if (i < gsp.endCurrent)
                 {
+                    // Past ends - show actual scores
                     scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);
                     scoreCols[i].transform.GetChild(2).gameObject.SetActive(true);
                     scoreCols[i].transform.GetChild(1).GetComponent<Text>().text = gsp.score[i].x.ToString();
@@ -298,6 +308,7 @@ public class EndMenu : MonoBehaviour
                 }
                 else if (i == gsp.endCurrent)
                 {
+                    // Current end - show hammer
                     scoreCols[i].transform.GetChild(0).GetComponent<Text>().color = yellow;
 
                     if (gsp.redHammer)
@@ -317,14 +328,23 @@ public class EndMenu : MonoBehaviour
                     scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
                 }
             }
+            
+            // CRITICAL FIX: Recalculate total scores from score array to ensure consistency
             Vector2 tempTotal = Vector2.zero;
-            for (int i = 0; i < gsp.score.Length; i++)
+            for (int i = 0; i < Mathf.Min(gsp.endCurrent, gsp.score.Length); i++)
             {
                 tempTotal.x += gsp.score[i].x;
                 tempTotal.y += gsp.score[i].y;
             }
+            
+            // Update gsp scores to match calculated totals
+            gsp.redScore = (int)tempTotal.x;
+            gsp.yellowScore = (int)tempTotal.y;
+            
             redTotalScore.text = tempTotal.x.ToString();
             yellowTotalScore.text = tempTotal.y.ToString();
+            
+            Debug.Log($"[EndMenu] Score totals recalculated - Red: {tempTotal.x}, Yellow: {tempTotal.y} (from {gsp.endCurrent} ends)");
         }
     }
 
@@ -360,100 +380,114 @@ public class EndMenu : MonoBehaviour
         {
             Debug.Log("Game is on!");
 
+            // CRITICAL FIX: Preserve existing scores, don't create new array from scratch
             Vector2Int[] tempScore = new Vector2Int[gsp.ends];
-            for (int j = 0; j < gsp.endCurrent; j++)
+            
+            // Copy ALL existing scores first
+            if (gsp.score != null)
             {
-                if (j < gsp.endCurrent - 1)
+                for (int j = 0; j < Mathf.Min(gsp.score.Length, tempScore.Length); j++)
                 {
                     tempScore[j] = gsp.score[j];
                 }
+            }
+            
+            // Now only simulate/update the CURRENT end (endCurrent - 1)
+            int currentEndIndex = gsp.endCurrent - 1;
+            if (currentEndIndex >= 0 && currentEndIndex < tempScore.Length)
+            {
+                // --- Improved realism using actual career stats ---
+
+                // FIXED: Use cm.cStats for player, Team.strength for opponent
+                float redSkill = 5f;
+                float yellowSkill = 5f;
+
+                if (cm != null && gsp.redTeam != null && gsp.yellowTeam != null)
+                {
+                    // Determine which team is player and which is opponent
+                    if (gsp.redTeam.player)
+                    {
+                        // Player is red team - use cm.cStats (includes equipment!)
+                        float playerAvg = (cm.cStats.drawAccuracy + cm.cStats.guardAccuracy + cm.cStats.takeOutAccuracy) / 3f;
+                        
+                        // Opponent is yellow team - use their team strength
+                        float oppTeamStrength = gsp.yellowTeam.strength;
+                        
+                        redSkill = playerAvg / 10f;  // Normalize to ~1-10 range (stats are 0-100)
+                        yellowSkill = oppTeamStrength / 100f;  // Team strength is typically 100-500
+                        
+                        Debug.Log($"[SimEnd] Player (red) cStats avg: {playerAvg} ? skill {redSkill:F2}, Opponent (yellow) strength: {oppTeamStrength} ? skill {yellowSkill:F2}");
+                    }
+                    else if (gsp.yellowTeam.player)
+                    {
+                        // Player is yellow team - use cm.cStats (includes equipment!)
+                        float playerAvg = (cm.cStats.drawAccuracy + cm.cStats.guardAccuracy + cm.cStats.takeOutAccuracy) / 3f;
+                        
+                        // Opponent is red team - use their team strength
+                        float oppTeamStrength = gsp.redTeam.strength;
+                        
+                        yellowSkill = playerAvg / 10f;
+                        redSkill = oppTeamStrength / 100f;
+                        
+                        Debug.Log($"[SimEnd] Player (yellow) cStats avg: {playerAvg} ? skill {yellowSkill:F2}, Opponent (red) strength: {oppTeamStrength} ? skill {redSkill:F2}");
+                    }
+                    else
+                    {
+                        // AI vs AI - use team strength for both
+                        redSkill = gsp.redTeam.strength / 100f;
+                        yellowSkill = gsp.yellowTeam.strength / 100f;
+                        Debug.Log($"[SimEnd] AI vs AI - red strength: {gsp.redTeam.strength} ? {redSkill:F2}, yellow strength: {gsp.yellowTeam.strength} ? {yellowSkill:F2}");
+                    }
+                }
                 else
                 {
-                    // --- Improved realism starts here ---
+                    // Fallback to team strength if CareerManager not found
+                    redSkill = gsp.redTeam != null ? gsp.redTeam.strength / 100f : 0.5f;
+                    yellowSkill = gsp.yellowTeam != null ? gsp.yellowTeam.strength / 100f : 0.5f;
+                    Debug.LogWarning($"[SimEnd] Using fallback team strength - red: {redSkill:F2}, yellow: {yellowSkill:F2}");
+                }
 
-                    // Example: Use average skill from CareerStats or Team objects
-                    float redSkill = gsp.redTeam != null ? gsp.redTeam.strength : 5f;
-                    float yellowSkill = gsp.yellowTeam != null ? gsp.yellowTeam.strength : 5f;
+                // Add a small random factor for upsets
+                float redChance = redSkill + Random.Range(-1f, 1.5f);
+                float yellowChance = yellowSkill + Random.Range(-1f, 1.5f);
 
-                    // Add a small random factor for upsets
-                    float redChance = redSkill + Random.Range(-1f, 1.5f);
-                    float yellowChance = yellowSkill + Random.Range(-1f, 1.5f);
-
-                    // Hammer advantage: team with hammer gets a bonus
-                    if (gsp.redHammer)
-                        redChance += 1.0f;
-                    else
-                        yellowChance += 1.0f;
-                    Debug.Log("Red " + redTeamName + " chance: " + redChance + ", Yellow " + yellowTeamName + " chance: " + yellowChance);
-                    // --- Blank end logic ---
-                    if (!lastTwoEnds)
+                // Hammer advantage: team with hammer gets a bonus
+                if (gsp.redHammer)
+                    redChance += 1.0f;
+                else
+                    yellowChance += 1.0f;
+                
+                Debug.Log($"[SimEnd] Final chances - Red: {redChance:F2}, Yellow: {yellowChance:F2}");
+                
+                // --- Blank end logic ---
+                if (!lastTwoEnds)
+                {
+                    // Early/mid game: favor blank ends (e.g., 40% chance)
+                    float blankChance = 0.4f;
+                    if (Random.value < blankChance)
                     {
-                        // Early/mid game: favor blank ends (e.g., 40% chance)
-                        float blankChance = 0.4f;
-                        if (Random.value < blankChance)
-                        {
-                            tempScore[j].x = 0;
-                            tempScore[j].y = 0;
-                            // Hammer is retained
-                            // No need to switch hammer
-                            continue;
-                        }
-                    }
-                    // Last two ends: no blank ends allowed
-                    // If blank would occur, force a score
-
-                    // Simulate end result
-                    if (redChance > yellowChance)
-                    {
-                        // Weighted random: 60% chance for 1, 30% for 2, 10% for 3
-                        float r = Random.value;
-                        int score = (r < 0.6f) ? 1 : (r < 0.9f) ? 2 : 3;
-                        tempScore[j].x = score;
-                        tempScore[j].y = 0;
-                        gsp.redHammer = false;
-                    }
-                    else if (yellowChance > redChance)
-                    {
-                        float r = Random.value;
-                        int score = (r < 0.6f) ? 1 : (r < 0.9f) ? 2 : 3;
-                        tempScore[j].y = score;
-                        tempScore[j].x = 0;
-                        gsp.redHammer = true;
+                        tempScore[currentEndIndex].x = 0;
+                        tempScore[currentEndIndex].y = 0;
+                        // Hammer is retained - don't change it
+                        Debug.Log($"[SimEnd] Blank end - hammer retained by {(gsp.redHammer ? "red" : "yellow")}");
                     }
                     else
                     {
-                        // If last two ends, force a score for the hammer team
-                        if (lastTwoEnds)
-                        {
-                            if (gsp.redHammer)
-                            {
-                                tempScore[j].x = 1;
-                                tempScore[j].y = 0;
-                                gsp.redHammer = false;
-                            }
-                            else
-                            {
-                                tempScore[j].y = 1;
-                                tempScore[j].x = 0;
-                                gsp.redHammer = true;
-                            }
-                        }
-                        else
-                        {
-                            // Should not reach here due to blankChance, but fallback
-                            tempScore[j].x = 0;
-                            tempScore[j].y = 0;
-                            // Hammer retained
-                        }
+                        // Score points based on chances
+                        SimulateScoringEnd(ref tempScore[currentEndIndex], redChance, yellowChance, lastTwoEnds);
                     }
+                }
+                else
+                {
+                    // Last two ends: force a score
+                    SimulateScoringEnd(ref tempScore[currentEndIndex], redChance, yellowChance, lastTwoEnds);
                 }
             }
 
-            gsp.score = new Vector2Int[gsp.ends];
-            for (int j = 0; j < gsp.score.Length; j++)
-            {
-                gsp.score[j] = tempScore[j];
-            }
+            // Update the score array (already has all previous scores preserved)
+            gsp.score = tempScore;
+            
+            Debug.Log($"[EndMenu.SimEnd] Updated end {currentEndIndex + 1} - preserved all {tempScore.Length} ends");
         }
         else
         {
@@ -552,8 +586,8 @@ public class EndMenu : MonoBehaviour
             }
         }
 
+        // CRITICAL FIX: Recalculate total scores from the COMPLETE score array
         Vector2 tempTotal = Vector2.zero;
-
         for (int i = 0; i < gsp.score.Length; i++)
         {
             tempTotal.x += gsp.score[i].x;
@@ -562,6 +596,8 @@ public class EndMenu : MonoBehaviour
 
         gsp.redScore = (int)tempTotal.x;
         gsp.yellowScore = (int)tempTotal.y;
+        
+        Debug.Log($"[EndMenu.SimEnd] Total scores recalculated - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.score.Length} ends)");
 
         if (ends > gsp.endCurrent)
         {
@@ -761,6 +797,60 @@ public class EndMenu : MonoBehaviour
         {
             Debug.Log("[EndMenu.SimEnd] Game complete after simulation - player must click End Game button");
             // The button is already visible from the UI logic above, player clicks it to continue
+        }
+    }
+
+    /// <summary>
+    /// Helper method to simulate scoring an end (not blank)
+    /// </summary>
+    private void SimulateScoringEnd(ref Vector2Int endScore, float redChance, float yellowChance, bool lastTwoEnds)
+    {
+        if (redChance > yellowChance)
+        {
+            // Red scores
+            float r = Random.value;
+            int score = (r < 0.6f) ? 1 : (r < 0.9f) ? 2 : 3;
+            endScore.x = score;
+            endScore.y = 0;
+            gsp.redHammer = false;
+            Debug.Log($"[SimEnd] Red scores {score}");
+        }
+        else if (yellowChance > redChance)
+        {
+            // Yellow scores
+            float r = Random.value;
+            int score = (r < 0.6f) ? 1 : (r < 0.9f) ? 2 : 3;
+            endScore.y = score;
+            endScore.x = 0;
+            gsp.redHammer = true;
+            Debug.Log($"[SimEnd] Yellow scores {score}");
+        }
+        else
+        {
+            // Tie - force hammer team to score if last two ends
+            if (lastTwoEnds)
+            {
+                if (gsp.redHammer)
+                {
+                    endScore.x = 1;
+                    endScore.y = 0;
+                    gsp.redHammer = false;
+                }
+                else
+                {
+                    endScore.y = 1;
+                    endScore.x = 0;
+                    gsp.redHammer = true;
+                }
+                Debug.Log($"[SimEnd] Tie broken - hammer team scores 1");
+            }
+            else
+            {
+                // Blank end
+                endScore.x = 0;
+                endScore.y = 0;
+                Debug.Log($"[SimEnd] Blank end (tie)");
+            }
         }
     }
 

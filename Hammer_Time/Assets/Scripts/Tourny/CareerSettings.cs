@@ -294,47 +294,99 @@ public class CareerSettings : MonoBehaviour
 
     public void NameGenerator()
     {
-        int first = Random.Range(0, 11);
-        string[] name1 = {"JJ", "Scrap", "Trabbitha", "Greezy", "Treep", "Cherp", "Glimp", "Jam", "Craw", "Stint", "Arugula" };
+        // First names - expanded and categorized for variety
+        string[] firstNames = {
+            "JJ", "Scrap", "Trabbitha", "Greezy", "Treep", "Cherp", "Glimp", "Jam", "Craw", "Stint", "Arugula",
+            "Bug", "Squib", "Plum", "Zibby", "Fang", "Mug", "Boot", "Glazz", "Sass", "Fish"
+        };
 
-        int syllables = Random.Range(0, 3);
+        // Prefixes (25% chance)
+        string[] prefixes = { "O'", "de ", "de la ", "Mc", "Van ", "Von " };
+        
+        // Consonant-heavy starts (strong sounds)
+        string[] strongStarts = { 
+            "Griff", "Stamp", "Gloob", "Frist", "Tank", "Stoob", "Thun", "Cleev",
+            "Barg", "Krump", "Flang", "Sprot", "Bank", "Groop", "Skit", "Plow"
+        };
+        
+        // Vowel-heavy starts (soft sounds)
+        string[] softStarts = {
+            "Jum", "Stoff", "Wel", "Gus", "Lol", "Sen", "Hel",
+            "Oob", "Eel", "Arp", "Umb", "Ilk", "Ook", "Emp"
+        };
+        
+        // Vowel endings (flow well after consonants)
+        string[] vowelEndings = { 
+            "il", "ity", "in", "or", "le", "ly", "er", "ow", "ie", "ey", "ee"
+        };
+        
+        // Consonant endings (flow well after vowels)
+        string[] consonantEndings = {
+            "on", "son", "len", "ler", "lun", "ton", "ber", "ter", "kin", "man"
+        };
+        
+        // Final suffixes (optional, add flair)
+        string[] finalSuffixes = {
+            "", "ty", "sen", "rov", "werk", "lova", "ter", "vun", "brun", "son", 
+            "bing", "ich", "eux", "ski", "stein", "worth", "ford", "ley"
+        };
 
-        int pref = Random.Range(0, 14);
-        string[] name2pref = { "O'", "de ", "de la ", "Mc" };
-
-        int lasta = Random.Range(0, 14);
-        string[] name2a = { "Griff", "Stamp", "Gloob", "Frist", "Jum", "Stoff", "Wel", "Tank", "Gus", "Stoob", "Lol", "Sen", "Thun", "Hel", "Cleev" };
-
-        int lastb = Random.Range(0, 11);
-        string[] name2b = { "il", "ity", "on", "son", "len", "ler", "lun", "in", "or", "le", "ly" };
-
-        int lastc = Random.Range(0, 13);
-        string[] name2c = { "", "ty", "sen", "rov", "werk", "lova", "ter", "vun", "brun", "son", "bing", "ich", "eux" };
-
-        Debug.Log("Syllables" + syllables + " - pref " + pref);
-
-        if (syllables == 0)
+        // Generate last name
+        string lastName = "";
+        
+        // 25% chance for prefix
+        if (Random.value < 0.25f)
         {
-            if (pref <= 3)
-                teamNameInput.text = name2pref[pref] + name2a[lasta];
-            else 
-                teamNameInput.text = name2a[lasta];
+            lastName += prefixes[Random.Range(0, prefixes.Length)];
         }
-        else if (syllables == 1)
+        
+        // Pick starting syllable (50/50 strong vs soft)
+        bool useStrongStart = Random.value < 0.5f;
+        string start = useStrongStart 
+            ? strongStarts[Random.Range(0, strongStarts.Length)]
+            : softStarts[Random.Range(0, softStarts.Length)];
+        
+        lastName += start;
+        
+        // Decide complexity (1-3 total syllables)
+        int complexity = Random.Range(1, 4);
+        
+        // RULE 1: Consonant-heavy syllables need vowel endings
+        // RULE 2: Vowel-heavy syllables need consonant endings
+        // RULE 3: Final suffixes only on 3+ syllable names
+        
+        if (complexity == 1)
         {
-            if (pref <= 3)
-                teamNameInput.text = name2pref[pref] + name2a[lasta] + name2b[lastb];
-            else
-                teamNameInput.text = name2a[lasta] + name2b[lastb];
+            // Simple one-syllable name (just the start)
+            // 30% chance to add a simple ending for flow
+            if (Random.value < 0.3f)
+            {
+                lastName += useStrongStart 
+                    ? vowelEndings[Random.Range(0, vowelEndings.Length)]
+                    : consonantEndings[Random.Range(0, consonantEndings.Length)];
+            }
         }
-        else if (syllables == 2)
+        else if (complexity == 2)
         {
-            if (pref <= 3)
-                teamNameInput.text = name2pref[pref] + name2a[lasta] + name2b[lastb] + name2c[lastc];
-            else
-                teamNameInput.text = name2a[lasta] + name2b[lastb] + name2c[lastc];
+            // Two-syllable name
+            lastName += useStrongStart 
+                ? vowelEndings[Random.Range(0, vowelEndings.Length)]      // Strong + vowel
+                : consonantEndings[Random.Range(0, consonantEndings.Length)]; // Soft + consonant
         }
-
-        playerNameInput.text = name1[first];
+        else // complexity == 3
+        {
+            // Three-syllable name (full complexity)
+            lastName += useStrongStart 
+                ? vowelEndings[Random.Range(0, vowelEndings.Length)]
+                : consonantEndings[Random.Range(0, consonantEndings.Length)];
+            
+            // Add final suffix for extra flair
+            lastName += finalSuffixes[Random.Range(0, finalSuffixes.Length)];
+        }
+        
+        teamNameInput.text = lastName;
+        playerNameInput.text = firstNames[Random.Range(0, firstNames.Length)];
+        
+        Debug.Log($"Generated: {playerNameInput.text} {lastName} (complexity: {complexity}, strongStart: {useStrongStart})");
     }
 }
