@@ -952,6 +952,8 @@ public class CareerManager : MonoBehaviour
             // This ensures we save justFinishedGame and tournyInProgress flags even after game ends
             if (gsp != null && (gsp.gameInProgress || gsp.tournyInProgress))
             {
+                Debug.Log($"[CareerManager] Saving game state - gameInProgress:{gsp.gameInProgress}, tournyInProgress:{gsp.tournyInProgress}, score array length:{(gsp.score != null ? gsp.score.Length : 0)}");
+                
                 saveData.currentGameState = new GameStateData
                 {
                     gameInProgress = gsp.gameInProgress,
@@ -985,12 +987,18 @@ public class CareerManager : MonoBehaviour
                     saveData.currentGameState.rockInPlay.AddRange(gsp.rockInPlay);
                 }
                 
+                
                 if (gsp.score != null)
                 {
+                    Debug.Log($"[CareerManager] Saving {gsp.score.Length} end scores to game state");
                     foreach (var score in gsp.score)
                     {
                         saveData.currentGameState.endScores.Add(new Vector2IntData(score));
                     }
+                }
+                else
+                {
+                    Debug.LogWarning("[CareerManager] gsp.score is NULL - no end scores saved!");
                 }
             }
             
@@ -3024,11 +3032,17 @@ public class CareerManager : MonoBehaviour
         // Restore end scores
         if (gameState.endScores != null && gameState.endScores.Count > 0)
         {
+            Debug.Log($"[CareerManager] Restoring {gameState.endScores.Count} end scores to gsp.score");
             gsp.score = new Vector2Int[gameState.endScores.Count];
             for (int i = 0; i < gameState.endScores.Count; i++)
             {
                 gsp.score[i] = gameState.endScores[i].ToVector2Int();
+                Debug.Log($"[CareerManager]   End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
             }
+        }
+        else
+        {
+            Debug.LogWarning($"[CareerManager] No end scores in save data - gameState.endScores is {(gameState.endScores == null ? "NULL" : "empty")}");
         }
         
         Debug.Log($"[CareerManager] Game state restored: End {gameState.currentEnd}/{gameState.ends}, Rock {gameState.currentRock}/{gameState.rocks}");
