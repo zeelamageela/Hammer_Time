@@ -11627,7 +11627,8 @@ MonoBehaviour:
   leftButton: {fileID: 0}
   rightButton: {fileID: 0}
   sweepTime: 1
-  sweepAmt: 0.001
+  sweepAmt: 0.5
+  sweepTapDuration: 0.5
 --- !u!114 &545177320
 MonoBehaviour:
   m_ObjectHideFlags: 0

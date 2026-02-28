@@ -27,9 +27,17 @@ public class Sweep : MonoBehaviour
     public int sweepTime;
     [Tooltip("Base sweep effect strength (0-1 range). Higher = stronger sweep effects. Default: 0.5")]
     public float sweepAmt = 0.5f; // DEFAULT VALUE: 0.5 for moderate effect
+    
+    [Tooltip("Duration in seconds for one sweep tap animation. Set to match your sweep animation clip length.")]
+    public float sweepTapDuration = 2.0f; // Default 2 seconds per tap - ADJUST THIS to match your animation!
 
     float statCalc;
     float statEndur;
+    
+    // Track original dampings so we can reset after sweep
+    private float originalLinearDamping = 0.38f;
+    private float originalAngularDamping = 0.32f;
+    private Coroutine activeSweepCoroutine = null;
 
     void Start()
     {
@@ -107,6 +115,14 @@ public class Sweep : MonoBehaviour
         //}
         
         statCalc = sm.swprLStats.sweepStrength.GetValue();
+        
+        // CRITICAL FIX: If stats are 0, use a default value for testing
+        if (statCalc <= 0.1f)
+        {
+            Debug.LogWarning($"[Sweep.OnLeft] swprLStats returned {statCalc}, using default 80");
+            statCalc = 80f; // Default sweeper strength for testing
+        }
+        
         if (!rm.inturn)
         {
             StartCoroutine(SweepLine(true));
@@ -128,6 +144,14 @@ public class Sweep : MonoBehaviour
         //}
         
         statCalc = sm.swprRStats.sweepStrength.GetValue();
+        
+        // CRITICAL FIX: If stats are 0, use a default value for testing
+        if (statCalc <= 0.1f)
+        {
+            Debug.LogWarning($"[Sweep.OnRight] swprRStats returned {statCalc}, using default 80");
+            statCalc = 80f; // Default sweeper strength for testing
+        }
+        
         if (!rm.inturn)
         {
             StartCoroutine(SweepCurl(true));
@@ -201,21 +225,39 @@ public class Sweep : MonoBehaviour
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         sm.CallOut("Line");
         
-        // LINE SWEEP: STRAIGHTEN the rock
-        // Main effect: Kill the spin faster (rock goes straighter)
+        // Stop any existing sweep effect
+        if (activeSweepCoroutine != null)
+        {
+            StopCoroutine(activeSweepCoroutine);
+        }
         
-        float sweepStrength = statCalc / 100f; // One sweeper
+        // CRITICAL FIX: If stats are 0, use a default value
+        if (statCalc <= 0.1f)
+        {
+            statCalc = 80f;
+        }
         
-        // Apply PERMANENT changes IMMEDIATELY
-        float linearReduction = sweepAmt * sweepStrength * 0.15f;  // Moderate distance boost
-        rb.linearDamping -= linearReduction;
+        // LINE SWEEP: GENTLE straightening per tap
         
-        float angularIncrease = sweepAmt * sweepStrength * 0.25f;  // STRONG straightening (more than weight!)
+        float sweepStrength = statCalc / 100f;
+        
+        // MUCH GENTLER effects
+        float angularIncrease = sweepAmt * sweepStrength * 4.0f;  // Was 0.25, now 0.025!
+        
+        // Apply GENTLE change
         rb.angularDamping += angularIncrease;
         
-        Debug.Log($"Line Sweep: linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3} = STRAIGHTER)");
+        Debug.Log($"Line Sweep TAP: angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3}), will reset in {sweepTapDuration}s");
 
-        yield return new WaitForSeconds(sweepTime);
+        // Wait for animation duration
+        yield return new WaitForSeconds(sweepTapDuration);
+        
+        // RESET to original after tap completes
+        rb.angularDamping = originalAngularDamping;
+        
+        Debug.Log($"Line Sweep RESET: angularDamping restored to {originalAngularDamping:F3}");
+        
+        activeSweepCoroutine = null;
     }
 
     IEnumerator SweepCurl(bool inturn)
@@ -225,24 +267,40 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         
-        // CURL SWEEP: Make it curl MORE!
-        // Main effect: Preserve spin longer (rock curls more)
+        // Stop any existing sweep effect
+        if (activeSweepCoroutine != null)
+        {
+            StopCoroutine(activeSweepCoroutine);
+        }
         
-        float sweepStrength = statCalc / 100f; // One sweeper
+        // CRITICAL FIX: If stats are 0, use a default value
+        if (statCalc <= 0.1f)
+        {
+            statCalc = 80f;
+        }
         
-        // DIAGNOSTIC: Log all the values
-        Debug.Log($"[SweepCurl DIAGNOSTIC] sweepAmt={sweepAmt}, statCalc={statCalc}, sweepStrength={sweepStrength}");
+        // CURL SWEEP: GENTLE, TEMPORARY effect
+        // Each tap gives a small burst that lasts for the animation duration
         
-        // Apply PERMANENT changes IMMEDIATELY
-        float linearReduction = sweepAmt * sweepStrength * 0.15f;  // Moderate distance boost
-        rb.linearDamping -= linearReduction;
+        float sweepStrength = statCalc / 100f; // Normalize to 0-1 range
         
-        float angularReduction = sweepAmt * sweepStrength * 0.25f;  // PRESERVE spin (less damping = more curl!)
-        rb.angularDamping -= angularReduction;  // SUBTRACT = spin lasts longer = MORE CURL!
+        // MUCH GENTLER effects - divide by 10!
+        float angularReduction = sweepAmt * sweepStrength * 4.0f;  // Was 0.25, now 0.025 (10x weaker!)
         
-        Debug.Log($"Curl Sweep: linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (-{angularReduction:F3} = MORE CURL!)");
+        // Apply GENTLE change
+        rb.angularDamping -= angularReduction;
+        
+        Debug.Log($"Curl Sweep TAP: angularDamping={rb.angularDamping:F3} (-{angularReduction:F3}), will reset in {sweepTapDuration}s");
 
-        yield return new WaitForSeconds(sweepTime);
+        // Wait for animation duration
+        yield return new WaitForSeconds(sweepTapDuration);
+        
+        // RESET to original after tap completes
+        rb.angularDamping = originalAngularDamping;
+        
+        Debug.Log($"Curl Sweep RESET: angularDamping restored to {originalAngularDamping:F3}");
+        
+        activeSweepCoroutine = null;
     }
 
     IEnumerator Whoa()
