@@ -11629,6 +11629,9 @@ MonoBehaviour:
   sweepTime: 1
   sweepAmt: 0.5
   sweepTapDuration: 0.5
+  cumulativeSweeping: 1
+  activeCurlMultiplier: 1
+  isSweeping: 0
 --- !u!114 &545177320
 MonoBehaviour:
   m_ObjectHideFlags: 0

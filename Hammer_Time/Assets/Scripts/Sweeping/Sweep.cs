@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,10 +26,13 @@ public class Sweep : MonoBehaviour
 
     public int sweepTime;
     [Tooltip("Base sweep effect strength (0-1 range). Higher = stronger sweep effects. Default: 0.5")]
-    public float sweepAmt = 0.5f; // DEFAULT VALUE: 0.5 for moderate effect
+    public float sweepAmt = 0.1f; // DEFAULT VALUE: 0.5 for moderate effect
     
     [Tooltip("Duration in seconds for one sweep tap animation. Set to match your sweep animation clip length.")]
-    public float sweepTapDuration = 2.0f; // Default 2 seconds per tap - ADJUST THIS to match your animation!
+    public float sweepTapDuration = 0.25f; // Default 0.25 seconds per tap
+    
+    [Tooltip("If true, each sweep tap extends the duration instead of resetting it. Allows continuous sweeping.")]
+    public bool cumulativeSweeping = true; // NEW: Allow taps to stack duration!
 
     float statCalc;
     float statEndur;
@@ -38,6 +41,11 @@ public class Sweep : MonoBehaviour
     private float originalLinearDamping = 0.38f;
     private float originalAngularDamping = 0.32f;
     private Coroutine activeSweepCoroutine = null;
+    
+    // CRITICAL: Real-time curl force multiplier (read by Rock_Force every frame!)
+    public float activeCurlMultiplier = 1.0f; // 1.0 = normal, <1.0 = straighter, >1.0 = more curl
+    public bool isSweeping = false;
+    private float sweepEndTime = 0f; // When current sweep effect expires
 
     void Start()
     {
@@ -178,19 +186,30 @@ public class Sweep : MonoBehaviour
 
         Debug.Log("Sweep Time is " + sweepTime);
         
-        // WEIGHT SWEEP: SIMPLE AND DIRECT
-        // Reduce both friction AND curl (makes rock go farther and straighter)
+        // WEIGHT SWEEP: NON-CUMULATIVE!
+        // Reset dampings to original first, then apply changes (prevents stacking)
+        rb.linearDamping = originalLinearDamping;
+        rb.angularDamping = originalAngularDamping;
         
         float sweepStrength = statCalc / 100f; // Normalize to 0-2 range
         
-        // Apply PERMANENT changes IMMEDIATELY
-        float linearReduction = sweepAmt * sweepStrength * 0.2f;  // Rock goes farther
+        // Apply changes (will be reset on next sweep) - VERY GENTLE!
+        float linearReduction = sweepAmt * sweepStrength * 0.035f;  // Rock goes farther (was 0.05, now 30% weaker)
         rb.linearDamping -= linearReduction;
         
-        float angularIncrease = sweepAmt * sweepStrength * 0.15f;  // Rock goes straighter (spin dies faster)
+        float angularIncrease = sweepAmt * sweepStrength * 0.25f;  // Rock goes straighter (was 0.5, now 30% weaker)
         rb.angularDamping += angularIncrease;
         
-        Debug.Log($"Weight Sweep: linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3})");
+        // ALSO add lateral straightening (like line sweep, but gentler)
+        Vector2 currentVel = rb.linearVelocity;
+        float forwardSpeed = Mathf.Abs(currentVel.y);
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f);
+        
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.005f * speedMultiplier; // Gentle straightening (was 0.01, now 50% weaker)
+        float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        
+        Debug.Log($"Weight Sweep: linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTime);
     }
@@ -225,37 +244,44 @@ public class Sweep : MonoBehaviour
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         sm.CallOut("Line");
         
-        // Stop any existing sweep effect
-        if (activeSweepCoroutine != null)
-        {
-            StopCoroutine(activeSweepCoroutine);
-        }
-        
         // CRITICAL FIX: If stats are 0, use a default value
         if (statCalc <= 0.1f)
         {
             statCalc = 80f;
         }
         
-        // LINE SWEEP: GENTLE straightening per tap
+        // LINE SWEEP: DIRECTLY modify velocity + add damping!
+        // Add lateral velocity OPPOSITE to curl direction (straightening), SCALED by forward speed
         
         float sweepStrength = statCalc / 100f;
         
-        // MUCH GENTLER effects
-        float angularIncrease = sweepAmt * sweepStrength * 4.0f;  // Was 0.25, now 0.025!
+        // Get current velocity FIRST (need it for speed calculation)
+        Vector2 currentVel = rb.linearVelocity;
         
-        // Apply GENTLE change
+        // Add damping effects (straightening focus - GENTLE angular, slight linear)
+        float linearReduction = sweepAmt * sweepStrength * 0.015f;  // Slight distance (was 0.05, reduced 40%)
+        rb.linearDamping -= linearReduction;
+        
+        float angularIncrease = sweepAmt * sweepStrength * 0.30f;  // Gentle spin kill (was 1.4, now 75% weaker!)
         rb.angularDamping += angularIncrease;
         
-        Debug.Log($"Line Sweep TAP: angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3}), will reset in {sweepTapDuration}s");
+        // Safety clamp: Never let angular damping get too high (rock must keep some spin!)
+        rb.angularDamping = Mathf.Min(rb.angularDamping, 1.0f); // Cap at 1.0
+        
+        // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
+        float forwardSpeed = Mathf.Abs(currentVel.y);
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f); // Normalize: 1.0 m/s = 100% effect
+        
+        // Calculate lateral velocity to add, scaled by forward speed!
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.03f * speedMultiplier; // Scaled!
+        float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
+        
+        // DIRECTLY add to the rock's velocity
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        
+        Debug.Log($"[Line Sweep] linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
 
-        // Wait for animation duration
         yield return new WaitForSeconds(sweepTapDuration);
-        
-        // RESET to original after tap completes
-        rb.angularDamping = originalAngularDamping;
-        
-        Debug.Log($"Line Sweep RESET: angularDamping restored to {originalAngularDamping:F3}");
         
         activeSweepCoroutine = null;
     }
@@ -267,38 +293,45 @@ public class Sweep : MonoBehaviour
         rb = rock.GetComponent<Rigidbody2D>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         
-        // Stop any existing sweep effect
-        if (activeSweepCoroutine != null)
-        {
-            StopCoroutine(activeSweepCoroutine);
-        }
-        
         // CRITICAL FIX: If stats are 0, use a default value
         if (statCalc <= 0.1f)
         {
-            statCalc = 80f;
+            statCalc = 99f;
         }
         
-        // CURL SWEEP: GENTLE, TEMPORARY effect
-        // Each tap gives a small burst that lasts for the animation duration
+        // CURL SWEEP: DIRECTLY modify velocity + add damping!
+        // Add lateral velocity in the curl direction, SCALED by forward speed
         
-        float sweepStrength = statCalc / 100f; // Normalize to 0-1 range
+        float sweepStrength = statCalc / 100f;
         
-        // MUCH GENTLER effects - divide by 10!
-        float angularReduction = sweepAmt * sweepStrength * 4.0f;  // Was 0.25, now 0.025 (10x weaker!)
+        // Get current velocity FIRST (need it for speed calculation)
+        Vector2 currentVel = rb.linearVelocity;
         
-        // Apply GENTLE change
-        rb.angularDamping -= angularReduction;
+        // Add damping effects (curl focus - VERY GENTLE angular reduction, slight linear)
+        float linearReduction = sweepAmt * sweepStrength * 0.025f;  // Slight distance (was 0.04, reduced 40%)
+        rb.linearDamping -= linearReduction;
         
-        Debug.Log($"Curl Sweep TAP: angularDamping={rb.angularDamping:F3} (-{angularReduction:F3}), will reset in {sweepTapDuration}s");
+        float angularReduction = sweepAmt * sweepStrength * 0.28f;  // Gentle spin preservation (was 0.7, now 60% weaker!)
+        rb.angularDamping -= angularReduction;  // LESS angular damping = spin lasts longer = MORE CURL!
+        
+        // Safety clamp: NEVER let angular damping go below 0.1 (rock must have some damping!)
+        rb.angularDamping = Mathf.Max(rb.angularDamping, 0.1f); // Minimum 0.1
+        
+        // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
+        // When rock is fast (3 m/s), full effect. When slow (0.5 m/s), much weaker effect.
+        float forwardSpeed = Mathf.Abs(currentVel.y);
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f); // Normalize: 2.0 m/s = 100% effect, <2.0 = proportionally less
+        
+        // Calculate lateral velocity to add, scaled by forward speed!
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.05f * speedMultiplier; // Scaled!
+        float curlDirection = rf.curl.x < 0 ? -1f : 1f; // Direction rock is curling
+        
+        // DIRECTLY add to the rock's velocity (not force!)
+        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost), currentVel.y);
+        
+        Debug.Log($"[Curl Sweep] linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
 
-        // Wait for animation duration
         yield return new WaitForSeconds(sweepTapDuration);
-        
-        // RESET to original after tap completes
-        rb.angularDamping = originalAngularDamping;
-        
-        Debug.Log($"Curl Sweep RESET: angularDamping restored to {originalAngularDamping:F3}");
         
         activeSweepCoroutine = null;
     }

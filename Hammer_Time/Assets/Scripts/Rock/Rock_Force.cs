@@ -17,6 +17,9 @@ public class Rock_Force : MonoBehaviour
     
     [Tooltip("Curl force multiplier - tune this to maintain trajectory shape at different speeds")]
     public float curlForceMultiplier = 1.0f;
+    
+    // Sweeping control (modified in real-time by Sweep.cs)
+    private Sweep sweepController;
 
     float velX = 0f;
     float velY = 0f;
@@ -37,6 +40,9 @@ public class Rock_Force : MonoBehaviour
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        
+        // Find sweep controller to read real-time curl multiplier
+        sweepController = FindFirstObjectByType<Sweep>();
         
         // ? QUICK TEST MODE: Lock all physics multipliers to 1.0 for perfect determinism!
         // This ensures trajectory is 100% predictable and matches the visual preview exactly
@@ -137,8 +143,19 @@ public class Rock_Force : MonoBehaviour
             // The linearDamping was set at hog line and stays constant
             
             //Debug.Log("Curl Force");
-            // Apply curl force multiplier for trajectory tuning
-            Vector2 scaledCurl = curl * curlForceMultiplier;
+            // Apply curl force WITH SWEEPING MULTIPLIER!
+            // If sweeping, the curl force is amplified (curl) or reduced (line) in REAL-TIME!
+            float sweepCurlMult = (sweepController != null && sweepController.isSweeping) 
+                ? sweepController.activeCurlMultiplier 
+                : 1.0f;
+            
+            // DIAGNOSTIC: Log when sweeping is active
+            if (sweepController != null && sweepController.isSweeping && frameCounter % 30 == 0)
+            {
+                Debug.Log($"[Rock_Force SWEEPING] Frame {frameCounter}: sweepMult={sweepCurlMult:F2}, curl.x={curl.x:F3}, angularVel={body.angularVelocity:F2}");
+            }
+            
+            Vector2 scaledCurl = curl * curlForceMultiplier * sweepCurlMult; // ? SWEEPING MODIFIES CURL FORCE HERE!
             body.AddForce(scaledCurl * vel, ForceMode2D.Force);
             
             //Debug.Log("curl is " + curl.x);
