@@ -70,7 +70,7 @@ public class ShooterAnim : MonoBehaviour
         {
 
             anim.SetBool("mouseDown", true);
-            if (springDistance > 0.5f && rock.transform.position.y < -25.1f)
+            if (springDistance > 1f && rock.transform.position.y < -25.5f)
             {
                 pullback = (springDistance) / 5f;
                 pullback = Mathf.Clamp(pullback, 0f, 1f);
@@ -79,13 +79,13 @@ public class ShooterAnim : MonoBehaviour
             }
             else
             {
-                pullback = 0f / 3f;
+                pullback = 0f / 4f;
                 pullback = Mathf.Clamp(pullback, 0f, 1f);
                 anim.SetBool("mouseDown", false);
                 anim.Play("Shooter_2_Backswing", 0, pullback);
             }
 
-            if (pullback >= 0.5f)
+            if (pullback >= 1f)
             {
                 angle = Mathf.Atan2(springDirection.y, springDirection.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90f));

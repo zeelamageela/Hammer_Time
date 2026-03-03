@@ -117,6 +117,11 @@ public class TrajectoryLine : MonoBehaviour
     
     // Store trajectory speeds for variable dot sizing
     private List<float> trajectorySpeed;
+    
+    // Visualization settings (controlled by UI toggles)
+    private GameVisualizationSettings visualSettings;
+    private bool trajectoryDotsVisible = true;
+    private bool collisionLinesVisible = true;
 
     void Start()
     {
@@ -126,6 +131,16 @@ public class TrajectoryLine : MonoBehaviour
         dots = new List<GameObject>();
         trajectorySpeed = new List<float>();
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+        
+        // Subscribe to visualization settings
+        visualSettings = GameVisualizationSettings.Instance;
+        trajectoryDotsVisible = visualSettings.TrajectoryVisible;
+        collisionLinesVisible = visualSettings.CollisionLinesVisible;
+        
+        visualSettings.OnTrajectoryVisibilityChanged += OnTrajectoryVisibilityChanged;
+        visualSettings.OnCollisionLinesVisibilityChanged += OnCollisionLinesVisibilityChanged;
+        
+        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}");
 
         lr.enabled = false;
         CareerManager cm = FindAnyObjectByType<CareerManager>();
@@ -484,8 +499,8 @@ public class TrajectoryLine : MonoBehaviour
             
             // Debug.Log($"Physics simulation complete - {pos.Count} points, collision: {collisionInfo.hasCollision}");
             
-            // Visualize collision if detected
-            if (collisionInfo.hasCollision && showCollisionPrediction)
+            // Visualize collision if detected (only if visibility enabled)
+            if (collisionInfo.hasCollision && showCollisionPrediction && collisionLinesVisible)
             {
                 Debug.Log($"[TrajectoryLine] COLLISION DETECTED! Point: {collisionInfo.collisionPoint}, Index: {collisionInfo.collisionIndex}");
                 Debug.Log($"[TrajectoryLine] Thrown rock path count: {collisionInfo.thrownRockPostCollisionPath.Count}, Hit rock path count: {collisionInfo.hitRockPostCollisionPath.Count}");
@@ -623,10 +638,10 @@ public class TrajectoryLine : MonoBehaviour
         lr.startWidth = Mathf.Lerp(0f, 0.3f, springDistance / 3.25f);
         lr.endWidth = Mathf.Lerp(0f, 0.1f, springDistance / 3.25f);
 
-        // Draw dots along trajectory
-        Debug.Log($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}");
+        // Draw dots along trajectory (only if visibility enabled)
+        Debug.Log($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}, visible={trajectoryDotsVisible}");
         
-        if (pos.Count > 0 && dotCount > 0 && dot != null)
+        if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible)
         {
             // Draw dots all the way through trajectory (including to collision point)
             int maxDotIndex = pos.Count;
@@ -820,4 +835,94 @@ public class TrajectoryLine : MonoBehaviour
     //        t += (1 / (float)lr.positionCount);
     //    }
     //}
+    
+    /// <summary>
+    /// Called when trajectory dot visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnTrajectoryVisibilityChanged(bool visible)
+    {
+        trajectoryDotsVisible = visible;
+        Debug.Log($"[TrajectoryLine] Trajectory dots visibility changed to: {visible}");
+        
+        // If currently showing trajectory, redraw it with new visibility setting
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            
+            // Only redraw if we're in aiming mode (not released yet)
+            if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+            {
+                // Clear existing dots
+                if (dots.Count > 0)
+                {
+                    foreach (GameObject dot in dots)
+                    {
+                        if (dot != null) Destroy(dot);
+                    }
+                    dots.Clear();
+                }
+                
+                // If turning ON, redraw trajectory to show dots
+                if (visible)
+                {
+                    DrawTrajectory();
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called when collision lines visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnCollisionLinesVisibilityChanged(bool visible)
+    {
+        collisionLinesVisible = visible;
+        Debug.Log($"[TrajectoryLine] Collision lines visibility changed to: {visible}");
+        
+        // Immediately hide/show collision visualization if it exists
+        if (!visible)
+        {
+            // Hide all collision visualization
+            if (currentCollisionMarker != null)
+            {
+                currentCollisionMarker.SetActive(false);
+            }
+            if (postCollisionLine != null)
+            {
+                postCollisionLine.enabled = false;
+            }
+            if (hitRockPostCollisionLine != null)
+            {
+                hitRockPostCollisionLine.enabled = false;
+            }
+        }
+        else
+        {
+            // Re-enable if aiming and collision exists
+            if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+            {
+                GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+                Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+                
+                if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+                {
+                    // Redraw to show collision visualization
+                    DrawTrajectory();
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Cleanup subscriptions when destroyed
+    /// </summary>
+    void OnDestroy()
+    {
+        if (visualSettings != null)
+        {
+            visualSettings.OnTrajectoryVisibilityChanged -= OnTrajectoryVisibilityChanged;
+            visualSettings.OnCollisionLinesVisibilityChanged -= OnCollisionLinesVisibilityChanged;
+        }
+    }
 }

@@ -217,7 +217,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (springDistance <= 0.5f)  // DETERMINISTIC: Allow light shots
+                        else if (springDistance <= 1.5f)  // DETERMINISTIC: Allow light shots
                         {
                             RockReset();
                         }
@@ -249,7 +249,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (springDistance <= 0.5f)  // DETERMINISTIC: Allow light shots
+                        else if (springDistance <= 1.5f)  // DETERMINISTIC: Allow light shots
                         {
                             RockReset();
                         }
@@ -284,7 +284,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (springDistance <= 0.5f)  // DETERMINISTIC: Allow light shots
+                        else if (springDistance <= 1.5f)  // DETERMINISTIC: Allow light shots
                         {
                             RockReset();
                         }
@@ -315,7 +315,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (springDistance <= 0.5f)  // DETERMINISTIC: Allow light shots
+                        else if (springDistance <= 1.5f)  // DETERMINISTIC: Allow light shots
                         {
                             RockReset();
                         }

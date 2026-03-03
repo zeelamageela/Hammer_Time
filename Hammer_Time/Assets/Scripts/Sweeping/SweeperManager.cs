@@ -302,16 +302,16 @@ public class SweeperManager : MonoBehaviour
 
         if (inturn)
         {
-            sweeperL.yOffset = 1.2f;
-            sweeperR.yOffset = 0.6f;
+            sweeperL.yOffset = 0.69f;
+            sweeperR.yOffset = 0.39f;
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
 
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
         }
         else
         {
-            sweeperL.yOffset = 0.6f;
-            sweeperR.yOffset = 1.2f;
+            sweeperL.yOffset = 0.39f;
+            sweeperR.yOffset = 0.69f;
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
 
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
@@ -323,9 +323,7 @@ public class SweeperManager : MonoBehaviour
     public void SweepTap()
     {
         //Tap on the sweep target
-
-        float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = (sweepEndur * 0.02f);
+        float sweepTimer = 0.01f;
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
@@ -366,8 +364,7 @@ public class SweeperManager : MonoBehaviour
     {
         //Tap on the sweep target
 
-        float sweepEndur = swprLStats.sweepEndurance.GetValue();
-        float sweepTimer = 0.5f + sweepEndur * 0.02f;
+        float sweepTimer = 0.01f;
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
@@ -395,9 +392,9 @@ public class SweeperManager : MonoBehaviour
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
             sweeperR.Whoa();
 
-            sweeperL.yOffset = Mathf.Lerp(1.2f, 0.6f, (1 - Time.deltaTime));
+            sweeperL.yOffset = 0.39f;
             //sweeperL.yOffset = 0.6f;
-            sweeperR.yOffset = Mathf.Lerp(0.6f, 1.2f, (1 - Time.deltaTime));
+            sweeperR.yOffset = 0.69f;
             //sweeperR.yOffset = 1.2f;
         }
 
@@ -410,9 +407,7 @@ public class SweeperManager : MonoBehaviour
     public void SweepTapRight()
     {
         //Tap on the sweep target
-
-        float sweepEndur = swprRStats.sweepEndurance.GetValue();
-        float sweepTimer = 0.5f + sweepEndur * 0.02f;
+        float sweepTimer = 0.01f;
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
@@ -443,8 +438,8 @@ public class SweeperManager : MonoBehaviour
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
             sweeperR.Sweep();
 
-            sweeperL.yOffset = 1.2f;
-            sweeperR.yOffset = 0.6f;
+            sweeperL.yOffset = 0.69f;
+            sweeperR.yOffset = 0.39f;
         }
 
         //set the buttons

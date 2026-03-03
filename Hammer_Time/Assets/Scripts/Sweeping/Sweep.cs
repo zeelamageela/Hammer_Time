@@ -262,7 +262,7 @@ public class Sweep : MonoBehaviour
         float linearReduction = sweepAmt * sweepStrength * 0.015f;  // Slight distance (was 0.05, reduced 40%)
         rb.linearDamping -= linearReduction;
         
-        float angularIncrease = sweepAmt * sweepStrength * 0.30f;  // Gentle spin kill (was 1.4, now 75% weaker!)
+        float angularIncrease = sweepAmt * sweepStrength * 0.10f;  // Gentle spin kill (was 1.4, now 75% weaker!)
         rb.angularDamping += angularIncrease;
         
         // Safety clamp: Never let angular damping get too high (rock must keep some spin!)
@@ -270,10 +270,10 @@ public class Sweep : MonoBehaviour
         
         // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
         float forwardSpeed = Mathf.Abs(currentVel.y);
-        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f); // Normalize: 1.0 m/s = 100% effect
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 2.5f); // Normalize: 1.0 m/s = 100% effect
         
         // Calculate lateral velocity to add, scaled by forward speed!
-        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.03f * speedMultiplier; // Scaled!
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.015f * speedMultiplier; // Scaled!
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         
         // DIRECTLY add to the rock's velocity
@@ -308,10 +308,10 @@ public class Sweep : MonoBehaviour
         Vector2 currentVel = rb.linearVelocity;
         
         // Add damping effects (curl focus - VERY GENTLE angular reduction, slight linear)
-        float linearReduction = sweepAmt * sweepStrength * 0.025f;  // Slight distance (was 0.04, reduced 40%)
+        float linearReduction = sweepAmt * sweepStrength * 0.015f;  // Slight distance (was 0.04, reduced 40%)
         rb.linearDamping -= linearReduction;
         
-        float angularReduction = sweepAmt * sweepStrength * 0.28f;  // Gentle spin preservation (was 0.7, now 60% weaker!)
+        float angularReduction = sweepAmt * sweepStrength * 0.10f;  // Gentle spin preservation (was 0.7, now 60% weaker!)
         rb.angularDamping -= angularReduction;  // LESS angular damping = spin lasts longer = MORE CURL!
         
         // Safety clamp: NEVER let angular damping go below 0.1 (rock must have some damping!)
@@ -323,7 +323,7 @@ public class Sweep : MonoBehaviour
         float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f); // Normalize: 2.0 m/s = 100% effect, <2.0 = proportionally less
         
         // Calculate lateral velocity to add, scaled by forward speed!
-        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.05f * speedMultiplier; // Scaled!
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.02f * speedMultiplier; // Scaled!
         float curlDirection = rf.curl.x < 0 ? -1f : 1f; // Direction rock is curling
         
         // DIRECTLY add to the rock's velocity (not force!)
