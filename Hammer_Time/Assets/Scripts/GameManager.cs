@@ -148,20 +148,26 @@ public class GameManager : MonoBehaviour
 
 
         rockCurrent = 2 * (8 - gsp.rocks);
-        // CRITICAL FIX: Initialize AND CLEAR score array at start of game
+        // CRITICAL FIX: Initialize score array at start of NEW game only!
+        // Don't clear it when continuing to next end (endCurrent > 0)
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
         {
             Debug.Log($"[GameManager] Creating new score array for {endTotal + 1} ends");
             gsp.score = new Vector2Int[endTotal + 1];
         }
-        else
+        else if (gsp.endCurrent == 0)
         {
-            // Array exists and is big enough - CLEAR IT for new game
-            Debug.Log($"[GameManager] Clearing existing score array ({gsp.score.Length} slots) for new game");
+            // Only clear when starting a NEW game (endCurrent == 0)
+            // Don't clear when continuing to next end!
+            Debug.Log($"[GameManager] Clearing score array for NEW game (endCurrent=0)");
             for (int i = 0; i < gsp.score.Length; i++)
             {
                 gsp.score[i] = new Vector2Int(0, 0);
             }
+        }
+        else
+        {
+            Debug.Log($"[GameManager] Preserving score array for end {gsp.endCurrent + 1}");
         }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
@@ -1134,23 +1140,32 @@ public class GameManager : MonoBehaviour
                 gsp.score = newScore;
             }
 
+            // ? CRITICAL: Save score with extra validation
             if (winningTeamName == redTeamName)
             {
+                Debug.Log($"[GameManager.Scoring] Attempting to save Red score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
                 gsp.score[endCurrent] = new Vector2Int(houseScore, 0);
-                Debug.Log($"[GameManager.Scoring] SAVED to gsp.score[{endCurrent}] = ({houseScore}, 0) for {redTeamName}");
+                Debug.Log($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = ({houseScore}, 0) for {redTeamName}");
+                Debug.Log($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
                 redScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = false;
                 gHUD.SetHammer(redHammer);
             }
-            if (winningTeamName == yellowTeamName)
+            else if (winningTeamName == yellowTeamName)
             {
+                Debug.Log($"[GameManager.Scoring] Attempting to save Yellow score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
                 gsp.score[endCurrent] = new Vector2Int(0, houseScore);
-                Debug.Log($"[GameManager.Scoring] SAVED to gsp.score[{endCurrent}] = (0, {houseScore}) for {yellowTeamName}");
+                Debug.Log($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = (0, {houseScore}) for {yellowTeamName}");
+                Debug.Log($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
                 yellowScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = true;
                 gHUD.SetHammer(redHammer);
+            }
+            else
+            {
+                Debug.LogError($"[GameManager.Scoring] ERROR: winningTeamName '{winningTeamName}' doesn't match redTeamName '{redTeamName}' or yellowTeamName '{yellowTeamName}'!");
             }
 
             //endScoreRed[endCurrent] = redScore;
