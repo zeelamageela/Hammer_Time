@@ -52,6 +52,32 @@ public class EndMenu : MonoBehaviour
         {
             gsp.loadGame = false;
             ends = gsp.ends;
+            
+            // ? CRITICAL FIX: Ensure score array exists BEFORE any calculations
+            if (gsp.score == null || gsp.score.Length != ends)
+            {
+                Debug.LogWarning($"[EndMenu.Start] Score array invalid (null or length {gsp.score?.Length} != {ends}) - initializing");
+                gsp.score = new Vector2Int[ends];
+                for (int i = 0; i < ends; i++)
+                {
+                    gsp.score[i] = new Vector2Int(0, 0);
+                }
+            }
+            
+            // ? CRITICAL FIX: Recalculate totals from score array FIRST!
+            // This MUST happen BEFORE any winner determination logic
+            Vector2 recalculatedTotal = Vector2.zero;
+            for (int i = 0; i < Mathf.Min(gsp.endCurrent, gsp.score.Length); i++)
+            {
+                recalculatedTotal.x += gsp.score[i].x;
+                recalculatedTotal.y += gsp.score[i].y;
+            }
+            
+            // Update gsp totals to match calculated values
+            gsp.redScore = (int)recalculatedTotal.x;
+            gsp.yellowScore = (int)recalculatedTotal.y;
+            
+            Debug.Log($"[EndMenu.Start] Scores recalculated from array - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.endCurrent} completed ends)");
 
             if (gsp.cashGame)
             {
@@ -267,31 +293,6 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
             }
             
-            // CRITICAL FIX: Ensure score array exists and is sized correctly BEFORE accessing it
-            if (gsp.score == null)
-            {
-                Debug.LogWarning($"[EndMenu] Score array was null - initializing to {ends} ends");
-                gsp.score = new Vector2Int[ends];
-                for (int j = 0; j < ends; j++)
-                {
-                    gsp.score[j] = new Vector2Int(0, 0);
-                }
-            }
-            else if (gsp.score.Length < ends)
-            {
-                Debug.LogWarning($"[EndMenu] Score array too small ({gsp.score.Length} vs {ends}) - resizing");
-                Vector2Int[] newScore = new Vector2Int[ends];
-                for (int j = 0; j < gsp.score.Length; j++)
-                {
-                    newScore[j] = gsp.score[j];
-                }
-                for (int j = gsp.score.Length; j < ends; j++)
-                {
-                    newScore[j] = new Vector2Int(0, 0);
-                }
-                gsp.score = newScore;
-            }
-
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
 

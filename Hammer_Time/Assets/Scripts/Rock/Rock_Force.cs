@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Lofelt.NiceVibrations;
@@ -44,14 +44,17 @@ public class Rock_Force : MonoBehaviour
         // Find sweep controller to read real-time curl multiplier
         sweepController = FindFirstObjectByType<Sweep>();
         
-        // ? QUICK TEST MODE: Lock all physics multipliers to 1.0 for perfect determinism!
+        // ⚠️ QUICK TEST MODE: Lock all physics multipliers to 1.0 for perfect determinism!
         // This ensures trajectory is 100% predictable and matches the visual preview exactly
-        bool isQuickTestMode = PlayerPrefs.GetInt("QuickTestMode", 0) == 1;
+        // CRITICAL: Only enable if QuickTestMode is set AND this is a debug game (gsp.debug = true)
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        bool isQuickTestMode = PlayerPrefs.GetInt("QuickTestMode", 0) == 1 && (gsp != null && gsp.debug);
+        
         if (isQuickTestMode)
         {
             springTensionMultiplier = 1.0f;
             curlForceMultiplier = 1.0f;
-            Debug.Log($"[Rock_Force] ? QUICK TEST MODE: Physics multipliers LOCKED to 1.0 (perfect determinism)");
+            Debug.Log($"[Rock_Force] ⚠️ QUICK TEST MODE: Physics multipliers LOCKED to 1.0 (perfect determinism)");
         }
 
         am = FindFirstObjectByType<AudioManager>();
@@ -111,7 +114,7 @@ public class Rock_Force : MonoBehaviour
         {
             body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
             turnStart = false;
-            
+
             // DIAGNOSTIC: Start frame-by-frame logging after hog line
             frameCounter = 0;
             lastPosition = body.position;
@@ -119,6 +122,17 @@ public class Rock_Force : MonoBehaviour
             //Debug.Log($"[Rock FixedUpdate] === FRAME-BY-FRAME LOGGING STARTED ===");
 
             //Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
+        }
+
+        if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
+        {
+            //Debug.Log($"[Rock STOPPED] Final Position: ({body.position.x:F3}, {body.position.y:F3}) | Total Distance: {totalDistance:F3}");
+            //Debug.Log("Velocity below 0.01");
+            //am.Stop("RockScrape");
+            GetComponent<Rock_Info>().stopped = true;
+            GetComponent<Rock_Info>().rest = true;
+            body.linearDamping = 0.95f;
+            HapticController.Stop();
         }
 
         if (forceStart == true)
@@ -166,7 +180,7 @@ public class Rock_Force : MonoBehaviour
                 //am.Stop("RockScrape");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
-                body.linearDamping = 0.75f;
+                body.linearDamping = 0.95f;
                 HapticController.Stop();
             }
 

@@ -191,8 +191,8 @@ public class GameSettingsPersist : MonoBehaviour
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         Debug.Log("Loading to GSP");
-        //Debug.Log("Ends is " + myFile.GetInt("End Total"));
-
+        
+        // Sync data from GameManager FIRST (before touching score array!)
         ends = gm.endTotal;
         endCurrent = gm.endCurrent;
         rocks = gm.rocksPerTeam;
@@ -202,15 +202,46 @@ public class GameSettingsPersist : MonoBehaviour
         redHammer = gm.redHammer;
         aiYellow = gm.aiTeamYellow;
         aiRed = gm.aiTeamRed;
-
-        //third = gm.target;
-        //skip = gm.target;
-
-        //score[endCurrent] = new Vector2Int(redScore, yellowScore);
-        //redScore = myFile.GetInt("Red Score");
-        //yellowScore = myFile.GetInt("Yellow Score");
         
+        // ? CRITICAL: Only initialize score array if it's NULL
+        // If it exists but wrong size, RESIZE while preserving data
+        // GameManager.Scoring() already saved the score before calling this!
+        if (score == null)
+        {
+            Debug.LogWarning($"[GSP.LoadFromGM] Score array was null - initializing for {ends} ends");
+            score = new Vector2Int[ends];
+            for (int i = 0; i < ends; i++)
+            {
+                score[i] = new Vector2Int(0, 0);
+            }
+        }
+        else if (score.Length != ends)
+        {
+            // Array exists but wrong size - resize while preserving existing scores
+            Debug.LogWarning($"[GSP.LoadFromGM] Resizing score array from {score.Length} to {ends} ends (preserving existing scores)");
+            Vector2Int[] newScore = new Vector2Int[ends];
+            
+            // Copy existing scores
+            for (int i = 0; i < Mathf.Min(score.Length, ends); i++)
+            {
+                newScore[i] = score[i];
+            }
+            
+            // Initialize any new slots
+            for (int i = score.Length; i < ends; i++)
+            {
+                newScore[i] = new Vector2Int(0, 0);
+            }
+            
+            score = newScore;
+        }
         
+        Debug.Log($"[GSP.LoadFromGM] Synced from GameManager - endCurrent: {endCurrent}, redScore: {redScore}, yellowScore: {yellowScore}");
+        if (score != null && endCurrent > 0 && endCurrent <= score.Length)
+        {
+            int lastEndIndex = endCurrent - 1;
+            Debug.Log($"[GSP.LoadFromGM] Last end ({lastEndIndex + 1}) score: Red {score[lastEndIndex].x}, Yellow {score[lastEndIndex].y}");
+        }
     }
 
     public void LoadFromEndMenu()
@@ -359,8 +390,26 @@ public class GameSettingsPersist : MonoBehaviour
         redScore = 0;
         yellowScore = 0;
         
-        // CRITICAL FIX: Also clear score array for new game!
-        score = null;
+        // ? CRITICAL FIX: Initialize score array for new game (don't leave it null!)
+        if (score == null || score.Length != ends)
+        {
+            score = new Vector2Int[ends];
+            for (int i = 0; i < ends; i++)
+            {
+                score[i] = new Vector2Int(0, 0);
+            }
+            Debug.Log($"[GSP.TournySetup] Initialized score array for {ends} ends");
+        }
+        else
+        {
+            // Clear existing array
+            for (int i = 0; i < score.Length; i++)
+            {
+                score[i] = new Vector2Int(0, 0);
+            }
+            Debug.Log($"[GSP.TournySetup] Cleared existing score array ({score.Length} ends)");
+        }
+        
         Debug.Log("[GSP] TournySetup - cleared game state (scores, rockCurrent, endCurrent)");
         Debug.Log($"[GSP] TournySetup - preserved tournament settings: games={games}, ends={ends}, rocks={rocks}");
         

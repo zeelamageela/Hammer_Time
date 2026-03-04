@@ -190,7 +190,13 @@ public class Sweep : MonoBehaviour
         // Reset dampings to original first, then apply changes (prevents stacking)
         rb.linearDamping = originalLinearDamping;
         rb.angularDamping = originalAngularDamping;
-        
+
+        //If stats are 0, use a default value (prevents divide by zero and ensures some effect for testing)
+        if (statCalc <= 0.1f)
+        {
+            statCalc = 99f;
+        }
+
         float sweepStrength = statCalc / 100f; // Normalize to 0-2 range
         
         // Apply changes (will be reset on next sweep) - VERY GENTLE!
@@ -247,7 +253,7 @@ public class Sweep : MonoBehaviour
         // CRITICAL FIX: If stats are 0, use a default value
         if (statCalc <= 0.1f)
         {
-            statCalc = 80f;
+            statCalc = 99f;
         }
         
         // LINE SWEEP: DIRECTLY modify velocity + add damping!

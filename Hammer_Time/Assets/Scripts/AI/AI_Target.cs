@@ -5768,7 +5768,7 @@ public class AI_Target : MonoBehaviour
                     );
                     
                     guardType = "Shot Rock Guard";
-                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, " + $"{shotRockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 }
                 else
                 {
@@ -5791,7 +5791,7 @@ public class AI_Target : MonoBehaviour
                     if (guard.lastTransform == null) continue;
                     
                     Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
-                    if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                    if (guardInfo == null)
                         continue; // Skip our guards
                     
                     Vector2 guardPos = guard.lastTransform.position;

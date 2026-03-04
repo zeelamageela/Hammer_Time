@@ -3320,6 +3320,7 @@ MonoBehaviour:
   careerLoad: 0
   tournyInProgress: 0
   gameInProgress: 0
+  justFinishedGame: 0
   teams: []
   playoffTeams: []
   cgp: []
@@ -16715,8 +16716,36 @@ PrefabInstance:
       value: -382.5
       objectReference: {fileID: 0}
     - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 650
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 186.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 20.049988
+      objectReference: {fileID: 0}
+    - target: {fileID: 75633025244548266, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -348.5
+      value: -362.15002
       objectReference: {fileID: 0}
     - target: {fileID: 75633025257483254, guid: c8dcf3b3d96d740dd881c517fb486106, type: 3}
       propertyPath: m_Name
@@ -17372,7 +17401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00091552734
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 2242657540674373881, guid: 48d74d06d326d7c47ab9f411efed68ba, type: 3}
       propertyPath: m_AnchoredPosition.y

@@ -50,6 +50,24 @@ public class QuickTestGame : MonoBehaviour
     [Tooltip("If randomizeScores is true, use weighted scenarios (more tied/close games)?")]
     public bool useWeightedScenarios = true;
     
+    /// <summary>
+    /// Call this to DISABLE Quick Test Mode (clears PlayerPrefs flags)
+    /// Automatically called when game scene loads if not started via Q key
+    /// </summary>
+    public static void ClearQuickTestMode()
+    {
+        PlayerPrefs.SetInt("QuickTestMode", 0);
+        PlayerPrefs.SetInt("DisableSweeping", 0);
+        PlayerPrefs.Save();
+        Debug.Log("[QuickTestGame] Quick Test Mode flags CLEARED - normal game mode restored");
+    }
+    
+    private void OnDestroy()
+    {
+        // CRITICAL: Clear flags when this component is destroyed (returning to menu)
+        ClearQuickTestMode();
+    }
+    
     private void Update()
     {
         // Check for quick test hotkey
