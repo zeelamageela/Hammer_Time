@@ -53,15 +53,20 @@ public class EndMenu : MonoBehaviour
             gsp.loadGame = false;
             ends = gsp.ends;
             
-            // ? CRITICAL FIX: Ensure score array exists BEFORE any calculations
-            if (gsp.score == null || gsp.score.Length != ends)
+            // ? CRITICAL FIX: DON'T recreate score array if it already exists!
+            // GameManager already saved the scores - just validate it exists
+            if (gsp.score == null)
             {
-                Debug.LogWarning($"[EndMenu.Start] Score array invalid (null or length {gsp.score?.Length} != {ends}) - initializing");
+                Debug.LogWarning($"[EndMenu.Start] Score array was NULL - initializing for {ends} ends");
                 gsp.score = new Vector2Int[ends];
                 for (int i = 0; i < ends; i++)
                 {
                     gsp.score[i] = new Vector2Int(0, 0);
                 }
+            }
+            else
+            {
+                Debug.Log($"[EndMenu.Start] Score array exists ({gsp.score.Length} slots) - using as-is");
             }
             
             // ? CRITICAL FIX: Recalculate totals from score array FIRST!

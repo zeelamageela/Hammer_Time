@@ -192,7 +192,7 @@ public class GameSettingsPersist : MonoBehaviour
 
         Debug.Log("Loading to GSP");
         
-        // Sync data from GameManager FIRST (before touching score array!)
+        // Sync data from GameManager
         ends = gm.endTotal;
         endCurrent = gm.endCurrent;
         rocks = gm.rocksPerTeam;
@@ -203,44 +203,30 @@ public class GameSettingsPersist : MonoBehaviour
         aiYellow = gm.aiTeamYellow;
         aiRed = gm.aiTeamRed;
         
-        // ? CRITICAL: Only initialize score array if it's NULL
-        // If it exists but wrong size, RESIZE while preserving data
-        // GameManager.Scoring() already saved the score before calling this!
+        // ? CRITICAL FIX: DON'T resize the score array here!
+        // GameManager.Scoring() already resized it if needed AND saved the scores
+        // Resizing here would create a NEW array and lose the scores we just saved
+        // Just validate it exists
         if (score == null)
         {
-            Debug.LogWarning($"[GSP.LoadFromGM] Score array was null - initializing for {ends} ends");
+            Debug.LogError($"[GSP.LoadFromGM] CRITICAL: Score array is NULL! This should never happen!");
             score = new Vector2Int[ends];
             for (int i = 0; i < ends; i++)
             {
                 score[i] = new Vector2Int(0, 0);
             }
         }
-        else if (score.Length != ends)
-        {
-            // Array exists but wrong size - resize while preserving existing scores
-            Debug.LogWarning($"[GSP.LoadFromGM] Resizing score array from {score.Length} to {ends} ends (preserving existing scores)");
-            Vector2Int[] newScore = new Vector2Int[ends];
-            
-            // Copy existing scores
-            for (int i = 0; i < Mathf.Min(score.Length, ends); i++)
-            {
-                newScore[i] = score[i];
-            }
-            
-            // Initialize any new slots
-            for (int i = score.Length; i < ends; i++)
-            {
-                newScore[i] = new Vector2Int(0, 0);
-            }
-            
-            score = newScore;
-        }
         
         Debug.Log($"[GSP.LoadFromGM] Synced from GameManager - endCurrent: {endCurrent}, redScore: {redScore}, yellowScore: {yellowScore}");
-        if (score != null && endCurrent > 0 && endCurrent <= score.Length)
+        
+        // Log all end scores for debugging
+        if (score != null && endCurrent > 0)
         {
-            int lastEndIndex = endCurrent - 1;
-            Debug.Log($"[GSP.LoadFromGM] Last end ({lastEndIndex + 1}) score: Red {score[lastEndIndex].x}, Yellow {score[lastEndIndex].y}");
+            Debug.Log($"[GSP.LoadFromGM] Score array has {score.Length} ends, showing first {endCurrent} completed:");
+            for (int i = 0; i < Mathf.Min(endCurrent, score.Length); i++)
+            {
+                Debug.Log($"  End {i + 1}: Red {score[i].x}, Yellow {score[i].y}");
+            }
         }
     }
 

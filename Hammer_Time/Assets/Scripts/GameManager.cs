@@ -148,11 +148,20 @@ public class GameManager : MonoBehaviour
 
 
         rockCurrent = 2 * (8 - gsp.rocks);
-        // CRITICAL FIX: Initialize score array if null or wrong size
+        // CRITICAL FIX: Initialize AND CLEAR score array at start of game
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
         {
-            Debug.Log($"[GameManager] Initializing score array for {endTotal + 1} ends");
+            Debug.Log($"[GameManager] Creating new score array for {endTotal + 1} ends");
             gsp.score = new Vector2Int[endTotal + 1];
+        }
+        else
+        {
+            // Array exists and is big enough - CLEAR IT for new game
+            Debug.Log($"[GameManager] Clearing existing score array ({gsp.score.Length} slots) for new game");
+            for (int i = 0; i < gsp.score.Length; i++)
+            {
+                gsp.score[i] = new Vector2Int(0, 0);
+            }
         }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
@@ -1107,9 +1116,28 @@ public class GameManager : MonoBehaviour
             if (gsp.skinsGame)
                 houseScore = (int)gsp.skinValue[endCurrent];
 
+            // ? CRITICAL FIX: Ensure score array is big enough BEFORE saving!
+            if (gsp.score == null || endCurrent >= gsp.score.Length)
+            {
+                Debug.LogWarning($"[GameManager.Scoring] Score array too small ({gsp.score?.Length}) for endCurrent {endCurrent} - resizing NOW");
+                int newSize = Mathf.Max(endTotal, endCurrent + 1);
+                Vector2Int[] newScore = new Vector2Int[newSize];
+                
+                if (gsp.score != null)
+                {
+                    for (int i = 0; i < gsp.score.Length; i++)
+                    {
+                        newScore[i] = gsp.score[i];
+                    }
+                }
+                
+                gsp.score = newScore;
+            }
+
             if (winningTeamName == redTeamName)
             {
                 gsp.score[endCurrent] = new Vector2Int(houseScore, 0);
+                Debug.Log($"[GameManager.Scoring] SAVED to gsp.score[{endCurrent}] = ({houseScore}, 0) for {redTeamName}");
                 redScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = false;
@@ -1118,6 +1146,7 @@ public class GameManager : MonoBehaviour
             if (winningTeamName == yellowTeamName)
             {
                 gsp.score[endCurrent] = new Vector2Int(0, houseScore);
+                Debug.Log($"[GameManager.Scoring] SAVED to gsp.score[{endCurrent}] = (0, {houseScore}) for {yellowTeamName}");
                 yellowScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = true;
@@ -1132,6 +1161,29 @@ public class GameManager : MonoBehaviour
         }
         else if (houseList.Count == 0)
         {
+            // ? CRITICAL FIX: Save blank end score!
+            // Ensure score array is big enough
+            if (gsp.score == null || endCurrent >= gsp.score.Length)
+            {
+                Debug.LogWarning($"[GameManager.Scoring] Score array too small for blank end - resizing");
+                int newSize = Mathf.Max(endTotal, endCurrent + 1);
+                Vector2Int[] newScore = new Vector2Int[newSize];
+                
+                if (gsp.score != null)
+                {
+                    for (int i = 0; i < gsp.score.Length; i++)
+                    {
+                        newScore[i] = gsp.score[i];
+                    }
+                }
+                
+                gsp.score = newScore;
+            }
+            
+            // Save blank end
+            gsp.score[endCurrent] = new Vector2Int(0, 0);
+            Debug.Log($"[GameManager.Scoring] SAVED blank end to gsp.score[{endCurrent}] = (0, 0)");
+            
             if (redHammer)
             {
                 redHammer = true;

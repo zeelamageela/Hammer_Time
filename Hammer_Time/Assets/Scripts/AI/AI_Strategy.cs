@@ -775,24 +775,14 @@ public class AI_Strategy : MonoBehaviour
         bool hasGuards = (gm.gList.Count > 0);
         
         ShotContext context;
-        
-        // EARLY: Aggressive setup or removal
+
+        // EARLY: Aggressive setup, ignore removal of early threats (they can be dealt with later)
         if (phase == "early")
         {
-            if (rockCurrent < 2 || !hasGuards)
-            {
-                // First 2 rocks or no guards - aggressive centre guards to set up steal
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
-            }
-            else
-            {
-                // Draw behind guards
-                context = new ShotContext(ShotIntent.ScorePoints);
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
-            }
+            // First rocks - aggressive centre guards to set up steal
+            context = new ShotContext(ShotIntent.CreateOpportunity);
+            aiTarg.ExecuteIntent(context, rockCurrent);
+            return true;
         }
         
         // MIDDLE: Keep pressure, remove threats
