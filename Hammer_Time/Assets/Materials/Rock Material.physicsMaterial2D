@@ -7,5 +7,8 @@ PhysicsMaterial2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Rock Material
-  friction: 0.2
-  bounciness: 0.9
+  serializedVersion: 2
+  friction: 0.25
+  bounciness: 0.99
+  m_FrictionCombine: 1
+  m_BounceCombine: 1

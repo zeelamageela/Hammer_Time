@@ -991,9 +991,10 @@ public class CareerManager : MonoBehaviour
                 if (gsp.score != null)
                 {
                     Debug.Log($"[CareerManager] Saving {gsp.score.Length} end scores to game state");
-                    foreach (var score in gsp.score)
+                    for (int i = 0; i < gsp.score.Length; i++)
                     {
-                        saveData.currentGameState.endScores.Add(new Vector2IntData(score));
+                        saveData.currentGameState.endScores.Add(new Vector2IntData(gsp.score[i]));
+                        Debug.Log($"[CareerManager]   Saving End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
                     }
                 }
                 else

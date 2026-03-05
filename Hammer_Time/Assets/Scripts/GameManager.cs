@@ -152,7 +152,7 @@ public class GameManager : MonoBehaviour
         // Don't clear it when continuing to next end (endCurrent > 0)
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
         {
-            Debug.Log($"[GameManager] Creating new score array for {endTotal + 1} ends");
+            Debug.Log($"[GameManager] Creating new score array for {endTotal + 1} ends (current array: {(gsp.score == null ? "NULL" : gsp.score.Length.ToString())})");
             gsp.score = new Vector2Int[endTotal + 1];
         }
         else if (gsp.endCurrent == 0)
@@ -167,7 +167,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // Preserve existing scores
             Debug.Log($"[GameManager] Preserving score array for end {gsp.endCurrent + 1}");
+            Debug.Log($"[GameManager]   Current scores: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({gsp.score[1].x},{gsp.score[1].y})");
         }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)

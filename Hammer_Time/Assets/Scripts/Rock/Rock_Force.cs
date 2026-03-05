@@ -131,7 +131,7 @@ public class Rock_Force : MonoBehaviour
             //am.Stop("RockScrape");
             GetComponent<Rock_Info>().stopped = true;
             GetComponent<Rock_Info>().rest = true;
-            body.linearDamping = 0.95f;
+            body.linearDamping = 0.90f;
             HapticController.Stop();
         }
 
@@ -180,7 +180,7 @@ public class Rock_Force : MonoBehaviour
                 //am.Stop("RockScrape");
                 GetComponent<Rock_Info>().stopped = true;
                 GetComponent<Rock_Info>().rest = true;
-                body.linearDamping = 0.95f;
+                body.linearDamping = 0.90f;
                 HapticController.Stop();
             }
 

@@ -360,6 +360,13 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournySetup(int btn = 0)
     {
+        Debug.Log($"[GSP.TournySetup] CALLED - btn={btn}, gameInProgress={gameInProgress}, loadGame={loadGame}");
+        Debug.Log($"[GSP.TournySetup] BEFORE: ends={ends}, endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore}");
+        if (score != null && score.Length > 0)
+        {
+            Debug.Log($"[GSP.TournySetup] BEFORE score array: End1=({score[0].x},{score[0].y}), End2=({(score.Length > 1 ? score[1].x : -1)},{(score.Length > 1 ? score[1].y : -1)})");
+        }
+        
         Debug.Log("[GSP] TournySetup called");
         TournyManager tm = FindFirstObjectByType<TournyManager>();
         PlayoffManager pm = FindFirstObjectByType<PlayoffManager>();
@@ -367,33 +374,69 @@ public class GameSettingsPersist : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         CashGames cg = FindFirstObjectByType<CashGames>();
         
-        // CRITICAL: Reset GAME state flags when setting up NEW game
-        // DO NOT reset TOURNAMENT settings (games, ends, rocks) - they come from TournySettings!
-        gameInProgress = false;
-        loadGame = false;
-        rockCurrent = 0;
-        endCurrent = 0;
-        redScore = 0;
-        yellowScore = 0;
+        // ? CRITICAL FIX: Don't reset scores if loading a game in progress!
+        // TournySetup() is called both for NEW games AND for each game in a tournament
+        // Only reset if this is truly a NEW game (not loading from save)
+        bool isNewGame = !gameInProgress && !loadGame;
         
-        // ? CRITICAL FIX: Initialize score array for new game (don't leave it null!)
-        if (score == null || score.Length != ends)
+        if (isNewGame)
         {
+            // Brand new game - reset everything
+            gameInProgress = false;
+            loadGame = false;
+            rockCurrent = 0;
+            endCurrent = 0;
+            redScore = 0;
+            yellowScore = 0;
+            Debug.Log("[GSP.TournySetup] NEW game - reset scores and state");
+        }
+        else
+        {
+            // Loading a game in progress - preserve scores!
+            Debug.Log($"[GSP.TournySetup] LOADING game - preserving scores (endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore})");
+        }
+        
+        // ? CRITICAL FIX: NEVER clear the score array in TournySetup()!
+        // This method is called both for NEW games AND when loading saved games
+        // Only create/expand the array if needed - NEVER clear existing scores!
+        
+        if (score == null)
+        {
+            // Brand new game - create fresh array
             score = new Vector2Int[ends];
             for (int i = 0; i < ends; i++)
             {
                 score[i] = new Vector2Int(0, 0);
             }
-            Debug.Log($"[GSP.TournySetup] Initialized score array for {ends} ends");
+            Debug.Log($"[GSP.TournySetup] Created new score array for {ends} ends");
+        }
+        else if (score.Length < ends)
+        {
+            // Array exists but too small - expand while preserving
+            Debug.Log($"[GSP.TournySetup] Expanding score array from {score.Length} to {ends} ends (preserving existing scores)");
+            Vector2Int[] newScore = new Vector2Int[ends];
+            for (int i = 0; i < score.Length; i++)
+            {
+                newScore[i] = score[i];  // Preserve existing scores
+            }
+            for (int i = score.Length; i < ends; i++)
+            {
+                newScore[i] = new Vector2Int(0, 0);  // Initialize new slots
+            }
+            score = newScore;
         }
         else
         {
-            // Clear existing array
-            for (int i = 0; i < score.Length; i++)
+            // Array is same size or larger - PRESERVE IT!
+            // Could be loading a saved game OR starting a new game with same settings
+            // Either way, DON'T CLEAR! GameManager will clear when endCurrent == 0
+            Debug.Log($"[GSP.TournySetup] Score array ({score.Length} ends) preserved - endCurrent={endCurrent}");
+            
+            // Log current scores for debugging
+            if (score.Length > 0 && endCurrent < score.Length)
             {
-                score[i] = new Vector2Int(0, 0);
+                Debug.Log($"[GSP.TournySetup]   End 1: Red={score[0].x}, Yellow={score[0].y}");
             }
-            Debug.Log($"[GSP.TournySetup] Cleared existing score array ({score.Length} ends)");
         }
         
         Debug.Log("[GSP] TournySetup - cleared game state (scores, rockCurrent, endCurrent)");
