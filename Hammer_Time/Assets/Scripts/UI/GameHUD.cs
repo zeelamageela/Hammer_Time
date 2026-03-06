@@ -193,6 +193,7 @@ public class GameHUD : MonoBehaviour
             }
 
         }
+        StartCoroutine(RefreshPanel());
         StartCoroutine(ClickDisplay());
     }
 

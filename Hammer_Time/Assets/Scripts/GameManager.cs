@@ -104,6 +104,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // ? DIAGNOSTIC: Check score array at VERY START of GameManager.Start()
+        GameSettingsPersist gspCheck = FindObjectOfType<GameSettingsPersist>();
+        if (gspCheck != null && gspCheck.score != null && gspCheck.score.Length > 0)
+        {
+            Debug.Log($"[GameManager.Start] === ENTRY === score array: End1=({gspCheck.score[0].x},{gspCheck.score[0].y}), End2=({(gspCheck.score.Length > 1 ? gspCheck.score[1].x : -1)},{(gspCheck.score.Length > 1 ? gspCheck.score[1].y : -1)})");
+        }
+        else
+        {
+            Debug.Log($"[GameManager.Start] === ENTRY === score array is NULL or empty!");
+        }
+        
         state = GameState.START;
 
         GameObject boards = GameObject.Find("BG/Boards_CREATED");
@@ -961,6 +972,16 @@ public class GameManager : MonoBehaviour
 
     public void NextTurn()
     {
+        // ? DIAGNOSTIC: Check score array integrity at start of NextTurn
+        if (gsp.score != null && gsp.score.Length > 0)
+        {
+            Debug.Log($"[GM.NextTurn] ENTRY - score array: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
+        }
+        else
+        {
+            Debug.LogWarning($"[GM.NextTurn] ENTRY - score array is NULL or empty!");
+        }
+        
         Debug.Log("Next Turn");
 
         // CRITICAL FIX: Save rock positions BEFORE incrementing rockCurrent
@@ -1272,11 +1293,22 @@ public class GameManager : MonoBehaviour
     #region Utilities and Special Situations
     IEnumerator WaitForClick()
     {
-        while (!Input.GetMouseButtonDown(0))
+        // Wait for either click OR 5 seconds timeout
+        float elapsed = 0f;
+        while (elapsed < 5f && !Input.GetMouseButtonDown(0))
         {
+            elapsed += Time.deltaTime;
             yield return null;
         }
-        //Debug.Log("Clickeddd");
+        
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("[WaitForClick] Clicked to advance");
+        }
+        else
+        {
+            Debug.Log("[WaitForClick] Auto-advanced after 5 seconds");
+        }
     }
 
     public void OnDebug()
@@ -1316,13 +1348,11 @@ public class GameManager : MonoBehaviour
         yellowScore = gsp.yellowScore;
         rocksPerTeam = gsp.rocks;
 
-        int[] redScoreList = new int[gsp.score.Length];
-        int[] yellowScoreList = new int[gsp.score.Length];
+        // ? REMOVED: Score array is already loaded by CareerManager.RestoreGameState()!
+        // This code was creating EMPTY arrays and overwriting the loaded scores with zeros!
+        // DO NOT reload scores here - they're already correct in gsp.score[]
         
-        for (int i = 0; i < redScoreList.Length; i++)
-        {
-            gsp.score[i] = new Vector2Int(redScoreList[i], yellowScoreList[i]);
-        }
+        Debug.Log($"[GameManager.LoadGame] Score array preserved from save: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
 
         for (int i = 1; i < endCurrent; i++)
         {

@@ -61,14 +61,13 @@ public class ShootingKnob : MonoBehaviour
         {
             Vector2 startPoint = launcher.transform.position;
             Vector2 endPoint = transform.position;
-            Vector2 colourStartPoint = aimCircle.transform.position;
-            Vector2 colourEndPoint = target.transform.position;
-
-            distColor = Vector2.Distance(colourStartPoint, colourEndPoint);
+            
+            // Get Y position of aim circle for color calculation
+            float aimCircleY = aimCircle.transform.position.y;
 
             distance = Vector2.Distance(startPoint, endPoint);
 
-            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, hogLinePoint.transform.position.y, 0f));
+            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -16f, 0f));
             lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
 
             lr.startColor = sr.color;
@@ -77,34 +76,62 @@ public class ShootingKnob : MonoBehaviour
             lr.startWidth = Mathf.Lerp(0f, 0.3f, distance / 3.25f);
             lr.endWidth = Mathf.Lerp(0f, 0.1f, distance / 3.25f);
 
-
+            // Camera zoom based on Y position (optional - can keep or adjust)
             if (cm.aim.enabled)
-                cm.aim.orthographicSize = Mathf.Lerp(1.75f, 2f, distColor / 5f);
+            {
+                float zoomDist = Mathf.Abs(aimCircleY);
+                cm.aim.orthographicSize = Mathf.Lerp(1.75f, 2f, zoomDist / 8f);
+            }
 
-            if (distColor > 10f)
+            // Color based on Y-position zones:
+            // Y < 6.5 = Guard zone (bright green)
+            // 6.5 <= Y < 8 = House zone (green)
+            // 8 <= Y < 13 = Yellow zone (transition yellow to orange)
+            // Y >= 13 = Red zone (too far)
+            if (aimCircleY < 0f)
             {
-                distColor = (distColor - 10f) / 7.5f;
-                sr.color = Color.Lerp(red, redTrans, distColor);
-                //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
+                // Out of play - red transparent
+                sr.color = redTrans;
             }
-            else if (distColor > 5f)
+            if (aimCircleY < 4.5f)
             {
-                distColor = (distColor - 5f) / 5f;
-                sr.color = Color.Lerp(yellow, red, distColor);
-                //spriteRenderer.color = new Color(0f, 1f, 0f, 1f);
+                // Guard zone - bright green
+                sr.color = brightGreen;
             }
-            else if (distColor > 1f)
+            else if (aimCircleY < 5f)
             {
-                distColor = (distColor - 1f) / 4f;
-                sr.color = Color.Lerp(green, yellow, distColor);
-                //spriteRenderer.color = new Color(1f, 0.92f, 0.016f, 1f);
+                // Front of house zone - transition from bright green to green
+                float frontHouseBlend = (aimCircleY - 4.5f) / 0.5f; // 0 to 1 over 0.5 units
+                sr.color = Color.Lerp(brightGreen, green, frontHouseBlend);
             }
-            else if (distColor <= 1f)
+            else if (aimCircleY < 8f)
             {
-                //distColor = (distColor - 1f) / 0.45f;
-                sr.color = Color.Lerp(brightGreen, green, distColor);
-
-                //spriteRenderer.color = new Color(1f, 0f, 0f, 1f);
+                // House zone - green
+                float houseBlend = (aimCircleY - 5f) / 3f; // 0 to 1 over 3 units
+                sr.color = green;
+            }
+            else if (aimCircleY < 8.5f)
+            {
+                // Back of house zone - transition from green to yellow
+                float backHouseBlend = (aimCircleY - 8f) / 0.5f; // 0 to 1 over 0.5 units
+                sr.color = Color.Lerp(green, yellow, backHouseBlend);
+            }
+            else if (aimCircleY < 13f)
+            {
+                // Yellow zone - yellow
+                float yellowBlend = (aimCircleY - 8.5f) / 4.5f; // 0 to 1 over 4.5 units
+                sr.color = yellow;
+            }
+            else if (aimCircleY < 17f)
+            {
+                // Red zone - transition from yellow to red
+                float yellowBlend = (aimCircleY - 13f) / 4.0f; // 0 to 1 over 4.0 units
+                sr.color = Color.Lerp(yellow, red, yellowBlend);
+            }
+            else
+            {
+                // Red zone - too far (danger/out of bounds)
+                sr.color = redTrans;
             }
         }
         

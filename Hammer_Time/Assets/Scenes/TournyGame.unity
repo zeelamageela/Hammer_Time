@@ -9610,7 +9610,6 @@ MonoBehaviour:
   playoffTeams: []
   cgp: []
   playerTeamIndex: 0
-  score: []
   skinsGame: 1
   skins: 0
   skinValue:
@@ -46280,7 +46279,7 @@ PrefabInstance:
       objectReference: {fileID: 197219300}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: red.a
-      value: 0.69411767
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: red.b
@@ -46300,19 +46299,19 @@ PrefabInstance:
       objectReference: {fileID: 676031301}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: green.a
-      value: 0.6862745
+      value: 0.8509804
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: green.b
-      value: 0.2207065
+      value: 0.36431894
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: green.g
-      value: 0.5294118
+      value: 0.64199996
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: green.r
-      value: 0.21758826
+      value: 0.360804
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: launcher
@@ -46324,7 +46323,7 @@ PrefabInstance:
       objectReference: {fileID: 1246941259}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: yellow.a
-      value: 0.69411767
+      value: 0.8509804
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: yellow.b
@@ -46344,19 +46343,19 @@ PrefabInstance:
       objectReference: {fileID: 377377834}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: redTrans.a
-      value: 0.29803923
+      value: 0.6509804
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: redTrans.b
-      value: 0.44058824
+      value: 0.28627452
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: redTrans.g
-      value: 0.41505882
+      value: 0.2509804
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: redTrans.r
-      value: 0.8235294
+      value: 0.8235295
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: hogLinePoint
@@ -46364,19 +46363,19 @@ PrefabInstance:
       objectReference: {fileID: 1994488550}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: brightGreen.a
-      value: 0.9019608
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: brightGreen.b
-      value: 0.13703528
+      value: 0.81988233
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: brightGreen.g
-      value: 0.4392157
+      value: 0.9019608
       objectReference: {fileID: 0}
     - target: {fileID: 464581204706455880, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: brightGreen.r
-      value: 0.13703528
+      value: 0.81988233
       objectReference: {fileID: 0}
     - target: {fileID: 2065704922561292691, guid: e72842438018d5141bc21ac44230f04b, type: 3}
       propertyPath: m_RootOrder

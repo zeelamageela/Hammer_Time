@@ -37,7 +37,7 @@ public class Rock_Flick : MonoBehaviour
 
     Vector3 lastMouseCoordinate = Vector3.zero;
 
-    Vector2 posScale = new Vector2(1f / 3f, 1f);
+    Vector2 posScale = new Vector2(1f / 20f, 1f);
 
     public bool story;
     AudioSource[] rockSounds;
