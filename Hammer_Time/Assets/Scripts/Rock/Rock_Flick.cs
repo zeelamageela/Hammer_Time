@@ -34,6 +34,7 @@ public class Rock_Flick : MonoBehaviour
     TrajectoryLine trajLine;
     GameObject shootKnobGO;
     ShootingKnob shootKnob;
+    GameObject mouseKnobGO;
 
     Vector3 lastMouseCoordinate = Vector3.zero;
 
@@ -82,7 +83,7 @@ public class Rock_Flick : MonoBehaviour
         if (isPressed)
         {
             rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
-
+            shootKnob.mouseCircle.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             trajLine.DrawTrajectory();
 
             shootKnob.ParentToRock();

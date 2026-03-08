@@ -9,6 +9,6 @@ PhysicsMaterial2D:
   m_Name: Rock Material
   serializedVersion: 2
   friction: 0.25
-  bounciness: 1.05
+  bounciness: 0.99
   m_FrictionCombine: 4
   m_BounceCombine: 4

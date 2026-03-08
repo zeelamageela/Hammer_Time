@@ -3883,15 +3883,88 @@ public class AI_Target : MonoBehaviour
         float bestAlternateScore = 0f;
         int bestAlternateTarget = -1;
         
+        // CRITICAL: Check if primary target is SHOT ROCK (closest to button)
+        bool primaryIsShotRock = false;
+        if (gm.houseList.Count > 0)
+        {
+            GameObject shotRock = gm.houseList[0].rock; // First in sorted list = closest to button
+            Rock_Info shotRockInfo = gm.houseList[0].rockInfo;
+            
+            if (shotRockInfo.rockIndex == context.targetRockIndex)
+            {
+                primaryIsShotRock = true;
+                Debug.Log($"[Removal] PRIMARY TARGET IS SHOT ROCK! (rock #{context.targetRockIndex})");
+            }
+        }
+        
+        // CRITICAL DECISION LOGIC:
+        // LAST ROCK (15): MUST hit shot rock, NO alternates allowed!
+        // VERY LATE (14): Strong preference for shot rock (huge penalty for alternates)
+        // LATE (12-13): Prefer shot rock, but allow close alternates
+        // NORMAL (0-11): Standard alternate search
+        
+        bool allowAlternates = true;
+        float alternatePenalty = 0f;
+        
+        if (rockCurrent >= 15)
+        {
+            // LAST ROCK: Hitting anything except shot rock is DISASTER
+            if (primaryIsShotRock)
+            {
+                allowAlternates = false; // NEVER consider alternates on last rock if primary is shot rock
+                Debug.Log($"[Removal] LAST ROCK + SHOT ROCK PRIMARY → NO ALTERNATES ALLOWED!");
+            }
+            else
+            {
+                // Primary is NOT shot rock (weird strategy call?) - huge penalty for alternates
+                alternatePenalty = -80f;
+                Debug.Log($"[Removal] LAST ROCK but primary ISN'T shot rock (strategy error?) → Huge alternate penalty!");
+            }
+        }
+        else if (rockCurrent >= 14)
+        {
+            // VERY LATE: Strong preference for shot rock
+            if (primaryIsShotRock)
+            {
+                alternatePenalty = -60f; // Huge penalty - almost never choose alternate over shot rock
+                Debug.Log($"[Removal] VERY LATE + SHOT ROCK PRIMARY → -60 alternate penalty");
+            }
+            else
+            {
+                alternatePenalty = -30f; // Moderate penalty
+                Debug.Log($"[Removal] VERY LATE but primary ISN'T shot rock → -30 alternate penalty");
+            }
+        }
+        else if (rockCurrent >= 12)
+        {
+            // LATE: Prefer shot rock
+            if (primaryIsShotRock)
+            {
+                alternatePenalty = -40f; // Significant penalty
+                Debug.Log($"[Removal] LATE + SHOT ROCK PRIMARY → -40 alternate penalty");
+            }
+            else
+            {
+                alternatePenalty = -15f; // Small penalty
+                Debug.Log($"[Removal] LATE but primary ISN'T shot rock → -15 alternate penalty");
+            }
+        }
+        else
+        {
+            // NORMAL: Standard alternate search (no penalty)
+            Debug.Log($"[Removal] NORMAL game phase → No alternate penalty");
+        }
+        
         // Only search for alternates if:
+        // - Allowed by context (not last rock with shot rock primary)
         // - Direct takeout failed/low score (< 40)
         // - OR target is heavily guarded
         // - OR late game (want options!)
-        bool shouldSearchAlternates = (takeoutScore < 40f) || isLateGame;
+        bool shouldSearchAlternates = allowAlternates && ((takeoutScore < 40f) || isLateGame);
         
         if (shouldSearchAlternates)
         {
-            Debug.Log($"[Removal] Searching for ALTERNATE TARGETS (primary score={takeoutScore:F2})");
+            Debug.Log($"[Removal] Searching for ALTERNATE TARGETS (primary score={takeoutScore:F2}, penalty={alternatePenalty:F1})");
             
             // Search through ALL rocks in house (not just target)
             foreach (var houseRock in gm.houseList)
@@ -3916,14 +3989,39 @@ public class AI_Target : MonoBehaviour
                     
                     altScore += proximityBonus;
                     
-                    // CONTEXT BONUS: Late game alternates are valuable
-                    if (isLateGame)
+                    // CRITICAL: Check if THIS alternate is shot rock
+                    bool alternateIsShotRock = false;
+                    if (gm.houseList.Count > 0)
+                    {
+                        Rock_Info shotRockInfo = gm.houseList[0].rockInfo;
+                        if (shotRockInfo.rockIndex == houseRock.rockInfo.rockIndex)
+                        {
+                            alternateIsShotRock = true;
+                            // MEGA BONUS: If primary WASN'T shot rock but this alternate IS, huge bonus!
+                            if (!primaryIsShotRock)
+                            {
+                                altScore += 50f;
+                                Debug.Log($"[Removal] ALTERNATE IS SHOT ROCK (primary wasn't!) → +50 MEGA BONUS!");
+                            }
+                        }
+                    }
+                    
+                    // Apply context-aware penalty (if primary is shot rock, alternates are penalized)
+                    altScore += alternatePenalty;
+                    
+                    // CONTEXT BONUS: Late game alternates are valuable (but already penalized if primary is shot rock)
+                    if (isLateGame && alternatePenalty == 0f) // Only if no penalty applied
                     {
                         altScore += 15f;
                         Debug.Log($"[Removal] LATE GAME ALTERNATE BONUS: +15");
                     }
                     
-                    Debug.Log($"[Removal] Option 3: ALTERNATE target #{houseRock.rockInfo.rockIndex} - Score: {altScore:F2} (proximity +{proximityBonus:F1})");
+                    Debug.Log($"[Removal] Option 3: ALTERNATE #{houseRock.rockInfo.rockIndex} - " +
+                              $"Base: {altScore - proximityBonus - alternatePenalty:F2}, " +
+                              $"Proximity: +{proximityBonus:F1}, " +
+                              $"Penalty: {alternatePenalty:F1}, " +
+                              $"IsShotRock: {alternateIsShotRock}, " +
+                              $"FINAL: {altScore:F2}");
                     
                     if (altScore > bestAlternateScore)
                     {
@@ -3941,6 +4039,10 @@ public class AI_Target : MonoBehaviour
             {
                 Debug.Log($"[Removal] ✗ NO viable alternates found");
             }
+        }
+        else if (!allowAlternates)
+        {
+            Debug.Log($"[Removal] ALTERNATES DISABLED - Last rock + shot rock primary = MUST hit shot rock!");
         }
         
         // ========================================

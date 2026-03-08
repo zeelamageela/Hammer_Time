@@ -122,6 +122,13 @@ public class TrajectoryLine : MonoBehaviour
     private GameVisualizationSettings visualSettings;
     private bool trajectoryDotsVisible = true;
     private bool collisionLinesVisible = true;
+    private bool aimCircleVisible = true;
+    
+    // Alternative aim visualization (when aim circle is OFF)
+    private LineRenderer aimVerticalLine;
+    private GameObject aimVerticalLineObj;
+    private LineRenderer aimHorizontalLine;
+    private GameObject aimHorizontalLineObj;
 
     void Start()
     {
@@ -136,11 +143,13 @@ public class TrajectoryLine : MonoBehaviour
         visualSettings = GameVisualizationSettings.Instance;
         trajectoryDotsVisible = visualSettings.TrajectoryVisible;
         collisionLinesVisible = visualSettings.CollisionLinesVisible;
+        aimCircleVisible = visualSettings.AimCircleVisible;
         
         visualSettings.OnTrajectoryVisibilityChanged += OnTrajectoryVisibilityChanged;
         visualSettings.OnCollisionLinesVisibilityChanged += OnCollisionLinesVisibilityChanged;
+        visualSettings.OnAimCircleVisibilityChanged += OnAimCircleVisibilityChanged;
         
-        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}");
+        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}");
 
         lr.enabled = false;
         CareerManager cm = FindAnyObjectByType<CareerManager>();
@@ -182,6 +191,29 @@ public class TrajectoryLine : MonoBehaviour
         
         // OLD: hitRockDirectionLine - now redundant, merged into hitRockPostCollisionLine
         // Keeping the variable for backwards compatibility but it won't be used
+        
+        // Create alternative aim visualization lines (for when aim circle is OFF)
+        // VERTICAL LINE: Shows lateral aim position (X) at Y=8
+        aimVerticalLineObj = new GameObject("AimVerticalLine");
+        aimVerticalLineObj.transform.parent = transform;
+        aimVerticalLine = aimVerticalLineObj.AddComponent<LineRenderer>();
+        aimVerticalLine.startWidth = 0.08f;
+        aimVerticalLine.endWidth = 0.08f;
+        aimVerticalLine.material = new Material(Shader.Find("Sprites/Default"));
+        aimVerticalLine.startColor = Color.white;
+        aimVerticalLine.endColor = Color.white;
+        aimVerticalLine.enabled = false;
+        
+        // HORIZONTAL LINE: Shows weight (distance) at Y=aim circle Y
+        aimHorizontalLineObj = new GameObject("AimHorizontalLine");
+        aimHorizontalLineObj.transform.parent = transform;
+        aimHorizontalLine = aimHorizontalLineObj.AddComponent<LineRenderer>();
+        aimHorizontalLine.startWidth = 0.08f;
+        aimHorizontalLine.endWidth = 0.08f;
+        aimHorizontalLine.material = new Material(Shader.Find("Sprites/Default"));
+        aimHorizontalLine.startColor = Color.white;
+        aimHorizontalLine.endColor = Color.white;
+        aimHorizontalLine.enabled = false;
         
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
@@ -325,6 +357,16 @@ public class TrajectoryLine : MonoBehaviour
         if (hitRockPostCollisionLine != null)
         {
             hitRockPostCollisionLine.enabled = false;
+        }
+        
+        // Hide alternative aim visualization lines
+        if (aimVerticalLine != null)
+        {
+            aimVerticalLine.enabled = false;
+        }
+        if (aimHorizontalLine != null)
+        {
+            aimHorizontalLine.enabled = false;
         }
         
         // CRITICAL FIX: Also hide the main trajectory line renderer
@@ -714,23 +756,38 @@ public class TrajectoryLine : MonoBehaviour
         }
 
         // Position aim circle at ideal endpoint (as if no rocks were there)
-        aimCircle.GetComponent<SpriteRenderer>().enabled = true;
+        if (aimCircle != null && aimCircleVisible)
+        {
+            aimCircle.GetComponent<SpriteRenderer>().enabled = true;
+            
+            // Hide alternative aim lines when aim circle is ON
+            if (aimVerticalLine != null) aimVerticalLine.enabled = false;
+            if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
+        }
+        else
+        {
+            aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+            
+            // Show alternative aim lines when aim circle is OFF
+            UpdateAlternativeAimVisualization();
+        }
+
         if (usePhysicsSimulation && trajectorySimulator != null)
         {
             // FIXED: Simulate trajectory WITHOUT rocks to get ideal target position
             // This makes aiming consistent regardless of what rocks are in play
-            
+
             // CRITICAL: Use flipAxis from the rock, NOT rm.inturn!
             Rock_Force aimRockForce = gm.rockList[gm.rockCurrent].rock.GetComponent<Rock_Force>();
             RockManager rm = FindObjectOfType<RockManager>();
             bool isInTurn = aimRockForce != null ? aimRockForce.flipAxis : (rm != null ? rm.inturn : false);
-            
+
             Vector2 launcherPos = new Vector2(launcher.transform.position.x, launcher.transform.position.y);
             Vector2 pullbackPos = new Vector2(
                 gm.rockList[gm.rockCurrent].rock.transform.position.x,
                 gm.rockList[gm.rockCurrent].rock.transform.position.y
             );
-            
+
             // DETERMINISTIC: Use direct calculation with inspector parameters
             Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromPullback(
                 pullbackPos,
@@ -741,15 +798,15 @@ public class TrajectoryLine : MonoBehaviour
                 minVelocity,
                 maxVelocity
             );
-            
+
             // Simulate WITHOUT any rocks (empty list) to get ideal position
             // CRITICAL: Pass forPlayerPreview = true for consistent visual curl
             List<Vector2> idealPath = trajectorySimulator.SimulateTrajectory(
                 launcherPos, initialVelocity, isInTurn, 250, new List<GameObject>(), forPlayerPreview: true
             );
-            
+
             TrajectorySimulator.CollisionInfo idealInfo = trajectorySimulator.GetCollisionInfo();
-            
+
             if (idealInfo.finalPosition != Vector2.zero)
             {
                 aimCircle.transform.position = idealInfo.finalPosition;
@@ -915,6 +972,122 @@ public class TrajectoryLine : MonoBehaviour
     }
     
     /// <summary>
+    /// Called when aim circle visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnAimCircleVisibilityChanged(bool visible)
+    {
+        aimCircleVisible = visible;
+        Debug.Log($"[TrajectoryLine] Aim circle visibility changed to: {visible}");
+        
+        // Toggle between aim circle and alternative visualization
+        if (aimCircle != null)
+        {
+            aimCircle.GetComponent<SpriteRenderer>().enabled = visible;
+        }
+        
+        // Update visualization if currently aiming
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            
+            if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+            {
+                if (visible)
+                {
+                    // Show aim circle, hide alternative lines
+                    if (aimVerticalLine != null) aimVerticalLine.enabled = false;
+                    if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
+                }
+                else
+                {
+                    // Hide aim circle, show alternative lines
+                    UpdateAlternativeAimVisualization();
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Draw alternative aim visualization when aim circle is OFF
+    /// Shows vertical line at lateral aim position and horizontal line for weight
+    /// </summary>
+    private void UpdateAlternativeAimVisualization()
+    {
+        if (shootKnob == null || launcher == null || aimCircle == null)
+            return;
+        
+        // Get pullback position (from shooting knob / rock position)
+        Vector2 pullbackPos = Vector2.zero;
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            if (currentRock != null)
+            {
+                pullbackPos = currentRock.transform.position;
+            }
+        }
+        
+        Vector2 launcherPos = launcher.transform.position;
+        
+        // Calculate where the line from pullback through launcher intersects Y=8
+        // This shows lateral aim position
+        Vector2 direction = (launcherPos - pullbackPos).normalized;
+        
+        float targetY = 8f;
+        float deltaY = targetY - pullbackPos.y;
+        
+        float projectedX;
+        if (Mathf.Abs(direction.y) > 0.001f)
+        {
+            float t = deltaY / direction.y;
+            projectedX = pullbackPos.x + (direction.x * t);
+        }
+        else
+        {
+            projectedX = pullbackPos.x;
+        }
+        
+        // VERTICAL LINE: From Y=8 to Y=8.4 at projected X position
+        if (aimVerticalLine != null)
+        {
+            aimVerticalLine.enabled = true;
+            aimVerticalLine.positionCount = 2;
+            aimVerticalLine.SetPosition(0, new Vector3(projectedX, 8f, 0f));
+            aimVerticalLine.SetPosition(1, new Vector3(projectedX, 8.4f, 0f));
+            
+            // Match color to shooting knob
+            Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            aimVerticalLine.startColor = lineColor;
+            aimVerticalLine.endColor = lineColor;
+        }
+        
+        // HORIZONTAL LINE: Fixed width across ice at trajectory endpoint Y
+        // Shows weight (distance shot will travel)
+        if (aimHorizontalLine != null && aimCircle != null)
+        {
+            // Get Y position from aim circle (trajectory endpoint)
+            float aimCircleY = aimCircle.transform.position.y;
+            
+            // Fixed X positions spanning ice width
+            float iceLeftEdge = -2.23f;  // Tunable - left edge of ice
+            float iceRightEdge = 2.25f;  // Tunable - right edge of ice
+            
+            aimHorizontalLine.enabled = true;
+            aimHorizontalLine.positionCount = 2;
+            aimHorizontalLine.SetPosition(0, new Vector3(iceLeftEdge, aimCircleY, 0f));
+            aimHorizontalLine.SetPosition(1, new Vector3(iceRightEdge, aimCircleY, 0f));
+            
+            // Match color to shooting knob
+            Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            aimHorizontalLine.startColor = lineColor;
+            aimHorizontalLine.endColor = lineColor;
+            
+            Debug.Log($"[Alternative Aim] Vertical at X={projectedX:F2}, Horizontal at Y={aimCircleY:F2} (spanning {iceLeftEdge} to {iceRightEdge})");
+        }
+    }
+    
+    /// <summary>
     /// Cleanup subscriptions when destroyed
     /// </summary>
     void OnDestroy()
@@ -923,6 +1096,7 @@ public class TrajectoryLine : MonoBehaviour
         {
             visualSettings.OnTrajectoryVisibilityChanged -= OnTrajectoryVisibilityChanged;
             visualSettings.OnCollisionLinesVisibilityChanged -= OnCollisionLinesVisibilityChanged;
+            visualSettings.OnAimCircleVisibilityChanged -= OnAimCircleVisibilityChanged;
         }
     }
 }

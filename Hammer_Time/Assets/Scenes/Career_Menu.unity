@@ -840,7 +840,6 @@ MonoBehaviour:
   playoffTeams: []
   cgp: []
   playerTeamIndex: 0
-  score: []
   skinsGame: 0
   skins: 0
   skinValue: []
@@ -4101,7 +4100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a95fa00288412db18e4e460f6b0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 
+  debug: tour
   week: 1
   seasonLength: 36
   playerName: Lady

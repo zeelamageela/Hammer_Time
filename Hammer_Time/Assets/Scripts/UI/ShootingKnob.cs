@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 public class ShootingKnob : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ShootingKnob : MonoBehaviour
     public TrajectoryLine trajLine;
     public GameObject aimCircle;
     public GameObject target;
+    public GameObject mouseCircle;
     float distColor;
 
     public CameraManager cm;
@@ -61,14 +63,42 @@ public class ShootingKnob : MonoBehaviour
         {
             Vector2 startPoint = launcher.transform.position;
             Vector2 endPoint = transform.position;
-            
+
             // Get Y position of aim circle for color calculation
             float aimCircleY = aimCircle.transform.position.y;
 
             distance = Vector2.Distance(startPoint, endPoint);
-
-            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -15.5f, 0f));
-            lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
+            
+            if (trajLine.aimCircle.GetComponent<SpriteRenderer>().enabled)
+            {
+                lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -15.5f, 0f));
+                lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
+                lr.SetPosition(2, mouseCircle.transform.position);
+            }
+            else
+            {
+                // Project line from endPoint through launcher to y = 8
+                // Calculate the direction vector from endPoint to launcher
+                Vector2 direction = (startPoint - endPoint).normalized;
+                
+                float targetY = -18f;
+                float deltaY = targetY - endPoint.y;
+                
+                // Calculate corresponding X using the direction ratio
+                float projectedX;
+                if (Mathf.Abs(direction.y) > 0.001f)
+                {
+                    float t = deltaY / direction.y;
+                    projectedX = endPoint.x + (direction.x * t);
+                }
+                else
+                {
+                    projectedX = endPoint.x;
+                }
+                
+                lr.SetPosition(0, new Vector3(projectedX, targetY, 0f));
+                lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
+            }
 
             lr.startColor = sr.color;
             lr.endColor = sr.color;
@@ -133,8 +163,12 @@ public class ShootingKnob : MonoBehaviour
                 // Red zone - too far (danger/out of bounds)
                 sr.color = redTrans;
             }
+
+
+            mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
+            mouseCircle.GetComponent<SpriteRenderer>().color = sr.color;
         }
-        
+
     }
 
 }
