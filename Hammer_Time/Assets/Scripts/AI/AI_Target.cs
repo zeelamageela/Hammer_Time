@@ -170,7 +170,7 @@ public class AI_Target : MonoBehaviour
             {
                 // RUNBACK: HEAVIEST weight - must drive through 2 rocks!
                 // Strategy: Hit guard with massive momentum to blast through to target behind
-                desiredPullbackDistance = 4.9f; // MAXIMUM weight → 13.5 m/s
+                desiredPullbackDistance = 5.0f; // MAXIMUM weight → 13.75 m/s (INCREASED from 4.9)
                 
                 // Nose hit on guard, rely on momentum to carry through
                 float impactOffset = 2f * rockRadius; // Standard collision distance
@@ -190,7 +190,7 @@ public class AI_Target : MonoBehaviour
                 // PEEL: HEAVY weight + 45° angled hit
                 // Strategy: Glancing blow at angle to send both rocks sideways
                 // Must be heavier than takeout to ensure both rocks exit
-                desiredPullbackDistance = 4.4f; // Heavy → 12.1 m/s for drive-through
+                desiredPullbackDistance = 4.7f; // Heavy → 12.9 m/s for drive-through (INCREASED from 4.4)
                 
                 // ANGLED HIT: Aim at SIDE of rock (45° approach) for glancing blow
                 float angleOffset = rockRadius * 0.7f; // Offset by ~70% of radius
@@ -218,7 +218,7 @@ public class AI_Target : MonoBehaviour
                 // TAKEOUT: Hit and stay weight
                 // Strategy: Nose hit with enough momentum to remove target, shooter stays in play
                 // Must be > draw weight (8.7) but < peel weight (12.1)
-                desiredPullbackDistance = 3.6f; // Hit-and-stay → 9.9 m/s
+                desiredPullbackDistance = 4.0f; // Hit-and-stay → 11.0 m/s (INCREASED from 3.6)
                 
                 // NOSE HIT: Center-to-center collision
                 float impactOffset = 2f * rockRadius; // Exact collision distance
@@ -258,7 +258,7 @@ public class AI_Target : MonoBehaviour
             // Much lighter than takeout, just enough to move target without blasting it
             TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
             float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-            float desiredPullbackDistance = 2.8f; // Light touch → ~7.7 m/s
+            float desiredPullbackDistance = 3.2f; // Light touch → ~8.8 m/s (INCREASED from 2.8)
             float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
             
             // Aim directly at target (no offset needed for light contact)
@@ -328,10 +328,10 @@ public class AI_Target : MonoBehaviour
                 Debug.Log($"[Phase 1] Testing offset {lateralOffsetBase:F2} (multiplied: {lateralOffset:F2})");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated shot weights
-                // Draw: 8.7 m/s | Takeout: 9.9 m/s | Peel: 12.1 m/s | Runback: 13.5 m/s
+                // Draw: 8.7 m/s | Takeout: 11.0 m/s | Peel: 12.9 m/s | Runback: 13.75 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Create velocity vector pointing toward target with lateral offset
@@ -459,7 +459,7 @@ public class AI_Target : MonoBehaviour
                 // DETERMINISTIC VELOCITY: Recalibrated weights
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -504,7 +504,7 @@ public class AI_Target : MonoBehaviour
                 // DETERMINISTIC VELOCITY: Recalibrated weights
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -550,10 +550,10 @@ public class AI_Target : MonoBehaviour
                     Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated weights!
-                // Takeout: 3.6 → 9.9 m/s | Peel: 4.4 → 12.1 m/s | Runback: 4.9 → 13.5 m/s
+                // Takeout: 4.0 → 11.0 m/s | Peel: 4.7 → 12.9 m/s | Runback: 5.0 → 13.75 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Aim toward target with lateral offset
@@ -751,7 +751,7 @@ public class AI_Target : MonoBehaviour
                     
                     TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                     float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                    float desiredPullbackDistance = (shotType == "Runback") ? 4.9f : (shotType == "Peel") ? 4.4f : 3.6f;
+                    float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
                     float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                     
                     Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -1153,20 +1153,28 @@ public class AI_Target : MonoBehaviour
             {
                 float accuracy = shooterStats.takeOutAccuracy.GetValue(); // 0-100
                 
-                Debug.Log($"[AI_Target] Shooter takeout skill: {accuracy}/100");
+                Debug.Log($"[AI_Target] Takeout shot accuracy: {accuracy}/100");
                 
                 // REALISTIC CURLING ERROR DISTRIBUTION:
                 // Weight (Y) errors are 4-5x more common than line (X) errors
                 // Professional curlers can control line very well, but weight is hard!
                 
                 float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
-                float baseMaxError = 0.05f;
+                
+                // SKILL-BASED BASE ERROR SCALING:
+                // Low skill (0-40): baseMaxError = 0.06 (very hard - 6cm miss)
+                // Mid skill (40-70): baseMaxError = 0.04 (moderate - 4cm miss)
+                // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
+                // Takeouts are slightly easier than draws (less distance = less error accumulation)
+                float skillFactor = accuracyRatio;
+                float baseMaxError = Mathf.Lerp(0.06f, 0.02f, skillFactor * skillFactor); // Quadratic scaling
+                
                 float maxError = baseMaxError * (1f - accuracyRatio);
                 
                 if (maxError > 0f)
                 {
                     // Generate separate X and Y errors with weight-dominant distribution
-                    float yError = Random.Range(-maxError, maxError); // Full range for weight
+                    float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
                     float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
                     
                     Vector2 errorOffset = new Vector2(xError, yError);
@@ -1179,7 +1187,9 @@ public class AI_Target : MonoBehaviour
                     
                     pullbackPos += errorOffset;
                     
-                    Debug.Log($"[AI_Target] Realistic error applied (80% weight / 20% line)\n" +
+                    Debug.Log($"[AI_Target] Takeout realistic error applied (80% weight / 20% line)\n" +
+                              $"  Skill factor: {skillFactor:F2}\n" +
+                              $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
                               $"  Max error: ±{maxError:F3}\n" +
                               $"  Y error (weight): {yError:F3} (100% range)\n" +
                               $"  X error (line): {xError:F3} (20% range)\n" +
@@ -1189,7 +1199,7 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT ACCURACY (skill 100) - NO ERROR APPLIED! Pullback: {pullbackPos}");
+                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (skill 100) - NO ERROR APPLIED! Pullback: {pullbackPos}");
                 }
             }
             else
@@ -2265,15 +2275,59 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
-            // Apply accuracy modifier
-            CharacterStats shooterStats = GetShooterStats(rockCurrent);
-            if (shooterStats != null)
+        // Apply accuracy modifier with realistic error distribution
+        CharacterStats shooterStats = GetShooterStats(rockCurrent);
+        if (shooterStats != null)
+        {
+            float accuracy = shooterStats.drawAccuracy.GetValue(); // 0-100
+            
+            Debug.Log($"[AI_Target] Draw shot accuracy: {accuracy}/100");
+            
+            // REALISTIC CURLING ERROR DISTRIBUTION:
+            // Weight (Y) errors are 4-5x more common than line (X) errors
+            // Professional curlers control line very well, but weight is harder
+            
+            float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+            
+            // SKILL-BASED BASE ERROR SCALING:
+            // Low skill (0-40): baseMaxError = 0.08 (very hard - 8cm miss)
+            // Mid skill (40-70): baseMaxError = 0.05 (moderate - 5cm miss)
+            // High skill (70-100): baseMaxError = 0.03 (easy - 3cm miss)
+            float skillFactor = accuracyRatio;
+            float baseMaxError = Mathf.Lerp(0.08f, 0.03f, skillFactor * skillFactor); // Quadratic scaling
+            
+            float maxError = baseMaxError * (1f - accuracyRatio);
+            
+            if (maxError > 0f)
             {
-                float accuracy = shooterStats.drawAccuracy.GetValue() / 100f;
-                float maxError = 0.2f * (1f - accuracy); // Draw shots have more tolerance
-                Vector2 errorOffset = Random.insideUnitCircle * maxError;
+                // Generate separate X and Y errors with weight-dominant distribution
+                float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
+                float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                
+                Vector2 errorOffset = new Vector2(xError, yError);
+                
+                // CRITICAL: Lateral error must respect turn direction
+                // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
+                // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
+                float lateralErrorSign = useInTurn ? 1f : -1f;
+                errorOffset.x *= lateralErrorSign;
+                
                 pullbackPos += errorOffset;
+                
+                Debug.Log($"[AI_Target] Draw shot realistic error applied (80% weight / 20% line)\n" +
+                          $"  Skill factor: {skillFactor:F2}\n" +
+                          $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
+                          $"  Max error: ±{maxError:F3}\n" +
+                          $"  Y error (weight): {yError:F3} (100% range)\n" +
+                          $"  X error (line): {xError:F3} (20% range)\n" +
+                          $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                          $"  Final pullback: {pullbackPos}");
             }
+            else
+            {
+                Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (skill 100) - NO ERROR APPLIED!");
+            }
+        }
             
             rm.inturn = useInTurn;
             takeOutX = pullbackPos.x;
@@ -2946,15 +3000,59 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
-            // Apply accuracy modifier
-            CharacterStats shooterStats = GetShooterStats(rockCurrent);
-            if (shooterStats != null)
+        // Apply accuracy modifier with realistic error distribution
+        CharacterStats shooterStats = GetShooterStats(rockCurrent);
+        if (shooterStats != null)
+        {
+            float accuracy = shooterStats.guardAccuracy.GetValue(); // 0-100
+            
+            Debug.Log($"[AI_Target] Guard shot accuracy: {accuracy}/100");
+            
+            // REALISTIC CURLING ERROR DISTRIBUTION:
+            // Weight (Y) errors are 4-5x more common than line (X) errors
+            // Professional curlers control line very well, but weight is harder
+            
+            float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+            
+            // SKILL-BASED BASE ERROR SCALING:
+            // Low skill (0-40): baseMaxError = 0.07 (very hard - 7cm miss)
+            // Mid skill (40-70): baseMaxError = 0.045 (moderate - 4.5cm miss)
+            // High skill (70-100): baseMaxError = 0.025 (easy - 2.5cm miss)
+            float skillFactor = accuracyRatio;
+            float baseMaxError = Mathf.Lerp(0.07f, 0.025f, skillFactor * skillFactor); // Quadratic scaling
+            
+            float maxError = baseMaxError * (1f - accuracyRatio);
+            
+            if (maxError > 0f)
             {
-                float accuracy = shooterStats.guardAccuracy.GetValue() / 100f;
-                float maxError = 0.18f * (1f - accuracy); // Guards have moderate tolerance
-                Vector2 errorOffset = Random.insideUnitCircle * maxError;
+                // Generate separate X and Y errors with weight-dominant distribution
+                float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
+                float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                
+                Vector2 errorOffset = new Vector2(xError, yError);
+                
+                // CRITICAL: Lateral error must respect turn direction
+                // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
+                // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
+                float lateralErrorSign = useInTurn ? 1f : -1f;
+                errorOffset.x *= lateralErrorSign;
+                
                 pullbackPos += errorOffset;
+                
+                Debug.Log($"[AI_Target] Guard shot realistic error applied (80% weight / 20% line)\n" +
+                          $"  Skill factor: {skillFactor:F2}\n" +
+                          $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
+                          $"  Max error: ±{maxError:F3}\n" +
+                          $"  Y error (weight): {yError:F3} (100% range)\n" +
+                          $"  X error (line): {xError:F3} (20% range)\n" +
+                          $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                          $"  Final pullback: {pullbackPos}");
             }
+            else
+            {
+                Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (skill 100) - NO ERROR APPLIED!");
+            }
+        }
             
             rm.inturn = useInTurn;
             takeOutX = pullbackPos.x;

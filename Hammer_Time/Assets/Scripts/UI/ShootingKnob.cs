@@ -67,7 +67,7 @@ public class ShootingKnob : MonoBehaviour
 
             distance = Vector2.Distance(startPoint, endPoint);
 
-            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -16f, 0f));
+            lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -15.5f, 0f));
             lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
 
             lr.startColor = sr.color;
