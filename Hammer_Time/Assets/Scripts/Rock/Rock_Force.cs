@@ -169,7 +169,7 @@ public class Rock_Force : MonoBehaviour
                 Debug.Log($"[Rock_Force SWEEPING] Frame {frameCounter}: sweepMult={sweepCurlMult:F2}, curl.x={curl.x:F3}, angularVel={body.angularVelocity:F2}");
             }
             
-            Vector2 scaledCurl = curl * curlForceMultiplier * sweepCurlMult; // ? SWEEPING MODIFIES CURL FORCE HERE!
+            Vector2 scaledCurl = curlForceMultiplier * sweepCurlMult * curl; // ? SWEEPING MODIFIES CURL FORCE HERE!
             body.AddForce(scaledCurl * vel, ForceMode2D.Force);
             
             //Debug.Log("curl is " + curl.x);

@@ -23,11 +23,11 @@ public class TrajectorySimulator
     private float curlAmount = 0.3f; // Legacy - now using angularVelocityCurl instead
     
     // Angular velocity curl model (matches Rock_Force.cs EXACTLY - READ FROM ROCK GAMEOBJECT!)
-    public Vector2 curlVector = new Vector2(-0.323f, 0f); // FIXED: Was +0.323, rock uses -0.323!
+    public Vector2 curlVector = new Vector2(-0.6f, 0f); // FIXED: Was +0.323, rock uses -0.323!
     public float scaleFactor = 0.1f;
     public float initialAngularVelocity = 60f; // This is the REAL value that works!
     public float angularDamping = 0.32f; // FIXED: Was 0.05, Rigidbody2D uses 0.32!
-    public float curlForceScale = 0.9f; // TUNED: Increased from 0.5 to compensate for mass fix
+    public float curlForceScale = 1.0f; // TUNED: MUST MATCH Rock_Force.curlForceMultiplier (1.0)!
     
     // Rock properties
     private float rockMass = 145f; // FIXED: Matches actual rock Rigidbody2D mass (was 19.96 - wrong!)

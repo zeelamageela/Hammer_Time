@@ -142,7 +142,7 @@ public class CareerSettings : MonoBehaviour
             gsp.loadGame = false; // Don't try to load a game, just tournament state
             
             if (gsp.KO3)
-                SceneManager.LoadScene("Tourny_Home_3K");
+                SceneManager.LoadScene("Tourny_Home_1");
             else if (gsp.KO1)
                 SceneManager.LoadScene("Tourny_Home_SingleK");
             else

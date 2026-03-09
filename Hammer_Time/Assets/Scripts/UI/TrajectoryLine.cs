@@ -129,6 +129,8 @@ public class TrajectoryLine : MonoBehaviour
     private GameObject aimVerticalLineObj;
     private LineRenderer aimHorizontalLine;
     private GameObject aimHorizontalLineObj;
+    private LineRenderer aimCurlLine;
+    private GameObject aimCurlLineObj;
 
     void Start()
     {
@@ -176,6 +178,7 @@ public class TrajectoryLine : MonoBehaviour
         postCollisionLine.material = new Material(Shader.Find("Sprites/Default"));
         postCollisionLine.startColor = new Color(1f, 0.5f, 0f, 1f); // Bright orange - full opacity
         postCollisionLine.endColor = new Color(1f, 0.3f, 0f, 0.8f); // Slightly transparent end
+        postCollisionLine.sortingOrder = 1; // Render on top of other elements
         postCollisionLine.enabled = false;
         
         // Create post-collision line renderer for hit rock (YELLOW ARROW)
@@ -187,6 +190,7 @@ public class TrajectoryLine : MonoBehaviour
         hitRockPostCollisionLine.material = new Material(Shader.Find("Sprites/Default"));
         hitRockPostCollisionLine.startColor = new Color(1f, 1f, 0f, 1f); // Bright yellow - full opacity
         hitRockPostCollisionLine.endColor = new Color(1f, 1f, 0f, 0.8f); // Slightly transparent end
+        hitRockPostCollisionLine.sortingOrder = 1; // Render on top of other elements
         hitRockPostCollisionLine.enabled = false;
         
         // OLD: hitRockDirectionLine - now redundant, merged into hitRockPostCollisionLine
@@ -202,6 +206,7 @@ public class TrajectoryLine : MonoBehaviour
         aimVerticalLine.material = new Material(Shader.Find("Sprites/Default"));
         aimVerticalLine.startColor = Color.white;
         aimVerticalLine.endColor = Color.white;
+        aimVerticalLine.sortingOrder = 1; // Render on top of other elements
         aimVerticalLine.enabled = false;
         
         // HORIZONTAL LINE: Shows weight (distance) at Y=aim circle Y
@@ -213,7 +218,20 @@ public class TrajectoryLine : MonoBehaviour
         aimHorizontalLine.material = new Material(Shader.Find("Sprites/Default"));
         aimHorizontalLine.startColor = Color.white;
         aimHorizontalLine.endColor = Color.white;
+        aimHorizontalLine.sortingOrder = 1; // Render on top of other elements
         aimHorizontalLine.enabled = false;
+        
+        // CURL LINE: Shows turn and curl direction from vertical line to aim circle
+        aimCurlLineObj = new GameObject("AimCurlLine");
+        aimCurlLineObj.transform.parent = transform;
+        aimCurlLine = aimCurlLineObj.AddComponent<LineRenderer>();
+        aimCurlLine.startWidth = 0.08f;
+        aimCurlLine.endWidth = 0.08f;
+        aimCurlLine.material = new Material(Shader.Find("Sprites/Default"));
+        aimCurlLine.startColor = Color.white;
+        aimCurlLine.endColor = Color.white;
+        aimCurlLine.sortingOrder = 1; // Render on top of other elements
+        aimCurlLine.enabled = false;
         
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
@@ -367,6 +385,10 @@ public class TrajectoryLine : MonoBehaviour
         if (aimHorizontalLine != null)
         {
             aimHorizontalLine.enabled = false;
+        }
+        if (aimCurlLine != null)
+        {
+            aimCurlLine.enabled = false;
         }
         
         // CRITICAL FIX: Also hide the main trajectory line renderer
@@ -998,6 +1020,7 @@ public class TrajectoryLine : MonoBehaviour
                     // Show aim circle, hide alternative lines
                     if (aimVerticalLine != null) aimVerticalLine.enabled = false;
                     if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
+                    if (aimCurlLine != null) aimCurlLine.enabled = false;
                 }
                 else
                 {
@@ -1030,60 +1053,226 @@ public class TrajectoryLine : MonoBehaviour
         
         Vector2 launcherPos = launcher.transform.position;
         
-        // Calculate where the line from pullback through launcher intersects Y=8
-        // This shows lateral aim position
+        // Calculate straight-line trajectory direction (no curl)
         Vector2 direction = (launcherPos - pullbackPos).normalized;
         
-        float targetY = 8f;
-        float deltaY = targetY - pullbackPos.y;
+        // STRAIGHT-LINE COLLISION DETECTION
+        // Check if aiming straight at this direction would hit any rocks in play
+        Vector2 collisionPoint = Vector2.zero;
+        bool hasCollision = false;
+        float rockRadius = 0.14f; // Same as TrajectorySimulator
         
-        float projectedX;
-        if (Mathf.Abs(direction.y) > 0.001f)
+        if (gm != null && gm.rockList != null)
         {
-            float t = deltaY / direction.y;
-            projectedX = pullbackPos.x + (direction.x * t);
+            // Get rocks in play (excluding current rock)
+            foreach (var rockEntry in gm.rockList)
+            {
+                if (rockEntry.rock != null 
+                    && rockEntry.rock.activeInHierarchy 
+                    && rockEntry.rockInfo.inPlay 
+                    && rockEntry.rock != gm.rockList[gm.rockCurrent].rock)
+                {
+                    Vector2 rockPos = rockEntry.rock.transform.position;
+                    
+                    // Calculate closest point on line to rock center
+                    // Line equation: point = pullbackPos + t * direction
+                    // Closest point to rockPos: t = dot(rockPos - pullbackPos, direction)
+                    float t = Vector2.Dot(rockPos - pullbackPos, direction);
+                    
+                    // Only check if rock is ahead of us (t > 0)
+                    if (t > 0)
+                    {
+                        Vector2 closestPoint = pullbackPos + direction * t;
+                        float distance = Vector2.Distance(closestPoint, rockPos);
+                        
+                        // Check if line passes through rock (within 2x rock radius)
+                        if (distance < rockRadius * 2f)
+                        {
+                            // COLLISION! Use the BOTTOM EDGE of the rock (not center)
+                            // This makes the line slide naturally over the rock surface
+                            // Bottom edge = rock center Y + rock radius (moving down ice = positive Y)
+                            collisionPoint = new Vector2(closestPoint.x, rockPos.y + rockRadius);
+                            hasCollision = true;
+                            Debug.Log($"[Alternative Aim] STRAIGHT-LINE COLLISION detected - rock center: ({rockPos.x:F2}, {rockPos.y:F2}), bottom edge: ({collisionPoint.x:F2}, {collisionPoint.y:F2})");
+                            break; // Use first collision (closest in direction)
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Determine vertical line position and height
+        float verticalLineX;
+        float verticalLineTopY;
+        float verticalLineBottomY = 8.4f; // Default bottom anchor
+        
+        // Get horizontal line Y position (trajectory endpoint + 0.4 offset)
+        float aimCircleY = aimCircle.transform.position.y;
+        float horizontalLineY = aimCircleY + 0.4f;
+        
+        if (hasCollision)
+        {
+            // ===== COLLISION MODE =====
+            // Vertical line extends 0.4 IN FRONT of collision point (closer to hack)
+            verticalLineX = collisionPoint.x;
+            verticalLineTopY = collisionPoint.y - 0.4f; // -0.4 to extend in front
+            
+            // Bottom end ALWAYS follows horizontal line during collision
+            verticalLineBottomY = horizontalLineY;
+            
+            Debug.Log($"[Alternative Aim] COLLISION - X={verticalLineX:F2}, top={verticalLineTopY:F2} (front edge), bottom={verticalLineBottomY:F2} (follows horiz), horizY={horizontalLineY:F2}");
         }
         else
         {
-            projectedX = pullbackPos.x;
+            // ===== NO COLLISION MODE =====
+            // Calculate X position from straight-line projection
+            float deltaY = aimCircleY - pullbackPos.y;
+            
+            if (Mathf.Abs(direction.y) > 0.001f)
+            {
+                float t = deltaY / direction.y;
+                verticalLineX = pullbackPos.x + (direction.x * t);
+            }
+            else
+            {
+                verticalLineX = pullbackPos.x;
+            }
+            
+            // ZONE-BASED LOGIC for vertical line endpoints
+            if (horizontalLineY <= 6.5f)
+            {
+                // ZONE 1: Horizontal between hog line and Y=6.5
+                // Top: horizontal - 0.4 (extends TOWARDS hack, opposite direction)
+                // Bottom: 8.4 (fixed)
+                verticalLineTopY = horizontalLineY - 0.4f; // -0.4 towards hack
+                verticalLineBottomY = 8.4f;
+                Debug.Log($"[Alternative Aim] ZONE 1 (Hog-6.5) - top={verticalLineTopY:F2} (-0.4 towards hack), bottom=8.4");
+            }
+            else if (horizontalLineY <= 8.0f)
+            {
+                // ZONE 2: Horizontal between Y=6.5 and Y=8.0
+                // Top: 6.1 (locked), Bottom: 8.4 (locked)
+                verticalLineTopY = 6.1f;
+                verticalLineBottomY = 8.4f;
+                Debug.Log($"[Alternative Aim] ZONE 2 (6.5-8.0) - top=6.1, bottom=8.4 (both locked)");
+            }
+            else
+            {
+                // ZONE 3: Horizontal past Y=8.0
+                // Top: 6.1 (locked), Bottom: follows horizontal line
+                verticalLineTopY = 6.1f;
+                verticalLineBottomY = horizontalLineY; // Follows horizontal
+                Debug.Log($"[Alternative Aim] ZONE 3 (8.0+) - top=6.1, bottom={verticalLineBottomY:F2} (follows horiz)");
+            }
         }
         
-        // VERTICAL LINE: From Y=8 to Y=8.4 at projected X position
+        // SKILL-BASED LINE WIDTH
+        // Get shooter's average accuracy from CareerManager (for player) or CharacterStats (for AI)
+        float shooterSkill = 50f; // Default mid-skill
+        
+        // Check if this is the player's rock or AI rock
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        TeamManager teamManager = FindFirstObjectByType<TeamManager>();
+        
+        if (cm != null && cm.cStats != null)
+        {
+            // Player rock - use CareerManager stats
+            shooterSkill = (cm.cStats.drawAccuracy + 
+                           cm.cStats.guardAccuracy + 
+                           cm.cStats.takeOutAccuracy) / 3f;
+        }
+        else if (teamManager != null)
+        {
+            // AI rock - try to get current team's average skill
+            // Fall back to default 50 if not available
+            shooterSkill = 50f;
+        }
+        
+        // Map skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
+        // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
+        float lineWidth = Mathf.Lerp(0.15f, 0.04f, shooterSkill / 100f);
+        
+        // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
+        // If collision detected, shows collision point; otherwise shows trajectory endpoint
         if (aimVerticalLine != null)
         {
             aimVerticalLine.enabled = true;
             aimVerticalLine.positionCount = 2;
-            aimVerticalLine.SetPosition(0, new Vector3(projectedX, 8f, 0f));
-            aimVerticalLine.SetPosition(1, new Vector3(projectedX, 8.4f, 0f));
+            // Top of vertical line: collision point OR trajectory endpoint (+0.4 offset)
+            aimVerticalLine.SetPosition(0, new Vector3(verticalLineX, verticalLineTopY, 0f));
+            // Bottom of vertical line: extend down to Y=8.4 for visual reference
+            aimVerticalLine.SetPosition(1, new Vector3(verticalLineX, verticalLineBottomY, 0f));
             
-            // Match color to shooting knob
-            Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            // Apply skill-based width
+            aimVerticalLine.startWidth = lineWidth;
+            aimVerticalLine.endWidth = lineWidth;
+            
+            // Color: Greyish-black (dark grey) or RED for collision
+            Color lineColor;
+            if (hasCollision && collisionLinesVisible)
+            {
+                // RED for collision warning
+                lineColor = new Color(1f, 0.3f, 0.3f, 1f); // Bright red
+            }
+            else
+            {
+                // Greyish-black: #3A3A3A (dark grey, 23% brightness)
+                lineColor = new Color(0.23f, 0.23f, 0.23f, 1f);
+            }
+            
             aimVerticalLine.startColor = lineColor;
             aimVerticalLine.endColor = lineColor;
         }
         
         // HORIZONTAL LINE: Fixed width across ice at trajectory endpoint Y
-        // Shows weight (distance shot will travel)
-        if (aimHorizontalLine != null && aimCircle != null)
+        // Shows weight (distance shot will travel) - TEAM COLOR
+        if (aimHorizontalLine != null)
         {
-            // Get Y position from aim circle (trajectory endpoint)
-            float aimCircleY = aimCircle.transform.position.y;
-            
             // Fixed X positions spanning ice width
             float iceLeftEdge = -2.23f;  // Tunable - left edge of ice
             float iceRightEdge = 2.25f;  // Tunable - right edge of ice
             
             aimHorizontalLine.enabled = true;
             aimHorizontalLine.positionCount = 2;
-            aimHorizontalLine.SetPosition(0, new Vector3(iceLeftEdge, aimCircleY, 0f));
-            aimHorizontalLine.SetPosition(1, new Vector3(iceRightEdge, aimCircleY, 0f));
+            aimHorizontalLine.SetPosition(0, new Vector3(iceLeftEdge, horizontalLineY, 0f));
+            aimHorizontalLine.SetPosition(1, new Vector3(iceRightEdge, horizontalLineY, 0f));
             
-            // Match color to shooting knob
+            // Apply skill-based width
+            aimHorizontalLine.startWidth = lineWidth;
+            aimHorizontalLine.endWidth = lineWidth;
+            
+            // TEAM COLOR (shooting knob color)
             Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
             aimHorizontalLine.startColor = lineColor;
             aimHorizontalLine.endColor = lineColor;
+        }
+        
+        // CURL LINE: Shows turn and curl from vertical line to aim circle
+        // Horizontal line at (minimum Y of vertical) + 0.5, from vertical X to aim circle X
+        if (aimCurlLine != null && aimCircle != null)
+        {
+            // Find the minimum Y value of the vertical line (closest to hack)
+            float curlLineY = Mathf.Min(verticalLineTopY, verticalLineBottomY) + 0.5f;
             
-            Debug.Log($"[Alternative Aim] Vertical at X={projectedX:F2}, Horizontal at Y={aimCircleY:F2} (spanning {iceLeftEdge} to {iceRightEdge})");
+            // Start at vertical line X, end at aim circle X
+            float curlLineStartX = verticalLineX;
+            float curlLineEndX = aimCircle.transform.position.x;
+            
+            aimCurlLine.enabled = true;
+            aimCurlLine.positionCount = 2;
+            aimCurlLine.SetPosition(0, new Vector3(curlLineStartX, curlLineY, 0f));
+            aimCurlLine.SetPosition(1, new Vector3(curlLineEndX, curlLineY, 0f));
+            
+            // Apply skill-based width
+            aimCurlLine.startWidth = lineWidth;
+            aimCurlLine.endWidth = lineWidth;
+            
+            // TEAM COLOR (shooting knob color)
+            Color curlLineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            aimCurlLine.startColor = curlLineColor;
+            aimCurlLine.endColor = curlLineColor;
+            
+            Debug.Log($"[Alternative Aim] Curl line at Y={curlLineY:F2}, from X={curlLineStartX:F2} to X={curlLineEndX:F2} (curl offset={Mathf.Abs(curlLineEndX - curlLineStartX):F2})");
         }
     }
     

@@ -71,9 +71,27 @@ public class ShootingKnob : MonoBehaviour
             
             if (trajLine.aimCircle.GetComponent<SpriteRenderer>().enabled)
             {
-                lr.SetPosition(0, new Vector3(hogLinePoint.transform.position.x, -15.5f, 0f));
+                // Project line from endPoint through launcher to y = 8
+                // Calculate the direction vector from endPoint to launcher
+                Vector2 direction = (startPoint - endPoint).normalized;
+
+                float targetY = -15.6f;
+                float deltaY = targetY - endPoint.y;
+
+                // Calculate corresponding X using the direction ratio
+                float projectedX;
+                if (Mathf.Abs(direction.y) > 0.001f)
+                {
+                    float t = deltaY / direction.y;
+                    projectedX = endPoint.x + (direction.x * t);
+                }
+                else
+                {
+                    projectedX = endPoint.x;
+                }
+
+                lr.SetPosition(0, new Vector3(projectedX, targetY, 0f));
                 lr.SetPosition(1, new Vector3(endPoint.x, endPoint.y, 0f));
-                lr.SetPosition(2, mouseCircle.transform.position);
             }
             else
             {
