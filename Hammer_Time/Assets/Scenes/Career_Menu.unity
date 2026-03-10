@@ -769,16 +769,16 @@ MonoBehaviour:
   tournyCash: 0
   tournyRecord: {x: 0, y: 0}
   cStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
   oppStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
@@ -4124,9 +4124,9 @@ MonoBehaviour:
     image: {fileID: 0}
     active: 0
     view: 0
-    draw: 0
-    guard: 0
-    takeOut: 0
+    weight: 0
+    finesse: 0
+    aim: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4139,23 +4139,23 @@ MonoBehaviour:
   xp: 20
   level: 0
   cStats:
-    drawAccuracy: 5
-    takeOutAccuracy: 5
-    guardAccuracy: 5
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 5
     sweepEndurance: 5
     sweepCohesion: 5
   oppStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
   modStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
@@ -4180,9 +4180,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 8f98d04ee0c5ee942871526d89c44d1e, type: 3}
     active: 1
     view: 0
-    draw: 30
-    guard: 30
-    takeOut: 20
+    weight: 30
+    finesse: 10
+    aim: 20
     sweepStrength: 50
     sweepEnduro: 50
     sweepCohesion: 20
@@ -4200,9 +4200,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 56041b51583fb44479db50dd7af4ab1e, type: 3}
     active: 1
     view: 0
-    draw: 20
-    guard: 30
-    takeOut: 30
+    weight: 30
+    finesse: 10
+    aim: 30
     sweepStrength: 30
     sweepEnduro: 30
     sweepCohesion: 10
@@ -4220,9 +4220,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 2321c7ee319c6734882876b6ebddcd4e, type: 3}
     active: 1
     view: 0
-    draw: 40
-    guard: 15
-    takeOut: 45
+    weight: 45
+    finesse: 10
+    aim: 45
     sweepStrength: 5
     sweepEnduro: 15
     sweepCohesion: 30
@@ -4239,9 +4239,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: f760c26be31a0384aab821657f9a3fe4, type: 3}
     active: 0
     view: 0
-    draw: 50
-    guard: 50
-    takeOut: 30
+    weight: 15
+    finesse: 15
+    aim: 40
     sweepStrength: 20
     sweepEnduro: 25
     sweepCohesion: 5
@@ -4259,9 +4259,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 2c76892a47844014886d19020042c5ed, type: 3}
     active: 0
     view: 0
-    draw: 50
-    guard: 80
-    takeOut: 30
+    weight: 40
+    finesse: 15
+    aim: 15
     sweepStrength: 20
     sweepEnduro: 10
     sweepCohesion: 0
@@ -4279,9 +4279,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: efcd62d2643c03148a0859e09e5c6931, type: 3}
     active: 0
     view: 0
-    draw: 80
-    guard: 20
-    takeOut: 10
+    weight: 35
+    finesse: 25
+    aim: 60
     sweepStrength: 60
     sweepEnduro: 40
     sweepCohesion: 0
@@ -4299,9 +4299,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 57759ccf1cc5433488326ac2aa50f696, type: 3}
     active: 0
     view: 0
-    draw: 50
-    guard: 0
-    takeOut: 50
+    weight: 70
+    finesse: 25
+    aim: 65
     sweepStrength: 40
     sweepEnduro: 40
     sweepCohesion: 50
@@ -4319,12 +4319,12 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 838007bc1c7ff2646a1d9a2f428d1cad, type: 3}
     active: 0
     view: 0
-    draw: 20
-    guard: 40
-    takeOut: 20
+    weight: 40
+    finesse: 15
+    aim: 55
     sweepStrength: 40
     sweepEnduro: 40
-    sweepCohesion: 20
+    sweepCohesion: 75
     oppDraw: 0
     oppGuard: 0
     oppTakeOut: 0
@@ -4339,9 +4339,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: e7349836d60966340bba9d352b843c4a, type: 3}
     active: 0
     view: 0
-    draw: 50
-    guard: 50
-    takeOut: 50
+    weight: 50
+    finesse: 50
+    aim: 50
     sweepStrength: 50
     sweepEnduro: 50
     sweepCohesion: 50
@@ -4359,9 +4359,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: ae6234133fd860548959b57f82995d5a, type: 3}
     active: 0
     view: 0
-    draw: 30
-    guard: 30
-    takeOut: 30
+    weight: 45
+    finesse: 40
+    aim: 45
     sweepStrength: 70
     sweepEnduro: 70
     sweepCohesion: 70
@@ -4379,9 +4379,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 3859c8d8dd69fc64e931a2440bfb7ab1, type: 3}
     active: 0
     view: 0
-    draw: 60
-    guard: 60
-    takeOut: 60
+    weight: 65
+    finesse: 75
+    aim: 65
     sweepStrength: 40
     sweepEnduro: 40
     sweepCohesion: 40
@@ -4399,9 +4399,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: c804e52da6383cc42912fee09e8446ff, type: 3}
     active: 0
     view: 0
-    draw: 10
-    guard: 10
-    takeOut: 80
+    weight: 45
+    finesse: 75
+    aim: 80
     sweepStrength: 90
     sweepEnduro: 80
     sweepCohesion: 30
@@ -4419,9 +4419,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 34bf1e4dae1918b418620f374164b5ed, type: 3}
     active: 0
     view: 0
-    draw: 90
-    guard: 40
-    takeOut: 10
+    weight: 75
+    finesse: 60
+    aim: 70
     sweepStrength: 40
     sweepEnduro: 90
     sweepCohesion: 70
@@ -4439,11 +4439,11 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 1ba1c12bc933d604eba4248e3166f1a6, type: 3}
     active: 0
     view: 0
-    draw: 60
-    guard: 80
-    takeOut: 20
-    sweepStrength: 100
-    sweepEnduro: 100
+    weight: 95
+    finesse: 40
+    aim: 85
+    sweepStrength: 99
+    sweepEnduro: 99
     sweepCohesion: 40
     oppDraw: 0
     oppGuard: 0
@@ -4459,9 +4459,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 13320e77a11c63c4a8e33a89ba67c309, type: 3}
     active: 0
     view: 0
-    draw: 100
-    guard: 100
-    takeOut: 80
+    weight: 95
+    finesse: 95
+    aim: 95
     sweepStrength: 30
     sweepEnduro: 20
     sweepCohesion: 20
@@ -4480,9 +4480,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 9f3f7aa93b81a814c801c27a671cc722, type: 3}
     active: 0
     view: 0
-    draw: 50
-    guard: 50
-    takeOut: 90
+    weight: 90
+    finesse: 60
+    aim: 75
     sweepStrength: 90
     sweepEnduro: 70
     sweepCohesion: 70
@@ -4502,9 +4502,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 57b2fd79c6e28ee4e963bc8ec7457c2a, type: 3}
     active: 0
     view: 0
-    draw: 90
-    guard: 70
-    takeOut: 50
+    weight: 85
+    finesse: 95
+    aim: 85
     sweepStrength: 50
     sweepEnduro: 70
     sweepCohesion: 90
@@ -4523,9 +4523,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: c01c1142b87be8a48a42c518287edefd, type: 3}
     active: 0
     view: 0
-    draw: 80
-    guard: 50
-    takeOut: 70
+    weight: 85
+    finesse: 100
+    aim: 90
     sweepStrength: 100
     sweepEnduro: 100
     sweepCohesion: 80

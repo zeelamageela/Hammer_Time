@@ -122,9 +122,9 @@ public class Debug_Placement : MonoBehaviour
             new Vector2(-0.5f, 5.8f),     // 5. Front left - short distance + lateral
             
             // GUARDS (for peel/raise testing)
-            new Vector2(0f, 3.0f),        // 6. Center guard - short distance
-            new Vector2(0.8f, 3.5f),      // 7. Right corner guard - short + lateral
-            new Vector2(-0.8f, 3.5f),     // 8. Left corner guard - short + lateral
+            new Vector2(0f, 3.0f),        // 6. Center finesse - short distance
+            new Vector2(0.8f, 3.5f),      // 7. Right corner finesse - short + lateral
+            new Vector2(-0.8f, 3.5f),     // 8. Left corner finesse - short + lateral
         };
         
         string[] positionNames = new string[]

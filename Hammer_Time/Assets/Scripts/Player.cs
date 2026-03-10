@@ -12,15 +12,16 @@ public class Player
     [TextArea(3, 10)]
     public string description;
 
+
     public float cost;
 
     public Sprite image;
     public bool active;
     public bool view;
 
-    public int draw;
-    public int guard;
-    public int takeOut;
+    public int weight;
+    public int finesse;
+    public int aim;
     public int sweepStrength;
     public int sweepEnduro;
     public int sweepCohesion;

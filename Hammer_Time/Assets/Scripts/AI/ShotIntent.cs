@@ -9,7 +9,7 @@ public enum ShotIntent
     // OFFENSIVE INTENTS
     RemoveThreat,           // Take out opponent's best rock(s)
     ScorePoints,            // Draw into scoring position
-    StealPoint,             // Aggressive draw when without hammer
+    StealPoint,             // Aggressive weight when without hammer
     
     // DEFENSIVE INTENTS
     ProtectLead,            // Guard my rocks when winning
@@ -17,7 +17,7 @@ public enum ShotIntent
     DenyOpportunity,        // Remove opponent's setup rocks
     
     // SETUP INTENTS
-    CreateOpportunity,      // Place guard for future shots
+    CreateOpportunity,      // Place finesse for future shots
     FreezeOnShot,          // Freeze to shot rock (advanced)
     
     // SPECIAL SITUATIONS
@@ -26,7 +26,7 @@ public enum ShotIntent
     Corner,                // Freeze behind cover
     
     // SIMPLE FALLBACKS
-    DrawToButton,          // Simple center draw
+    DrawToButton,          // Simple center weight
     ThrowAway              // Nothing good available, throw it away
 }
 

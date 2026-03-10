@@ -9,9 +9,9 @@ public class CharacterStats : MonoBehaviour
     AIManager aim;
 
     public string charName;
-    public Stat drawAccuracy;
-    public Stat takeOutAccuracy;
-    public Stat guardAccuracy;
+    public Stat weightAccuracy;   // Y-axis accuracy (distance/weight control)
+    public Stat aimAccuracy;       // X-axis accuracy (lateral positioning)
+    public Stat finesseAccuracy;   // Complex shot bonus (finesse techniques)
     public Stat sweepStrength;
     public Stat sweepEndurance;
     public Stat sweepCohesion;
@@ -55,7 +55,7 @@ public class CharacterStats : MonoBehaviour
     }
     public void OnSweepFatigue(float fatigue)
     {
-        fatigue -= 0.01f * (100f - sweepEndurance.GetValue());
+        fatigue -= 0.005f * (100f - sweepEndurance.GetValue());
         //Debug.Log("Fatigue is " + fatigue);
         sweepHealth -= fatigue;
         //Debug.Log("Sweep Health is " + fatigue);
@@ -78,10 +78,11 @@ public class CharacterStats : MonoBehaviour
         aim = FindFirstObjectByType<AIManager>();
         AI_Shooter aiShoot = aim.gameObject.GetComponent<AI_Shooter>();
 
-        Debug.Log("AI Take Out Accuracy is " + takeOutAccuracy.GetValue());
+        Debug.Log("AI Aim Accuracy is " + aimAccuracy.GetValue());
 
-        aiShoot.drawAccu = new Vector2(0.1f - (0.001f * drawAccuracy.GetValue()), 0.1f - (0.001f * drawAccuracy.GetValue()));
-        aiShoot.guardAccu = new Vector2(0.1f - (0.001f * guardAccuracy.GetValue()), 0.1f - (0.001f * guardAccuracy.GetValue()));
-        aiShoot.toAccu = new Vector2(0.1f - (0.001f * takeOutAccuracy.GetValue()), 0.1f - (0.001f * takeOutAccuracy.GetValue()));
+        // Legacy AI_Shooter compatibility (will be removed later)
+        aiShoot.drawAccu = new Vector2(0.1f - (0.001f * weightAccuracy.GetValue()), 0.1f - (0.001f * weightAccuracy.GetValue()));
+        aiShoot.guardAccu = new Vector2(0.1f - (0.001f * finesseAccuracy.GetValue()), 0.1f - (0.001f * finesseAccuracy.GetValue()));
+        aiShoot.toAccu = new Vector2(0.1f - (0.001f * aimAccuracy.GetValue()), 0.1f - (0.001f * aimAccuracy.GetValue()));
     }
 }

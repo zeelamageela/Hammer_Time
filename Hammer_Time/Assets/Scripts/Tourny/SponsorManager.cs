@@ -123,15 +123,15 @@ public class SponsorManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
 
-        cm.modStats.drawAccuracy += activeCards[card].draw;
-        cm.modStats.guardAccuracy += activeCards[card].guard;
-        cm.modStats.takeOutAccuracy += activeCards[card].takeOut;
+        cm.modStats.weightAccuracy += activeCards[card].draw;
+        cm.modStats.finesseAccuracy += activeCards[card].guard;
+        cm.modStats.aimAccuracy += activeCards[card].takeOut;
         cm.modStats.sweepEndurance += activeCards[card].sweepEnduro;
         cm.modStats.sweepStrength += activeCards[card].sweepStrength;
         cm.modStats.sweepCohesion += activeCards[card].sweepCohesion;
-        cm.oppStats.drawAccuracy += activeCards[card].oppDraw;
-        cm.oppStats.guardAccuracy += activeCards[card].oppGuard;
-        cm.oppStats.takeOutAccuracy += activeCards[card].oppTakeOut;
+        cm.oppStats.weightAccuracy += activeCards[card].oppDraw;
+        cm.oppStats.finesseAccuracy += activeCards[card].oppGuard;
+        cm.oppStats.aimAccuracy += activeCards[card].oppTakeOut;
         cm.oppStats.sweepEndurance += activeCards[card].oppEnduro;
         cm.oppStats.sweepStrength += activeCards[card].oppStrength;
         cm.oppStats.sweepCohesion += activeCards[card].oppCohesion;
@@ -142,15 +142,15 @@ public class SponsorManager : MonoBehaviour
     {
         cm = FindObjectOfType<CareerManager>();
         //DisplayCards(numberOfCards);
-        cm.modStats.drawAccuracy -= activeCards[card].draw;
-        cm.modStats.guardAccuracy -= activeCards[card].guard;
-        cm.modStats.takeOutAccuracy -= activeCards[card].takeOut;
+        cm.modStats.weightAccuracy -= activeCards[card].draw;
+        cm.modStats.finesseAccuracy -= activeCards[card].guard;
+        cm.modStats.aimAccuracy -= activeCards[card].takeOut;
         cm.modStats.sweepEndurance -= activeCards[card].sweepEnduro;
         cm.modStats.sweepStrength -= activeCards[card].sweepStrength;
         cm.modStats.sweepCohesion -= activeCards[card].sweepCohesion;
-        cm.oppStats.drawAccuracy -= activeCards[card].oppDraw;
-        cm.oppStats.guardAccuracy -= activeCards[card].oppGuard;
-        cm.oppStats.takeOutAccuracy -= activeCards[card].oppTakeOut;
+        cm.oppStats.weightAccuracy -= activeCards[card].oppDraw;
+        cm.oppStats.finesseAccuracy -= activeCards[card].oppGuard;
+        cm.oppStats.aimAccuracy -= activeCards[card].oppTakeOut;
         cm.oppStats.sweepEndurance -= activeCards[card].oppEnduro;
         cm.oppStats.sweepStrength -= activeCards[card].oppStrength;
         cm.oppStats.sweepCohesion -= activeCards[card].oppCohesion;
@@ -868,3 +868,4 @@ public class SponsorManager : MonoBehaviour
         }
     }
 }
+

@@ -113,9 +113,9 @@ public class TeamMenu : MonoBehaviour
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    teamBaseDraw += cm.activePlayers[i].draw;
-                    teamBaseGuard += cm.activePlayers[i].guard;
-                    teamBaseTakeOut += cm.activePlayers[i].takeOut;
+                    teamBaseDraw += cm.activePlayers[i].weight;
+                    teamBaseGuard += cm.activePlayers[i].finesse;
+                    teamBaseTakeOut += cm.activePlayers[i].aim;
                     teamBaseStrength += cm.activePlayers[i].sweepStrength;
                     teamBaseEndurance += cm.activePlayers[i].sweepEnduro;
                     teamBaseCohesion += cm.activePlayers[i].sweepCohesion;
@@ -123,9 +123,9 @@ public class TeamMenu : MonoBehaviour
             }
             
             // Add the Skip's (player character) stats
-            teamBaseDraw += cm.cStats.drawAccuracy;
-            teamBaseGuard += cm.cStats.guardAccuracy;
-            teamBaseTakeOut += cm.cStats.takeOutAccuracy;
+            teamBaseDraw += cm.cStats.weightAccuracy;
+            teamBaseGuard += cm.cStats.finesseAccuracy;
+            teamBaseTakeOut += cm.cStats.aimAccuracy;
             teamBaseStrength += cm.cStats.sweepStrength;
             teamBaseEndurance += cm.cStats.sweepEndurance;
             teamBaseCohesion += cm.cStats.sweepCohesion;
@@ -139,9 +139,9 @@ public class TeamMenu : MonoBehaviour
             healthSlider.value = teamBaseCohesion;
 
             // Mod sliders show TEAM total + equipment/sponsor bonuses
-            drawModSlider.value = teamBaseDraw + cm.modStats.drawAccuracy;
-            guardModSlider.value = teamBaseGuard + cm.modStats.guardAccuracy;
-            takeOutModSlider.value = teamBaseTakeOut + cm.modStats.takeOutAccuracy;
+            drawModSlider.value = teamBaseDraw + cm.modStats.weightAccuracy;
+            guardModSlider.value = teamBaseGuard + cm.modStats.finesseAccuracy;
+            takeOutModSlider.value = teamBaseTakeOut + cm.modStats.aimAccuracy;
             strengthModSlider.value = teamBaseStrength + cm.modStats.sweepStrength;
             enduranceModSlider.value = teamBaseEndurance + cm.modStats.sweepEndurance;
             healthModSlider.value = teamBaseCohesion + cm.modStats.sweepCohesion;
@@ -331,9 +331,9 @@ public class TeamMenu : MonoBehaviour
                     image = cm.playerPool[i].image,
                     active = true,
                     view = cm.playerPool[i].view,
-                    draw = cm.playerPool[i].draw,
-                    guard = cm.playerPool[i].guard,
-                    takeOut = cm.playerPool[i].takeOut,
+                    weight = cm.playerPool[i].weight,
+                    finesse = cm.playerPool[i].finesse,
+                    aim = cm.playerPool[i].aim,
                     sweepStrength = cm.playerPool[i].sweepStrength,
                     sweepEnduro = cm.playerPool[i].sweepEnduro,
                     sweepCohesion = cm.playerPool[i].sweepCohesion
@@ -522,9 +522,9 @@ public class TeamMenu : MonoBehaviour
                     image = cm.playerPool[i].image,
                     active = true,
                     view = cm.playerPool[i].view,
-                    draw = cm.playerPool[i].draw,
-                    guard = cm.playerPool[i].guard,
-                    takeOut = cm.playerPool[i].takeOut,
+                    weight = cm.playerPool[i].weight,
+                    finesse = cm.playerPool[i].finesse,
+                    aim = cm.playerPool[i].aim,
                     sweepStrength = cm.playerPool[i].sweepStrength,
                     sweepEnduro = cm.playerPool[i].sweepEnduro,
                     sweepCohesion = cm.playerPool[i].sweepCohesion
@@ -562,7 +562,7 @@ public class TeamMenu : MonoBehaviour
                 // IMPORTANT: Update team skills from the new player roster
                 cm.teams[i].UpdateTeamSkillsFromPlayers();
                 
-                Debug.Log($"[TeamMenu] Team skills updated: draw={cm.teams[i].draw}, strength={cm.teams[i].strength}");
+                Debug.Log($"[TeamMenu] Team skills updated: weight={cm.teams[i].weight}, strength={cm.teams[i].strength}");
                 break; // Only one player team expected
             }
         }
@@ -676,3 +676,4 @@ public class TeamMenu : MonoBehaviour
         }
     }
 }
+

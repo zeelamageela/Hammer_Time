@@ -1120,15 +1120,15 @@ public class EquipmentManager : MonoBehaviour
     {
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        cm.modStats.drawAccuracy += equip.stats[0];
-        cm.modStats.guardAccuracy += equip.stats[1];
-        cm.modStats.takeOutAccuracy += equip.stats[2];
+        cm.modStats.weightAccuracy += equip.stats[0];
+        cm.modStats.finesseAccuracy += equip.stats[1];
+        cm.modStats.aimAccuracy += equip.stats[2];
         cm.modStats.sweepEndurance += equip.stats[3];
         cm.modStats.sweepStrength += equip.stats[4];
         cm.modStats.sweepCohesion += equip.stats[5];
-        cm.oppStats.drawAccuracy += equip.oppStats[0];
-        cm.oppStats.guardAccuracy += equip.oppStats[1];
-        cm.oppStats.takeOutAccuracy += equip.oppStats[2];
+        cm.oppStats.weightAccuracy += equip.oppStats[0];
+        cm.oppStats.finesseAccuracy += equip.oppStats[1];
+        cm.oppStats.aimAccuracy += equip.oppStats[2];
         cm.oppStats.sweepEndurance += equip.oppStats[3];
         cm.oppStats.sweepStrength += equip.oppStats[4];
         cm.oppStats.sweepCohesion += equip.oppStats[5];
@@ -1138,15 +1138,15 @@ public class EquipmentManager : MonoBehaviour
     {
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        cm.modStats.drawAccuracy -= equip.stats[0];
-        cm.modStats.guardAccuracy -= equip.stats[1];
-        cm.modStats.takeOutAccuracy -= equip.stats[2];
+        cm.modStats.weightAccuracy -= equip.stats[0];
+        cm.modStats.finesseAccuracy -= equip.stats[1];
+        cm.modStats.aimAccuracy -= equip.stats[2];
         cm.modStats.sweepEndurance -= equip.stats[3];
         cm.modStats.sweepStrength -= equip.stats[4];
         cm.modStats.sweepCohesion -= equip.stats[5];
-        cm.oppStats.drawAccuracy -= equip.oppStats[0];
-        cm.oppStats.guardAccuracy -= equip.oppStats[1];
-        cm.oppStats.takeOutAccuracy -= equip.oppStats[2];
+        cm.oppStats.weightAccuracy -= equip.oppStats[0];
+        cm.oppStats.finesseAccuracy -= equip.oppStats[1];
+        cm.oppStats.aimAccuracy -= equip.oppStats[2];
         cm.oppStats.sweepEndurance -= equip.oppStats[3];
         cm.oppStats.sweepStrength -= equip.oppStats[4];
         cm.oppStats.sweepCohesion -= equip.oppStats[5];
@@ -1198,3 +1198,4 @@ public class EquipmentManager : MonoBehaviour
         FillArray(apparel, 3);
     }
 }
+

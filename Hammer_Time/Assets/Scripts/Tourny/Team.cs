@@ -60,9 +60,9 @@ public class Team
     public List<Player> players = new List<Player>();
 
     // --- Six skill categories (team average) ---
-    public int draw;
-    public int takeOut;
-    public int guard;
+    public int weight;
+    public int aim;
+    public int finesse;
     public int sweepStrength;
     public int sweepEnduro;
     public int sweepCohesion;
@@ -73,9 +73,9 @@ public class Team
         get { return Mathf.RoundToInt(CalculateStrength()); }
         set
         {
-            draw = value;
-            takeOut = value;
-            guard = value;
+            weight = value;
+            aim = value;
+            finesse = value;
             sweepStrength = value;
             sweepEnduro = value;
             sweepCohesion = value;
@@ -86,9 +86,9 @@ public class Team
     public float CalculateStrength()
     {
         UpdateTeamSkillsFromPlayers();
-        return 0.2f * draw +
-               0.2f * takeOut +
-               0.15f * guard +
+        return 0.2f * weight +
+               0.2f * aim +
+               0.15f * finesse +
                0.15f * sweepStrength +
                0.15f * sweepEnduro +
                0.15f * sweepCohesion;
@@ -100,20 +100,20 @@ public class Team
         if (players == null || players.Count == 0)
             return;
 
-        float totalDraw = 0, totalTakeOut = 0, totalGuard = 0, totalSweepStrength = 0, totalSweepEnduro = 0, totalSweepCohesion = 0;
+        float totalWeight = 0, totalAim = 0, totalFinesse = 0, totalSweepStrength = 0, totalSweepEnduro = 0, totalSweepCohesion = 0;
         foreach (var p in players)
         {
-            totalDraw += p.draw;
-            totalTakeOut += p.takeOut;
-            totalGuard += p.guard;
+            totalWeight += p.weight;
+            totalAim += p.aim;
+            totalFinesse += p.finesse;
             totalSweepStrength += p.sweepStrength;
             totalSweepEnduro += p.sweepEnduro;
             totalSweepCohesion += p.sweepCohesion;
         }
         int count = players.Count;
-        draw = Mathf.RoundToInt(totalDraw / count);
-        takeOut = Mathf.RoundToInt(totalTakeOut / count);
-        guard = Mathf.RoundToInt(totalGuard / count);
+        weight = Mathf.RoundToInt(totalWeight / count);
+        aim = Mathf.RoundToInt(totalAim / count);
+        finesse = Mathf.RoundToInt(totalFinesse / count);
         sweepStrength = Mathf.RoundToInt(totalSweepStrength / count);
         sweepEnduro = Mathf.RoundToInt(totalSweepEnduro / count);
         sweepCohesion = Mathf.RoundToInt(totalSweepCohesion / count);

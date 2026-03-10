@@ -251,17 +251,17 @@ public class CareerManager : MonoBehaviour
         // cost, image, active, view are not typically stored in CareerManager
 
         // Main stats
-        playerCharacter.draw = cStats.drawAccuracy;
-        playerCharacter.guard = cStats.guardAccuracy;
-        playerCharacter.takeOut = cStats.takeOutAccuracy;
+        playerCharacter.weight = cStats.weightAccuracy;
+        playerCharacter.finesse = cStats.finesseAccuracy;
+        playerCharacter.aim = cStats.aimAccuracy;
         playerCharacter.sweepStrength = cStats.sweepStrength;
         playerCharacter.sweepEnduro = cStats.sweepEndurance;
         playerCharacter.sweepCohesion = cStats.sweepCohesion;
 
         // Opponent stats
-        playerCharacter.oppDraw = oppStats.drawAccuracy;
-        playerCharacter.oppGuard = oppStats.guardAccuracy;
-        playerCharacter.oppTakeOut = oppStats.takeOutAccuracy;
+        playerCharacter.oppDraw = oppStats.weightAccuracy;
+        playerCharacter.oppGuard = oppStats.finesseAccuracy;
+        playerCharacter.oppTakeOut = oppStats.aimAccuracy;
         playerCharacter.oppStrength = oppStats.sweepStrength;
         playerCharacter.oppEnduro = oppStats.sweepEndurance;
         playerCharacter.oppCohesion = oppStats.sweepCohesion;
@@ -1553,25 +1553,25 @@ public class CareerManager : MonoBehaviour
         tourQual = false;
 
         // Reset player character stats to starting values
-        cStats.drawAccuracy = STARTING_STAT_VALUE;
-        cStats.guardAccuracy = STARTING_STAT_VALUE;
-        cStats.takeOutAccuracy = STARTING_STAT_VALUE;
+        cStats.weightAccuracy = STARTING_STAT_VALUE;
+        cStats.finesseAccuracy = STARTING_STAT_VALUE;
+        cStats.aimAccuracy = STARTING_STAT_VALUE;
         cStats.sweepStrength = STARTING_STAT_VALUE;
         cStats.sweepEndurance = STARTING_STAT_VALUE;
         cStats.sweepCohesion = STARTING_STAT_VALUE;
         
         // Reset modifier stats (from equipment/sponsors)
-        modStats.drawAccuracy = 0;
-        modStats.guardAccuracy = 0;
-        modStats.takeOutAccuracy = 0;
+        modStats.weightAccuracy = 0;
+        modStats.finesseAccuracy = 0;
+        modStats.aimAccuracy = 0;
         modStats.sweepStrength = 0;
         modStats.sweepEndurance = 0;
         modStats.sweepCohesion = 0;
         
         // Reset opponent modifier stats
-        oppStats.drawAccuracy = 0;
-        oppStats.guardAccuracy = 0;
-        oppStats.takeOutAccuracy = 0;
+        oppStats.weightAccuracy = 0;
+        oppStats.finesseAccuracy = 0;
+        oppStats.aimAccuracy = 0;
         oppStats.sweepStrength = 0;
         oppStats.sweepEndurance = 0;
         oppStats.sweepCohesion = 0;
@@ -1616,7 +1616,7 @@ public class CareerManager : MonoBehaviour
 
         System.Random rand = new System.Random();
 
-        // Define weights for each role: [draw, takeOut, guard, sweepStrength, sweepEnduro, sweepCohesion]
+        // Define weights for each role: [weight, aim, finesse, sweepStrength, sweepEnduro, sweepCohesion]
         float[][] roleWeights = new float[][]
         {
         // Lead: heavy sweeping
@@ -1682,9 +1682,9 @@ public class CareerManager : MonoBehaviour
                     stats[idx]++;
                 }
 
-                player.draw = stats[0];
-                player.takeOut = stats[1];
-                player.guard = stats[2];
+                player.weight = stats[0];
+                player.aim = stats[1];
+                player.finesse = stats[2];
                 player.sweepStrength = stats[3];
                 player.sweepEnduro = stats[4];
                 player.sweepCohesion = stats[5];
@@ -1714,7 +1714,7 @@ public class CareerManager : MonoBehaviour
         
         // Update team skills from player stats
         teams[0].UpdateTeamSkillsFromPlayers();
-        Debug.Log($"[CareerManager] Player team skills: draw={teams[0].draw}, strength={teams[0].strength}");
+        Debug.Log($"[CareerManager] Player team skills: weight={teams[0].weight}, strength={teams[0].strength}");
         
         teams[0].earnings = earnings;
         cash = STARTING_CASH;
@@ -1818,7 +1818,7 @@ public class CareerManager : MonoBehaviour
         int minStrength = teams.Min(t => t.strength);
         int maxStrength = teams.Max(t => t.strength);
 
-        // Define weights for each role: [draw, takeOut, guard, sweepStrength, sweepEnduro, sweepCohesion]
+        // Define weights for each role: [weight, aim, finesse, sweepStrength, sweepEnduro, sweepCohesion]
         float[][] roleWeights = new float[][]
         {
         new float[] { 0.10f, 0.10f, 0.10f, 0.23f, 0.23f, 0.24f },
@@ -1869,9 +1869,9 @@ public class CareerManager : MonoBehaviour
             for (int p = 0; p < 4; p++)
             {
                 Player player = teams[i].players[p];
-                player.draw = allStats[p * 6 + 0];
-                player.takeOut = allStats[p * 6 + 1];
-                player.guard = allStats[p * 6 + 2];
+                player.weight = allStats[p * 6 + 0];
+                player.aim = allStats[p * 6 + 1];
+                player.finesse = allStats[p * 6 + 2];
                 player.sweepStrength = allStats[p * 6 + 3];
                 player.sweepEnduro = allStats[p * 6 + 4];
                 player.sweepCohesion = allStats[p * 6 + 5];
@@ -1983,9 +1983,9 @@ public class CareerManager : MonoBehaviour
         // Career Stats
         data.careerStats = new CareerStatsData
         {
-            drawAccuracy = cStats.drawAccuracy,
-            guardAccuracy = cStats.guardAccuracy,
-            takeOutAccuracy = cStats.takeOutAccuracy,
+            weightAccuracy = cStats.weightAccuracy,
+            finesseAccuracy = cStats.finesseAccuracy,
+            aimAccuracy = cStats.aimAccuracy,
             sweepStrength = cStats.sweepStrength,
             sweepEndurance = cStats.sweepEndurance,
             sweepCohesion = cStats.sweepCohesion
@@ -1993,9 +1993,9 @@ public class CareerManager : MonoBehaviour
         
         data.oppStats = new CareerStatsData
         {
-            drawAccuracy = oppStats.drawAccuracy,
-            guardAccuracy = oppStats.guardAccuracy,
-            takeOutAccuracy = oppStats.takeOutAccuracy,
+            weightAccuracy = oppStats.weightAccuracy,
+            finesseAccuracy = oppStats.finesseAccuracy,
+            aimAccuracy = oppStats.aimAccuracy,
             sweepStrength = oppStats.sweepStrength,
             sweepEndurance = oppStats.sweepEndurance,
             sweepCohesion = oppStats.sweepCohesion
@@ -2400,16 +2400,16 @@ public class CareerManager : MonoBehaviour
         Debug.Log($"[CareerManager] Loaded career record from save: {record.x}-{record.y}");
         
         // Career Stats
-        cStats.drawAccuracy = data.careerStats.drawAccuracy;
-        cStats.guardAccuracy = data.careerStats.guardAccuracy;
-        cStats.takeOutAccuracy = data.careerStats.takeOutAccuracy;
+        cStats.weightAccuracy = data.careerStats.weightAccuracy;
+        cStats.finesseAccuracy = data.careerStats.finesseAccuracy;
+        cStats.aimAccuracy = data.careerStats.aimAccuracy;
         cStats.sweepStrength = data.careerStats.sweepStrength;
         cStats.sweepEndurance = data.careerStats.sweepEndurance;
         cStats.sweepCohesion = data.careerStats.sweepCohesion;
         
-        oppStats.drawAccuracy = data.oppStats.drawAccuracy;
-        oppStats.guardAccuracy = data.oppStats.guardAccuracy;
-        oppStats.takeOutAccuracy = data.oppStats.takeOutAccuracy;
+        oppStats.weightAccuracy = data.oppStats.weightAccuracy;
+        oppStats.finesseAccuracy = data.oppStats.finesseAccuracy;
+        oppStats.aimAccuracy = data.oppStats.aimAccuracy;
         oppStats.sweepStrength = data.oppStats.sweepStrength;
         oppStats.sweepEndurance = data.oppStats.sweepEndurance;
         oppStats.sweepCohesion = data.oppStats.sweepCohesion;
@@ -2566,9 +2566,9 @@ public class CareerManager : MonoBehaviour
             
             // Skills
             strength = team.strength,
-            draw = team.draw,
-            guard = team.guard,
-            takeOut = team.takeOut,
+            draw = team.weight,
+            guard = team.finesse,
+            takeOut = team.aim,
             sweepStrength = team.sweepStrength,
             sweepEnduro = team.sweepEnduro,
             sweepCohesion = team.sweepCohesion,
@@ -2617,9 +2617,9 @@ public class CareerManager : MonoBehaviour
             
             // Skills
             strength = data.strength,
-            draw = data.draw,
-            guard = data.guard,
-            takeOut = data.takeOut,
+            weight = data.draw,
+            finesse = data.guard,
+            aim = data.takeOut,
             sweepStrength = data.sweepStrength,
             sweepEnduro = data.sweepEnduro,
             sweepCohesion = data.sweepCohesion,
@@ -2647,9 +2647,9 @@ public class CareerManager : MonoBehaviour
         {
             id = player.id,
             name = player.name,
-            draw = player.draw,
-            guard = player.guard,
-            takeOut = player.takeOut,
+            draw = player.weight,
+            guard = player.finesse,
+            takeOut = player.aim,
             sweepStrength = player.sweepStrength,
             sweepEnduro = player.sweepEnduro,
             sweepCohesion = player.sweepCohesion,
@@ -2674,9 +2674,9 @@ public class CareerManager : MonoBehaviour
         {
             id = data.id,
             name = data.name,
-            draw = data.draw,
-            guard = data.guard,
-            takeOut = data.takeOut,
+            weight = data.draw,
+            finesse = data.guard,
+            aim = data.takeOut,
             sweepStrength = data.sweepStrength,
             sweepEnduro = data.sweepEnduro,
             sweepCohesion = data.sweepCohesion,
@@ -2885,7 +2885,7 @@ public class CareerManager : MonoBehaviour
             }
         }
         
-        // Save draw and playoff round from GameSettingsPersist
+        // Save weight and playoff round from GameSettingsPersist
         if (gsp != null)
         {
             tournamentState.draw = gsp.draw;
@@ -3090,3 +3090,4 @@ public class CareerManager : MonoBehaviour
     
     #endregion
 }
+

@@ -159,18 +159,18 @@ public class XPManager : MonoBehaviour
         // Set sliders to match the selected player's stats
         if (select == 3)
         {
-            drawSlider.value = cm.cStats.drawAccuracy;
-            takeOutSlider.value = cm.cStats.takeOutAccuracy;
-            guardSlider.value = cm.cStats.guardAccuracy;
+            drawSlider.value = cm.cStats.weightAccuracy;
+            takeOutSlider.value = cm.cStats.aimAccuracy;
+            guardSlider.value = cm.cStats.finesseAccuracy;
             strengthSlider.value = cm.cStats.sweepStrength;
             endurSlider.value = cm.cStats.sweepEndurance;
             healthSlider.value = cm.cStats.sweepCohesion;
         }
         else
         {
-            drawSlider.value = cm.activePlayers[select].draw;
-            takeOutSlider.value = cm.activePlayers[select].takeOut;
-            guardSlider.value = cm.activePlayers[select].guard;
+            drawSlider.value = cm.activePlayers[select].weight;
+            takeOutSlider.value = cm.activePlayers[select].aim;
+            guardSlider.value = cm.activePlayers[select].finesse;
             strengthSlider.value = cm.activePlayers[select].sweepStrength;
             endurSlider.value = cm.activePlayers[select].sweepEnduro;
             healthSlider.value = cm.activePlayers[select].sweepCohesion;
@@ -184,18 +184,18 @@ public class XPManager : MonoBehaviour
         // Apply slider values to the selected player
         if (activePlayer == 3)
         {
-            cm.cStats.drawAccuracy = (int)drawSlider.value;
-            cm.cStats.takeOutAccuracy = (int)takeOutSlider.value;
-            cm.cStats.guardAccuracy = (int)guardSlider.value;
+            cm.cStats.weightAccuracy = (int)drawSlider.value;
+            cm.cStats.aimAccuracy = (int)takeOutSlider.value;
+            cm.cStats.finesseAccuracy = (int)guardSlider.value;
             cm.cStats.sweepStrength = (int)strengthSlider.value;
             cm.cStats.sweepEndurance = (int)endurSlider.value;
             cm.cStats.sweepCohesion = (int)healthSlider.value;
         }
         else
         {
-            cm.activePlayers[activePlayer].draw = (int)drawSlider.value;
-            cm.activePlayers[activePlayer].takeOut = (int)takeOutSlider.value;
-            cm.activePlayers[activePlayer].guard = (int)guardSlider.value;
+            cm.activePlayers[activePlayer].weight = (int)drawSlider.value;
+            cm.activePlayers[activePlayer].aim = (int)takeOutSlider.value;
+            cm.activePlayers[activePlayer].finesse = (int)guardSlider.value;
             cm.activePlayers[activePlayer].sweepStrength = (int)strengthSlider.value;
             cm.activePlayers[activePlayer].sweepEnduro = (int)endurSlider.value;
             cm.activePlayers[activePlayer].sweepCohesion = (int)healthSlider.value;
@@ -268,3 +268,4 @@ public class XPManager : MonoBehaviour
     //    this.gameObject.SetActive(false);
     //}
 }
+

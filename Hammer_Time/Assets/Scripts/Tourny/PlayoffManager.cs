@@ -890,7 +890,7 @@ public class PlayoffManager : MonoBehaviour
 
 		//if (!inProgress)
 		//      {
-		//	tm.draw = 0;
+		//	tm.weight = 0;
 		//	playoffRound = 0;
 		//	tm.playoffRound = 0;
 
@@ -898,7 +898,7 @@ public class PlayoffManager : MonoBehaviour
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.tournyInProgress = inProgress;
 		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
-		//myFile.Add("Draw", gsp.draw);
+		//myFile.Add("Draw", gsp.weight);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
 		//myFile.Add("Player Team", gsp.playerTeamIndex);
 		myFile.Add("OppTeam", oppTeam);

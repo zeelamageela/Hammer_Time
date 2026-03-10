@@ -132,12 +132,12 @@ public class AI_Shooter : MonoBehaviour
         }
         else
         {
-            // FALLBACK: Physics failed, draw to button with accuracy error
+            // FALLBACK: Physics failed, weight to button with accuracy error
             // This should rarely happen - indicates a problem with AI_Target
             Debug.LogWarning($"[AI_Shooter] {aiShotType} FALLBACK - No physics position available!");
             
             CharacterStats stats = GetShooterStats();
-            float accuracy = stats != null ? stats.drawAccuracy.GetValue() : 70f;
+            float accuracy = stats != null ? stats.weightAccuracy.GetValue() : 70f;
             Vector2 error = GetAccuracyError(accuracy, 0.15f);
             
             shotX = button.x + error.x;

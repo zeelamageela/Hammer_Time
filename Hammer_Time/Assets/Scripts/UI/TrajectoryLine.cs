@@ -624,7 +624,7 @@ public class TrajectoryLine : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"[Collision Viz] Cannot draw ORANGE arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.thrownRockPostCollisionPath.Count}");
+                    Debug.LogWarning($"[Collision Viz] Cannot weight ORANGE arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.thrownRockPostCollisionPath.Count}");
                 }
                 
                 // Draw hit rock's EXIT direction (YELLOW ARROW)
@@ -649,7 +649,7 @@ public class TrajectoryLine : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning($"[Collision Viz] Cannot draw YELLOW arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.hitRockPostCollisionPath.Count}");
+                    Debug.LogWarning($"[Collision Viz] Cannot weight YELLOW arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.hitRockPostCollisionPath.Count}");
                 }
             }
             else
@@ -714,7 +714,7 @@ public class TrajectoryLine : MonoBehaviour
             
             Debug.Log($"Drawing {dotCount} dots from {maxDotIndex} trajectory points (every {counter} points)");
             
-            // Ensure we draw dots all the way to the end
+            // Ensure we weight dots all the way to the end
             for (int i = 1; i < maxDotIndex; i += counter)
             {
                 if (dots.Count >= dotCount) break; // Limit to dotCount
@@ -767,7 +767,7 @@ public class TrajectoryLine : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Cannot draw dots - pos.Count: {pos.Count}, dotCount: {dotCount}, dot: {dot}");
+            Debug.LogWarning($"Cannot weight dots - pos.Count: {pos.Count}, dotCount: {dotCount}, dot: {dot}");
         }
 
         // Store points for later comparison
@@ -1139,12 +1139,12 @@ public class TrajectoryLine : MonoBehaviour
             }
             
             // ZONE-BASED LOGIC for vertical line endpoints
-            if (horizontalLineY <= 6.5f)
+            if (horizontalLineY <= 8.0f)
             {
                 // ZONE 1: Horizontal between hog line and Y=6.5
                 // Top: horizontal - 0.4 (extends TOWARDS hack, opposite direction)
                 // Bottom: 8.4 (fixed)
-                verticalLineTopY = horizontalLineY - 0.4f; // -0.4 towards hack
+                verticalLineTopY = horizontalLineY - 0.5f; // -0.4 towards hack
                 verticalLineBottomY = 8.4f;
                 Debug.Log($"[Alternative Aim] ZONE 1 (Hog-6.5) - top={verticalLineTopY:F2} (-0.4 towards hack), bottom=8.4");
             }
@@ -1167,8 +1167,9 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // SKILL-BASED LINE WIDTH
-        // Get shooter's average accuracy from CareerManager (for player) or CharacterStats (for AI)
-        float shooterSkill = 50f; // Default mid-skill
+        // Get shooter's AIM accuracy (X-axis) from CareerManager (for player) or CharacterStats (for AI)
+        // Aim skill controls lateral positioning = line width represents X-axis precision
+        float aimSkill = 50f; // Default mid-skill
         
         // Check if this is the player's rock or AI rock
         CareerManager cm = FindFirstObjectByType<CareerManager>();
@@ -1176,21 +1177,19 @@ public class TrajectoryLine : MonoBehaviour
         
         if (cm != null && cm.cStats != null)
         {
-            // Player rock - use CareerManager stats
-            shooterSkill = (cm.cStats.drawAccuracy + 
-                           cm.cStats.guardAccuracy + 
-                           cm.cStats.takeOutAccuracy) / 3f;
+            // Player rock - use AIM accuracy (lateral positioning skill)
+            aimSkill = cm.cStats.aimAccuracy;
         }
         else if (teamManager != null)
         {
             // AI rock - try to get current team's average skill
             // Fall back to default 50 if not available
-            shooterSkill = 50f;
+            aimSkill = 50f;
         }
         
-        // Map skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
+        // Map AIM skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
         // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
-        float lineWidth = Mathf.Lerp(0.15f, 0.04f, shooterSkill / 100f);
+        float lineWidth = Mathf.Lerp(0.08f, 0.04f, aimSkill / 100f);
         
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // If collision detected, shows collision point; otherwise shows trajectory endpoint
@@ -1248,7 +1247,7 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // CURL LINE: Shows turn and curl from vertical line to aim circle
-        // Horizontal line at (minimum Y of vertical) + 0.5, from vertical X to aim circle X
+        // ENHANCED with accuracy visualization (width, offset, gradient)
         if (aimCurlLine != null && aimCircle != null)
         {
             // Find the minimum Y value of the vertical line (closest to hack)
@@ -1258,22 +1257,160 @@ public class TrajectoryLine : MonoBehaviour
             float curlLineStartX = verticalLineX;
             float curlLineEndX = aimCircle.transform.position.x;
             
+            // === ENHANCED CURL LINE WITH ACCURACY VISUALIZATION ===
+            
+            // Get shooter's weight accuracy (controls distance/weight error)
+            float weightAccuracy = GetShooterWeightAccuracy(); // 0-100
+            float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
+            
+            // Calculate weight error range (using AI formula from AI_Target.cs)
+            // Low skill (0-40): baseMaxError = 0.99 (very hard - 99cm miss)
+            // Mid skill (40-70): baseMaxError = ~0.50 (moderate - 50cm miss)
+            // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
+            float weightBaseMaxError = Mathf.Lerp(0.99f, 0.02f, weightRatio * weightRatio); // Quadratic scaling
+            float weightMaxError = weightBaseMaxError * (1f - weightRatio);
+            
+            // MINIMUM WIDTH for visibility (requirement: 0.25 minimum)
+            weightMaxError = Mathf.Max(weightMaxError, 0.25f);
+            
+            // === WIDTH: Reflects ACTUAL weight error range ===
+            // Line width shows "rock could land anywhere in this vertical range"
+            float curlLineWidth = weightMaxError * 2.0f; // Double to show ±error (both short and long)
+            
+            // === VERTICAL OFFSET: Short bias (30/70 - most shots go SHORT) ===
+            // Offset curl line BELOW ideal trajectory by 40% of weight error
+            float shortBias = -weightMaxError * 0.4f; // 40% below center line
+            float curlLineYWithBias = curlLineY + shortBias;
+            
+            // === GRADIENT FADE: Skill-based transparency transition ===
+            // High skill (70-100%): Sharp fade (fades at 70% of distance)
+            // Medium skill (40-70%): Moderate fade (fades at 50% of distance)
+            // Low skill (0-40%): Gradual fade (fades at 30% of distance)
+            
+            // Calculate where fade STARTS (as % along line from start to end)
+            // High skill = later fade (0.7), Low skill = earlier fade (0.3)
+            float fadeStartRatio = Mathf.Lerp(0.3f, 0.7f, weightRatio);
+            
+            // TEAM COLOR with gradient
+            Color teamColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            
+            // Apply to line renderer
             aimCurlLine.enabled = true;
             aimCurlLine.positionCount = 2;
-            aimCurlLine.SetPosition(0, new Vector3(curlLineStartX, curlLineY, 0f));
-            aimCurlLine.SetPosition(1, new Vector3(curlLineEndX, curlLineY, 0f));
+            aimCurlLine.SetPosition(0, new Vector3(curlLineStartX, curlLineYWithBias, 0f));
+            aimCurlLine.SetPosition(1, new Vector3(curlLineEndX, curlLineYWithBias, 0f));
             
-            // Apply skill-based width
-            aimCurlLine.startWidth = lineWidth;
-            aimCurlLine.endWidth = lineWidth;
+            // Set WIDTH (skill-based - shows weight error range)
+            aimCurlLine.startWidth = curlLineWidth;
+            aimCurlLine.endWidth = curlLineWidth;
             
-            // TEAM COLOR (shooting knob color)
-            Color curlLineColor = shootKnob.GetComponent<SpriteRenderer>().color;
-            aimCurlLine.startColor = curlLineColor;
-            aimCurlLine.endColor = curlLineColor;
+            // === GRADIENT WITH BIAS (skill-based fade point) ===
+            // Unity LineRenderer.colorGradient allows us to set custom fade curves
+            Gradient curlGradient = new Gradient();
             
-            Debug.Log($"[Alternative Aim] Curl line at Y={curlLineY:F2}, from X={curlLineStartX:F2} to X={curlLineEndX:F2} (curl offset={Mathf.Abs(curlLineEndX - curlLineStartX):F2})");
+            // Define gradient color keys (where colors change)
+            GradientColorKey[] colorKeys = new GradientColorKey[2];
+            colorKeys[0] = new GradientColorKey(teamColor, 0f); // Start: full color
+            colorKeys[1] = new GradientColorKey(teamColor, 1f); // End: same color (alpha does the fade)
+            
+            // Define gradient ALPHA keys (where transparency changes)
+            // This is where we apply the SKILL-BASED FADE BIAS!
+            // Three keys: opaque at start → hold opacity until fade point → transparent at end
+            GradientAlphaKey[] alphaKeys = new GradientAlphaKey[3];
+            alphaKeys[0] = new GradientAlphaKey(1.0f, 0f); // Start: fully opaque
+            alphaKeys[1] = new GradientAlphaKey(1.0f, fadeStartRatio); // Hold opacity until fade point
+            alphaKeys[2] = new GradientAlphaKey(0.05f, 1.0f); // Then fade to transparent at end
+            
+            curlGradient.SetKeys(colorKeys, alphaKeys);
+            
+            // Apply gradient to line renderer
+            aimCurlLine.colorGradient = curlGradient;
+            
+            Debug.Log($"[Curl Line Enhanced] Weight skill: {weightAccuracy:F0}%, Error: ±{weightMaxError:F2}m\n" +
+                      $"  Width: {curlLineWidth:F2} (shows weight error range)\n" +
+                      $"  Y offset: {shortBias:F2} (30/70 short bias)\n" +
+                      $"  Fade starts at: {fadeStartRatio:F0}% ({(weightAccuracy >= 70 ? "SHARP" : weightAccuracy >= 40 ? "MODERATE" : "GRADUAL")} fade)\n" +
+                      $"  Curl: {curlLineStartX:F2} → {curlLineEndX:F2} (offset: {Mathf.Abs(curlLineEndX - curlLineStartX):F2})");
         }
+    }
+    
+    /// <summary>
+    /// Get shooter's weight accuracy (Y-axis skill) from active character
+    /// </summary>
+    private float GetShooterWeightAccuracy()
+    {
+        // Check if this is the player's rock or AI rock
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        TeamManager teamManager = FindFirstObjectByType<TeamManager>();
+        
+        if (cm != null && cm.cStats != null)
+        {
+            // Player rock - use WEIGHT accuracy (distance control skill)
+            return cm.cStats.weightAccuracy;
+        }
+        else if (teamManager != null)
+        {
+            // AI rock - try to get current team member's weight skill
+            // Determine which team member is shooting based on rock number
+            if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+            {
+                int memberIndex = gm.rockCurrent / 4; // 0-3 for lead, second, third, skip
+                memberIndex = Mathf.Clamp(memberIndex, 0, 3);
+                
+                // Get the correct team
+                bool isRedTeam = (gm.rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
+                
+                if (isRedTeam && teamManager.teamRed != null && memberIndex < teamManager.teamRed.Length)
+                {
+                    return teamManager.teamRed[memberIndex].charStats.weightAccuracy.GetValue();
+                }
+                else if (!isRedTeam && teamManager.teamYellow != null && memberIndex < teamManager.teamYellow.Length)
+                {
+                    return teamManager.teamYellow[memberIndex].charStats.weightAccuracy.GetValue();
+                }
+            }
+        }
+        
+        return 50f; // Default mid-skill
+    }
+    
+    /// <summary>
+    /// Get shooter's aim accuracy (X-axis skill) from active character
+    /// </summary>
+    private float GetShooterAimAccuracy()
+    {
+        // Check if this is the player's rock or AI rock
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        TeamManager teamManager = FindFirstObjectByType<TeamManager>();
+        
+        if (cm != null && cm.cStats != null)
+        {
+            // Player rock - use AIM accuracy (lateral positioning skill)
+            return cm.cStats.aimAccuracy;
+        }
+        else if (teamManager != null)
+        {
+            // AI rock - try to get current team member's aim skill
+            if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+            {
+                int memberIndex = gm.rockCurrent / 4; // 0-3 for lead, second, third, skip
+                memberIndex = Mathf.Clamp(memberIndex, 0, 3);
+                
+                // Get the correct team
+                bool isRedTeam = (gm.rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
+                
+                if (isRedTeam && teamManager.teamRed != null && memberIndex < teamManager.teamRed.Length)
+                {
+                    return teamManager.teamRed[memberIndex].charStats.aimAccuracy.GetValue();
+                }
+                else if (!isRedTeam && teamManager.teamYellow != null && memberIndex < teamManager.teamYellow.Length)
+                {
+                    return teamManager.teamYellow[memberIndex].charStats.aimAccuracy.GetValue();
+                }
+            }
+        }
+        
+        return 50f; // Default mid-skill
     }
     
     /// <summary>

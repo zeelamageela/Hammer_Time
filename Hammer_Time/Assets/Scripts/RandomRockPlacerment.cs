@@ -177,7 +177,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             houseRed++;
                             if (gsp.aiRed)
                                 rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1f - (0.009f * cm.cStats.drawAccuracy)) * 1.25f));
+                                    + (Random.insideUnitCircle * ((1f - (0.009f * cm.cStats.weightAccuracy)) * 1.25f));
                             else
                                 rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
@@ -186,7 +186,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             houseRed++;
                             if (gsp.aiRed)
                                 rockPos[i] = placePos[placeSelector]
-                                    + (Random.insideUnitCircle * ((1 - (0.009f * cm.cStats.drawAccuracy)) * 1.25f));
+                                    + (Random.insideUnitCircle * ((1f - (0.009f * cm.cStats.weightAccuracy)) * 1.25f));
                             else
                                 rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                         }
@@ -362,8 +362,8 @@ public class RandomRockPlacerment : MonoBehaviour
     {
         // Example logic:
         // - If behind and there are opponent rocks in the house, prefer takeout.
-        // - If ahead, prefer guard.
-        // - If house is empty, prefer draw.
+        // - If ahead, prefer finesse.
+        // - If house is empty, prefer weight.
         // - Use skill to bias toward more aggressive shots for higher skill.
 
         if (isBehind && rocksInHouse > 0 && aiSkill > 7)
@@ -372,7 +372,7 @@ public class RandomRockPlacerment : MonoBehaviour
             return 3; // Guard
         if (rocksInHouse == 0)
             return 0; // Draw
-                      // Fallback: random between draw and guard
+                      // Fallback: random between weight and finesse
         return (Random.value < 0.5f) ? 0 : 3;
     }
     
@@ -476,7 +476,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     }
                 }
                 
-                // Fallback to draw if takeout fails
+                // Fallback to weight if takeout fails
                 targetPosition = CalculateDrawTargetPosition();
                 finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
                 fltText.Value = "Draw";
@@ -494,7 +494,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     break;
                 }
                 
-                // Fallback to draw
+                // Fallback to weight
                 targetPosition = CalculateDrawTargetPosition();
                 finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
                 fltText.Value = "Draw";
@@ -616,7 +616,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 }
                 else if (aiStrategy.activeTeamScore <= aiStrategy.oppTeamScore)
                 {
-                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                    chosenShot = SimulateStrategyShot_StealOrForce(rockCurrent, phase);
                 }
                 else
                 {
@@ -627,7 +627,7 @@ public class RandomRockPlacerment : MonoBehaviour
             {
                 if (aiStrategy.activeTeamScore - aiStrategy.oppTeamScore <= 1)
                 {
-                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                    chosenShot = SimulateStrategyShot_StealOrForce(rockCurrent, phase);
                 }
                 else
                 {
@@ -638,7 +638,7 @@ public class RandomRockPlacerment : MonoBehaviour
             {
                 if (aiStrategy.activeTeamScore < aiStrategy.oppTeamScore)
                 {
-                    chosenShot = SimulateStrategyShot_StealOrBlank(rockCurrent, phase);
+                    chosenShot = SimulateStrategyShot_StealOrForce(rockCurrent, phase);
                 }
                 else
                 {
@@ -660,7 +660,7 @@ public class RandomRockPlacerment : MonoBehaviour
         int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
         int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
         
-        // EARLY: Remove threats or draw
+        // EARLY: Remove threats or weight
         if (phase == "early")
         {
             if (threatRock >= 0)
@@ -669,7 +669,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 return "Draw";
         }
         
-        // MIDDLE: Remove threats, protect lead, or draw
+        // MIDDLE: Remove threats, protect lead, or weight
         else if (phase == "middle")
         {
             if (threatRock >= 0)
@@ -727,7 +727,7 @@ public class RandomRockPlacerment : MonoBehaviour
             if (isLastRock)
             {
                 if (threatRock < 0)
-                    return "Draw"; // Easy draw
+                    return "Draw"; // Easy weight
                 else
                     return "Take Out"; // Remove and score
             }
@@ -834,33 +834,42 @@ public class RandomRockPlacerment : MonoBehaviour
             else if (myRocksInHouse > 0)
                 return "Draw"; // Build steal
             else
-                return "Draw"; // Clean house draw
+                return "Draw"; // Clean house weight
         }
     }
     
     /// <summary>
     /// Simulate StealOrBlank strategy
     /// </summary>
-    private string SimulateStrategyShot_StealOrBlank(int rockCurrent, string phase)
+    private string SimulateStrategyShot_StealOrForce(int rockCurrent, string phase)
     {
         int threatRock = FindBestTakeoutTarget(aiStrategy.activeTeamName);
         int myRocksInHouse = CountRocksInHouse(aiStrategy.activeTeamName);
         int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
-        
+        int guardsInPlay = gm.gList.Count;
+        bool hasGuards = (guardsInPlay > 0);
+
         if (phase == "early")
         {
             if (threatRock >= 0)
-                return "Take Out";
-            else if (myRocksInHouse > 0)
+            {
+                if (myRocksInHouse < 1)
+                    return "Take Out";
+                else
+                    return "Guard";
+            }
+            else if (guardsInPlay < 2)
                 return "Guard";
-            else
+            else if (myRocksInHouse < 1)
                 return "Draw";
+            else
+                return "Guard";
         }
         else if (phase == "middle")
         {
             if (threatRock >= 0)
                 return "Take Out";
-            else if (myRocksInHouse > 0)
+            else if (myRocksInHouse < 1)
                 return "Guard";
             else
                 return "Draw";
@@ -872,7 +881,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (threatRock >= 0)
                     return "Take Out"; // Reduce to 1 point
                 else
-                    return "Guard"; // Force blank
+                    return "Draw"; // Force blank
             }
             else if (oppRocksInHouse == 1)
             {
@@ -913,8 +922,11 @@ public class RandomRockPlacerment : MonoBehaviour
     /// </summary>
     private Vector2 ApplyAccuracyToFreeze(Vector2 targetRockPos, CharacterStats stats)
     {
-        float accuracy = stats.drawAccuracy.GetValue();
-        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        // Freeze: Primarily finesse (delicate touch), secondarily weight
+        float finesseAccuracy = stats.finesseAccuracy.GetValue();
+        float weightAccuracy = stats.weightAccuracy.GetValue();
+        float combinedAccuracy = (finesseAccuracy * 0.7f) + (weightAccuracy * 0.3f);
+        float accuracyRatio = Mathf.Clamp01(combinedAccuracy / 100f);
         
         // Freeze: Very tight circular error (must be close)
         float baseMaxError = 0.15f;
@@ -926,13 +938,13 @@ public class RandomRockPlacerment : MonoBehaviour
         // Circular error
         Vector2 error = Random.insideUnitCircle * maxError;
         
-        Debug.Log($"[Freeze Accuracy] target={freezeTarget}, accuracy={accuracy}%, error={error}, final={freezeTarget + error}");
+        Debug.Log($"[Freeze Accuracy] target={freezeTarget}, finesse={finesseAccuracy}%, weight={weightAccuracy}%, combined={combinedAccuracy}%, error={error}, final={freezeTarget + error}");
         
         return freezeTarget + error;
     }
     
     /// <summary>
-    /// Calculate guard target position (before accuracy applied)
+    /// Calculate finesse target position (before accuracy applied)
     /// USES SAME LOGIC AS AI_Target.PlaceStrategicGuard()!
     /// </summary>
     private Vector2 CalculateGuardTargetPosition(int rockCurrent)
@@ -1006,13 +1018,13 @@ public class RandomRockPlacerment : MonoBehaviour
             {
                 Vector2 rockPos = unguardedFriendly.transform.position;
                 
-                // Match X position, place in guard zone
+                // Match X position, place in finesse zone
                 float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
                 float guardDepth = Mathf.Lerp(3.0f, 4.5f, Mathf.Clamp01((distToButton - 0.5f) / 1.5f));
                 
                 Vector2 guardTarget = new Vector2(rockPos.x, guardDepth);
                 
-                Debug.Log($"[GuardPlacement] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) ? guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                Debug.Log($"[GuardPlacement] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 return guardTarget;
             }
             
@@ -1042,10 +1054,10 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     Vector2 guardTarget = new Vector2(
                         shotRockPos.x,
-                        Random.Range(3.5f, 4.2f) // Tighter guard
+                        Random.Range(3.5f, 4.2f) // Tighter finesse
                     );
                     
-                    Debug.Log($"[GuardPlacement] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) ? guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    Debug.Log($"[GuardPlacement] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                     return guardTarget;
                 }
             }
@@ -1083,7 +1095,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 Random.Range(-0.15f, 0.15f), // Centered with variance
                 Random.Range(3.0f, 3.5f)      // Standard depth
             );
-            Debug.Log($"[GuardPlacement] WITHOUT HAMMER ? Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            Debug.Log($"[GuardPlacement] WITHOUT HAMMER ? Center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             return guardTarget;
         }
         else
@@ -1137,13 +1149,13 @@ public class RandomRockPlacerment : MonoBehaviour
                 );
             }
             
-            Debug.Log($"[GuardPlacement] WITH HAMMER ? {(placeLeft ? "LEFT" : "RIGHT")} corner guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            Debug.Log($"[GuardPlacement] WITH HAMMER ? {(placeLeft ? "LEFT" : "RIGHT")} corner finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             return guardTarget;
         }
     }
     
     /// <summary>
-    /// Calculate draw target position (before accuracy applied)
+    /// Calculate weight target position (before accuracy applied)
     /// </summary>
     private Vector2 CalculateDrawTargetPosition()
     {
@@ -1161,42 +1173,46 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// Apply accuracy to guard shot using CIRCULAR distribution centered on target
+    /// Apply accuracy to finesse shot using CIRCULAR distribution centered on target
     /// Guards: Line control ? Weight control (circular error pattern)
     /// </summary>
     private Vector2 ApplyAccuracyToGuard(Vector2 targetPosition, CharacterStats stats)
     {
-        float accuracy = stats.guardAccuracy.GetValue();
-        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        // Guard: Weight (Y) + Aim (X) both primary
+        float weightAccuracy = stats.weightAccuracy.GetValue();
+        float aimAccuracy = stats.aimAccuracy.GetValue();
+        float combinedAccuracy = (weightAccuracy * 0.5f) + (aimAccuracy * 0.5f);
+        float accuracyRatio = Mathf.Clamp01(combinedAccuracy / 100f);
         
         // Base error for guards (circular distribution)
-        float baseMaxError = 0.20f; // Guards can be off by up to 20cm for 0% accuracy
+        float baseMaxError = 1.20f; // Guards can be off by up to 20cm for 0% accuracy
         float maxError = baseMaxError * (1f - accuracyRatio);
         
         // CIRCULAR ERROR: Unit circle centered on target
         Vector2 error = Random.insideUnitCircle * maxError;
         
-        Debug.Log($"[Guard Accuracy] target={targetPosition}, accuracy={accuracy}%, error={error}, final={targetPosition + error}");
+        Debug.Log($"[Guard Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, combined={combinedAccuracy}%, error={error}, final={targetPosition + error}");
         
         return targetPosition + error;
     }
     
     /// <summary>
-    /// Apply accuracy to draw shot using ELLIPTICAL distribution
+    /// Apply accuracy to weight shot using ELLIPTICAL distribution
     /// Draws: Weight errors (Y) >> Line errors (X)
     /// Ellipse centered BELOW target (shots tend to be short, not long)
     /// </summary>
     private Vector2 ApplyAccuracyToDraw(Vector2 targetPosition, CharacterStats stats)
     {
-        float accuracy = stats.drawAccuracy.GetValue();
-        float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+        // Draw: Weight (Y-axis primary) + Aim (X-axis primary)
+        float weightAccuracy = stats.weightAccuracy.GetValue();
+        float aimAccuracy = stats.aimAccuracy.GetValue();
         
         // Base error for draws
-        float baseLineError = 0.10f;   // X: line errors (tight control)
-        float baseWeightError = 0.40f; // Y: weight errors (loose control, 4x bigger!)
+        float baseLineError = 0.35f;   // X: line errors (tight control)
+        float baseWeightError = 1.20f; // Y: weight errors (loose control, 4x bigger!)
         
-        float maxLineError = baseLineError * (1f - accuracyRatio);
-        float maxWeightError = baseWeightError * (1f - accuracyRatio);
+        float maxLineError = baseLineError * (1f - Mathf.Clamp01(aimAccuracy / 100f));
+        float maxWeightError = baseWeightError * (1f - Mathf.Clamp01(weightAccuracy / 100f));
         
         // ELLIPTICAL ERROR: Wider vertically than horizontally
         // But centered BELOW target (shots go short more than long)
@@ -1205,7 +1221,7 @@ public class RandomRockPlacerment : MonoBehaviour
         
         Vector2 error = new Vector2(xError, yError);
         
-        Debug.Log($"[Draw Accuracy] target={targetPosition}, accuracy={accuracy}%, error={error}, final={targetPosition + error}");
+        Debug.Log($"[Draw Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, error={error}, final={targetPosition + error}");
         
         return targetPosition + error;
     }
@@ -1385,7 +1401,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1393,7 +1409,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1405,11 +1421,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1417,11 +1433,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.houseList.Count > 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -1435,7 +1451,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1443,7 +1459,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1455,11 +1471,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1470,7 +1486,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1478,7 +1494,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1490,11 +1506,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1502,11 +1518,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.houseList.Count > 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -1535,11 +1551,11 @@ public class RandomRockPlacerment : MonoBehaviour
                             {
                                 if (gm.rockList[takeOutSelector].rock.transform.position.y > 6.5f)
                                 {
-                                    shotSelector = SkillCheck("Freeze", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Freeze", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -1547,7 +1563,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -1559,7 +1575,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             //if there's no target
                             else
                             {
-                                shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 //Crash check
                                 if (shotSelector == 99)
                                 {
@@ -1567,7 +1583,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                     if (hit)
                                     {
-                                        shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     }
                                     else
                                     {
@@ -1580,11 +1596,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1592,11 +1608,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.gList.Count < 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -1613,11 +1629,11 @@ public class RandomRockPlacerment : MonoBehaviour
                             {
                                 if (gm.rockList[takeOutSelector].rock.transform.position.y > 6.5f)
                                 {
-                                    shotSelector = SkillCheck("Freeze", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Freeze", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -1625,7 +1641,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -1636,7 +1652,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 //Crash check
                                 if (shotSelector == 99)
                                 {
@@ -1644,7 +1660,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                     if (hit)
                                     {
-                                        shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     }
                                     else
                                     {
@@ -1657,17 +1673,17 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else
@@ -1684,11 +1700,11 @@ public class RandomRockPlacerment : MonoBehaviour
                                 //if the target is behind the tee line
                                 if (gm.rockList[takeOutSelector].rock.transform.position.y > 6.5f)
                                 {
-                                    shotSelector = SkillCheck("Freeze", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Freeze", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -1696,7 +1712,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -1707,7 +1723,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 //Crash check
                                 if (shotSelector == 99)
                                 {
@@ -1715,7 +1731,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                     if (hit)
                                     {
-                                        shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                        shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     }
                                     else
                                     {
@@ -1731,7 +1747,7 @@ public class RandomRockPlacerment : MonoBehaviour
                                 TakeOutTarget(activeTeamName, otherTeamName, "Guards", out hit, out takeOutSelector);
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -1739,7 +1755,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -1751,21 +1767,21 @@ public class RandomRockPlacerment : MonoBehaviour
                                 {
                                     if (gm.houseList.Count > 2)
                                     {
-                                        shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                        shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                     }
                                     else
                                     {
-                                        shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                                        shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                     }
                                 }
                             }
                             else if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1773,11 +1789,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.gList.Count < 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -1804,7 +1820,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1812,7 +1828,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1824,11 +1840,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1836,11 +1852,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.houseList.Count > 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -1853,7 +1869,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1861,7 +1877,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1871,12 +1887,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else
@@ -1888,7 +1904,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1896,7 +1912,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1912,7 +1928,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -1920,7 +1936,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -1930,20 +1946,20 @@ public class RandomRockPlacerment : MonoBehaviour
                                 }
                                 else if (gm.houseList.Count > 2)
                                 {
-                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                             }
                             else if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -1954,7 +1970,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -1962,7 +1978,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -1972,12 +1988,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 #endregion
@@ -1998,7 +2014,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2006,7 +2022,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2018,11 +2034,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -2030,11 +2046,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.houseList.Count > 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -2047,7 +2063,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2055,7 +2071,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2065,12 +2081,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else
@@ -2082,7 +2098,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2090,7 +2106,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2106,7 +2122,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -2114,7 +2130,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -2124,20 +2140,20 @@ public class RandomRockPlacerment : MonoBehaviour
                                 }
                                 else if (gm.houseList.Count > 2)
                                 {
-                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                             }
                             else if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -2148,7 +2164,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2156,7 +2172,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2166,12 +2182,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 #endregion
@@ -2192,7 +2208,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Freeze", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Freeze", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2212,17 +2228,17 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                        shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else if (rockCurrent > 13)
@@ -2234,7 +2250,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2242,7 +2258,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2252,12 +2268,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw Four Foot", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw Four Foot", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else
@@ -2269,7 +2285,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2277,7 +2293,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2287,7 +2303,7 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else if (gm.houseList.Count > 0)
@@ -2297,7 +2313,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2305,7 +2321,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2321,7 +2337,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -2329,7 +2345,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -2339,26 +2355,26 @@ public class RandomRockPlacerment : MonoBehaviour
                                 }
                                 else if (gm.houseList.Count > 2)
                                 {
-                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                             }
                             else if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 #endregion
@@ -2375,7 +2391,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2383,7 +2399,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2395,11 +2411,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -2407,11 +2423,11 @@ public class RandomRockPlacerment : MonoBehaviour
                     {
                         if (gm.houseList.Count > 2)
                         {
-                            shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                            shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                 }
@@ -2424,7 +2440,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2432,7 +2448,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2442,12 +2458,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 else
@@ -2459,7 +2475,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2467,7 +2483,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2483,7 +2499,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                     //Crash check
                                     if (shotSelector == 99)
                                     {
@@ -2491,7 +2507,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                         if (hit)
                                         {
-                                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                         }
                                         else
                                         {
@@ -2501,20 +2517,20 @@ public class RandomRockPlacerment : MonoBehaviour
                                 }
                                 else if (gm.houseList.Count > 2)
                                 {
-                                    shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
-                                    shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                                 }
                             }
                             else if (gm.houseList.Count > 2)
                             {
-                                shotSelector = SkillCheck("Guard", activeCharStats.guardAccuracy.GetValue());
+                                shotSelector = SkillCheck("Guard", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                             else
                             {
-                                shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                                shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                             }
                         }
                     }
@@ -2525,7 +2541,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                         if (hit)
                         {
-                            shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                            shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                             //Crash check
                             if (shotSelector == 99)
                             {
@@ -2533,7 +2549,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                                 if (hit)
                                 {
-                                    shotSelector = SkillCheck("Takeout", activeCharStats.takeOutAccuracy.GetValue());
+                                    shotSelector = SkillCheck("Takeout", (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)));
                                 }
                                 else
                                 {
@@ -2543,12 +2559,12 @@ public class RandomRockPlacerment : MonoBehaviour
                         }
                         else
                         {
-                            shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                            shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                         }
                     }
                     else
                     {
-                        shotSelector = SkillCheck("Draw", activeCharStats.drawAccuracy.GetValue());
+                        shotSelector = SkillCheck("Draw", (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     }
                 }
                 #endregion
@@ -2560,7 +2576,7 @@ public class RandomRockPlacerment : MonoBehaviour
         int guardsInPlay = gm.gList.Count;
         bool isBehind = activeScore < otherScore;
         int aiSkill = 8; // Set a default AI skill level
-        //int aiSkill = activeCharStats.drawAccuracy.GetValue(); // Or average of skills
+        //int aiSkill = (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)); // Or average of skills
 
         // Use improved AI logic
         if (gsp.aiRed && redTeam || gsp.aiYellow && !redTeam)
@@ -2783,7 +2799,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 placeSelector = 9;
                 rockPos[rockCurrent] = placePos[placeSelector]
                     + (Random.insideUnitCircle
-                    * (1.5f - (0.01f * activeCharStats.drawAccuracy.GetValue())));
+                    * (1.5f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
                 //houseCount++;
                 //gm.houseList.Add(new House_List (gm.rockList[rockCurrent].rock, gm.rockList[rockCurrent].rockInfo));
                 Debug.Log("case 0 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
@@ -2850,23 +2866,23 @@ public class RandomRockPlacerment : MonoBehaviour
                 }
                 rockPos[rockCurrent] = placePos[placeSelector]
                     + (Random.insideUnitCircle
-                    * Random.Range(0f, 1.5f - (0.01f * activeCharStats.guardAccuracy.GetValue())));
+                    * Random.Range(0f, 1.5f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
                 break;
                 #endregion
             case 4:
                 #region Takeout
-                //takeOut check
+                //aim check
                 Debug.Log("Takeout Selector - " + takeOutSelector);
                 lastShotWasTakeout = true;
                 HapticController.Play(hitHap);
                 fltText.Value = "Takeout";
                 //fltFdbk.PlayFeedbacks(lastTakeoutTarget.transform.position);
                 lastTakeoutTarget = null;
-                if (Random.Range(0f, 100f) < activeCharStats.takeOutAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))
                 {
                     //placeSelector = 9;
                     rockPos[rockCurrent] = rockPos[takeOutSelector]
-                        + (Random.insideUnitCircle * (1.5f - (0.005f * activeCharStats.takeOutAccuracy.GetValue())));
+                        + (Random.insideUnitCircle * (1.5f - (0.005f * (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))));
                     Debug.Log("Hit and Roll Check - SUCCESS");
                     houseCount++;
                 }
@@ -2879,7 +2895,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
 
-                if (Random.Range(0f, 100f) < activeCharStats.takeOutAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))
                 {
                     rockPos[takeOutSelector] = placePos[10];
                     Debug.Log("Opponent Rock Out of Play Check - SUCCESS");
@@ -2892,7 +2908,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 else
                 {
                     rockPos[takeOutSelector] += 
-                        (Random.insideUnitCircle * (1.5f - (0.01f * activeCharStats.takeOutAccuracy.GetValue())));
+                        (Random.insideUnitCircle * (1.5f - (0.01f * (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))));
                     Debug.Log("Opponent Rock Out of Play Check - FAIL");
                     if (rockPos[rockCurrent] == placePos[10])
                     {
@@ -2911,12 +2927,12 @@ public class RandomRockPlacerment : MonoBehaviour
                 Debug.Log("Case 5 - Freeze - " + takeOutSelector);
                 fltText.Value = "Freeze";
                 //Freeze check
-                if (Random.Range(0f, 100f) < activeCharStats.drawAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))
                 {
                     rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.25f;
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
-                            * (0.5f - (0.005f * activeCharStats.drawAccuracy.GetValue())));
+                            * (0.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
                     Debug.Log("Close Freeze Check - SUCCESS");
                     
                 }
@@ -2925,22 +2941,22 @@ public class RandomRockPlacerment : MonoBehaviour
                     rockPos[rockCurrent].y = rockPos[takeOutSelector].y - 0.25f;
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
-                            * (2f - (0.01f * activeCharStats.drawAccuracy.GetValue())));
+                            * (2f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
                     Debug.Log("Close Freeze Check - FAIL");
                 }
                 houseCount++;
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
 
-                if (Random.Range(0f, 100f) < activeCharStats.drawAccuracy.GetValue())
+                if (Random.Range(0f, 100f) < (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))
                 {
-                    rockPos[takeOutSelector].y += 0.5f - (0.005f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].y += 0.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     Debug.Log("Opponent Freeze Check - SUCCESS");
                 }
                 else
                 {
-                    rockPos[takeOutSelector].x += Random.Range(0f, 0.1f * activeCharStats.drawAccuracy.GetValue());
-                    rockPos[takeOutSelector].y += 1.5f - (0.005f * activeCharStats.drawAccuracy.GetValue());
+                    rockPos[takeOutSelector].x += Random.Range(0f, 0.1f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
+                    rockPos[takeOutSelector].y += 1.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     Debug.Log("Opponent Freeze Check - FAIL");
                 }
                 break;
@@ -2969,7 +2985,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     guardCounter++;
                 }
-                rockPos[rockCurrent] = placePos[placeSelector] * Random.Range(0f, 1.5f - (0.01f * activeCharStats.guardAccuracy.GetValue()));
+                rockPos[rockCurrent] = placePos[placeSelector] * Random.Range(0f, 1.5f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f))));
                 break;
             #endregion
 
@@ -3034,7 +3050,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (!hit && rock.rockInfo.teamName == otherTeamName)
                     {
                         bool guarded = false;
-                        //guard check
+                        //finesse check
                         foreach (Guard_List guard in gm.gList)
                         {
                             if (!guarded
@@ -3292,21 +3308,28 @@ public class RandomRockPlacerment : MonoBehaviour
     {
         if (stats == null) return 70f;
         
+        // Return combined accuracy based on shot type
         switch (shotType)
         {
             case "Guard":
             case "Centre Guard":
             case "Corner Guard":
-                return stats.guardAccuracy.GetValue();
+                // Guard: Weight + Aim (50/50)
+                return (stats.weightAccuracy.GetValue() * 0.5f) + (stats.aimAccuracy.GetValue() * 0.5f);
                 
             case "Take Out":
+                // Takeout: Aim + Weight (50/50) - hitting target requires both
+                return (stats.aimAccuracy.GetValue() * 0.5f) + (stats.weightAccuracy.GetValue() * 0.5f);
+                
             case "Freeze":
-                return stats.takeOutAccuracy.GetValue();
+                // Freeze: Finesse + Weight (70/30) - very delicate
+                return (stats.finesseAccuracy.GetValue() * 0.7f) + (stats.weightAccuracy.GetValue() * 0.3f);
                 
             case "Draw":
             case "Draw Four Foot":
             default:
-                return stats.drawAccuracy.GetValue();
+                // Draw: Weight + Aim (50/50)
+                return (stats.weightAccuracy.GetValue() * 0.5f) + (stats.aimAccuracy.GetValue() * 0.5f);
         }
     }
     
@@ -3433,7 +3456,7 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate draw position using FULL PHYSICS SIMULATION
+    /// Calculate weight position using FULL PHYSICS SIMULATION
     /// Simulates the actual shot trajectory to get realistic final position
     /// </summary>
     private Vector2 CalculateDrawPosition(CharacterStats stats)
@@ -3459,7 +3482,7 @@ public class RandomRockPlacerment : MonoBehaviour
         }
         else if (gm.gList.Count > 1)
         {
-            // Guards present: draw behind them
+            // Guards present: weight behind them
             desiredTarget = new Vector2(0f, 7.0f); // Back of house
         }
         else
@@ -3524,13 +3547,13 @@ public class RandomRockPlacerment : MonoBehaviour
             DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
         }
         
-        Debug.Log($"[SmartPlacement] Physics draw: target={desiredTarget}, final={bestFinalPos}, score={bestScore:F2}");
+        Debug.Log($"[SmartPlacement] Physics weight: target={desiredTarget}, final={bestFinalPos}, score={bestScore:F2}");
         
         return bestFinalPos;
     }
     
     /// <summary>
-    /// Score a draw path based on quality
+    /// Score a weight path based on quality
     /// </summary>
     private float ScoreDrawPath(List<Vector2> path, Vector2 target, List<GameObject> obstacles)
     {
@@ -3583,12 +3606,12 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate guard position using FULL PHYSICS SIMULATION
-    /// Simulates the actual shot trajectory to place guard realistically
+    /// Calculate finesse position using FULL PHYSICS SIMULATION
+    /// Simulates the actual shot trajectory to place finesse realistically
     /// </summary>
     private Vector2 CalculateGuardPosition(CharacterStats stats)
     {
-        // STEP 1: Determine guard strategy
+        // STEP 1: Determine finesse strategy
         int guardSelect;
         
         if (rockCurrent % 2 == 1)
@@ -3640,7 +3663,7 @@ public class RandomRockPlacerment : MonoBehaviour
         }
         else // Center guards (guardSelect == 2)
         {
-            // Keep center guard logic (already good)
+            // Keep center finesse logic (already good)
             targetGuardPos = placePos[placeSelector];
         }
         
@@ -3653,7 +3676,7 @@ public class RandomRockPlacerment : MonoBehaviour
     }
     
     /// <summary>
-    /// Score a guard path based on quality
+    /// Score a finesse path based on quality
     /// </summary>
     private float ScoreGuardPath(List<Vector2> path, Vector2 target, List<GameObject> obstacles)
     {
@@ -3665,7 +3688,7 @@ public class RandomRockPlacerment : MonoBehaviour
         float distanceToTarget = Vector2.Distance(finalPos, target);
         float score = 10f - distanceToTarget * 3f;
         
-        // BONUS: Rock stops in guard zone (Y between 3.0 and 6.5)
+        // BONUS: Rock stops in finesse zone (Y between 3.0 and 6.5)
         if (finalPos.y > 3.0f && finalPos.y < 6.5f)
         {
             score += 5f;
@@ -3691,7 +3714,7 @@ public class RandomRockPlacerment : MonoBehaviour
             score -= 5f;
         }
         
-        // PENALTY: Too short (doesn't reach guard zone)
+        // PENALTY: Too short (doesn't reach finesse zone)
         if (finalPos.y < 3.0f)
         {
             score -= 8f;
@@ -3741,7 +3764,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     tryInTurn
                 );
                 
-                // Takeout weight (faster than draw)
+                // Takeout weight (faster than weight)
                 velocity *= 1.15f;
                 
                 // Simulate trajectory
@@ -3783,8 +3806,8 @@ public class RandomRockPlacerment : MonoBehaviour
                     // Target rock pushed forward
                     Vector2 targetFinal = targetRockPos + approachDir * 0.6f;
                     
-                    // Apply skill check
-                    float hitChance = stats.takeOutAccuracy.GetValue();
+                    // Apply skill check (Takeout: Aim + Weight 35/65)
+                    float hitChance = (stats.aimAccuracy.GetValue() * 0.65f) + (stats.weightAccuracy.GetValue() * 0.35f);
                     bool successfulHit = Random.Range(0f, 100f) < hitChance;
                     
                     if (successfulHit)
@@ -3826,8 +3849,10 @@ public class RandomRockPlacerment : MonoBehaviour
             }
         }
         
-        // FALLBACK: Simple skill-based calculation
-        if (Random.Range(0f, 100f) < stats.takeOutAccuracy.GetValue())
+        // FALLBACK: Simple skill-based calculation (Takeout: Aim + Weight 50/50)
+        float takeoutAccuracy = (stats.aimAccuracy.GetValue() * 0.35f) + (stats.weightAccuracy.GetValue() * 0.65f);
+        
+        if (Random.Range(0f, 100f) < takeoutAccuracy)
         {
             // Hit and roll - shooter stays near target
             shooterPos = targetRockPos + Random.insideUnitCircle * 0.5f;
@@ -3839,7 +3864,7 @@ public class RandomRockPlacerment : MonoBehaviour
         }
         
         // Target rock position based on accuracy
-        if (Random.Range(0f, 100f) < stats.takeOutAccuracy.GetValue())
+        if (Random.Range(0f, 100f) < takeoutAccuracy)
         {
             // Target removed
             targetPos = placePos[10];
@@ -3898,7 +3923,7 @@ public class RandomRockPlacerment : MonoBehaviour
             else
             {
                 // Penalty based on how well guarded
-                score -= (3f / guardDistance); // Closer guard = harder shot
+                score -= (3f / guardDistance); // Closer finesse = harder shot
             }
             
             // BONUS: If this is shot rock (closest)

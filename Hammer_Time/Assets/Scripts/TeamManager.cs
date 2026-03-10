@@ -318,9 +318,9 @@ public class TeamManager : MonoBehaviour
             {
                 if (teamRed[j] != null && teamRed[j].charStats != null && gsp.redTeam.players[j] != null)
                 {
-                    teamRed[j].charStats.drawAccuracy.SetBaseValue(gsp.redTeam.players[j].draw);
-                    teamRed[j].charStats.takeOutAccuracy.SetBaseValue(gsp.redTeam.players[j].takeOut);
-                    teamRed[j].charStats.guardAccuracy.SetBaseValue(gsp.redTeam.players[j].guard);
+                    teamRed[j].charStats.weightAccuracy.SetBaseValue(gsp.redTeam.players[j].weight);
+                    teamRed[j].charStats.aimAccuracy.SetBaseValue(gsp.redTeam.players[j].aim);
+                    teamRed[j].charStats.finesseAccuracy.SetBaseValue(gsp.redTeam.players[j].finesse);
                     teamRed[j].charStats.sweepStrength.SetBaseValue(gsp.redTeam.players[j].sweepStrength);
                     teamRed[j].charStats.sweepEndurance.SetBaseValue(gsp.redTeam.players[j].sweepEnduro);
                     teamRed[j].charStats.sweepCohesion.SetBaseValue(gsp.redTeam.players[j].sweepCohesion);
@@ -356,9 +356,9 @@ public class TeamManager : MonoBehaviour
             {
                 if (teamYellow[j] != null && teamYellow[j].charStats != null && gsp.yellowTeam.players[j] != null)
                 {
-                    teamYellow[j].charStats.drawAccuracy.SetBaseValue(gsp.yellowTeam.players[j].draw);
-                    teamYellow[j].charStats.takeOutAccuracy.SetBaseValue(gsp.yellowTeam.players[j].takeOut);
-                    teamYellow[j].charStats.guardAccuracy.SetBaseValue(gsp.yellowTeam.players[j].guard);
+                    teamYellow[j].charStats.weightAccuracy.SetBaseValue(gsp.yellowTeam.players[j].weight);
+                    teamYellow[j].charStats.aimAccuracy.SetBaseValue(gsp.yellowTeam.players[j].aim);
+                    teamYellow[j].charStats.finesseAccuracy.SetBaseValue(gsp.yellowTeam.players[j].finesse);
                     teamYellow[j].charStats.sweepStrength.SetBaseValue(gsp.yellowTeam.players[j].sweepStrength);
                     teamYellow[j].charStats.sweepEndurance.SetBaseValue(gsp.yellowTeam.players[j].sweepEnduro);
                     teamYellow[j].charStats.sweepCohesion.SetBaseValue(gsp.yellowTeam.players[j].sweepCohesion);

@@ -107,7 +107,7 @@ public class AI_Target : MonoBehaviour
                 && rockEntry.rockInfo.inPlay)
             {
                 // For collision shots (takeout/peel), include ALL rocks including target
-                // For draw shots (targetRockIndex < 0), exclude all rocks
+                // For weight shots (targetRockIndex < 0), exclude all rocks
                 bool shouldInclude = (targetRockIndex >= 0); // Include all if we're trying to hit something
                 
                 if (shouldInclude || i != targetRockIndex)
@@ -169,10 +169,10 @@ public class AI_Target : MonoBehaviour
             if (shotType == "Runback")
             {
                 // RUNBACK: HEAVIEST weight - must drive through 2 rocks!
-                // Strategy: Hit guard with massive momentum to blast through to target behind
+                // Strategy: Hit finesse with massive momentum to blast through to target behind
                 desiredPullbackDistance = 5.0f; // MAXIMUM weight → 13.75 m/s (INCREASED from 4.9)
                 
-                // Nose hit on guard, rely on momentum to carry through
+                // Nose hit on finesse, rely on momentum to carry through
                 float impactOffset = 2f * rockRadius; // Standard collision distance
                 targetImpactPoint = new Vector2(
                     targetRockPosition.x,
@@ -180,10 +180,10 @@ public class AI_Target : MonoBehaviour
                 );
                 
                 Debug.Log($"[AI_Target] RUNBACK: Maximum drive-through\n" +
-                          $"  Target (guard): {targetRockPosition}\n" +
+                          $"  Target (finesse): {targetRockPosition}\n" +
                           $"  Pullback: {desiredPullbackDistance:F2} (MAXIMUM)\n" +
                           $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
-                          $"  Strategy: Blast through guard to remove target behind");
+                          $"  Strategy: Blast through finesse to remove target behind");
             }
             else if (shotType == "Peel")
             {
@@ -217,7 +217,7 @@ public class AI_Target : MonoBehaviour
             {
                 // TAKEOUT: Hit and stay weight
                 // Strategy: Nose hit with enough momentum to remove target, shooter stays in play
-                // Must be > draw weight (8.7) but < peel weight (12.1)
+                // Must be > weight weight (8.7) but < peel weight (12.1)
                 desiredPullbackDistance = 4.0f; // Hit-and-stay → 11.0 m/s (INCREASED from 3.6)
                 
                 // NOSE HIT: Center-to-center collision
@@ -726,7 +726,7 @@ public class AI_Target : MonoBehaviour
                     }
                 }
                 }  // End of Phase 4 for-loop
-            }  // End of Phase 4 if-guard
+            }  // End of Phase 4 if-finesse
             else
             {
                 Debug.LogWarning($"[AI_Target] Phase 4 SKIPPED - No hits found in Phases 1-3 (bestFineScore={bestFineScore})");
@@ -1038,7 +1038,7 @@ public class AI_Target : MonoBehaviour
         //if there's guards
         if (gm.gList.Count != 0)
         {
-            //for each item in guard list
+            //for each item in finesse list
             foreach (Guard_List guard in gm.gList)
             {
                 float posX;
@@ -1151,31 +1151,42 @@ public class AI_Target : MonoBehaviour
             
             if (shooterStats != null)
             {
-                float accuracy = shooterStats.takeOutAccuracy.GetValue(); // 0-100
+                // NEW SKILL SYSTEM:
+                // - Aim accuracy controls X-axis error (lateral positioning)
+                // - Weight accuracy controls Y-axis error (distance control)
+                float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
+                float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
                 
-                Debug.Log($"[AI_Target] Takeout shot accuracy: {accuracy}/100");
+                Debug.Log($"[AI_Target] Takeout skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
                 
                 // REALISTIC CURLING ERROR DISTRIBUTION:
-                // Weight (Y) errors are 4-5x more common than line (X) errors
-                // Professional curlers can control line very well, but weight is hard!
+                // Weight (Y) errors are 4-5x more common than line (X) errors in real curling
+                // But now we have SEPARATE skills for each axis!
                 
-                float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+                float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
+                float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
                 
-                // SKILL-BASED BASE ERROR SCALING:
+                // SKILL-BASED ERROR SCALING (per axis):
                 // Low skill (0-40): baseMaxError = 0.06 (very hard - 6cm miss)
                 // Mid skill (40-70): baseMaxError = 0.04 (moderate - 4cm miss)
                 // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
                 // Takeouts are slightly easier than draws (less distance = less error accumulation)
-                float skillFactor = accuracyRatio;
-                float baseMaxError = Mathf.Lerp(0.06f, 0.02f, skillFactor * skillFactor); // Quadratic scaling
                 
-                float maxError = baseMaxError * (1f - accuracyRatio);
+                // X-axis error (controlled by AIM skill)
+                float aimSkillFactor = aimRatio;
+                float aimBaseMaxError = Mathf.Lerp(0.35f, 0.02f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
+                float aimMaxError = aimBaseMaxError * (1f - aimRatio);
                 
-                if (maxError > 0f)
+                // Y-axis error (controlled by WEIGHT skill)
+                float weightSkillFactor = weightRatio;
+                float weightBaseMaxError = Mathf.Lerp(0.99f, 0.02f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+                float weightMaxError = weightBaseMaxError * (1f - weightRatio);
+                
+                if (aimMaxError > 0f || weightMaxError > 0f)
                 {
-                    // Generate separate X and Y errors with weight-dominant distribution
-                    float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
-                    float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                    // Generate INDEPENDENT X and Y errors based on respective skills
+                    float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
+                    float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
                     
                     Vector2 errorOffset = new Vector2(xError, yError);
                     
@@ -1187,19 +1198,17 @@ public class AI_Target : MonoBehaviour
                     
                     pullbackPos += errorOffset;
                     
-                    Debug.Log($"[AI_Target] Takeout realistic error applied (80% weight / 20% line)\n" +
-                              $"  Skill factor: {skillFactor:F2}\n" +
-                              $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
-                              $"  Max error: ±{maxError:F3}\n" +
-                              $"  Y error (weight): {yError:F3} (100% range)\n" +
-                              $"  X error (line): {xError:F3} (20% range)\n" +
-                              $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                    Debug.Log($"[AI_Target] Takeout INDEPENDENT axis error (Aim/Weight skills)\n" +
+                              $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
+                              $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
+                              $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
+                              $"  Y error (weight): {yError:F3}\n" +
                               $"  Original pullback: {originalPullback}\n" +
                               $"  Final pullback: {pullbackPos}");
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (skill 100) - NO ERROR APPLIED! Pullback: {pullbackPos}");
+                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (both skills 100) - NO ERROR APPLIED! Pullback: {pullbackPos}");
                 }
             }
             else
@@ -1284,7 +1293,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
             
-            // FALLBACK 3: Try removing ANY opponent guard blocking the center
+            // FALLBACK 3: Try removing ANY opponent finesse blocking the center
             Debug.Log($"[Fallback 3] Trying opponent guards");
             
             foreach (var guard in gm.gList)
@@ -1297,7 +1306,7 @@ public class AI_Target : MonoBehaviour
                     continue; // Skip our own guards
                 
                 Vector2 guardPos = guard.lastTransform.position;
-                Debug.Log($"[Fallback 3] Trying guard #{guardInfo.rockIndex} at ({guardPos.x:F2}, {guardPos.y:F2})");
+                Debug.Log($"[Fallback 3] Trying finesse #{guardInfo.rockIndex} at ({guardPos.x:F2}, {guardPos.y:F2})");
                 
                 Vector2 guardPullback;
                 bool guardInTurn;
@@ -1318,7 +1327,7 @@ public class AI_Target : MonoBehaviour
             }
             
             // FALLBACK 4: Draw to button instead (can't remove anything)
-            Debug.Log($"[Fallback 4] All takeout options exhausted - trying draw to button");
+            Debug.Log($"[Fallback 4] All takeout options exhausted - trying weight to button");
             
             Vector2 button = new Vector2(0f, 6.5f);
             Vector2 drawPullback;
@@ -1340,7 +1349,7 @@ public class AI_Target : MonoBehaviour
             
             
             // FALLBACK 5: ABSOLUTE LAST RESORT - Just throw away the rock
-            Debug.LogError($"[Fallback 5] CATASTROPHIC: Even draw failed - THROWING AWAY ROCK");
+            Debug.LogError($"[Fallback 5] CATASTROPHIC: Even weight failed - THROWING AWAY ROCK");
             
             // Throw to corner out of bounds
             rm.inturn = (targetRockPos.x < 0f); // In-turn if target is left, out-turn if target is right
@@ -1357,6 +1366,10 @@ public class AI_Target : MonoBehaviour
     
     /// <summary>
     /// Get shooter stats for the current rock
+    /// NEW SKILL SYSTEM:
+    /// - weightAccuracy: Y-axis (distance/weight control)
+    /// - aimAccuracy: X-axis (lateral positioning)
+    /// - finesseAccuracy: Complex shot bonus (runbacks, freezes, etc.)
     /// </summary>
     private CharacterStats GetShooterStats(int rockCurrent)
     {
@@ -1600,7 +1613,7 @@ public class AI_Target : MonoBehaviour
                         
                         Vector2 guardPos = guard.lastTransform.position;
                         
-                        // Check if this guard is blocking access to ANY rock in the house
+                        // Check if this finesse is blocking access to ANY rock in the house
                         bool blocksHouseRock = false;
                         foreach (var houseRock in gm.houseList)
                         {
@@ -1618,9 +1631,9 @@ public class AI_Target : MonoBehaviour
                         
                         if (blocksHouseRock)
                         {
-                            // Try to take out this blocking guard
+                            // Try to take out this blocking finesse
                             int guardIndex = guardInfo.rockIndex;
-                            Debug.Log($"[Fallback Guard] Attempting takeout of blocking guard #{guardIndex}");
+                            Debug.Log($"[Fallback Guard] Attempting takeout of blocking finesse #{guardIndex}");
                             
                             bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
                             
@@ -1630,21 +1643,21 @@ public class AI_Target : MonoBehaviour
                                 takeOutX = pullbackPos.x;
                                 takeOutY = pullbackPos.y;
                                 
-                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout guard #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
                                           $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                           $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
                                           $"  Strategy: Clear path to house rocks");
                                 
                                 foundGuardTakeout = true;
-                                break; // Found a guard to take out
+                                break; // Found a finesse to take out
                             }
                         }
                     }
                     
                     if (!foundGuardTakeout)
                     {
-                        // FALLBACK PHASE 4: No blocking guards found - try any opponent guard
-                        Debug.LogWarning($"[AI_Target] No blocking guards found - trying ANY opponent guard");
+                        // FALLBACK PHASE 4: No blocking guards found - try any opponent finesse
+                        Debug.LogWarning($"[AI_Target] No blocking guards found - trying ANY opponent finesse");
                         
                         foreach (var guard in gm.gList)
                         {
@@ -1658,7 +1671,7 @@ public class AI_Target : MonoBehaviour
                             Vector2 guardPos = guard.lastTransform.position;
                             int guardIndex = guardInfo.rockIndex;
                             
-                            Debug.Log($"[Fallback Guard] Attempting takeout of any opponent guard #{guardIndex}");
+                            Debug.Log($"[Fallback Guard] Attempting takeout of any opponent finesse #{guardIndex}");
                             
                             bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
                             
@@ -1668,7 +1681,7 @@ public class AI_Target : MonoBehaviour
                                 takeOutX = pullbackPos.x;
                                 takeOutY = pullbackPos.y;
                                 
-                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout ANY guard #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout ANY finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
                                           $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                           $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                                 
@@ -1717,7 +1730,7 @@ public class AI_Target : MonoBehaviour
                     if (!foundGuardTakeout)
                     {
                         // LAST RESORT: Draw to button instead of using magic numbers
-                        Debug.LogWarning($"[AI_Target] ALL TAKEOUT OPTIONS FAILED - falling back to draw shot");
+                        Debug.LogWarning($"[AI_Target] ALL TAKEOUT OPTIONS FAILED - falling back to weight shot");
                         
                         Vector2 drawPullback;
                         bool drawInTurn;
@@ -1740,7 +1753,7 @@ public class AI_Target : MonoBehaviour
                         else
                         {
                             // ABSOLUTE LAST RESORT: Throw away the rock (total failure)
-                            Debug.LogError($"[AI_Target] CATASTROPHIC: Even draw shot failed - throwing away rock");
+                            Debug.LogError($"[AI_Target] CATASTROPHIC: Even weight shot failed - throwing away rock");
                             
                             rm.inturn = (targetRockPos.x < 0f);
                             takeOutX = (targetRockPos.x < 0f) ? -1.5f : 1.5f;
@@ -2183,18 +2196,18 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// RUNBACK: Hit an obstructing guard rock through to remove the target behind it
+    /// RUNBACK: Hit an obstructing finesse rock through to remove the target behind it
     /// This is an advanced double-takeout shot requiring extra velocity
     /// </summary>
     IEnumerator RunbackTarget(int rockCurrent, int rockTarget)
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        // PHYSICS-BASED: Runback requires hitting the guard with enough velocity
+        // PHYSICS-BASED: Runback requires hitting the finesse with enough velocity
         // to drive through and remove the target rock behind it
         Vector2 guardRockPos = gm.rockList[rockTarget].rock.transform.position;
         
-        Debug.Log($"[AI_Target] RUNBACK SHOT - Hitting guard at {guardRockPos} to remove target behind it");
+        Debug.Log($"[AI_Target] RUNBACK SHOT - Hitting finesse at {guardRockPos} to remove target behind it");
         
         Vector2 pullbackPos;
         bool useInTurn;
@@ -2211,8 +2224,8 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // FALLBACK: Try peel on guard if runback fails
-            Debug.LogWarning($"[AI_Target] Runback physics FAILED - trying peel on guard: {guardRockPos}");
+            // FALLBACK: Try peel on finesse if runback fails
+            Debug.LogWarning($"[AI_Target] Runback physics FAILED - trying peel on finesse: {guardRockPos}");
             
             Vector2 peelPullback;
             bool peelInTurn;
@@ -2228,8 +2241,8 @@ public class AI_Target : MonoBehaviour
             }
             else
             {
-                // LAST RESORT: Try regular takeout on guard
-                Debug.LogWarning($"[AI_Target] Runback AND Peel FAILED - trying regular takeout on guard");
+                // LAST RESORT: Try regular takeout on finesse
+                Debug.LogWarning($"[AI_Target] Runback AND Peel FAILED - trying regular takeout on finesse");
                 
                 Vector2 takeoutPullback;
                 bool takeoutInTurn;
@@ -2256,7 +2269,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Peel", rockCurrent); // Use Peel shot type for extra velocity
-        Debug.Log("Runback - Hitting " + gm.rockList[rockTarget].rockInfo.teamName + " guard #" + gm.rockList[rockTarget].rockInfo.rockNumber);
+        Debug.Log("Runback - Hitting " + gm.rockList[rockTarget].rockInfo.teamName + " finesse #" + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
 
@@ -2279,30 +2292,41 @@ public class AI_Target : MonoBehaviour
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
         if (shooterStats != null)
         {
-            float accuracy = shooterStats.drawAccuracy.GetValue(); // 0-100
+            // NEW SKILL SYSTEM:
+            // - Aim accuracy controls X-axis error (lateral positioning)
+            // - Weight accuracy controls Y-axis error (distance control)
+            float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
+            float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
             
-            Debug.Log($"[AI_Target] Draw shot accuracy: {accuracy}/100");
+            Debug.Log($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
             
             // REALISTIC CURLING ERROR DISTRIBUTION:
-            // Weight (Y) errors are 4-5x more common than line (X) errors
-            // Professional curlers control line very well, but weight is harder
+            // Weight (Y) errors are THE PRIMARY challenge in draws (controlling distance is hard!)
+            // Line (X) errors are less common but now controlled by separate AIM skill
             
-            float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+            float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
+            float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
             
-            // SKILL-BASED BASE ERROR SCALING:
+            // SKILL-BASED ERROR SCALING (per axis):
             // Low skill (0-40): baseMaxError = 0.08 (very hard - 8cm miss)
             // Mid skill (40-70): baseMaxError = 0.05 (moderate - 5cm miss)
             // High skill (70-100): baseMaxError = 0.03 (easy - 3cm miss)
-            float skillFactor = accuracyRatio;
-            float baseMaxError = Mathf.Lerp(0.08f, 0.03f, skillFactor * skillFactor); // Quadratic scaling
             
-            float maxError = baseMaxError * (1f - accuracyRatio);
+            // X-axis error (controlled by AIM skill)
+            float aimSkillFactor = aimRatio;
+            float aimBaseMaxError = Mathf.Lerp(0.40f, 0.03f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
+            float aimMaxError = aimBaseMaxError * (1f - aimRatio);
             
-            if (maxError > 0f)
+            // Y-axis error (controlled by WEIGHT skill)
+            float weightSkillFactor = weightRatio;
+            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+            float weightMaxError = weightBaseMaxError * (1f - weightRatio);
+            
+            if (aimMaxError > 0f || weightMaxError > 0f)
             {
-                // Generate separate X and Y errors with weight-dominant distribution
-                float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
-                float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                // Generate INDEPENDENT X and Y errors based on respective skills
+                float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
+                float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
                 
                 Vector2 errorOffset = new Vector2(xError, yError);
                 
@@ -2314,18 +2338,16 @@ public class AI_Target : MonoBehaviour
                 
                 pullbackPos += errorOffset;
                 
-                Debug.Log($"[AI_Target] Draw shot realistic error applied (80% weight / 20% line)\n" +
-                          $"  Skill factor: {skillFactor:F2}\n" +
-                          $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
-                          $"  Max error: ±{maxError:F3}\n" +
-                          $"  Y error (weight): {yError:F3} (100% range)\n" +
-                          $"  X error (line): {xError:F3} (20% range)\n" +
-                          $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                Debug.Log($"[AI_Target] Draw INDEPENDENT axis error (Aim/Weight skills)\n" +
+                          $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
+                          $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
+                          $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
+                          $"  Y error (weight): {yError:F3}\n" +
                           $"  Final pullback: {pullbackPos}");
             }
             else
             {
-                Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (skill 100) - NO ERROR APPLIED!");
+                Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR APPLIED!");
             }
         }
             
@@ -2337,8 +2359,8 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // FALLBACK: Draw shot failed - try guard shot instead (lighter weight might work)
-            Debug.LogWarning("[Physics Draw] Failed, trying guard shot as fallback");
+            // FALLBACK: Draw shot failed - try finesse shot instead (lighter weight might work)
+            Debug.LogWarning("[Physics Draw] Failed, trying finesse shot as fallback");
             
             Vector2 guardPullback;
             bool guardInTurn;
@@ -2354,15 +2376,15 @@ public class AI_Target : MonoBehaviour
             }
             else
             {
-                // LAST RESORT: Just place a guard in the open (can't reach target)
-                Debug.LogError($"[Physics Draw] Draw AND Guard BOTH FAILED - placing emergency center guard");
+                // LAST RESORT: Just place a finesse in the open (can't reach target)
+                Debug.LogError($"[Physics Draw] Draw AND Guard BOTH FAILED - placing emergency center finesse");
                 
-                // Emergency guard placement - center, medium depth
+                // Emergency finesse placement - center, medium depth
                 rm.inturn = Random.value > 0.5f; // Random turn
                 
                 Vector2 emergencyGuardTarget = new Vector2(
                     Random.Range(-0.15f, 0.15f), // Center with slight variance
-                    Random.Range(3.0f, 3.5f)      // Standard guard depth
+                    Random.Range(3.0f, 3.5f)      // Standard finesse depth
                 );
                 
                 Vector2 emergencyPullback;
@@ -2375,11 +2397,11 @@ public class AI_Target : MonoBehaviour
                     takeOutX = emergencyPullback.x;
                     takeOutY = emergencyPullback.y;
                     
-                    Debug.Log($"[Physics Draw] Emergency guard placement - InTurn: {emergencyInTurn}");
+                    Debug.Log($"[Physics Draw] Emergency finesse placement - InTurn: {emergencyInTurn}");
                 }
                 else
                 {
-                    // CATASTROPHIC: Can't even place a guard - throw it away
+                    // CATASTROPHIC: Can't even place a finesse - throw it away
                     Debug.LogError($"[Physics Draw] CATASTROPHIC FAILURE - throwing rock away");
                     
                     rm.inturn = Random.value > 0.5f;
@@ -2394,7 +2416,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Physics-based draw shot calculation - RADIAL SWEEP around guards to find PROTECTED SCORING positions
+    /// Physics-based weight shot calculation - RADIAL SWEEP around guards to find PROTECTED SCORING positions
     /// STRATEGY: Protected + Scoring > Clean path + Far away
     /// Prioritizes: 1) Behind guards, 2) Closer to button than opponents, 3) Minor bumps near target OK
     /// </summary>
@@ -2479,7 +2501,7 @@ public class AI_Target : MonoBehaviour
         
         Debug.Log($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 0.4m of target - TIGHT PRECISION)");
         
-        // Get velocity multiplier for draw weight calculation
+        // Get velocity multiplier for weight weight calculation
         TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
         float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
         
@@ -2490,7 +2512,7 @@ public class AI_Target : MonoBehaviour
             
             Debug.Log($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")} ---");
             
-            // STEP 1: Measure curl for this turn direction at draw weight
+            // STEP 1: Measure curl for this turn direction at weight weight
             // Simulate straight shot to target to see how much curl we get
             float targetDistFromLauncher = Vector2.Distance(launcherPos, targetPosition);
             float desiredPullbackDistance;
@@ -2616,9 +2638,9 @@ public class AI_Target : MonoBehaviour
                 
                 score += proximityScore;
                 
-                // PART 2: GUARD PROTECTION (15 points max) - Small bonus for ANY guard
+                // PART 2: GUARD PROTECTION (15 points max) - Small bonus for ANY finesse
                 // Philosophy: ALL guards (friendly OR opponent) provide some protection
-                // Being under a guard makes you harder to remove, regardless of who placed it
+                // Being under a finesse makes you harder to remove, regardless of who placed it
                 float protectionScore = 0f;
                 GameObject protectingGuard = null;
                 
@@ -2626,11 +2648,11 @@ public class AI_Target : MonoBehaviour
                 {
                     Vector2 guardPos = guard.transform.position;
                     
-                    // Check if guard is protecting this position
-                    // Protection = guard is BETWEEN launcher and final position
+                    // Check if finesse is protecting this position
+                    // Protection = finesse is BETWEEN launcher and final position
                     bool inFront = guardPos.y < finalPos.y; // Guard is closer to launcher
                     float lateralAlignment = Mathf.Abs(guardPos.x - finalPos.x); // How aligned laterally
-                    float depthSeparation = finalPos.y - guardPos.y; // How far behind guard
+                    float depthSeparation = finalPos.y - guardPos.y; // How far behind finesse
                     
                     // Good protection: Guard in front, good lateral alignment, reasonable depth
                     if (inFront && lateralAlignment < 0.6f && depthSeparation > 0.3f && depthSeparation < 3.0f)
@@ -2648,7 +2670,7 @@ public class AI_Target : MonoBehaviour
                         }
                     }
                 }               
-                score += protectionScore * 12f; // Up to 12 points for ANY guard protection (reduced from 15 to make proximity dominate)
+                score += protectionScore * 12f; // Up to 12 points for ANY finesse protection (reduced from 15 to make proximity dominate)
                 
                 // PART 2: SCORING POSITION (30 points max) - Get in scoring position!
                 // Philosophy: MULTIPLE rocks score in curling - being 2nd/3rd shot is still valuable!
@@ -2781,14 +2803,14 @@ public class AI_Target : MonoBehaviour
         }
         
         // ========================================
-        // ACCEPTANCE CRITERIA: Demand HIGH QUALITY draw shots
+        // ACCEPTANCE CRITERIA: Demand HIGH QUALITY weight shots
         // ========================================
         // Threshold: 45.0 (out of 122 max) to demand precision
         // With tighter radii (0.4m max) + proximity-dominant scoring, we should find accurate shots!
         // Score breakdown for reference:
         //   70 points = proximity (<8cm = 70, <15cm = 65, <25cm = 56) ← DOMINANT!
         //   25 points = scoring position (beat opponent, close to button)
-        //   12 points = guard protection
+        //   12 points = finesse protection
         //   15 points = in-house bonus
         //   -25 to +5 = collision context
         // Threshold of 45 requires: <15cm proximity (65 pts) OR <25cm + good scoring/house
@@ -2849,14 +2871,14 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Physics-based guard shot calculation
+    /// Physics-based finesse shot calculation
     /// STRATEGY: Block friendly scoring stones OR block center lane
     /// </summary>
     private bool CalculatePhysicsBasedGuardShot(Vector2 targetPosition, out Vector2 pullbackPosition, out bool useInTurn)
     {
         Vector2 launcherPos = new Vector2(0f, -25f);
         
-        // STRATEGIC DECISION: Where should we place the guard?
+        // STRATEGIC DECISION: Where should we place the finesse?
         Vector2 guardTarget;
         Rock_Info rockInfo = gm.rockList[gm.rockCurrent].rockInfo;
         
@@ -2877,28 +2899,28 @@ public class AI_Target : MonoBehaviour
         
         if (haveFriendlyRocks && friendlyCount > 0)
         {
-            // PROTECT FRIENDLY ROCKS: Place guard between launcher and friendly rocks
+            // PROTECT FRIENDLY ROCKS: Place finesse between launcher and friendly rocks
             friendlyRockAvgPos /= friendlyCount;
             
             // Guard position: ~60% of the way from launcher to friendly rock
             // This blocks direct takeout attempts
             Vector2 launcherToFriendly = friendlyRockAvgPos - launcherPos;
-            guardTarget = launcherPos + launcherToFriendly * 0.35f; // Closer to launcher = better guard
+            guardTarget = launcherPos + launcherToFriendly * 0.35f; // Closer to launcher = better finesse
             
-            // Clamp to guard zone (Y between 2.0 and 5.0)
+            // Clamp to finesse zone (Y between 2.0 and 5.0)
             guardTarget.y = Mathf.Clamp(guardTarget.y, 2.5f, 4.5f);
             
-            Debug.Log($"[Physics Guard] PROTECT: Guarding friendly rocks at ({friendlyRockAvgPos.x:F2}, {friendlyRockAvgPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            Debug.Log($"[Physics Guard] PROTECT: Guarding friendly rocks at ({friendlyRockAvgPos.x:F2}, {friendlyRockAvgPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
         }
         else
         {
             // NO FRIENDLY ROCKS: Block center lane (most common approach)
-            // Center guard: X = 0 (or close), Y = 3-4 (standard guard position)
+            // Center finesse: X = 0 (or close), Y = 3-4 (standard finesse position)
             float guardY = Random.Range(3.0f, 4.0f);
             float guardX = Random.Range(-0.2f, 0.2f); // Slight variance for realism
             
             guardTarget = new Vector2(guardX, guardY);
-            Debug.Log($"[Physics Guard] CENTER BLOCK: Placing center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            Debug.Log($"[Physics Guard] CENTER BLOCK: Placing center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
         }
         
         // Get rocks in play (other guards are obstacles - we don't want to hit them)
@@ -2920,7 +2942,7 @@ public class AI_Target : MonoBehaviour
         {
             bool tryInTurn = (turnDir == 0);
             
-            // Calculate required velocity to reach guard position
+            // Calculate required velocity to reach finesse position
             Vector2 requiredVelocity = trajectorySimulator.CalculateVelocityToTarget(
                 launcherPos,
                 guardTarget,
@@ -2934,7 +2956,7 @@ public class AI_Target : MonoBehaviour
             
             Vector2 testPullback = CalculatePullbackFromVelocity(requiredVelocity, launcherPos, tryInTurn);
             
-            // Simulate to see if we reach guard position cleanly
+            // Simulate to see if we reach finesse position cleanly
             List<Vector2> simulatedPath = trajectorySimulator.SimulateTrajectory(
                 launcherPos,
                 requiredVelocity,
@@ -2949,7 +2971,7 @@ public class AI_Target : MonoBehaviour
             Vector2 finalPos = simulatedPath[simulatedPath.Count - 1];
             float distanceToTarget = Vector2.Distance(finalPos, guardTarget);
             
-            // Score: closer to guard position = better
+            // Score: closer to finesse position = better
             TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
             float score = -distanceToTarget;
             
@@ -2959,7 +2981,7 @@ public class AI_Target : MonoBehaviour
                 score -= 3f;
             }
             
-            // Bonus if we land in the guard zone (Y between 2.0 and 5.0)
+            // Bonus if we land in the finesse zone (Y between 2.0 and 5.0)
             if (finalPos.y >= 2.0f && finalPos.y <= 5.0f)
             {
                 score += 1f;
@@ -2987,7 +3009,7 @@ public class AI_Target : MonoBehaviour
 
     IEnumerator GuardTarget(int rockCurrent)
     {
-        // PHYSICS-BASED: Place guard in front of house
+        // PHYSICS-BASED: Place finesse in front of house
         // Target area is in guards zone (y < 5f typically)
         Vector2 targetPosition = new Vector2 (0, 2f);
         
@@ -3004,30 +3026,45 @@ public class AI_Target : MonoBehaviour
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
         if (shooterStats != null)
         {
-            float accuracy = shooterStats.guardAccuracy.GetValue(); // 0-100
+            // NEW SKILL SYSTEM FOR GUARDS:
+            // Guards use FINESSE skill (complex/delicate shots) combined with Weight/Aim
+            // Finesse acts as a BONUS/MULTIPLIER to reduce base error
+            float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
+            float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
+            float finesseAccuracy = shooterStats.finesseAccuracy.GetValue(); // 0-100 (complexity bonus)
             
-            Debug.Log($"[AI_Target] Guard shot accuracy: {accuracy}/100");
+            Debug.Log($"[AI_Target] Guard skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%, Finesse={finesseAccuracy}%");
             
-            // REALISTIC CURLING ERROR DISTRIBUTION:
-            // Weight (Y) errors are 4-5x more common than line (X) errors
-            // Professional curlers control line very well, but weight is harder
+            // FINESSE BONUS: Reduces error by up to 30% at max finesse
+            // Formula: finalError = baseError * (1.0 - (finesse * 0.003))
+            // Finesse 0 = no bonus (1.0 multiplier)
+            // Finesse 100 = 30% reduction (0.7 multiplier)
+            float finesseRatio = Mathf.Clamp01(finesseAccuracy / 100f);
+            float finesseMultiplier = 1.0f - (finesseRatio * 0.3f);
             
-            float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+            float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
+            float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
             
-            // SKILL-BASED BASE ERROR SCALING:
+            // SKILL-BASED ERROR SCALING (per axis):
             // Low skill (0-40): baseMaxError = 0.07 (very hard - 7cm miss)
             // Mid skill (40-70): baseMaxError = 0.045 (moderate - 4.5cm miss)
             // High skill (70-100): baseMaxError = 0.025 (easy - 2.5cm miss)
-            float skillFactor = accuracyRatio;
-            float baseMaxError = Mathf.Lerp(0.07f, 0.025f, skillFactor * skillFactor); // Quadratic scaling
             
-            float maxError = baseMaxError * (1f - accuracyRatio);
+            // X-axis error (controlled by AIM skill + finesse bonus)
+            float aimSkillFactor = aimRatio;
+            float aimBaseMaxError = Mathf.Lerp(0.55f, 0.025f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
+            float aimMaxError = (aimBaseMaxError * (1f - aimRatio)) * finesseMultiplier; // Apply finesse bonus
             
-            if (maxError > 0f)
+            // Y-axis error (controlled by WEIGHT skill + finesse bonus)
+            float weightSkillFactor = weightRatio;
+            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.025f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+            float weightMaxError = (weightBaseMaxError * (1f - weightRatio)) * finesseMultiplier; // Apply finesse bonus
+            
+            if (aimMaxError > 0f || weightMaxError > 0f)
             {
-                // Generate separate X and Y errors with weight-dominant distribution
-                float yError = Random.Range(-maxError, maxError); // Full range for weight (100%)
-                float xError = Random.Range(-maxError * 0.2f, maxError * 0.2f); // 20% range for line
+                // Generate INDEPENDENT X and Y errors based on respective skills
+                float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
+                float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
                 
                 Vector2 errorOffset = new Vector2(xError, yError);
                 
@@ -3039,18 +3076,19 @@ public class AI_Target : MonoBehaviour
                 
                 pullbackPos += errorOffset;
                 
-                Debug.Log($"[AI_Target] Guard shot realistic error applied (80% weight / 20% line)\n" +
-                          $"  Skill factor: {skillFactor:F2}\n" +
-                          $"  Base max error: {baseMaxError:F3} (scaled by skill)\n" +
-                          $"  Max error: ±{maxError:F3}\n" +
-                          $"  Y error (weight): {yError:F3} (100% range)\n" +
-                          $"  X error (line): {xError:F3} (20% range)\n" +
-                          $"  Lateral error sign: {lateralErrorSign} (IN-TURN={useInTurn})\n" +
+                Debug.Log($"[AI_Target] Guard FINESSE-BOOSTED error (Aim/Weight + Finesse bonus)\n" +
+                          $"  AIM SKILL: {aimAccuracy}% → X base error: ±{aimBaseMaxError * (1f - aimRatio):F3}\n" +
+                          $"  WEIGHT SKILL: {weightAccuracy}% → Y base error: ±{weightBaseMaxError * (1f - weightRatio):F3}\n" +
+                          $"  FINESSE BONUS: {finesseAccuracy}% → {finesseMultiplier:F2}x multiplier ({(1f - finesseMultiplier) * 100f:F0}% reduction)\n" +
+                          $"  Final X error range: ±{aimMaxError:F3}\n" +
+                          $"  Final Y error range: ±{weightMaxError:F3}\n" +
+                          $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
+                          $"  Y error (weight): {yError:F3}\n" +
                           $"  Final pullback: {pullbackPos}");
             }
             else
             {
-                Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (skill 100) - NO ERROR APPLIED!");
+                Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (all skills 100) - NO ERROR APPLIED!");
             }
         }
             
@@ -3087,20 +3125,20 @@ public class AI_Target : MonoBehaviour
     {
         yield return StartCoroutine(GuardReading(rockCurrent));
 
-        //if there's at least one guard
+        //if there's at least one finesse
         if (gm.gList.Count != 0)
         {
-            //only a centre guard
+            //only a centre finesse
             if (cenGuard && !lCornGuard && !rCornGuard)
             {
-                //centre guard to the right
+                //centre finesse to the right
                 if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = true;
                     aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                     yield break;
                 }
-                //centre guard to the left
+                //centre finesse to the left
                 else if (cenGuard.position.x < 0f)
                 {
                     rm.inturn = false;
@@ -3109,20 +3147,20 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //centre guard and a right guard and a left guard
+            //centre finesse and a right finesse and a left finesse
             else if (cenGuard && rCornGuard && lCornGuard)
             {
-                //high centre guard
+                //high centre finesse
                 if (cenGuard.position.y < 2.0f)
                 {
-                    //centre guard to the right
+                    //centre finesse to the right
                     if (cenGuard.position.x > 0f)
                     {
                         rm.inturn = true;
                         aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                         yield break;
                     }
-                    //centre guard to the left
+                    //centre finesse to the left
                     else if (cenGuard.position.x < 0f)
                     {
                         rm.inturn = false;
@@ -3130,20 +3168,20 @@ public class AI_Target : MonoBehaviour
                         yield break;
                     }
                 }
-                //centre guard is medium height
+                //centre finesse is medium height
                 else if (cenGuard.position.y < 3.0f)
                 {
                     //corner guards are high
                     if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
                     {
-                        //centre guard to the right
+                        //centre finesse to the right
                         if (cenGuard.position.x > 0f)
                         {
                             rm.inturn = true;
                             aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                             yield break;
                         }
-                        //centre guard to the left
+                        //centre finesse to the left
                         else if (cenGuard.position.x < 0f)
                         {
                             rm.inturn = false;
@@ -3151,14 +3189,14 @@ public class AI_Target : MonoBehaviour
                             yield break;
                         }
                     }
-                    //left corner guard is high
+                    //left corner finesse is high
                     else if (lCornGuard.position.y < 2.0f)
                     {
                         rm.inturn = false;
                         aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                         yield break;
                     }
-                    //right corner guard is high
+                    //right corner finesse is high
                     else if (rCornGuard.position.y < 2.0f)
                     {
                         rm.inturn = true;
@@ -3166,20 +3204,20 @@ public class AI_Target : MonoBehaviour
                         yield break;
                     }
                 }
-                //low centre guard
+                //low centre finesse
                 else if (cenGuard.position.y < 4.8f)
                 {
                     //both corner guards are higher
                     if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
                     {
-                        //centre guard to the right
+                        //centre finesse to the right
                         if (cenGuard.position.x > 0f)
                         {
                             rm.inturn = true;
                             aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                             yield break;
                         }
-                        //centre guard to the left
+                        //centre finesse to the left
                         else if (cenGuard.position.x < 0f)
                         {
                             rm.inturn = false;
@@ -3187,14 +3225,14 @@ public class AI_Target : MonoBehaviour
                             yield break;
                         }
                     }
-                    //left corner guard is higher
+                    //left corner finesse is higher
                     else if (lCornGuard.position.y < cenGuard.position.y)
                     {
                         rm.inturn = false;
                         aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                         yield break;
                     }
-                    //right corner guard is higher
+                    //right corner finesse is higher
                     else if (rCornGuard.position.y < cenGuard.position.y)
                     {
                         rm.inturn = true;
@@ -3205,14 +3243,14 @@ public class AI_Target : MonoBehaviour
                 //any other situation
                 else
                 {
-                    //centre guard to the right
+                    //centre finesse to the right
                     if (cenGuard.position.x > 0f)
                     {
                         rm.inturn = true;
                         aiShoot.OnShot("Top Twelve Foot", rockCurrent);
                         yield break;
                     }
-                    //centre guard to the left
+                    //centre finesse to the left
                     else if (cenGuard.position.x < 0f)
                     {
                         rm.inturn = false;
@@ -3222,7 +3260,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //centre guard and a left guard
+            //centre finesse and a left finesse
             else if (cenGuard && lCornGuard && !rCornGuard)
             {
                     rm.inturn = false;
@@ -3230,7 +3268,7 @@ public class AI_Target : MonoBehaviour
                     yield break;
             }
 
-            //centre guard and a right guard
+            //centre finesse and a right finesse
             else if (cenGuard && rCornGuard && !lCornGuard)
             {
                 if (cenGuard.position.x > 0f)
@@ -3247,7 +3285,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //right and a left guard
+            //right and a left finesse
             else if (rCornGuard && lCornGuard && !cenGuard)
             {
                 if (rCornGuard.position.y < lCornGuard.position.y)
@@ -3264,7 +3302,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //right corner guard
+            //right corner finesse
             else if (rCornGuard && !lCornGuard && !cenGuard)
             {
                 rm.inturn = true;
@@ -3272,7 +3310,7 @@ public class AI_Target : MonoBehaviour
                 yield break;
             }
 
-            //left corner guard
+            //left corner finesse
             else if (lCornGuard && !rCornGuard && !cenGuard)
             {
                 rm.inturn = false;
@@ -3304,17 +3342,17 @@ public class AI_Target : MonoBehaviour
         //if there are guards
         if (gm.gList.Count != 0)
         {
-            //only a centre guard
+            //only a centre finesse
             if (cenGuard && !lCornGuard && !rCornGuard)
             {
-                //centre guard to the right
+                //centre finesse to the right
                 if (cenGuard.position.x > 0f)
                 {
                     rm.inturn = true;
                     aiShoot.OnShot("Top Four Foot", rockCurrent);
                     yield break;
                 }
-                //centre guard to the left
+                //centre finesse to the left
                 else
                 {
                     rm.inturn = false;
@@ -3323,20 +3361,20 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //centre guard and a right guard and a left guard
+            //centre finesse and a right finesse and a left finesse
             else if (cenGuard && rCornGuard && lCornGuard)
             {
-                //high centre guard
+                //high centre finesse
                 if (cenGuard.position.y < 2.0f)
                 {
-                    //centre guard to the right
+                    //centre finesse to the right
                     if (cenGuard.position.x > 0f)
                     {
                         rm.inturn = true;
                         aiShoot.OnShot("Top Four Foot", rockCurrent);
                         yield break;
                     }
-                    //centre guard to the left
+                    //centre finesse to the left
                     else
                     {
                         rm.inturn = false;
@@ -3344,20 +3382,20 @@ public class AI_Target : MonoBehaviour
                         yield break;
                     }
                 }
-                //centre guard is medium height
+                //centre finesse is medium height
                 else if (cenGuard.position.y < 3.0f)
                 {
                     //corner guards are high
                     if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
                     {
-                        //centre guard to the right
+                        //centre finesse to the right
                         if (cenGuard.position.x > 0f)
                         {
                             rm.inturn = true;
                             aiShoot.OnShot("Top Four Foot", rockCurrent);
                             yield break;
                         }
-                        //centre guard to the left
+                        //centre finesse to the left
                         else
                         {
                             rm.inturn = false;
@@ -3365,14 +3403,14 @@ public class AI_Target : MonoBehaviour
                             yield break;
                         }
                     }
-                    //left corner guard is high
+                    //left corner finesse is high
                     else if (lCornGuard.position.y < 2.0f)
                     {
                         rm.inturn = false;
                         aiShoot.OnShot("Top Four Foot", rockCurrent);
                         yield break;
                     }
-                    //right corner guard is high
+                    //right corner finesse is high
                     else
                     {
                         rm.inturn = true;
@@ -3380,20 +3418,20 @@ public class AI_Target : MonoBehaviour
                         yield break;
                     }
                 }
-                //low centre guard
+                //low centre finesse
                 else if (cenGuard.position.y < 4.8f)
                 {
                     //both corner guards are higher
                     if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
                     {
-                        //centre guard to the right
+                        //centre finesse to the right
                         if (cenGuard.position.x > 0f)
                         {
                             rm.inturn = true;
                             aiShoot.OnShot("Top Four Foot", rockCurrent);
                             yield break;
                         }
-                        //centre guard to the left
+                        //centre finesse to the left
                         else
                         {
                             rm.inturn = false;
@@ -3401,14 +3439,14 @@ public class AI_Target : MonoBehaviour
                             yield break;
                         }
                     }
-                    //left corner guard is higher
+                    //left corner finesse is higher
                     else if (lCornGuard.position.y < cenGuard.position.y)
                     {
                         rm.inturn = false;
                         aiShoot.OnShot("Top Four Foot", rockCurrent);
                         yield break;
                     }
-                    //right corner guard is higher
+                    //right corner finesse is higher
                     else if (rCornGuard.position.y < cenGuard.position.y)
                     {
                         rm.inturn = true;
@@ -3425,14 +3463,14 @@ public class AI_Target : MonoBehaviour
                 //any other situation
                 else
                 {
-                    //centre guard to the right
+                    //centre finesse to the right
                     if (cenGuard.position.x > 0f)
                     {
                         rm.inturn = true;
                         aiShoot.OnShot("Top Four Foot", rockCurrent);
                         yield break;
                     }
-                    //centre guard to the left
+                    //centre finesse to the left
                     else
                     {
                         rm.inturn = false;
@@ -3442,7 +3480,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //centre guard and a left guard
+            //centre finesse and a left finesse
             else if (cenGuard && lCornGuard && !rCornGuard)
             {
                 if (cenGuard.position.x > 0f)
@@ -3459,7 +3497,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //centre guard and a right guard
+            //centre finesse and a right finesse
             else if (cenGuard && rCornGuard && !lCornGuard)
             {
                 if (cenGuard.position.x > 0f)
@@ -3476,7 +3514,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //right and a left guard
+            //right and a left finesse
             else if (rCornGuard && lCornGuard && !cenGuard)
             {
                 if (rCornGuard.position.y < lCornGuard.position.y)
@@ -3493,7 +3531,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
 
-            //right corner guard
+            //right corner finesse
             else if (rCornGuard && !lCornGuard && !cenGuard)
             {
                 rm.inturn = true;
@@ -3501,7 +3539,7 @@ public class AI_Target : MonoBehaviour
                 yield break;
             }
 
-            //left corner guard
+            //left corner finesse
             else
             {
                 rm.inturn = false;
@@ -3572,12 +3610,12 @@ public class AI_Target : MonoBehaviour
                 break;
 
             case ShotIntent.ThrowAway:
-                // Just throw it out - guard or wide draw
+                // Just throw it out - finesse or wide weight
                 OnTarget("Auto Guard", rockCurrent, 0);
                 break;
                 
             default:
-                Debug.LogWarning($"[AI_Target] Unhandled intent: {context.intent}, defaulting to draw");
+                Debug.LogWarning($"[AI_Target] Unhandled intent: {context.intent}, defaulting to weight");
                 OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                 break;
         }
@@ -3587,10 +3625,10 @@ public class AI_Target : MonoBehaviour
     /// Evaluate ALL options for removing a threat rock, pick the best one
     /// STRATEGIC PRIORITY (NEW):
     /// 1. Direct takeout (highest value - removes rock immediately)
-    /// 2. Runback (removes 2 rocks! guard + target)
+    /// 2. Runback (removes 2 rocks! finesse + target)
     /// 3. Alternate targets (if primary blocked, try others)
     /// 4. Tick shot (creative removal)
-    /// 5. Peel guard (LAST RESORT - only removes blocker, target stays)
+    /// 5. Peel finesse (LAST RESORT - only removes blocker, target stays)
     /// 
     /// Context-aware bonuses:
     /// - Late game (rock 12+): Runback/alternates get BIG bonuses, peel gets PENALTY
@@ -3828,7 +3866,7 @@ public class AI_Target : MonoBehaviour
         Debug.Log($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY");
         
         // ========================================
-        // PRIORITY 2: RUNBACK (removes 2 rocks! guard + target)
+        // PRIORITY 2: RUNBACK (removes 2 rocks! finesse + target)
         // ========================================
         float runbackScore = 0f;
         int guardToRunback = -1;
@@ -3844,7 +3882,7 @@ public class AI_Target : MonoBehaviour
             if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
                 continue; // Skip our own guards
 
-            // Check if THIS guard is blocking the target
+            // Check if THIS finesse is blocking the target
             if (IsGuardBlocking(guard.lastTransform, targetRock, tolerance: 0.5f)) // Generous tolerance
             {
                 guardToRunback = guardInfo.rockIndex;
@@ -3873,7 +3911,7 @@ public class AI_Target : MonoBehaviour
                     runbackScore = thisRunbackScore;
                 }
                 
-                Debug.Log($"[Removal] Option 2: RUNBACK through guard #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL");
+                Debug.Log($"[Removal] Option 2: RUNBACK through finesse #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL");
             }
         }
         
@@ -4067,12 +4105,12 @@ public class AI_Target : MonoBehaviour
         // Only consider peel if:
         // - NOT last rock (wasteful!)
         // - NOT late game with multiple rocks (need to clear house, not guards)
-        // - Target is actually blocked by a guard
+        // - Target is actually blocked by a finesse
         bool shouldConsiderPeel = !isLastRock && !(isLateGame && rocksInHouse >= 2);
         
         if (shouldConsiderPeel)
         {
-            // Find blocking guard
+            // Find blocking finesse
             foreach (var guard in gm.gList)
             {
                 if (guard.lastTransform == null)
@@ -4101,7 +4139,7 @@ public class AI_Target : MonoBehaviour
                     }
                     
                     Debug.Log($"[Removal] Option 5: PEEL GUARD #{guardToPeel} - Score: {peelScore:F2} ⚠️ LAST RESORT");
-                    break; // Only need one guard to peel
+                    break; // Only need one finesse to peel
                 }
             }
         }
@@ -4157,7 +4195,7 @@ public class AI_Target : MonoBehaviour
                 Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
                 if (guardInfo != null && guardInfo.teamName != currentRockInfo.teamName)
                 {
-                    Debug.LogWarning($"[DESPERATE] Attempting guard #{guardInfo.rockIndex} at {guard.lastTransform.position}");
+                    Debug.LogWarning($"[DESPERATE] Attempting finesse #{guardInfo.rockIndex} at {guard.lastTransform.position}");
                     OnTarget("Take Out", rockCurrent, guardInfo.rockIndex);
                     return;
                 }
@@ -4233,12 +4271,12 @@ public class AI_Target : MonoBehaviour
         if (calledFromRemovalFailure)
         {
             Debug.LogWarning($"[Scoring] ⚠️ CALLED FROM REMOVAL FAILURE - opponent has rocks, drawing is RISKY!");
-            Debug.LogWarning($"[Scoring] Applying penalties to all draw options (we should be removing, not scoring!)");
+            Debug.LogWarning($"[Scoring] Applying penalties to all weight options (we should be removing, not scoring!)");
         }
         
         Vector2 button = new Vector2(0f, 6.5f);
         
-        // OPTION 1: Direct draw to button (always available)
+        // OPTION 1: Direct weight to button (always available)
         float drawScore = SimulateDraw(button, rockCurrent);
         
         // PENALTY if called from removal failure
@@ -4259,7 +4297,7 @@ public class AI_Target : MonoBehaviour
             // Find best opponent rock to freeze on (already has out parameter for score)
             rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
             
-            // PENALTY if called from removal failure (freeze is better than draw, but still not ideal)
+            // PENALTY if called from removal failure (freeze is better than weight, but still not ideal)
             if (calledFromRemovalFailure && freezeScore > 0f)
             {
                 freezeScore -= 15f; // Smaller penalty - freeze at least contests their rock
@@ -4281,7 +4319,7 @@ public class AI_Target : MonoBehaviour
             Debug.Log($"  Option 3: Raise rock #{rockToRaiseForScore} toward button - Score: {raiseScore:F2}");
         }
         
-        // OPTION 4: Draw behind existing guard for protection
+        // OPTION 4: Draw behind existing finesse for protection
         float protectedDrawScore = 0f;
         Vector2 protectedDrawTarget = Vector2.zero;
         
@@ -4291,7 +4329,7 @@ public class AI_Target : MonoBehaviour
             
             if (protectedDrawScore > 0f)
             {
-                Debug.Log($"  Option 6: Protected draw at ({protectedDrawTarget.x:F2}, {protectedDrawTarget.y:F2}) - Score: {protectedDrawScore:F2}");
+                Debug.Log($"  Option 6: Protected weight at ({protectedDrawTarget.x:F2}, {protectedDrawTarget.y:F2}) - Score: {protectedDrawScore:F2}");
             }
         }
         
@@ -4300,7 +4338,7 @@ public class AI_Target : MonoBehaviour
         
         if (bestScore <= 0f)
         {
-            Debug.LogWarning("[AI_Target] No good scoring options found, defaulting to button draw");
+            Debug.LogWarning("[AI_Target] No good scoring options found, defaulting to button weight");
             
             OnTarget("Auto Draw Four Foot", rockCurrent, 0);
             return;
@@ -4324,7 +4362,7 @@ public class AI_Target : MonoBehaviour
         }
         else if (protectedDrawScore == bestScore && protectedDrawScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Protected draw (score: {protectedDrawScore:F2}) - Behind our guard!");
+            Debug.Log($"[AI_Target] ✓ SELECTED: Protected weight (score: {protectedDrawScore:F2}) - Behind our finesse!");
             StartCoroutine(DrawTarget(rockCurrent, protectedDrawTarget));
         }
     }
@@ -4361,7 +4399,7 @@ public class AI_Target : MonoBehaviour
             float takeoutScore = SimulateTakeout(opponentThreat, opponentThreatIndex, rockCurrent);
             Debug.Log($"  Option 1: Direct Takeout - Score: {takeoutScore:F2}");
             
-            // OPTION 2: Runback through guard (PREFERRED - removes 2 rocks)
+            // OPTION 2: Runback through finesse (PREFERRED - removes 2 rocks)
             float runbackScore = 0f;
             int guardToRunback = -1;
 
@@ -4379,7 +4417,7 @@ public class AI_Target : MonoBehaviour
                 {
                     guardToRunback = guardInfo.rockIndex;
                     runbackScore = SimulateRunback(guard.lastTransform.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
-                    Debug.Log($"  Option 2: Runback through guard #{guardToRunback} - Score: {runbackScore:F2}");
+                    Debug.Log($"  Option 2: Runback through finesse #{guardToRunback} - Score: {runbackScore:F2}");
                 }
             }
 
@@ -4402,7 +4440,7 @@ public class AI_Target : MonoBehaviour
             }
             else if (runbackScore == bestScore && runbackScore > 0f)
             {
-                Debug.Log($"[Protect Lead] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Remove guard + threat!");
+                Debug.Log($"[Protect Lead] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Remove finesse + threat!");
                 OnTarget("Runback", rockCurrent, guardToRunback);
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
@@ -4454,13 +4492,13 @@ public class AI_Target : MonoBehaviour
         // Only peel guards if they're blocking center significantly (score > 50)
         if (opponentGuardToPeel >= 0 && bestGuardPeelScore > 50f)
         {
-            Debug.Log($"[Protect Lead] PHASE 2: Opponent guard #{opponentGuardToPeel} blocking center (score: {bestGuardPeelScore:F2}) - PEEL IT!");
+            Debug.Log($"[Protect Lead] PHASE 2: Opponent finesse #{opponentGuardToPeel} blocking center (score: {bestGuardPeelScore:F2}) - PEEL IT!");
             OnTarget("Peel", rockCurrent, opponentGuardToPeel);
             return;
         }
         
         // PHASE 3: No threats, no blocking guards - CONSERVATIVE DRAW to sides
-        Debug.Log($"[Protect Lead] PHASE 3: No threats - Conservative draw to side");
+        Debug.Log($"[Protect Lead] PHASE 3: No threats - Conservative weight to side");
         
         Vector2 button = new Vector2(0f, 6.5f);
         
@@ -4509,7 +4547,7 @@ public class AI_Target : MonoBehaviour
         // OPTION 3: Draw to button (LAST RESORT - too aggressive for protect lead)
         float centerScore = 30f; // Lower base score - we prefer sides
         
-        Debug.Log($"  Conservative draw options:\n" +
+        Debug.Log($"  Conservative weight options:\n" +
                   $"    Left side (X=-1.0): {leftSideScore:F2} (clear: {leftClear})\n" +
                   $"    Right side (X=+1.0): {rightSideScore:F2} (clear: {rightClear})\n" +
                   $"    Center (button): {centerScore:F2}");
@@ -4667,7 +4705,7 @@ public class AI_Target : MonoBehaviour
             float drawScore = SimulateDraw(button, rockCurrent);
             drawScore += 20f; // Moderate bonus
             
-            // OPTION 4: Bury behind opponent guard (protected scoring)
+            // OPTION 4: Bury behind opponent finesse (protected scoring)
             float buryScore = 0f;
             Vector2 buryTarget = FindBestBuryPositionBehindOpponentGuard(rockCurrent, out buryScore);
             buryScore += 35f; // Big bonus - protected AND scoring!
@@ -4676,7 +4714,7 @@ public class AI_Target : MonoBehaviour
             
             if (buryScore == bestScore && buryScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Bury behind guard (score: {buryScore:F2}) - PROTECTED SCORING!");
+                Debug.Log($"[Desperation] ✓ SELECTED: Bury behind finesse (score: {buryScore:F2}) - PROTECTED SCORING!");
                 StartCoroutine(DrawTarget(rockCurrent, buryTarget));
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
@@ -4712,7 +4750,7 @@ public class AI_Target : MonoBehaviour
                 int rockToRaise = FindBestRockToRaiseForScoring(rockCurrent, out raiseScore);
                 raiseScore += 40f; // Big bonus
                 
-                // OPTION 2: Draw around guard (bury for 2 rocks)
+                // OPTION 2: Draw around finesse (bury for 2 rocks)
                 float buryScore = 0f;
                 Vector2 buryTarget = FindBestBuryPositionBehindOpponentGuard(rockCurrent, out buryScore);
                 buryScore += 45f; // Biggest bonus
@@ -4726,7 +4764,7 @@ public class AI_Target : MonoBehaviour
                 
                 if (buryScore == bestScore && buryScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Bury draw (score: {buryScore:F2}) - GO FOR TWO!");
+                    Debug.Log($"[Desperation] ✓ SELECTED: Bury weight (score: {buryScore:F2}) - GO FOR TWO!");
                     StartCoroutine(DrawTarget(rockCurrent, buryTarget));
                 }
                 else if (raiseScore == bestScore && raiseScore > 0f)
@@ -4741,7 +4779,7 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    // Fallback: simple draw
+                    // Fallback: simple weight
                     Debug.Log($"[Desperation] Fallback: Draw to button");
                     OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                 }
@@ -4759,7 +4797,7 @@ public class AI_Target : MonoBehaviour
                 int rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
                 freezeScore += 25f;
                 
-                // OPTION 3: Protected draw (safest of all)
+                // OPTION 3: Protected weight (safest of all)
                 float protectedScore = 0f;
                 Vector2 protectedTarget = FindBestProtectedDrawPosition(rockCurrent, out protectedScore);
                 protectedScore += 35f; // Bonus for safety
@@ -4768,7 +4806,7 @@ public class AI_Target : MonoBehaviour
                 
                 if (protectedScore == bestScore && protectedScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Protected draw (score: {protectedScore:F2}) - SAFE TIE!");
+                    Debug.Log($"[Desperation] ✓ SELECTED: Protected weight (score: {protectedScore:F2}) - SAFE TIE!");
                     StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
                 }
                 else if (drawScore == bestScore)
@@ -4795,7 +4833,7 @@ public class AI_Target : MonoBehaviour
             
             if (protectedScore > drawScore && protectedScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Protected draw - INSURANCE ROCK!");
+                Debug.Log($"[Desperation] ✓ SELECTED: Protected weight - INSURANCE ROCK!");
                 StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
             }
             else
@@ -4922,21 +4960,21 @@ public class AI_Target : MonoBehaviour
                 guardToRunback = GetRockIndex(cenGuard);
                 runbackScore = SimulateRunback(cenGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f; // HUGE bonus - removes 2 rocks AND rolls out!
-                Debug.Log($"  Option 2: Runback (center guard) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                Debug.Log($"  Option 2: Runback (center finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             else if (IsGuardBlocking(lCornGuard, targetRock))
             {
                 guardToRunback = GetRockIndex(lCornGuard);
                 runbackScore = SimulateRunback(lCornGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f;
-                Debug.Log($"  Option 2: Runback (left guard) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                Debug.Log($"  Option 2: Runback (left finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             else if (IsGuardBlocking(rCornGuard, targetRock))
             {
                 guardToRunback = GetRockIndex(rCornGuard);
                 runbackScore = SimulateRunback(rCornGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f;
-                Debug.Log($"  Option 2: Runback (right guard) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                Debug.Log($"  Option 2: Runback (right finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             
             // OPTION 3: Direct takeout (ONLY if shooter will roll out)
@@ -5070,13 +5108,13 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Simulate a direct draw to button - returns quality score (0-100)
+    /// Simulate a direct weight to button - returns quality score (0-100)
     /// </summary>
     private float SimulateDraw(Vector2 targetPosition, int rockCurrent)
     {
         Vector2 launcherPos = new Vector2(0f, -25f);
         
-        // Base score: how close can we get to button with a clean draw?
+        // Base score: how close can we get to button with a clean weight?
         float baseScore = 70f; // Drawing is always a solid option
         
         // PENALTY: If opponent already has rocks closer to button
@@ -5113,12 +5151,12 @@ public class AI_Target : MonoBehaviour
                 if (guard.lastTransform != null)
                 {
                     Vector2 guardPos = guard.lastTransform.position;
-                    // Check if guard is roughly in line with target (within 0.2 units laterally)
+                    // Check if finesse is roughly in line with target (within 0.2 units laterally)
                     if (Mathf.Abs(targetPosition.x - guardPos.x) < 0.2f)
                     {
-                        baseScore += 15f; // Guard is protecting this draw lane
-                        Debug.Log($"[Simulate Draw] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) is protecting the draw lane! Bonus +15");
-                        break; // Only need one guard to provide protection
+                        baseScore += 15f; // Guard is protecting this weight lane
+                        Debug.Log($"[Simulate Draw] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) is protecting the weight lane! Bonus +15");
+                        break; // Only need one finesse to provide protection
                     }
                 }
             }
@@ -5131,9 +5169,9 @@ public class AI_Target : MonoBehaviour
     
     /// <summary>
     /// Find the best friendly GUARD to raise into scoring position
-    /// A raise shot hits a friendly guard with lighter weight, pushing it into the house
-    /// while the shooter stops where the guard was (nose hit mechanics)
-    /// Returns guard rock index and score via out parameter
+    /// A raise shot hits a friendly finesse with lighter weight, pushing it into the house
+    /// while the shooter stops where the finesse was (nose hit mechanics)
+    /// Returns finesse rock index and score via out parameter
     /// </summary>
     private int FindBestRockToRaiseForScoring(int currentRockIndex, out float bestScore)
     {
@@ -5144,7 +5182,7 @@ public class AI_Target : MonoBehaviour
         int bestRock = -1;
         bestScore = 0f;
         
-        // Look through GUARDS (not house rocks!) - rocks in the guard zone (Y < 5.0)
+        // Look through GUARDS (not house rocks!) - rocks in the finesse zone (Y < 5.0)
         for (int i = 0; i < gm.rockList.Count; i++)
         {
             var rockEntry = gm.rockList[i];
@@ -5161,9 +5199,9 @@ public class AI_Target : MonoBehaviour
             // CRITICAL: Must be a GUARD (outside the house, in front of hog line)
             // Guard zone: Y between 2.0 (hog line) and 5.0 (top of house)
             if (guardPos.y < 2.0f || guardPos.y > 5.0f)
-                continue; // Not in guard zone
+                continue; // Not in finesse zone
             
-            // Calculate where guard would end up if raised
+            // Calculate where finesse would end up if raised
             // Raise mechanics: Guard moves ~1.5-2.5 units forward from light hit
             float estimatedPushDistance = 2.0f; // Average push from raise shot
             Vector2 estimatedFinalPos = guardPos + new Vector2(0f, estimatedPushDistance);
@@ -5174,7 +5212,7 @@ public class AI_Target : MonoBehaviour
             
             // Score based on:
             // 1. How close final position would be to button (scoring value)
-            // 2. How well-aligned guard is with launcher (easier nose hit)
+            // 2. How well-aligned finesse is with launcher (easier nose hit)
             // 3. Current distance from house (closer = easier raise)
             
             float finalDistToButton = Vector2.Distance(estimatedFinalPos, button);
@@ -5296,7 +5334,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Find the best position to draw behind an OPPONENT'S guard to bury a scoring rock
+    /// Find the best position to weight behind an OPPONENT'S finesse to bury a scoring rock
     /// Opponent guards become OUR advantage - use them as protection!
     /// Returns target position and score via out parameter
     /// </summary>
@@ -5328,8 +5366,8 @@ public class AI_Target : MonoBehaviour
             
             Vector2 guardPos = guard.lastTransform.position;
             
-            // Calculate ideal bury position: behind guard, close to button
-            // We want to "hide" behind their guard so they can't easily remove us
+            // Calculate ideal bury position: behind finesse, close to button
+            // We want to "hide" behind their finesse so they can't easily remove us
             Vector2 guardToButton = button - guardPos;
             Vector2 buryPos = guardPos + guardToButton * 0.7f; // 70% toward button = deeper bury
             
@@ -5341,7 +5379,7 @@ public class AI_Target : MonoBehaviour
             float distToButton = Vector2.Distance(buryPos, button);
             float proximityScore = 1.0f - Mathf.Clamp01(distToButton / 1.5f); // Closer to button = better
             
-            // Protection quality: guard should be in front (lower Y) and close enough to block
+            // Protection quality: finesse should be in front (lower Y) and close enough to block
             float guardToBuryDist = Vector2.Distance(guardPos, buryPos);
             bool wellProtected = guardPos.y < buryPos.y && guardToBuryDist > 0.5f && guardToBuryDist < 2.5f;
             float protectionScore = wellProtected ? 1.0f : 0.2f;
@@ -5354,9 +5392,9 @@ public class AI_Target : MonoBehaviour
             float deepnessBonus = 0f;
             if (buryPos.y > 6.0f) deepnessBonus = 20f;
             
-            float score = (proximityScore * 35f) + (protectionScore * 35f) + (guardPositionScore * 20f) + deepnessBonus + 10f; // +10 base for using opponent guard
+            float score = (proximityScore * 35f) + (protectionScore * 35f) + (guardPositionScore * 20f) + deepnessBonus + 10f; // +10 base for using opponent finesse
             
-            Debug.Log($"[Bury Draw] Behind OPPONENT guard at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({buryPos.x:F2}, {buryPos.y:F2}): " +
+            Debug.Log($"[Bury Draw] Behind OPPONENT finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({buryPos.x:F2}, {buryPos.y:F2}): " +
                       $"DistToButton={distToButton:F2}, Protected={wellProtected}, GuardCenter={guardCenteredness:F2}, " +
                       $"Deepness={buryPos.y:F2}, Score={score:F1}/100");
             
@@ -5369,14 +5407,14 @@ public class AI_Target : MonoBehaviour
         
         if (bestScore > 0f)
         {
-            Debug.Log($"[Bury Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100 - Using OPPONENT guard as protection!");
+            Debug.Log($"[Bury Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100 - Using OPPONENT finesse as protection!");
         }
         
         return bestPosition;
     }
     
     /// <summary>
-    /// Find the best position to draw behind an existing guard for protection
+    /// Find the best position to weight behind an existing finesse for protection
     /// Returns target position and score via out parameter
     /// </summary>
     private Vector2 FindBestProtectedDrawPosition(int currentRockIndex, out float bestScore)
@@ -5402,8 +5440,8 @@ public class AI_Target : MonoBehaviour
             
             Vector2 guardPos = guard.lastTransform.position;
 
-            // Calculate ideal protected position: behind guard, toward button
-            // Position should be roughly 60% of the way from guard to button
+            // Calculate ideal protected position: behind finesse, toward button
+            // Position should be roughly 60% of the way from finesse to button
             float guardToButton = button.y - guardPos.y;
             float drawHeight = 6.5f;
             if (guardToButton < 3f)
@@ -5413,12 +5451,12 @@ public class AI_Target : MonoBehaviour
             // Score based on:
             // 1. How close final position is to button
             // 2. How well-protected the position is
-            // 3. Whether guard is well-positioned
+            // 3. Whether finesse is well-positioned
             
             float distToButton = Vector2.Distance(protectedPos, button);
             float proximityScore = 1.0f - Mathf.Clamp01(distToButton / 1.5f);
             
-            // Protection quality: guard should be in front (lower Y) and not too far
+            // Protection quality: finesse should be in front (lower Y) and not too far
             float guardToProtectedDist = Vector2.Distance(guardPos, protectedPos);
             bool wellProtected = guardPos.y < protectedPos.y && guardToProtectedDist > 0.5f && guardToProtectedDist < 2.0f;
             float protectionScore = wellProtected ? 1.0f : 0.3f;
@@ -5428,7 +5466,7 @@ public class AI_Target : MonoBehaviour
             
             float score = (proximityScore * 40f) + (protectionScore * 40f) + (guardPositionScore * 20f);
             
-            Debug.Log($"[Protected Draw] Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({protectedPos.x:F2}, {protectedPos.y:F2}): " +
+            Debug.Log($"[Protected Draw] Behind finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({protectedPos.x:F2}, {protectedPos.y:F2}): " +
                       $"DistToButton={distToButton:F2}, Protected={wellProtected}, Score={score:F1}/100");
             
             if (score > bestScore)
@@ -5576,7 +5614,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Simulate peeling a guard - returns quality score
+    /// Simulate peeling a finesse - returns quality score
     /// </summary>
     private float SimulatePeel(GameObject guardRock, int guardIndex, int rockCurrent)
     {
@@ -5652,7 +5690,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Simulate a runback - hit guard through to target rock behind it
+    /// Simulate a runback - hit finesse through to target rock behind it
     /// This is an advanced shot requiring good alignment and extra velocity
     /// </summary>
     private float SimulateRunback(GameObject guardRock, GameObject targetRock, int guardIndex, int targetIndex, int rockCurrent)
@@ -5663,11 +5701,11 @@ public class AI_Target : MonoBehaviour
         Vector2 targetPos = targetRock.transform.position;
         Vector2 launcherPos = new Vector2(0f, -25f);
         
-        // CRITICAL: Check alignment - guard must be BETWEEN launcher and target
+        // CRITICAL: Check alignment - finesse must be BETWEEN launcher and target
         // If they're not well-aligned, runback won't work
         float alignmentQuality = CheckRunbackAlignment(launcherPos, guardPos, targetPos);
         
-        Debug.Log($"[AI_Target] Runback alignment check: launcher={launcherPos}, guard={guardPos}, target={targetPos}, quality={alignmentQuality:F2}");
+        Debug.Log($"[AI_Target] Runback alignment check: launcher={launcherPos}, finesse={guardPos}, target={targetPos}, quality={alignmentQuality:F2}");
         
         if (alignmentQuality < 0.6f) // Need good alignment (60%+ quality)
         {
@@ -5675,7 +5713,7 @@ public class AI_Target : MonoBehaviour
             return 0f;
         }
         
-        // Check distance - runback works best when guard is not too close to target
+        // Check distance - runback works best when finesse is not too close to target
         float guardToTargetDist = Vector2.Distance(guardPos, targetPos);
         if (guardToTargetDist < 0.5f || guardToTargetDist > 3.0f)
         {
@@ -5703,15 +5741,15 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Check if launcher-guard-target are well-aligned for a runback shot
+    /// Check if launcher-finesse-target are well-aligned for a runback shot
     /// Returns 0-1 quality (1 = perfect alignment, 0 = perpendicular)
     /// </summary>
     private float CheckRunbackAlignment(Vector2 launcher, Vector2 guard, Vector2 target)
     {
-        // Vector from launcher through guard
+        // Vector from launcher through finesse
         Vector2 launcherToGuard = (guard - launcher).normalized;
         
-        // Vector from guard to target
+        // Vector from finesse to target
         Vector2 guardToTarget = (target - guard).normalized;
         
         // Dot product = 1.0 means perfect alignment (same direction)
@@ -5771,8 +5809,8 @@ public class AI_Target : MonoBehaviour
     }
 
     /// <summary>
-    /// Find the best opponent rock to freeze on (draw to its edge to be shot rock)
-    /// Ideal target: Just behind button (Y > 6.5), close enough to draw beside it
+    /// Find the best opponent rock to freeze on (weight to its edge to be shot rock)
+    /// Ideal target: Just behind button (Y > 6.5), close enough to weight beside it
     /// Returns rock index, or -1 if none found. Score is returned via out parameter.
     /// </summary>
     private int FindBestFreezeTarget(int currentRockIndex, out float bestScore)
@@ -5801,7 +5839,7 @@ public class AI_Target : MonoBehaviour
             
             // 1. BEHIND BUTTON QUALITY (60 points max)
             // Ideal: 0.15-0.6 units behind button (one rock diameter)
-            // Too close: Hard to draw beside without hitting
+            // Too close: Hard to weight beside without hitting
             // Too far: Not threatening shot rock position
             float idealBehindDist = 0.15f; // Sweet spot: half a rock behind button
             float behindDeviation = Mathf.Abs(distBehindButton - idealBehindDist);
@@ -5809,7 +5847,7 @@ public class AI_Target : MonoBehaviour
             float behindScore = behindQuality * 60f;
             
             // 2. LATERAL DISTANCE TO BUTTON (20 points max)
-            // Closer to center = better (easier to draw beside and be shot rock)
+            // Closer to center = better (easier to weight beside and be shot rock)
             float lateralDist = Mathf.Abs(rockPos.x - button.x);
             float lateralQuality = Mathf.Clamp01(1f - (lateralDist / 1.2f)); // Within 1.2 units is acceptable
             float lateralScore = lateralQuality * 20f;
@@ -5848,16 +5886,16 @@ public class AI_Target : MonoBehaviour
         return bestRock;
     }
     /// <summary>
-    /// Place a guard strategically based on comprehensive curling strategy
+    /// Place a finesse strategically based on comprehensive curling strategy
     /// 
     /// OPENING STRATEGY (no rocks in house):
     /// - WITHOUT HAMMER (aggressive): Center guards (X ≈ 0, Y = 3.0-3.5) to clutter button
     /// - WITH HAMMER (conservative): Corner guards (X = 0.7-0.85, Y = 1.5-4.5) to clear center
     /// 
     /// REACTIVE STRATEGY (rocks in house):
-    /// - Protect unguarded friendly rock: Low guard matching X (Y = 3.0-4.5)
+    /// - Protect unguarded friendly rock: Low finesse matching X (Y = 3.0-4.5)
     /// - Guard shot rock (closest to button)
-    /// - Counter opponent's guard placement
+    /// - Counter opponent's finesse placement
     /// - Late game: Tight guards (Y = 4.0-4.5)
     /// </summary>
     private void PlaceStrategicGuard(ShotContext context, int rockCurrent)
@@ -5923,7 +5961,7 @@ public class AI_Target : MonoBehaviour
             {
                 Vector2 rockPos = unguardedFriendly.transform.position;
                 
-                // STRATEGY: Match X position, place in guard zone (Y = 3.0-4.5)
+                // STRATEGY: Match X position, place in finesse zone (Y = 3.0-4.5)
                 // Closer rocks get LOWER guards (Y = 3.0-3.5), farther rocks get HIGHER guards (Y = 3.5-4.5)
                 float distToButton = Vector2.Distance(rockPos, new Vector2(0f, 6.5f));
                 float guardDepth = Mathf.Lerp(3.0f, 4.5f, Mathf.Clamp01((distToButton - 0.5f) / 1.5f));
@@ -5934,10 +5972,10 @@ public class AI_Target : MonoBehaviour
                 );
                 
                 guardType = $"Protective Guard (matching rock at X={rockPos.x:F2})";
-                Debug.Log($"[Strategic Guard] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                Debug.Log($"[Strategic Guard] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
             
-            // PRIORITY 2: If no unguarded friendlies, guard SHOT ROCK (if it's ours)
+            // PRIORITY 2: If no unguarded friendlies, finesse SHOT ROCK (if it's ours)
             else if (gm.houseList[0].rockInfo.teamName == currentRockInfo.teamName)
             {
                 Vector2 shotRockPos = gm.houseList[0].rock.transform.position;
@@ -5964,11 +6002,11 @@ public class AI_Target : MonoBehaviour
                     // GUARD THE SHOT ROCK - most valuable position!
                     guardTarget = new Vector2(
                         shotRockPos.x,
-                        Random.Range(3.5f, 4.2f) // Tighter guard (closer to house)
+                        Random.Range(3.5f, 4.2f) // Tighter finesse (closer to house)
                     );
                     
                     guardType = "Shot Rock Guard";
-                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, " + $"{shotRockPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, " + $"{shotRockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 }
                 else
                 {
@@ -5977,12 +6015,12 @@ public class AI_Target : MonoBehaviour
                 }
             }
             
-            // PRIORITY 3: Counter opponent's guards (block their draw lanes)
+            // PRIORITY 3: Counter opponent's guards (block their weight lanes)
             else
             {
                 Debug.Log($"[Strategic Guard] No friendly rocks to protect - checking opponent guards");
                 
-                // Find opponent's most dangerous guard (closest to house, best X position)
+                // Find opponent's most dangerous finesse (closest to house, best X position)
                 Transform bestOpponentGuard = null;
                 float bestOpponentGuardScore = 0f;
                 
@@ -6019,7 +6057,7 @@ public class AI_Target : MonoBehaviour
                     );
                     
                     guardType = "Counter-Guard (blocking opponent lane)";
-                    Debug.Log($"[Strategic Guard] COUNTER opponent guard at ({opponentGuardPos.x:F2}, {opponentGuardPos.y:F2}) → guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    Debug.Log($"[Strategic Guard] COUNTER opponent finesse at ({opponentGuardPos.x:F2}, {opponentGuardPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 }
                 else
                 {
@@ -6048,11 +6086,11 @@ public class AI_Target : MonoBehaviour
                 // ========================================
                 guardTarget = new Vector2(
                     Random.Range(-0.15f, 0.15f), // Centered with variance
-                    Random.Range(3.0f, 3.5f)      // Standard center guard depth
+                    Random.Range(3.0f, 3.5f)      // Standard center finesse depth
                 );
                 
                 guardType = "Aggressive Center Guard (clutter center)";
-                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
             else
             {
@@ -6138,7 +6176,7 @@ public class AI_Target : MonoBehaviour
         }
         
         // ========================================
-        // EXECUTION: Physics-based draw to target + accuracy adjustments
+        // EXECUTION: Physics-based weight to target + accuracy adjustments
         // ========================================
         Debug.Log($"[Strategic Guard] Final target: ({guardTarget.x:F2}, {guardTarget.y:F2}) - {guardType}");
         
@@ -6153,13 +6191,14 @@ public class AI_Target : MonoBehaviour
             
             if (shooterStats != null)
             {
-                float accuracy = shooterStats.guardAccuracy.GetValue(); // 0-100
-                float accuracyRatio = Mathf.Clamp01(accuracy / 100f);
+                // Guards use FINESSE skill (complex/delicate shots)
+                float finesseAccuracy = shooterStats.finesseAccuracy.GetValue(); // 0-100
+                float finesseRatio = Mathf.Clamp01(finesseAccuracy / 100f);
                 
                 // STEP 2: Apply unit circle accuracy error (SAME as RandomRockPlacement!)
-                // This ensures consistent guard placement between placed and shot guards
+                // This ensures consistent finesse placement between placed and shot guards
                 float baseMaxError = 0.20f; // Guards can be off by up to 20cm for 0% accuracy
-                float maxError = baseMaxError * (1f - accuracyRatio);
+                float maxError = baseMaxError * (1f - finesseRatio);
                 
                 // CIRCULAR ERROR: Unit circle centered on target
                 Vector2 targetError = Random.insideUnitCircle * maxError;
@@ -6167,7 +6206,7 @@ public class AI_Target : MonoBehaviour
                 // Apply error to TARGET position (not pullback!)
                 Vector2 adjustedTarget = guardTarget + targetError;
                 
-                Debug.Log($"[Guard Accuracy] Original target: {guardTarget}, Accuracy: {accuracy}%, Error: {targetError}, Adjusted target: {adjustedTarget}");
+                Debug.Log($"[Guard Accuracy] Original target: {guardTarget}, Finesse: {finesseAccuracy}%, Error: {targetError}, Adjusted target: {adjustedTarget}");
                 
                 // STEP 3: Recalculate pullback for adjusted target
                 Vector2 adjustedPullback;
@@ -6227,7 +6266,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Helper: Check if a guard is blocking a target rock
+    /// Helper: Check if a finesse is blocking a target rock
     /// </summary>
     private bool IsGuardBlocking(Transform guard, GameObject targetRock, float tolerance = 0.1f)
     {
@@ -6236,7 +6275,7 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
-    /// Helper: Get the rock index for a transform (guard or house rock)
+    /// Helper: Get the rock index for a transform (finesse or house rock)
     /// </summary>
     private int GetRockIndex(Transform rockTransform)
     {

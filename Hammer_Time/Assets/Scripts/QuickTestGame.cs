@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ public class QuickTestGame : MonoBehaviour
     [Tooltip("Hotkey to trigger takeout practice mode (default: W) - Sets up 4 red rocks in house, forces yellow AI to take them out")]
     public KeyCode takeoutPracticeKey = KeyCode.W;
     
-    [Tooltip("Hotkey to trigger runback practice mode (default: E) - Sets up a guarded target rock, forces yellow AI to run it back through the guard")]
+    [Tooltip("Hotkey to trigger runback practice mode (default: E) - Sets up a guarded target rock, forces yellow AI to run it back through the finesse")]
     public KeyCode runbackPracticeKey = KeyCode.E;
     
     [Tooltip("Number of rocks per team")]
@@ -155,11 +155,11 @@ public class QuickTestGame : MonoBehaviour
             Debug.Log("[QuickTestGame] Player vs AI mode");
         }
         
-        // 🔒 LOCKED SCENARIO: Always 2-1, yellow has hammer
+        // ?? LOCKED SCENARIO: Always 2-1, yellow has hammer
         gsp.redHammer = false;
         gsp.redScore = 2;
         gsp.yellowScore = 1;
-        Debug.Log($"[QuickTestGame] 🔒 LOCKED: Score 2-1, YELLOW has hammer");
+        Debug.Log($"[QuickTestGame] ?? LOCKED: Score 2-1, YELLOW has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];
@@ -170,9 +170,9 @@ public class QuickTestGame : MonoBehaviour
         {
             name = "Max Stats AI",
             strength = opponentStatValue,
-            draw = opponentStatValue,
-            guard = opponentStatValue,
-            takeOut = opponentStatValue,
+            weight = opponentStatValue,
+            finesse = opponentStatValue,
+            aim = opponentStatValue,
             sweepStrength = opponentStatValue,
             sweepEnduro = opponentStatValue,
             sweepCohesion = opponentStatValue,
@@ -188,24 +188,24 @@ public class QuickTestGame : MonoBehaviour
             {
                 id = i,
                 name = $"AI Player {i + 1}",
-                draw = opponentStatValue,
-                guard = opponentStatValue,
-                takeOut = opponentStatValue,
+                weight = opponentStatValue,
+                finesse = opponentStatValue,
+                aim = opponentStatValue,
                 sweepStrength = opponentStatValue,
                 sweepEnduro = opponentStatValue,
                 sweepCohesion = opponentStatValue
             });
         }
         
-        // ⭐ CRITICAL: Create player team with 100 stats for PERFECT DETERMINISTIC SHOTS!
+        // ? CRITICAL: Create player team with 100 stats for PERFECT DETERMINISTIC SHOTS!
         // NO randomness, NO skill penalties - pure physics for trajectory tuning
         Team playerTeam = new Team
         {
             name = "Test Player (100% Accuracy)",
             strength = 100,  // LOCKED: Perfect stats for trajectory tuning
-            draw = 100,
-            guard = 100,
-            takeOut = 100,
+            weight = 100,
+            finesse = 100,
+            aim = 100,
             sweepStrength = 100,
             sweepEnduro = 100,
             sweepCohesion = 100,
@@ -220,9 +220,9 @@ public class QuickTestGame : MonoBehaviour
             {
                 id = i,
                 name = $"Test Player {i + 1} (Perfect)",
-                draw = 100,      // ⭐ NO RANDOMNESS
-                guard = 100,
-                takeOut = 100,
+                weight = 100,      // ? NO RANDOMNESS
+                finesse = 100,
+                aim = 100,
                 sweepStrength = 100,
                 sweepEnduro = 100,
                 sweepCohesion = 100
@@ -236,29 +236,29 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
-            // ⭐ CRITICAL: Set player stats to 100 for ZERO randomness!
-            cm.cStats.drawAccuracy = 100;
-            cm.cStats.guardAccuracy = 100;
-            cm.cStats.takeOutAccuracy = 100;
+            // ? CRITICAL: Set player stats to 100 for ZERO randomness!
+            cm.cStats.weightAccuracy = 100;
+            cm.cStats.finesseAccuracy = 100;
+            cm.cStats.aimAccuracy = 100;
             cm.cStats.sweepStrength = 100;
             cm.cStats.sweepEndurance = 100;
             cm.cStats.sweepCohesion = 100;
             
             // Max out opponent stats
-            cm.oppStats.drawAccuracy = opponentStatValue;
-            cm.oppStats.guardAccuracy = opponentStatValue;
-            cm.oppStats.takeOutAccuracy = opponentStatValue;
+            cm.oppStats.weightAccuracy = opponentStatValue;
+            cm.oppStats.finesseAccuracy = opponentStatValue;
+            cm.oppStats.aimAccuracy = opponentStatValue;
             cm.oppStats.sweepStrength = opponentStatValue;
             cm.oppStats.sweepEndurance = opponentStatValue;
             cm.oppStats.sweepCohesion = opponentStatValue;
         }
         
-        // ⭐ CRITICAL: Set flag for 100% deterministic player physics (no multipliers!)
+        // ? CRITICAL: Set flag for 100% deterministic player physics (no multipliers!)
         PlayerPrefs.SetInt("QuickTestMode", 1);
         
-        // ⭐ CRITICAL: Disable sweeping in test mode for perfect determinism
+        // ? CRITICAL: Disable sweeping in test mode for perfect determinism
         // Sweeping introduces timing-based variance (when/how long you sweep)
-        // For trajectory tuning, we want PURE pullback → distance relationship
+        // For trajectory tuning, we want PURE pullback ? distance relationship
         PlayerPrefs.SetInt("DisableSweeping", 1);
         
         PlayerPrefs.Save();
@@ -266,10 +266,10 @@ public class QuickTestGame : MonoBehaviour
         // Load the game scene
         SceneManager.LoadScene("TournyGame");
         
-        Debug.Log($"[QuickTestGame] ⭐ DETERMINISTIC MODE ENABLED!");
+        Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
         Debug.Log($"[QuickTestGame] Player stats: 100/100 (NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
-        Debug.Log($"[QuickTestGame] ⭐ SWEEPING DISABLED for perfect distance consistency");
+        Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
     }
     
@@ -418,13 +418,13 @@ public class QuickTestGame : MonoBehaviour
     }
     
     /// <summary>
-    /// RUNBACK PRACTICE MODE: Sets up a guard rock protecting a target, forces yellow AI to run it back
+    /// RUNBACK PRACTICE MODE: Sets up a finesse rock protecting a target, forces yellow AI to run it back
     /// Perfect for testing the new runback shot system!
     /// Press E during a game to activate
     /// </summary>
     private IEnumerator ActivateRunbackPracticeMode(GameManager gm)
     {
-        Debug.Log("?? [RUNBACK PRACTICE MODE] Activated! Setting up guard-protected target...");
+        Debug.Log("?? [RUNBACK PRACTICE MODE] Activated! Setting up finesse-protected target...");
         Debug.Log("?? Yellow AI will attempt to HIT THE GUARD THROUGH to remove the target!");
         Debug.Log("?? Press E again to reset and try different alignments");
         
@@ -499,10 +499,10 @@ public class QuickTestGame : MonoBehaviour
         yield return new WaitForFixedUpdate();
         
         // 3. PLACE RED GUARD ROCK (protecting the target - AI must hit THIS rock)
-        // Position guard between launcher and target for good alignment
+        // Position finesse between launcher and target for good alignment
         Vector2 guardPosition = new Vector2(0.05f, 3.5f);  // Well-aligned with target
         
-        // Find second red rock for guard
+        // Find second red rock for finesse
         int guardRockIndex = -1;
         int redCount = 0;
         for (int i = 0; i < gm.rockList.Count; i++)
@@ -525,7 +525,7 @@ public class QuickTestGame : MonoBehaviour
         {
             var guardRock = gm.rockList[guardRockIndex];
             
-            // Activate and position the guard rock
+            // Activate and position the finesse rock
             guardRock.rock.SetActive(true);
             guardRock.rock.transform.position = guardPosition;
             
@@ -589,7 +589,7 @@ public class QuickTestGame : MonoBehaviour
                 }
             }
             
-            // Rebuild guard list with guard rock
+            // Rebuild finesse list with finesse rock
             foreach (var rockEntry in gm.rockList)
             {
                 if (rockEntry.rockInfo.inPlay && !rockEntry.rockInfo.inHouse && rockEntry.rockInfo.placed)
@@ -619,4 +619,5 @@ public class QuickTestGame : MonoBehaviour
         }
     }
 }
+
 

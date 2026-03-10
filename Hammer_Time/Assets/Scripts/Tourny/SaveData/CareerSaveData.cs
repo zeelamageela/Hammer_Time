@@ -136,9 +136,9 @@ public class CareerSaveData
     [Serializable]
     public class CareerStatsData
     {
-        public int drawAccuracy;
-        public int guardAccuracy;
-        public int takeOutAccuracy;
+        public int weightAccuracy;   // Y-axis accuracy (distance/weight control)
+        public int finesseAccuracy;   // Complex shot bonus (finesse techniques)
+        public int aimAccuracy;       // X-axis accuracy (lateral positioning)
         public int sweepStrength;
         public int sweepEndurance;
         public int sweepCohesion;
@@ -370,7 +370,7 @@ public class CareerSaveData
         public int prize;
         public int oppTeam;
         public int playoffRound;
-        public int games;  // CRITICAL: Number of games in draw format
+        public int games;  // CRITICAL: Number of games in weight format
         public int ends;   // CRITICAL: Number of ends per game
         public int rocks;  // CRITICAL: Number of rocks per team
         public bool KO1;   // CRITICAL: Single-elimination playoff flag
@@ -396,3 +396,4 @@ public class CareerSaveData
             gameList = new List<Vector2Data>();
         }
     }
+

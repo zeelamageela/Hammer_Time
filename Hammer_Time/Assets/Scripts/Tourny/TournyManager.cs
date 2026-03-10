@@ -120,7 +120,7 @@ public class TournyManager : MonoBehaviour
 
 			StartCoroutine(SetupStandings());
 
-			//Debug.Log("Draw at top of start - " + gsp.draw);
+			//Debug.Log("Draw at top of start - " + gsp.weight);
 
 			//PrintRows(teams);
 		}
@@ -172,7 +172,7 @@ public class TournyManager : MonoBehaviour
 		yield return new WaitUntil(() => teams.Length > 0);
 		
 		// CRITICAL FIX: Always initialize drawFormat, even when loading saved tournament
-		// This was skipped when draw > 0, causing drawFormat.Length = 0
+		// This was skipped when weight > 0, causing drawFormat.Length = 0
 		for (int i = 0; i < teams.Length; i++)
 		{
 			row[i] = Instantiate(standTextRow, standTextParent);
@@ -231,7 +231,7 @@ public class TournyManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             drawFormat = dfList.currentFormat;
 
-            Debug.Log($"[TournyManager.SetupStandings] draw={draw}, drawFormat.Length={drawFormat?.Length ?? 0}, teamList.Count={teamList.Count}");
+            Debug.Log($"[TournyManager.SetupStandings] weight={draw}, drawFormat.Length={drawFormat?.Length ?? 0}, teamList.Count={teamList.Count}");
 
             // CRITICAL: Sync cm.record with tournament stats
             if (cm != null)
@@ -269,7 +269,7 @@ public class TournyManager : MonoBehaviour
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
 				
-				// Simulate remaining games in the current draw
+				// Simulate remaining games in the current weight
 				StartCoroutine(SimRestDraw());
 			}
 			else if (gsp.gameInProgress)
@@ -295,7 +295,7 @@ public class TournyManager : MonoBehaviour
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
 				
-				// Simulate remaining games in the current draw
+				// Simulate remaining games in the current weight
 				StartCoroutine(SimRestDraw());
 			}
 			else if (gsp.tournyInProgress)
@@ -333,7 +333,7 @@ public class TournyManager : MonoBehaviour
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
 				
-				// Simulate remaining games in the current draw
+				// Simulate remaining games in the current weight
 				StartCoroutine(SimRestDraw());
 			}
 
@@ -370,15 +370,15 @@ public class TournyManager : MonoBehaviour
 				teams[i].strength = Random.Range(0, 10);
 				if (teams[i].player)
 				{
-					float strength = cm.cStats.drawAccuracy
-						+ cm.cStats.takeOutAccuracy
-						+ cm.cStats.guardAccuracy
+					float strength = cm.cStats.weightAccuracy
+						+ cm.cStats.aimAccuracy
+						+ cm.cStats.finesseAccuracy
 						+ cm.cStats.sweepStrength
 						+ cm.cStats.sweepEndurance
 						+ cm.cStats.sweepCohesion
-						+ cm.modStats.drawAccuracy
-						+ cm.modStats.takeOutAccuracy
-						+ cm.modStats.guardAccuracy
+						+ cm.modStats.weightAccuracy
+						+ cm.modStats.aimAccuracy
+						+ cm.modStats.finesseAccuracy
 						+ cm.modStats.sweepStrength
 						+ cm.modStats.sweepEndurance;
 
@@ -503,7 +503,7 @@ public class TournyManager : MonoBehaviour
     #region Set
     void SetDraw()
     {
-		//Debug.Log("Setting Draw - " + draw);
+		//Debug.Log("Setting Draw - " + weight);
 		if (draw < drawFormat.Length)
 		{
 			for (int i = 0; i < drawFormat[draw].game.Length; i++)
@@ -591,14 +591,14 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator SimRestDraw()
 	{
-		// Note: gsp.draw was already incremented by EndMenu.EndGame(), so we need to decrement it
-		// to get back to the draw that was just played
+		// Note: gsp.weight was already incremented by EndMenu.EndGame(), so we need to decrement it
+		// to get back to the weight that was just played
 		int tempDraw = draw - 1;
-		Debug.Log($"[SimRestDraw] Starting - draw={draw}, tempDraw={tempDraw}, teams.Length={teams.Length}, drawFormat.Length={drawFormat.Length}");
+		Debug.Log($"[SimRestDraw] Starting - weight={draw}, tempDraw={tempDraw}, teams.Length={teams.Length}, drawFormat.Length={drawFormat.Length}");
 		Team[] games = new Team[teams.Length];
 		
-		// Build games array from draw format
-		// Note: EndMenu incremented gsp.draw, so draw-1 is the draw that was just played
+		// Build games array from weight format
+		// Note: EndMenu incremented gsp.weight, so weight-1 is the weight that was just played
 		for (int i = 0; i < teams.Length; i++)
 		{
 			if (i % 2 == 0)
@@ -615,7 +615,7 @@ public class TournyManager : MonoBehaviour
         {
             if (i % 2 == 0)
             {
-                // Get the team indices from the draw format
+                // Get the team indices from the weight format
                 int team1Index = drawFormat[tempDraw].game[i / 2].x;
                 int team2Index = drawFormat[tempDraw].game[i / 2].y;
 
@@ -649,7 +649,7 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator DrawScoring()
     {
-		Debug.Log($"[DrawScoring] draw={draw}, drawFormat.Length={drawFormat.Length}");
+		Debug.Log($"[DrawScoring] weight={draw}, drawFormat.Length={drawFormat.Length}");
 		if (draw < drawFormat.Length)
 		{
 			Debug.Log("Draw number " + draw);
@@ -802,6 +802,7 @@ public class TournyManager : MonoBehaviour
     }
 
 }
+
 
 
 

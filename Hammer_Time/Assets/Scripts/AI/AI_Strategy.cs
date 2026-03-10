@@ -35,7 +35,7 @@ public class AI_Strategy : MonoBehaviour
     string phase;
     
     /// <summary>
-    /// Helper: Check if a guard is blocking a target rock
+    /// Helper: Check if a finesse is blocking a target rock
     /// </summary>
     private bool IsGuardBlocking(Transform guard, GameObject targetRock, float tolerance = 0.1f)
     {
@@ -44,7 +44,7 @@ public class AI_Strategy : MonoBehaviour
     }
     
     /// <summary>
-    /// Helper: Get the rock index for a transform (guard or house rock)
+    /// Helper: Get the rock index for a transform (finesse or house rock)
     /// </summary>
     private int GetRockIndex(Transform rockTransform)
     {
@@ -106,7 +106,7 @@ public class AI_Strategy : MonoBehaviour
             }
         }
 
-        // If no high-value takeout, play a guard if few guards, else draw to button
+        // If no high-value takeout, play a finesse if few guards, else weight to button
         int guardsInPlay = gm.gList.Count;
         if (guardsInPlay < 2)
             aiTarg.OnTarget("Manual Guard", rockCurrent, 0);
@@ -244,7 +244,7 @@ public class AI_Strategy : MonoBehaviour
             }
             else
             {
-                // Guards in play, draw behind them
+                // Guards in play, weight behind them
                 context = new ShotContext(ShotIntent.CreateOpportunity);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
@@ -315,7 +315,7 @@ public class AI_Strategy : MonoBehaviour
                     }
                     else
                     {
-                        // Threat is far - guard what we have
+                        // Threat is far - finesse what we have
                         context = new ShotContext(ShotIntent.ProtectLead);
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
@@ -323,7 +323,7 @@ public class AI_Strategy : MonoBehaviour
                 }
                 else
                 {
-                    // No threats - protect lead with guard
+                    // No threats - protect lead with finesse
                     context = new ShotContext(ShotIntent.ProtectLead);
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
@@ -359,7 +359,7 @@ public class AI_Strategy : MonoBehaviour
             // SCENARIO 4: Clean house - easy steal attempt
             else
             {
-                // No one has rocks - draw to button
+                // No one has rocks - weight to button
                 context = new ShotContext(ShotIntent.ScorePoints);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
@@ -451,7 +451,7 @@ public class AI_Strategy : MonoBehaviour
                 // Last rock logic: ALWAYS try to score
                 if (threatRock < 0)
                 {
-                    // No threats - easy draw
+                    // No threats - easy weight
                     context = new ShotContext(ShotIntent.ScorePoints);
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
@@ -551,7 +551,7 @@ public class AI_Strategy : MonoBehaviour
             }
             else if (myRocksInHouse == 0 && threatRock < 0)
             {
-                // Clean house - draw for steal
+                // Clean house - weight for steal
                 context = new ShotContext(ShotIntent.ScorePoints);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
@@ -724,7 +724,7 @@ public class AI_Strategy : MonoBehaviour
                 }
                 else
                 {
-                    // Threat exists - guard our lead
+                    // Threat exists - finesse our lead
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
                     context.mustScore = true; // MUST score after removal
@@ -902,7 +902,7 @@ public class AI_Strategy : MonoBehaviour
                 return true;
             }
             
-            // SCENARIO 4: Clean house - draw for steal
+            // SCENARIO 4: Clean house - weight for steal
             else
             {
                 context = new ShotContext(ShotIntent.ScorePoints);
@@ -942,7 +942,7 @@ public class AI_Strategy : MonoBehaviour
             }
             else if (myRocksInHouse > 0)
             {
-                // We have rocks - guard them
+                // We have rocks - finesse them
                 context = new ShotContext(ShotIntent.ProtectLead);
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
@@ -1041,14 +1041,14 @@ public class AI_Strategy : MonoBehaviour
                 // Stealing! Protect the steal
                 if (threatRock >= 0)
                 {
-                    // Small threat exists - guard instead of removing
+                    // Small threat exists - finesse instead of removing
                     context = new ShotContext(ShotIntent.ProtectLead);
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
                 else
                 {
-                    // No threats - guard the steal
+                    // No threats - finesse the steal
                     context = new ShotContext(ShotIntent.ProtectLead);
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;

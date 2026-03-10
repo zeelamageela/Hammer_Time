@@ -266,7 +266,7 @@ public class EndMenu : MonoBehaviour
             }
             //else
             //{
-            //    draw.text = "Draw " + (gsp.draw + 1).ToString();
+            //    weight.text = "Draw " + (gsp.weight + 1).ToString();
             //}
 
 
@@ -414,7 +414,7 @@ public class EndMenu : MonoBehaviour
                     if (gsp.redTeam.player)
                     {
                         // Player is red team - use cm.cStats (includes equipment!)
-                        float playerAvg = (cm.cStats.drawAccuracy + cm.cStats.guardAccuracy + cm.cStats.takeOutAccuracy) / 3f;
+                        float playerAvg = (cm.cStats.weightAccuracy + cm.cStats.finesseAccuracy + cm.cStats.aimAccuracy) / 3f;
                         
                         // Opponent is yellow team - use their team strength
                         float oppTeamStrength = gsp.yellowTeam.strength;
@@ -427,7 +427,7 @@ public class EndMenu : MonoBehaviour
                     else if (gsp.yellowTeam.player)
                     {
                         // Player is yellow team - use cm.cStats (includes equipment!)
-                        float playerAvg = (cm.cStats.drawAccuracy + cm.cStats.guardAccuracy + cm.cStats.takeOutAccuracy) / 3f;
+                        float playerAvg = (cm.cStats.weightAccuracy + cm.cStats.finesseAccuracy + cm.cStats.aimAccuracy) / 3f;
                         
                         // Opponent is red team - use their team strength
                         float oppTeamStrength = gsp.redTeam.strength;
@@ -960,7 +960,7 @@ public class EndMenu : MonoBehaviour
             else
             {
                 gsp.draw++;
-                Debug.Log("[EndMenu] Incremented draw to " + gsp.draw);
+                Debug.Log("[EndMenu] Incremented weight to " + gsp.draw);
             }
             
             // Save with updated team records AND simulated games
@@ -993,7 +993,7 @@ public class EndMenu : MonoBehaviour
     }
     
     /// <summary>
-    /// Simulates games for all OTHER teams in the current draw (excluding player's game)
+    /// Simulates games for all OTHER teams in the current weight (excluding player's game)
     /// </summary>
     private void SimulateOtherGames()
     {
@@ -1003,7 +1003,7 @@ public class EndMenu : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[EndMenu] Simulating other teams' games for draw {gsp.draw}");
+        Debug.Log($"[EndMenu] Simulating other teams' games for weight {gsp.draw}");
         
         // Track which teams have been processed to avoid double-counting
         HashSet<string> processedTeams = new HashSet<string>();
@@ -1082,3 +1082,4 @@ public class EndMenu : MonoBehaviour
         Debug.Log($"[EndMenu] Simulation complete - processed {processedTeams.Count} teams");
     }
 }
+
