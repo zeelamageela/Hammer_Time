@@ -85,6 +85,27 @@ public class Rock_Force : MonoBehaviour
             Debug.Log($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
         }
         
+        // === VELOCITY-BASED CURL SCALING ===
+        // In real curling: FAST rocks curl LESS, SLOW rocks curl MORE
+        // Scale curl force based on actual velocity at release
+        float currentVelocity = body.linearVelocity.magnitude;
+        
+        // Get min/max velocities from TrajectoryLine (same as trajectory preview)
+        TrajectoryLine trajLine = FindFirstObjectByType<TrajectoryLine>();
+        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 5f;   // Default: 5 m/s
+        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 13f;  // Default: 13 m/s
+        
+        // Calculate velocity ratio (0 = slowest, 1 = fastest)
+        float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
+        
+        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
+        float curlMagnitude = Mathf.Lerp(0.6f, 0.05f, velocityRatio);
+        
+        // Apply to curl vector (dirMult handles in-turn vs out-turn)
+        curl = new Vector2(-curlMagnitude * dirMult, 0);
+        
+        Debug.Log($"[Rock_Force Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.05)");
+        
         // REAL CURLING: Apply spin NOW (at hog line, not at launch!)
         // This is when the player "releases" the rock, giving it rotation
         turnStart = true;

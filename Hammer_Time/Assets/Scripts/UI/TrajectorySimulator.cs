@@ -97,6 +97,27 @@ public class TrajectorySimulator
         Vector2 velocity = initialVelocity;
         float currentTime = 0f;
         
+        // === VELOCITY-BASED CURL SCALING ===
+        // In real curling: FAST rocks curl LESS, SLOW rocks curl MORE
+        // Scale curlVector based on initial velocity (matching Rock_Force.cs)
+        float currentVelocity = initialVelocity.magnitude;
+        
+        // Get min/max velocities from TrajectoryLine (if available)
+        TrajectoryLine trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
+        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 5f;   // Default: 5 m/s
+        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 11f;  // Default: 11 m/s
+        
+        // Calculate velocity ratio (0 = slowest, 1 = fastest)
+        float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
+        
+        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
+        float curlMagnitude = Mathf.Lerp(0.6f, 0.05f, velocityRatio);
+        
+        // Apply to curlVector (will be used throughout simulation)
+        Vector2 scaledCurlVector = new Vector2(-curlMagnitude, 0f);
+        
+        Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.05)");
+        
         // REAL CURLING PHYSICS: NO spin before hog line!
         // Hog line trigger is at Y = -16.15 (BoxCollider2D on "Hog_Line" GameObject)
         const float HOG_LINE_Y = -16.15f;
@@ -347,7 +368,7 @@ public class TrajectorySimulator
                 int dirMult = isInTurn ? -1 : 1;  // CORRECTED: Match Rock_Force exactly!
                 
                 // Apply curl force exactly as Rock_Force.cs does
-                Vector2 curlForce = new Vector2(curlVector.x * dirMult * velX, 0f);
+                Vector2 curlForce = new Vector2(scaledCurlVector.x * dirMult * velX, 0f);
                 
                 // Rock_Force applies this force every FixedUpdate (0.02s)
                 // We apply it every TIME_STEP (0.05s), so scale by time ratio

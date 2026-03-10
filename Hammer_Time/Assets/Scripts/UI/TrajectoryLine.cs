@@ -88,7 +88,7 @@ public class TrajectoryLine : MonoBehaviour
     
     [Tooltip("Maximum velocity (m/s) from largest pullback. Controls strongest possible shot.")]
     [Range(10.0f, 25.0f)]
-    public float maxVelocity = 11.0f;
+    public float maxVelocity = 13.0f;
     
     // Track previous values to detect changes
     private float lastIceFriction = -1f; // FIXED: Initialize to -1 to force first update
@@ -1056,50 +1056,10 @@ public class TrajectoryLine : MonoBehaviour
         // Calculate straight-line trajectory direction (no curl)
         Vector2 direction = (launcherPos - pullbackPos).normalized;
         
-        // STRAIGHT-LINE COLLISION DETECTION
-        // Check if aiming straight at this direction would hit any rocks in play
-        Vector2 collisionPoint = Vector2.zero;
-        bool hasCollision = false;
-        float rockRadius = 0.14f; // Same as TrajectorySimulator
-        
-        if (gm != null && gm.rockList != null)
-        {
-            // Get rocks in play (excluding current rock)
-            foreach (var rockEntry in gm.rockList)
-            {
-                if (rockEntry.rock != null 
-                    && rockEntry.rock.activeInHierarchy 
-                    && rockEntry.rockInfo.inPlay 
-                    && rockEntry.rock != gm.rockList[gm.rockCurrent].rock)
-                {
-                    Vector2 rockPos = rockEntry.rock.transform.position;
-                    
-                    // Calculate closest point on line to rock center
-                    // Line equation: point = pullbackPos + t * direction
-                    // Closest point to rockPos: t = dot(rockPos - pullbackPos, direction)
-                    float t = Vector2.Dot(rockPos - pullbackPos, direction);
-                    
-                    // Only check if rock is ahead of us (t > 0)
-                    if (t > 0)
-                    {
-                        Vector2 closestPoint = pullbackPos + direction * t;
-                        float distance = Vector2.Distance(closestPoint, rockPos);
-                        
-                        // Check if line passes through rock (within 2x rock radius)
-                        if (distance < rockRadius * 2f)
-                        {
-                            // COLLISION! Use the BOTTOM EDGE of the rock (not center)
-                            // This makes the line slide naturally over the rock surface
-                            // Bottom edge = rock center Y + rock radius (moving down ice = positive Y)
-                            collisionPoint = new Vector2(closestPoint.x, rockPos.y + rockRadius);
-                            hasCollision = true;
-                            Debug.Log($"[Alternative Aim] STRAIGHT-LINE COLLISION detected - rock center: ({rockPos.x:F2}, {rockPos.y:F2}), bottom edge: ({collisionPoint.x:F2}, {collisionPoint.y:F2})");
-                            break; // Use first collision (closest in direction)
-                        }
-                    }
-                }
-            }
-        }
+        // COLLISION DETECTION DISABLED FOR GUIDE LINES
+        // Guide lines show ideal aim positions, not collision warnings
+        // Actual trajectory (with curl) handles collision visualization separately
+        bool hasCollision = false; // Always false - no collision detection for guide lines
         
         // Determine vertical line position and height
         float verticalLineX;
@@ -1110,60 +1070,42 @@ public class TrajectoryLine : MonoBehaviour
         float aimCircleY = aimCircle.transform.position.y;
         float horizontalLineY = aimCircleY + 0.4f;
         
-        if (hasCollision)
+        // ===== GUIDE LINE MODE (no collision detection) =====
+        // Calculate X position from straight-line projection
+        float deltaY = aimCircleY - pullbackPos.y;
+        
+        if (Mathf.Abs(direction.y) > 0.001f)
         {
-            // ===== COLLISION MODE =====
-            // Vertical line extends 0.4 IN FRONT of collision point (closer to hack)
-            verticalLineX = collisionPoint.x;
-            verticalLineTopY = collisionPoint.y - 0.4f; // -0.4 to extend in front
-            
-            // Bottom end ALWAYS follows horizontal line during collision
-            verticalLineBottomY = horizontalLineY;
-            
-            Debug.Log($"[Alternative Aim] COLLISION - X={verticalLineX:F2}, top={verticalLineTopY:F2} (front edge), bottom={verticalLineBottomY:F2} (follows horiz), horizY={horizontalLineY:F2}");
+            float t = deltaY / direction.y;
+            verticalLineX = pullbackPos.x + (direction.x * t);
         }
         else
         {
-            // ===== NO COLLISION MODE =====
-            // Calculate X position from straight-line projection
-            float deltaY = aimCircleY - pullbackPos.y;
-            
-            if (Mathf.Abs(direction.y) > 0.001f)
-            {
-                float t = deltaY / direction.y;
-                verticalLineX = pullbackPos.x + (direction.x * t);
-            }
-            else
-            {
-                verticalLineX = pullbackPos.x;
-            }
-            
-            // ZONE-BASED LOGIC for vertical line endpoints
-            if (horizontalLineY <= 8.0f)
-            {
-                // ZONE 1: Horizontal between hog line and Y=6.5
-                // Top: horizontal - 0.4 (extends TOWARDS hack, opposite direction)
-                // Bottom: 8.4 (fixed)
-                verticalLineTopY = horizontalLineY - 0.5f; // -0.4 towards hack
-                verticalLineBottomY = 8.4f;
-                Debug.Log($"[Alternative Aim] ZONE 1 (Hog-6.5) - top={verticalLineTopY:F2} (-0.4 towards hack), bottom=8.4");
-            }
-            else if (horizontalLineY <= 8.0f)
-            {
-                // ZONE 2: Horizontal between Y=6.5 and Y=8.0
-                // Top: 6.1 (locked), Bottom: 8.4 (locked)
-                verticalLineTopY = 6.1f;
-                verticalLineBottomY = 8.4f;
-                Debug.Log($"[Alternative Aim] ZONE 2 (6.5-8.0) - top=6.1, bottom=8.4 (both locked)");
-            }
-            else
-            {
-                // ZONE 3: Horizontal past Y=8.0
-                // Top: 6.1 (locked), Bottom: follows horizontal line
-                verticalLineTopY = 6.1f;
-                verticalLineBottomY = horizontalLineY; // Follows horizontal
-                Debug.Log($"[Alternative Aim] ZONE 3 (8.0+) - top=6.1, bottom={verticalLineBottomY:F2} (follows horiz)");
-            }
+            verticalLineX = pullbackPos.x;
+        }
+        
+        // ZONE-BASED LOGIC for vertical line endpoints
+        if (horizontalLineY <= 6.5f)
+        {
+            // ZONE 1: Horizontal between hog line and Y=6.5
+            // Top: horizontal - 0.4 (extends TOWARDS hack, opposite direction)
+            // Bottom: 8.4 (fixed)
+            verticalLineTopY = horizontalLineY - 0.5f; // -0.4 towards hack
+            verticalLineBottomY = 8.4f;
+        }
+        else if (horizontalLineY <= 8.0f)
+        {
+            // ZONE 2: Horizontal between Y=6.5 and Y=8.0
+            // Top: 6.1 (locked), Bottom: 8.4 (locked)
+            verticalLineTopY = 6.1f;
+            verticalLineBottomY = 8.4f;
+        }
+        else
+        {
+            // ZONE 3: Horizontal past Y=8.0
+            // Top: 6.1 (locked), Bottom: follows horizontal line
+            verticalLineTopY = 6.1f;
+            verticalLineBottomY = horizontalLineY; // Follows horizontal
         }
         
         // SKILL-BASED LINE WIDTH
@@ -1192,12 +1134,12 @@ public class TrajectoryLine : MonoBehaviour
         float lineWidth = Mathf.Lerp(0.08f, 0.04f, aimSkill / 100f);
         
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
-        // If collision detected, shows collision point; otherwise shows trajectory endpoint
+        // Always shows ideal aim position (no collision warnings)
         if (aimVerticalLine != null)
         {
             aimVerticalLine.enabled = true;
             aimVerticalLine.positionCount = 2;
-            // Top of vertical line: collision point OR trajectory endpoint (+0.4 offset)
+            // Top of vertical line: trajectory endpoint (+0.4 offset)
             aimVerticalLine.SetPosition(0, new Vector3(verticalLineX, verticalLineTopY, 0f));
             // Bottom of vertical line: extend down to Y=8.4 for visual reference
             aimVerticalLine.SetPosition(1, new Vector3(verticalLineX, verticalLineBottomY, 0f));
@@ -1206,18 +1148,9 @@ public class TrajectoryLine : MonoBehaviour
             aimVerticalLine.startWidth = lineWidth;
             aimVerticalLine.endWidth = lineWidth;
             
-            // Color: Greyish-black (dark grey) or RED for collision
-            Color lineColor;
-            if (hasCollision && collisionLinesVisible)
-            {
-                // RED for collision warning
-                lineColor = new Color(1f, 0.3f, 0.3f, 1f); // Bright red
-            }
-            else
-            {
-                // Greyish-black: #3A3A3A (dark grey, 23% brightness)
-                lineColor = new Color(0.23f, 0.23f, 0.23f, 1f);
-            }
+            // Color: Always greyish-black (no red collision warning)
+            // Greyish-black: #3A3A3A (dark grey, 23% brightness)
+            Color lineColor = new Color(0.23f, 0.23f, 0.23f, 1f);
             
             aimVerticalLine.startColor = lineColor;
             aimVerticalLine.endColor = lineColor;
