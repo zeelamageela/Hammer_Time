@@ -109,14 +109,27 @@ public class TrajectorySimulator
         
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
-        
+
         // Scale curl: 0.6 (slow shots) to 0.2 (fast shots)
         // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
-        float curlMagnitude = Mathf.Lerp(0.6f, 0.2f, velocityRatio);
-        
+        float curlMagnitude;
+
+        if (velocityRatio < 0.4f)
+        {
+            curlMagnitude = Mathf.Lerp(0.6f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
+        }
+        else if (velocityRatio < 0.66f)
+        {
+            curlMagnitude = Mathf.Lerp(0.48f, 0.15f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
+        }
+        else
+        {
+            curlMagnitude = Mathf.Lerp(0.15f, 0.05f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
+        }
+
         // Apply to curlVector (will be used throughout simulation)
-        // MUST MATCH Rock_Force.cs convention
-        // POSITIVE base (no negative sign) - dirMult already handles direction
+        // MUST MATCH Rock_Force.cs convention: curlMagnitude * -dirMult
+        // Negative of dirMult because torque is inverted but curl isn't
         Vector2 scaledCurlVector = new Vector2(curlMagnitude, 0f);
         
         Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
@@ -225,9 +238,9 @@ public class TrajectorySimulator
                             {
                                 // Use REAL angular velocity model (same as main loop)
                                 float tempVelX = angularVelocity * scaleFactor;
-                                int dirMult = isInTurn ? 1 : -1;  // MUST MATCH main loop
-                                // MUST USE scaledCurlVector (positive), not old curlVector (negative)
-                                Vector2 curlForce = new Vector2(scaledCurlVector.x * dirMult * tempVelX, 0f);
+                                int dirMult = isInTurn ? -1 : 1;  // MUST MATCH main loop
+                                // MUST USE -dirMult formula (matches main loop and Rock_Force.cs)
+                                Vector2 curlForce = new Vector2(-dirMult * scaledCurlVector.x * tempVelX, 0f);
                                 // CRITICAL: Use curlEffectiveMass for curl calculations
                                 Vector2 velocityChange = curlForce * highResTimeStep / curlEffectiveMass;
                                 tempVel += velocityChange * curlForceScale;
@@ -338,9 +351,9 @@ public class TrajectorySimulator
             // CRITICAL: Match Rock_Force behavior - increase damping when rock is nearly stopped!
             // Rock_Force.cs increases linearDamping to 0.75 when speed < 0.01
             // This makes the rock "stick" to the ice at the end for a more realistic stop
-            if (speed < 0.01f && currentDamping < 0.55f)
+            if (speed < 0.01f && currentDamping < 0.90f)
             {
-                currentDamping = 0.55f; // Match Rock_Force's stopping damping
+                currentDamping = 0.90f; // Match Rock_Force's stopping damping
             }
             
             // Calculate damping (Unity's multiplicative model)
@@ -366,12 +379,13 @@ public class TrajectorySimulator
                 float velY = 0f; // Not used in curl calculation in Rock_Force
                 
                 // Curl direction logic - MATCHES Rock_Force.cs
-                // flipAxis=true (in-turn) → dirMult=+1
-                // flipAxis=false (out-turn) → dirMult=-1
-                int dirMult = isInTurn ? 1 : -1;
+                // flipAxis=true (in-turn) → dirMult=-1 → curl = -(-1) * mag = +mag (RIGHT)
+                // flipAxis=false (out-turn) → dirMult=+1 → curl = -(+1) * mag = -mag (LEFT)
+                int dirMult = isInTurn ? -1 : 1;
                 
                 // Apply curl force exactly as Rock_Force.cs does
-                Vector2 curlForce = new Vector2(scaledCurlVector.x * dirMult * velX, 0f);
+                // Formula: -dirMult * curlMagnitude
+                Vector2 curlForce = new Vector2(-dirMult * scaledCurlVector.x * velX, 0f);
                 
                 // Rock_Force applies this force every FixedUpdate (0.02s)
                 // We apply it every TIME_STEP (0.05s), so scale by time ratio

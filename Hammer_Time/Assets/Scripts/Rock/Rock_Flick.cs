@@ -181,8 +181,10 @@ public class Rock_Flick : MonoBehaviour
                     }
                 }
             }
+
+            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
+            shootKnobGO.GetComponent<SpriteRenderer>().enabled = true;
         }
-        
     }
 
     void OnDrag()
@@ -335,8 +337,10 @@ public class Rock_Flick : MonoBehaviour
             {
                 StartCoroutine(RockResetStory());
             }
+
+            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = false;
+            shootKnobGO.GetComponent<SpriteRenderer>().enabled = false;
         }
-        
     }
 
     public void RockReset()

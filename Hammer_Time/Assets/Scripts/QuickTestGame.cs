@@ -36,7 +36,7 @@ public class QuickTestGame : MonoBehaviour
     
     [Tooltip("Opponent stats (0-100, 100 = perfect shots)")]
     [Range(0, 100)]
-    public int opponentStatValue = 100;
+    public int opponentStatValue = 50;
     
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
@@ -165,7 +165,7 @@ public class QuickTestGame : MonoBehaviour
         gsp.score = new Vector2Int[endsToPlay];
         // Note: Scores are set above in randomization section
         
-        // Create opponent team with max stats
+        // Create opponent team with 50% stats
         Team opponentTeam = new Team
         {
             name = "Max Stats AI",
@@ -197,35 +197,35 @@ public class QuickTestGame : MonoBehaviour
             });
         }
         
-        // ? CRITICAL: Create player team with 100 stats for PERFECT DETERMINISTIC SHOTS!
+        // ? CRITICAL: Create player team with 50% stats for PERFECT DETERMINISTIC SHOTS!
         // NO randomness, NO skill penalties - pure physics for trajectory tuning
         Team playerTeam = new Team
         {
-            name = "Test Player (100% Accuracy)",
-            strength = 100,  // LOCKED: Perfect stats for trajectory tuning
-            weight = 100,
-            finesse = 100,
-            aim = 100,
-            sweepStrength = 100,
-            sweepEnduro = 100,
-            sweepCohesion = 100,
+            name = "Test Player (50% Accuracy)",
+            strength = 50,  // LOCKED: Perfect stats for trajectory tuning
+            weight = 50,
+            finesse = 50,
+            aim = 50,
+            sweepStrength = 50,
+            sweepEnduro = 50,
+            sweepCohesion = 50,
             player = true,
             players = new List<Player>()
         };
         
-        // Add 4 players to the team - ALL with 100 stats
+        // Add 4 players to the team - ALL with 50% stats
         for (int i = 0; i < 4; i++)
         {
             playerTeam.players.Add(new Player
             {
                 id = i,
                 name = $"Test Player {i + 1} (Perfect)",
-                weight = 100,      // ? NO RANDOMNESS
-                finesse = 100,
-                aim = 100,
-                sweepStrength = 100,
-                sweepEnduro = 100,
-                sweepCohesion = 100
+                weight = 50,      // ? NO RANDOMNESS
+                finesse = 50,
+                aim = 50,
+                sweepStrength = 50,
+                sweepEnduro = 50,
+                sweepCohesion = 50
             });
         }
         
@@ -236,13 +236,13 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
-            // ? CRITICAL: Set player stats to 100 for ZERO randomness!
-            cm.cStats.weightAccuracy = 100;
-            cm.cStats.finesseAccuracy = 100;
-            cm.cStats.aimAccuracy = 100;
-            cm.cStats.sweepStrength = 100;
-            cm.cStats.sweepEndurance = 100;
-            cm.cStats.sweepCohesion = 100;
+            // ? CRITICAL: Set player stats to 50 for ZERO randomness!
+            cm.cStats.weightAccuracy = 50;
+            cm.cStats.finesseAccuracy = 50;
+            cm.cStats.aimAccuracy = 50;
+            cm.cStats.sweepStrength = 50;
+            cm.cStats.sweepEndurance = 50;
+            cm.cStats.sweepCohesion = 50;
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;
@@ -253,7 +253,7 @@ public class QuickTestGame : MonoBehaviour
             cm.oppStats.sweepCohesion = opponentStatValue;
         }
         
-        // ? CRITICAL: Set flag for 100% deterministic player physics (no multipliers!)
+        // ? CRITICAL: Set flag for 50% deterministic player physics (no multipliers!)
         PlayerPrefs.SetInt("QuickTestMode", 1);
         
         // ? CRITICAL: Disable sweeping in test mode for perfect determinism
@@ -267,7 +267,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 100/100 (NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 50/50"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");

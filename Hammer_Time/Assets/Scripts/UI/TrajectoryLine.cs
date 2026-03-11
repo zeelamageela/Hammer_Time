@@ -1066,13 +1066,17 @@ public class TrajectoryLine : MonoBehaviour
         float verticalLineTopY;
         float verticalLineBottomY = 8.4f; // Default bottom anchor
         
-        // Get horizontal line Y position (trajectory endpoint + 0.4 offset)
-        float aimCircleY = aimCircle.transform.position.y;
-        float horizontalLineY = aimCircleY + 0.4f;
+        // HORIZONTAL LINE: Use aim circle's Y position (ideal endpoint without collisions)
+        // This shows where the rock WOULD go if no obstacles were present
+        float horizontalLineY = aimCircle.transform.position.y;
+        Debug.Log($"[Horizontal Line] Using AIM CIRCLE Y position: Y={horizontalLineY:F2}");
+        
+        
+        
         
         // ===== GUIDE LINE MODE (no collision detection) =====
         // Calculate X position from straight-line projection
-        float deltaY = aimCircleY - pullbackPos.y;
+        float deltaY = horizontalLineY - pullbackPos.y;
         
         if (Mathf.Abs(direction.y) > 0.001f)
         {
@@ -1085,29 +1089,33 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // ZONE-BASED LOGIC for vertical line endpoints
-        if (horizontalLineY <= 6.5f)
+        // CRITICAL: Use ACTUAL final trajectory point Y position for vertical line endpoints!
+        // This makes the vertical line end exactly at the trajectory dot's Y position
+        if (points != null && points.Count > 0)
         {
-            // ZONE 1: Horizontal between hog line and Y=6.5
-            // Top: horizontal - 0.4 (extends TOWARDS hack, opposite direction)
-            // Bottom: 8.4 (fixed)
-            verticalLineTopY = horizontalLineY - 0.5f; // -0.4 towards hack
-            verticalLineBottomY = 8.4f;
-        }
-        else if (horizontalLineY <= 8.0f)
-        {
-            // ZONE 2: Horizontal between Y=6.5 and Y=8.0
-            // Top: 6.1 (locked), Bottom: 8.4 (locked)
-            verticalLineTopY = 6.1f;
-            verticalLineBottomY = 8.4f;
+            // Use the last simulated trajectory point's Y (distance/weight position)
+            float trajectoryDotY = points[points.Count - 1].y;
+            Debug.Log($"[Vertical Line] Using FINAL TRAJECTORY DOT Y position for endpoints: Y={trajectoryDotY:F2}");
+            
+            // Simple logic: vertical line goes from trajectory dot Y up to Y=8.4
+            verticalLineTopY = trajectoryDotY - 0.5f;
+
         }
         else
         {
-            // ZONE 3: Horizontal past Y=8.0
-            // Top: 6.1 (locked), Bottom: follows horizontal line
-            verticalLineTopY = 6.1f;
-            verticalLineBottomY = horizontalLineY; // Follows horizontal
+            verticalLineTopY = horizontalLineY - 0.5f; // Default to 0.5 above horizontal line if no trajectory points
+             Debug.LogWarning($"[Vertical Line] No trajectory points available, defaulting vertical line top Y to: {verticalLineTopY:F2}");
         }
-        
+
+        if (verticalLineTopY > 7.5f)
+            verticalLineTopY = 7.5f;
+
+        if (horizontalLineY <= 8.0f)
+            verticalLineBottomY = 8.4f;
+        else
+            verticalLineBottomY = horizontalLineY + 0.4f;
+
+
         // SKILL-BASED LINE WIDTH
         // Get shooter's AIM accuracy (X-axis) from CareerManager (for player) or CharacterStats (for AI)
         // Aim skill controls lateral positioning = line width represents X-axis precision
@@ -1131,7 +1139,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // Map AIM skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
         // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
-        float lineWidth = Mathf.Lerp(0.08f, 0.04f, aimSkill / 100f);
+        float lineWidth = Mathf.Lerp(1f, 0.04f, aimSkill / 100f);
         
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // Always shows ideal aim position (no collision warnings)
@@ -1145,8 +1153,8 @@ public class TrajectoryLine : MonoBehaviour
             aimVerticalLine.SetPosition(1, new Vector3(verticalLineX, verticalLineBottomY, 0f));
             
             // Apply skill-based width
-            aimVerticalLine.startWidth = lineWidth;
-            aimVerticalLine.endWidth = lineWidth;
+            aimVerticalLine.startWidth = lineWidth / 10f;
+            aimVerticalLine.endWidth = lineWidth / 10f;
             
             // Color: Always greyish-black (no red collision warning)
             // Greyish-black: #3A3A3A (dark grey, 23% brightness)
@@ -1200,7 +1208,7 @@ public class TrajectoryLine : MonoBehaviour
             // Low skill (0-40): baseMaxError = 0.99 (very hard - 99cm miss)
             // Mid skill (40-70): baseMaxError = ~0.50 (moderate - 50cm miss)
             // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
-            float weightBaseMaxError = Mathf.Lerp(0.99f, 0.02f, weightRatio * weightRatio); // Quadratic scaling
+            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.02f, weightRatio * weightRatio); // Quadratic scaling
             float weightMaxError = weightBaseMaxError * (1f - weightRatio);
             
             // MINIMUM WIDTH for visibility (requirement: 0.25 minimum)

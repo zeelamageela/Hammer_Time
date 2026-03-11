@@ -65,9 +65,9 @@ public class Rock_Force : MonoBehaviour
     public void Release()
     {
         if (flipAxis)
-            dirMult = 1;   // In-turn: positive multiplier
+            dirMult = -1;  // In-turn: use -1
         else
-            dirMult = -1;  // Out-turn: negative multiplier
+            dirMult = 1;   // Out-turn: use +1
 
         GetComponent<SpriteRenderer>().enabled = true;
         
@@ -98,14 +98,38 @@ public class Rock_Force : MonoBehaviour
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
         
-        // Scale curl: 0.6 (slow shots) to 0.2 (fast shots)
+        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
         // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
-        float curlMagnitude = Mathf.Lerp(0.6f, 0.2f, velocityRatio);
+        float curlMagnitude;
+
+        if (velocityRatio < 0.4f)
+        {
+            curlMagnitude = Mathf.Lerp(0.6f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
+        }
+        else if (velocityRatio < 0.66f)
+        {
+            curlMagnitude = Mathf.Lerp(0.48f, 0.15f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
+        }
+        else
+        {
+            curlMagnitude = Mathf.Lerp(0.15f, 0.05f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
+        }
+        // Apply to curl vector
+        // KEY INSIGHT: vel.x = angularVelocity encodes rotation direction:
+        //   - In-turn: angularVelocity is NEGATIVE (clockwise)
+        //   - Out-turn: angularVelocity is POSITIVE (counter-clockwise)
+        // Final force = curl.x * vel.x (in FixedUpdate)
+        // Unity coordinates: POSITIVE force = RIGHT, NEGATIVE force = LEFT
+        //
+        // We want:
+        //   - In-turn: force RIGHT (+) → curl.x (neg) * vel.x (neg) = POSITIVE ✓
+        //   - Out-turn: force LEFT (-) → curl.x (neg) * vel.x (pos) = NEGATIVE ✓
+        //
+        // Therefore: curl.x must ALWAYS be NEGATIVE!
+        curl = new Vector2(-curlMagnitude, 0);
         
-        // Apply to curl vector (dirMult handles in-turn vs out-turn)
-        // MUST MATCH TrajectorySimulator.cs convention
-        // POSITIVE base (no negative sign) - dirMult already handles direction
-        curl = new Vector2(curlMagnitude * dirMult, 0);
+        Debug.Log($"[Rock_Force CURL CALC] flipAxis={flipAxis}, dirMult={dirMult}, curlMagnitude={curlMagnitude:F3}, FINAL curl.x={curl.x:F3}");
+        Debug.Log($"[Rock_Force CURL CALC] Formula: curl.x = -curlMagnitude = -{curlMagnitude:F3} = {curl.x:F3}");
         
         Debug.Log($"[Rock_Force Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
         
@@ -137,11 +161,10 @@ public class Rock_Force : MonoBehaviour
         if (turnStart == true)
         {
             // Apply torque for visual spin direction
-            // Unity 2D: NEGATIVE torque = clockwise, POSITIVE torque = counter-clockwise
-            // In-turn (dirMult=+1) should spin CLOCKWISE → need NEGATIVE torque
-            // Out-turn (dirMult=-1) should spin COUNTER-CLOCKWISE → need POSITIVE torque
-            // So we INVERT: apply -dirMult instead of dirMult
-            body.AddTorque(-dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
+            // Unity 2D: positive torque = counter-clockwise, negative = clockwise
+            // In-turn (dirMult=-1) should spin CLOCKWISE → torque = -1 * 60 = -60
+            // Out-turn (dirMult=+1) should spin COUNTER-CLOCKWISE → torque = +1 * 60 = +60
+            body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
             turnStart = false;
 
             // DIAGNOSTIC: Start frame-by-frame logging after hog line
@@ -200,6 +223,11 @@ public class Rock_Force : MonoBehaviour
             
             Vector2 scaledCurl = curlForceMultiplier * sweepCurlMult * curl; // ? SWEEPING MODIFIES CURL FORCE HERE!
             body.AddForce(scaledCurl * vel, ForceMode2D.Force);
+            
+            if (frameCounter % 30 == 0)
+            {
+                Debug.Log($"[Rock_Force APPLY] Frame {frameCounter}: curl.x={curl.x:F3}, vel.x={vel.x:F3}, scaledCurl.x={scaledCurl.x:F3}, FORCE.x={(scaledCurl * vel).x:F3}");
+            }
             
             //Debug.Log("curl is " + curl.x);
             if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
