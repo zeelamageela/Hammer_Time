@@ -515,8 +515,8 @@ public class TrajectoryLine : MonoBehaviour
             Debug.Log($"   Initial velocity: {initialVelocity}");
             Debug.Log($"   Velocity magnitude: {initialVelocity.magnitude:F3}");
             Debug.Log($"   Lateral velocity (X): {initialVelocity.x:F4} units/s");
-            Debug.Log($"   If isInTurn=true → Rock curls LEFT");
-            Debug.Log($"   If isInTurn=false → Rock curls RIGHT");
+            Debug.Log($"   If isInTurn=true → dirMult=-1 → Rock curls in in-turn direction");
+            Debug.Log($"   If isInTurn=false → dirMult=+1 → Rock curls in out-turn direction");
             
             // Debug.Log($"Pullback: {pullbackPos}, Launcher: {launcherPos}, InitVel: {initialVelocity.magnitude}");
             

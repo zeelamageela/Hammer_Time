@@ -65,9 +65,9 @@ public class Rock_Force : MonoBehaviour
     public void Release()
     {
         if (flipAxis)
-            dirMult = -1;
+            dirMult = 1;   // In-turn: positive multiplier
         else
-            dirMult = 1;
+            dirMult = -1;  // Out-turn: negative multiplier
 
         GetComponent<SpriteRenderer>().enabled = true;
         
@@ -98,13 +98,16 @@ public class Rock_Force : MonoBehaviour
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
         
-        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
-        float curlMagnitude = Mathf.Lerp(0.6f, 0.05f, velocityRatio);
+        // Scale curl: 0.6 (slow shots) to 0.2 (fast shots)
+        // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
+        float curlMagnitude = Mathf.Lerp(0.6f, 0.2f, velocityRatio);
         
         // Apply to curl vector (dirMult handles in-turn vs out-turn)
-        curl = new Vector2(-curlMagnitude * dirMult, 0);
+        // MUST MATCH TrajectorySimulator.cs convention
+        // POSITIVE base (no negative sign) - dirMult already handles direction
+        curl = new Vector2(curlMagnitude * dirMult, 0);
         
-        Debug.Log($"[Rock_Force Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.05)");
+        Debug.Log($"[Rock_Force Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
         
         // REAL CURLING: Apply spin NOW (at hog line, not at launch!)
         // This is when the player "releases" the rock, giving it rotation
@@ -133,7 +136,12 @@ public class Rock_Force : MonoBehaviour
 
         if (turnStart == true)
         {
-            body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
+            // Apply torque for visual spin direction
+            // Unity 2D: NEGATIVE torque = clockwise, POSITIVE torque = counter-clockwise
+            // In-turn (dirMult=+1) should spin CLOCKWISE → need NEGATIVE torque
+            // Out-turn (dirMult=-1) should spin COUNTER-CLOCKWISE → need POSITIVE torque
+            // So we INVERT: apply -dirMult instead of dirMult
+            body.AddTorque(-dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
             turnStart = false;
 
             // DIAGNOSTIC: Start frame-by-frame logging after hog line

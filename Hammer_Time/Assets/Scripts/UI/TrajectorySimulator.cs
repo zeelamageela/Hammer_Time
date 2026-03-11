@@ -110,13 +110,16 @@ public class TrajectorySimulator
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
         
-        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
-        float curlMagnitude = Mathf.Lerp(0.6f, 0.05f, velocityRatio);
+        // Scale curl: 0.6 (slow shots) to 0.2 (fast shots)
+        // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
+        float curlMagnitude = Mathf.Lerp(0.6f, 0.2f, velocityRatio);
         
         // Apply to curlVector (will be used throughout simulation)
-        Vector2 scaledCurlVector = new Vector2(-curlMagnitude, 0f);
+        // MUST MATCH Rock_Force.cs convention
+        // POSITIVE base (no negative sign) - dirMult already handles direction
+        Vector2 scaledCurlVector = new Vector2(curlMagnitude, 0f);
         
-        Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.05)");
+        Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
         
         // REAL CURLING PHYSICS: NO spin before hog line!
         // Hog line trigger is at Y = -16.15 (BoxCollider2D on "Hog_Line" GameObject)
@@ -222,8 +225,9 @@ public class TrajectorySimulator
                             {
                                 // Use REAL angular velocity model (same as main loop)
                                 float tempVelX = angularVelocity * scaleFactor;
-                                int dirMult = isInTurn ? 1 : -1;  // INVERTED: Matches main loop convention
-                                Vector2 curlForce = new Vector2(curlVector.x * dirMult * tempVelX, 0f);
+                                int dirMult = isInTurn ? 1 : -1;  // MUST MATCH main loop
+                                // MUST USE scaledCurlVector (positive), not old curlVector (negative)
+                                Vector2 curlForce = new Vector2(scaledCurlVector.x * dirMult * tempVelX, 0f);
                                 // CRITICAL: Use curlEffectiveMass for curl calculations
                                 Vector2 velocityChange = curlForce * highResTimeStep / curlEffectiveMass;
                                 tempVel += velocityChange * curlForceScale;
@@ -361,11 +365,10 @@ public class TrajectorySimulator
                 float velX = angularVelocity * scaleFactor;
                 float velY = 0f; // Not used in curl calculation in Rock_Force
                 
-                // CRITICAL: Match Rock_Force.cs EXACTLY
-                // Rock_Force.cs line 72: if (flipAxis) dirMult = -1; else dirMult = 1;
-                // So: flipAxis=true (in-turn) → dirMult=-1
-                //     flipAxis=false (out-turn) → dirMult=1
-                int dirMult = isInTurn ? -1 : 1;  // CORRECTED: Match Rock_Force exactly!
+                // Curl direction logic - MATCHES Rock_Force.cs
+                // flipAxis=true (in-turn) → dirMult=+1
+                // flipAxis=false (out-turn) → dirMult=-1
+                int dirMult = isInTurn ? 1 : -1;
                 
                 // Apply curl force exactly as Rock_Force.cs does
                 Vector2 curlForce = new Vector2(scaledCurlVector.x * dirMult * velX, 0f);
