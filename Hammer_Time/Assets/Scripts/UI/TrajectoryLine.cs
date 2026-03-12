@@ -131,6 +131,10 @@ public class TrajectoryLine : MonoBehaviour
     private GameObject aimHorizontalLineObj;
     private LineRenderer aimCurlLine;
     private GameObject aimCurlLineObj;
+    
+    // Collision warning indicator (small dotted line at collision point)
+    private LineRenderer collisionWarningLine;
+    private GameObject collisionWarningLineObj;
 
     void Start()
     {
@@ -232,6 +236,25 @@ public class TrajectoryLine : MonoBehaviour
         aimCurlLine.endColor = Color.white;
         aimCurlLine.sortingOrder = 1; // Render on top of other elements
         aimCurlLine.enabled = false;
+        
+        // Create collision warning line (small dotted vertical indicator at collision point)
+        collisionWarningLineObj = new GameObject("CollisionWarningLine");
+        collisionWarningLineObj.transform.parent = transform;
+        collisionWarningLine = collisionWarningLineObj.AddComponent<LineRenderer>();
+        collisionWarningLine.startWidth = 0.06f;
+        collisionWarningLine.endWidth = 0.06f;
+        collisionWarningLine.material = new Material(Shader.Find("Sprites/Default"));
+        collisionWarningLine.startColor = new Color(1f, 0f, 0f, 0.8f); // Red with transparency
+        collisionWarningLine.endColor = new Color(1f, 0f, 0f, 0.8f);
+        collisionWarningLine.sortingOrder = 2; // Render on top of aim lines
+        collisionWarningLine.enabled = false;
+        
+        // Make it dotted by using textureMode and material settings
+        collisionWarningLine.textureMode = LineTextureMode.Tile;
+        // Note: For actual dotted appearance, you'd need a dotted texture
+        // For now, we'll use opacity and thin width to make it subtle
+        
+        Debug.Log("[TrajectoryLine] Collision warning line created");
         
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
@@ -389,6 +412,12 @@ public class TrajectoryLine : MonoBehaviour
         if (aimCurlLine != null)
         {
             aimCurlLine.enabled = false;
+        }
+        
+        // Hide collision warning line
+        if (collisionWarningLine != null)
+        {
+            collisionWarningLine.enabled = false;
         }
         
         // CRITICAL FIX: Also hide the main trajectory line renderer
@@ -1077,7 +1106,13 @@ public class TrajectoryLine : MonoBehaviour
         // ===== GUIDE LINE MODE (no collision detection) =====
         // Calculate X position from straight-line projection
         float deltaY = horizontalLineY - pullbackPos.y;
-        
+        if (horizontalLineY > 8.0f)
+        {
+            // If aiming above 8.0, use actual trajectory direction for better visual guidance
+            // This accounts for curl and gives a more accurate vertical line position
+            deltaY = 8.0f - pullbackPos.y;
+            Debug.Log($"[Vertical Line] Aiming above 8.0, using trajectory direction for vertical line X calculation");
+        }
         if (Mathf.Abs(direction.y) > 0.001f)
         {
             float t = deltaY / direction.y;
@@ -1091,21 +1126,24 @@ public class TrajectoryLine : MonoBehaviour
         // ZONE-BASED LOGIC for vertical line endpoints
         // CRITICAL: Use ACTUAL final trajectory point Y position for vertical line endpoints!
         // This makes the vertical line end exactly at the trajectory dot's Y position
-        if (points != null && points.Count > 0)
-        {
-            // Use the last simulated trajectory point's Y (distance/weight position)
-            float trajectoryDotY = points[points.Count - 1].y;
-            Debug.Log($"[Vertical Line] Using FINAL TRAJECTORY DOT Y position for endpoints: Y={trajectoryDotY:F2}");
+        //if (points != null && points.Count > 0)
+        //{
+        //    // STRAIGHT-LINE PROJECTION LOGIC (ignore trajectory)
+        //    // Use the last simulated trajectory point's Y (distance/weight position)
+        //    float trajectoryDotY = points[points.Count - 1].y;
+        //    Debug.Log($"[Vertical Line] Using FINAL TRAJECTORY DOT Y position for endpoints: Y={trajectoryDotY:F2}");
             
-            // Simple logic: vertical line goes from trajectory dot Y up to Y=8.4
-            verticalLineTopY = trajectoryDotY - 0.5f;
+        //    // Simple logic: vertical line goes from trajectory dot Y up to Y=8.4
+        //    // This is based on STRAIGHT-LINE aim, NOT actual trajectory
+        //    verticalLineTopY = trajectoryDotY - 0.5f;
+        //}
+        //else
+        //{
+        //    verticalLineTopY = horizontalLineY - 0.5f; // Default to 0.5 above horizontal line if no trajectory points
+        //     Debug.LogWarning($"[Vertical Line] No trajectory points available, defaulting vertical line top Y to: {verticalLineTopY:F2}");
+        //}
 
-        }
-        else
-        {
-            verticalLineTopY = horizontalLineY - 0.5f; // Default to 0.5 above horizontal line if no trajectory points
-             Debug.LogWarning($"[Vertical Line] No trajectory points available, defaulting vertical line top Y to: {verticalLineTopY:F2}");
-        }
+        verticalLineTopY = horizontalLineY - 0.5f;
 
         if (verticalLineTopY > 7.5f)
             verticalLineTopY = 7.5f;
@@ -1139,7 +1177,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // Map AIM skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
         // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
-        float lineWidth = Mathf.Lerp(1f, 0.04f, aimSkill / 100f);
+        float lineWidth = Mathf.Lerp(0.10f, 0.04f, aimSkill / 100f);
         
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // Always shows ideal aim position (no collision warnings)
@@ -1153,8 +1191,8 @@ public class TrajectoryLine : MonoBehaviour
             aimVerticalLine.SetPosition(1, new Vector3(verticalLineX, verticalLineBottomY, 0f));
             
             // Apply skill-based width
-            aimVerticalLine.startWidth = lineWidth / 10f;
-            aimVerticalLine.endWidth = lineWidth / 10f;
+            aimVerticalLine.startWidth = lineWidth;
+            aimVerticalLine.endWidth = lineWidth;
             
             // Color: Always greyish-black (no red collision warning)
             // Greyish-black: #3A3A3A (dark grey, 23% brightness)
@@ -1208,7 +1246,7 @@ public class TrajectoryLine : MonoBehaviour
             // Low skill (0-40): baseMaxError = 0.99 (very hard - 99cm miss)
             // Mid skill (40-70): baseMaxError = ~0.50 (moderate - 50cm miss)
             // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
-            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.02f, weightRatio * weightRatio); // Quadratic scaling
+            float weightBaseMaxError = Mathf.Lerp(1.0f, 0.02f, weightRatio * weightRatio); // Quadratic scaling
             float weightMaxError = weightBaseMaxError * (1f - weightRatio);
             
             // MINIMUM WIDTH for visibility (requirement: 0.25 minimum)
@@ -1229,8 +1267,8 @@ public class TrajectoryLine : MonoBehaviour
             // Low skill (0-40%): Gradual fade (fades at 30% of distance)
             
             // Calculate where fade STARTS (as % along line from start to end)
-            // High skill = later fade (0.7), Low skill = earlier fade (0.3)
-            float fadeStartRatio = Mathf.Lerp(0.3f, 0.7f, weightRatio);
+            // High skill = later fade (0.7), Low skill = earlier fade (0.2)
+            float fadeStartRatio = Mathf.Lerp(0.2f, 0.7f, weightRatio);
             
             // TEAM COLOR with gradient
             Color teamColor = shootKnob.GetComponent<SpriteRenderer>().color;
@@ -1273,6 +1311,11 @@ public class TrajectoryLine : MonoBehaviour
                       $"  Fade starts at: {fadeStartRatio:F0}% ({(weightAccuracy >= 70 ? "SHARP" : weightAccuracy >= 40 ? "MODERATE" : "GRADUAL")} fade)\n" +
                       $"  Curl: {curlLineStartX:F2} → {curlLineEndX:F2} (offset: {Mathf.Abs(curlLineEndX - curlLineStartX):F2})");
         }
+        
+        // === COLLISION WARNING INDICATOR ===
+        // Show small dotted line at collision point if trajectory will hit a rock
+        // This is SEPARATE from vertical guide line (which shows straight-line aim)
+        UpdateCollisionWarningLine();
     }
     
     /// <summary>
@@ -1313,6 +1356,56 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         return 50f; // Default mid-skill
+    }
+    
+    /// <summary>
+    /// Draw collision warning indicator at collision point on trajectory
+    /// Small dotted vertical line (0.5 units) showing where rock will hit obstacle
+    /// Shown with guide lines (aim circle OFF), independent of collision visualization toggle
+    /// </summary>
+    private void UpdateCollisionWarningLine()
+    {
+        if (collisionWarningLine == null)
+        {
+            return;
+        }
+        
+        // Only show when aim circle is OFF (guide lines mode)
+        if (aimCircleVisible)
+        {
+            collisionWarningLine.enabled = false;
+            return;
+        }
+        
+        // Check if trajectory simulator detected a collision
+        if (trajectorySimulator == null)
+        {
+            collisionWarningLine.enabled = false;
+            return;
+        }
+        
+        TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
+        
+        if (!collisionInfo.hasCollision)
+        {
+            collisionWarningLine.enabled = false;
+            return;
+        }
+        
+        // Draw small vertical line at collision point
+        Vector2 collisionPoint = collisionInfo.collisionPoint;
+        float indicatorHeight = 0.5f; // 0.5 units tall (subtle)
+        
+        // Center the indicator around collision point
+        float topY = collisionPoint.y + (indicatorHeight / 2f);
+        float bottomY = collisionPoint.y - (indicatorHeight / 2f);
+        
+        collisionWarningLine.enabled = true;
+        collisionWarningLine.positionCount = 2;
+        collisionWarningLine.SetPosition(0, new Vector3(collisionPoint.x, topY, 0f));
+        collisionWarningLine.SetPosition(1, new Vector3(collisionPoint.x, bottomY, 0f));
+        
+        Debug.Log($"[Collision Warning] Indicator drawn at ({collisionPoint.x:F2}, {collisionPoint.y:F2}) - height: {indicatorHeight}");
     }
     
     /// <summary>

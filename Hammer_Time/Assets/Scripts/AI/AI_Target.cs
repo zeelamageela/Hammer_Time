@@ -2319,7 +2319,7 @@ public class AI_Target : MonoBehaviour
             
             // Y-axis error (controlled by WEIGHT skill)
             float weightSkillFactor = weightRatio;
-            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+            float weightBaseMaxError = Mathf.Lerp(3.0f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
             float weightMaxError = weightBaseMaxError * (1f - weightRatio);
             
             if (aimMaxError > 0f || weightMaxError > 0f)
@@ -2638,9 +2638,9 @@ public class AI_Target : MonoBehaviour
                 
                 score += proximityScore;
                 
-                // PART 2: GUARD PROTECTION (15 points max) - Small bonus for ANY finesse
+                // PART 2: GUARD PROTECTION (15 points max) - Small bonus for ANY guard
                 // Philosophy: ALL guards (friendly OR opponent) provide some protection
-                // Being under a finesse makes you harder to remove, regardless of who placed it
+                // Being under a guard makes you harder to remove, regardless of who placed it
                 float protectionScore = 0f;
                 GameObject protectingGuard = null;
                 
@@ -2648,11 +2648,11 @@ public class AI_Target : MonoBehaviour
                 {
                     Vector2 guardPos = guard.transform.position;
                     
-                    // Check if finesse is protecting this position
-                    // Protection = finesse is BETWEEN launcher and final position
+                    // Check if guard is protecting this position
+                    // Protection = guard is BETWEEN launcher and final position
                     bool inFront = guardPos.y < finalPos.y; // Guard is closer to launcher
                     float lateralAlignment = Mathf.Abs(guardPos.x - finalPos.x); // How aligned laterally
-                    float depthSeparation = finalPos.y - guardPos.y; // How far behind finesse
+                    float depthSeparation = finalPos.y - guardPos.y; // How far behind guard
                     
                     // Good protection: Guard in front, good lateral alignment, reasonable depth
                     if (inFront && lateralAlignment < 0.6f && depthSeparation > 0.3f && depthSeparation < 3.0f)
@@ -3057,7 +3057,7 @@ public class AI_Target : MonoBehaviour
             
             // Y-axis error (controlled by WEIGHT skill + finesse bonus)
             float weightSkillFactor = weightRatio;
-            float weightBaseMaxError = Mathf.Lerp(1.5f, 0.025f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+            float weightBaseMaxError = Mathf.Lerp(3.0f, 0.025f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
             float weightMaxError = (weightBaseMaxError * (1f - weightRatio)) * finesseMultiplier; // Apply finesse bonus
             
             if (aimMaxError > 0f || weightMaxError > 0f)
@@ -6086,11 +6086,11 @@ public class AI_Target : MonoBehaviour
                 // ========================================
                 guardTarget = new Vector2(
                     Random.Range(-0.15f, 0.15f), // Centered with variance
-                    Random.Range(3.0f, 3.5f)      // Standard center finesse depth
+                    Random.Range(3.0f, 3.5f)      // Standard center guard depth
                 );
                 
                 guardType = "Aggressive Center Guard (clutter center)";
-                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
             else
             {

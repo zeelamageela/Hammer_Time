@@ -132,7 +132,7 @@ public class TrajectorySimulator
         // Negative of dirMult because torque is inverted but curl isn't
         Vector2 scaledCurlVector = new Vector2(curlMagnitude, 0f);
         
-        Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
+        //Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
         
         // REAL CURLING PHYSICS: NO spin before hog line!
         // Hog line trigger is at Y = -16.15 (BoxCollider2D on "Hog_Line" GameObject)

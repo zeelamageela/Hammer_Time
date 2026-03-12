@@ -9618,16 +9618,16 @@ MonoBehaviour:
   tournyCash: 0
   tournyRecord: {x: 0, y: 0}
   cStats:
-    drawAccuracy: 6
-    takeOutAccuracy: 6
-    guardAccuracy: 6
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 10
     sweepEndurance: 10
     sweepCohesion: 0
   oppStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
@@ -9648,9 +9648,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -9671,9 +9671,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -9710,9 +9710,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -18970,11 +18970,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.36
+      value: 1.48
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.9
+      value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 3838552662515088158, guid: b2ff29e3bb633024b951386d459d0345, type: 3}
       propertyPath: m_LocalPosition.z
@@ -35739,9 +35739,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: aa08693dc6104451cb3d1893bd2ed54a, type: 3}
     active: 0
     view: 0
-    draw: 3
-    guard: 3
-    takeOut: 3
+    weight: 0
+    finesse: 0
+    aim: 0
     sweepStrength: 7
     sweepEnduro: 8
     sweepCohesion: 7
@@ -35758,9 +35758,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: a601819accc62425cac401e1f3579c64, type: 3}
     active: 0
     view: 0
-    draw: 3
-    guard: 3
-    takeOut: 3
+    weight: 0
+    finesse: 0
+    aim: 0
     sweepStrength: 8
     sweepEnduro: 8
     sweepCohesion: 8
@@ -35777,9 +35777,9 @@ MonoBehaviour:
     image: {fileID: 21300000, guid: 773c65e736d4142528300b7329262e1d, type: 3}
     active: 0
     view: 0
-    draw: 3
-    guard: 9
-    takeOut: 3
+    weight: 0
+    finesse: 0
+    aim: 0
     sweepStrength: 10
     sweepEnduro: 8
     sweepCohesion: 10
@@ -35797,9 +35797,9 @@ MonoBehaviour:
     image: {fileID: 0}
     active: 0
     view: 0
-    draw: 0
-    guard: 0
-    takeOut: 0
+    weight: 0
+    finesse: 0
+    aim: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -35812,23 +35812,23 @@ MonoBehaviour:
   xp: 0
   level: 0
   cStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
   oppStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
   modStats:
-    drawAccuracy: 0
-    takeOutAccuracy: 0
-    guardAccuracy: 0
+    weightAccuracy: 0
+    aimAccuracy: 0
+    finesseAccuracy: 0
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
@@ -35866,9 +35866,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0

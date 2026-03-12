@@ -36,7 +36,7 @@ public class QuickTestGame : MonoBehaviour
     
     [Tooltip("Opponent stats (0-100, 100 = perfect shots)")]
     [Range(0, 100)]
-    public int opponentStatValue = 50;
+    public int opponentStatValue = 85;
     
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
@@ -155,17 +155,36 @@ public class QuickTestGame : MonoBehaviour
             Debug.Log("[QuickTestGame] Player vs AI mode");
         }
         
-        // ?? LOCKED SCENARIO: Always 2-1, yellow has hammer
-        gsp.redHammer = false;
-        gsp.redScore = 2;
-        gsp.yellowScore = 1;
-        Debug.Log($"[QuickTestGame] ?? LOCKED: Score 2-1, YELLOW has hammer");
+        if (randomizeScores)
+        {
+            gsp.redScore = Random.Range(0, 6);
+            gsp.yellowScore = Random.Range(0, 6);
+        }
+        else
+        {
+            gsp.redScore = 2;
+            gsp.yellowScore = 6;
+        }
+        if (randomizeHammer)
+        {
+            if (Random.value < 0.50f) // 50% chance red has hammer
+            {
+                gsp.redHammer = true;
+            }
+            else
+            {
+                gsp.redHammer = false;
+            }
+        }
+        else
+            gsp.redHammer = false;
+        Debug.Log($"[QuickTestGame] ?? LOCKED: Score 6-2, YELLOW has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];
         // Note: Scores are set above in randomization section
         
-        // Create opponent team with 50% stats
+        // Create opponent team with 85% stats
         Team opponentTeam = new Team
         {
             name = "Max Stats AI",
@@ -197,35 +216,35 @@ public class QuickTestGame : MonoBehaviour
             });
         }
         
-        // ? CRITICAL: Create player team with 50% stats for PERFECT DETERMINISTIC SHOTS!
+        // ? CRITICAL: Create player team with 85% stats for PERFECT DETERMINISTIC SHOTS!
         // NO randomness, NO skill penalties - pure physics for trajectory tuning
         Team playerTeam = new Team
         {
-            name = "Test Player (50% Accuracy)",
-            strength = 50,  // LOCKED: Perfect stats for trajectory tuning
-            weight = 50,
-            finesse = 50,
-            aim = 50,
-            sweepStrength = 50,
-            sweepEnduro = 50,
-            sweepCohesion = 50,
+            name = "Test Player (85% Accuracy)",
+            strength = 85,  // LOCKED: Perfect stats for trajectory tuning
+            weight = 85,
+            finesse = 85,
+            aim = 85,
+            sweepStrength = 85,
+            sweepEnduro = 85,
+            sweepCohesion = 85,
             player = true,
             players = new List<Player>()
         };
         
-        // Add 4 players to the team - ALL with 50% stats
+        // Add 4 players to the team - ALL with 85% stats
         for (int i = 0; i < 4; i++)
         {
             playerTeam.players.Add(new Player
             {
                 id = i,
                 name = $"Test Player {i + 1} (Perfect)",
-                weight = 50,      // ? NO RANDOMNESS
-                finesse = 50,
-                aim = 50,
-                sweepStrength = 50,
-                sweepEnduro = 50,
-                sweepCohesion = 50
+                weight = 85,      // ? NO RANDOMNESS
+                finesse = 85,
+                aim = 85,
+                sweepStrength = 85,
+                sweepEnduro = 85,
+                sweepCohesion = 85
             });
         }
         
@@ -236,13 +255,13 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
-            // ? CRITICAL: Set player stats to 50 for ZERO randomness!
-            cm.cStats.weightAccuracy = 50;
-            cm.cStats.finesseAccuracy = 50;
-            cm.cStats.aimAccuracy = 50;
-            cm.cStats.sweepStrength = 50;
-            cm.cStats.sweepEndurance = 50;
-            cm.cStats.sweepCohesion = 50;
+            // ? CRITICAL: Set player stats to 85 for ZERO randomness!
+            cm.cStats.weightAccuracy = 85;
+            cm.cStats.finesseAccuracy = 85;
+            cm.cStats.aimAccuracy = 85;
+            cm.cStats.sweepStrength = 85;
+            cm.cStats.sweepEndurance = 85;
+            cm.cStats.sweepCohesion = 85;
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;
@@ -267,7 +286,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 50/50"); //(NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 85/85"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
