@@ -226,7 +226,7 @@ public class Rock_Force : MonoBehaviour
             
             if (frameCounter % 30 == 0)
             {
-                Debug.Log($"[Rock_Force APPLY] Frame {frameCounter}: curl.x={curl.x:F3}, vel.x={vel.x:F3}, scaledCurl.x={scaledCurl.x:F3}, FORCE.x={(scaledCurl * vel).x:F3}");
+                //Debug.Log($"[Rock_Force APPLY] Frame {frameCounter}: curl.x={curl.x:F3}, vel.x={vel.x:F3}, scaledCurl.x={scaledCurl.x:F3}, FORCE.x={(scaledCurl * vel).x:F3}");
             }
             
             //Debug.Log("curl is " + curl.x);

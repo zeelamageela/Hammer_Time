@@ -193,7 +193,7 @@ public class TrajectorySimulator
             
             if (speed < 0.01f)
             {
-                Debug.Log($"[Trajectory SIM STOPPED] Final Position: ({position.x:F3}, {position.y:F3}) | Total Distance: {totalSimDistance:F3} | Iterations: {iterationCount}");
+                //Debug.Log($"[Trajectory SIM STOPPED] Final Position: ({position.x:F3}, {position.y:F3}) | Total Distance: {totalSimDistance:F3} | Iterations: {iterationCount}");
                 // Rock has essentially stopped
                 break;
             }

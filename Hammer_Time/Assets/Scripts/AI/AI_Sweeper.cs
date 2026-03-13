@@ -39,10 +39,20 @@ public class AI_Sweeper : MonoBehaviour
     /// <summary>
     /// Start physics-based sweeping monitor
     /// Predicts trajectory and makes intelligent sweeping decisions in real-time
+    /// 
+    /// CRITICAL: Uses IDEAL (pre-error) velocity to determine where rock SHOULD go
+    /// Sweepers correct deviations from ideal path caused by accuracy errors
     /// </summary>
-    public void StartPhysicsBasedSweeping(Rigidbody2D rockRB, Vector2 initialVelocity, bool isInTurn, Vector2 targetPosition, string shotType, int currentRockNumber)
+    /// <param name="rockRB">Rigidbody of the rock being swept</param>
+    /// <param name="actualVelocity">ACTUAL velocity rock was launched with (includes accuracy errors)</param>
+    /// <param name="idealVelocity">IDEAL velocity from physics calculation (NO accuracy errors) - sweepers aim for this trajectory</param>
+    /// <param name="isInTurn">Turn direction</param>
+    /// <param name="targetPosition">Final target position</param>
+    /// <param name="shotType">Type of shot being played</param>
+    /// <param name="currentRockNumber">Index of current rock</param>
+    public void StartPhysicsBasedSweeping(Rigidbody2D rockRB, Vector2 actualVelocity, Vector2 idealVelocity, bool isInTurn, Vector2 targetPosition, string shotType, int currentRockNumber)
     {
-        StartCoroutine(MonitorAndSweepCoroutine(rockRB, initialVelocity, isInTurn, targetPosition, shotType, currentRockNumber));
+        StartCoroutine(MonitorAndSweepCoroutine(rockRB, actualVelocity, idealVelocity, isInTurn, targetPosition, shotType, currentRockNumber));
     }
     /// <summary>
     /// LEGACY HARD-CODED SWEEPING SYSTEM - DISABLED
@@ -989,12 +999,18 @@ public class AI_Sweeper : MonoBehaviour
     /// <summary>
     /// Monitor rock position vs predicted trajectory and make sweeping decisions
     /// PHILOSOPHY:
-    /// 1. Predict clean trajectory before errors accumulate
-    /// 2. Priority: Collision avoidance > Distance > Line accuracy
-    /// 3. Post-collision: Scoring position > Cover behind rocks
-    /// 4. Sculpt rock back to ideal trajectory using intelligent sweep state changes
+    /// 1. Predict IDEAL trajectory from perfect velocity (no accuracy errors)
+    /// 2. Compare actual rock position to ideal path
+    /// 3. Priority: Collision avoidance > Distance > Line accuracy
+    /// 4. Post-collision: Scoring position > Cover behind rocks
+    /// 5. Sculpt rock back toward IDEAL trajectory to correct accuracy errors
+    /// 
+    /// CRITICAL DISTINCTION:
+    /// - actualVelocity: Rock's REAL launch velocity (includes shooter accuracy errors)
+    /// - idealVelocity: PERFECT physics-calculated velocity (what sweepers aim for)
+    /// - Sweepers CORRECT the difference between actual and ideal paths!
     /// </summary>
-    private IEnumerator MonitorAndSweepCoroutine(Rigidbody2D rockRB, Vector2 initialVelocity, bool isInTurn, Vector2 targetPosition, string shotType, int currentRockNumber)
+    private IEnumerator MonitorAndSweepCoroutine(Rigidbody2D rockRB, Vector2 actualVelocity, Vector2 idealVelocity, bool isInTurn, Vector2 targetPosition, string shotType, int currentRockNumber)
     {
         GameObject rock = gm.rockList[currentRockNumber].rock;
         if (rock == null)
@@ -1024,7 +1040,11 @@ public class AI_Sweeper : MonoBehaviour
             yield break;
         }
 
-        // Generate CLEAN predicted path from launch position (before errors)
+        // ========================================
+        // GENERATE TWO TRAJECTORIES:
+        // 1. IDEAL trajectory (from perfect physics calculation - what we WANT)
+        // 2. ACTUAL trajectory (from error-contaminated launch - what we GOT)
+        // ========================================
         Vector2 launcherPos = new Vector2(0f, -25f);
         List<GameObject> rocksInPlay = new List<GameObject>();
         foreach (var rockEntry in gm.rockList)
@@ -1035,17 +1055,33 @@ public class AI_Sweeper : MonoBehaviour
             }
         }
 
-        // CRITICAL: Predict clean trajectory from initial launch
-        List<Vector2> cleanTrajectory = trajectorySimulator.SimulateTrajectory(
+        // IDEAL TRAJECTORY: Perfect physics calculation (NO accuracy errors)
+        // This is what sweepers will try to ACHIEVE by correcting errors
+        List<Vector2> idealTrajectory = trajectorySimulator.SimulateTrajectory(
             launcherPos,
-            initialVelocity,
+            idealVelocity,  // ? PERFECT velocity from physics (before errors)
+            isInTurn,
+            250,
+            rocksInPlay,
+            forPlayerPreview: false
+        );
+        
+        // ACTUAL TRAJECTORY: Error-contaminated launch (what rock actually got)
+        // Used for collision detection and real-time prediction
+        List<Vector2> actualTrajectory = trajectorySimulator.SimulateTrajectory(
+            launcherPos,
+            actualVelocity,  // ? ACTUAL velocity (includes accuracy errors)
             isInTurn,
             250,
             rocksInPlay,
             forPlayerPreview: false
         );
 
-        Debug.Log($"[AI_Sweeper] Monitoring started - clean trajectory has {cleanTrajectory.Count} points");
+        Debug.Log($"[AI_Sweeper] Monitoring started:");
+        Debug.Log($"  Shot type: {shotType}");
+        Debug.Log($"  IDEAL trajectory (sweeping target): {idealTrajectory.Count} points from perfect velocity {idealVelocity}");
+        Debug.Log($"  ACTUAL trajectory (error-contaminated): {actualTrajectory.Count} points from actual velocity {actualVelocity}");
+        Debug.Log($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}°)");
 
         // Wait until rock crosses hog line (Y > -16.15)
         while (rock.transform.position.y < -16.15f)
@@ -1055,10 +1091,73 @@ public class AI_Sweeper : MonoBehaviour
 
         Debug.Log($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
 
-        // Sweeping thresholds (skill-adjusted)
-        float lateralErrorThreshold = 0.12f; // 12cm lateral error
-        float distanceErrorThreshold = 0.25f; // 25cm distance error
-        float predictionLookahead = 3.5f; // Look 3.5 units ahead
+        // ========================================
+        // CONTEXT-AWARE SWEEPING PARAMETERS
+        // ========================================
+        // Different shot types need different sweeping strategies!
+        
+        bool isTakeoutShot = (shotType == "Take Out" || shotType == "Peel" || shotType == "Runback" || shotType == "Tick");
+        bool isDrawShot = (shotType == "Draw To Target" || shotType == "Guard To Target");
+        bool isRaiseShot = (shotType == "Raise" || shotType == "Tap Back");
+        
+        // TAKEOUT SHOTS: Need VELOCITY! Sweep aggressively for weight
+        // DRAW SHOTS: Need PRECISION! Sweep carefully for line and distance
+        // RAISE SHOTS: Need CONTROL! Gentle sweeping only
+        
+        float lateralErrorThreshold;
+        float distanceErrorThreshold;
+        float predictionLookahead;
+        
+        if (isTakeoutShot)
+        {
+            // TAKEOUTS: ULTRA-AGGRESSIVE parameters
+            // - MASSIVE lookahead (8.0 units!) to detect velocity drops SUPER early
+            // - VERY sensitive to distance errors (0.10 = 10cm) - even tiny shortfalls trigger sweeping
+            // - Moderate lateral tolerance (0.12 = 12cm) - hitting is more important than perfect line
+            lateralErrorThreshold = 0.12f;  // 12cm lateral (relaxed - hitting matters more than line)
+            distanceErrorThreshold = 0.10f;  // 10cm distance (ULTRA sensitive - sweep early!)
+            predictionLookahead = 8.0f;      // Look 8 units ahead (MASSIVE - detect problems WAY ahead!)
+            
+            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE weight sweeping enabled!");
+            Debug.Log($"  Lookahead: {predictionLookahead}m (MASSIVE - detect velocity drops SUPER early!)");
+            Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (ULTRA sensitive - must reach!)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (hit accuracy)");
+        }
+        else if (isDrawShot)
+        {
+            // DRAWS: PRECISION parameters
+            // - Medium lookahead (4.0 units) to balance correction time
+            // - Moderate distance sensitivity (0.20 = 20cm) - stopping is critical
+            // - Tight lateral tolerance (0.08 = 8cm) - line accuracy is paramount
+            lateralErrorThreshold = 0.08f;   // 8cm lateral (TIGHT - draws need perfect line)
+            distanceErrorThreshold = 0.20f;  // 20cm distance (important but less critical than takeouts)
+            predictionLookahead = 4.0f;      // Look 4 units ahead (balanced)
+            
+            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control");
+            Debug.Log($"  Lookahead: {predictionLookahead}m (balanced prediction)");
+            Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (stopping control)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (line precision!)");
+        }
+        else if (isRaiseShot)
+        {
+            // RAISES: GENTLE parameters
+            // - Short lookahead (3.0 units) to avoid over-correction
+            // - Relaxed thresholds (raises are light contact, less precision needed)
+            lateralErrorThreshold = 0.15f;   // 15cm lateral (relaxed - light contact)
+            distanceErrorThreshold = 0.30f;  // 30cm distance (relaxed - just need contact)
+            predictionLookahead = 3.0f;      // Look 3 units ahead (short - avoid over-sweeping)
+            
+            Debug.Log($"[AI_Sweeper] RAISE MODE: Gentle sweeping for light contact");
+        }
+        else
+        {
+            // DEFAULT: Balanced parameters
+            lateralErrorThreshold = 0.12f;   // 12cm lateral
+            distanceErrorThreshold = 0.25f;  // 25cm distance
+            predictionLookahead = 3.5f;      // Look 3.5 units ahead
+            
+            Debug.Log($"[AI_Sweeper] DEFAULT MODE: Standard sweeping parameters");
+        }
         
         bool collisionImminent = false;
         float collisionDistance = float.MaxValue;
@@ -1071,9 +1170,10 @@ public class AI_Sweeper : MonoBehaviour
         {
             Vector2 currentPos = rock.transform.position;
 
-            // Find where rock SHOULD be on clean trajectory at this Y coordinate
-            Vector2 idealPosAtCurrentY = GetPredictedPositionAtY(cleanTrajectory, currentPos.y);
-            Vector2 idealPosAhead = GetPredictedPositionAtY(cleanTrajectory, currentPos.y + predictionLookahead);
+            // Find where rock SHOULD be on IDEAL trajectory at this Y coordinate
+            // This is the PERFECT path (no accuracy errors) that sweepers aim to achieve
+            Vector2 idealPosAtCurrentY = GetPredictedPositionAtY(idealTrajectory, currentPos.y);
+            Vector2 idealPosAhead = GetPredictedPositionAtY(idealTrajectory, currentPos.y + predictionLookahead);
 
             // Calculate deviations from ideal trajectory
             float lateralError = currentPos.x - idealPosAtCurrentY.x;
@@ -1200,18 +1300,41 @@ public class AI_Sweeper : MonoBehaviour
                         Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
                     }
                 }
-                // PRIORITY 1: CRITICAL DISTANCE (rock won't reach target!)
+                // PRIORITY 1: TAKEOUT VELOCITY BOOST (ALWAYS sweep if it's a takeout and we're losing velocity!)
+                else if (isTakeoutShot && predictedShortfall > 0.03f)
+                {
+                    // TAKEOUT SHOTS: ULTRA-AGGRESSIVE weight sweeping to maintain/boost velocity
+                    // Even TINY shortfalls (3cm!) trigger sweeping on takeouts!
+                    // Philosophy: "Hit it hard, sweepers make ABSOLUTELY SURE it gets there!"
+                    
+                    if (predictedShortfall > 0.8f)
+                    {
+                        desiredState = "Critical"; // HUGE shortfall - sweep HARD!
+                        Debug.Log($"[AI_Sweeper] TAKEOUT CRITICAL: {predictedShortfall:F2}m shortfall - SWEEP HARD!");
+                    }
+                    else if (predictedShortfall > 0.2f)
+                    {
+                        desiredState = "Weight"; // Moderate shortfall - sweep aggressively
+                        Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY BOOST: {predictedShortfall:F2}m shortfall - SWEEP FOR SPEED!");
+                    }
+                    else
+                    {
+                        desiredState = "Weight"; // Tiny shortfall (3cm+) - sweep preventatively
+                        Debug.Log($"[AI_Sweeper] TAKEOUT PREVENTATIVE: {predictedShortfall:F2}m shortfall - sweep to maintain velocity");
+                    }
+                }
+                // PRIORITY 2: CRITICAL DISTANCE (rock won't reach target!)
                 else if (predictedShortfall > 1.0f)
                 {
                     desiredState = "Critical";
                     Debug.Log($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
                 }
-                // PRIORITY 2: SIGNIFICANT SHORTFALL
+                // PRIORITY 3: SIGNIFICANT SHORTFALL
                 else if (predictedShortfall > distanceThreshold)
                 {
                     desiredState = "Weight";
                 }
-                // PRIORITY 3: LATERAL ERROR (off the ideal line)
+                // PRIORITY 4: LATERAL ERROR (off the ideal line)
                 else if (Mathf.Abs(lateralError) > lateralThreshold)
                 {
                     if (isInTurn)
@@ -1229,6 +1352,26 @@ public class AI_Sweeper : MonoBehaviour
                         desiredState = (lateralError < 0f) ? "Line" : "Curl";
                     }
                 }
+                // PRIORITY 5: TAKEOUT VELOCITY MAINTENANCE (keep it moving even if on-target!)
+                else if (isTakeoutShot && currentPos.y < targetPosition.y - 2.0f)
+                {
+                    // TAKEOUTS ONLY: If we're still far from target (>2m away) and on-line,
+                    // apply gentle weight sweeping to maintain velocity
+                    // This ensures we don't slow down too much before impact
+                    
+                    float distanceRemaining = targetPosition.y - currentPos.y;
+                    float currentVelocity = rockRB.linearVelocity.magnitude;
+                    
+                    // Check if velocity is dropping below ideal for this distance
+                    // Rough heuristic: Need ~3-4 m/s at 2m out, ~5-6 m/s at 4m out
+                    float idealVelocityForDistance = 2.0f + (distanceRemaining * 1.0f);
+                    
+                    if (currentVelocity < idealVelocityForDistance)
+                    {
+                        desiredState = "Weight";
+                        Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY MAINTENANCE: {distanceRemaining:F1}m out, velocity={currentVelocity:F2} (ideal={idealVelocityForDistance:F2})");
+                    }
+                }
             }
 
             // Apply sweeping if state changed
@@ -1238,6 +1381,12 @@ public class AI_Sweeper : MonoBehaviour
                 currentSweepState = desiredState;
 
                 Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}");
+            }
+            // SPECIAL: On takeouts, log velocity tracking
+            else if (isTakeoutShot && desiredState == "Weight")
+            {
+                float currentVelocity = rockRB.linearVelocity.magnitude;
+                Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY TRACKING: Y={currentPos.y:F2}, Vel={currentVelocity:F2} m/s, Sweeping={currentSweepState}");
             }
 
             yield return new WaitForFixedUpdate();
@@ -1320,6 +1469,7 @@ public class AI_Sweeper : MonoBehaviour
 
     /// <summary>
     /// Get combined sweeper skill (0-1 scale)
+    /// NEW: Returns >1.0 for exceptional sweepers (allows dramatic correction!)
     /// </summary>
     private float GetSweeperSkill()
     {
@@ -1331,6 +1481,23 @@ public class AI_Sweeper : MonoBehaviour
         float rightSkill = (sm.swprRStats.sweepStrength.GetValue() / 100f + sm.swprRStats.sweepEndurance.GetValue() / 100f) * 0.5f;
 
         // Average both sweepers
-        return (leftSkill + rightSkill) * 0.5f;
+        float averageSkill = (leftSkill + rightSkill) * 0.5f;
+        
+        // NEW: Apply amplification for high-skill sweepers!
+        // 0.0-0.6 skill: Linear (0.0-0.6 output)
+        // 0.6-1.0 skill: Amplified (0.6-1.3 output) - exceptional sweepers get >100% effectiveness!
+        if (averageSkill > 0.6f)
+        {
+            // Quadratic amplification above 60% skill
+            // Formula: 0.6 + (skill - 0.6)^1.5 * 1.75
+            // This gives: 60% skill = 0.6, 80% skill = 0.85, 100% skill = 1.3 (30% bonus!)
+            float excessSkill = averageSkill - 0.6f;
+            float amplifiedExcess = Mathf.Pow(excessSkill, 1.5f) * 1.75f;
+            averageSkill = 0.6f + amplifiedExcess;
+            
+            Debug.Log($"[Sweeper Skill] HIGH SKILL AMPLIFICATION: Base={((leftSkill + rightSkill) * 0.5f):F2} ? Amplified={averageSkill:F2} ({(averageSkill > 1f ? "EXCEPTIONAL!" : "very good")}");
+        }
+        
+        return averageSkill; // Can be >1.0 for exceptional sweepers!
     }
 }

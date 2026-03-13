@@ -58,6 +58,11 @@ public class AI_Target : MonoBehaviour
     [Range(0.5f, 3.0f)]
     public float aimPointRadiusMultiplier = 1.5f;
     
+    // NEW: Store perfect velocity before accuracy errors
+    // Used by AI_Sweeper to generate ideal trajectory for correction
+    [HideInInspector]
+    public Vector2 lastPerfectVelocity;
+    
     void Start()
     {
         // CRITICAL: AI must use the SAME physics as player trajectory!
@@ -879,6 +884,29 @@ public class AI_Target : MonoBehaviour
     }
     
 
+    
+    /// <summary>
+    /// Calculate velocity from pullback position using PLAYER'S formula
+    /// This gives us the INTENDED velocity before accuracy errors
+    /// </summary>
+    private Vector2 CalculateVelocityFromPullback(Vector2 pullbackPos, Vector2 launcherPos, bool isInTurn)
+    {
+        // Get TrajectoryLine parameters
+        TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+        float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+        
+        // Calculate pullback distance
+        Vector2 pullbackOffset = pullbackPos - launcherPos;
+        float pullbackDistance = pullbackOffset.magnitude;
+        
+        // PLAYER'S FORMULA: velocity = pullbackDistance * velocityMultiplier
+        Vector2 velocityDirection = pullbackOffset.normalized;
+        float velocityMagnitude = pullbackDistance * velocityMultiplier;
+        Vector2 baseVelocity = velocityDirection * velocityMagnitude;
+        
+        return baseVelocity;
+    }
+
     /// <summary>
     /// Convert a desired velocity into the required pullback position
     /// CRITICAL: Returns RAW pullback distance (not pre-divided)
@@ -1137,6 +1165,12 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
+            // **NEW: Store perfect velocity BEFORE accuracy errors**
+            Vector2 launchPosition = new Vector2(0f, -27.5f);
+            lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
+            
+            Debug.Log($"[AI_Target] Perfect velocity stored: {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+            
             // CRITICAL: Set rm.inturn from physics calculation ONCE
             Debug.Log($"[AI_Target] Physics recommends: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                       $"Setting rm.inturn = {useInTurn}");
@@ -1174,7 +1208,7 @@ public class AI_Target : MonoBehaviour
                 
                 // X-axis error (controlled by AIM skill)
                 float aimSkillFactor = aimRatio;
-                float aimBaseMaxError = Mathf.Lerp(0.35f, 0.02f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
+                float aimBaseMaxError = Mathf.Lerp(0.175f, 0.02f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
                 float aimMaxError = aimBaseMaxError * (1f - aimRatio);
                 
                 // Y-axis error (controlled by WEIGHT skill)
@@ -2288,68 +2322,74 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
+        // **NEW: Store perfect velocity BEFORE accuracy errors**
+        Vector2 launchPosition = new Vector2(0f, -27.5f);
+        lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
+        
+        Debug.Log($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+        
         // Apply accuracy modifier with realistic error distribution
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
-        if (shooterStats != null)
-        {
-            // NEW SKILL SYSTEM:
-            // - Aim accuracy controls X-axis error (lateral positioning)
-            // - Weight accuracy controls Y-axis error (distance control)
-            float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
-            float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
-            
-            Debug.Log($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
-            
-            // REALISTIC CURLING ERROR DISTRIBUTION:
-            // Weight (Y) errors are THE PRIMARY challenge in draws (controlling distance is hard!)
-            // Line (X) errors are less common but now controlled by separate AIM skill
-            
-            float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
-            float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
-            
-            // SKILL-BASED ERROR SCALING (per axis):
-            // Low skill (0-40): baseMaxError = 0.08 (very hard - 8cm miss)
-            // Mid skill (40-70): baseMaxError = 0.05 (moderate - 5cm miss)
-            // High skill (70-100): baseMaxError = 0.03 (easy - 3cm miss)
-            
-            // X-axis error (controlled by AIM skill)
-            float aimSkillFactor = aimRatio;
-            float aimBaseMaxError = Mathf.Lerp(0.40f, 0.03f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
-            float aimMaxError = aimBaseMaxError * (1f - aimRatio);
-            
-            // Y-axis error (controlled by WEIGHT skill)
-            float weightSkillFactor = weightRatio;
-            float weightBaseMaxError = Mathf.Lerp(3.0f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
-            float weightMaxError = weightBaseMaxError * (1f - weightRatio);
-            
-            if (aimMaxError > 0f || weightMaxError > 0f)
+            if (shooterStats != null)
             {
-                // Generate INDEPENDENT X and Y errors based on respective skills
-                float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
-                float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
+                // NEW SKILL SYSTEM:
+                // - Aim accuracy controls X-axis error (lateral positioning)
+                // - Weight accuracy controls Y-axis error (distance control)
+                float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
+                float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
+            
+                Debug.Log($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
+            
+                // REALISTIC CURLING ERROR DISTRIBUTION:
+                // Weight (Y) errors are THE PRIMARY challenge in draws (controlling distance is hard!)
+                // Line (X) errors are less common but now controlled by separate AIM skill
+            
+                float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
+                float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
+            
+                // SKILL-BASED ERROR SCALING (per axis):
+                // Low skill (0-40): baseMaxError = 0.08 (very hard - 8cm miss)
+                // Mid skill (40-70): baseMaxError = 0.05 (moderate - 5cm miss)
+                // High skill (70-100): baseMaxError = 0.03 (easy - 3cm miss)
+            
+                // X-axis error (controlled by AIM skill)
+                float aimSkillFactor = aimRatio;
+                float aimBaseMaxError = Mathf.Lerp(0.21f, 0.03f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
+                float aimMaxError = aimBaseMaxError * (1f - aimRatio);
+            
+                // Y-axis error (controlled by WEIGHT skill)
+                float weightSkillFactor = weightRatio;
+                float weightBaseMaxError = Mathf.Lerp(2.4f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
+                float weightMaxError = weightBaseMaxError * (1f - weightRatio);
+            
+                if (aimMaxError > 0f || weightMaxError > 0f)
+                {
+                    // Generate INDEPENDENT X and Y errors based on respective skills
+                    float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
+                    float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
                 
-                Vector2 errorOffset = new Vector2(xError, yError);
+                    Vector2 errorOffset = new Vector2(xError, yError);
                 
-                // CRITICAL: Lateral error must respect turn direction
-                // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
-                // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
-                float lateralErrorSign = useInTurn ? 1f : -1f;
-                errorOffset.x *= lateralErrorSign;
+                    // CRITICAL: Lateral error must respect turn direction
+                    // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
+                    // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
+                    float lateralErrorSign = useInTurn ? 1f : -1f;
+                    errorOffset.x *= lateralErrorSign;
                 
-                pullbackPos += errorOffset;
+                    pullbackPos += errorOffset;
                 
-                Debug.Log($"[AI_Target] Draw INDEPENDENT axis error (Aim/Weight skills)\n" +
-                          $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
-                          $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
-                          $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
-                          $"  Y error (weight): {yError:F3}\n" +
-                          $"  Final pullback: {pullbackPos}");
+                    Debug.Log($"[AI_Target] Draw INDEPENDENT axis error (Aim/Weight skills)\n" +
+                              $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
+                              $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
+                              $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
+                              $"  Y error (weight): {yError:F3}\n" +
+                              $"  Final pullback: {pullbackPos}");
+                }
+                else
+                {
+                    Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR APPLIED!");
+                }
             }
-            else
-            {
-                Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR APPLIED!");
-            }
-        }
             
             rm.inturn = useInTurn;
             takeOutX = pullbackPos.x;
@@ -2397,11 +2437,11 @@ public class AI_Target : MonoBehaviour
                     takeOutX = emergencyPullback.x;
                     takeOutY = emergencyPullback.y;
                     
-                    Debug.Log($"[Physics Draw] Emergency finesse placement - InTurn: {emergencyInTurn}");
+                    Debug.Log($"[Physics Draw] Emergency guard placement - InTurn: {emergencyInTurn}");
                 }
                 else
                 {
-                    // CATASTROPHIC: Can't even place a finesse - throw it away
+                    // CATASTROPHIC: Can't even place a guard - throw it away
                     Debug.LogError($"[Physics Draw] CATASTROPHIC FAILURE - throwing rock away");
                     
                     rm.inturn = Random.value > 0.5f;
@@ -3022,6 +3062,12 @@ public class AI_Target : MonoBehaviour
         
         if (foundShot)
         {
+        // **NEW: Store perfect velocity BEFORE accuracy errors**
+        Vector2 launchPosition = new Vector2(0f, -27.5f);
+        lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
+        
+        Debug.Log($"[AI_Target] Perfect velocity stored (Guard): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+        
         // Apply accuracy modifier with realistic error distribution
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
         if (shooterStats != null)
@@ -3121,453 +3167,7 @@ public class AI_Target : MonoBehaviour
         yield break;
     }
 
-    IEnumerator DrawTwelveFoot(int rockCurrent)
-    {
-        yield return StartCoroutine(GuardReading(rockCurrent));
-
-        //if there's at least one finesse
-        if (gm.gList.Count != 0)
-        {
-            //only a centre finesse
-            if (cenGuard && !lCornGuard && !rCornGuard)
-            {
-                //centre finesse to the right
-                if (cenGuard.position.x > 0f)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                    yield break;
-                }
-                //centre finesse to the left
-                else if (cenGuard.position.x < 0f)
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //centre finesse and a right finesse and a left finesse
-            else if (cenGuard && rCornGuard && lCornGuard)
-            {
-                //high centre finesse
-                if (cenGuard.position.y < 2.0f)
-                {
-                    //centre finesse to the right
-                    if (cenGuard.position.x > 0f)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                    //centre finesse to the left
-                    else if (cenGuard.position.x < 0f)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //centre finesse is medium height
-                else if (cenGuard.position.y < 3.0f)
-                {
-                    //corner guards are high
-                    if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
-                    {
-                        //centre finesse to the right
-                        if (cenGuard.position.x > 0f)
-                        {
-                            rm.inturn = true;
-                            aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                            yield break;
-                        }
-                        //centre finesse to the left
-                        else if (cenGuard.position.x < 0f)
-                        {
-                            rm.inturn = false;
-                            aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                            yield break;
-                        }
-                    }
-                    //left corner finesse is high
-                    else if (lCornGuard.position.y < 2.0f)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                    //right corner finesse is high
-                    else if (rCornGuard.position.y < 2.0f)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //low centre finesse
-                else if (cenGuard.position.y < 4.8f)
-                {
-                    //both corner guards are higher
-                    if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
-                    {
-                        //centre finesse to the right
-                        if (cenGuard.position.x > 0f)
-                        {
-                            rm.inturn = true;
-                            aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                            yield break;
-                        }
-                        //centre finesse to the left
-                        else if (cenGuard.position.x < 0f)
-                        {
-                            rm.inturn = false;
-                            aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                            yield break;
-                        }
-                    }
-                    //left corner finesse is higher
-                    else if (lCornGuard.position.y < cenGuard.position.y)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                    //right corner finesse is higher
-                    else if (rCornGuard.position.y < cenGuard.position.y)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //any other situation
-                else
-                {
-                    //centre finesse to the right
-                    if (cenGuard.position.x > 0f)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                    //centre finesse to the left
-                    else if (cenGuard.position.x < 0f)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-            }
-
-            //centre finesse and a left finesse
-            else if (cenGuard && lCornGuard && !rCornGuard)
-            {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Left Twelve Foot", rockCurrent);
-                    yield break;
-            }
-
-            //centre finesse and a right finesse
-            else if (cenGuard && rCornGuard && !lCornGuard)
-            {
-                if (cenGuard.position.x > 0f)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Right Twelve Foot", rockCurrent);
-                    yield break;
-                }
-                else if (cenGuard.position.x < 0f)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //right and a left finesse
-            else if (rCornGuard && lCornGuard && !cenGuard)
-            {
-                if (rCornGuard.position.y < lCornGuard.position.y)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Right Twelve Foot", rockCurrent);
-                    yield break;
-                }
-                else if (lCornGuard.position.y < rCornGuard.position.y)
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Left Twelve Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //right corner finesse
-            else if (rCornGuard && !lCornGuard && !cenGuard)
-            {
-                rm.inturn = true;
-                aiShoot.OnShot("Right Twelve Foot", rockCurrent);
-                yield break;
-            }
-
-            //left corner finesse
-            else if (lCornGuard && !rCornGuard && !cenGuard)
-            {
-                rm.inturn = false;
-                aiShoot.OnShot("Left Twelve Foot", rockCurrent);
-                yield break;
-            }
-        }
-
-        //if there's no guards
-        else
-        {
-            if (Random.value > 0.5f)
-            {
-                rm.inturn = true;
-            }
-            else rm.inturn = false;
-
-            aiShoot.OnShot("Top Twelve Foot", rockCurrent);
-            yield break;
-        }
-
-    }
-
-    IEnumerator DrawFourFoot(int rockCurrent)
-    {
-        //read where the guards are
-        yield return StartCoroutine(GuardReading(rockCurrent));
-
-        //if there are guards
-        if (gm.gList.Count != 0)
-        {
-            //only a centre finesse
-            if (cenGuard && !lCornGuard && !rCornGuard)
-            {
-                //centre finesse to the right
-                if (cenGuard.position.x > 0f)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Top Four Foot", rockCurrent);
-                    yield break;
-                }
-                //centre finesse to the left
-                else
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Top Four Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //centre finesse and a right finesse and a left finesse
-            else if (cenGuard && rCornGuard && lCornGuard)
-            {
-                //high centre finesse
-                if (cenGuard.position.y < 2.0f)
-                {
-                    //centre finesse to the right
-                    if (cenGuard.position.x > 0f)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                    //centre finesse to the left
-                    else
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //centre finesse is medium height
-                else if (cenGuard.position.y < 3.0f)
-                {
-                    //corner guards are high
-                    if (rCornGuard.position.y < 2.0f && lCornGuard.position.y < 2.0f)
-                    {
-                        //centre finesse to the right
-                        if (cenGuard.position.x > 0f)
-                        {
-                            rm.inturn = true;
-                            aiShoot.OnShot("Top Four Foot", rockCurrent);
-                            yield break;
-                        }
-                        //centre finesse to the left
-                        else
-                        {
-                            rm.inturn = false;
-                            aiShoot.OnShot("Top Four Foot", rockCurrent);
-                            yield break;
-                        }
-                    }
-                    //left corner finesse is high
-                    else if (lCornGuard.position.y < 2.0f)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                    //right corner finesse is high
-                    else
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //low centre finesse
-                else if (cenGuard.position.y < 4.8f)
-                {
-                    //both corner guards are higher
-                    if (rCornGuard.position.y < cenGuard.position.y && lCornGuard.position.y < cenGuard.position.y)
-                    {
-                        //centre finesse to the right
-                        if (cenGuard.position.x > 0f)
-                        {
-                            rm.inturn = true;
-                            aiShoot.OnShot("Top Four Foot", rockCurrent);
-                            yield break;
-                        }
-                        //centre finesse to the left
-                        else
-                        {
-                            rm.inturn = false;
-                            aiShoot.OnShot("Top Four Foot", rockCurrent);
-                            yield break;
-                        }
-                    }
-                    //left corner finesse is higher
-                    else if (lCornGuard.position.y < cenGuard.position.y)
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                    //right corner finesse is higher
-                    else if (rCornGuard.position.y < cenGuard.position.y)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                    else
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-                //any other situation
-                else
-                {
-                    //centre finesse to the right
-                    if (cenGuard.position.x > 0f)
-                    {
-                        rm.inturn = true;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                    //centre finesse to the left
-                    else
-                    {
-                        rm.inturn = false;
-                        aiShoot.OnShot("Top Four Foot", rockCurrent);
-                        yield break;
-                    }
-                }
-            }
-
-            //centre finesse and a left finesse
-            else if (cenGuard && lCornGuard && !rCornGuard)
-            {
-                if (cenGuard.position.x > 0f)
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Top Four Foot", rockCurrent);
-                    yield break;
-                }
-                else
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Left Four Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //centre finesse and a right finesse
-            else if (cenGuard && rCornGuard && !lCornGuard)
-            {
-                if (cenGuard.position.x > 0f)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Right Four Foot", rockCurrent);
-                    yield break;
-                }
-                else
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Top Four Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //right and a left finesse
-            else if (rCornGuard && lCornGuard && !cenGuard)
-            {
-                if (rCornGuard.position.y < lCornGuard.position.y)
-                {
-                    rm.inturn = true;
-                    aiShoot.OnShot("Right Four Foot", rockCurrent);
-                    yield break;
-                }
-                else
-                {
-                    rm.inturn = false;
-                    aiShoot.OnShot("Left Four Foot", rockCurrent);
-                    yield break;
-                }
-            }
-
-            //right corner finesse
-            else if (rCornGuard && !lCornGuard && !cenGuard)
-            {
-                rm.inturn = true;
-                aiShoot.OnShot("Right Four Foot", rockCurrent);
-                yield break;
-            }
-
-            //left corner finesse
-            else
-            {
-                rm.inturn = false;
-                aiShoot.OnShot("Left Four Foot", rockCurrent);
-                yield break;
-            }
-        }
-
-        //if there's no guards
-        else
-        {
-            if (Random.value > 0.5f)
-            {
-                rm.inturn = true;
-            }
-            else rm.inturn = false;
-
-            if (rockCurrent < 4)
-            {
-                aiShoot.OnShot("Top Four Foot", rockCurrent);
-            }
-            else
-            {
-                aiShoot.OnShot("Button", rockCurrent);
-            }
-            yield break;
-        }
-    }
+    
     
     #region INTENT-BASED SHOT SELECTION (NEW ARCHITECTURE)
     

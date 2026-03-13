@@ -160,13 +160,33 @@ public class AI_Shooter : MonoBehaviour
         // Start AI sweeping via AI_Sweeper's new physics-based system
         if (gm != null && rm != null && aiSweep.sm != null)
         {
-            Vector2 initialVelocity = rockRB.linearVelocity;
+            // Get ACTUAL velocity (includes accuracy errors from pullback offset)
+            Vector2 actualVelocity = rockRB.linearVelocity;
+            
+            // Get PERFECT velocity (before accuracy errors) from AI_Target
+            Vector2 perfectVelocity = aiTarg.lastPerfectVelocity;
+            
+            // SAFETY: If no perfect velocity stored, use actual velocity (degraded mode)
+            if (perfectVelocity == Vector2.zero)
+            {
+                Debug.LogWarning("[AI_Shooter] No perfect velocity stored - using actual velocity (sweepers won't correct errors!)");
+                perfectVelocity = actualVelocity;
+            }
+            
             Vector2 targetPosition = aiTarg.targetPos;
             bool isInTurn = inturn;
+            
+            // Calculate launch error for diagnostics
+            float launchError = (actualVelocity - perfectVelocity).magnitude;
+            float angleError = Vector2.Angle(actualVelocity, perfectVelocity);
 
-            Debug.Log($"[AI_Shooter] Starting physics-based sweeping: velocity={initialVelocity.magnitude:F2} m/s, target={targetPosition}, inTurn={isInTurn}");
+            Debug.Log($"[AI_Shooter] Starting physics-based sweeping:");
+            Debug.Log($"  Perfect velocity: {perfectVelocity.magnitude:F2} m/s @ {Mathf.Atan2(perfectVelocity.y, perfectVelocity.x) * Mathf.Rad2Deg:F1}° (ideal target)");
+            Debug.Log($"  Actual velocity: {actualVelocity.magnitude:F2} m/s @ {Mathf.Atan2(actualVelocity.y, actualVelocity.x) * Mathf.Rad2Deg:F1}° (includes errors)");
+            Debug.Log($"  Launch error: {launchError:F3} m/s ({angleError:F2}° off-angle)");
+            Debug.Log($"  Target: {targetPosition}, Turn: {(isInTurn ? "IN" : "OUT")}");
 
-            aiSweep.StartPhysicsBasedSweeping(rockRB, initialVelocity, isInTurn, targetPosition, aiShotType, currentRockNumber);
+            aiSweep.StartPhysicsBasedSweeping(rockRB, actualVelocity, perfectVelocity, isInTurn, targetPosition, aiShotType, currentRockNumber);
         }
     }
 
