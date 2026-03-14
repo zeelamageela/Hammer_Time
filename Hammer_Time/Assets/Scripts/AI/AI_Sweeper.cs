@@ -1041,19 +1041,54 @@ public class AI_Sweeper : MonoBehaviour
         }
 
         // ========================================
+        // CONTEXT-AWARE SWEEPING PARAMETERS
+        // ========================================
+        // Different shot types need different sweeping strategies!
+        
+        bool isTakeoutShot = (shotType == "Take Out" || shotType == "Peel" || shotType == "Runback" || shotType == "Tick");
+        bool isDrawShot = (shotType == "Draw To Target" || shotType == "Guard To Target");
+        bool isRaiseShot = (shotType == "Raise" || shotType == "Tap Back");
+
+        // ========================================
         // GENERATE TWO TRAJECTORIES:
         // 1. IDEAL trajectory (from perfect physics calculation - what we WANT)
         // 2. ACTUAL trajectory (from error-contaminated launch - what we GOT)
         // ========================================
         Vector2 launcherPos = new Vector2(0f, -25f);
         List<GameObject> rocksInPlay = new List<GameObject>();
+        
+        // CRITICAL FIX: For takeout shots, EXCLUDE the target rock from collision detection!
+        // We WANT to hit it, so it shouldn't be treated as an obstacle to avoid
+        Vector2 targetRockPos = targetPosition; // Approximate target rock position
+        float targetRockRadius = 0.5f; // Collision detection radius
+        
         foreach (var rockEntry in gm.rockList)
         {
-            if (rockEntry.rock != null && rockEntry.rock.activeInHierarchy && rockEntry.rockInfo.inPlay && rockEntry.rock != rock)
+            if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy || !rockEntry.rockInfo.inPlay)
+                continue;
+            
+            if (rockEntry.rock == rock)
+                continue; // Skip self
+            
+            // For TAKEOUT shots: Skip rocks near the target position (they're what we're trying to hit!)
+            if (isTakeoutShot)
             {
-                rocksInPlay.Add(rockEntry.rock);
+                Vector2 otherRockPos = rockEntry.rock.transform.position;
+                float distToTarget = Vector2.Distance(otherRockPos, targetRockPos);
+                
+                if (distToTarget < targetRockRadius)
+                {
+                    Debug.Log($"[AI_Sweeper] TAKEOUT: Excluding target rock {rockEntry.rock.name} from collision detection (we want to hit it!)");
+                    continue; // Skip target rock - we WANT to collide with it!
+                }
             }
+            
+            rocksInPlay.Add(rockEntry.rock);
         }
+        
+        Debug.Log($"[AI_Sweeper] Rocks in play for collision detection: {rocksInPlay.Count} (excluding self{(isTakeoutShot ? " and target" : "")})");
+
+
 
         // IDEAL TRAJECTORY: Perfect physics calculation (NO accuracy errors)
         // This is what sweepers will try to ACHIEVE by correcting errors
@@ -1092,13 +1127,40 @@ public class AI_Sweeper : MonoBehaviour
         Debug.Log($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
 
         // ========================================
-        // CONTEXT-AWARE SWEEPING PARAMETERS
+        // CALCULATE ACTUAL SWEEPING GOAL
         // ========================================
-        // Different shot types need different sweeping strategies!
+        // CRITICAL: For TAKEOUT shots, the goal is to reach the COLLISION POINT,
+        // not the target rock's center position!
+        // Collision happens when rock centers are ~0.58 units apart (2 × rock radius)
         
-        bool isTakeoutShot = (shotType == "Take Out" || shotType == "Peel" || shotType == "Runback" || shotType == "Tick");
-        bool isDrawShot = (shotType == "Draw To Target" || shotType == "Guard To Target");
-        bool isRaiseShot = (shotType == "Raise" || shotType == "Tap Back");
+        Vector2 sweepingGoal;
+        
+        if (isTakeoutShot)
+        {
+            // TAKEOUT: Goal is the collision point (before reaching target center)
+            // Approach from behind, collision happens when centers are 0.58 units apart
+            float rockRadius = 0.145f; // Half of rock diameter (~0.29m)
+            float twoRockRadii = rockRadius * 2.0f; // Two radii (0.29m)
+            
+            // Calculate collision point: target position minus collision distance
+            Vector2 approachDirection = (targetPosition - launcherPos).normalized;
+            sweepingGoal = targetPosition - (approachDirection * twoRockRadii);
+            
+            Debug.Log($"[AI_Sweeper] TAKEOUT sweeping goal: COLLISION POINT at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
+            Debug.Log($"  Target rock center: ({targetPosition.x:F2}, {targetPosition.y:F2})");
+            Debug.Log($"  Collision distance: {twoRockRadii:F3}m (2 × rock radius)");
+            Debug.Log($"  Goal is {(targetPosition.y - sweepingGoal.y):F3}m BEFORE target center");
+        }
+        else
+        {
+            // DRAW/GUARD/RAISE: Goal is the exact target position (final resting spot)
+            sweepingGoal = targetPosition;
+            
+            Debug.Log($"[AI_Sweeper] {shotType} sweeping goal: TARGET POSITION at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
+        }
+
+        // Shot type flags already declared above before trajectory generation
+        // (isTakeoutShot, isDrawShot, isRaiseShot)
         
         // TAKEOUT SHOTS: Need VELOCITY! Sweep aggressively for weight
         // DRAW SHOTS: Need PRECISION! Sweep carefully for line and distance
@@ -1177,8 +1239,24 @@ public class AI_Sweeper : MonoBehaviour
 
             // Calculate deviations from ideal trajectory
             float lateralError = currentPos.x - idealPosAtCurrentY.x;
-            float distanceToTarget = targetPosition.y - currentPos.y;
-            float predictedShortfall = targetPosition.y - idealPosAhead.y;
+            float distanceToGoal = sweepingGoal.y - currentPos.y;  // Distance to collision point (takeouts) or final position (draws)
+            
+            // CRITICAL FIX: If idealPosAhead is invalid (Vector2.zero or behind current position),
+            // use current position instead to avoid massive false shortfalls
+            if (idealPosAhead == Vector2.zero || idealPosAhead.y <= currentPos.y)
+            {
+                idealPosAhead = currentPos; // Rock is at end of trajectory, no shortfall prediction possible
+            }
+            
+            float predictedShortfall = sweepingGoal.y - idealPosAhead.y;  // Will we reach the goal?
+            
+            // SANITY CHECK: If predicted shortfall is absurdly large (>20m), something is wrong
+            // This prevents spam sweeping due to bad trajectory data
+            if (predictedShortfall > 20f || predictedShortfall < -20f)
+            {
+                Debug.LogWarning($"[AI_Sweeper] INSANE shortfall detected: {predictedShortfall:F2}m - resetting to 0 (trajectory data invalid)");
+                predictedShortfall = 0f; // Don't sweep based on bad data
+            }
             
             // COLLISION DETECTION: Check if rock will hit obstacles in next 2 meters
             collisionImminent = false;
@@ -1227,39 +1305,49 @@ public class AI_Sweeper : MonoBehaviour
                 Debug.Log($"[AI_Sweeper] POST-COLLISION MODE ACTIVATED");
             }
 
-            // POST-COLLISION BEHAVIOR: Different priorities after hitting a rock
+            // POST-COLLISION BEHAVIOR: SIMPLIFIED - Direction toward button ONLY
             if (hasCollided)
             {
-                // Strategy after collision:
-                // 1. Get to scoring position (in house)
-                // 2. Get behind cover (guard rocks)
+                // ========================================
+                // POST-COLLISION: KILL ALL COMPLEX LOGIC
+                // ========================================
+                // After collision, physics becomes chaotic and unpredictable.
+                // ONLY sweep if rock is heading toward button (0, 6.5)
+                // Ignore shortfall, ignore cover, ignore everything else!
                 
-                // Check if we're heading toward house
-                bool headingToHouse = currentPos.y < 6.5f && distanceToTarget > 0f;
-                
-                if (headingToHouse && predictedShortfall > distanceThreshold)
+                // CRITICAL: If rock is beyond house (Y > 9.0), NEVER SWEEP!
+                if (currentPos.y > 9.0f)
                 {
-                    // Help rock reach house after collision
-                    desiredState = "Weight";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Sweeping to reach house");
-                }
-                else if (currentPos.y > 6.5f && currentPos.y < 7.5f)
-                {
-                    // In house - check if we need fine positioning
-                    if (Vector2.Distance(currentPos, targetPosition) > 0.3f && predictedShortfall > 0.1f)
-                    {
-                        desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Fine positioning in house");
-                    }
-                    else
-                    {
-                        desiredState = "None";
-                    }
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock beyond house (Y={currentPos.y:F2}), WHOA (out of play)");
                 }
                 else
                 {
-                    // Beyond house or stopped - whoa
-                    desiredState = "None";
+                    // Simple button position
+                    Vector2 button = new Vector2(0f, 6.5f);
+                    Vector2 velocity = rockRB.linearVelocity;
+                    
+                    // Calculate direction to button
+                    Vector2 toButton = button - currentPos;
+                    
+                    // Dot product: positive = moving toward button, negative = moving away
+                    float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
+                    
+                    // SIMPLE DECISION: Are we moving toward button?
+                    bool movingTowardButton = dotProduct > 0f;
+                    
+                    if (movingTowardButton)
+                    {
+                        // SWEEP - rock is heading toward button!
+                        desiredState = "Weight";
+                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}), SWEEP!");
+                    }
+                    else
+                    {
+                        // DON'T SWEEP - rock is moving away from button!
+                        desiredState = "None";
+                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving away from button (dot={dotProduct:F2}), NO SWEEP!");
+                    }
                 }
             }
             // PRE-COLLISION BEHAVIOR: Standard trajectory following
@@ -1268,62 +1356,73 @@ public class AI_Sweeper : MonoBehaviour
                 // PRIORITY 0: COLLISION AVOIDANCE (highest priority!)
                 if (collisionImminent)
                 {
-                    // Determine if collision is on path to target or off-target
-                    float collisionOffsetX = collisionPoint.x - targetPosition.x;
+                    // Determine if collision is on path to goal or off-target
+                    float collisionOffsetX = collisionPoint.x - sweepingGoal.x;
                     
                     if (Mathf.Abs(collisionOffsetX) > 0.3f)
                     {
                         // Collision is off-line - try to adjust line to avoid it
                         if (collisionOffsetX > 0f)
                         {
-                            // Obstacle is right of target - sweep to pull rock LEFT
+                            // Obstacle is right of goal - sweep to pull rock LEFT
                             desiredState = isInTurn ? "Curl" : "Line";
                             Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line LEFT");
                         }
                         else
                         {
-                            // Obstacle is left of target - sweep to push rock RIGHT
+                            // Obstacle is left of goal - sweep to push rock RIGHT
                             desiredState = isInTurn ? "Line" : "Curl";
                             Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT");
                         }
                     }
-                    else if (collisionDistance < distanceToTarget * 0.8f)
+                    else if (collisionDistance < distanceToGoal * 0.8f)
                     {
-                        // Collision is on-path and before target - try to get past it faster
+                        // Collision is on-path and before goal - try to get past it faster
                         desiredState = "Critical";
                         Debug.Log($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
                     }
                     else
                     {
-                        // Collision is on-path and near/past target - can't avoid, just optimize
+                        // Collision is on-path and near/past goal - can't avoid, just optimize
                         desiredState = "Weight";
                         Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
                     }
                 }
-                // PRIORITY 1: TAKEOUT VELOCITY BOOST (ALWAYS sweep if it's a takeout and we're losing velocity!)
-                else if (isTakeoutShot && predictedShortfall > 0.03f)
+                // PRIORITY 1: TAKEOUT SHOTS - LINE/CURL ONLY (NO WEIGHT!)
+                // Takeouts are thrown with PLENTY of velocity (11+ m/s)
+                // Sweeping for weight is pointless - only fix line/curl errors!
+                if (isTakeoutShot)
                 {
-                    // TAKEOUT SHOTS: ULTRA-AGGRESSIVE weight sweeping to maintain/boost velocity
-                    // Even TINY shortfalls (3cm!) trigger sweeping on takeouts!
-                    // Philosophy: "Hit it hard, sweepers make ABSOLUTELY SURE it gets there!"
-                    
-                    if (predictedShortfall > 0.8f)
+                    // ONLY check lateral error (line accuracy)
+                    // Ignore shortfall completely - rock has enough speed!
+                    if (Mathf.Abs(lateralError) > lateralThreshold)
                     {
-                        desiredState = "Critical"; // HUGE shortfall - sweep HARD!
-                        Debug.Log($"[AI_Sweeper] TAKEOUT CRITICAL: {predictedShortfall:F2}m shortfall - SWEEP HARD!");
-                    }
-                    else if (predictedShortfall > 0.2f)
-                    {
-                        desiredState = "Weight"; // Moderate shortfall - sweep aggressively
-                        Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY BOOST: {predictedShortfall:F2}m shortfall - SWEEP FOR SPEED!");
+                        if (isInTurn)
+                        {
+                            // IN-TURN curls LEFT (negative X)
+                            // If lateralError > 0 (rock is right of ideal), sweep Line to straighten
+                            // If lateralError < 0 (rock is left of ideal), sweep Curl to straighten
+                            desiredState = (lateralError > 0f) ? "Line" : "Curl";
+                            Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line, sweeping {desiredState}");
+                        }
+                        else
+                        {
+                            // OUT-TURN curls RIGHT (positive X)
+                            // If lateralError < 0 (rock is left of ideal), sweep Line to straighten
+                            // If lateralError > 0 (rock is right of ideal), sweep Curl to straighten
+                            desiredState = (lateralError < 0f) ? "Line" : "Curl";
+                            Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line, sweeping {desiredState}");
+                        }
                     }
                     else
                     {
-                        desiredState = "Weight"; // Tiny shortfall (3cm+) - sweep preventatively
-                        Debug.Log($"[AI_Sweeper] TAKEOUT PREVENTATIVE: {predictedShortfall:F2}m shortfall - sweep to maintain velocity");
+                        // On line - no sweeping needed!
+                        desiredState = "None";
+                        Debug.Log($"[AI_Sweeper] TAKEOUT: On line ({lateralError:F3}m), no sweep needed");
                     }
                 }
-                // PRIORITY 2: CRITICAL DISTANCE (rock won't reach target!)
+                // PRIORITY 2: NON-TAKEOUT SHOTS - Full logic (weight + line)
+                // CRITICAL DISTANCE (rock won't reach target!)
                 else if (predictedShortfall > 1.0f)
                 {
                     desiredState = "Critical";
@@ -1352,26 +1451,6 @@ public class AI_Sweeper : MonoBehaviour
                         desiredState = (lateralError < 0f) ? "Line" : "Curl";
                     }
                 }
-                // PRIORITY 5: TAKEOUT VELOCITY MAINTENANCE (keep it moving even if on-target!)
-                else if (isTakeoutShot && currentPos.y < targetPosition.y - 2.0f)
-                {
-                    // TAKEOUTS ONLY: If we're still far from target (>2m away) and on-line,
-                    // apply gentle weight sweeping to maintain velocity
-                    // This ensures we don't slow down too much before impact
-                    
-                    float distanceRemaining = targetPosition.y - currentPos.y;
-                    float currentVelocity = rockRB.linearVelocity.magnitude;
-                    
-                    // Check if velocity is dropping below ideal for this distance
-                    // Rough heuristic: Need ~3-4 m/s at 2m out, ~5-6 m/s at 4m out
-                    float idealVelocityForDistance = 2.0f + (distanceRemaining * 1.0f);
-                    
-                    if (currentVelocity < idealVelocityForDistance)
-                    {
-                        desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY MAINTENANCE: {distanceRemaining:F1}m out, velocity={currentVelocity:F2} (ideal={idealVelocityForDistance:F2})");
-                    }
-                }
             }
 
             // Apply sweeping if state changed
@@ -1381,12 +1460,6 @@ public class AI_Sweeper : MonoBehaviour
                 currentSweepState = desiredState;
 
                 Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}");
-            }
-            // SPECIAL: On takeouts, log velocity tracking
-            else if (isTakeoutShot && desiredState == "Weight")
-            {
-                float currentVelocity = rockRB.linearVelocity.magnitude;
-                Debug.Log($"[AI_Sweeper] TAKEOUT VELOCITY TRACKING: Y={currentPos.y:F2}, Vel={currentVelocity:F2} m/s, Sweeping={currentSweepState}");
             }
 
             yield return new WaitForFixedUpdate();

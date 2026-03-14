@@ -98,7 +98,8 @@ public class AI_Shooter : MonoBehaviour
         takeOutX = aiTarg.takeOutX;
         takeOutY = aiTarg.takeOutY;
 
-        aiSweep.OnSweep(true, aiShotType, aiTarg.targetPos, inturn);
+        // REMOVED: aiSweep.OnSweep() - Legacy sweeping system is disabled
+        // Physics-based sweeping is started AFTER rock is released (see below)
         
         // CRITICAL FIX: Set BOTH flipAxis AND rm.inturn to keep everything synchronized!
         GameObject rock = gm.rockList[currentRockNumber].rock;

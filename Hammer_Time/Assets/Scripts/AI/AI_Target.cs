@@ -1166,7 +1166,8 @@ public class AI_Target : MonoBehaviour
         if (foundShot)
         {
             // **NEW: Store perfect velocity BEFORE accuracy errors**
-            Vector2 launchPosition = new Vector2(0f, -27.5f);
+            // CRITICAL: Use SAME launcher position as physics calculation (0, -25)
+            Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedShot!
             lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
             
             Debug.Log($"[AI_Target] Perfect velocity stored: {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
@@ -1185,64 +1186,81 @@ public class AI_Target : MonoBehaviour
             
             if (shooterStats != null)
             {
-                // NEW SKILL SYSTEM:
-                // - Aim accuracy controls X-axis error (lateral positioning)
-                // - Weight accuracy controls Y-axis error (distance control)
+                // ========================================
+                // GAUSSIAN DISTRIBUTION ERROR SYSTEM
+                // ========================================
+                // Real curling follows a BELL CURVE (normal distribution):
+                // - Most shots are close to target (68% within 1 std dev)
+                // - Occasional moderate errors (27% within 1-2 std dev)
+                // - Rare large errors (5% beyond 2 std dev)
+                //
+                // SKILL controls standard deviation:
+                // - High skill = tight distribution (small errors)
+                // - Low skill = wide distribution (large errors)
+                
                 float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
                 float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
                 
                 Debug.Log($"[AI_Target] Takeout skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
                 
-                // REALISTIC CURLING ERROR DISTRIBUTION:
-                // Weight (Y) errors are 4-5x more common than line (X) errors in real curling
-                // But now we have SEPARATE skills for each axis!
-                
                 float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
                 float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
                 
-                // SKILL-BASED ERROR SCALING (per axis):
-                // Low skill (0-40): baseMaxError = 0.06 (very hard - 6cm miss)
-                // Mid skill (40-70): baseMaxError = 0.04 (moderate - 4cm miss)
-                // High skill (70-100): baseMaxError = 0.02 (easy - 2cm miss)
-                // Takeouts are slightly easier than draws (less distance = less error accumulation)
+                // STANDARD DEVIATION CALCULATION (per axis):
+                // Standard deviation = base_sigma * (1 - skill_ratio)^2
+                // This creates QUADRATIC scaling:
+                //   100% skill → sigma = 0 (perfect)
+                //   50% skill → sigma = 0.25 * base_sigma (moderate spread)
+                //   0% skill → sigma = base_sigma (maximum spread)
                 
-                // X-axis error (controlled by AIM skill)
-                float aimSkillFactor = aimRatio;
-                float aimBaseMaxError = Mathf.Lerp(0.175f, 0.02f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
-                float aimMaxError = aimBaseMaxError * (1f - aimRatio);
+                // X-axis (AIM) - Lateral positioning
+                // Base sigma for 0% skill: 0.12 units (12cm spread)
+                // This means 68% of shots within ±12cm, 95% within ±24cm
+                float aimBaseSigma = 0.12f;
+                float aimSigma = aimBaseSigma * Mathf.Pow(1f - aimRatio, 2f);
                 
-                // Y-axis error (controlled by WEIGHT skill)
-                float weightSkillFactor = weightRatio;
-                float weightBaseMaxError = Mathf.Lerp(0.99f, 0.02f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
-                float weightMaxError = weightBaseMaxError * (1f - weightRatio);
+                // Y-axis (WEIGHT) - Distance control
+                // Base sigma for 0% skill: 0.6 units (60cm spread)
+                // Weight errors are typically 5x larger than line errors in curling
+                float weightBaseSigma = 0.6f;
+                float weightSigma = weightBaseSigma * Mathf.Pow(1f - weightRatio, 2f);
                 
-                if (aimMaxError > 0f || weightMaxError > 0f)
+                if (aimSigma > 0.001f || weightSigma > 0.001f)
                 {
-                    // Generate INDEPENDENT X and Y errors based on respective skills
-                    float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
-                    float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
+                    // GAUSSIAN SAMPLING using Box-Muller transform
+                    // This generates true normal distribution (not uniform!)
+                    float xError = GenerateGaussianError(aimSigma);
+                    float yError = GenerateGaussianError(weightSigma);
                     
                     Vector2 errorOffset = new Vector2(xError, yError);
                     
-                    // CRITICAL FIX: Lateral error must respect turn direction
-                    // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error moves it MORE right (away from curl)
-                    // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error moves it MORE left (away from curl)
+                    // Lateral error sign correction for turn direction
                     float lateralErrorSign = useInTurn ? 1f : -1f;
                     errorOffset.x *= lateralErrorSign;
                     
                     pullbackPos += errorOffset;
                     
-                    Debug.Log($"[AI_Target] Takeout INDEPENDENT axis error (Aim/Weight skills)\n" +
-                              $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
-                              $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
-                              $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
-                              $"  Y error (weight): {yError:F3}\n" +
+                    // DISTRIBUTION ANALYSIS for debugging
+                    float xSigmaDistance = Mathf.Abs(xError / Mathf.Max(0.001f, aimSigma));
+                    float ySigmaDistance = Mathf.Abs(yError / Mathf.Max(0.001f, weightSigma));
+                    
+                    string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                    string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                    
+                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Takeout)\n" +
+                              $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
+                              $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
+                              $"    68% shots within ±{aimSigma:F3}, 95% within ±{aimSigma * 2f:F3}\n" +
+                              $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
+                              $"    Y error: {yError:F4} ({ySigmaDistance:F2}σ) - {yCategory}\n" +
+                              $"    68% shots within ±{weightSigma:F3}, 95% within ±{weightSigma * 2f:F3}\n" +
+                              $"  Turn correction sign: {lateralErrorSign}\n" +
                               $"  Original pullback: {originalPullback}\n" +
                               $"  Final pullback: {pullbackPos}");
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (both skills 100) - NO ERROR APPLIED! Pullback: {pullbackPos}");
+                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (both skills 100) - NO ERROR! Sigma ≈ 0");
                 }
             }
             else
@@ -2323,7 +2341,8 @@ public class AI_Target : MonoBehaviour
         if (foundShot)
         {
         // **NEW: Store perfect velocity BEFORE accuracy errors**
-        Vector2 launchPosition = new Vector2(0f, -27.5f);
+        // CRITICAL: Use SAME launcher position as physics calculation (0, -25)
+        Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedDrawShot!
         lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
         
         Debug.Log($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
@@ -2332,62 +2351,64 @@ public class AI_Target : MonoBehaviour
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
             if (shooterStats != null)
             {
-                // NEW SKILL SYSTEM:
-                // - Aim accuracy controls X-axis error (lateral positioning)
-                // - Weight accuracy controls Y-axis error (distance control)
+                // ========================================
+                // GAUSSIAN DISTRIBUTION ERROR SYSTEM (DRAW SHOTS)
+                // ========================================
                 float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
                 float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
             
                 Debug.Log($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
             
-                // REALISTIC CURLING ERROR DISTRIBUTION:
-                // Weight (Y) errors are THE PRIMARY challenge in draws (controlling distance is hard!)
-                // Line (X) errors are less common but now controlled by separate AIM skill
-            
                 float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
                 float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
             
-                // SKILL-BASED ERROR SCALING (per axis):
-                // Low skill (0-40): baseMaxError = 0.08 (very hard - 8cm miss)
-                // Mid skill (40-70): baseMaxError = 0.05 (moderate - 5cm miss)
-                // High skill (70-100): baseMaxError = 0.03 (easy - 3cm miss)
+                // DRAW SHOT STANDARD DEVIATIONS:
+                // Draws are HARDER than takeouts (longer travel = more error accumulation)
+                // Base sigmas are ~50% larger than takeouts
+                
+                // X-axis (AIM) - Lateral positioning
+                // Base sigma for 0% skill: 0.15 units (15cm spread)
+                float aimBaseSigma = 0.15f;
+                float aimSigma = aimBaseSigma * Mathf.Pow(1f - aimRatio, 2f);
+                
+                // Y-axis (WEIGHT) - Distance control
+                // Base sigma for 0% skill: 0.9 units (90cm spread)
+                // Weight control is THE PRIMARY CHALLENGE in draws!
+                float weightBaseSigma = 0.9f;
+                float weightSigma = weightBaseSigma * Mathf.Pow(1f - weightRatio, 2f);
             
-                // X-axis error (controlled by AIM skill)
-                float aimSkillFactor = aimRatio;
-                float aimBaseMaxError = Mathf.Lerp(0.21f, 0.03f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
-                float aimMaxError = aimBaseMaxError * (1f - aimRatio);
-            
-                // Y-axis error (controlled by WEIGHT skill)
-                float weightSkillFactor = weightRatio;
-                float weightBaseMaxError = Mathf.Lerp(2.4f, 0.03f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
-                float weightMaxError = weightBaseMaxError * (1f - weightRatio);
-            
-                if (aimMaxError > 0f || weightMaxError > 0f)
+                if (aimSigma > 0.001f || weightSigma > 0.001f)
                 {
-                    // Generate INDEPENDENT X and Y errors based on respective skills
-                    float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
-                    float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
+                    // GAUSSIAN SAMPLING
+                    float xError = GenerateGaussianError(aimSigma);
+                    float yError = GenerateGaussianError(weightSigma);
                 
                     Vector2 errorOffset = new Vector2(xError, yError);
                 
-                    // CRITICAL: Lateral error must respect turn direction
-                    // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
-                    // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
+                    // Lateral error sign correction for turn direction
                     float lateralErrorSign = useInTurn ? 1f : -1f;
                     errorOffset.x *= lateralErrorSign;
                 
                     pullbackPos += errorOffset;
                 
-                    Debug.Log($"[AI_Target] Draw INDEPENDENT axis error (Aim/Weight skills)\n" +
-                              $"  AIM SKILL: {aimAccuracy}% → X error range: ±{aimMaxError:F3}\n" +
-                              $"  WEIGHT SKILL: {weightAccuracy}% → Y error range: ±{weightMaxError:F3}\n" +
-                              $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
-                              $"  Y error (weight): {yError:F3}\n" +
+                    // DISTRIBUTION ANALYSIS
+                    float xSigmaDistance = Mathf.Abs(xError / Mathf.Max(0.001f, aimSigma));
+                    float ySigmaDistance = Mathf.Abs(yError / Mathf.Max(0.001f, weightSigma));
+                    
+                    string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                    string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                
+                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Draw)\n" +
+                              $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
+                              $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
+                              $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
+                              $"    Y error: {yError:F4} ({ySigmaDistance:F2}σ) - {yCategory}\n" +
+                              $"  Turn correction sign: {lateralErrorSign}\n" +
                               $"  Final pullback: {pullbackPos}");
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR APPLIED!");
+                    Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR!");
                 }
             }
             
@@ -3063,80 +3084,82 @@ public class AI_Target : MonoBehaviour
         if (foundShot)
         {
         // **NEW: Store perfect velocity BEFORE accuracy errors**
-        Vector2 launchPosition = new Vector2(0f, -27.5f);
+        // CRITICAL: Use SAME launcher position as physics calculation (0, -25)
+        Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedGuardShot!
         lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
         
         Debug.Log($"[AI_Target] Perfect velocity stored (Guard): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
         
         // Apply accuracy modifier with realistic error distribution
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
-        if (shooterStats != null)
-        {
-            // NEW SKILL SYSTEM FOR GUARDS:
-            // Guards use FINESSE skill (complex/delicate shots) combined with Weight/Aim
-            // Finesse acts as a BONUS/MULTIPLIER to reduce base error
-            float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
-            float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
-            float finesseAccuracy = shooterStats.finesseAccuracy.GetValue(); // 0-100 (complexity bonus)
-            
-            Debug.Log($"[AI_Target] Guard skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%, Finesse={finesseAccuracy}%");
-            
-            // FINESSE BONUS: Reduces error by up to 30% at max finesse
-            // Formula: finalError = baseError * (1.0 - (finesse * 0.003))
-            // Finesse 0 = no bonus (1.0 multiplier)
-            // Finesse 100 = 30% reduction (0.7 multiplier)
-            float finesseRatio = Mathf.Clamp01(finesseAccuracy / 100f);
-            float finesseMultiplier = 1.0f - (finesseRatio * 0.3f);
-            
-            float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
-            float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
-            
-            // SKILL-BASED ERROR SCALING (per axis):
-            // Low skill (0-40): baseMaxError = 0.07 (very hard - 7cm miss)
-            // Mid skill (40-70): baseMaxError = 0.045 (moderate - 4.5cm miss)
-            // High skill (70-100): baseMaxError = 0.025 (easy - 2.5cm miss)
-            
-            // X-axis error (controlled by AIM skill + finesse bonus)
-            float aimSkillFactor = aimRatio;
-            float aimBaseMaxError = Mathf.Lerp(0.55f, 0.025f, aimSkillFactor * aimSkillFactor); // Quadratic scaling
-            float aimMaxError = (aimBaseMaxError * (1f - aimRatio)) * finesseMultiplier; // Apply finesse bonus
-            
-            // Y-axis error (controlled by WEIGHT skill + finesse bonus)
-            float weightSkillFactor = weightRatio;
-            float weightBaseMaxError = Mathf.Lerp(3.0f, 0.025f, weightSkillFactor * weightSkillFactor); // Quadratic scaling
-            float weightMaxError = (weightBaseMaxError * (1f - weightRatio)) * finesseMultiplier; // Apply finesse bonus
-            
-            if (aimMaxError > 0f || weightMaxError > 0f)
+            if (shooterStats != null)
             {
-                // Generate INDEPENDENT X and Y errors based on respective skills
-                float xError = Random.Range(-aimMaxError, aimMaxError); // AIM skill controls this
-                float yError = Random.Range(-weightMaxError, weightMaxError); // WEIGHT skill controls this
+                // ========================================
+                // GAUSSIAN DISTRIBUTION ERROR SYSTEM (GUARD SHOTS)
+                // ========================================
+                // Guards use FINESSE skill as a MULTIPLIER to tighten distribution
+                float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
+                float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
+                float finesseAccuracy = shooterStats.finesseAccuracy.GetValue(); // 0-100 (complexity bonus)
                 
-                Vector2 errorOffset = new Vector2(xError, yError);
+                Debug.Log($"[AI_Target] Guard skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%, Finesse={finesseAccuracy}%");
                 
-                // CRITICAL: Lateral error must respect turn direction
-                // IN-TURN (curls LEFT ←): pullback on RIGHT (positive X) -> positive lateral error
-                // OUT-TURN (curls RIGHT →): pullback on LEFT (negative X) -> negative lateral error
-                float lateralErrorSign = useInTurn ? 1f : -1f;
-                errorOffset.x *= lateralErrorSign;
+                // FINESSE MULTIPLIER: Reduces sigma by up to 30% at max finesse
+                // Guards are delicate shots requiring finesse to execute precisely
+                float finesseRatio = Mathf.Clamp01(finesseAccuracy / 100f);
+                float finesseMultiplier = 1.0f - (finesseRatio * 0.3f);
                 
-                pullbackPos += errorOffset;
+                float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
+                float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
                 
-                Debug.Log($"[AI_Target] Guard FINESSE-BOOSTED error (Aim/Weight + Finesse bonus)\n" +
-                          $"  AIM SKILL: {aimAccuracy}% → X base error: ±{aimBaseMaxError * (1f - aimRatio):F3}\n" +
-                          $"  WEIGHT SKILL: {weightAccuracy}% → Y base error: ±{weightBaseMaxError * (1f - weightRatio):F3}\n" +
-                          $"  FINESSE BONUS: {finesseAccuracy}% → {finesseMultiplier:F2}x multiplier ({(1f - finesseMultiplier) * 100f:F0}% reduction)\n" +
-                          $"  Final X error range: ±{aimMaxError:F3}\n" +
-                          $"  Final Y error range: ±{weightMaxError:F3}\n" +
-                          $"  X error (aim): {xError:F3} (sign: {lateralErrorSign})\n" +
-                          $"  Y error (weight): {yError:F3}\n" +
-                          $"  Final pullback: {pullbackPos}");
+                // GUARD SHOT STANDARD DEVIATIONS:
+                // Guards are moderate difficulty (between takeouts and draws)
+                
+                // X-axis (AIM) - Lateral positioning
+                // Base sigma for 0% skill: 0.13 units (13cm spread)
+                float aimBaseSigma = 0.13f;
+                float aimSigma = aimBaseSigma * Mathf.Pow(1f - aimRatio, 2f) * finesseMultiplier;
+                
+                // Y-axis (WEIGHT) - Distance control
+                // Base sigma for 0% skill: 0.7 units (70cm spread)
+                float weightBaseSigma = 0.7f;
+                float weightSigma = weightBaseSigma * Mathf.Pow(1f - weightRatio, 2f) * finesseMultiplier;
+                
+                if (aimSigma > 0.001f || weightSigma > 0.001f)
+                {
+                    // GAUSSIAN SAMPLING
+                    float xError = GenerateGaussianError(aimSigma);
+                    float yError = GenerateGaussianError(weightSigma);
+                    
+                    Vector2 errorOffset = new Vector2(xError, yError);
+                    
+                    // Lateral error sign correction for turn direction
+                    float lateralErrorSign = useInTurn ? 1f : -1f;
+                    errorOffset.x *= lateralErrorSign;
+                    
+                    pullbackPos += errorOffset;
+                    
+                    // DISTRIBUTION ANALYSIS
+                    float xSigmaDistance = Mathf.Abs(xError / Mathf.Max(0.001f, aimSigma));
+                    float ySigmaDistance = Mathf.Abs(yError / Mathf.Max(0.001f, weightSigma));
+                    
+                    string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                    string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
+                    
+                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Guard)\n" +
+                              $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
+                              $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
+                              $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
+                              $"    Y error: {yError:F4} ({ySigmaDistance:F2}σ) - {yCategory}\n" +
+                              $"  FINESSE BONUS: {finesseAccuracy}% → {finesseMultiplier:F2}x multiplier ({(1f - finesseMultiplier) * 100f:F0}% tighter)\n" +
+                              $"  Turn correction sign: {lateralErrorSign}\n" +
+                              $"  Final pullback: {pullbackPos}");
+                }
+                else
+                {
+                    Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (all skills 100) - NO ERROR!");
+                }
             }
-            else
-            {
-                Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (all skills 100) - NO ERROR APPLIED!");
-            }
-        }
             
             rm.inturn = useInTurn;
             takeOutX = pullbackPos.x;
@@ -5884,6 +5907,41 @@ public class AI_Target : MonoBehaviour
         return info != null ? info.rockIndex : -1;
     }
     
+    
     #endregion
+    
+    /// <summary>
+    /// Generate a Gaussian (normal distribution) random value with given standard deviation
+    /// Uses Box-Muller transform for true normal distribution
+    /// 
+    /// DISTRIBUTION PROPERTIES:
+    /// - 68.2% of values within ±1σ (sigma)
+    /// - 95.4% of values within ±2σ
+    /// - 99.7% of values within ±3σ
+    /// 
+    /// Example: sigma = 0.1
+    /// - 68% of shots within ±0.1 units (10cm)
+    /// - 95% of shots within ±0.2 units (20cm)
+    /// - 99.7% of shots within ±0.3 units (30cm)
+    /// </summary>
+    /// <param name="sigma">Standard deviation (spread of the distribution)</param>
+    /// <returns>Random value from normal distribution N(0, sigma)</returns>
+    private float GenerateGaussianError(float sigma)
+    {
+        // Box-Muller transform generates pairs of independent standard normal variates
+        // We only need one, so we'll use the first
+        
+        // Generate two uniform random values in (0, 1]
+        // Use epsilon to avoid log(0)
+        float u1 = 1f - Random.value; // (0, 1]
+        float u2 = 1f - Random.value; // (0, 1]
+        
+        // Box-Muller transform
+        float z0 = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
+        
+        // Scale by standard deviation
+        return z0 * sigma;
+    }
 }
+
 
