@@ -1022,6 +1022,7 @@ public class AI_Sweeper : MonoBehaviour
         Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
         bool isOpponentRock = false; // AI rocks are never opponent rocks
         bool hasCollided = false; // Track if rock has hit another rock
+        sm.sweepSel.gameObject.SetActive(true);
 
         // Get trajectory simulator
         TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
@@ -1507,37 +1508,62 @@ public class AI_Sweeper : MonoBehaviour
 
     /// <summary>
     /// Apply the desired sweeping state
+    /// CRITICAL DEBUG: Logging all sweep commands to diagnose activation issues
     /// </summary>
     private void ApplySweepState(string state, bool isInTurn)
     {
+        Debug.Log($"[AI_Sweeper] ApplySweepState called: state={state}, isInTurn={isInTurn}, SweeperManager={(sm != null ? "exists" : "NULL!")}");
+        
+        if (sm == null)
+        {
+            Debug.LogError("[AI_Sweeper] SweeperManager is NULL! Cannot sweep!");
+            return;
+        }
+        
         switch (state)
         {
             case "None":
+                Debug.Log($"[AI_Sweeper] Calling sm.SweepWhoa(true)");
                 sm.SweepWhoa(true);
                 break;
 
             case "Weight":
             case "Critical":
                 // Both sweepers - maximum distance extension
+                Debug.Log($"[AI_Sweeper] Calling sm.SweepWeight(true) for {state}");
                 sm.SweepWeight(true);
                 break;
 
             case "Line":
                 // One sweeper on curl side - straighten the rock
                 if (isInTurn)
+                {
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Line (IN-TURN)");
                     sm.SweepLeft(true);  // IN-TURN: Left sweeper
+                }
                 else
+                {
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Line (OUT-TURN)");
                     sm.SweepRight(true); // OUT-TURN: Right sweeper
+                }
                 break;
 
             case "Curl":
                 // One sweeper on opposite side - increase curl
                 if (isInTurn)
+                {
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Curl (IN-TURN)");
                     sm.SweepRight(true); // IN-TURN: Right sweeper
+                }
                 else
+                {
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Curl (OUT-TURN)");
                     sm.SweepLeft(true);  // OUT-TURN: Left sweeper
+                }
                 break;
         }
+        
+        Debug.Log($"[AI_Sweeper] ApplySweepState completed for {state}");
     }
 
     /// <summary>
