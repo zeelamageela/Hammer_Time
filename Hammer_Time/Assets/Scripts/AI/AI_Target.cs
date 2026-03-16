@@ -63,6 +63,12 @@ public class AI_Target : MonoBehaviour
     [HideInInspector]
     public Vector2 lastPerfectVelocity;
     
+    // ERROR SMOOTHING: Prevent clustering of big misses
+    [HideInInspector]
+    public int consecutiveBigErrors = 0;  // Track streak of large errors
+    public const int MAX_BIG_ERRORS = 1;   // Max big errors before forcing accuracy boost
+    public const float BIG_ERROR_THRESHOLD = 0.15f;  // What counts as "big" error (15cm+)
+    
     void Start()
     {
         // CRITICAL: AI must use the SAME physics as player trajectory!
@@ -888,6 +894,7 @@ public class AI_Target : MonoBehaviour
     /// <summary>
     /// Calculate velocity from pullback position using PLAYER'S formula
     /// This gives us the INTENDED velocity before accuracy errors
+    /// CRITICAL FIX: Velocity points FROM launcher TO target (POSITIVE Y), not from launcher to pullback!
     /// </summary>
     private Vector2 CalculateVelocityFromPullback(Vector2 pullbackPos, Vector2 launcherPos, bool isInTurn)
     {
@@ -895,14 +902,25 @@ public class AI_Target : MonoBehaviour
         TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
         float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
         
-        // Calculate pullback distance
-        Vector2 pullbackOffset = pullbackPos - launcherPos;
+        // CRITICAL FIX: Velocity direction is OPPOSITE of pullback offset!
+        // Pullback is BEHIND launcher (negative Y offset)
+        // Velocity must point FORWARD (positive Y direction) toward target!
+        Vector2 pullbackOffset = pullbackPos - launcherPos; // This points BACKWARDS (negative Y)
         float pullbackDistance = pullbackOffset.magnitude;
         
-        // PLAYER'S FORMULA: velocity = pullbackDistance * velocityMultiplier
-        Vector2 velocityDirection = pullbackOffset.normalized;
+        // CORRECT VELOCITY DIRECTION: Flip the pullback offset to point FORWARD
+        Vector2 velocityDirection = -pullbackOffset.normalized; // ← CRITICAL FIX: Negate to flip direction!
         float velocityMagnitude = pullbackDistance * velocityMultiplier;
         Vector2 baseVelocity = velocityDirection * velocityMagnitude;
+        
+        Debug.Log($"[CalculateVelocityFromPullback] 🎯 DIRECTION FIX:\n" +
+                  $"  Pullback: {pullbackPos}\n" +
+                  $"  Launcher: {launcherPos}\n" +
+                  $"  Pullback offset: {pullbackOffset} (BACKWARDS)\n" +
+                  $"  Velocity direction: {velocityDirection} (FORWARD - negated!)\n" +
+                  $"  Distance: {pullbackDistance:F3}\n" +
+                  $"  Velocity: {baseVelocity.magnitude:F2} m/s @ {Mathf.Atan2(baseVelocity.y, baseVelocity.x) * Mathf.Rad2Deg:F1}°\n" +
+                  $"  ✅ Velocity Y is now POSITIVE (pointing forward)!");
         
         return baseVelocity;
     }

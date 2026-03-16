@@ -14,6 +14,9 @@ public class AI_Sweeper : MonoBehaviour
     private void Start()
     {
         fltText = fltFbk.GetFeedbackOfType<MMF_FloatingText>();
+        
+        // Initialize AI trajectory visualization system
+        InitializeTrajectoryVisualization();
     }
     
     /// <summary>
@@ -993,6 +996,142 @@ public class AI_Sweeper : MonoBehaviour
         //fltText.Play(rockRB.position);
     }
     
+    // ========== AI TRAJECTORY VISUALIZATION (DEBUG) ==========
+    // Visual debugging system to see ideal vs actual trajectories
+    
+    private LineRenderer idealTrajectoryLine;     // Green line: IDEAL path (perfect physics, what sweepers aim for)
+    private LineRenderer actualTrajectoryLine;    // Red line: ACTUAL path (error-contaminated, what rock got)
+    private LineRenderer currentPositionMarker;   // Yellow crosshair: Current rock position on ideal path
+    
+    private GameObject idealTrajectoryLineObj;
+    private GameObject actualTrajectoryLineObj;
+    private GameObject currentPositionMarkerObj;
+    
+    public bool showAITrajectoryDebug = false;     // Toggle in inspector to enable/disable visualization (DISABLED - causing performance issues with limited trajectory points)
+    
+    /// <summary>
+    /// Initialize visual debugging system for AI trajectories
+    /// </summary>
+    private void InitializeTrajectoryVisualization()
+    {
+        // GREEN LINE: IDEAL trajectory (perfect physics - what sweepers want)
+        idealTrajectoryLineObj = new GameObject("AI_IdealTrajectory");
+        idealTrajectoryLineObj.transform.parent = transform;
+        idealTrajectoryLine = idealTrajectoryLineObj.AddComponent<LineRenderer>();
+        idealTrajectoryLine.startWidth = 0.08f;
+        idealTrajectoryLine.endWidth = 0.08f;
+        idealTrajectoryLine.material = new Material(Shader.Find("Sprites/Default"));
+        idealTrajectoryLine.startColor = new Color(0f, 1f, 0f, 0.7f); // Bright green, semi-transparent
+        idealTrajectoryLine.endColor = new Color(0f, 1f, 0f, 0.7f);
+        idealTrajectoryLine.sortingOrder = 2; // Render on top
+        idealTrajectoryLine.enabled = false;
+        
+        // RED LINE: ACTUAL trajectory (error-contaminated - what rock actually got)
+        actualTrajectoryLineObj = new GameObject("AI_ActualTrajectory");
+        actualTrajectoryLineObj.transform.parent = transform;
+        actualTrajectoryLine = actualTrajectoryLineObj.AddComponent<LineRenderer>();
+        actualTrajectoryLine.startWidth = 0.08f;
+        actualTrajectoryLine.endWidth = 0.08f;
+        actualTrajectoryLine.material = new Material(Shader.Find("Sprites/Default"));
+        actualTrajectoryLine.startColor = new Color(1f, 0f, 0f, 0.7f); // Bright red, semi-transparent
+        actualTrajectoryLine.endColor = new Color(1f, 0f, 0f, 0.7f);
+        actualTrajectoryLine.sortingOrder = 2; // Render on top
+        actualTrajectoryLine.enabled = false;
+        
+        // YELLOW CROSSHAIR: Current rock position on ideal path
+        currentPositionMarkerObj = new GameObject("AI_CurrentPositionMarker");
+        currentPositionMarkerObj.transform.parent = transform;
+        currentPositionMarker = currentPositionMarkerObj.AddComponent<LineRenderer>();
+        currentPositionMarker.startWidth = 0.12f;
+        currentPositionMarker.endWidth = 0.12f;
+        currentPositionMarker.material = new Material(Shader.Find("Sprites/Default"));
+        currentPositionMarker.startColor = new Color(1f, 1f, 0f, 1f); // Bright yellow, full opacity
+        currentPositionMarker.endColor = new Color(1f, 1f, 0f, 1f);
+        currentPositionMarker.sortingOrder = 3; // Render on top of trajectory lines
+        currentPositionMarker.enabled = false;
+        
+        Debug.Log("[AI_Sweeper] Trajectory visualization initialized - Green=IDEAL, Red=ACTUAL, Yellow=CURRENT");
+    }
+    
+    /// <summary>
+    /// Update visual debugging: show ideal trajectory, actual trajectory, and current position
+    /// </summary>
+    private void UpdateTrajectoryVisualization(List<Vector2> idealPath, List<Vector2> actualPath, Vector2 currentPosition, Vector2 idealPosAtCurrentY)
+    {
+        if (!showAITrajectoryDebug || idealPath == null || actualPath == null)
+        {
+            // Hide all visualization
+            if (idealTrajectoryLine != null) idealTrajectoryLine.enabled = false;
+            if (actualTrajectoryLine != null) actualTrajectoryLine.enabled = false;
+            if (currentPositionMarker != null) currentPositionMarker.enabled = false;
+            return;
+        }
+        
+        Debug.Log($"[Trajectory Viz] Updating visualization - Ideal: {idealPath.Count} points, Actual: {actualPath.Count} points");
+        
+        // GREEN LINE: IDEAL trajectory (perfect physics)
+        if (idealTrajectoryLine != null && idealPath.Count > 0)
+        {
+            idealTrajectoryLine.enabled = true;
+            idealTrajectoryLine.positionCount = idealPath.Count;
+            for (int i = 0; i < idealPath.Count; i++)
+            {
+                idealTrajectoryLine.SetPosition(i, new Vector3(idealPath[i].x, idealPath[i].y, 0f));
+            }
+            Debug.Log($"[Trajectory Viz] GREEN line rendered with {idealPath.Count} points");
+        }
+        
+        // RED LINE: ACTUAL trajectory (error-contaminated)
+        if (actualTrajectoryLine != null && actualPath.Count > 0)
+        {
+            actualTrajectoryLine.enabled = true;
+            actualTrajectoryLine.positionCount = actualPath.Count;
+            for (int i = 0; i < actualPath.Count; i++)
+            {
+                actualTrajectoryLine.SetPosition(i, new Vector3(actualPath[i].x, actualPath[i].y, 0f));
+            }
+            Debug.Log($"[Trajectory Viz] RED line rendered with {actualPath.Count} points");
+        }
+        
+        // YELLOW CROSSHAIR: Show current position and ideal position (small crosshair)
+        if (currentPositionMarker != null && idealPosAtCurrentY != Vector2.zero)
+        {
+            currentPositionMarker.enabled = true;
+            
+            // Draw a small crosshair: vertical and horizontal lines intersecting at ideal position
+            float crosshairSize = 0.3f; // 30cm crosshair
+            
+            // 4 points: left, center, right, center, up, center, down
+            // This creates a + shape
+            currentPositionMarker.positionCount = 5;
+            
+            // Horizontal line (left to right through ideal position)
+            currentPositionMarker.SetPosition(0, new Vector3(idealPosAtCurrentY.x - crosshairSize, idealPosAtCurrentY.y, 0f)); // Left
+            currentPositionMarker.SetPosition(1, new Vector3(idealPosAtCurrentY.x, idealPosAtCurrentY.y, 0f));                   // Center
+            currentPositionMarker.SetPosition(2, new Vector3(idealPosAtCurrentY.x + crosshairSize, idealPosAtCurrentY.y, 0f)); // Right
+            currentPositionMarker.SetPosition(3, new Vector3(idealPosAtCurrentY.x, idealPosAtCurrentY.y, 0f));                   // Back to center
+            currentPositionMarker.SetPosition(4, new Vector3(idealPosAtCurrentY.x, idealPosAtCurrentY.y + crosshairSize, 0f)); // Up
+            // Note: This creates a connected line - for a proper crosshair you'd need 2 separate lines
+            // But this is simpler and still shows the position clearly
+            
+            Debug.Log($"[Trajectory Viz] YELLOW crosshair at ({idealPosAtCurrentY.x:F2}, {idealPosAtCurrentY.y:F2})");
+        }
+        else if (currentPositionMarker != null)
+        {
+            currentPositionMarker.enabled = false;
+        }
+    }
+    
+    /// <summary>
+    /// Clear trajectory visualization when sweeping ends
+    /// </summary>
+    private void ClearTrajectoryVisualization()
+    {
+        if (idealTrajectoryLine != null) idealTrajectoryLine.enabled = false;
+        if (actualTrajectoryLine != null) actualTrajectoryLine.enabled = false;
+        if (currentPositionMarker != null) currentPositionMarker.enabled = false;
+    }
+    
     // ========== PHYSICS-BASED SWEEPING SYSTEM ==========
     // New intelligent sweeping that predicts trajectory and corrects deviations in real-time
     
@@ -1118,6 +1257,52 @@ public class AI_Sweeper : MonoBehaviour
         Debug.Log($"  IDEAL trajectory (sweeping target): {idealTrajectory.Count} points from perfect velocity {idealVelocity}");
         Debug.Log($"  ACTUAL trajectory (error-contaminated): {actualTrajectory.Count} points from actual velocity {actualVelocity}");
         Debug.Log($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}°)");
+        
+        // TRAJECTORY VERIFICATION: Log first/last points to verify it's not a straight line
+        if (idealTrajectory.Count > 10)
+        {
+            Debug.Log($"[Trajectory Verification] IDEAL path sample:");
+            Debug.Log($"  Start: ({idealTrajectory[0].x:F2}, {idealTrajectory[0].y:F2})");
+            Debug.Log($"  25%: ({idealTrajectory[idealTrajectory.Count / 4].x:F2}, {idealTrajectory[idealTrajectory.Count / 4].y:F2})");
+            Debug.Log($"  50%: ({idealTrajectory[idealTrajectory.Count / 2].x:F2}, {idealTrajectory[idealTrajectory.Count / 2].y:F2})");
+            Debug.Log($"  75%: ({idealTrajectory[idealTrajectory.Count * 3 / 4].x:F2}, {idealTrajectory[idealTrajectory.Count * 3 / 4].y:F2})");
+            Debug.Log($"  End: ({idealTrajectory[idealTrajectory.Count - 1].x:F2}, {idealTrajectory[idealTrajectory.Count - 1].y:F2})");
+        }
+        if (actualTrajectory.Count > 10)
+        {
+            Debug.Log($"[Trajectory Verification] ACTUAL path sample:");
+            Debug.Log($"  Start: ({actualTrajectory[0].x:F2}, {actualTrajectory[0].y:F2})");
+            Debug.Log($"  25%: ({actualTrajectory[actualTrajectory.Count / 4].x:F2}, {actualTrajectory[actualTrajectory.Count / 4].y:F2})");
+            Debug.Log($"  50%: ({actualTrajectory[actualTrajectory.Count / 2].x:F2}, {actualTrajectory[actualTrajectory.Count / 2].y:F2})");
+            Debug.Log($"  75%: ({actualTrajectory[actualTrajectory.Count * 3 / 4].x:F2}, {actualTrajectory[actualTrajectory.Count * 3 / 4].y:F2})");
+            Debug.Log($"  End: ({actualTrajectory[actualTrajectory.Count - 1].x:F2}, {actualTrajectory[actualTrajectory.Count - 1].y:F2})");
+        }
+        
+        // CRITICAL: Check collision info to see if simulation stopped early
+        TrajectorySimulator.CollisionInfo idealCollisionInfo = trajectorySimulator.GetCollisionInfo();
+        if (idealCollisionInfo.hasCollision)
+        {
+            Debug.LogWarning($"[Trajectory Verification] IDEAL trajectory has collision at {idealCollisionInfo.collisionPoint} (index {idealCollisionInfo.collisionIndex})");
+        }
+        
+        // Check actual trajectory collision (this might be WHY it's short!)
+        List<Vector2> actualTrajectoryCheck = trajectorySimulator.SimulateTrajectory(
+            launcherPos,
+            actualVelocity,
+            isInTurn,
+            250,
+            rocksInPlay,
+            forPlayerPreview: false
+        );
+        TrajectorySimulator.CollisionInfo actualCollisionInfo = trajectorySimulator.GetCollisionInfo();
+        if (actualCollisionInfo.hasCollision)
+        {
+            Debug.LogWarning($"[Trajectory Verification] ACTUAL trajectory has collision at {actualCollisionInfo.collisionPoint} (index {actualCollisionInfo.collisionIndex}) - THIS IS WHY IT'S SHORT!");
+        }
+        else if (actualTrajectory.Count < 100)
+        {
+            Debug.LogError($"[Trajectory Verification] ACTUAL trajectory only has {actualTrajectory.Count} points but NO COLLISION! Velocity might have hit zero prematurely!");
+        }
 
         // Wait until rock crosses hog line (Y > -16.15)
         while (rock.transform.position.y < -16.15f)
@@ -1126,6 +1311,12 @@ public class AI_Sweeper : MonoBehaviour
         }
 
         Debug.Log($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
+
+        // ========================================
+        // ENABLE AI TRAJECTORY VISUALIZATION
+        // ========================================
+        // Show IDEAL (green) and ACTUAL (red) trajectories for debugging
+        UpdateTrajectoryVisualization(idealTrajectory, actualTrajectory, Vector2.zero, Vector2.zero);
 
         // ========================================
         // CALCULATE ACTUAL SWEEPING GOAL
@@ -1173,33 +1364,33 @@ public class AI_Sweeper : MonoBehaviour
         
         if (isTakeoutShot)
         {
-            // TAKEOUTS: ULTRA-AGGRESSIVE parameters
+            // TAKEOUTS: ULTRA-AGGRESSIVE parameters with TIGHTER line control
             // - MASSIVE lookahead (8.0 units!) to detect velocity drops SUPER early
             // - VERY sensitive to distance errors (0.10 = 10cm) - even tiny shortfalls trigger sweeping
-            // - Moderate lateral tolerance (0.12 = 12cm) - hitting is more important than perfect line
-            lateralErrorThreshold = 0.12f;  // 12cm lateral (relaxed - hitting matters more than line)
+            // - TIGHTER lateral tolerance (0.06 = 6cm) - MORE SENSITIVE line correction!
+            lateralErrorThreshold = 0.06f;  // 6cm lateral (TIGHTER - more sensitive to line errors!)
             distanceErrorThreshold = 0.10f;  // 10cm distance (ULTRA sensitive - sweep early!)
             predictionLookahead = 8.0f;      // Look 8 units ahead (MASSIVE - detect problems WAY ahead!)
             
-            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE weight sweeping enabled!");
+            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE with TIGHTER line control!");
             Debug.Log($"  Lookahead: {predictionLookahead}m (MASSIVE - detect velocity drops SUPER early!)");
             Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (ULTRA sensitive - must reach!)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (hit accuracy)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (TIGHTER - more sensitive!)");
         }
         else if (isDrawShot)
         {
-            // DRAWS: PRECISION parameters
+            // DRAWS: PRECISION parameters with TIGHTER line control
             // - Medium lookahead (4.0 units) to balance correction time
             // - Moderate distance sensitivity (0.20 = 20cm) - stopping is critical
-            // - Tight lateral tolerance (0.08 = 8cm) - line accuracy is paramount
-            lateralErrorThreshold = 0.08f;   // 8cm lateral (TIGHT - draws need perfect line)
+            // - TIGHTER lateral tolerance (0.05 = 5cm) - VERY PRECISE line accuracy!
+            lateralErrorThreshold = 0.05f;   // 5cm lateral (TIGHTER - very precise line!)
             distanceErrorThreshold = 0.20f;  // 20cm distance (important but less critical than takeouts)
             predictionLookahead = 4.0f;      // Look 4 units ahead (balanced)
             
-            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control");
+            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control with TIGHTER thresholds!");
             Debug.Log($"  Lookahead: {predictionLookahead}m (balanced prediction)");
             Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (stopping control)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (line precision!)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (VERY PRECISE!)");
         }
         else if (isRaiseShot)
         {
@@ -1241,6 +1432,12 @@ public class AI_Sweeper : MonoBehaviour
             // Calculate deviations from ideal trajectory
             float lateralError = currentPos.x - idealPosAtCurrentY.x;
             float distanceToGoal = sweepingGoal.y - currentPos.y;  // Distance to collision point (takeouts) or final position (draws)
+            
+            // ========================================
+            // UPDATE TRAJECTORY VISUALIZATION
+            // ========================================
+            // Show current rock position (yellow crosshair) on ideal path
+            UpdateTrajectoryVisualization(idealTrajectory, actualTrajectory, currentPos, idealPosAtCurrentY);
             
             // CRITICAL FIX: If idealPosAhead is invalid (Vector2.zero or behind current position),
             // use current position instead to avoid massive false shortfalls
@@ -1296,7 +1493,7 @@ public class AI_Sweeper : MonoBehaviour
             float lateralThreshold = lateralErrorThreshold * skillMultiplier;
             float distanceThreshold = distanceErrorThreshold * skillMultiplier;
 
-            // DECISION LOGIC - PRIORITY ORDER
+            // DECISION LOGIC - PRIORITY ORDER WITH HYSTERESIS
             string desiredState = "None";
 
             // Check if we've already collided (velocity magnitude drop or collision event)
@@ -1306,151 +1503,149 @@ public class AI_Sweeper : MonoBehaviour
                 Debug.Log($"[AI_Sweeper] POST-COLLISION MODE ACTIVATED");
             }
 
-            // POST-COLLISION BEHAVIOR: SIMPLIFIED - Direction toward button ONLY
+            // POST-COLLISION BEHAVIOR: SIMPLIFIED - Only sweep if moving toward house
             if (hasCollided)
             {
                 // ========================================
-                // POST-COLLISION: KILL ALL COMPLEX LOGIC
+                // POST-COLLISION: SMART DIRECTIONAL CHECK
                 // ========================================
-                // After collision, physics becomes chaotic and unpredictable.
-                // ONLY sweep if rock is heading toward button (0, 6.5)
-                // Ignore shortfall, ignore cover, ignore everything else!
+                // After collision, physics is chaotic.
+                // ONLY sweep if rock is moving FORWARD (positive Y velocity)
+                // AND still heading toward the house (Y < 9.0)
                 
-                // CRITICAL: If rock is beyond house (Y > 9.0), NEVER SWEEP!
+                Vector2 velocity = rockRB.linearVelocity;
+                
+                // CRITICAL: If rock is beyond house (Y > 9.0) or moving BACKWARDS (negative Y), NEVER SWEEP!
                 if (currentPos.y > 9.0f)
                 {
                     desiredState = "None";
                     Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock beyond house (Y={currentPos.y:F2}), WHOA (out of play)");
                 }
+                else if (velocity.y <= 0f)
+                {
+                    // Rock moving BACKWARDS or stopped - DO NOT SWEEP!
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock moving backwards/stopped (velY={velocity.y:F2}), NO SWEEP!");
+                }
                 else
                 {
-                    // Simple button position
-                    Vector2 button = new Vector2(0f, 6.5f);
-                    Vector2 velocity = rockRB.linearVelocity;
-                    
-                    // Calculate direction to button
-                    Vector2 toButton = button - currentPos;
-                    
-                    // Dot product: positive = moving toward button, negative = moving away
-                    float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
-                    
-                    // SIMPLE DECISION: Are we moving toward button?
-                    bool movingTowardButton = dotProduct > 0f;
-                    
-                    if (movingTowardButton)
-                    {
-                        // SWEEP - rock is heading toward button!
-                        desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}), SWEEP!");
-                    }
-                    else
-                    {
-                        // DON'T SWEEP - rock is moving away from button!
-                        desiredState = "None";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving away from button (dot={dotProduct:F2}), NO SWEEP!");
-                    }
+                    // Rock still moving FORWARD toward house - SWEEP to maximize distance!
+                    desiredState = "Weight";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock moving forward (velY={velocity.y:F2}), SWEEP to maximize distance!");
                 }
             }
             // PRE-COLLISION BEHAVIOR: Standard trajectory following
-            else
+            else if (collisionImminent)
             {
                 // PRIORITY 0: COLLISION AVOIDANCE (highest priority!)
-                if (collisionImminent)
+                // Determine if collision is on path to goal or off-target
+                float collisionOffsetX = collisionPoint.x - sweepingGoal.x;
+                
+                if (Mathf.Abs(collisionOffsetX) > 0.3f)
                 {
-                    // Determine if collision is on path to goal or off-target
-                    float collisionOffsetX = collisionPoint.x - sweepingGoal.x;
-                    
-                    if (Mathf.Abs(collisionOffsetX) > 0.3f)
+                    // Collision is off-line - try to adjust line to avoid it
+                    if (collisionOffsetX > 0f)
                     {
-                        // Collision is off-line - try to adjust line to avoid it
-                        if (collisionOffsetX > 0f)
-                        {
-                            // Obstacle is right of goal - sweep to pull rock LEFT
-                            desiredState = isInTurn ? "Curl" : "Line";
-                            Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line LEFT");
-                        }
-                        else
-                        {
-                            // Obstacle is left of goal - sweep to push rock RIGHT
-                            desiredState = isInTurn ? "Line" : "Curl";
-                            Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT");
-                        }
-                    }
-                    else if (collisionDistance < distanceToGoal * 0.8f)
-                    {
-                        // Collision is on-path and before goal - try to get past it faster
-                        desiredState = "Critical";
-                        Debug.Log($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
+                        // Obstacle is right of goal - sweep to pull rock LEFT
+                        desiredState = isInTurn ? "Curl" : "Line";
+                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line LEFT");
                     }
                     else
                     {
-                        // Collision is on-path and near/past goal - can't avoid, just optimize
-                        desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
+                        // Obstacle is left of goal - sweep to push rock RIGHT
+                        desiredState = isInTurn ? "Line" : "Curl";
+                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT");
                     }
                 }
-                // PRIORITY 1: TAKEOUT SHOTS - LINE/CURL ONLY (NO WEIGHT!)
-                // Takeouts are thrown with PLENTY of velocity (11+ m/s)
-                // Sweeping for weight is pointless - only fix line/curl errors!
-                if (isTakeoutShot)
+                else if (collisionDistance < distanceToGoal * 0.8f)
                 {
-                    // ONLY check lateral error (line accuracy)
-                    // Ignore shortfall completely - rock has enough speed!
-                    if (Mathf.Abs(lateralError) > lateralThreshold)
-                    {
-                        if (isInTurn)
-                        {
-                            // IN-TURN curls LEFT (negative X)
-                            // If lateralError > 0 (rock is right of ideal), sweep Line to straighten
-                            // If lateralError < 0 (rock is left of ideal), sweep Curl to straighten
-                            desiredState = (lateralError > 0f) ? "Line" : "Curl";
-                            Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line, sweeping {desiredState}");
-                        }
-                        else
-                        {
-                            // OUT-TURN curls RIGHT (positive X)
-                            // If lateralError < 0 (rock is left of ideal), sweep Line to straighten
-                            // If lateralError > 0 (rock is right of ideal), sweep Curl to straighten
-                            desiredState = (lateralError < 0f) ? "Line" : "Curl";
-                            Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line, sweeping {desiredState}");
-                        }
-                    }
-                    else
-                    {
-                        // On line - no sweeping needed!
-                        desiredState = "None";
-                        Debug.Log($"[AI_Sweeper] TAKEOUT: On line ({lateralError:F3}m), no sweep needed");
-                    }
-                }
-                // PRIORITY 2: NON-TAKEOUT SHOTS - Full logic (weight + line)
-                // CRITICAL DISTANCE (rock won't reach target!)
-                else if (predictedShortfall > 1.0f)
-                {
+                    // Collision is on-path and before goal - try to get past it faster
                     desiredState = "Critical";
-                    Debug.Log($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
+                    Debug.Log($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
                 }
-                // PRIORITY 3: SIGNIFICANT SHORTFALL
-                else if (predictedShortfall > distanceThreshold)
+                else
                 {
+                    // Collision is on-path and near/past goal - can't avoid, just optimize
                     desiredState = "Weight";
+                    Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
                 }
-                // PRIORITY 4: LATERAL ERROR (off the ideal line)
-                else if (Mathf.Abs(lateralError) > lateralThreshold)
+            }
+            // PRIORITY 1: TAKEOUT SHOTS - LINE/CURL ONLY (NO WEIGHT!)
+            // Takeouts are thrown with PLENTY of velocity (11+ m/s)
+            // Sweeping for weight is pointless - only fix line/curl errors!
+            else if (isTakeoutShot)
+            {
+                // HYSTERESIS: Use 50% threshold for stopping sweep (prevents oscillation)
+                float stopThreshold = (currentSweepState == "Line" || currentSweepState == "Curl") 
+                    ? lateralThreshold * 0.5f 
+                    : lateralThreshold;
+                
+                // ONLY check lateral error (line accuracy)
+                // Ignore shortfall completely - rock has enough speed!
+                if (Mathf.Abs(lateralError) > stopThreshold)
                 {
+                    // CRITICAL FIX: Logic was BACKWARDS!
+                    // lateralError = currentPos.x - idealPos.x
+                    // - If lateralError > 0: rock is RIGHT of ideal ? need to pull LEFT
+                    // - If lateralError < 0: rock is LEFT of ideal ? need to pull RIGHT
+                    
                     if (isInTurn)
                     {
                         // IN-TURN curls LEFT (negative X)
-                        // If lateralError > 0 (rock is right of ideal), sweep Line to straighten
-                        // If lateralError < 0 (rock is left of ideal), sweep Curl to straighten
-                        desiredState = (lateralError > 0f) ? "Line" : "Curl";
+                        // If lateralError > 0 (rock right of ideal), sweep Curl to pull LEFT
+                        // If lateralError < 0 (rock left of ideal), sweep Line to pull RIGHT
+                        desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ? FIXED: Swapped!
+                        Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
                     else
                     {
                         // OUT-TURN curls RIGHT (positive X)
-                        // If lateralError < 0 (rock is left of ideal), sweep Line to straighten
-                        // If lateralError > 0 (rock is right of ideal), sweep Curl to straighten
-                        desiredState = (lateralError < 0f) ? "Line" : "Curl";
+                        // If lateralError > 0 (rock right of ideal), sweep Line to pull LEFT
+                        // If lateralError < 0 (rock left of ideal), sweep Curl to pull RIGHT
+                        desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ? FIXED: Swapped!
+                        Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
+                }
+                else
+                {
+                    // On line - no sweeping needed!
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] TAKEOUT: On line ({lateralError:F3}m < {stopThreshold:F3}m), no sweep needed");
+                }
+            }
+            // PRIORITY 2: NON-TAKEOUT SHOTS - Full logic (weight + line)
+            else if (predictedShortfall > 1.0f)
+            {
+                // CRITICAL DISTANCE (rock won't reach target!)
+                desiredState = "Critical";
+                Debug.Log($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
+            }
+            else if (predictedShortfall > distanceThreshold)
+            {
+                // PRIORITY 3: SIGNIFICANT SHORTFALL
+                desiredState = "Weight";
+            }
+            else if (Mathf.Abs(lateralError) > lateralThreshold)
+            {
+                // PRIORITY 4: LATERAL ERROR (off the ideal line)
+                // CRITICAL FIX: Logic was BACKWARDS!
+                // lateralError = currentPos.x - idealPos.x
+                // - If lateralError > 0: rock is RIGHT of ideal ? need to pull LEFT
+                // - If lateralError < 0: rock is LEFT of ideal ? need to pull RIGHT
+                
+                if (isInTurn)
+                {
+                    // IN-TURN curls LEFT (negative X)
+                    // If lateralError > 0 (rock right of ideal), sweep Curl to pull LEFT
+                    // If lateralError < 0 (rock left of ideal), sweep Line to pull RIGHT
+                    desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ? FIXED: Swapped!
+                }
+                else
+                {
+                    // OUT-TURN curls RIGHT (positive X)
+                    // If lateralError > 0 (rock right of ideal), sweep Line to pull LEFT
+                    // If lateralError < 0 (rock left of ideal), sweep Curl to pull RIGHT
+                    desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ? FIXED: Swapped!
                 }
             }
 
@@ -1472,6 +1667,9 @@ public class AI_Sweeper : MonoBehaviour
             sm.SweepWhoa(true);
             Debug.Log($"[AI_Sweeper] Rock stopped - WHOA");
         }
+        
+        // Clear trajectory visualization
+        ClearTrajectoryVisualization();
     }
 
     /// <summary>
@@ -1508,7 +1706,21 @@ public class AI_Sweeper : MonoBehaviour
 
     /// <summary>
     /// Apply the desired sweeping state
-    /// CRITICAL DEBUG: Logging all sweep commands to diagnose activation issues
+    /// 
+    /// SWEEPING PHYSICS MAPPING:
+    /// - "Line" = STRAIGHTEN rock (one sweeper, reduces curl when curling too much)
+    /// - "Curl" = ENHANCE curl (one sweeper, increases curl when not curling enough)
+    /// - "Weight" = EXTEND distance (both sweepers, makes rock go further)
+    /// 
+    /// IN-TURN (curls LEFT):
+    ///   - Line sweep: SweepLeft() ? straightens (rock curling too much left)
+    ///   - Curl sweep: SweepRight() ? enhances curl (rock not curling enough left)
+    ///   - Weight sweep: SweepWeight() ? extends distance
+    /// 
+    /// OUT-TURN (curls RIGHT):
+    ///   - Line sweep: SweepRight() ? straightens (rock curling too much right)
+    ///   - Curl sweep: SweepLeft() ? enhances curl (rock not curling enough right)
+    ///   - Weight sweep: SweepWeight() ? extends distance
     /// </summary>
     private void ApplySweepState(string state, bool isInTurn)
     {
@@ -1523,42 +1735,42 @@ public class AI_Sweeper : MonoBehaviour
         switch (state)
         {
             case "None":
-                Debug.Log($"[AI_Sweeper] Calling sm.SweepWhoa(true)");
+                Debug.Log($"[AI_Sweeper] Calling sm.SweepWhoa(true) - STOP sweeping");
                 sm.SweepWhoa(true);
                 break;
 
             case "Weight":
             case "Critical":
-                // Both sweepers - maximum distance extension
-                Debug.Log($"[AI_Sweeper] Calling sm.SweepWeight(true) for {state}");
+                // Both sweepers - extend distance (linear damping reduction)
+                Debug.Log($"[AI_Sweeper] Calling sm.SweepWeight(true) for {state} - EXTEND DISTANCE");
                 sm.SweepWeight(true);
                 break;
 
             case "Line":
-                // One sweeper on curl side - straighten the rock
+                // One sweeper - straighten rock (reduce excessive curl)
                 if (isInTurn)
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Line (IN-TURN)");
-                    sm.SweepLeft(true);  // IN-TURN: Left sweeper
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Line (IN-TURN) - STRAIGHTEN (reduce left curl)");
+                    sm.SweepLeft(true);  // IN-TURN curls left, sweep left to straighten
                 }
                 else
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Line (OUT-TURN)");
-                    sm.SweepRight(true); // OUT-TURN: Right sweeper
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Line (OUT-TURN) - STRAIGHTEN (reduce right curl)");
+                    sm.SweepRight(true); // OUT-TURN curls right, sweep right to straighten
                 }
                 break;
 
             case "Curl":
-                // One sweeper on opposite side - increase curl
+                // One sweeper - enhance curl (increase curl amount)
                 if (isInTurn)
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Curl (IN-TURN)");
-                    sm.SweepRight(true); // IN-TURN: Right sweeper
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Curl (IN-TURN) - ENHANCE CURL (increase left curl)");
+                    sm.SweepRight(true); // IN-TURN: Right sweeper enhances left curl
                 }
                 else
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Curl (OUT-TURN)");
-                    sm.SweepLeft(true);  // OUT-TURN: Left sweeper
+                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Curl (OUT-TURN) - ENHANCE CURL (increase right curl)");
+                    sm.SweepLeft(true);  // OUT-TURN: Left sweeper enhances right curl
                 }
                 break;
         }

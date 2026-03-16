@@ -276,7 +276,7 @@ public class Sweep : MonoBehaviour
         
         // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
         float forwardSpeed = Mathf.Abs(currentVel.y);
-        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 2.5f); // Normalize: 1.0 m/s = 100% effect
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.5f); // Normalize: 1.0 m/s = 100% effect
         
         // Calculate lateral velocity to add, scaled by forward speed!
         float lateralVelocityBoost = sweepAmt * sweepStrength * 0.015f * speedMultiplier; // Scaled!

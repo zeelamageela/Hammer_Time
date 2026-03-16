@@ -214,8 +214,9 @@ public class AI_Shooter : MonoBehaviour
     }
     
     /// <summary>
-    /// Apply character-based accuracy using realistic distribution
+    /// Apply character-based accuracy using realistic distribution WITH ERROR SMOOTHING
     /// Returns error offset to add to target position
+    /// ANTI-CLUSTERING: Prevents multiple big misses in a row (frustrating for player)
     /// </summary>
     private Vector2 GetAccuracyError(float accuracy, float baseMaxError)
     {
@@ -225,7 +226,34 @@ public class AI_Shooter : MonoBehaviour
         // Calculate max error based on accuracy (better accuracy = less error)
         float maxError = baseMaxError * (1f - accuracyRatio);
         
+        // ERROR SMOOTHING: Check if we've had consecutive big errors
+        if (aiTarg.consecutiveBigErrors >= AI_Target.MAX_BIG_ERRORS)
+        {
+            // FORCE better accuracy this shot (prevent frustrating streaks)
+            maxError *= 0.3f;  // Reduce error to 30% (nearly perfect shot)
+            Debug.Log($"[AI_Shooter] ERROR SMOOTHING: Forcing better accuracy after {aiTarg.consecutiveBigErrors} big misses (maxError reduced to {maxError:F3})");
+        }
+        
         // Use circular distribution for natural shot spread
-        return Random.insideUnitCircle * maxError;
+        Vector2 error = Random.insideUnitCircle * maxError;
+        
+        // Track if this is a big error
+        float errorMagnitude = error.magnitude;
+        if (errorMagnitude > AI_Target.BIG_ERROR_THRESHOLD)
+        {
+            aiTarg.consecutiveBigErrors++;
+            Debug.Log($"[AI_Shooter] BIG ERROR detected ({errorMagnitude:F3}m) - consecutive count: {aiTarg.consecutiveBigErrors}");
+        }
+        else
+        {
+            // Reset streak on good shot
+            if (aiTarg.consecutiveBigErrors > 0)
+            {
+                Debug.Log($"[AI_Shooter] Good shot - resetting big error streak (was {aiTarg.consecutiveBigErrors})");
+            }
+            aiTarg.consecutiveBigErrors = 0;
+        }
+        
+        return error;
     }
 }

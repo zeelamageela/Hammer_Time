@@ -211,6 +211,22 @@ public class AI_Strategy : MonoBehaviour
         return true;
     }
     
+    /// <summary>
+    /// Count how many rocks a team has in the house (any scoring rocks)
+    /// </summary>
+    private int CountRocksInHouse(string teamName)
+    {
+        int count = 0;
+        foreach (var rockEntry in gm.houseList)
+        {
+            if (rockEntry.rockInfo.teamName == teamName)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     #region INTENT-BASED SHOT SELECTION METHODS
     
     /// <summary>
@@ -446,79 +462,57 @@ public class AI_Strategy : MonoBehaviour
             
             if (isLastRock)
             {
-                Debug.Log("[AggressiveHammer] LAST ROCK - prioritizing scoring!");
+                Debug.Log("[AggressiveHammer] HAMMER LAST ROCK - SMART low-risk strategy!");
                 
-                // Last rock logic: ALWAYS try to score
-                if (threatRock < 0)
+                // PHILOSOPHY: Accept force of 1 rather than risk blank on failed takeout!
+                // ONLY attempt risky takeout if:
+                // 1. Clear shot (no guards blocking)
+                // 2. Multiple opponent rocks (2+) in scoring
+                // 3. We have 2+ rocks that will remain after takeout
+                
+                // Check for guard interference
+                bool hasGuardInterference = false;
+                foreach (var rockEntry in gm.rockList)
                 {
-                    // No threats - easy weight
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    if (rockEntry.rock == null || !rockEntry.rock.activeInHierarchy) continue;
+                    Vector2 rockPos = rockEntry.rock.transform.position;
+                    if (rockPos.y > 0f && rockPos.y < 3.5f)  // Guard zone
+                    {
+                        hasGuardInterference = true;
+                        break;
+                    }
+                }
+                
+                // DECISION: Risky takeout vs safe draw?
+                bool shouldAttemptTakeout = false;
+                
+                if (oppRocksInHouse >= 2 && !hasGuardInterference && myRocksInHouse >= 2)
+                {
+                    // ONLY attempt if VERY SAFE: No guards, we have 2+ backup rocks
+                    shouldAttemptTakeout = true;
+                    Debug.Log($"[HAMMER LAST ROCK] High-confidence takeout (clear shot, our rocks: {myRocksInHouse}, opponent: {oppRocksInHouse})");
                 }
                 else
                 {
-                    // Threat exists - evaluate
-                    // do we have rocks in the house?
-                    if (myRocksInHouse > 0)
-                    {
-                        // are we closest?
-                        if (gm.houseList[0].rockInfo.teamName == activeTeamName)
-                        {
-                            // There's three or more rocks in the house
-                            if (gm.houseList.Count > 2)
-                            {
-                                // If either of the two are opponent rocks, we have to remove the threat rock
-                                if (gm.houseList[1].rockInfo.teamName != activeTeamName || gm.houseList[2].rockInfo.teamName != activeTeamName)
-                                {
-                                    // Remove second shot to maximize score
-                                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                                    context.acceptRisk = true;
-                                    context.mustScore = true; // MUST score after removal
-                                    aiTarg.ExecuteIntent(context, rockCurrent);
-                                    return true;
-                                }
-                                else
-                                {
-                                    // We have second shot and third shot - pile on
-                                    context = new ShotContext(ShotIntent.ScorePoints);
-                                    aiTarg.ExecuteIntent(context, rockCurrent);
-                                    return true;
-                                }
-                            }
-                            else
-                            {
-                                // We're winning - add more points
-                                context = new ShotContext(ShotIntent.ScorePoints);
-                                aiTarg.ExecuteIntent(context, rockCurrent);
-                                return true;
-                            }
-                        }
-                        else if (gm.houseList.Count > 1 && gm.houseList[1].rockInfo.teamName == activeTeamName)
-                        {
-                            // We have second shot - remove the shot rock
-                            context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                            aiTarg.ExecuteIntent(context, rockCurrent);
-                            return true;
-                        }
-                        else
-                        {
-                            // They have two+ rocks - remove biggest threat, try to score 
-                            context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                            aiTarg.ExecuteIntent(context, rockCurrent);
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        // They have multiple rocks - remove biggest threat, try to score
-                        context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                        context.acceptRisk = true;
-                        context.mustScore = true;
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
-                    }
+                    Debug.Log($"[HAMMER LAST ROCK] RISKY takeout avoided (guards: {hasGuardInterference}, our rocks: {myRocksInHouse}, opp: {oppRocksInHouse}) - DRAWING TO BUTTON!");
                 }
+                
+                if (shouldAttemptTakeout && threatRock >= 0)
+                {
+                    // Attempt high-confidence takeout
+                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
+                    context.acceptRisk = true;
+                    context.mustScore = true;
+                    aiTarg.ExecuteIntent(context, rockCurrent);
+                    return true;
+                }
+                
+                // DEFAULT: SAFE DRAW TO BUTTON
+                // Accept force of 1 - MUCH better than blank end!
+                Debug.Log($"[HAMMER LAST ROCK] Drawing to button - accept force of 1, avoid blank!");
+                context = new ShotContext(ShotIntent.ScorePoints);
+                aiTarg.ExecuteIntent(context, rockCurrent);
+                return true;
             }
             
             // Not last rock - general late-game logic
