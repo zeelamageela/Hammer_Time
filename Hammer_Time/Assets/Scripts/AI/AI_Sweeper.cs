@@ -1503,35 +1503,93 @@ public class AI_Sweeper : MonoBehaviour
                 Debug.Log($"[AI_Sweeper] POST-COLLISION MODE ACTIVATED");
             }
 
-            // POST-COLLISION BEHAVIOR: SIMPLIFIED - Only sweep if moving toward house
+            // POST-COLLISION BEHAVIOR: Context-aware sweeping - only in scoring situations
             if (hasCollided)
             {
                 // ========================================
-                // POST-COLLISION: SMART DIRECTIONAL CHECK
+                // POST-COLLISION: SMART SCORING LOGIC
                 // ========================================
-                // After collision, physics is chaotic.
-                // ONLY sweep if rock is moving FORWARD (positive Y velocity)
-                // AND still heading toward the house (Y < 9.0)
+                // PHILOSOPHY: After collision, only sweep if it helps SCORING
+                // 
+                // TWO SCENARIOS where post-collision sweeping is VALUABLE:
+                // 1. Rock moving toward BUTTON (0, 6.5) ? sweep to maximize distance
+                // 2. Rock in SCORING POSITION behind guard ? sweep to protect/extend
+                // 
+                // ALL OTHER scenarios ? WHOA (collision physics is chaotic, sweeping is useless)
                 
+                Vector2 button = new Vector2(0f, 6.5f);
                 Vector2 velocity = rockRB.linearVelocity;
                 
-                // CRITICAL: If rock is beyond house (Y > 9.0) or moving BACKWARDS (negative Y), NEVER SWEEP!
-                if (currentPos.y > 9.0f)
+                // SCENARIO 1: Check if rock is moving TOWARD button
+                // Calculate direction to button from current position
+                Vector2 toButton = button - currentPos;
+                float distToButton = toButton.magnitude;
+                
+                // Dot product: positive = moving toward button, negative = moving away
+                float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
+                
+                bool movingTowardButton = dotProduct > 0.5f; // At least 60° toward button (cos 60° = 0.5)
+                bool closeToButton = distToButton < 2.0f; // Within 2 units of button
+                
+                if (movingTowardButton && closeToButton)
                 {
-                    desiredState = "None";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock beyond house (Y={currentPos.y:F2}), WHOA (out of play)");
-                }
-                else if (velocity.y <= 0f)
-                {
-                    // Rock moving BACKWARDS or stopped - DO NOT SWEEP!
-                    desiredState = "None";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock moving backwards/stopped (velY={velocity.y:F2}), NO SWEEP!");
+                    // SWEEP: Rock is heading toward button and close - maximize distance!
+                    desiredState = "Weight";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) ? SWEEP for distance!");
                 }
                 else
                 {
-                    // Rock still moving FORWARD toward house - SWEEP to maximize distance!
-                    desiredState = "Weight";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Rock moving forward (velY={velocity.y:F2}), SWEEP to maximize distance!");
+                    // SCENARIO 2: Check if rock is in scoring position behind guard
+                    bool behindGuard = false;
+                    bool inScoringZone = (currentPos.y >= 5.0f && currentPos.y <= 9.0f); // In the house
+                    
+                    if (inScoringZone)
+                    {
+                        // Check if there's a guard protecting this position
+                        foreach (var guard in gm.gList)
+                        {
+                            if (guard.lastTransform == null) continue;
+                            
+                            Vector2 guardPos = guard.lastTransform.position;
+                            
+                            // Check if guard is IN FRONT (lower Y) and ALIGNED (similar X)
+                            bool guardInFront = guardPos.y < currentPos.y;
+                            float lateralAlignment = Mathf.Abs(guardPos.x - currentPos.x);
+                            bool guardAligned = lateralAlignment < 0.6f; // Within 60cm laterally
+                            
+                            if (guardInFront && guardAligned)
+                            {
+                                behindGuard = true;
+                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}), protected scoring position!");
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (behindGuard && inScoringZone)
+                    {
+                        // SWEEP: Rock is in protected scoring position - extend it!
+                        desiredState = "Weight";
+                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) ? SWEEP to extend!");
+                    }
+                    else
+                    {
+                        // WHOA: Neither moving toward button nor in scoring position
+                        desiredState = "None";
+                        
+                        if (!movingTowardButton && !closeToButton)
+                        {
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) ? WHOA");
+                        }
+                        else if (!inScoringZone)
+                        {
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) ? WHOA");
+                        }
+                        else
+                        {
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) ? WHOA");
+                        }
+                    }
                 }
             }
             // PRE-COLLISION BEHAVIOR: Standard trajectory following
