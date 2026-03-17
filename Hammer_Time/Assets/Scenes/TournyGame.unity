@@ -10867,7 +10867,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 11.421186
+  field of view: 60
   orthographic: 1
   orthographic size: 8.5
   m_Depth: 1
@@ -10894,7 +10894,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -25, z: -10}
+  m_LocalPosition: {x: -0.009605244, y: -24.06762, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27104,9 +27104,9 @@ MonoBehaviour:
   lateBreakingCurve: 1.5
   velocityMultiplier: 2.75
   minPullbackDistance: 1.5
-  maxPullbackDistance: 5
+  maxPullbackDistance: 5.5
   minVelocity: 5
-  maxVelocity: 13
+  maxVelocity: 15.8
   collisionMarker: {fileID: 1058954659}
   hitRockGhost: {fileID: 2097664716}
   showCollisionPrediction: 1
@@ -46546,6 +46546,10 @@ PrefabInstance:
     - target: {fileID: 3956428150274880480, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: fltText
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3956428150274880480, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: showAITrajectoryDebug
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: gm
