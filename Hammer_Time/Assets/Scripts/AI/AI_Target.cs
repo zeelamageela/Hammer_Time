@@ -179,29 +179,29 @@ public class AI_Target : MonoBehaviour
             
             if (shotType == "Runback")
             {
-                // RUNBACK: HEAVIEST weight - must drive through 2 rocks!
-                // Strategy: Hit finesse with massive momentum to blast through to target behind
-                desiredPullbackDistance = 5.0f; // MAXIMUM weight → 13.75 m/s (INCREASED from 4.9)
+                // RUNBACK: MAXIMUM weight - must drive through 2 rocks!
+                // Strategy: Hit guard with MASSIVE momentum to blast through to target behind
+                desiredPullbackDistance = 5.75f; // MAXIMUM weight → 15.8 m/s (was 13.75 m/s)
                 
-                // Nose hit on finesse, rely on momentum to carry through
+                // Nose hit on guard, rely on momentum to carry through
                 float impactOffset = 2f * rockRadius; // Standard collision distance
                 targetImpactPoint = new Vector2(
                     targetRockPosition.x,
                     targetRockPosition.y - impactOffset
                 );
                 
-                Debug.Log($"[AI_Target] RUNBACK: Maximum drive-through\n" +
-                          $"  Target (finesse): {targetRockPosition}\n" +
-                          $"  Pullback: {desiredPullbackDistance:F2} (MAXIMUM)\n" +
+                Debug.Log($"[AI_Target] RUNBACK: MAXIMUM drive-through (recalibrated!)\n" +
+                          $"  Target (guard): {targetRockPosition}\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2} (MAXIMUM - 15% heavier!)\n" +
                           $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
-                          $"  Strategy: Blast through finesse to remove target behind");
+                          $"  Strategy: Blast through guard to remove target behind");
             }
             else if (shotType == "Peel")
             {
                 // PEEL: HEAVY weight + 45° angled hit
                 // Strategy: Glancing blow at angle to send both rocks sideways
-                // Must be heavier than takeout to ensure both rocks exit
-                desiredPullbackDistance = 4.7f; // Heavy → 12.9 m/s for drive-through (INCREASED from 4.4)
+                // Heavier than takeout to ensure both rocks exit
+                desiredPullbackDistance = 5.0f; // Heavy → 13.75 m/s for drive-through (was 12.9 m/s)
                 
                 // ANGLED HIT: Aim at SIDE of rock (45° approach) for glancing blow
                 float angleOffset = rockRadius * 0.7f; // Offset by ~70% of radius
@@ -217,19 +217,18 @@ public class AI_Target : MonoBehaviour
                     targetRockPosition.y - rockRadius * 1.5f // Slightly behind
                 );
                 
-                Debug.Log($"[AI_Target] PEEL: 45° angled hit + heavy weight\n" +
+                Debug.Log($"[AI_Target] PEEL: 45° angled hit + heavy weight (recalibrated!)\n" +
                           $"  Target: {targetRockPosition}\n" +
                           $"  Angle offset: {angleOffset:F3}\n" +
                           $"  Impact point: {targetImpactPoint}\n" +
-                          $"  Pullback: {desiredPullbackDistance:F2} (HEAVY)\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2} (HEAVY - 6% heavier!)\n" +
                           $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s");
             }
             else // "Take Out"
             {
-                // TAKEOUT: Hit and stay weight
-                // Strategy: Nose hit with enough momentum to remove target, shooter stays in play
-                // Must be > weight weight (8.7) but < peel weight (12.1)
-                desiredPullbackDistance = 4.0f; // Hit-and-stay → 11.0 m/s (INCREASED from 3.6)
+                // TAKEOUT: Hit and clear weight
+                // Strategy: Nose hit with enough momentum to remove target AND clear house
+                desiredPullbackDistance = 4.5f; // Hit-and-clear → 12.4 m/s (balanced weight)
                 
                 // NOSE HIT: Center-to-center collision
                 float impactOffset = 2f * rockRadius; // Exact collision distance
@@ -238,13 +237,13 @@ public class AI_Target : MonoBehaviour
                     targetRockPosition.y - impactOffset
                 );
                 
-                Debug.Log($"[AI_Target] TAKEOUT: Nose hit + controlled weight\n" +
+                Debug.Log($"[AI_Target] TAKEOUT: Nose hit + clearing weight (recalibrated!)\n" +
                           $"  Target: {targetRockPosition}\n" +
                           $"  Impact offset: {impactOffset:F3}\n" +
                           $"  Impact point: {targetImpactPoint}\n" +
-                          $"  Pullback: {desiredPullbackDistance:F2}\n" +
+                          $"  Pullback: {desiredPullbackDistance:F2} (balanced weight)\n" +
                           $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
-                          $"  Strategy: Hit and stay in play");
+                          $"  Strategy: Remove target AND clear house (12.4 m/s)");
             }
             
             // Calculate velocity using PLAYER'S formula: velocity = pullback * multiplier
@@ -338,11 +337,11 @@ public class AI_Target : MonoBehaviour
                 
                 Debug.Log($"[Phase 1] Testing offset {lateralOffsetBase:F2} (multiplied: {lateralOffset:F2})");
                 
-                // DETERMINISTIC VELOCITY: Recalibrated shot weights
-                // Draw: 8.7 m/s | Takeout: 11.0 m/s | Peel: 12.9 m/s | Runback: 13.75 m/s
+                // DETERMINISTIC VELOCITY: Recalibrated shot weights (v2)
+                // Draw: 9.35 m/s | Takeout: 12.4 m/s | Peel: 13.75 m/s | Runback: 15.8 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.75f : (shotType == "Peel") ? 5.0f : 4.5f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Create velocity vector pointing toward target with lateral offset
@@ -467,10 +466,10 @@ public class AI_Target : MonoBehaviour
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                // DETERMINISTIC VELOCITY: Recalibrated weights
+                // DETERMINISTIC VELOCITY: Recalibrated weights (v2)
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.75f : (shotType == "Peel") ? 5.0f : 4.5f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -512,10 +511,10 @@ public class AI_Target : MonoBehaviour
             {
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                // DETERMINISTIC VELOCITY: Recalibrated weights
+                // DETERMINISTIC VELOCITY: Recalibrated weights (v2)
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.75f : (shotType == "Peel") ? 5.0f : 4.5f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
@@ -560,11 +559,11 @@ public class AI_Target : MonoBehaviour
                     
                     Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
                 
-                // DETERMINISTIC VELOCITY: Recalibrated weights!
-                // Takeout: 4.0 → 11.0 m/s | Peel: 4.7 → 12.9 m/s | Runback: 5.0 → 13.75 m/s
+                // DETERMINISTIC VELOCITY: Recalibrated weights (v2)!
+                // Takeout: 4.5 → 12.4 m/s | Peel: 5.0 → 13.75 m/s | Runback: 5.75 → 15.8 m/s
                 TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
                 float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.75f : (shotType == "Peel") ? 5.0f : 4.5f;
                 float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                 
                 // Aim toward target with lateral offset
@@ -756,14 +755,14 @@ public class AI_Target : MonoBehaviour
                 bool tryInTurn = (turnDir == 0);
                 int offsetMultiplier = tryInTurn ? 1 : -1;
                 
-                for (float lateralOffsetBase = 1.32f; lateralOffsetBase <= 2.4f; lateralOffsetBase += 0.12f)
-                {
-                    float lateralOffset = lateralOffsetBase * offsetMultiplier;
-                    
-                    TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
-                    float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
-                    float desiredPullbackDistance = (shotType == "Runback") ? 5.0f : (shotType == "Peel") ? 4.7f : 4.0f;
-                    float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
+            for (float lateralOffsetBase = 1.32f; lateralOffsetBase <= 2.4f; lateralOffsetBase += 0.12f)
+            {
+                float lateralOffset = lateralOffsetBase * offsetMultiplier;
+                
+                TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
+                float velocityMultiplier = playerTrajectory != null ? playerTrajectory.velocityMultiplier : 5.0f;
+                float desiredPullbackDistance = (shotType == "Runback") ? 5.75f : (shotType == "Peel") ? 5.0f : 4.5f;
+                float velocityMagnitude = desiredPullbackDistance * velocityMultiplier;
                     
                     Vector2 targetWithOffset = new Vector2(targetRockPosition.x + lateralOffset, targetRockPosition.y);
                     Vector2 direction = (targetWithOffset - launcherPos).normalized;

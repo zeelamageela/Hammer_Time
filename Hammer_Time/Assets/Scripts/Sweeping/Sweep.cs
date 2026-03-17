@@ -26,10 +26,10 @@ public class Sweep : MonoBehaviour
 
     public int sweepTime;
     [Tooltip("Base sweep effect strength (0-1 range). Higher = stronger sweep effects. Default: 0.5")]
-    public float sweepAmt = 0.1f; // DEFAULT VALUE: 0.5 for moderate effect
+    public float sweepAmt = 0.25f; // DEFAULT VALUE: 0.5 for moderate effect
     
     [Tooltip("Duration in seconds for one sweep tap animation. Set to match your sweep animation clip length.")]
-    public float sweepTapDuration = 0.25f; // Default 0.25 seconds per tap
+    public float sweepTapDuration = 0.4f; // Default 0.25 seconds per tap
     
     [Tooltip("If true, each sweep tap extends the duration instead of resetting it. Allows continuous sweeping.")]
     public bool cumulativeSweeping = true; // NEW: Allow taps to stack duration!
@@ -131,13 +131,21 @@ public class Sweep : MonoBehaviour
             statCalc = 80f; // Default sweeper strength for testing
         }
         
-        if (!rm.inturn)
+        // ✅ CRITICAL FIX: Player sweeping logic was BACKWARDS!
+        // PHYSICS: Sweep LEFT → Rock goes RIGHT (asymmetric friction pulls toward swept side)
+        // 
+        // OUT-TURN (curls LEFT ←):
+        //   - Sweep LEFT → Want rock to go RIGHT → Use CURL (enhance left curl → pulls right)
+        // IN-TURN (curls RIGHT →):
+        //   - Sweep LEFT → Want rock to go RIGHT → Use LINE (reduce right curl → goes right)
+        
+        if (!rm.inturn)  // OUT-TURN (curls LEFT ←)
         {
-            StartCoroutine(SweepLine(true));
+            StartCoroutine(SweepLine(false));   // ✅ Decrease curl → rock stays RIGHT
         }
-        else
+        else  // IN-TURN (curls RIGHT →)
         {
-            StartCoroutine(SweepCurl(false));
+            StartCoroutine(SweepCurl(true));  // ✅ Enhance curl → rock pushes RIGHT
         }
         
     }
@@ -160,13 +168,21 @@ public class Sweep : MonoBehaviour
             statCalc = 80f; // Default sweeper strength for testing
         }
         
-        if (!rm.inturn)
+        // ✅ CRITICAL FIX: Player sweeping logic was BACKWARDS!
+        // PHYSICS: Sweep RIGHT → Rock goes LEFT (asymmetric friction pulls toward swept side)
+        // 
+        // OUT-TURN (curls LEFT ←):
+        //   - Sweep RIGHT → Want rock to go LEFT → Use LINE (reduce left curl → goes left)
+        // IN-TURN (curls RIGHT →):
+        //   - Sweep RIGHT → Want rock to go LEFT → Use CURL (enhance right curl → pulls left)
+        
+        if (!rm.inturn)  // OUT-TURN (curls LEFT ←)
         {
-            StartCoroutine(SweepCurl(true));
+            StartCoroutine(SweepCurl(false));   // ✅ Enhance curl → rock goes LEFT
         }
-        else
+        else  // IN-TURN (curls RIGHT →)
         {
-            StartCoroutine(SweepLine(false));
+            StartCoroutine(SweepLine(true));  // ✅ Reduce curl → rock pulls LEFT
         }
     }
 

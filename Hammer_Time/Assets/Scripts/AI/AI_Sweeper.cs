@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Feedbacks;
@@ -1023,7 +1023,10 @@ public class AI_Sweeper : MonoBehaviour
         idealTrajectoryLine.material = new Material(Shader.Find("Sprites/Default"));
         idealTrajectoryLine.startColor = new Color(0f, 1f, 0f, 0.7f); // Bright green, semi-transparent
         idealTrajectoryLine.endColor = new Color(0f, 1f, 0f, 0.7f);
-        idealTrajectoryLine.sortingOrder = 2; // Render on top
+        
+        // ✅ CRITICAL FIX: Set sorting layer to ensure visibility above background!
+        idealTrajectoryLine.sortingLayerName = "UI";  // Use UI layer (highest priority)
+        idealTrajectoryLine.sortingOrder = 100;  // Very high order to render on top
         idealTrajectoryLine.enabled = false;
         
         // RED LINE: ACTUAL trajectory (error-contaminated - what rock actually got)
@@ -1035,7 +1038,10 @@ public class AI_Sweeper : MonoBehaviour
         actualTrajectoryLine.material = new Material(Shader.Find("Sprites/Default"));
         actualTrajectoryLine.startColor = new Color(1f, 0f, 0f, 0.7f); // Bright red, semi-transparent
         actualTrajectoryLine.endColor = new Color(1f, 0f, 0f, 0.7f);
-        actualTrajectoryLine.sortingOrder = 2; // Render on top
+        
+        // ✅ CRITICAL FIX: Set sorting layer to ensure visibility above background!
+        actualTrajectoryLine.sortingLayerName = "UI";  // Use UI layer (highest priority)
+        actualTrajectoryLine.sortingOrder = 100;  // Very high order to render on top
         actualTrajectoryLine.enabled = false;
         
         // YELLOW CROSSHAIR: Current rock position on ideal path
@@ -1047,10 +1053,13 @@ public class AI_Sweeper : MonoBehaviour
         currentPositionMarker.material = new Material(Shader.Find("Sprites/Default"));
         currentPositionMarker.startColor = new Color(1f, 1f, 0f, 1f); // Bright yellow, full opacity
         currentPositionMarker.endColor = new Color(1f, 1f, 0f, 1f);
-        currentPositionMarker.sortingOrder = 3; // Render on top of trajectory lines
+        
+        // ✅ CRITICAL FIX: Set sorting layer to ensure visibility above background!
+        currentPositionMarker.sortingLayerName = "UI";  // Use UI layer (highest priority)
+        currentPositionMarker.sortingOrder = 101;  // Even higher to render on top of trajectories
         currentPositionMarker.enabled = false;
         
-        Debug.Log("[AI_Sweeper] Trajectory visualization initialized - Green=IDEAL, Red=ACTUAL, Yellow=CURRENT");
+        Debug.Log("[AI_Sweeper] Trajectory visualization initialized - Green=IDEAL, Red=ACTUAL, Yellow=CURRENT (UI layer, order 100+)");
     }
     
     /// <summary>
@@ -1256,7 +1265,7 @@ public class AI_Sweeper : MonoBehaviour
         Debug.Log($"  Shot type: {shotType}");
         Debug.Log($"  IDEAL trajectory (sweeping target): {idealTrajectory.Count} points from perfect velocity {idealVelocity}");
         Debug.Log($"  ACTUAL trajectory (error-contaminated): {actualTrajectory.Count} points from actual velocity {actualVelocity}");
-        Debug.Log($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}�)");
+        Debug.Log($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}°)");
         
         // TRAJECTORY VERIFICATION: Log first/last points to verify it's not a straight line
         if (idealTrajectory.Count > 10)
@@ -1323,7 +1332,7 @@ public class AI_Sweeper : MonoBehaviour
         // ========================================
         // CRITICAL: For TAKEOUT shots, the goal is to reach the COLLISION POINT,
         // not the target rock's center position!
-        // Collision happens when rock centers are ~0.58 units apart (2 � rock radius)
+        // Collision happens when rock centers are ~0.58 units apart (2 × rock radius)
         
         Vector2 sweepingGoal;
         
@@ -1340,7 +1349,7 @@ public class AI_Sweeper : MonoBehaviour
             
             Debug.Log($"[AI_Sweeper] TAKEOUT sweeping goal: COLLISION POINT at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
             Debug.Log($"  Target rock center: ({targetPosition.x:F2}, {targetPosition.y:F2})");
-            Debug.Log($"  Collision distance: {twoRockRadii:F3}m (2 � rock radius)");
+            Debug.Log($"  Collision distance: {twoRockRadii:F3}m (2 × rock radius)");
             Debug.Log($"  Goal is {(targetPosition.y - sweepingGoal.y):F3}m BEFORE target center");
         }
         else
@@ -1364,33 +1373,33 @@ public class AI_Sweeper : MonoBehaviour
         
         if (isTakeoutShot)
         {
-            // TAKEOUTS: ULTRA-AGGRESSIVE parameters with TIGHTER line control
+            // TAKEOUTS: ULTRA-AGGRESSIVE parameters with ULTRA-TIGHT line control
             // - MASSIVE lookahead (8.0 units!) to detect velocity drops SUPER early
             // - VERY sensitive to distance errors (0.10 = 10cm) - even tiny shortfalls trigger sweeping
-            // - TIGHTER lateral tolerance (0.06 = 6cm) - MORE SENSITIVE line correction!
-            lateralErrorThreshold = 0.06f;  // 6cm lateral (TIGHTER - more sensitive to line errors!)
+            // - ULTRA-TIGHT lateral tolerance (0.01 = 1cm) - HYPER-SENSITIVE line correction! (was 6cm)
+            lateralErrorThreshold = 0.01f;  // 1cm lateral (ULTRA-TIGHT - 33% more sensitive!)
             distanceErrorThreshold = 0.10f;  // 10cm distance (ULTRA sensitive - sweep early!)
-            predictionLookahead = 8.0f;      // Look 8 units ahead (MASSIVE - detect problems WAY ahead!)
+            predictionLookahead = 15.0f;      // Look 15 units ahead (MASSIVE - detect problems WAY ahead!)
             
-            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE with TIGHTER line control!");
+            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE with ULTRA-TIGHT line control!");
             Debug.Log($"  Lookahead: {predictionLookahead}m (MASSIVE - detect velocity drops SUPER early!)");
             Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (ULTRA sensitive - must reach!)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (TIGHTER - more sensitive!)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (ULTRA-TIGHT - 33% more sensitive!)");
         }
         else if (isDrawShot)
         {
-            // DRAWS: PRECISION parameters with TIGHTER line control
+            // DRAWS: PRECISION parameters with ULTRA-TIGHT line control
             // - Medium lookahead (4.0 units) to balance correction time
             // - Moderate distance sensitivity (0.20 = 20cm) - stopping is critical
-            // - TIGHTER lateral tolerance (0.05 = 5cm) - VERY PRECISE line accuracy!
-            lateralErrorThreshold = 0.05f;   // 5cm lateral (TIGHTER - very precise line!)
+            // - ULTRA-TIGHT lateral tolerance (0.035 = 3.5cm) - HYPER-PRECISE line accuracy! (was 5cm)
+            lateralErrorThreshold = 0.035f;   // 3.5cm lateral (ULTRA-TIGHT - 30% more sensitive!)
             distanceErrorThreshold = 0.20f;  // 20cm distance (important but less critical than takeouts)
             predictionLookahead = 4.0f;      // Look 4 units ahead (balanced)
             
-            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control with TIGHTER thresholds!");
+            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control with ULTRA-TIGHT thresholds!");
             Debug.Log($"  Lookahead: {predictionLookahead}m (balanced prediction)");
             Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (stopping control)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (VERY PRECISE!)");
+            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (HYPER-PRECISE!)");
         }
         else if (isRaiseShot)
         {
@@ -1500,7 +1509,15 @@ public class AI_Sweeper : MonoBehaviour
             if (!hasCollided && lookaheadCollision.hasCollision && collisionDistance < 0.1f)
             {
                 hasCollided = true;
-                Debug.Log($"[AI_Sweeper] POST-COLLISION MODE ACTIVATED");
+                Debug.Log($"[AI_Sweeper] COLLISION DETECTED - Auto-WHOA activated!");
+                
+                // IMMEDIATE WHOA on collision!
+                if (currentSweepState != "None")
+                {
+                    sm.SweepWhoa(true);
+                    currentSweepState = "None";
+                    Debug.Log($"[AI_Sweeper] Sweepers STOPPED on collision - rock physics now in control");
+                }
             }
 
             // POST-COLLISION BEHAVIOR: Context-aware sweeping - only in scoring situations
@@ -1512,10 +1529,10 @@ public class AI_Sweeper : MonoBehaviour
                 // PHILOSOPHY: After collision, only sweep if it helps SCORING
                 // 
                 // TWO SCENARIOS where post-collision sweeping is VALUABLE:
-                // 1. Rock moving toward BUTTON (0, 6.5) ? sweep to maximize distance
-                // 2. Rock in SCORING POSITION behind guard ? sweep to protect/extend
+                // 1. Rock moving toward BUTTON (0, 6.5) → sweep to maximize distance
+                // 2. Rock in SCORING POSITION behind guard → sweep to protect/extend
                 // 
-                // ALL OTHER scenarios ? WHOA (collision physics is chaotic, sweeping is useless)
+                // ALL OTHER scenarios → WHOA (collision physics is chaotic, sweeping is useless)
                 
                 Vector2 button = new Vector2(0f, 6.5f);
                 Vector2 velocity = rockRB.linearVelocity;
@@ -1528,14 +1545,14 @@ public class AI_Sweeper : MonoBehaviour
                 // Dot product: positive = moving toward button, negative = moving away
                 float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
                 
-                bool movingTowardButton = dotProduct > 0.5f; // At least 60� toward button (cos 60� = 0.5)
+                bool movingTowardButton = dotProduct > 0.5f; // At least 60° toward button (cos 60° = 0.5)
                 bool closeToButton = distToButton < 2.0f; // Within 2 units of button
                 
                 if (movingTowardButton && closeToButton)
                 {
                     // SWEEP: Rock is heading toward button and close - maximize distance!
                     desiredState = "Weight";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) ? SWEEP for distance!");
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) → SWEEP for distance!");
                 }
                 else
                 {
@@ -1570,7 +1587,7 @@ public class AI_Sweeper : MonoBehaviour
                     {
                         // SWEEP: Rock is in protected scoring position - extend it!
                         desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) ? SWEEP to extend!");
+                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) → SWEEP to extend!");
                     }
                     else
                     {
@@ -1579,15 +1596,15 @@ public class AI_Sweeper : MonoBehaviour
                         
                         if (!movingTowardButton && !closeToButton)
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) ? WHOA");
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) → WHOA");
                         }
                         else if (!inScoringZone)
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) ? WHOA");
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) → WHOA");
                         }
                         else
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) ? WHOA");
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) → WHOA");
                         }
                     }
                 }
@@ -1644,15 +1661,15 @@ public class AI_Sweeper : MonoBehaviour
                 {
                     // CRITICAL FIX: Logic was BACKWARDS!
                     // lateralError = currentPos.x - idealPos.x
-                    // - If lateralError > 0: rock is RIGHT of ideal ? need to pull LEFT
-                    // - If lateralError < 0: rock is LEFT of ideal ? need to pull RIGHT
+                    // - If lateralError > 0: rock is RIGHT of ideal → need to pull LEFT
+                    // - If lateralError < 0: rock is LEFT of ideal → need to pull RIGHT
                     
                     if (isInTurn)
                     {
                         // IN-TURN curls LEFT (negative X)
                         // If lateralError > 0 (rock right of ideal), sweep Curl to pull LEFT
                         // If lateralError < 0 (rock left of ideal), sweep Line to pull RIGHT
-                        desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ? FIXED: Swapped!
+                        desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ✅ FIXED: Swapped!
                         Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
                     else
@@ -1660,7 +1677,7 @@ public class AI_Sweeper : MonoBehaviour
                         // OUT-TURN curls RIGHT (positive X)
                         // If lateralError > 0 (rock right of ideal), sweep Line to pull LEFT
                         // If lateralError < 0 (rock left of ideal), sweep Curl to pull RIGHT
-                        desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ? FIXED: Swapped!
+                        desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ✅ FIXED: Swapped!
                         Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
                 }
@@ -1688,22 +1705,22 @@ public class AI_Sweeper : MonoBehaviour
                 // PRIORITY 4: LATERAL ERROR (off the ideal line)
                 // CRITICAL FIX: Logic was BACKWARDS!
                 // lateralError = currentPos.x - idealPos.x
-                // - If lateralError > 0: rock is RIGHT of ideal ? need to pull LEFT
-                // - If lateralError < 0: rock is LEFT of ideal ? need to pull RIGHT
+                // - If lateralError > 0: rock is RIGHT of ideal → need to pull LEFT
+                // - If lateralError < 0: rock is LEFT of ideal → need to pull RIGHT
                 
                 if (isInTurn)
                 {
                     // IN-TURN curls LEFT (negative X)
                     // If lateralError > 0 (rock right of ideal), sweep Curl to pull LEFT
                     // If lateralError < 0 (rock left of ideal), sweep Line to pull RIGHT
-                    desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ? FIXED: Swapped!
+                    desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ✅ FIXED: Swapped!
                 }
                 else
                 {
                     // OUT-TURN curls RIGHT (positive X)
                     // If lateralError > 0 (rock right of ideal), sweep Line to pull LEFT
                     // If lateralError < 0 (rock left of ideal), sweep Curl to pull RIGHT
-                    desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ? FIXED: Swapped!
+                    desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ✅ FIXED: Swapped!
                 }
             }
 
@@ -1771,14 +1788,14 @@ public class AI_Sweeper : MonoBehaviour
     /// - "Weight" = EXTEND distance (both sweepers, makes rock go further)
     /// 
     /// IN-TURN (curls LEFT):
-    ///   - Line sweep: SweepLeft() ? straightens (rock curling too much left)
-    ///   - Curl sweep: SweepRight() ? enhances curl (rock not curling enough left)
-    ///   - Weight sweep: SweepWeight() ? extends distance
+    ///   - Line sweep: SweepLeft() → straightens (rock curling too much left)
+    ///   - Curl sweep: SweepRight() → enhances curl (rock not curling enough left)
+    ///   - Weight sweep: SweepWeight() → extends distance
     /// 
     /// OUT-TURN (curls RIGHT):
-    ///   - Line sweep: SweepRight() ? straightens (rock curling too much right)
-    ///   - Curl sweep: SweepLeft() ? enhances curl (rock not curling enough right)
-    ///   - Weight sweep: SweepWeight() ? extends distance
+    ///   - Line sweep: SweepRight() → straightens (rock curling too much right)
+    ///   - Curl sweep: SweepLeft() → enhances curl (rock not curling enough right)
+    ///   - Weight sweep: SweepWeight() → extends distance
     /// </summary>
     private void ApplySweepState(string state, bool isInTurn)
     {

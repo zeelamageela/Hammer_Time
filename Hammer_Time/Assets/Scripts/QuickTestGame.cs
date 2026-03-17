@@ -36,7 +36,7 @@ public class QuickTestGame : MonoBehaviour
     
     [Tooltip("Opponent stats (0-100, 100 = perfect shots)")]
     [Range(0, 100)]
-    public int opponentStatValue = 50;
+    public int opponentStatValue = 85;
     
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
