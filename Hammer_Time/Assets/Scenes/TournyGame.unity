@@ -10920,6 +10920,7 @@ MonoBehaviour:
   aimCircleToggle: {fileID: 1327419318}
   guidelinesToggle: {fileID: 1815833738}
   curlLineToggle: {fileID: 680808646}
+  collisionWarningToggle: {fileID: 2012726026}
 --- !u!1 &510977264
 GameObject:
   m_ObjectHideFlags: 0
