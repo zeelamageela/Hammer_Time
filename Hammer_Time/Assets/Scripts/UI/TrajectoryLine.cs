@@ -123,6 +123,9 @@ public class TrajectoryLine : MonoBehaviour
     private bool trajectoryDotsVisible = true;
     private bool collisionLinesVisible = true;
     private bool aimCircleVisible = true;
+    private bool guidelinesVisible = true;
+    private bool curlLineVisible = true;
+    private bool collisionWarningVisible = true;
     
     // Alternative aim visualization (when aim circle is OFF)
     private LineRenderer aimVerticalLine;
@@ -150,12 +153,18 @@ public class TrajectoryLine : MonoBehaviour
         trajectoryDotsVisible = visualSettings.TrajectoryVisible;
         collisionLinesVisible = visualSettings.CollisionLinesVisible;
         aimCircleVisible = visualSettings.AimCircleVisible;
+        guidelinesVisible = visualSettings.GuidelinesVisible;
+        curlLineVisible = visualSettings.CurlLineVisible;
+        collisionWarningVisible = visualSettings.CollisionWarningVisible;
         
         visualSettings.OnTrajectoryVisibilityChanged += OnTrajectoryVisibilityChanged;
         visualSettings.OnCollisionLinesVisibilityChanged += OnCollisionLinesVisibilityChanged;
         visualSettings.OnAimCircleVisibilityChanged += OnAimCircleVisibilityChanged;
+        visualSettings.OnGuidelinesVisibilityChanged += OnGuidelinesVisibilityChanged;
+        visualSettings.OnCurlLineVisibilityChanged += OnCurlLineVisibilityChanged;
+        visualSettings.OnCollisionWarningVisibilityChanged += OnCollisionWarningVisibilityChanged;
         
-        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}");
+        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
         lr.enabled = false;
         CareerManager cm = FindAnyObjectByType<CareerManager>();
@@ -1181,7 +1190,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // Always shows ideal aim position (no collision warnings)
-        if (aimVerticalLine != null)
+        if (aimVerticalLine != null && guidelinesVisible)
         {
             aimVerticalLine.enabled = true;
             aimVerticalLine.positionCount = 2;
@@ -1204,7 +1213,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // HORIZONTAL LINE: Fixed width across ice at trajectory endpoint Y
         // Shows weight (distance shot will travel) - TEAM COLOR
-        if (aimHorizontalLine != null)
+        if (aimHorizontalLine != null && guidelinesVisible)
         {
             // Fixed X positions spanning ice width
             float iceLeftEdge = -2.23f;  // Tunable - left edge of ice
@@ -1227,7 +1236,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // CURL LINE: Shows turn and curl from vertical line to aim circle
         // ENHANCED with accuracy visualization (width, offset, gradient)
-        if (aimCurlLine != null && aimCircle != null)
+        if (aimCurlLine != null && aimCircle != null && curlLineVisible)
         {
             // Find the minimum Y value of the vertical line (closest to hack)
             float curlLineY = Mathf.Min(verticalLineTopY, verticalLineBottomY) + 0.5f;
@@ -1370,6 +1379,13 @@ public class TrajectoryLine : MonoBehaviour
             return;
         }
         
+        // Only show if toggle is ON
+        if (!collisionWarningVisible)
+        {
+            collisionWarningLine.enabled = false;
+            return;
+        }
+        
         // Only show when aim circle is OFF (guide lines mode)
         if (aimCircleVisible)
         {
@@ -1448,6 +1464,75 @@ public class TrajectoryLine : MonoBehaviour
     }
     
     /// <summary>
+    /// Called when guidelines visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnGuidelinesVisibilityChanged(bool visible)
+    {
+        guidelinesVisible = visible;
+        Debug.Log($"[TrajectoryLine] Guidelines visibility changed to: {visible}");
+        
+        // If currently showing trajectory, update visualization
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            
+            // Only update if we're in aiming mode (not released yet)
+            if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+            {
+                // Update alternative aim visualization
+                UpdateAlternativeAimVisualization();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called when curl line visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnCurlLineVisibilityChanged(bool visible)
+    {
+        curlLineVisible = visible;
+        Debug.Log($"[TrajectoryLine] Curl line visibility changed to: {visible}");
+        
+        // If currently showing trajectory, update visualization
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            
+            // Only update if we're in aiming mode (not released yet)
+            if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+            {
+                // Update alternative aim visualization
+                UpdateAlternativeAimVisualization();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called when collision warning visibility setting changes (from UI toggle)
+    /// </summary>
+    private void OnCollisionWarningVisibilityChanged(bool visible)
+    {
+        collisionWarningVisible = visible;
+        Debug.Log($"[TrajectoryLine] Collision warning visibility changed to: {visible}");
+        
+        // If currently showing trajectory, update visualization
+        if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
+        {
+            GameObject currentRock = gm.rockList[gm.rockCurrent].rock;
+            Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
+            
+            // Only update if we're in aiming mode (not released yet)
+            if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
+            {
+                // Update collision warning line
+                UpdateCollisionWarningLine();
+            }
+        }
+    }
+    
+    /// <summary>
     /// Cleanup subscriptions when destroyed
     /// </summary>
     void OnDestroy()
@@ -1457,6 +1542,9 @@ public class TrajectoryLine : MonoBehaviour
             visualSettings.OnTrajectoryVisibilityChanged -= OnTrajectoryVisibilityChanged;
             visualSettings.OnCollisionLinesVisibilityChanged -= OnCollisionLinesVisibilityChanged;
             visualSettings.OnAimCircleVisibilityChanged -= OnAimCircleVisibilityChanged;
+            visualSettings.OnGuidelinesVisibilityChanged -= OnGuidelinesVisibilityChanged;
+            visualSettings.OnCurlLineVisibilityChanged -= OnCurlLineVisibilityChanged;
+            visualSettings.OnCollisionWarningVisibilityChanged -= OnCollisionWarningVisibilityChanged;
         }
     }
 }

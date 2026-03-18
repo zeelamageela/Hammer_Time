@@ -1,20 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MoreMountains.Feedbacks;
 
 public class AI_Sweeper : MonoBehaviour
 {
     public AIManager aim;
     public GameManager gm;
     public SweeperManager sm;
-    public MMF_Player fltFbk;
-    public MMF_FloatingText fltText;
 
     private void Start()
     {
-        fltText = fltFbk.GetFeedbackOfType<MMF_FloatingText>();
-        
         // Initialize AI trajectory visualization system
         InitializeTrajectoryVisualization();
     }
@@ -921,68 +916,57 @@ public class AI_Sweeper : MonoBehaviour
                 float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
                 Debug.Log("y = -7 velLimit is " + velLimit);
                 if (rockRB.linearVelocity.y <= velLimit)
-                    fltText.Value = "Sweep!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep!!");
                 else
-                    fltText.Value = "Leave it!!";
-                //fltText.Play(rockRB.position, 1.25f);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    fltText.Value = "SWEEP!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEP!!");
                 else
-                    fltText.Value = "Nope!!";
-
-                //fltText.Play(rockRB.position, 1.4f);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Nope!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
                 velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    fltText.Value = "SWEEEEEP!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEEEEP!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.65f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.65f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else
-                    fltText.Value = "Leave it!!";
-
-                //fltText.Play(rockRB.position, 1.6f);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    fltText.Value = "SWEEEEEEEEEP HARD!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEEEEEEEEP HARD!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.55f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.55f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else
-                    fltText.Value = "It's good!!";
-
-                //fltText.Play(rockRB.position, 1.75f);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "It's good!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
                 velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    fltText.Value = "HARRRRRD!! GO GO GO!!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "HARRRRRD!! GO GO GO!!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.4f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.4f)
-                    fltText.Value = "Sweep the Curl!!";
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
                 else
-                    fltText.Value = "It's good!!";
-
-                //fltText.Play(rockRB.position, 1.85f);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "It's good!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= target.x);
                 velLimit = 0.5f * ((target.y - 5.225f) / 2.55f);
                 if (rockRB.linearVelocity.y >= velLimit)
-                    fltText.Value = "We're there!!";
-
-                //fltText.Play(rockRB.position, intensity);
+                    TextCalloutManager.Instance.ShowRockCallout(rock, "We're there!!");
                 break;
 
             case "Guard To Target":

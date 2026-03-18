@@ -2352,20 +2352,21 @@ public class AI_Target : MonoBehaviour
         Vector2 pullbackPos;
         bool useInTurn;
         
-        // Try to find a clear path to the target, avoiding guards
-        bool foundShot = CalculatePhysicsBasedDrawShot(targetPosition, out pullbackPos, out useInTurn);
+            // Try to find a clear path to the target, avoiding guards
+            bool foundShot = CalculatePhysicsBasedDrawShot(targetPosition, out pullbackPos, out useInTurn);
         
-        if (foundShot)
-        {
-        // **NEW: Store perfect velocity BEFORE accuracy errors**
-        // CRITICAL: Use SAME launcher position as physics calculation (0, -25)
-        Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedDrawShot!
-        lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
+            if (foundShot)
+            {
+            // **NEW: Store perfect velocity BEFORE accuracy errors**
+            // CRITICAL: Use SAME launcher position as physics calculation (0, -25)
+            Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedDrawShot!
+            lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
         
-        Debug.Log($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+            Debug.Log($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
         
-        // Apply accuracy modifier with realistic error distribution
-        CharacterStats shooterStats = GetShooterStats(rockCurrent);
+            // Apply accuracy modifier with realistic error distribution
+            CharacterStats shooterStats = GetShooterStats(rockCurrent);
+
             if (shooterStats != null)
             {
                 // ========================================
@@ -2416,12 +2417,12 @@ public class AI_Target : MonoBehaviour
                     string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                 
                     Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Draw)\n" +
-                              $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
-                              $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
-                              $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
-                              $"    Y error: {yError:F4} ({ySigmaDistance:F2}σ) - {yCategory}\n" +
-                              $"  Turn correction sign: {lateralErrorSign}\n" +
-                              $"  Final pullback: {pullbackPos}");
+                                $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
+                                $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
+                                $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
+                                $"    Y error: {yError:F4} ({ySigmaDistance:F2}σ) - {yCategory}\n" +
+                                $"  Turn correction sign: {lateralErrorSign}\n" +
+                                $"  Final pullback: {pullbackPos}");
                 }
                 else
                 {
@@ -2437,8 +2438,8 @@ public class AI_Target : MonoBehaviour
         }
         else
         {
-            // FALLBACK: Draw shot failed - try finesse shot instead (lighter weight might work)
-            Debug.LogWarning("[Physics Draw] Failed, trying finesse shot as fallback");
+            // FALLBACK: Draw shot failed - try guard shot instead (lighter weight might work)
+            Debug.LogWarning("[Physics Draw] Failed, trying guard shot as fallback");
             
             Vector2 guardPullback;
             bool guardInTurn;
@@ -2454,15 +2455,15 @@ public class AI_Target : MonoBehaviour
             }
             else
             {
-                // LAST RESORT: Just place a finesse in the open (can't reach target)
-                Debug.LogError($"[Physics Draw] Draw AND Guard BOTH FAILED - placing emergency center finesse");
+                // LAST RESORT: Just place a guard in the open (can't reach target)
+                Debug.LogError($"[Physics Draw] Draw AND Guard BOTH FAILED - placing emergency center guard");
                 
-                // Emergency finesse placement - center, medium depth
+                // Emergency guard placement - center, medium depth
                 rm.inturn = Random.value > 0.5f; // Random turn
                 
                 Vector2 emergencyGuardTarget = new Vector2(
                     Random.Range(-0.15f, 0.15f), // Center with slight variance
-                    Random.Range(3.0f, 3.5f)      // Standard finesse depth
+                    Random.Range(3.0f, 3.5f)      // Standard guard depth
                 );
                 
                 Vector2 emergencyPullback;
@@ -3248,6 +3249,10 @@ public class AI_Target : MonoBehaviour
             case ShotIntent.Desperation:
                 EvaluateDesperationOptions(context, rockCurrent);
                 break;
+            
+            case ShotIntent.LastShotScoring:
+                EvaluateLastShotScoringOptions(context, rockCurrent);
+                break;
 
             case ShotIntent.ThrowAway:
                 // Just throw it out - finesse or wide weight
@@ -3895,6 +3900,89 @@ public class AI_Target : MonoBehaviour
     }
     
     /// <summary>
+    /// ✨ NEW: Evaluate LAST SHOT scoring options - NO PENALTIES!
+    /// This is called ONLY for the final rock (rock 15) when we need to score
+    /// Focus: Get as close to button as possible, ignore removal penalties
+    /// </summary>
+    private void EvaluateLastShotScoringOptions(ShotContext context, int rockCurrent)
+    {
+        Debug.Log($"[LastShotScoring] 🎯 Evaluating FINAL SHOT scoring options (rock #{rockCurrent}/16)");
+        Debug.Log($"[LastShotScoring] ✅ NO REMOVAL PENALTIES - Focus ONLY on final position!");
+        
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        // Count opponent rocks in house (for freeze target)
+        float closestOpponentDistToButton = 999f;
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName != currentRockInfo.teamName)
+            {
+                float dist = Vector2.Distance(houseRock.rock.transform.position, button);
+                if (dist < closestOpponentDistToButton)
+                {
+                    closestOpponentDistToButton = dist;
+                }
+            }
+        }
+        
+        // OPTION 1: Direct draw to button (ALWAYS HIGH SCORE - no penalties!)
+        float drawScore = 100f; // ✅ HIGH BASE SCORE (no removal penalty!)
+        Debug.Log($"  Option 1: Draw to button - Score: {drawScore:F2} (NO PENALTIES!)");
+        
+        // OPTION 2: Freeze on opponent's best rock (if available)
+        float freezeScore = 0f;
+        int rockToFreeze = FindBestFreezeTarget(rockCurrent, out freezeScore);
+        
+        if (rockToFreeze >= 0 && freezeScore > 0f)
+        {
+            freezeScore += 50f; // ✅ HUGE BONUS for stealing shot rock on last shot!
+            Debug.Log($"  Option 2: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2} (STEAL SHOT ROCK!)");
+        }
+        
+        // OPTION 3: Protected draw (behind guard)
+        float protectedScore = 0f;
+        Vector2 protectedTarget = Vector2.zero;
+        
+        if (gm.gList.Count > 0)
+        {
+            protectedTarget = FindBestProtectedDrawPosition(rockCurrent, out protectedScore);
+            
+            if (protectedScore > 0f)
+            {
+                protectedScore += 30f; // ✅ BONUS for safety
+                Debug.Log($"  Option 3: Protected draw at ({protectedTarget.x:F2}, {protectedTarget.y:F2}) - Score: {protectedScore:F2} (SAFE!)");
+            }
+        }
+        
+        // PICK THE BEST SCORING OPTION (all are viable - no penalties!)
+        float bestScore = Mathf.Max(drawScore, freezeScore, protectedScore);
+        
+        Debug.Log($"[LastShotScoring] ========== FINAL SCORES (NO PENALTIES!) ==========");
+        Debug.Log($"[LastShotScoring]   Draw to button: {drawScore:F2}");
+        Debug.Log($"[LastShotScoring]   Freeze: {freezeScore:F2}");
+        Debug.Log($"[LastShotScoring]   Protected draw: {protectedScore:F2}");
+        Debug.Log($"[LastShotScoring]   BEST: {bestScore:F2}");
+        
+        if (freezeScore == bestScore && freezeScore > 0f && rockToFreeze >= 0)
+        {
+            Debug.Log($"[LastShotScoring] ✅ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
+            OnTarget("Freeze", rockCurrent, rockToFreeze);
+        }
+        else if (protectedScore == bestScore && protectedScore > 0f && protectedTarget != Vector2.zero)
+        {
+            Debug.Log($"[LastShotScoring] ✅ SELECTED: Protected draw (score: {protectedScore:F2}) - SAFE SCORING!");
+            StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
+        }
+        else
+        {
+            Debug.Log($"[LastShotScoring] ✅ SELECTED: Draw to button (score: {drawScore:F2}) - STRAIGHTFORWARD!");
+            OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+        }
+    }
+    
+    /// <summary>
     /// Evaluate ALL options for scoring points, pick the best one
     /// Options: Draw to button, freeze on opponent rock, raise friendly rock, tick opponent into house, remove blocker
     /// 
@@ -4278,17 +4366,13 @@ public class AI_Target : MonoBehaviour
                 Debug.Log($"  Option 2: Runback (right) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
             }
             
-            // OPTION 3: Raise our rock into theirs (creative desperation!)
-            float raiseScore = 0f;
-            int rockToRaise = FindBestRaiseTarget(opponentRock, rockCurrent);
-            if (rockToRaise >= 0)
-            {
-                raiseScore = SimulateRaise(opponentRock, rockToRaise, rockCurrent) + aggressionBonus * 0.5f;
-                Debug.Log($"  Option 3: Raise rock #{rockToRaise} - Score: {raiseScore:F2}");
-            }
+            // OPTION 3: Angled takeout (45° hit for better rollout - creative desperation!)
+            float angledTakeoutScore = SimulateAngledTakeout(opponentRock, opponentRockIndex, rockCurrent) + aggressionBonus * 0.5f;
+            Debug.Log($"  Option 3: Angled Takeout (45° rollout) - Score: {angledTakeoutScore:F2}");
             
+
             // PICK BEST REMOVAL
-            float bestRemovalScore = Mathf.Max(takeoutScore, runbackScore, raiseScore);
+            float bestRemovalScore = Mathf.Max(takeoutScore, runbackScore, angledTakeoutScore);
             
             if (runbackScore == bestRemovalScore && runbackScore > 0f)
             {
@@ -4296,16 +4380,16 @@ public class AI_Target : MonoBehaviour
                 OnTarget("Runback", rockCurrent, guardToRunback);
                 return;
             }
+            else if (angledTakeoutScore == bestRemovalScore && angledTakeoutScore > 0f)
+            {
+                Debug.Log($"[Desperation] ✓ SELECTED: Angled Takeout (score: {angledTakeoutScore:F2}) - Desperation rollout!");
+                OnTarget("Take Out", rockCurrent, opponentRockIndex); // Uses same mechanics, just angled
+                return;
+            }
             else if (takeoutScore == bestRemovalScore && takeoutScore > 0f)
             {
                 Debug.Log($"[Desperation] ✓ SELECTED: Aggressive Takeout (score: {takeoutScore:F2})");
                 OnTarget("Take Out", rockCurrent, opponentRockIndex);
-                return;
-            }
-            else if (raiseScore == bestRemovalScore && raiseScore > 0f)
-            {
-                Debug.Log($"[Desperation] ✓ SELECTED: Raise (score: {raiseScore:F2}) - Desperation play!");
-                OnTarget("Tap Back", rockCurrent, rockToRaise);
                 return;
             }
         }
@@ -4345,7 +4429,7 @@ public class AI_Target : MonoBehaviour
             float drawScore = SimulateDraw(button, rockCurrent);
             drawScore += 20f; // Moderate bonus
             
-            // OPTION 4: Bury behind opponent finesse (protected scoring)
+            // OPTION 4: Bury behind opponent guard (protected scoring)
             float buryScore = 0f;
             Vector2 buryTarget = FindBestBuryPositionBehindOpponentGuard(rockCurrent, out buryScore);
             buryScore += 35f; // Big bonus - protected AND scoring!
@@ -4354,7 +4438,7 @@ public class AI_Target : MonoBehaviour
             
             if (buryScore == bestScore && buryScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Bury behind finesse (score: {buryScore:F2}) - PROTECTED SCORING!");
+                Debug.Log($"[Desperation] ✓ SELECTED: Bury behind guard (score: {buryScore:F2}) - PROTECTED SCORING!");
                 StartCoroutine(DrawTarget(rockCurrent, buryTarget));
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
@@ -4407,15 +4491,15 @@ public class AI_Target : MonoBehaviour
                     Debug.Log($"[Desperation] ✓ SELECTED: Bury weight (score: {buryScore:F2}) - GO FOR TWO!");
                     StartCoroutine(DrawTarget(rockCurrent, buryTarget));
                 }
-                else if (raiseScore == bestScore && raiseScore > 0f)
-                {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Raise (score: {raiseScore:F2}) - GO FOR TWO!");
-                    OnTarget("Tap Back", rockCurrent, rockToRaise);
-                }
                 else if (freezeScore == bestScore && freezeScore > 0f)
                 {
                     Debug.Log($"[Desperation] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
                     OnTarget("Freeze", rockCurrent, rockToFreeze);
+                }
+                else if (raiseScore == bestScore && raiseScore > 0f)
+                {
+                    Debug.Log($"[Desperation] ✓ SELECTED: Raise (score: {raiseScore:F2}) - GO FOR TWO!");
+                    OnTarget("Tap Back", rockCurrent, rockToRaise);
                 }
                 else
                 {

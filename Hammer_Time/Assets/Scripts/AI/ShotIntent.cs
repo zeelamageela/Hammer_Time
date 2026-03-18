@@ -17,13 +17,14 @@ public enum ShotIntent
     DenyOpportunity,        // Remove opponent's setup rocks
     
     // SETUP INTENTS
-    CreateOpportunity,      // Place finesse for future shots
+    CreateOpportunity,      // Place guard for future shots
     FreezeOnShot,          // Freeze to shot rock (advanced)
     
     // SPECIAL SITUATIONS
     Desperation,           // Last rock, need miracle
     RunBack,               // Hit and roll to better position
     Corner,                // Freeze behind cover
+    LastShotScoring,       // LAST SHOT: Focus ONLY on final position (no removal penalties!)
     
     // SIMPLE FALLBACKS
     DrawToButton,          // Simple center weight

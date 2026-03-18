@@ -364,7 +364,7 @@ public class SweeperManager : MonoBehaviour
     {
         //Tap on the sweep target
 
-        float sweepTimer = 0.25f;  // Match sweepTapDuration from Sweep.cs
+        float sweepTimer = 0.45f;  // Match sweepTapDuration from Sweep.cs
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;

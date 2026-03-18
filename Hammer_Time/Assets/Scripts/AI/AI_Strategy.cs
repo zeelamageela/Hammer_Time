@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -384,6 +384,86 @@ public class AI_Strategy : MonoBehaviour
         
         // Unknown phase - use fallback
         return false;
+    }
+    
+    /// <summary>
+    /// ✨ NEW: Last Shot Scoring - FINAL shot MUST score (no penalties!)
+    /// Called when rock 15 (last rock) is being played
+    /// </summary>
+    private bool TryIntentBasedShot_LastShotScoring(int rockCurrent)
+    {
+        Debug.Log($"[LastShotScoring] 🎯 FINAL SHOT - Evaluating scoring options (rock #{rockCurrent}/16)");
+        
+        Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        // Count rocks in house
+        int myRocksInHouse = CountRocksInHouse(currentRockInfo.teamName);
+        int oppRocksInHouse = 0;
+        float closestOpponentDistToButton = 999f;
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName != currentRockInfo.teamName)
+            {
+                oppRocksInHouse++;
+                float dist = Vector2.Distance(houseRock.rock.transform.position, button);
+                if (dist < closestOpponentDistToButton)
+                {
+                    closestOpponentDistToButton = dist;
+                }
+            }
+        }
+        
+        Debug.Log($"[LastShotScoring] My rocks: {myRocksInHouse}, Opponent rocks: {oppRocksInHouse}, Closest opp dist: {closestOpponentDistToButton:F2}");
+        
+        ShotContext context;
+        
+        // CRITICAL DECISION: Do we need to REMOVE or SCORE?
+        
+        // SCENARIO 1: Opponent has shot rock (closest to button) - MUST REMOVE!
+        bool opponentHasShotRock = false;
+        int shotRockIndex = -1;
+        
+        if (gm.houseList.Count > 0)
+        {
+            GameObject shotRock = gm.houseList[0].rock; // First in sorted list = closest to button
+            Rock_Info shotRockInfo = gm.houseList[0].rockInfo;
+            
+            if (shotRockInfo.teamName != currentRockInfo.teamName)
+            {
+                opponentHasShotRock = true;
+                shotRockIndex = shotRockInfo.rockIndex;
+                
+                Debug.Log($"[LastShotScoring] ⚠️ OPPONENT HAS SHOT ROCK (rock #{shotRockIndex} at {shotRock.transform.position})");
+            }
+        }
+        
+        if (opponentHasShotRock && shotRockIndex >= 0  && gm.houseList[0].rockInfo.distance < 1.0f)
+        {
+            // MUST REMOVE SHOT ROCK (or we lose!)
+            Debug.Log($"[LastShotScoring] 🎯 CRITICAL: Must remove shot rock #{shotRockIndex} to win/tie!");
+            
+            context = new ShotContext(ShotIntent.RemoveThreat, shotRockIndex);
+            context.acceptRisk = true; // Aggressive - MUST hit it!
+            context.mustScore = false; // Don't try to score after removal - just get shot rock!
+            
+            aiTarg.ExecuteIntent(context, rockCurrent);
+            return true;
+        }
+        
+        // SCENARIO 2: We have shot rock OR clean house - SCORE!
+        Debug.Log($"[LastShotScoring] ✅ We have shot rock OR clean house - AGGRESSIVE SCORING!");
+        
+        // Use NEW LastShotScoring intent (no removal penalties!)
+        context = new ShotContext(ShotIntent.LastShotScoring);
+        context.idealFinalPosition = button; // Default to button
+        context.aggressiveness = 1.0f; // Maximum aggression
+        context.acceptRisk = false; // Don't risk missing - just score!
+        context.mustScore = true; // CRITICAL: Must land in house!
+        
+        aiTarg.ExecuteIntent(context, rockCurrent);
+        return true;
     }
     
     /// <summary>
@@ -1202,6 +1282,17 @@ public class AI_Strategy : MonoBehaviour
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
+        // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
+        if (rockCurrent >= 15)
+        {
+            Debug.Log("[AggressiveHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            if (TryIntentBasedShot_LastShotScoring(rockCurrent))
+            {
+                Debug.Log("[AggressiveHammer] ✅ Last shot scoring executed!");
+                return;
+            }
+        }
+        
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_AggressiveHammer(rockCurrent, phase))
         {
@@ -1228,6 +1319,17 @@ public class AI_Strategy : MonoBehaviour
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
+        // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
+        if (rockCurrent >= 15)
+        {
+            Debug.Log("[ScoreTwoOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            if (TryIntentBasedShot_LastShotScoring(rockCurrent))
+            {
+                Debug.Log("[ScoreTwoOrBlank] ✅ Last shot scoring executed!");
+                return;
+            }
+        }
+        
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_ScoreTwoOrBlank(rockCurrent, phase))
         {
@@ -1252,6 +1354,17 @@ public class AI_Strategy : MonoBehaviour
         }
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
+        if (rockCurrent >= 15)
+        {
+            Debug.Log("[AggressiveNotHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            if (TryIntentBasedShot_LastShotScoring(rockCurrent))
+            {
+                Debug.Log("[AggressiveNotHammer] ✅ Last shot scoring executed!");
+                return;
+            }
+        }
         
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_AggressiveNotHammer(rockCurrent, phase))
@@ -1278,6 +1391,17 @@ public class AI_Strategy : MonoBehaviour
         Debug.Log("Steal or Force - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
+        
+        // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
+        if (rockCurrent >= 15)
+        {
+            Debug.Log("[StealOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            if (TryIntentBasedShot_LastShotScoring(rockCurrent))
+            {
+                Debug.Log("[StealOrBlank] ✅ Last shot scoring executed!");
+                return;
+            }
+        }
             
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_StealOrBlank(rockCurrent, phase))

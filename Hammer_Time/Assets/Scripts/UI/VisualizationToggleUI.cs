@@ -18,6 +18,15 @@ public class VisualizationToggleUI : MonoBehaviour
     [Tooltip("Toggle for aim circle visibility (OFF = show aim lines instead)")]
     public Toggle aimCircleToggle;
     
+    [Tooltip("Toggle for guidelines visibility (vertical + horizontal aim lines)")]
+    public Toggle guidelinesToggle;
+    
+    [Tooltip("Toggle for curl line visibility (shows curl from vertical line to aim circle)")]
+    public Toggle curlLineToggle;
+    
+    [Tooltip("Toggle for collision warning line visibility (small red line at collision point)")]
+    public Toggle collisionWarningToggle;
+    
     private GameVisualizationSettings visualSettings;
 
     void Start()
@@ -56,9 +65,42 @@ public class VisualizationToggleUI : MonoBehaviour
             Debug.LogWarning("[VisualizationToggleUI] Aim circle toggle is not assigned in Inspector!");
         }
         
+        if (guidelinesToggle != null)
+        {
+            guidelinesToggle.isOn = visualSettings.GuidelinesVisible;
+            guidelinesToggle.onValueChanged.AddListener(OnGuidelinesToggleChanged);
+        }
+        else
+        {
+            Debug.LogWarning("[VisualizationToggleUI] Guidelines toggle is not assigned in Inspector!");
+        }
+        
+        if (curlLineToggle != null)
+        {
+            curlLineToggle.isOn = visualSettings.CurlLineVisible;
+            curlLineToggle.onValueChanged.AddListener(OnCurlLineToggleChanged);
+        }
+        else
+        {
+            Debug.LogWarning("[VisualizationToggleUI] Curl line toggle is not assigned in Inspector!");
+        }
+        
+        if (collisionWarningToggle != null)
+        {
+            collisionWarningToggle.isOn = visualSettings.CollisionWarningVisible;
+            collisionWarningToggle.onValueChanged.AddListener(OnCollisionWarningToggleChanged);
+        }
+        else
+        {
+            Debug.LogWarning("[VisualizationToggleUI] Collision warning toggle is not assigned in Inspector!");
+        }
+        
         Debug.Log("[VisualizationToggleUI] Initialized - Trajectory: " + visualSettings.TrajectoryVisible + 
                   ", Collision: " + visualSettings.CollisionLinesVisible +
-                  ", AimCircle: " + visualSettings.AimCircleVisible);
+                  ", AimCircle: " + visualSettings.AimCircleVisible +
+                  ", Guidelines: " + visualSettings.GuidelinesVisible +
+                  ", CurlLine: " + visualSettings.CurlLineVisible +
+                  ", CollisionWarning: " + visualSettings.CollisionWarningVisible);
     }
 
     /// <summary>
@@ -88,6 +130,33 @@ public class VisualizationToggleUI : MonoBehaviour
         Debug.Log($"[VisualizationToggleUI] Player toggled aim circle: {isOn}");
     }
 
+    /// <summary>
+    /// Called when guidelines toggle value changes
+    /// </summary>
+    private void OnGuidelinesToggleChanged(bool isOn)
+    {
+        visualSettings.ToggleGuidelinesVisibility(isOn);
+        Debug.Log($"[VisualizationToggleUI] Player toggled guidelines: {isOn}");
+    }
+
+    /// <summary>
+    /// Called when curl line toggle value changes
+    /// </summary>
+    private void OnCurlLineToggleChanged(bool isOn)
+    {
+        visualSettings.ToggleCurlLineVisibility(isOn);
+        Debug.Log($"[VisualizationToggleUI] Player toggled curl line: {isOn}");
+    }
+
+    /// <summary>
+    /// Called when collision warning toggle value changes
+    /// </summary>
+    private void OnCollisionWarningToggleChanged(bool isOn)
+    {
+        visualSettings.ToggleCollisionWarningVisibility(isOn);
+        Debug.Log($"[VisualizationToggleUI] Player toggled collision warning: {isOn}");
+    }
+
     void OnDestroy()
     {
         // Clean up listeners
@@ -104,6 +173,21 @@ public class VisualizationToggleUI : MonoBehaviour
         if (aimCircleToggle != null)
         {
             aimCircleToggle.onValueChanged.RemoveListener(OnAimCircleToggleChanged);
+        }
+        
+        if (guidelinesToggle != null)
+        {
+            guidelinesToggle.onValueChanged.RemoveListener(OnGuidelinesToggleChanged);
+        }
+        
+        if (curlLineToggle != null)
+        {
+            curlLineToggle.onValueChanged.RemoveListener(OnCurlLineToggleChanged);
+        }
+        
+        if (collisionWarningToggle != null)
+        {
+            collisionWarningToggle.onValueChanged.RemoveListener(OnCollisionWarningToggleChanged);
         }
     }
 }
