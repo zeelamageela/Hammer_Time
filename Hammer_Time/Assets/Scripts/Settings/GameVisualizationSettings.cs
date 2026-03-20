@@ -29,6 +29,7 @@ public class GameVisualizationSettings : MonoBehaviour
     private const string GUIDELINES_VISIBLE_KEY = "GuidelinesVisible";
     private const string CURL_LINE_VISIBLE_KEY = "CurlLineVisible";
     private const string COLLISION_WARNING_VISIBLE_KEY = "CollisionWarningVisible";
+    private const string FLICK_SHOT_MODE_KEY = "FlickShotMode";
 
     // Current settings (cached for performance)
     private bool trajectoryVisible = true;
@@ -37,6 +38,7 @@ public class GameVisualizationSettings : MonoBehaviour
     private bool guidelinesVisible = true;
     private bool curlLineVisible = true;
     private bool collisionWarningVisible = true;
+    private bool flickShotMode = false;
 
     // Public properties with change notifications
     public bool TrajectoryVisible
@@ -135,6 +137,22 @@ public class GameVisualizationSettings : MonoBehaviour
         }
     }
 
+    public bool FlickShotMode
+    {
+        get => flickShotMode;
+        set
+        {
+            if (flickShotMode != value)
+            {
+                flickShotMode = value;
+                PlayerPrefs.SetInt(FLICK_SHOT_MODE_KEY, value ? 1 : 0);
+                PlayerPrefs.Save();
+                OnFlickShotModeChanged?.Invoke(value);
+                Debug.Log($"[GameVisualizationSettings] Flick shot mode: {value}");
+            }
+        }
+    }
+
     // Events for systems to subscribe to
     public delegate void VisibilityChangedDelegate(bool visible);
     public event VisibilityChangedDelegate OnTrajectoryVisibilityChanged;
@@ -143,6 +161,7 @@ public class GameVisualizationSettings : MonoBehaviour
     public event VisibilityChangedDelegate OnGuidelinesVisibilityChanged;
     public event VisibilityChangedDelegate OnCurlLineVisibilityChanged;
     public event VisibilityChangedDelegate OnCollisionWarningVisibilityChanged;
+    public event VisibilityChangedDelegate OnFlickShotModeChanged;
 
     void Awake()
     {
@@ -169,8 +188,9 @@ public class GameVisualizationSettings : MonoBehaviour
         guidelinesVisible = PlayerPrefs.GetInt(GUIDELINES_VISIBLE_KEY, 1) == 1;
         curlLineVisible = PlayerPrefs.GetInt(CURL_LINE_VISIBLE_KEY, 1) == 1;
         collisionWarningVisible = PlayerPrefs.GetInt(COLLISION_WARNING_VISIBLE_KEY, 1) == 1;
+        flickShotMode = PlayerPrefs.GetInt(FLICK_SHOT_MODE_KEY, 0) == 1;
         
-        Debug.Log($"[GameVisualizationSettings] Loaded settings - Trajectory: {trajectoryVisible}, Collision: {collisionLinesVisible}, AimCircle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
+        Debug.Log($"[GameVisualizationSettings] Loaded settings - Trajectory: {trajectoryVisible}, Collision: {collisionLinesVisible}, AimCircle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}, FlickShotMode: {flickShotMode}");
     }
 
     /// <summary>
@@ -222,6 +242,14 @@ public class GameVisualizationSettings : MonoBehaviour
     }
 
     /// <summary>
+    /// Toggle flick shot mode (for UI toggle callback)
+    /// </summary>
+    public void ToggleFlickShotMode(bool enabled)
+    {
+        FlickShotMode = enabled;
+    }
+
+    /// <summary>
     /// Reset to defaults
     /// </summary>
     public void ResetToDefaults()
@@ -232,5 +260,6 @@ public class GameVisualizationSettings : MonoBehaviour
         GuidelinesVisible = true;
         CurlLineVisible = true;
         CollisionWarningVisible = true;
+        FlickShotMode = false;
     }
 }

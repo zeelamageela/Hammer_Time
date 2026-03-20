@@ -99,7 +99,7 @@ public class ShootingKnob : MonoBehaviour
                 // Calculate the direction vector from endPoint to launcher
                 Vector2 direction = (startPoint - endPoint).normalized;
                 
-                float targetY = -18f;
+                float targetY = -16f;
                 float deltaY = targetY - endPoint.y;
                 
                 // Calculate corresponding X using the direction ratio

@@ -27,6 +27,9 @@ public class VisualizationToggleUI : MonoBehaviour
     [Tooltip("Toggle for collision warning line visibility (small red line at collision point)")]
     public Toggle collisionWarningToggle;
     
+    [Tooltip("Toggle for flick shot mode (two-phase aiming: aim then power)")]
+    public Toggle flickShotModeToggle;
+    
     private GameVisualizationSettings visualSettings;
 
     void Start()
@@ -95,12 +98,23 @@ public class VisualizationToggleUI : MonoBehaviour
             Debug.LogWarning("[VisualizationToggleUI] Collision warning toggle is not assigned in Inspector!");
         }
         
+        if (flickShotModeToggle != null)
+        {
+            flickShotModeToggle.isOn = visualSettings.FlickShotMode;
+            flickShotModeToggle.onValueChanged.AddListener(OnFlickShotModeToggleChanged);
+        }
+        else
+        {
+            Debug.LogWarning("[VisualizationToggleUI] Flick shot mode toggle is not assigned in Inspector!");
+        }
+        
         Debug.Log("[VisualizationToggleUI] Initialized - Trajectory: " + visualSettings.TrajectoryVisible + 
                   ", Collision: " + visualSettings.CollisionLinesVisible +
                   ", AimCircle: " + visualSettings.AimCircleVisible +
                   ", Guidelines: " + visualSettings.GuidelinesVisible +
                   ", CurlLine: " + visualSettings.CurlLineVisible +
-                  ", CollisionWarning: " + visualSettings.CollisionWarningVisible);
+                  ", CollisionWarning: " + visualSettings.CollisionWarningVisible +
+                  ", FlickShotMode: " + visualSettings.FlickShotMode);
     }
 
     /// <summary>
@@ -157,6 +171,15 @@ public class VisualizationToggleUI : MonoBehaviour
         Debug.Log($"[VisualizationToggleUI] Player toggled collision warning: {isOn}");
     }
 
+    /// <summary>
+    /// Called when flick shot mode toggle value changes
+    /// </summary>
+    private void OnFlickShotModeToggleChanged(bool isOn)
+    {
+        visualSettings.ToggleFlickShotMode(isOn);
+        Debug.Log($"[VisualizationToggleUI] Player toggled flick shot mode: {isOn}");
+    }
+
     void OnDestroy()
     {
         // Clean up listeners
@@ -188,6 +211,11 @@ public class VisualizationToggleUI : MonoBehaviour
         if (collisionWarningToggle != null)
         {
             collisionWarningToggle.onValueChanged.RemoveListener(OnCollisionWarningToggleChanged);
+        }
+        
+        if (flickShotModeToggle != null)
+        {
+            flickShotModeToggle.onValueChanged.RemoveListener(OnFlickShotModeToggleChanged);
         }
     }
 }

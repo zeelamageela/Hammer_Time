@@ -35,6 +35,10 @@ public class Rock_Flick : MonoBehaviour
     GameObject shootKnobGO;
     ShootingKnob shootKnob;
     GameObject mouseKnobGO;
+    
+    // Flick shot controller
+    private FlickShotController flickShotController;
+    private bool isFlickShotMode = false;
 
     Vector3 lastMouseCoordinate = Vector3.zero;
 
@@ -76,6 +80,36 @@ public class Rock_Flick : MonoBehaviour
 
         rockSounds = GetComponents<AudioSource>();
         //Debug.Log(rockSounds[0].clip.name + " - " + rockSounds[1].clip.name);
+        
+        // Initialize flick shot controller if it exists
+        flickShotController = GetComponent<FlickShotController>();
+        if (flickShotController != null)
+        {
+            isFlickShotMode = GameVisualizationSettings.Instance.FlickShotMode;
+            GameVisualizationSettings.Instance.OnFlickShotModeChanged += OnFlickShotModeChanged;
+            Debug.Log($"[Rock_Flick] FlickShotController found - Mode: {(isFlickShotMode ? "ENABLED" : "DISABLED")}");
+            
+            // If flick shot mode is enabled, start it automatically
+            if (isFlickShotMode)
+            {
+                flickShotController.StartFlickShot();
+            }
+        }
+    }
+    
+    void OnDestroy()
+    {
+        // Unsubscribe from flick shot mode changes
+        if (GameVisualizationSettings.Instance != null)
+        {
+            GameVisualizationSettings.Instance.OnFlickShotModeChanged -= OnFlickShotModeChanged;
+        }
+    }
+    
+    private void OnFlickShotModeChanged(bool enabled)
+    {
+        isFlickShotMode = enabled;
+        Debug.Log($"[Rock_Flick] Flick shot mode changed to: {(enabled ? "ENABLED" : "DISABLED")}");
     }
 
     void Update()
@@ -125,7 +159,29 @@ public class Rock_Flick : MonoBehaviour
     void OnMouseDown()
     {
         if (!GetComponent<Rock_Info>().released)
-        {//if red has hammer
+        {
+            // CRITICAL: In flick shot mode, block all clicks once aim is set
+            if (isFlickShotMode && flickShotController != null)
+            {
+                // Check if we're in AimSet or PowerPhase - block all clicks!
+                System.Reflection.PropertyInfo phaseProp = flickShotController.GetType().GetProperty("currentPhase");
+                if (phaseProp != null)
+                {
+                    object phase = phaseProp.GetValue(flickShotController);
+                    string phaseName = phase.ToString();
+                    
+                    if (phaseName == "AimSet" || phaseName == "PowerPhase" || phaseName == "Released")
+                    {
+                        Debug.Log($"[Rock_Flick] Ignoring click - in {phaseName} phase (aim locked)");
+                        return; // Block clicks once aim is set!
+                    }
+                }
+            }
+            
+            // In flick shot mode, we still allow normal pullback to work
+            // (Don't skip the normal pullback logic!)
+            
+            //if red has hammer
             Debug.Log("Clicked on Rock");
             if (gm.redHammer)
             {
@@ -200,7 +256,51 @@ public class Rock_Flick : MonoBehaviour
     public void OnMouseUp()
     {
         if (!GetComponent<Rock_Info>().released)
-        {//if red has hammer
+        {
+            // CRITICAL: In flick shot mode, don't fire on release - just hold position
+            if (isFlickShotMode && flickShotController != null)
+            {
+                // IMPORTANT: Capture rock position BEFORE anything else
+                Vector2 aimPosition = rb.position;
+                Vector2 launcherPosition = launcher.transform.position;
+                
+                // Calculate and pass aim direction to controller
+                flickShotController.SetAimPosition(aimPosition, launcherPosition);
+                
+                // Keep the rock at the aimed position (don't fire, don't reset)
+                // Player will click launcher to start power phase
+                isPressed = false;
+                
+                // CRITICAL: Keep rock KINEMATIC to hold it in place
+                // DON'T let spring pull it back - we want to adjust aim!
+                rb.isKinematic = true;
+                rb.linearVelocity = Vector2.zero;
+                
+                // Disable spring so it doesn't interfere
+                SpringJoint2D spring = GetComponent<SpringJoint2D>();
+                if (spring != null)
+                {
+                    spring.enabled = false;
+                }
+                
+                Debug.Log($"[Rock_Flick] Flick shot mode: Aim set at position {aimPosition}. Click launcher to start power flick (or drag rock to adjust aim).");
+                
+                // Disable rock collider so we can't click it again
+                CircleCollider2D rockCollider = GetComponent<CircleCollider2D>();
+                if (rockCollider != null)
+                {
+                    rockCollider.enabled = false;
+                    Debug.Log("[Rock_Flick] Rock collider disabled - can't click rock anymore");
+                }
+                
+                // Keep shooting knob visible at aimed position
+                shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = false; // Hide mouse circle
+                shootKnobGO.GetComponent<SpriteRenderer>().enabled = true; // Keep shooting knob visible
+                
+                return; // Skip normal release logic
+            }
+            
+            //if red has hammer
             if (!story && gm.redHammer && !GetComponent<Rock_Info>().released)
             {
                 //if the rock is red

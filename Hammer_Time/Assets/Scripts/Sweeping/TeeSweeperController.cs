@@ -115,6 +115,31 @@ public class TeeSweeperController : MonoBehaviour
     
     void DetectRockTaps()
     {
+        // CRITICAL: Don't interfere with flick shot mode!
+        // Check if flick shot mode is active using reflection
+        System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
+        if (settingsType != null)
+        {
+            System.Reflection.PropertyInfo instanceProp = settingsType.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            if (instanceProp != null)
+            {
+                object visualSettings = instanceProp.GetValue(null);
+                if (visualSettings != null)
+                {
+                    System.Reflection.PropertyInfo flickModeProp = settingsType.GetProperty("FlickShotMode");
+                    if (flickModeProp != null)
+                    {
+                        bool flickShotMode = (bool)flickModeProp.GetValue(visualSettings);
+                        if (flickShotMode)
+                        {
+                            // Flick shot mode is active - don't process rock taps
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        
         if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("[TeeSweeperController] Mouse click detected!");
