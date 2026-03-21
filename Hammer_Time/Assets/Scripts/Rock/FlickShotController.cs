@@ -308,13 +308,15 @@ public class FlickShotController : MonoBehaviour
             return;
         }
         
-        aimDirection = direction.normalized;
+        // CRITICAL: FLIP the direction! Rock goes OPPOSITE of pullback
+        // If you pull DOWN (negative Y), rock should go UP (positive Y) toward house
+        aimDirection = -direction.normalized;  // NEGATIVE!
         aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         
         // Transition to AimSet phase - ready for power click
         currentPhase = FlickShotPhase.AimSet;
         
-        Debug.Log($"[FlickShot] Aim position set - Rock: {rockPosition}, Launcher: {launcherPosition}, Direction: {aimDirection}, Angle: {aimAngle:F1}°, Distance: {pullbackDistance:F2}");
+        Debug.Log($"[FlickShot] Aim position set - Rock: {rockPosition}, Launcher: {launcherPosition}, Pullback: {direction}, Aim Direction (FLIPPED): {aimDirection}, Angle: {aimAngle:F1}°, Distance: {pullbackDistance:F2}");
         Debug.Log($"[FlickShot] Aim locked! Click on launcher (0, -25) to start power phase.");
     }
     
@@ -723,62 +725,206 @@ public class FlickShotController : MonoBehaviour
         
         Debug.Log($"[FlickShot] Calculated synthetic pullback: {syntheticPullback:F2} units for target velocity {targetSpeed:F2} m/s");
         
-        // Position rock at synthetic pullback distance in aimed direction
+        // CRITICAL: DON'T position rock at pullback location!
+        // Rock must stay at launcher so it crosses hog line trigger
+        // Instead, we'll directly set the velocity in Rock_Flick
         Vector2 launcherPos = launcher.transform.position;
-        Vector2 pullbackPos = launcherPos + aimDirection * syntheticPullback;
-        rb.position = pullbackPos;
+        rb.position = launcherPos; // Keep rock AT LAUNCHER
         
-        Debug.Log($"[FlickShot] Rock positioned at synthetic pullback: {pullbackPos} (launcher + aim direction * {syntheticPullback:F2})");
-        
-        // Get Rock_Flick component to trigger normal release
-        Component rockFlickComp = GetComponent("Rock_Flick");
-        if (rockFlickComp != null)
-        {
-            MonoBehaviour rockFlick = (MonoBehaviour)rockFlickComp;
-            
-            // CRITICAL: Ensure Rock_Flick is enabled before triggering release
-            rockFlick.enabled = true;
-            
-            // Set the rock as "released" from user input perspective (mouseUp = true)
-            System.Reflection.FieldInfo mouseUpField = rockFlick.GetType().GetField("mouseUp");
-            if (mouseUpField != null)
-            {
-                mouseUpField.SetValue(rockFlick, true);
-                Debug.Log($"[FlickShot] Triggering normal Rock_Flick.Release() - will calculate velocity from synthetic pullback {syntheticPullback:F2}");
-            }
-            
-            // CRITICAL: Make sure isPressed is false so Update() sees mouseUp
-            System.Reflection.FieldInfo isPressedField = rockFlick.GetType().GetField("isPressed");
-            if (isPressedField != null)
-            {
-                isPressedField.SetValue(rockFlick, false);
-            }
-        }
-        else
-        {
-            Debug.LogError("[FlickShot] Could not find Rock_Flick component to trigger release!");
-        }
+        Debug.Log($"[FlickShot] Rock positioned at LAUNCHER: {launcherPos} (will cross hog line trigger)");
         
         // CRITICAL: Set shotTaken = true so GameManager knows the shot is happening
+        // But DON'T set released yet - wait for rock to actually start moving!
         if (rockInfo != null)
         {
-            System.Reflection.PropertyInfo shotTakenProp = rockInfo.GetType().GetProperty("shotTaken");
-            if (shotTakenProp != null)
+            System.Reflection.FieldInfo shotTakenField = rockInfo.GetType().GetField("shotTaken");
+            if (shotTakenField != null)
             {
-                shotTakenProp.SetValue(rockInfo, true);
+                shotTakenField.SetValue(rockInfo, true);
                 Debug.Log("[FlickShot] Set Rock_Info.shotTaken = true");
             }
-            else
+            
+            // DON'T set released = true yet!
+            // It will be set after the rock actually starts moving
+        }
+        
+        // CRITICAL: Call TrajectoryLine.Release() to hide trajectory
+        if (trajLine != null)
+        {
+            System.Type trajType = trajLine.GetType();
+            System.Reflection.MethodInfo releaseMethod = trajType.GetMethod("Release");
+            if (releaseMethod != null)
             {
-                // Try as field if not a property
-                System.Reflection.FieldInfo shotTakenField = rockInfo.GetType().GetField("shotTaken");
-                if (shotTakenField != null)
+                releaseMethod.Invoke(trajLine, null);
+                Debug.Log("[FlickShot] Called TrajectoryLine.Release() to hide trajectory");
+            }
+        }
+        
+        // CRITICAL: Unparent shooting knob from rock!
+        if (shootingKnobObj != null)
+        {
+            Component shootKnobComp = shootingKnobObj.GetComponent("ShootingKnob");
+            if (shootKnobComp != null)
+            {
+                System.Reflection.MethodInfo unparentMethod = shootKnobComp.GetType().GetMethod("UnParentandHide");
+                if (unparentMethod != null)
                 {
-                    shotTakenField.SetValue(rockInfo, true);
-                    Debug.Log("[FlickShot] Set Rock_Info.shotTaken = true (field)");
+                    unparentMethod.Invoke(shootKnobComp, null);
+                    Debug.Log("[FlickShot] Called ShootingKnob.UnParentandHide() - rock is now free!");
                 }
             }
         }
+        
+        // CRITICAL: Make rock visible!
+        SpriteRenderer rockSprite = GetComponent<SpriteRenderer>();
+        if (rockSprite != null)
+        {
+            rockSprite.enabled = true;
+            Debug.Log("[FlickShot] Rock sprite enabled");
+        }
+        
+        // CRITICAL: Directly apply the calculated velocity
+        // Don't rely on Rock_Flick.Release() to calculate from position
+        rb.isKinematic = false;
+        rb.linearDamping = 0f; // Will be restored at hog line
+        rb.linearVelocity = velocity;
+        
+        // CRITICAL: Enable continuous collision detection for high-speed collisions!
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        
+        // CRITICAL: Disable ALL other components that might interfere!
+        Rock_Force rockForce = GetComponent<Rock_Force>();
+        if (rockForce != null)
+        {
+            rockForce.enabled = false;
+            Debug.Log("[FlickShot] Rock_Force disabled - will be enabled at hog line");
+        }
+        
+        // CRITICAL: Disable Rock_Colliders temporarily to prevent premature OutOfPlay trigger!
+        Rock_Colliders rockColliders = GetComponent<Rock_Colliders>();
+        if (rockColliders != null)
+        {
+            rockColliders.enabled = false;
+            Debug.Log("[FlickShot] Rock_Colliders DISABLED during launch - will be enabled after crossing Y=-20");
+            
+            // Start coroutine to re-enable it after rock moves past Y=-20
+            StartCoroutine(ReenableCollidersAfterLaunch());
+        }
+        
+        Debug.Log($"[FlickShot] Physics applied - isKinematic: {rb.isKinematic}, velocity: {rb.linearVelocity.magnitude:F2} m/s, position: {rb.position}, damping: {rb.linearDamping}, collisionMode: {rb.collisionDetectionMode}");
+        
+        // Disable spring
+        SpringJoint2D spring = GetComponent<SpringJoint2D>();
+        if (spring != null)
+        {
+            spring.enabled = false;
+        }
+        
+        // Enable launcher collider
+        if (launcher != null)
+        {
+            Collider2D launcherCol = launcher.GetComponent<Collider2D>();
+            if (launcherCol != null) launcherCol.enabled = true;
+        }
+        
+        // Adjust collider size and ENSURE it's enabled for physics collisions!
+        CircleCollider2D col = GetComponent<CircleCollider2D>();
+        if (col != null)
+        {
+            col.radius = 0.14f;
+            col.enabled = true; // CRITICAL: Enable collider for physics!
+            Debug.Log($"[FlickShot] CircleCollider2D enabled - radius: {col.radius}, isTrigger: {col.isTrigger}");
+        }
+        
+        // Disable Rock_Flick component (we're handling the launch)
+        Component rockFlickComp = GetComponent("Rock_Flick");
+        if (rockFlickComp != null)
+        {
+            ((MonoBehaviour)rockFlickComp).enabled = false;
+            Debug.Log("[FlickShot] Rock_Flick disabled - flick shot handling launch directly");
+        }
+        
+        // Play release sound
+        AudioSource[] rockSounds = GetComponents<AudioSource>();
+        if (rockSounds != null && rockSounds.Length > 1)
+        {
+            rockSounds[1].enabled = true;
+        }
+        
+        Debug.Log($"[FlickShot] Rock launched directly with velocity: {velocity.magnitude:F2} m/s at angle {aimAngle:F1}°");
+        
+        // Start coroutine to set released = true after rock starts moving
+        StartCoroutine(SetReleasedAfterMoving());
+    }
+    
+    /// <summary>
+    /// Wait for rock to actually start moving, then set released = true
+    /// </summary>
+    private IEnumerator SetReleasedAfterMoving()
+    {
+        // Wait for next FixedUpdate so physics applies velocity
+        yield return new WaitForFixedUpdate();
+        
+        Debug.Log($"[FlickShot] After FixedUpdate - velocity: {rb.linearVelocity.magnitude:F2} m/s, position: {rb.position}");
+        
+        // Now set released = true
+        if (rockInfo != null)
+        {
+            System.Reflection.FieldInfo releasedField = rockInfo.GetType().GetField("released");
+            if (releasedField != null)
+            {
+                releasedField.SetValue(rockInfo, true);
+                Debug.Log($"[FlickShot] Set Rock_Info.released = true AFTER velocity applied (velocity: {rb.linearVelocity.magnitude:F2} m/s)");
+            }
+        }
+        
+        // Monitor rock for a few seconds to see what happens
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            Debug.Log($"[FlickShot] Rock monitor [{i * 0.5f}s]: pos={rb.position}, vel={rb.linearVelocity.magnitude:F2} m/s, isKinematic={rb.isKinematic}, parent={transform.parent?.name ?? "null"}");
+            
+            if (rb.linearVelocity.magnitude < 0.1f)
+            {
+                Debug.LogWarning($"[FlickShot] Rock stopped moving at {rb.position} after {i * 0.5f}s!");
+                break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Re-enable Rock_Colliders and Rock_Force after rock has crossed hog line
+    /// </summary>
+    private IEnumerator ReenableCollidersAfterLaunch()
+    {
+        // Wait until rock crosses hog line (Y=-16)
+        while (rb.position.y < -16f)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        
+        Debug.Log($"[FlickShot] Rock crossed hog line (Y=-16), re-enabling components at position {rb.position}");
+        
+        // Re-enable Rock_Colliders for trigger detection
+        Rock_Colliders rockColliders = GetComponent<Rock_Colliders>();
+        if (rockColliders != null)
+        {
+            rockColliders.enabled = true;
+            Debug.Log("[FlickShot] Rock_Colliders re-enabled for trigger detection");
+        }
+        
+        // CRITICAL: Re-enable Rock_Force for curl and friction!
+        // Rock_Force.Release() will handle setting proper damping
+        Rock_Force rockForce = GetComponent<Rock_Force>();
+        if (rockForce != null)
+        {
+            rockForce.enabled = true;
+            Debug.Log("[FlickShot] Rock_Force re-enabled for curl and friction");
+        }
+        
+        // DON'T set linearDamping here - let Rock_Force.Release() handle it!
+        // Rock_Force will be triggered by Rock_Release trigger and will set proper damping
+        Debug.Log($"[FlickShot] Waiting for Rock_Release trigger to restore damping (current: {rb.linearDamping})");
     }
     
     /// <summary>
