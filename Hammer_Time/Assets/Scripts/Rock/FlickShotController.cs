@@ -28,11 +28,14 @@ public class FlickShotController : MonoBehaviour
     [Tooltip("Shooting Knob - finds by name if not assigned")]
     public GameObject shootingKnobObj;
     
-    [Tooltip("Green shooting knob that follows drag in power phase")]
-    public GameObject powerKnobObj;
+    [Tooltip("Line renderer for drawing swipe trail")]
+    private LineRenderer swipeTrailLine;
     
-    [Tooltip("Line renderer for power swipe visualization")]
-    private LineRenderer powerSwipeLine;
+    [Tooltip("Line renderer for predicted stop position")]
+    private LineRenderer predictedStopLine;
+    
+    [Tooltip("Track cursor positions during swipe")]
+    private List<Vector3> swipePoints = new List<Vector3>();
     
     [Header("Phase 1: Aim Settings")]
     [Tooltip("Locked pullback distance for aiming phase")]
@@ -151,34 +154,30 @@ public class FlickShotController : MonoBehaviour
         }
         rockInfo = GetComponent("Rock_Info");
         
-        // Create power phase knob (clone of shooting knob)
-        if (shootingKnobObj != null && powerKnobObj == null)
-        {
-            powerKnobObj = Instantiate(shootingKnobObj);
-            powerKnobObj.name = "PowerKnob";
-            powerKnobObj.SetActive(false);
-            
-            // Set to green color
-            SpriteRenderer powerSprite = powerKnobObj.GetComponent<SpriteRenderer>();
-            if (powerSprite != null)
-            {
-                powerSprite.color = new Color(0.2f, 1f, 0.2f, 1f); // Bright green
-            }
-            
-            // Get the line renderer from power knob (we'll use it for swipe visualization)
-            powerSwipeLine = powerKnobObj.GetComponent<LineRenderer>();
-            if (powerSwipeLine != null)
-            {
-                // Enable and configure the line for swipe visualization
-                powerSwipeLine.enabled = true;
-                powerSwipeLine.startWidth = 0.3f;
-                powerSwipeLine.endWidth = 0.1f;
-                powerSwipeLine.positionCount = 2;
-                Debug.Log("[FlickShot] Power swipe line configured");
-            }
-            
-            Debug.Log("[FlickShot] Power knob created (green)");
-        }
+        // Create swipe trail line renderer (BLACK line that draws as player swipes)
+        GameObject swipeTrailObj = new GameObject("SwipeTrail");
+        swipeTrailLine = swipeTrailObj.AddComponent<LineRenderer>();
+        swipeTrailLine.enabled = false;
+        swipeTrailLine.startWidth = 0.05f; // 75% thinner (was 0.2f)
+        swipeTrailLine.endWidth = 0.05f;
+        swipeTrailLine.positionCount = 0;
+        swipeTrailLine.startColor = Color.black;
+        swipeTrailLine.endColor = Color.black;
+        swipeTrailLine.material = new Material(Shader.Find("Sprites/Default"));
+        Debug.Log("[FlickShot] Swipe trail line created (black, thin)");
+        
+        // Create predicted stop line (CYAN horizontal line)
+        GameObject predictedStopObj = new GameObject("PredictedStopLine");
+        predictedStopLine = predictedStopObj.AddComponent<LineRenderer>();
+        predictedStopLine.enabled = false;
+        predictedStopLine.startWidth = 0.15f;
+        predictedStopLine.endWidth = 0.15f;
+        predictedStopLine.positionCount = 2;
+        Color cyanColor = new Color(0f, 0.8f, 1f, 0.8f);
+        predictedStopLine.startColor = cyanColor;
+        predictedStopLine.endColor = cyanColor;
+        predictedStopLine.material = new Material(Shader.Find("Sprites/Default"));
+        Debug.Log("[FlickShot] Predicted stop line created (cyan horizontal)");
         
         // Subscribe to flick shot mode changes using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
@@ -392,12 +391,12 @@ public class FlickShotController : MonoBehaviour
             }
         }
         
-        // Show green power knob at launcher position
-        if (powerKnobObj != null)
+        // Enable swipe trail line (will draw as player swipes)
+        if (swipeTrailLine != null)
         {
-            powerKnobObj.SetActive(true);
-            powerKnobObj.transform.position = launcher.transform.position;
-            Debug.Log("[FlickShot] Green power knob visible at launcher");
+            swipeTrailLine.enabled = true;
+            swipePoints.Clear();
+            Debug.Log("[FlickShot] Swipe trail enabled - ready to draw");
         }
         
         // Power drag starts at launcher Y position
@@ -417,8 +416,7 @@ public class FlickShotController : MonoBehaviour
     
     /// <summary>
     /// Update power phase (track drag speed from launcher down the sheet)
-    /// Player drags mouse from Y=-25 (hack) toward Y=-16 (hog line)
-    /// Drag TIME determines rock speed
+    /// Player swipes and we draw a trail, then show feedback AFTER release
     /// </summary>
     private void UpdatePowerPhase()
     {
@@ -429,104 +427,96 @@ public class FlickShotController : MonoBehaviour
             {
                 isPowerDragging = true;
                 powerDragStartTime = Time.time;
-                lastFeedbackTime = Time.time;
-                Debug.Log("[FlickShot] Power drag started - swipe down!");
+                swipePoints.Clear();
+                
+                // Add starting point at launcher
+                Vector3 startPos = launcher.transform.position;
+                startPos.z = -1f; // In front of everything
+                swipePoints.Add(startPos);
+                
+                Debug.Log("[FlickShot] Power swipe started - draw your path!");
             }
-            return; // Wait for drag to start
+            return;
         }
         
         // Get current mouse position in world space
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePos3D = new Vector3(mouseWorldPos.x, mouseWorldPos.y, -1f);
         
-        // Update green power knob to follow mouse Y position
-        Vector3 knobPos = launcher.transform.position;
-        knobPos.y = Mathf.Clamp(mouseWorldPos.y, powerDragTargetY, powerDragStartY);
-        
-        if (powerKnobObj != null)
+        // Add cursor position to trail (sample every few frames for smooth line)
+        if (swipePoints.Count == 0 || Vector3.Distance(swipePoints[swipePoints.Count - 1], mousePos3D) > 0.2f)
         {
-            powerKnobObj.transform.position = knobPos;
-        }
-        
-        // Draw swipe line from launcher to knob position
-        if (powerSwipeLine != null)
-        {
-            powerSwipeLine.SetPosition(0, launcher.transform.position); // Start at launcher
-            powerSwipeLine.SetPosition(1, knobPos); // End at knob
+            swipePoints.Add(mousePos3D);
             
-            // Color based on speed zone (like shooting knob)
-            Color swipeColor = GetColorForDragPosition(knobPos.y);
-            powerSwipeLine.startColor = swipeColor;
-            powerSwipeLine.endColor = swipeColor;
-        }
-        
-        // Track how far down the sheet the mouse has been dragged
-        float currentY = Mathf.Clamp(mouseWorldPos.y, powerDragTargetY, powerDragStartY);
-        float dragDistance = Mathf.Abs(currentY - powerDragStartY);
-        float dragTime = Time.time - powerDragStartTime;
-        
-        // Provide feedback at intervals
-        if (showSpeedFeedback && Time.time - lastFeedbackTime >= feedbackInterval)
-        {
-            CalculateSpeedBand(dragTime, dragDistance);
-            
-            // Show feedback at knob position
-            if (powerKnobObj != null)
+            // Update line renderer with all points
+            if (swipeTrailLine != null)
             {
-                ShowSpeedFeedback(GetSpeedFeedbackMessage(), powerKnobObj.transform.position);
+                swipeTrailLine.positionCount = swipePoints.Count;
+                swipeTrailLine.SetPositions(swipePoints.ToArray());
             }
-            else
-            {
-                ShowSpeedFeedback(GetSpeedFeedbackMessage(), mouseWorldPos);
-            }
-            
-            lastFeedbackTime = Time.time;
         }
         
         // Check for release (mouse up)
         if (Input.GetMouseButtonUp(0))
         {
+            float dragTime = Time.time - powerDragStartTime;
+            float currentY = Mathf.Clamp(mouseWorldPos.y, powerDragTargetY, powerDragStartY);
+            float dragDistance = Mathf.Abs(currentY - powerDragStartY);
+            
             ReleaseFlickShot(dragTime, dragDistance);
         }
     }
     
     /// <summary>
-    /// Get color for drag position (based on speed zones like shooting knob)
+    /// Get predicted velocity based on current drag time
     /// </summary>
-    private Color GetColorForDragPosition(float dragY)
+    private float GetPredictedVelocity()
     {
-        // Calculate drag progress (0 = at launcher, 1 = at hog line)
-        float dragProgress = Mathf.InverseLerp(powerDragStartY, powerDragTargetY, dragY);
+        float minVel = 5f;
+        float maxVel = 13f;
         
-        // Map to velocity bands
-        // Green = perfect zone (middle)
-        // Yellow = fast zone
-        // Red = too fast zone
+        // Try to get velocity range from TrajectoryLine
+        if (minVelocityProp != null && trajLine != null)
+        {
+            object minVelObj = minVelocityProp.GetValue(trajLine);
+            if (minVelObj != null) minVel = (float)minVelObj;
+        }
+        if (maxVelocityProp != null && trajLine != null)
+        {
+            object maxVelObj = maxVelocityProp.GetValue(trajLine);
+            if (maxVelObj != null) maxVel = (float)maxVelObj;
+        }
         
-        if (dragProgress < 0.2f)
-        {
-            // Way too slow - dark green
-            return new Color(0.1f, 0.5f, 0.1f);
-        }
-        else if (dragProgress < 0.4f)
-        {
-            // Too slow - green
-            return new Color(0.2f, 0.8f, 0.2f);
-        }
-        else if (dragProgress < 0.6f)
-        {
-            // Perfect! - bright green
-            return new Color(0.2f, 1f, 0.2f);
-        }
-        else if (dragProgress < 0.8f)
-        {
-            // Too fast - yellow
-            return Color.yellow;
-        }
-        else
-        {
-            // Way too fast - red
-            return new Color(1f, 0.3f, 0.3f);
-        }
+        return Mathf.Lerp(minVel, maxVel, calculatedSpeed);
+    }
+    
+    /// <summary>
+    /// Calculate predicted stop position based on initial velocity
+    /// Uses physics simulation to estimate where rock will stop
+    /// </summary>
+    private float CalculatePredictedStopPosition(float initialVelocity)
+    {
+        // Simple physics estimate: rock decelerates from hog line to house
+        // Based on empirical data from logs:
+        // - Rock loses ~17-18% velocity per 0.5s after hog line
+        // - Damping factor ? 0.9 (90% retained per frame at 50 FPS)
+        
+        float hogLineY = -16f;
+        float distanceFromHogToHouse = 22.5f; // From Y=-16 to Y=6.5
+        
+        // Estimate travel distance using energy/friction model
+        // v^2 = u^2 + 2as, where a = -friction
+        // Approximation: distance ? velocity^2 / (2 * friction)
+        
+        float frictionFactor = 1.8f; // Empirical from logs
+        float estimatedDistance = (initialVelocity * initialVelocity) / (2f * frictionFactor);
+        
+        float predictedStopY = hogLineY + estimatedDistance;
+        
+        // Clamp to reasonable range (-16 to 15)
+        predictedStopY = Mathf.Clamp(predictedStopY, -16f, 15f);
+        
+        return predictedStopY;
     }
     
     /// <summary>
@@ -567,21 +557,6 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// Show speed feedback text callout
-    /// </summary>
-    private void ShowSpeedFeedback(string message, Vector2 position)
-    {
-        if (message == lastFeedbackMessage) return; // Don't spam same message
-        
-        lastFeedbackMessage = message;
-        
-        // Use TextCalloutManager if available
-        ShowCallout(position, message, followTarget: false, duration: feedbackInterval * 2f);
-        
-        Debug.Log($"[FlickShot] Speed Feedback: {message} (Band: {speedBand}/{speedBands - 1})");
-    }
-    
-    /// <summary>
     /// Helper method to show callout using reflection (avoids hard dependency on TextCalloutManager)
     /// </summary>
     private void ShowCallout(Vector2 position, string message, bool followTarget, float duration)
@@ -616,60 +591,82 @@ public class FlickShotController : MonoBehaviour
     
     /// <summary>
     /// Release flick shot and calculate final velocity
+    /// Show final feedback AFTER release
     /// </summary>
     private void ReleaseFlickShot(float dragTime, float dragDistance)
     {
         currentPhase = FlickShotPhase.Released;
-        isPowerDragging = false; // Reset drag state
+        isPowerDragging = false;
         
-        // Hide power knob and swipe line
-        if (powerKnobObj != null)
-        {
-            powerKnobObj.SetActive(false);
-            Debug.Log("[FlickShot] Power knob hidden");
-        }
-        
-        if (powerSwipeLine != null)
-        {
-            powerSwipeLine.enabled = false;
-        }
-        
-        // Calculate final speed band
+        // Calculate final speed
         CalculateSpeedBand(dragTime, dragDistance);
+        float targetSpeed = GetPredictedVelocity();
+        float predictedStopY = CalculatePredictedStopPosition(targetSpeed);
         
-        Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Distance: {dragDistance:F2}, Speed: {calculatedSpeed:F2}, Band: {speedBand}");
+        Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Speed: {calculatedSpeed:F2}, Band: {speedBand}");
         
-        // Calculate velocity based on aim direction and calculated speed
-        // Map calculatedSpeed (0-1) to trajectory velocity range
-        float minVel = 5f;
-        float maxVel = 13f;
-        
-        // Try to get velocity range from TrajectoryLine
-        if (minVelocityProp != null && trajLine != null)
+        // Show predicted stop line (CYAN horizontal line at predicted Y)
+        if (predictedStopLine != null)
         {
-            object minVelObj = minVelocityProp.GetValue(trajLine);
-            if (minVelObj != null) minVel = (float)minVelObj;
+            float lineWidth = 3f;
+            Vector3 leftPoint = new Vector3(-lineWidth, predictedStopY, -1f);
+            Vector3 rightPoint = new Vector3(lineWidth, predictedStopY, -1f);
+            
+            predictedStopLine.SetPosition(0, leftPoint);
+            predictedStopLine.SetPosition(1, rightPoint);
+            predictedStopLine.enabled = true;
+            
+            Debug.Log($"[FlickShot] Predicted stop line shown at Y={predictedStopY:F1}");
         }
-        if (maxVelocityProp != null && trajLine != null)
-        {
-            object maxVelObj = maxVelocityProp.GetValue(trajLine);
-            if (maxVelObj != null) maxVel = (float)maxVelObj;
-        }
         
-        float targetSpeed = Mathf.Lerp(minVel, maxVel, calculatedSpeed);
-        
-        Vector2 finalVelocity = aimDirection * targetSpeed;
-        
-        Debug.Log($"[FlickShot] Final velocity: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}°");
-        
-        // Apply velocity to rock
-        ApplyFlickShotVelocity(finalVelocity);
-        
-        // Show final feedback
+        // Show speed callout at shooter position
         if (showSpeedFeedback)
         {
-            string finalMessage = GetSpeedFeedbackMessage();
-            ShowCallout(rb.position, finalMessage, followTarget: true, duration: 2f);
+            string speedMessage = GetSpeedFeedbackMessage();
+            Vector2 shooterPos = new Vector2(0f, -25f);
+            ShowCallout(shooterPos, speedMessage + $" ({targetSpeed:F1} m/s)", followTarget: false, duration: 3f);
+            Debug.Log($"[FlickShot] Speed callout: {speedMessage} ({targetSpeed:F1} m/s)");
+        }
+        
+        // Calculate and apply velocity
+        Vector2 finalVelocity = aimDirection * targetSpeed;
+        Debug.Log($"[FlickShot] Final velocity: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}°");
+        
+        ApplyFlickShotVelocity(finalVelocity);
+        
+        // Hide swipe trail after 1 second
+        StartCoroutine(HideSwipeTrailAfterDelay(1f));
+        
+        // Hide predicted line after 3 seconds
+        StartCoroutine(HidePredictedLineAfterDelay(3f));
+    }
+    
+    /// <summary>
+    /// Hide swipe trail after delay
+    /// </summary>
+    private IEnumerator HideSwipeTrailAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        if (swipeTrailLine != null)
+        {
+            swipeTrailLine.enabled = false;
+            swipePoints.Clear();
+            Debug.Log("[FlickShot] Swipe trail hidden");
+        }
+    }
+    
+    /// <summary>
+    /// Hide predicted stop line after delay
+    /// </summary>
+    private IEnumerator HidePredictedLineAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        if (predictedStopLine != null)
+        {
+            predictedStopLine.enabled = false;
+            Debug.Log("[FlickShot] Predicted stop line hidden");
         }
     }
     
