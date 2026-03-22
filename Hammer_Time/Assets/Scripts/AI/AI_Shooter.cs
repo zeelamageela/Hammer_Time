@@ -110,6 +110,9 @@ public class AI_Shooter : MonoBehaviour
             rm.inturn = inturn;
             Debug.Log($"[AI_Shooter] Set flipAxis AND rm.inturn = {inturn} for {aiShotType}");
         }
+        
+        // Show AI shot decision callout on launcher
+        ShowAIShotDecisionCallout(rock, aiShotType, inturn);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -192,6 +195,117 @@ public class AI_Shooter : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Show AI shot decision callout on launcher before shot
+    /// Displays shot type, turn direction, and target information
+    /// </summary>
+    private void ShowAIShotDecisionCallout(GameObject rock, string shotType, bool inturn)
+    {
+        if (TextCalloutManager.Instance == null || rock == null) return;
+        
+        // Get target position for context
+        Vector2 targetPos = aiTarg.targetPos;
+        string turnDir = inturn ? "IN" : "OUT";
+        
+        // Generate contextual message based on shot type
+        string message = "";
+        
+        // Categorize shot types
+        bool isGuard = shotType.Contains("Guard") || shotType == "Guard To Target";
+        bool isTakeout = shotType.Contains("Take Out") || shotType.Contains("Peel") || shotType.Contains("Tick");
+        bool isDraw = shotType.Contains("Draw") || shotType.Contains("Button") || shotType.Contains("Foot");
+        bool isRaise = shotType.Contains("Raise");
+        
+        if (isGuard)
+        {
+            // Guard shots - emphasize defensive play
+            if (shotType.Contains("Corner"))
+                message = $"🛡️ {shotType}\n{turnDir}-turn | Setting up defense";
+            else if (shotType.Contains("Centre") || shotType.Contains("Center"))
+                message = $"🛡️ {shotType}\n{turnDir}-turn | Blocking center";
+            else
+                message = $"🛡️ Guard Shot\n{turnDir}-turn | Y={targetPos.y:F1}";
+        }
+        else if (isTakeout)
+        {
+            // Takeout shots - emphasize aggression
+            if (shotType.Contains("Peel"))
+                message = $"💥 PEEL!\n{turnDir}-turn | Removing guard";
+            else if (shotType.Contains("Tick"))
+                message = $"🎯 Tick Shot\n{turnDir}-turn | Light contact";
+            else
+            {
+                // Regular takeout - show target location
+                int targetRockIndex = FindTargetRockIndex(targetPos);
+                if (targetRockIndex >= 0)
+                    message = $"💥 TAKEOUT!\n{turnDir}-turn | Rock #{targetRockIndex+1}";
+                else
+                    message = $"💥 TAKEOUT!\n{turnDir}-turn | X={targetPos.x:F1}";
+            }
+        }
+        else if (isRaise)
+        {
+            message = $"⬆️ Raise Shot\n{turnDir}-turn | Promoting rock";
+        }
+        else if (isDraw)
+        {
+            // Draw shots - emphasize scoring position
+            if (shotType.Contains("Button"))
+                message = $"🎯 Draw to BUTTON!\n{turnDir}-turn | Going for center";
+            else if (shotType.Contains("Four Foot"))
+                message = $"🎯 Draw to 4-Foot\n{turnDir}-turn | Close scoring";
+            else if (shotType.Contains("Twelve Foot"))
+                message = $"📍 Draw to 12-Foot\n{turnDir}-turn | Wide scoring";
+            else if (shotType.Contains("Back"))
+                message = $"📍 Back of House\n{turnDir}-turn | Deep draw";
+            else
+                message = $"📍 Draw Shot\n{turnDir}-turn | Y={targetPos.y:F1}";
+        }
+        else
+        {
+            // Fallback for any other shot types
+            message = $"🎯 {shotType}\n{turnDir}-turn";
+        }
+        
+        // Show callout at launcher position (where rock starts)
+        Vector3 launcherPos = new Vector3(0f, -25f, 0f);
+        TextCalloutManager.Instance.ShowCallout(
+            launcherPos + Vector3.up * 1f,
+            message,
+            followTarget: false,  // Static at launcher
+            target: null,
+            duration: 3f  // Show for 3 seconds
+        );
+        
+        Debug.Log($"[AI_Shooter] Shot callout shown: {message}");
+    }
+    
+    /// <summary>
+    /// Find which rock is being targeted (for takeout callouts)
+    /// </summary>
+    private int FindTargetRockIndex(Vector2 targetPos)
+    {
+        float closestDist = float.MaxValue;
+        int closestIndex = -1;
+        
+        for (int i = 0; i < gm.rockList.Count; i++)
+        {
+            if (gm.rockList[i].rock == null || !gm.rockList[i].rock.activeInHierarchy)
+                continue;
+            
+            Vector2 rockPos = gm.rockList[i].rock.transform.position;
+            float dist = Vector2.Distance(rockPos, targetPos);
+            
+            if (dist < closestDist && dist < 0.5f)  // Within 0.5m = probably the target
+            {
+                closestDist = dist;
+                closestIndex = i;
+            }
+        }
+        
+        return closestIndex;
+    }
+    
     /// <summary>
     /// Get character stats for the current shooter
     /// </summary>

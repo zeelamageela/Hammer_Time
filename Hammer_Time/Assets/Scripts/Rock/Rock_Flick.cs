@@ -118,6 +118,7 @@ public class Rock_Flick : MonoBehaviour
         {
             rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
             shootKnob.mouseCircle.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
             trajLine.DrawTrajectory();
 
             shootKnob.ParentToRock();

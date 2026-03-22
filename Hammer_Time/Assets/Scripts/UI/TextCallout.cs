@@ -180,6 +180,15 @@ public class TextCallout : MonoBehaviour
         if (rectTransform == null || parentCanvas == null)
             return;
 
+        // WORLD SPACE CANVAS: Just use world position directly!
+        if (parentCanvas.renderMode == RenderMode.WorldSpace)
+        {
+            // For World Space canvas, position is directly in world coordinates
+            rectTransform.position = worldPosition;
+            return;
+        }
+
+        // SCREEN SPACE CANVAS: Convert world to screen to canvas local
         Camera cam = mainCamera ?? Camera.current;
         if (cam == null)
         {

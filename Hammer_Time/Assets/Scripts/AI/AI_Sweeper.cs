@@ -905,7 +905,7 @@ public class AI_Sweeper : MonoBehaviour
         Debug.Log("sweeperL is " + sm.sweeperL.gameObject.activeSelf);
         //fltText.TargetTransform = rock.transform;
 
-        Debug.Log("Player Speed Callouts - " + playerShotType);
+        //Debug.Log("Player Speed Callouts - " + playerShotType);
 
         switch (playerShotType)
         {
@@ -1715,6 +1715,9 @@ public class AI_Sweeper : MonoBehaviour
                 currentSweepState = desiredState;
 
                 Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}");
+                
+                // Show callout on rock to visualize AI sweeping decisions
+                ShowAISweepingCallout(rock, desiredState, lateralError, predictedShortfall, hasCollided, isTakeoutShot);
             }
 
             yield return new WaitForFixedUpdate();
@@ -1837,6 +1840,69 @@ public class AI_Sweeper : MonoBehaviour
         Debug.Log($"[AI_Sweeper] ApplySweepState completed for {state}");
     }
 
+    /// <summary>
+    /// Show visual callout on rock to display AI sweeping decisions
+    /// Helps players understand what the AI is thinking during sweeps
+    /// </summary>
+    private void ShowAISweepingCallout(GameObject rock, string state, float lateralError, float predictedShortfall, bool postCollision, bool isTakeout)
+    {
+        if (TextCalloutManager.Instance == null || rock == null) return;
+        
+        string message = "";
+        
+        // Generate contextual message based on state
+        switch (state)
+        {
+            case "Critical":
+                message = $"SWEEP HARD! ({predictedShortfall:F1}m short)";
+                break;
+                
+            case "Weight":
+                if (postCollision)
+                    message = "Sweeping for position...";
+                else if (isTakeout)
+                    message = "On line - maintaining speed";
+                else
+                    message = $"Sweeping! ({predictedShortfall:F1}m)";
+                break;
+                
+            case "Line":
+                if (isTakeout)
+                    message = lateralError > 0 ? "Too wide - correcting left" : "Too narrow - correcting right";
+                else
+                    message = lateralError > 0 ? "Straightening (too much curl)" : "Straightening (over-corrected)";
+                break;
+                
+            case "Curl":
+                if (isTakeout)
+                    message = lateralError > 0 ? "Off-line - adjusting right" : "Off-line - adjusting left";
+                else
+                    message = "Sweeping the curl...";
+                break;
+                
+            case "None":
+                if (postCollision)
+                    message = "WHOA! (Hit)";
+                else if (isTakeout)
+                    message = "Perfect line!";
+                else
+                    message = "Looking good!";
+                break;
+        }
+        
+        // Show callout following rock (short duration for frequent updates)
+        if (!string.IsNullOrEmpty(message))
+        {
+            TextCalloutManager.Instance.ShowCallout(
+                rock.transform.position + Vector3.up * 0.5f,
+                message,
+                followTarget: true,
+                target: rock.transform,
+                duration: 1.5f  // Short duration - updates frequently
+            );
+        }
+    }
+    
     /// <summary>
     /// Get combined sweeper skill (0-1 scale)
     /// NEW: Returns >1.0 for exceptional sweepers (allows dramatic correction!)

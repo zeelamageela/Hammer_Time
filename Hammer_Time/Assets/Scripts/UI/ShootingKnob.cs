@@ -183,7 +183,6 @@ public class ShootingKnob : MonoBehaviour
             }
 
 
-            mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
             mouseCircle.GetComponent<SpriteRenderer>().color = sr.color;
         }
 

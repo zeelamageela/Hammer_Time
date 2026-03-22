@@ -83,6 +83,19 @@ public class FlickShotController : MonoBehaviour
     [Range(0.05f, 0.5f)]
     public float feedbackInterval = 0.1f;
     
+    [Header("Speed Guide Slider")]
+    [Tooltip("Name of slider GameObject to find (default: 'FlickShotSpeedSlider')")]
+    public string speedSliderName = "FlickShotSpeedSlider";
+    
+    [Tooltip("Auto-detected each turn")]
+    private UnityEngine.UI.Slider speedSlider;
+    
+    [Tooltip("Auto-detected from slider handle")]
+    private UnityEngine.UI.Image sliderHandleImage;
+    
+    [Tooltip("Auto-detected shooter animator")]
+    private ShooterAnim shooterAnim;
+    
     // State tracking
     public enum FlickShotPhase
     {
@@ -106,6 +119,12 @@ public class FlickShotController : MonoBehaviour
     private float lastFeedbackTime;
     private string lastFeedbackMessage = "";
     private bool isPowerDragging = false;  // Track if we're actively dragging
+    
+    // Speed slider state
+    private float idealDragTime = 0.8f;
+    private float ghostCycleStartTime = 0f;
+    private bool isSliderActive = false;
+    private float lastPlayerSliderValue = 0f;
     
     // Calculated values
     private float calculatedSpeed;
@@ -404,6 +423,9 @@ public class FlickShotController : MonoBehaviour
         powerDragStartTime = Time.time;
         lastFeedbackTime = Time.time;
         
+        // Initialize speed slider
+        InitializeSpeedSlider();
+        
         Debug.Log($"[FlickShot] Phase 2: POWER started - Drag from Y={powerDragStartY} to Y={powerDragTargetY} for speed!");
         Debug.Log($"[FlickShot] Using aim direction: angle={aimAngle:F1}°, direction={aimDirection}");
         
@@ -420,6 +442,9 @@ public class FlickShotController : MonoBehaviour
     /// </summary>
     private void UpdatePowerPhase()
     {
+        // Update speed slider animation
+        UpdateSpeedSlider();
+        
         // Wait for mouse down to start dragging
         if (!isPowerDragging)
         {
@@ -492,30 +517,67 @@ public class FlickShotController : MonoBehaviour
     
     /// <summary>
     /// Calculate predicted stop position based on initial velocity
-    /// Uses physics simulation to estimate where rock will stop
+    /// Uses TrajectorySimulator to get accurate prediction matching real physics
     /// </summary>
     private float CalculatePredictedStopPosition(float initialVelocity)
     {
-        // Simple physics estimate: rock decelerates from hog line to house
-        // Based on empirical data from logs:
-        // - Rock loses ~17-18% velocity per 0.5s after hog line
-        // - Damping factor ? 0.9 (90% retained per frame at 50 FPS)
+        // Use TrajectorySimulator to get REAL predicted stop position
+        if (trajLine != null)
+        {
+            // Get TrajectorySimulator from TrajectoryLine
+            System.Type trajType = trajLine.GetType();
+            System.Reflection.FieldInfo simulatorField = trajType.GetField("simulator", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (simulatorField != null)
+            {
+                object simulator = simulatorField.GetValue(trajLine);
+                if (simulator != null)
+                {
+                    // Simulate trajectory with calculated velocity
+                    Vector2 startPos = new Vector2(0f, -25f); // Launcher position
+                    Vector2 testVelocity = aimDirection * initialVelocity;
+                    
+                    // Get flipAxis (turn direction) from Rock_Force
+                    bool isInTurn = false;
+                    Rock_Force rockForce = GetComponent<Rock_Force>();
+                    if (rockForce != null)
+                    {
+                        System.Reflection.FieldInfo flipAxisField = rockForce.GetType().GetField("flipAxis");
+                        if (flipAxisField != null)
+                        {
+                            isInTurn = (bool)flipAxisField.GetValue(rockForce);
+                        }
+                    }
+                    
+                    // Call SimulateTrajectory on the simulator
+                    System.Type simType = simulator.GetType();
+                    System.Reflection.MethodInfo simMethod = simType.GetMethod("SimulateTrajectory");
+                    
+                    if (simMethod != null)
+                    {
+                        // Parameters: startPos, velocity, isInTurn, maxPoints, rocksInPlay, forPlayerPreview
+                        object[] parameters = new object[] { startPos, testVelocity, isInTurn, 200, null, false };
+                        object result = simMethod.Invoke(simulator, parameters);
+                        
+                        if (result is List<Vector2> trajectory && trajectory.Count > 0)
+                        {
+                            Vector2 finalPos = trajectory[trajectory.Count - 1];
+                            Debug.Log($"[FlickShot Prediction] Using TrajectorySimulator - velocity: {initialVelocity:F1} m/s ? predicted Y: {finalPos.y:F1}");
+                            return finalPos.y;
+                        }
+                    }
+                }
+            }
+        }
         
+        // Fallback: Use simple physics estimate if simulator not available
         float hogLineY = -16f;
-        float distanceFromHogToHouse = 22.5f; // From Y=-16 to Y=6.5
-        
-        // Estimate travel distance using energy/friction model
-        // v^2 = u^2 + 2as, where a = -friction
-        // Approximation: distance ? velocity^2 / (2 * friction)
-        
-        float frictionFactor = 1.8f; // Empirical from logs
+        float frictionFactor = 1.8f;
         float estimatedDistance = (initialVelocity * initialVelocity) / (2f * frictionFactor);
-        
         float predictedStopY = hogLineY + estimatedDistance;
-        
-        // Clamp to reasonable range (-16 to 15)
         predictedStopY = Mathf.Clamp(predictedStopY, -16f, 15f);
         
+        Debug.Log($"[FlickShot Prediction] Using fallback formula - velocity: {initialVelocity:F1} m/s ? predicted Y: {predictedStopY:F1}");
         return predictedStopY;
     }
     
@@ -537,6 +599,276 @@ public class FlickShotController : MonoBehaviour
         
         // Calculate final speed multiplier
         calculatedSpeed = normalizedTime;
+    }
+    
+    /// <summary>
+    /// Initialize speed slider for power phase
+    /// Auto-detects slider and components in scene
+    /// </summary>
+    private void InitializeSpeedSlider()
+    {
+        // Auto-detect speed slider by name
+        GameObject sliderObj = GameObject.Find(speedSliderName);
+        if (sliderObj != null)
+        {
+            speedSlider = sliderObj.GetComponent<UnityEngine.UI.Slider>();
+            
+            if (speedSlider != null)
+            {
+                Debug.Log($"[FlickShot] Found speed slider: {speedSliderName}");
+                
+                // Auto-detect handle image from slider
+                if (speedSlider.handleRect != null)
+                {
+                    sliderHandleImage = speedSlider.handleRect.GetComponent<UnityEngine.UI.Image>();
+                    
+                    if (sliderHandleImage != null)
+                    {
+                        Debug.Log($"[FlickShot] Found slider handle image");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[FlickShot] Slider handle has no Image component!");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[FlickShot] Slider has no handle rect!");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[FlickShot] GameObject '{speedSliderName}' found but has no Slider component!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[FlickShot] Speed slider '{speedSliderName}' not found in scene - slider disabled");
+            return;
+        }
+        
+        // Auto-detect shooter animator
+        shooterAnim = FindObjectOfType<ShooterAnim>();
+        if (shooterAnim != null)
+        {
+            Debug.Log($"[FlickShot] Found shooter animator: {shooterAnim.name}");
+        }
+        
+        // Configure slider if found
+        if (speedSlider != null)
+        {
+            speedSlider.gameObject.SetActive(true);
+            speedSlider.minValue = 0f;
+            speedSlider.maxValue = 1f;
+            speedSlider.value = 0f;
+            speedSlider.interactable = false; // Visual only
+            
+            // Calculate ideal drag time based on target speed band
+            idealDragTime = CalculateIdealDragTime();
+            ghostCycleStartTime = Time.time;
+            isSliderActive = true;
+            lastPlayerSliderValue = 0f;
+            
+            // Set ghost rock to 50% opacity (shows ideal timing)
+            if (sliderHandleImage != null)
+            {
+                Color ghostColor = sliderHandleImage.color;
+                ghostColor.a = 0.5f;
+                sliderHandleImage.color = ghostColor;
+            }
+            
+            Debug.Log($"[FlickShot] Speed slider initialized - ideal time: {idealDragTime:F2}s");
+        }
+    }
+    
+    /// <summary>
+    /// Update speed slider animation each frame
+    /// Ghost rock cycles at ideal speed, player rock follows cursor
+    /// </summary>
+    private void UpdateSpeedSlider()
+    {
+        // Only update if we're in power phase AND slider is active
+        if (currentPhase != FlickShotPhase.PowerPhase || !isSliderActive || speedSlider == null)
+        {
+            // Not in power phase - ensure slider is hidden
+            if (speedSlider != null && speedSlider.gameObject.activeSelf)
+            {
+                speedSlider.gameObject.SetActive(false);
+            }
+            return;
+        }
+        
+        if (!isPowerDragging)
+        {
+            // BEFORE DRAG: Animate ghost rock cycling at ideal speed
+            // Cycle: 0?1 (animate up) ? pause ? fade out ? reappear at 0 ? repeat
+            
+            float elapsedTime = Time.time - ghostCycleStartTime;
+            float cycleDuration = idealDragTime * 1.5f; // Total cycle time (includes pause/fade)
+            float cycleProgress = (elapsedTime % cycleDuration) / cycleDuration;
+            
+            float ghostValue = 0f;
+            float ghostAlpha = 0.5f;
+            
+            // Split cycle into phases:
+            // 0.0-0.53: Animate up (0?1) over idealDragTime
+            // 0.53-0.80: Pause at top (LONGER pause - 27% of cycle!)
+            // 0.80-1.0: Fade out and reset to bottom
+            
+            float animatePhase = idealDragTime / cycleDuration;  // ~0.53 typically
+            float pausePhase = animatePhase + 0.27f;             // ~0.80 (LONGER pause!)
+            float fadePhase = 1.0f;                              // 1.0 (end)
+            
+            if (cycleProgress < animatePhase)
+            {
+                // PHASE 1: Animate up (0?1)
+                ghostValue = cycleProgress / animatePhase;
+                ghostAlpha = 0.5f; // Visible
+            }
+            else if (cycleProgress < pausePhase)
+            {
+                // PHASE 2: Pause at top
+                ghostValue = 1.0f; // At top
+                ghostAlpha = 0.5f; // Visible
+            }
+            else
+            {
+                // PHASE 3: Fade out and reset to bottom
+                ghostValue = 0f; // Back to bottom
+                float fadeProgress = (cycleProgress - pausePhase) / (fadePhase - pausePhase);
+                ghostAlpha = 0.5f * (1f - fadeProgress); // Fade from 0.5 to 0
+            }
+            
+            speedSlider.value = ghostValue;
+            
+            // Update alpha
+            if (sliderHandleImage != null)
+            {
+                Color ghostColor = Color.white;
+                ghostColor.a = ghostAlpha;
+                sliderHandleImage.color = ghostColor;
+            }
+        }
+        else
+        {
+            // DURING DRAG: Show player's actual drag progress
+            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float targetProgress = CalculateSwipeProgress(mouseWorldPos.y);
+            
+            // Smooth the slider movement (prevents jitter)
+            float smoothedProgress = Mathf.Lerp(lastPlayerSliderValue, targetProgress, Time.deltaTime * 10f);
+            lastPlayerSliderValue = smoothedProgress;
+            
+            speedSlider.value = smoothedProgress;
+            
+            // Change handle to full opacity during drag
+            if (sliderHandleImage != null)
+            {
+                Color playerColor = sliderHandleImage.color;
+                playerColor.a = 1f; // Full opacity
+                
+                // Color feedback: Green if matching ghost speed, yellow/red if off
+                float speedRatio = CalculateSpeedMatchingRatio(smoothedProgress);
+                if (Mathf.Abs(speedRatio - 1f) < 0.15f)
+                    playerColor = Color.Lerp(playerColor, Color.green, 0.5f); // Perfect!
+                else if (Mathf.Abs(speedRatio - 1f) < 0.3f)
+                    playerColor = Color.Lerp(playerColor, Color.yellow, 0.5f); // Close
+                else
+                    playerColor = Color.Lerp(playerColor, Color.red, 0.5f); // Off
+                
+                sliderHandleImage.color = playerColor;
+            }
+            
+            // Link to shooter animation (if available)
+            UpdateShooterAnimationFromSlider(smoothedProgress);
+        }
+    }
+    
+    /// <summary>
+    /// Calculate swipe progress (0-1) from cursor Y position
+    /// Maps launcher (-25) to hog line (-16)
+    /// </summary>
+    private float CalculateSwipeProgress(float cursorY)
+    {
+        float startY = powerDragStartY;   // -25f
+        float endY = powerDragTargetY;    // -16f
+        return Mathf.InverseLerp(startY, endY, cursorY);
+    }
+    
+    /// <summary>
+    /// Calculate ideal drag time for current target speed band
+    /// Perfect (middle) = ~0.8s, Faster = shorter, Slower = longer
+    /// </summary>
+    private float CalculateIdealDragTime()
+    {
+        // Map speed bands to drag time
+        // speedBands = 5: [0=slowest, 1=slow, 2=PERFECT, 3=fast, 4=fastest]
+        int perfectBand = speedBands / 2;
+        
+        // For now, use middle band as default (can adjust based on target later)
+        float normalizedBand = 0.5f; // Middle band
+        
+        // Interpolate: Slow shots = longer time, Fast shots = shorter time
+        return Mathf.Lerp(maxDragTime, minDragTime, normalizedBand);
+    }
+    
+    /// <summary>
+    /// Calculate how well player's speed matches ghost speed
+    /// Returns ratio: 1.0 = perfect match, <1 = too slow, >1 = too fast
+    /// </summary>
+    private float CalculateSpeedMatchingRatio(float playerProgress)
+    {
+        float elapsedTime = Time.time - powerDragStartTime;
+        if (elapsedTime < 0.01f) return 1f; // Avoid divide by zero
+        
+        float playerSpeed = playerProgress / elapsedTime;
+        float ghostSpeed = 1f / idealDragTime;
+        
+        return playerSpeed / ghostSpeed;
+    }
+    
+    /// <summary>
+    /// Link slider progress to shooter animation
+    /// Allows swipe to control animation frame (optional feature)
+    /// </summary>
+    private void UpdateShooterAnimationFromSlider(float sliderProgress)
+    {
+        if (shooterAnim == null) return;
+        
+        // Map slider progress (0-1) to shooter animation
+        // This creates a "drag shooter along with your finger" effect
+        // shooterAnim should have a method to set animation progress directly
+        
+        // Example: shooterAnim.SetAnimationProgress(sliderProgress);
+        // (Implement this in ShooterAnim if you want the feature)
+    }
+    
+    /// <summary>
+    /// Hide and clean up speed slider
+    /// Clears references for next turn
+    /// </summary>
+    private void CleanupSpeedSlider()
+    {
+        if (speedSlider != null)
+        {
+            speedSlider.gameObject.SetActive(false);
+            isSliderActive = false;
+        }
+        
+        // Reset handle color
+        if (sliderHandleImage != null)
+        {
+            Color resetColor = sliderHandleImage.color;
+            resetColor.a = 0.5f;
+            sliderHandleImage.color = resetColor;
+        }
+        
+        // Clear references for next turn (will be auto-detected again)
+        speedSlider = null;
+        sliderHandleImage = null;
+        shooterAnim = null;
+        
+        Debug.Log("[FlickShot] Speed slider cleaned up - references cleared for next turn");
     }
     
     /// <summary>
@@ -619,13 +951,29 @@ public class FlickShotController : MonoBehaviour
             Debug.Log($"[FlickShot] Predicted stop line shown at Y={predictedStopY:F1}");
         }
         
-        // Show speed callout at shooter position
+        // Show speed callout that FOLLOWS the rock
         if (showSpeedFeedback)
         {
             string speedMessage = GetSpeedFeedbackMessage();
-            Vector2 shooterPos = new Vector2(0f, -25f);
-            ShowCallout(shooterPos, speedMessage + $" ({targetSpeed:F1} m/s)", followTarget: false, duration: 3f);
-            Debug.Log($"[FlickShot] Speed callout: {speedMessage} ({targetSpeed:F1} m/s)");
+            string fullMessage = speedMessage + $" ({targetSpeed:F1} m/s)";
+            
+            // Try to show callout using TextCalloutManager directly
+            if (TextCalloutManager.Instance != null)
+            {
+                // Show callout that FOLLOWS the rock as it travels!
+                TextCalloutManager.Instance.ShowCallout(
+                    transform.position + Vector3.up * 0.5f,  // Start 0.5 units above rock
+                    fullMessage, 
+                    followTarget: true,  // Follow the rock!
+                    target: transform,   // Attach to rock transform
+                    duration: 5f
+                );
+                Debug.Log($"[FlickShot] *** SPEED CALLOUT FOLLOWING ROCK: {fullMessage} ***");
+            }
+            else
+            {
+                Debug.LogWarning("[FlickShot] TextCalloutManager.Instance is null! Callout not shown.");
+            }
         }
         
         // Calculate and apply velocity
@@ -637,8 +985,10 @@ public class FlickShotController : MonoBehaviour
         // Hide swipe trail after 1 second
         StartCoroutine(HideSwipeTrailAfterDelay(1f));
         
-        // Hide predicted line after 3 seconds
-        StartCoroutine(HidePredictedLineAfterDelay(3f));
+        // Keep cyan predicted line visible until turn ends (don't hide it!)
+        
+        // Hide speed slider
+        CleanupSpeedSlider();
     }
     
     /// <summary>
@@ -653,20 +1003,6 @@ public class FlickShotController : MonoBehaviour
             swipeTrailLine.enabled = false;
             swipePoints.Clear();
             Debug.Log("[FlickShot] Swipe trail hidden");
-        }
-    }
-    
-    /// <summary>
-    /// Hide predicted stop line after delay
-    /// </summary>
-    private IEnumerator HidePredictedLineAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        
-        if (predictedStopLine != null)
-        {
-            predictedStopLine.enabled = false;
-            Debug.Log("[FlickShot] Predicted stop line hidden");
         }
     }
     
@@ -931,6 +1267,18 @@ public class FlickShotController : MonoBehaviour
     {
         currentPhase = FlickShotPhase.Inactive;
         
+        // Hide visual elements
+        if (swipeTrailLine != null)
+        {
+            swipeTrailLine.enabled = false;
+            swipePoints.Clear();
+        }
+        
+        if (predictedStopLine != null)
+        {
+            predictedStopLine.enabled = false;
+        }
+        
         // Reset rock to launcher position
         if (launcher != null)
         {
@@ -948,6 +1296,17 @@ public class FlickShotController : MonoBehaviour
     
     void OnDestroy()
     {
+        // Clean up visual elements
+        if (swipeTrailLine != null)
+        {
+            swipeTrailLine.enabled = false;
+        }
+        
+        if (predictedStopLine != null)
+        {
+            predictedStopLine.enabled = false;
+        }
+        
         // Unsubscribe from events using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
         if (settingsType != null)
@@ -967,5 +1326,29 @@ public class FlickShotController : MonoBehaviour
                 }
             }
         }
+    }
+    
+    void OnDisable()
+    {
+        // Clean up visual elements when rock is disabled (reset for next turn)
+        if (swipeTrailLine != null)
+        {
+            swipeTrailLine.enabled = false;
+            swipePoints.Clear();
+            Debug.Log("[FlickShot] Swipe trail hidden (OnDisable)");
+        }
+        
+        if (predictedStopLine != null)
+        {
+            predictedStopLine.enabled = false;
+            Debug.Log("[FlickShot] Predicted stop line hidden (OnDisable)");
+        }
+        
+        // Clean up speed slider
+        CleanupSpeedSlider();
+        
+        // Reset phase
+        currentPhase = FlickShotPhase.Inactive;
+        isPowerDragging = false;
     }
 }
