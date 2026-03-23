@@ -31,6 +31,14 @@ public class Rock_Release : MonoBehaviour
             released = true;
             GetComponent<Rock_Info>().released = true;
             GetComponent<Rock_Force>().Release();
+            
+            // Start rock timer display when crossing hog line
+            RockTimerDisplay timerDisplay = GetComponent<RockTimerDisplay>();
+            if (timerDisplay != null)
+            {
+                timerDisplay.StartTimer();
+                Debug.Log("[Rock_Release] Rock timer started at hog line crossing");
+            }
         }
 
     }

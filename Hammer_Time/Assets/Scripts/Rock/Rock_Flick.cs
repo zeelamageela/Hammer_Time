@@ -491,6 +491,31 @@ public class Rock_Flick : MonoBehaviour
         
         Debug.Log($"[Rock_Flick] CALCULATED velocity: {velocity.magnitude:F2} m/s from pullback distance: {springDistance:F3} (using TrajectoryLine params)");
         
+        // Show detailed feedback callout for normal shot
+        if (TextCalloutManager.Instance != null)
+        {
+            float actualVelocity = velocity.magnitude;
+            float minVel = trajLine.minVelocity;
+            float maxVel = trajLine.maxVelocity;
+            
+            // Build comprehensive feedback message
+            string feedbackMessage = $"Shot Released!\n" +
+                                    $"{actualVelocity:F3} m/s\n" +
+                                    $"\nRange: {minVel:F1}-{maxVel:F1} m/s\n" +
+                                    $"Pullback: {springDistance:F3}m";
+            
+            // Show callout that FOLLOWS the rock
+            TextCalloutManager.Instance.ShowCallout(
+                transform.position + Vector3.up * 0.5f,
+                feedbackMessage,
+                followTarget: true,
+                target: transform,
+                duration: 6f
+            );
+            
+            Debug.Log($"[Rock_Flick] Normal shot feedback: {feedbackMessage.Replace("\n", " | ")}");
+        }
+        
         // CRITICAL: Disable spring FIRST to prevent it from interfering!
         GetComponent<SpringJoint2D>().enabled = false;
         
@@ -502,6 +527,14 @@ public class Rock_Flick : MonoBehaviour
         Debug.Log($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");
         
         launcher.GetComponent<Collider2D>().enabled = true;
+        
+        // Start rock timer display
+        RockTimerDisplay timerDisplay = GetComponent<RockTimerDisplay>();
+        if (timerDisplay != null)
+        {
+            timerDisplay.StartTimer();
+            Debug.Log("[Rock_Flick] Rock timer started!");
+        }
         
         yield return new WaitForSeconds(releaseTime);
         rockSounds[1].enabled = true;

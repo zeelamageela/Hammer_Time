@@ -3523,7 +3523,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: -21.45}
-  m_SizeDelta: {x: 82.5979, y: 110.1305}
+  m_SizeDelta: {x: 80, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &146479043
 GameObject:
@@ -11870,7 +11870,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 11.421186
+  field of view: 60
   orthographic: 1
   orthographic size: 8.5
   m_Depth: 1
@@ -11897,7 +11897,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -25, z: -10}
+  m_LocalPosition: {x: -0.009605244, y: -24.06762, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27505,8 +27505,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 381138357}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
-  m_AnchorMin: {x: 0.678, y: 0}
-  m_AnchorMax: {x: 0.678, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 5, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -28017,6 +28017,9 @@ MonoBehaviour:
   defaultDuration: 2
   defaultFloatDistance: 2.5
   defaultFadeDuration: 0.5
+  stackSpacing: 0.8
+  stackDetectionRange: 1.5
+  debugStacking: 0
 --- !u!1 &1203170752
 GameObject:
   m_ObjectHideFlags: 0
@@ -31142,7 +31145,7 @@ RectTransform:
   m_Father: {fileID: 825248753}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.678, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -37874,7 +37877,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1676907307
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37944,7 +37947,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.678
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -49737,7 +49740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: evWeight
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: evVerboseLogging

@@ -70,11 +70,21 @@ public class TextCalloutManager : MonoBehaviour
     [Tooltip("How long the callout stays visible")]
     public float defaultDuration = 2f;
 
-    [Tooltip("How far the callout floats upward")]
-    public float defaultFloatDistance = 1f;
+    [Tooltip("How far the callout floats upward (reduced for tighter animation closer to target)")]
+    public float defaultFloatDistance = 0.6f; // Was 1f, now 0.6f (40% reduction for tighter feel)
 
     [Tooltip("Fade out over this duration at the end")]
     public float defaultFadeDuration = 0.5f;
+
+    [Header("Stacking Settings")]
+    [Tooltip("Minimum distance between callouts to avoid overlap (ultra-minimal - barely visible gap)")]
+    public float stackSpacing = 0.01f; // Was 0.05f, now 0.01m - ULTRA-TIGHT!
+    
+    [Tooltip("Maximum range to check for nearby callouts")]
+    public float stackDetectionRange = 1.5f;
+    
+    [Tooltip("Enable debug visualization for stacking")]
+    public bool debugStacking = false;
 
     // Object pool
     private Queue<TextCallout> calloutPool = new Queue<TextCallout>();
@@ -196,6 +206,9 @@ public class TextCalloutManager : MonoBehaviour
             return null;
         }
 
+        // Check for nearby callouts and adjust position to avoid overlap
+        Vector3 adjustedPosition = GetStackedPosition(targetPosition, target);
+
         // Get callout from pool
         TextCallout callout = GetCalloutFromPool();
         if (callout == null)
@@ -207,7 +220,7 @@ public class TextCalloutManager : MonoBehaviour
         // Configure callout
         callout.Initialize(
             text: text,
-            startPosition: targetPosition,
+            startPosition: adjustedPosition,
             followTarget: followTarget,
             target: target,
             duration: duration ?? defaultDuration,
@@ -221,9 +234,73 @@ public class TextCalloutManager : MonoBehaviour
         callout.gameObject.SetActive(true);
         callout.StartAnimation();
 
-        Debug.Log($"[TextCalloutManager] Spawned callout: '{text}' at {targetPosition}");
+        if (debugStacking && adjustedPosition != targetPosition)
+        {
+            Debug.Log($"[TextCalloutManager] Stacked callout '{text}' - offset by {adjustedPosition.y - targetPosition.y:F2}m");
+        }
 
         return callout;
+    }
+    
+    /// <summary>
+    /// Get an adjusted position that avoids overlapping with existing callouts
+    /// Accounts for full animation range (not just current position)
+    /// </summary>
+    private Vector3 GetStackedPosition(Vector3 originalPosition, Transform target)
+    {
+        // Find all nearby callouts
+        List<TextCallout> nearbyCallouts = new List<TextCallout>();
+        
+        foreach (TextCallout activeCallout in activeCallouts)
+        {
+            if (activeCallout == null || !activeCallout.gameObject.activeInHierarchy)
+                continue;
+            
+            // If both callouts follow the same target, they should stack
+            if (target != null && activeCallout.IsFollowingTarget(target))
+            {
+                nearbyCallouts.Add(activeCallout);
+                continue;
+            }
+            
+            // Check distance for position-based callouts
+            Vector3 activePosition = activeCallout.GetCurrentPosition();
+            float distance = Vector3.Distance(
+                new Vector3(originalPosition.x, 0, originalPosition.z), // Horizontal distance only
+                new Vector3(activePosition.x, 0, activePosition.z)
+            );
+            
+            if (distance < stackDetectionRange)
+            {
+                nearbyCallouts.Add(activeCallout);
+            }
+        }
+        
+        // If no nearby callouts, use original position
+        if (nearbyCallouts.Count == 0)
+            return originalPosition;
+        
+        // Find the highest occupied Y position among nearby callouts
+        // CRITICAL FIX: Account for FINAL animation height, not just current position!
+        float highestY = originalPosition.y;
+        foreach (TextCallout nearby in nearbyCallouts)
+        {
+            // Get the FINAL Y position (after full animation completes)
+            float calloutFinalY = nearby.GetFinalPosition().y;
+            if (calloutFinalY > highestY)
+                highestY = calloutFinalY;
+        }
+        
+        // Stack above the highest final position
+        Vector3 stackedPosition = originalPosition;
+        stackedPosition.y = highestY + stackSpacing;
+        
+        if (debugStacking)
+        {
+            Debug.Log($"[TextCalloutManager] Stacking: Found {nearbyCallouts.Count} nearby callouts, highest final Y: {highestY:F2}, new Y: {stackedPosition.y:F2}");
+        }
+        
+        return stackedPosition;
     }
 
     /// <summary>
