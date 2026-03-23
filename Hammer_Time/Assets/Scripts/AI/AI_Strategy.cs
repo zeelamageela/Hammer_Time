@@ -15,6 +15,8 @@ public class AI_Strategy : MonoBehaviour
     Rock_Info rockInfo;
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
+    
+    private EVEvaluationSystem evSystem;
 
     public Transform cenGuard;
     public Transform tCenGuard;
@@ -70,6 +72,17 @@ public class AI_Strategy : MonoBehaviour
     [Tooltip("When behind by this much, enter desperation mode")]
     [Range(1, 5)]
     public int desperationScoreGap = 2;
+    
+    [Header("EV System (Experimental)")]
+    [Tooltip("Enable EV-based shot optimization")]
+    public bool useEVOptimization = false;
+    
+    [Tooltip("EV weight (0=intent only, 1=EV only)")]
+    [Range(0f, 1f)]
+    public float evWeight = 0.3f;
+    
+    [Tooltip("Show detailed EV logs")]
+    public bool evVerboseLogging = false;
 
     private void Update()
     {
@@ -78,6 +91,20 @@ public class AI_Strategy : MonoBehaviour
         lCornGuard = aiTarg.lCornGuard;
         rCornGuard = aiTarg.rCornGuard;
     }
+    
+    void Start()
+    {
+        // Initialize EV system
+        GameObject evObj = new GameObject("EVSystem");
+        evObj.transform.SetParent(transform);
+        evSystem = evObj.AddComponent<EVEvaluationSystem>();
+        evSystem.useEVEvaluation = useEVOptimization;
+        evSystem.evWeight = evWeight;
+        evSystem.verboseLogging = evVerboseLogging;
+        
+        Debug.Log($"[AI_Strategy] EV System initialized (Enabled: {useEVOptimization}, Weight: {evWeight:F2})");
+    }
+    
     public void SimpleAIShoot(int rockCurrent)
     {
         // Initialize active team name based on rock number and hammer
@@ -227,6 +254,50 @@ public class AI_Strategy : MonoBehaviour
         return count;
     }
     
+    /// <summary>
+    /// Build game state snapshot for EV evaluation
+    /// </summary>
+    private AIGameState BuildGameState(int rockCurrent)
+    {
+        return new AIGameState
+        {
+            rockCurrent = rockCurrent,
+            endCurrent = gm.endCurrent,
+            endTotal = gm.endTotal,
+            activeTeamScore = activeTeamScore,
+            oppTeamScore = oppTeamScore,
+            activeTeamName = activeTeamName,
+            oppTeamName = oppTeamName,
+            hasHammer = (rockCurrent % 2 != 0),
+            myRocksInHouse = CountRocksInHouse(activeTeamName),
+            oppRocksInHouse = CountRocksInHouse(oppTeamName),
+            phase = phase,
+            guardsInPlay = gm.gList.Count,
+            hasGuardBlocking = false
+        };
+    }
+    
+    /// <summary>
+    /// Get character stats for current shooter
+    /// </summary>
+    private CharacterStats GetShooterStats(int rockCurrent)
+    {
+        TeamManager tm = FindObjectOfType<TeamManager>();
+        if (tm == null) return null;
+        
+        int memberIndex = rockCurrent / 4;
+        memberIndex = Mathf.Clamp(memberIndex, 0, 3);
+        
+        bool isRedTeam = (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
+        
+        if (isRedTeam && tm.teamRed != null && memberIndex < tm.teamRed.Length)
+            return tm.teamRed[memberIndex].charStats;
+        else if (!isRedTeam && tm.teamYellow != null && memberIndex < tm.teamYellow.Length)
+            return tm.teamYellow[memberIndex].charStats;
+        
+        return null;
+    }
+    
     #region INTENT-BASED SHOT SELECTION METHODS
     
     /// <summary>
@@ -254,7 +325,14 @@ public class AI_Strategy : MonoBehaviour
             {
                 // They have a rock in play - remove it
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false; // Conservative - only if good shot available
+                context.acceptRisk = false;
+                
+                // EV EVALUATION (optional - only if enabled!)
+                if (evSystem != null && useEVOptimization)
+                {
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                }
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -262,6 +340,13 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Guards in play, weight behind them
                 context = new ShotContext(ShotIntent.CreateOpportunity);
+                
+                // EV EVALUATION (optional)
+                if (evSystem != null && useEVOptimization)
+                {
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                }
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -274,7 +359,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Remove biggest threat
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = (myRocksInHouse > 0); // More risk if we have rocks
+                context.acceptRisk = (myRocksInHouse > 0);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -282,6 +372,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // We're in good shape - protect lead
                 context = new ShotContext(ShotIntent.ProtectLead);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -289,6 +384,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Keep building
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -304,7 +404,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Must remove threat to have ANY chance at stealing
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true; // Aggressive - need to make something happen
+                context.acceptRisk = true;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -321,11 +426,16 @@ public class AI_Strategy : MonoBehaviour
                         new Vector2(0f, 6.5f)
                     );
                     
-                    if (threatDist < urgentThreatDistance) // Urgent: Must remove immediately
+                    if (threatDist < urgentThreatDistance)
                     {
                         // Must remove it
                         context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                         context.acceptRisk = true;
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -333,6 +443,11 @@ public class AI_Strategy : MonoBehaviour
                     {
                         // Threat is far - finesse what we have
                         context = new ShotContext(ShotIntent.ProtectLead);
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -341,6 +456,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // No threats - protect lead with finesse
                     context = new ShotContext(ShotIntent.ProtectLead);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -355,11 +475,16 @@ public class AI_Strategy : MonoBehaviour
                     new Vector2(0f, 6.5f)
                 );
                 
-                if (threatDist < closeThreatDistance) // Close threat - must remove
+                if (threatDist < closeThreatDistance)
                 {
                     // Remove threat (might steal)
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -367,6 +492,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Draw another rock (try to outscore them)
                     context = new ShotContext(ShotIntent.ScorePoints);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -377,6 +507,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // No one has rocks - weight to button
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -486,6 +621,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // First 2 rocks - aggressive corner guards
                 context = new ShotContext(ShotIntent.CreateOpportunity);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -494,7 +634,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Remove any opposition rock immediately
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true; // Aggressive!
+                context.acceptRisk = true;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -502,6 +647,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Build guards for corner game
                 context = new ShotContext(ShotIntent.CreateOpportunity);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -515,6 +665,11 @@ public class AI_Strategy : MonoBehaviour
                 // Always remove threats when aggressive
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                 context.acceptRisk = true;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -522,6 +677,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Build on our position
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -529,6 +689,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Keep setting up
                 context = new ShotContext(ShotIntent.CreateOpportunity);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -601,6 +766,11 @@ public class AI_Strategy : MonoBehaviour
                 // Behind in game score - desperate removal
                 context = new ShotContext(ShotIntent.Desperation, threatRock);
                 context.acceptRisk = true;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -611,6 +781,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // We're winning house - keep scoring
                     context = new ShotContext(ShotIntent.ScorePoints);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -619,6 +794,11 @@ public class AI_Strategy : MonoBehaviour
                     // They're winning house - must remove
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -627,6 +807,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Clean house - weight for steal
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -643,6 +828,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -650,6 +840,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Threat is far or we're ahead - keep scoring
                     context = new ShotContext(ShotIntent.ScorePoints);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -658,6 +853,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // No threats - just score!
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -687,7 +887,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Can't let them have anything - remove it
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false; // Don't risk blank
+                context.acceptRisk = false;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -695,6 +900,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Draw to corners for 2-point setup
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -708,6 +918,11 @@ public class AI_Strategy : MonoBehaviour
                 // Remove anything in our way
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                 context.acceptRisk = false;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -715,6 +930,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // We have 2+ rocks - protect them!
                 context = new ShotContext(ShotIntent.ProtectLead);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -722,6 +942,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Keep building
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -855,6 +1080,11 @@ public class AI_Strategy : MonoBehaviour
         {
             // First rocks - aggressive centre guards to set up steal
             context = new ShotContext(ShotIntent.CreateOpportunity);
+            
+            // EV EVALUATION
+            if (evSystem != null && useEVOptimization)
+                context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+            
             aiTarg.ExecuteIntent(context, rockCurrent);
             return true;
         }
@@ -868,6 +1098,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Build on position
                     context = new ShotContext(ShotIntent.CreateOpportunity);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -876,6 +1111,11 @@ public class AI_Strategy : MonoBehaviour
                     // No rocks in house - try to steal by removing threat
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = true;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -884,6 +1124,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Keep setting up
                 context = new ShotContext(ShotIntent.CreateOpportunity);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -899,7 +1144,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Must remove to have ANY chance
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true; // Very aggressive
+                context.acceptRisk = true;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -928,7 +1178,12 @@ public class AI_Strategy : MonoBehaviour
                     {
                         context = new ShotContext(ShotIntent.Desperation, threatRock);
                         context.acceptRisk = true;
-                        context.mustScore = true; // Need miracle
+                        context.mustScore = true;
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -937,6 +1192,11 @@ public class AI_Strategy : MonoBehaviour
                         // Just remove threat
                         context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                         context.acceptRisk = true;
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -950,10 +1210,15 @@ public class AI_Strategy : MonoBehaviour
                         new Vector2(0f, 6.5f)
                     );
                     
-                    if (threatDist < closeThreatDistance) // Very close threat
+                    if (threatDist < closeThreatDistance)
                     {
                         context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                         context.acceptRisk = true;
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -961,6 +1226,11 @@ public class AI_Strategy : MonoBehaviour
                     {
                         // Add more rocks to steal multiple
                         context = new ShotContext(ShotIntent.ScorePoints);
+                        
+                        // EV EVALUATION
+                        if (evSystem != null && useEVOptimization)
+                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                        
                         aiTarg.ExecuteIntent(context, rockCurrent);
                         return true;
                     }
@@ -972,6 +1242,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // We're stealing - add more!
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -980,6 +1255,11 @@ public class AI_Strategy : MonoBehaviour
             else
             {
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1010,7 +1290,12 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Remove it - can't let them build
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false; // Conservative
+                context.acceptRisk = false;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1018,6 +1303,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // We have rocks - finesse them
                 context = new ShotContext(ShotIntent.ProtectLead);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1025,6 +1315,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Draw for steal attempt
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1038,6 +1333,11 @@ public class AI_Strategy : MonoBehaviour
                 // Remove threats
                 context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                 context.acceptRisk = false;
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1045,6 +1345,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Protect what we have
                 context = new ShotContext(ShotIntent.ProtectLead);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1052,6 +1357,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Draw cautiously
                 context = new ShotContext(ShotIntent.ScorePoints);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }
@@ -1069,7 +1379,12 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Remove their best rock (try to reduce to 1 point)
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = false; // Conservative - don't give them more
+                    context.acceptRisk = false;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1077,6 +1392,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // No clear removal - force blank
                     context = new ShotContext(ShotIntent.ForceBlank);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1089,6 +1409,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // We're stealing! Protect what we have
                     context = new ShotContext(ShotIntent.ProtectLead);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1097,6 +1422,11 @@ public class AI_Strategy : MonoBehaviour
                     // Remove their single rock (steal or blank)
                     context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
                     context.acceptRisk = false;
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1104,6 +1434,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Try to steal
                     context = new ShotContext(ShotIntent.ScorePoints);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1117,6 +1452,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Small threat exists - finesse instead of removing
                     context = new ShotContext(ShotIntent.ProtectLead);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1124,6 +1464,11 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // No threats - finesse the steal
                     context = new ShotContext(ShotIntent.ProtectLead);
+                    
+                    // EV EVALUATION
+                    if (evSystem != null && useEVOptimization)
+                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                    
                     aiTarg.ExecuteIntent(context, rockCurrent);
                     return true;
                 }
@@ -1134,6 +1479,11 @@ public class AI_Strategy : MonoBehaviour
             {
                 // Blank is fine - keeps hammer for them but no damage
                 context = new ShotContext(ShotIntent.ForceBlank);
+                
+                // EV EVALUATION
+                if (evSystem != null && useEVOptimization)
+                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                
                 aiTarg.ExecuteIntent(context, rockCurrent);
                 return true;
             }

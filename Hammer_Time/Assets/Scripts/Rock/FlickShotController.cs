@@ -180,10 +180,21 @@ public class FlickShotController : MonoBehaviour
         swipeTrailLine.startWidth = 0.05f; // 75% thinner (was 0.2f)
         swipeTrailLine.endWidth = 0.05f;
         swipeTrailLine.positionCount = 0;
-        swipeTrailLine.startColor = Color.black;
-        swipeTrailLine.endColor = Color.black;
+        
+        // 66% more transparent (34% opacity instead of 100%)
+        Color swipeColor = Color.black;
+        swipeColor.a = 0.34f;
+        swipeTrailLine.startColor = swipeColor;
+        swipeTrailLine.endColor = swipeColor;
+        
         swipeTrailLine.material = new Material(Shader.Find("Sprites/Default"));
-        Debug.Log("[FlickShot] Swipe trail line created (black, thin)");
+        
+        // Enable smoothing for cleaner line
+        swipeTrailLine.useWorldSpace = true;
+        swipeTrailLine.numCornerVertices = 8;  // Smooth corners
+        swipeTrailLine.numCapVertices = 8;     // Smooth ends
+        
+        Debug.Log("[FlickShot] Swipe trail line created (black, thin, 34% opacity, smoothed)");
         
         // Create predicted stop line (CYAN horizontal line)
         GameObject predictedStopObj = new GameObject("PredictedStopLine");
@@ -468,16 +479,35 @@ public class FlickShotController : MonoBehaviour
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 mousePos3D = new Vector3(mouseWorldPos.x, mouseWorldPos.y, -1f);
         
-        // Add cursor position to trail (sample every few frames for smooth line)
-        if (swipePoints.Count == 0 || Vector3.Distance(swipePoints[swipePoints.Count - 1], mousePos3D) > 0.2f)
+        // Add cursor position to trail with smoothing (reduce jitter)
+        // Only sample if cursor moved far enough to avoid dense clustering
+        float minSampleDistance = 0.15f; // Sample every 15cm (smoother, less jagged)
+        
+        if (swipePoints.Count == 0 || Vector3.Distance(swipePoints[swipePoints.Count - 1], mousePos3D) > minSampleDistance)
         {
             swipePoints.Add(mousePos3D);
             
-            // Update line renderer with all points
-            if (swipeTrailLine != null)
+            // Apply Catmull-Rom smoothing if we have enough points
+            if (swipePoints.Count >= 4)
             {
-                swipeTrailLine.positionCount = swipePoints.Count;
-                swipeTrailLine.SetPositions(swipePoints.ToArray());
+                // Smooth the trail by interpolating between last few points
+                List<Vector3> smoothedPoints = SmoothSwipePath(swipePoints);
+                
+                // Update line renderer with smoothed points
+                if (swipeTrailLine != null)
+                {
+                    swipeTrailLine.positionCount = smoothedPoints.Count;
+                    swipeTrailLine.SetPositions(smoothedPoints.ToArray());
+                }
+            }
+            else
+            {
+                // Not enough points yet - just use raw points
+                if (swipeTrailLine != null)
+                {
+                    swipeTrailLine.positionCount = swipePoints.Count;
+                    swipeTrailLine.SetPositions(swipePoints.ToArray());
+                }
             }
         }
         
@@ -657,7 +687,13 @@ public class FlickShotController : MonoBehaviour
         // Configure slider if found
         if (speedSlider != null)
         {
-            speedSlider.gameObject.SetActive(true);
+            // CRITICAL: Make sure GameObject is active BEFORE configuring!
+            if (!speedSlider.gameObject.activeSelf)
+            {
+                speedSlider.gameObject.SetActive(true);
+                Debug.Log($"[FlickShot] Speed slider GameObject re-enabled for new turn");
+            }
+            
             speedSlider.minValue = 0f;
             speedSlider.maxValue = 1f;
             speedSlider.value = 0f;
@@ -782,6 +818,37 @@ public class FlickShotController : MonoBehaviour
             // Link to shooter animation (if available)
             UpdateShooterAnimationFromSlider(smoothedProgress);
         }
+    }
+    
+    /// <summary>
+    /// Smooth swipe path using simple averaging for cleaner visual
+    /// Reduces jitter from rapid cursor movements
+    /// </summary>
+    private List<Vector3> SmoothSwipePath(List<Vector3> rawPoints)
+    {
+        if (rawPoints.Count < 4) return rawPoints;
+        
+        List<Vector3> smoothed = new List<Vector3>();
+        
+        // Keep first point as-is
+        smoothed.Add(rawPoints[0]);
+        
+        // Smooth middle points using 3-point average
+        for (int i = 1; i < rawPoints.Count - 1; i++)
+        {
+            Vector3 prev = rawPoints[i - 1];
+            Vector3 current = rawPoints[i];
+            Vector3 next = rawPoints[i + 1];
+            
+            // Average of previous, current, and next point
+            Vector3 smoothPoint = (prev + current + next) / 3f;
+            smoothed.Add(smoothPoint);
+        }
+        
+        // Keep last point as-is
+        smoothed.Add(rawPoints[rawPoints.Count - 1]);
+        
+        return smoothed;
     }
     
     /// <summary>
