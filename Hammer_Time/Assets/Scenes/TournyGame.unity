@@ -49736,6 +49736,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: evWeight
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: evVerboseLogging
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: useEVOptimization
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: closeThreatDistance
       value: 1
       objectReference: {fileID: 0}
