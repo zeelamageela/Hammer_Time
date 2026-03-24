@@ -504,16 +504,19 @@ public class Rock_Flick : MonoBehaviour
                                     $"\nRange: {minVel:F1}-{maxVel:F1} m/s\n" +
                                     $"Pullback: {springDistance:F3}m";
             
+            // FIXED: Use rock's actual Rigidbody2D position
+            Vector3 rockPosition = (Vector3)rb.position;
+            
             // Show callout that FOLLOWS the rock
             TextCalloutManager.Instance.ShowCallout(
-                transform.position + Vector3.up * 0.5f,
+                rockPosition + Vector3.up * 0.5f,  // Use actual rock position
                 feedbackMessage,
                 followTarget: true,
                 target: transform,
                 duration: 6f
             );
             
-            Debug.Log($"[Rock_Flick] Normal shot feedback: {feedbackMessage.Replace("\n", " | ")}");
+            Debug.Log($"[Rock_Flick] Normal shot feedback at {rockPosition}: {feedbackMessage.Replace("\n", " | ")}");
         }
         
         // CRITICAL: Disable spring FIRST to prevent it from interfering!

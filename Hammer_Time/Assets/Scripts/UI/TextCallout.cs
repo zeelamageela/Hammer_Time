@@ -17,12 +17,14 @@ public class TextCallout : MonoBehaviour
 
     // Animation state
     private Coroutine animationCoroutine;
+    private Coroutine slideUpCoroutine; // NEW: For slide-up animation
     private bool isFollowingTarget = false;
     private Transform followTarget = null;
     private Vector3 startWorldPosition;
     private Vector3 currentWorldPosition; // Track current position for stacking
     private Vector3 finalWorldPosition;   // Track final position (after full animation)
     private Vector3 targetWorldOffset;
+    private float accumulatedSlideOffset = 0f; // NEW: Track total slide-up offset
 
     // Animation parameters (set during Initialize)
     private float duration = 2f;
@@ -90,6 +92,7 @@ public class TextCallout : MonoBehaviour
         // Set position parameters
         this.startWorldPosition = startPosition;
         this.currentWorldPosition = startPosition;
+        this.accumulatedSlideOffset = 0f; // Reset slide offset
         this.isFollowingTarget = followTarget;
         this.followTarget = target;
         this.targetWorldOffset = Vector3.zero;
@@ -165,15 +168,15 @@ public class TextCallout : MonoBehaviour
             float easedT = phase1T * phase1T * phase1T * phase1T; // Quartic for ULTRA snap
             float currentHeight = 0.66f * easedT; // 0 ? 66%
             
-            // Calculate current world position
+            // Calculate current world position WITH SLIDE OFFSET
             Vector3 currentWorldPos;
             if (isFollowingTarget && followTarget != null)
             {
-                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * floatDistance * currentHeight);
+                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * (floatDistance * currentHeight + accumulatedSlideOffset));
             }
             else
             {
-                currentWorldPos = startLocalPos + (Vector3.up * floatDistance * currentHeight);
+                currentWorldPos = startLocalPos + (Vector3.up * (floatDistance * currentHeight + accumulatedSlideOffset));
             }
             
             currentWorldPosition = currentWorldPos; // Update tracked position
@@ -195,15 +198,15 @@ public class TextCallout : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             
-            // Stay at 66% height, fully visible
+            // Stay at 66% height, fully visible WITH SLIDE OFFSET
             Vector3 currentWorldPos;
             if (isFollowingTarget && followTarget != null)
             {
-                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * floatDistance * 0.66f);
+                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * (floatDistance * 0.66f + accumulatedSlideOffset));
             }
             else
             {
-                currentWorldPos = startLocalPos + (Vector3.up * floatDistance * 0.66f);
+                currentWorldPos = startLocalPos + (Vector3.up * (floatDistance * 0.66f + accumulatedSlideOffset));
             }
             
             currentWorldPosition = currentWorldPos; // Update tracked position
@@ -230,15 +233,15 @@ public class TextCallout : MonoBehaviour
             float easedT = 1f - (1f - phase3T) * (1f - phase3T); // Quad ease-out for gentle float
             float currentHeight = 0.66f + (0.34f * easedT); // 66% ? 100%
             
-            // Calculate current world position
+            // Calculate current world position WITH SLIDE OFFSET
             Vector3 currentWorldPos;
             if (isFollowingTarget && followTarget != null)
             {
-                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * floatDistance * currentHeight);
+                currentWorldPos = followTarget.position + targetWorldOffset + (Vector3.up * (floatDistance * currentHeight + accumulatedSlideOffset));
             }
             else
             {
-                currentWorldPos = startLocalPos + (Vector3.up * floatDistance * currentHeight);
+                currentWorldPos = startLocalPos + (Vector3.up * (floatDistance * currentHeight + accumulatedSlideOffset));
             }
             
             currentWorldPosition = currentWorldPos; // Update tracked position
@@ -374,4 +377,41 @@ public class TextCallout : MonoBehaviour
     {
         return isFollowingTarget && followTarget == target;
     }
+    
+    /// <summary>
+    /// Slide this callout upward by the specified world units
+    /// Called when a new callout appears below this one
+    /// </summary>
+    public void SlideUp(float worldUnits, float duration)
+    {
+        // Add to accumulated offset (stacks multiple slides)
+        accumulatedSlideOffset += worldUnits;
+        
+        if (debugLogging)
+        {
+            Debug.Log($"[TextCallout] Slide up by {worldUnits} world units (= {worldUnits * 100f} in scale). Total offset: {accumulatedSlideOffset}");
+        }
+        
+        // Start slide animation if not already running
+        if (slideUpCoroutine != null)
+        {
+            StopCoroutine(slideUpCoroutine);
+        }
+        
+        slideUpCoroutine = StartCoroutine(AnimateSlideUp(worldUnits, duration));
+    }
+    
+    /// <summary>
+    /// Animate a smooth slide upward
+    /// </summary>
+    private IEnumerator AnimateSlideUp(float distance, float duration)
+    {
+        // The accumulated offset is already updated, animation just makes it smooth
+        // No additional code needed - the main animation loop will use accumulatedSlideOffset
+        yield return new WaitForSeconds(duration);
+        slideUpCoroutine = null;
+    }
+    
+    private bool debugLogging = false; // Set to true if you want per-callout logs
 }
+

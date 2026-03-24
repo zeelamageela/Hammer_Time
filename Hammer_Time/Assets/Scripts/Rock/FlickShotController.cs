@@ -440,17 +440,17 @@ public class FlickShotController : MonoBehaviour
         // Initialize speed slider
         InitializeSpeedSlider();
         
-        // CRITICAL: Start shooter animation control!
-        if (shooterAnim != null)
-        {
-            shooterAnim.StartSwipeControl();
-            isShooterAnimControlActive = true;
-            Debug.Log("[FlickShot] Shooter animation control STARTED - player drives animation!");
-        }
-        else
-        {
-            Debug.LogWarning("[FlickShot] No ShooterAnim found - animation control disabled");
-        }
+        // DISABLED: Shooter animation control removed
+        // if (shooterAnim != null)
+        // {
+        //     shooterAnim.StartSwipeControl();
+        //     isShooterAnimControlActive = true;
+        //     Debug.Log("[FlickShot] Shooter animation control STARTED - player drives animation!");
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("[FlickShot] No ShooterAnim found - animation control disabled");
+        // }
         
         Debug.Log($"[FlickShot] Phase 2: POWER started - Drag from Y={powerDragStartY} to Y={powerDragTargetY} for speed!");
         Debug.Log($"[FlickShot] Using aim direction: angle={aimAngle:F1}°, direction={aimDirection}");
@@ -521,12 +521,12 @@ public class FlickShotController : MonoBehaviour
                 }
             }
             
-            // CRITICAL: Update shooter animation with swipe progress!
-            if (isShooterAnimControlActive && shooterAnim != null)
-            {
-                float swipeProgress = CalculateSwipeProgress(mouseWorldPos.y);
-                shooterAnim.SetSwipeProgress(swipeProgress);
-            }
+            // DISABLED: Shooter animation control removed
+            // if (isShooterAnimControlActive && shooterAnim != null)
+            // {
+            //     float swipeProgress = CalculateSwipeProgress(mouseWorldPos.y);
+            //     shooterAnim.SetSwipeProgress(swipeProgress);
+            // }
         }
         
         // Add cursor position to trail with smoothing (reduce jitter)
@@ -568,21 +568,22 @@ public class FlickShotController : MonoBehaviour
             float currentY = Mathf.Clamp(mouseWorldPos.y, powerDragTargetY, powerDragStartY);
             float dragDistance = Mathf.Abs(currentY - powerDragStartY);
             
-            // Check if shooter animation is at valid release point
-            if (isShooterAnimControlActive && shooterAnim != null)
-            {
-                if (!shooterAnim.CanRelease())
-                {
-                    Debug.LogWarning($"[FlickShot] Release too early! Progress: {shooterAnim.GetSwipeProgress():F2}, need >= {shooterAnim.releaseThreshold:F2}");
-                    ShowCallout(transform.position, "Release too early!\nSwipe further down", followTarget: false, duration: 2f);
-                    
-                    // Reset for another try
-                    isPowerDragging = false;
-                    return;
-                }
-                
-                Debug.Log($"[FlickShot] Valid release at progress: {shooterAnim.GetSwipeProgress():F2}");
-            }
+            // DISABLED: Shooter animation control removed
+            // if (isShooterAnimControlActive && shooterAnim != null)
+            // {
+            //     if (!shooterAnim.CanRelease())
+            //     {
+            //         Debug.LogWarning($"[FlickShot] Release too early! Progress: {shooterAnim.GetSwipeProgress():F2}, need >= {shooterAnim.releaseThreshold:F2}");
+            //         ShowCallout(transform.position, "Release too early!", followTarget: false, duration: 2f);
+            //         ShowCallout(transform.position, "Swipe further down", followTarget: false, duration: 2f);
+            //         
+            //         // Reset for another try
+            //         isPowerDragging = false;
+            //         return;
+            //     }
+            //     
+            //     Debug.Log($"[FlickShot] Valid release at progress: {shooterAnim.GetSwipeProgress():F2}");
+            // }
             
             ReleaseFlickShot(dragTime, dragDistance);
         }
@@ -617,97 +618,156 @@ public class FlickShotController : MonoBehaviour
     /// </summary>
     private float CalculatePredictedStopPosition(float initialVelocity)
     {
+        Debug.Log($"[FlickShot Prediction] ======== PREDICTION START ========");
+        Debug.Log($"[FlickShot Prediction] Initial velocity: {initialVelocity:F2} m/s");
+        Debug.Log($"[FlickShot Prediction] Aim direction: {aimDirection}, angle: {aimAngle:F1}°");
+        
         // Use TrajectorySimulator to get REAL predicted stop position
         if (trajLine != null)
         {
+            Debug.Log($"[FlickShot Prediction] trajLine found: {trajLine.GetType().Name}");
+            
             // Get TrajectorySimulator from TrajectoryLine
             System.Type trajType = trajLine.GetType();
-            System.Reflection.FieldInfo simulatorField = trajType.GetField("simulator", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            // FIXED: Use correct field name "trajectorySimulator" not "simulator"
+            System.Reflection.FieldInfo simulatorField = trajType.GetField("trajectorySimulator", 
+                System.Reflection.BindingFlags.NonPublic | 
+                System.Reflection.BindingFlags.Instance);
             
             if (simulatorField != null)
             {
+                Debug.Log("[FlickShot Prediction] Found 'trajectorySimulator' field (private)!");
                 object simulator = simulatorField.GetValue(trajLine);
                 if (simulator != null)
                 {
-                    // Simulate trajectory with calculated velocity
-                    Vector2 startPos = new Vector2(0f, -25f); // Launcher position
-                    Vector2 testVelocity = aimDirection * initialVelocity;
-                    
-                    // CRITICAL: Get turn direction from Rock_Force RIGHT NOW (not at initialization)
-                    bool isInTurn = false;
-                    Rock_Force rockForce = GetComponent<Rock_Force>();
-                    if (rockForce != null)
-                    {
-                        System.Type forceType = rockForce.GetType();
-                        System.Reflection.FieldInfo flipAxisField = forceType.GetField("flipAxis", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                        if (flipAxisField != null)
-                        {
-                            isInTurn = (bool)flipAxisField.GetValue(rockForce);
-                            Debug.Log($"[FlickShot Prediction] Rock turn direction: {(isInTurn ? "IN-TURN" : "OUT-TURN")}");
-                        }
-                        else
-                        {
-                            Debug.LogWarning("[FlickShot Prediction] Could not find flipAxis field in Rock_Force!");
-                        }
-                    }
-                    
-                    // Call SimulateTrajectory on the simulator
-                    System.Type simType = simulator.GetType();
-                    System.Reflection.MethodInfo simMethod = simType.GetMethod("SimulateTrajectory");
-                    
-                    if (simMethod != null)
-                    {
-                        // Parameters: startPos, velocity, isInTurn, maxPoints, rocksInPlay, forPlayerPreview
-                        // FIXED: More maxPoints (300 vs 200) for longer shots, forPlayerPreview=true
-                        object[] parameters = new object[] { startPos, testVelocity, isInTurn, 300, null, true };
-                        object result = simMethod.Invoke(simulator, parameters);
-                        
-                        if (result is List<Vector2> trajectory && trajectory.Count > 0)
-                        {
-                            Vector2 finalPos = trajectory[trajectory.Count - 1];
-                            
-                            // DETAILED LOGGING for debugging
-                            Debug.Log($"[FlickShot Prediction] TrajectorySimulator result:");
-                            Debug.Log($"  Velocity: {initialVelocity:F1} m/s, Direction: {aimDirection}, Angle: {aimAngle:F1}°");
-                            Debug.Log($"  Turn: {(isInTurn ? "IN" : "OUT")}, Points simulated: {trajectory.Count}");
-                            Debug.Log($"  Predicted stop: Y = {finalPos.y:F2}");
-                            
-                            return finalPos.y;
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"[FlickShot Prediction] SimulateTrajectory returned invalid result: {result?.GetType().Name ?? "null"}");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogWarning("[FlickShot Prediction] Could not find SimulateTrajectory method!");
-                    }
+                    Debug.Log($"[FlickShot Prediction] Simulator is NOT null: {simulator.GetType().Name}");
+                    return SimulatePrediction(simulator, initialVelocity);
                 }
                 else
                 {
-                    Debug.LogWarning("[FlickShot Prediction] Simulator object is null!");
+                    Debug.LogError("[FlickShot Prediction] Simulator field found but VALUE is null!");
                 }
             }
             else
             {
-                Debug.LogWarning("[FlickShot Prediction] Could not find simulator field!");
+                Debug.LogError("[FlickShot Prediction] Could not find 'trajectorySimulator' field!");
+                Debug.LogError("[FlickShot Prediction] Check if field name has changed in TrajectoryLine!");
+                ListAllMembers(trajType);
             }
         }
         else
         {
-            Debug.LogWarning("[FlickShot Prediction] trajLine is null!");
+            Debug.LogError("[FlickShot Prediction] trajLine is NULL!");
         }
         
-        // Fallback: Use simple physics estimate
-        Debug.LogWarning("[FlickShot Prediction] TrajectorySimulator not available - using fallback formula");
+        // Fallback
+        return FallbackPrediction(initialVelocity);
+    }
+    
+    /// <summary>
+    /// Debug helper: List all fields and properties on TrajectoryLine
+    /// </summary>
+    private void ListAllMembers(System.Type type)
+    {
+        Debug.Log($"[FlickShot Prediction] === Fields in {type.Name} ===");
+        foreach (var field in type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+        {
+            Debug.Log($"  Field: {field.Name} ({field.FieldType.Name})");
+        }
+        
+        Debug.Log($"[FlickShot Prediction] === Properties in {type.Name} ===");
+        foreach (var prop in type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+        {
+            Debug.Log($"  Property: {prop.Name} ({prop.PropertyType.Name})");
+        }
+    }
+    
+    /// <summary>
+    /// Run trajectory simulation with given simulator
+    /// </summary>
+    private float SimulatePrediction(object simulator, float initialVelocity)
+    {
+        if (simulator == null)
+        {
+            Debug.LogError("[FlickShot Prediction] SIMULATOR IS NULL - TrajectoryLine.simulator field exists but value is null!");
+            Debug.LogError("[FlickShot Prediction] This means TrajectoryLine hasn't initialized its simulator yet.");
+            return FallbackPrediction(initialVelocity);
+        }
+        
+        Debug.Log($"[FlickShot Prediction] Simulator found and NOT null: {simulator.GetType().Name}");
+        
+        // Simulate trajectory with calculated velocity
+        Vector2 startPos = new Vector2(0f, -25f); // Launcher position
+        Vector2 testVelocity = aimDirection * initialVelocity;
+        
+        // CRITICAL: Get turn direction from Rock_Force RIGHT NOW (not at initialization)
+        bool isInTurn = false;
+        Rock_Force rockForce = GetComponent<Rock_Force>();
+        if (rockForce != null)
+        {
+            System.Type forceType = rockForce.GetType();
+            System.Reflection.FieldInfo flipAxisField = forceType.GetField("flipAxis", 
+                System.Reflection.BindingFlags.Public | 
+                System.Reflection.BindingFlags.NonPublic | 
+                System.Reflection.BindingFlags.Instance);
+            if (flipAxisField != null)
+            {
+                isInTurn = (bool)flipAxisField.GetValue(rockForce);
+            }
+        }
+        
+        // Call SimulateTrajectory on the simulator
+        System.Type simType = simulator.GetType();
+        System.Reflection.MethodInfo simMethod = simType.GetMethod("SimulateTrajectory");
+        
+        if (simMethod != null)
+        {
+            // Parameters: startPos, velocity, isInTurn, maxPoints, rocksInPlay, forPlayerPreview
+            // CRITICAL: Use forPlayerPreview=FALSE for flick shot - we want ACTUAL stop position WITHOUT sweeping!
+            object[] parameters = new object[] { startPos, testVelocity, isInTurn, 300, null, false };
+            
+            // CRITICAL FIX: Invoke on INSTANCE (simulator), not TYPE (simType)!
+            object result = simMethod.Invoke(simulator, parameters);
+            
+            if (result is List<Vector2> trajectory && trajectory.Count > 0)
+            {
+                Vector2 finalPos = trajectory[trajectory.Count - 1];
+                
+                Debug.Log($"[FlickShot Prediction] *** TrajectorySimulator SUCCESS! ***");
+                Debug.Log($"  Velocity: {initialVelocity:F1} m/s, Direction: {aimDirection}, Angle: {aimAngle:F1}°");
+                Debug.Log($"  Turn: {(isInTurn ? "IN" : "OUT")}, Points simulated: {trajectory.Count}");
+                Debug.Log($"  Predicted UNSWEPT stop: Y = {finalPos.y:F2}");
+                
+                return finalPos.y;
+            }
+            else
+            {
+                Debug.LogWarning($"[FlickShot Prediction] SimulateTrajectory returned invalid result: {result?.GetType().Name ?? "null"}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[FlickShot Prediction] Could not find SimulateTrajectory method!");
+        }
+        
+        // Fallback
+        return FallbackPrediction(initialVelocity);
+    }
+    
+    /// <summary>
+    /// Fallback prediction using simple physics
+    /// </summary>
+    private float FallbackPrediction(float initialVelocity)
+    {
+        Debug.LogWarning("[FlickShot Prediction] Using fallback formula - TrajectorySimulator not available!");
         float hogLineY = -16f;
         float frictionFactor = 1.8f;
         float estimatedDistance = (initialVelocity * initialVelocity) / (2f * frictionFactor);
         float predictedStopY = hogLineY + estimatedDistance;
         predictedStopY = Mathf.Clamp(predictedStopY, -16f, 15f);
         
-        Debug.Log($"[FlickShot Prediction] Using fallback formula - velocity: {initialVelocity:F1} m/s ? predicted Y: {predictedStopY:F1}");
+        Debug.Log($"[FlickShot Prediction] Fallback formula: velocity={initialVelocity:F1} m/s ? predicted Y={predictedStopY:F1}");
         return predictedStopY;
     }
     
@@ -1153,13 +1213,13 @@ public class FlickShotController : MonoBehaviour
         currentPhase = FlickShotPhase.Released;
         isPowerDragging = false;
         
-        // Complete shooter animation release
-        if (isShooterAnimControlActive && shooterAnim != null)
-        {
-            shooterAnim.CompleteRelease();
-            isShooterAnimControlActive = false;
-            Debug.Log("[FlickShot] Shooter animation released - natural follow-through!");
-        }
+        // DISABLED: Shooter animation control removed
+        // if (isShooterAnimControlActive && shooterAnim != null)
+        // {
+        //     shooterAnim.CompleteRelease();
+        //     isShooterAnimControlActive = false;
+        //     Debug.Log("[FlickShot] Shooter animation released - natural follow-through!");
+        // }
         
         // Calculate final speed
         CalculateSpeedBand(dragTime, dragDistance);
@@ -1167,6 +1227,9 @@ public class FlickShotController : MonoBehaviour
         float predictedStopY = CalculatePredictedStopPosition(targetSpeed);
         
         Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Speed: {calculatedSpeed:F2}, Band: {speedBand}");
+        Debug.Log($"[FlickShot] *** CYAN LINE PREDICTION: Y = {predictedStopY:F2} ***");
+        Debug.Log($"[FlickShot] *** TARGET VELOCITY: {targetSpeed:F2} m/s ***");
+        Debug.Log($"[FlickShot] *** AIM DIRECTION: {aimDirection}, ANGLE: {aimAngle:F1}° ***");
         
         // Show predicted stop line (CYAN horizontal line at predicted Y)
         if (predictedStopLine != null)
@@ -1179,10 +1242,10 @@ public class FlickShotController : MonoBehaviour
             predictedStopLine.SetPosition(1, rightPoint);
             predictedStopLine.enabled = true;
             
-            Debug.Log($"[FlickShot] Predicted stop line shown at Y={predictedStopY:F1}");
+            Debug.Log($"[FlickShot] *** CYAN LINE DRAWN AT Y={predictedStopY:F2} (Watch where rock actually stops!) ***");
         }
         
-        // Show detailed speed callout that FOLLOWS the rock
+        // Show detailed speed callout that FOLLOWS the rock - USING STACKING!
         if (showSpeedFeedback)
         {
             // Get velocity range from TrajectoryLine
@@ -1201,43 +1264,39 @@ public class FlickShotController : MonoBehaviour
             }
             
             // Calculate what "raw" input would have been (before quantization)
-            // Reverse the forgiveness factor application to get pre-quantized speed
             float rawNormalizedSpeed = Mathf.Lerp(calculatedSpeed, 0.5f, forgivenessFactor - 1f);
-            
-            // Convert back to drag time to show what player "actually" did
             float rawDragTime = minDragTime + ((1f - rawNormalizedSpeed) * (maxDragTime - minDragTime));
             float rawSpeed = Mathf.Lerp(minVel, maxVel, rawNormalizedSpeed);
-            
-            // Calculate the correction amount
             float correctionAmount = targetSpeed - rawSpeed;
-            string correctionText = "";
-            if (Mathf.Abs(correctionAmount) > 0.01f)
-            {
-                correctionText = correctionAmount > 0 ? 
-                    $"\n(+{correctionAmount:F3} m/s adjusted)" : 
-                    $"\n({correctionAmount:F3} m/s adjusted)";
-            }
             
-            // Build comprehensive feedback message
-            string speedMessage = GetSpeedFeedbackMessage();
-            string fullMessage = $"{speedMessage}\n" +
-                                $"{targetSpeed:F3} m/s" +
-                                correctionText +
-                                $"\n\nRange: {minVel:F1}-{maxVel:F1} m/s\n" +
-                                $"Your Input: {dragTime:F3}s";
-            
-            // Try to show callout using TextCalloutManager directly
+            // STACKED CALLOUTS - each piece of info gets its own callout!
             if (TextCalloutManager.Instance != null)
             {
-                // Show callout that FOLLOWS the rock as it travels!
-                TextCalloutManager.Instance.ShowCallout(
-                    transform.position + Vector3.up * 0.5f,  // Start 0.5 units above rock
-                    fullMessage, 
-                    followTarget: true,  // Follow the rock!
-                    target: transform,   // Attach to rock transform
-                    duration: 6f // Longer duration for more info
-                );
-                Debug.Log($"[FlickShot] *** DETAILED SPEED CALLOUT: {fullMessage.Replace("\n", " | ")} ***");
+                Vector3 rockPosition = rb != null ? (Vector3)rb.position : transform.position;
+                
+                // Callout 1: Speed feedback message (Perfect!/Too Fast/etc.)
+                string speedMessage = GetSpeedFeedbackMessage();
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, speedMessage);
+                
+                // Callout 2: Actual velocity
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s");
+                
+                // Callout 3: Adjustment (if any)
+                if (Mathf.Abs(correctionAmount) > 0.01f)
+                {
+                    string adjustmentText = correctionAmount > 0 ? 
+                        $"+{correctionAmount:F2} m/s" : 
+                        $"{correctionAmount:F2} m/s";
+                    TextCalloutManager.Instance.ShowRockCallout(gameObject, adjustmentText);
+                }
+                
+                // Callout 4: Predicted stop
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Stop: Y={predictedStopY:F1}");
+                
+                // Callout 5: Input time
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Time: {dragTime:F2}s");
+                
+                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s | Predicted Y={predictedStopY:F1} | Time={dragTime:F2}s ***");
             }
             else
             {
@@ -1259,7 +1318,7 @@ public class FlickShotController : MonoBehaviour
         
         // Calculate and apply velocity
         Vector2 finalVelocity = aimDirection * targetSpeed;
-        Debug.Log($"[FlickShot] Final velocity: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}°");
+        Debug.Log($"[FlickShot] *** ACTUAL VELOCITY APPLIED: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}° ***");
         
         ApplyFlickShotVelocity(finalVelocity);
         
@@ -1270,6 +1329,61 @@ public class FlickShotController : MonoBehaviour
         
         // Hide speed slider
         CleanupSpeedSlider();
+        
+        // Start coroutine to monitor actual stop position
+        StartCoroutine(MonitorActualStopPosition(predictedStopY));
+    }
+    
+    /// <summary>
+    /// Monitor where rock actually stops and compare to prediction
+    /// </summary>
+    private IEnumerator MonitorActualStopPosition(float predictedY)
+    {
+        // Wait for rock to stop moving
+        float stoppedTime = 0f;
+        Vector2 lastPos = rb.position;
+        
+        while (stoppedTime < 0.5f) // Rock must be stopped for 0.5s
+        {
+            yield return new WaitForSeconds(0.1f);
+            
+            float distMoved = Vector2.Distance(rb.position, lastPos);
+            
+            if (distMoved < 0.01f && rb.linearVelocity.magnitude < 0.1f)
+            {
+                stoppedTime += 0.1f;
+            }
+            else
+            {
+                stoppedTime = 0f;
+            }
+            
+            lastPos = rb.position;
+        }
+        
+        // Rock has stopped!
+        float actualY = rb.position.y;
+        float error = actualY - predictedY;
+        float errorPercent = Mathf.Abs(error / (predictedY + 25f)) * 100f; // Percent of ice length
+        
+        Debug.Log($"[FlickShot] ========================================");
+        Debug.Log($"[FlickShot] *** PREDICTION ACCURACY REPORT ***");
+        Debug.Log($"[FlickShot] Predicted Y: {predictedY:F2}");
+        Debug.Log($"[FlickShot] Actual Y: {actualY:F2}");
+        Debug.Log($"[FlickShot] Error: {error:F2} meters ({(error > 0 ? "too short" : "too long")})");
+        Debug.Log($"[FlickShot] Error %: {errorPercent:F1}% of ice length");
+        Debug.Log($"[FlickShot] ========================================");
+        
+        // Show error callout as STACKED messages
+        if (TextCalloutManager.Instance != null && Mathf.Abs(error) > 0.5f)
+        {
+            // Callout 1: Error label
+            TextCalloutManager.Instance.ShowRockCallout(gameObject, "Prediction Error:");
+            
+            // Callout 2: Error amount with direction
+            string errorText = $"{Mathf.Abs(error):F2}m {(error > 0 ? "short" : "long")}";
+            TextCalloutManager.Instance.ShowRockCallout(gameObject, errorText);
+        }
     }
     
     /// <summary>

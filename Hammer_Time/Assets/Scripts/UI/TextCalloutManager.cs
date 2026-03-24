@@ -49,8 +49,8 @@ public class TextCalloutManager : MonoBehaviour
     [Tooltip("Parent transform for spawned callouts (usually Canvas)")]
     public Transform calloutParent;
 
-    [Tooltip("If no parent specified, create callouts at this offset from target")]
-    public Vector3 defaultWorldOffset = new Vector3(0f, 0.5f, 0f);
+    [Tooltip("Offset from rock position (Y=0.1 means 10 units above rock in world space)")]
+    public Vector3 defaultWorldOffset = new Vector3(0f, 0.1f, 0f); // 10 units above rock!
 
     [Header("Pool Settings")]
     [Tooltip("Pre-instantiate this many callouts for performance")]
@@ -70,21 +70,24 @@ public class TextCalloutManager : MonoBehaviour
     [Tooltip("How long the callout stays visible")]
     public float defaultDuration = 2f;
 
-    [Tooltip("How far the callout floats upward (reduced for tighter animation closer to target)")]
-    public float defaultFloatDistance = 0.6f; // Was 1f, now 0.6f (40% reduction for tighter feel)
+    [Tooltip("How far the callout floats upward")]
+    public float defaultFloatDistance = 0.6f;
 
     [Tooltip("Fade out over this duration at the end")]
     public float defaultFadeDuration = 0.5f;
 
     [Header("Stacking Settings")]
-    [Tooltip("Minimum distance between callouts to avoid overlap (ultra-minimal - barely visible gap)")]
-    public float stackSpacing = 0.01f; // Was 0.05f, now 0.01m - ULTRA-TIGHT!
+    [Tooltip("Vertical spacing between callouts in world units (0.35 = 35 units in your scale)")]
+    public float stackSpacingWorldUnits = 0.35f; // 35 units in world space
     
     [Tooltip("Maximum range to check for nearby callouts")]
     public float stackDetectionRange = 1.5f;
     
     [Tooltip("Enable debug visualization for stacking")]
-    public bool debugStacking = false;
+    public bool debugStacking = true; // Turn on for tuning
+    
+    [Tooltip("Duration for existing callouts to slide up when new one appears")]
+    public float slideUpDuration = 0.2f;
 
     // Object pool
     private Queue<TextCallout> calloutPool = new Queue<TextCallout>();
@@ -244,11 +247,11 @@ public class TextCalloutManager : MonoBehaviour
     
     /// <summary>
     /// Get an adjusted position that avoids overlapping with existing callouts
-    /// Accounts for full animation range (not just current position)
+    /// NEW: Uses actual UI rect heights + triggers slide-up animation on existing callouts
     /// </summary>
     private Vector3 GetStackedPosition(Vector3 originalPosition, Transform target)
     {
-        // Find all nearby callouts
+        // Find all nearby callouts that should stack
         List<TextCallout> nearbyCallouts = new List<TextCallout>();
         
         foreach (TextCallout activeCallout in activeCallouts)
@@ -280,27 +283,20 @@ public class TextCalloutManager : MonoBehaviour
         if (nearbyCallouts.Count == 0)
             return originalPosition;
         
-        // Find the highest occupied Y position among nearby callouts
-        // CRITICAL FIX: Account for FINAL animation height, not just current position!
-        float highestY = originalPosition.y;
+        // TRIGGER SLIDE-UP on all nearby callouts before calculating new position
+        // Each callout slides up by the stack spacing (e.g., 0.35 world units = 35 units)
         foreach (TextCallout nearby in nearbyCallouts)
         {
-            // Get the FINAL Y position (after full animation completes)
-            float calloutFinalY = nearby.GetFinalPosition().y;
-            if (calloutFinalY > highestY)
-                highestY = calloutFinalY;
+            nearby.SlideUp(stackSpacingWorldUnits, slideUpDuration);
         }
-        
-        // Stack above the highest final position
-        Vector3 stackedPosition = originalPosition;
-        stackedPosition.y = highestY + stackSpacing;
         
         if (debugStacking)
         {
-            Debug.Log($"[TextCalloutManager] Stacking: Found {nearbyCallouts.Count} nearby callouts, highest final Y: {highestY:F2}, new Y: {stackedPosition.y:F2}");
+            Debug.Log($"[TextCalloutManager] Triggered slide-up on {nearbyCallouts.Count} callouts by {stackSpacingWorldUnits} world units (= {stackSpacingWorldUnits * 100f} units in your scale)");
         }
         
-        return stackedPosition;
+        // New callout starts at original position (existing ones will slide up above it)
+        return originalPosition;
     }
 
     /// <summary>
@@ -332,6 +328,7 @@ public class TextCalloutManager : MonoBehaviour
 
     /// <summary>
     /// Quick callout for rock objects (common use case)
+    /// FIXED: Uses Rigidbody2D position for accuracy during physics simulation
     /// </summary>
     public TextCallout ShowRockCallout(GameObject rock, string text)
     {
@@ -341,10 +338,23 @@ public class TextCalloutManager : MonoBehaviour
             return null;
         }
 
+        // CRITICAL: Use Rigidbody2D position if available for accurate physics-based positioning
+        Vector3 rockPosition;
+        Rigidbody2D rb = rock.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rockPosition = (Vector3)rb.position + defaultWorldOffset;
+        }
+        else
+        {
+            rockPosition = rock.transform.position + defaultWorldOffset;
+        }
+
         return ShowCallout(
-            target: rock.transform,
+            targetPosition: rockPosition,
             text: text,
-            followTarget: true
+            followTarget: true,
+            target: rock.transform
         );
     }
 
