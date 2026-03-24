@@ -1245,6 +1245,9 @@ public class FlickShotController : MonoBehaviour
             Debug.Log($"[FlickShot] *** CYAN LINE DRAWN AT Y={predictedStopY:F2} (Watch where rock actually stops!) ***");
         }
         
+        // ?? FIX: Hide cyan line after short delay (matches trajectory line behavior)
+        StartCoroutine(HidePredictionLineAfterDelay(0.5f));
+        
         // Show detailed speed callout that FOLLOWS the rock - USING STACKING!
         if (showSpeedFeedback)
         {
@@ -1399,6 +1402,15 @@ public class FlickShotController : MonoBehaviour
             swipePoints.Clear();
             Debug.Log("[FlickShot] Swipe trail hidden");
         }
+    }
+    
+    /// <summary>
+    /// ?? FIX: Hide cyan prediction line after delay (syncs with trajectory line)
+    /// </summary>
+    private IEnumerator HidePredictionLineAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        HidePredictionLine();
     }
     
     /// <summary>
@@ -1745,5 +1757,18 @@ public class FlickShotController : MonoBehaviour
         // Reset phase
         currentPhase = FlickShotPhase.Inactive;
         isPowerDragging = false;
+    }
+    
+    /// <summary>
+    /// ?? FIX: Hide cyan prediction line when shot is released
+    /// Called from ReleaseFlickShot() to sync with trajectory line visibility
+    /// </summary>
+    private void HidePredictionLine()
+    {
+        if (predictedStopLine != null)
+        {
+            predictedStopLine.enabled = false;
+            Debug.Log("[FlickShot] ?? Cyan prediction line hidden when shot released");
+        }
     }
 }

@@ -17,6 +17,7 @@ public class AI_Strategy : MonoBehaviour
     Rigidbody2D rockRB;
     
     private EVEvaluationSystem evSystem;
+    private MultiShotPlanner multiShotPlanner;
 
     public Transform cenGuard;
     public Transform tCenGuard;
@@ -83,6 +84,13 @@ public class AI_Strategy : MonoBehaviour
     
     [Tooltip("Show detailed EV logs")]
     public bool evVerboseLogging = false;
+    
+    [Header("Multi-Shot Planning (NEW!)")]
+    [Tooltip("Enable strategic 2-3 shot planning")]
+    public bool useMultiShotPlanning = true;
+    
+    [Tooltip("Show detailed planning logs")]
+    public bool planningVerboseLogging = false;
 
     private void Update()
     {
@@ -103,6 +111,13 @@ public class AI_Strategy : MonoBehaviour
         evSystem.verboseLogging = evVerboseLogging;
         
         Debug.Log($"[AI_Strategy] EV System initialized (Enabled: {useEVOptimization}, Weight: {evWeight:F2})");
+        
+        // Initialize Multi-Shot Planner
+        multiShotPlanner = new MultiShotPlanner(gm);
+        multiShotPlanner.enableMultiShotPlanning = useMultiShotPlanning;
+        multiShotPlanner.verboseLogging = planningVerboseLogging;
+        
+        Debug.Log($"[AI_Strategy] Multi-Shot Planner initialized (Enabled: {useMultiShotPlanning})");
     }
     
     public void SimpleAIShoot(int rockCurrent)
@@ -301,6 +316,58 @@ public class AI_Strategy : MonoBehaviour
     #region INTENT-BASED SHOT SELECTION METHODS
     
     /// <summary>
+    /// 🎯 NEW: Multi-Shot Planning System
+    /// Try to execute current step of strategic plan
+    /// Returns true if plan is being followed, false if plan invalid/unavailable
+    /// </summary>
+    private bool TryExecutePlannedShot(int rockCurrent, string phase)
+    {
+        if (!useMultiShotPlanning) return false;
+        if (multiShotPlanner == null) return false;
+        
+        // Get or create strategic plan
+        bool hasHammer = (rockCurrent % 2 != 0);
+        EndPlan plan = multiShotPlanner.GetPlan(rockCurrent, activeTeamName, hasHammer, activeTeamScore, oppTeamScore);
+        
+        if (plan == null || !plan.isValid)
+        {
+            if (planningVerboseLogging)
+            {
+                Debug.Log($"[MultiShot] No valid plan for rock {rockCurrent} - using single-shot logic");
+            }
+            return false;
+        }
+        
+        // Execute current step of plan
+        ShotIntent plannedIntent = plan.GetCurrentIntent();
+        int targetRock = plan.GetCurrentTargetRock();
+        Vector2 targetPos = plan.GetCurrentTargetPosition();
+        
+        Debug.Log($"[MultiShot] Executing plan '{plan.strategyName}' step {plan.currentStep + 1}/{plan.plannedIntents.Count}: {plannedIntent}");
+        
+        // Build shot context from plan
+        ShotContext context = new ShotContext(plannedIntent, targetRock);
+        
+        // Inherit settings from plan
+        context.idealFinalPosition = targetPos;
+        context.acceptRisk = (plannedIntent == ShotIntent.RemoveThreat || plannedIntent == ShotIntent.Desperation);
+        
+        // Apply EV evaluation if enabled
+        if (evSystem != null && useEVOptimization)
+        {
+            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+        }
+        
+        // Execute the shot
+        aiTarg.ExecuteIntent(context, rockCurrent);
+        
+        // Advance plan for next shot
+        multiShotPlanner.AdvancePlan();
+        
+        return true;
+    }
+    
+    /// <summary>
     /// ?? PROOF-OF-CONCEPT: Intent-based shot selection for ConservativeSteal
     /// This demonstrates the NEW architecture - simple, clear, smart!
     /// </summary>
@@ -309,6 +376,16 @@ public class AI_Strategy : MonoBehaviour
         Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;
         
         Debug.Log($"[IntentBased] ConservativeSteal - {phase} phase");
+        
+        // 🎯 STEP 1: Check if we have a multi-shot plan to follow
+        if (TryExecutePlannedShot(rockCurrent, phase))
+        {
+            Debug.Log("[ConservativeSteal] ✅ Following multi-shot strategic plan!");
+            return true;
+        }
+        
+        // STEP 2: No plan - use single-shot intent logic
+        Debug.Log("[ConservativeSteal] No plan - using single-shot intent logic");
         
         // PHASE 1: Identify the situation
         int threatRock = FindBiggestThreat(activeTeamName);
@@ -608,6 +685,13 @@ public class AI_Strategy : MonoBehaviour
     {
         Debug.Log($"[IntentBased] AggressiveHammer - {phase} phase");
         
+        // 🎯 Check if we have a multi-shot plan to follow
+        if (TryExecutePlannedShot(rockCurrent, phase))
+        {
+            Debug.Log("[AggressiveHammer] ✅ Following multi-shot strategic plan!");
+            return true;
+        }
+        
         int threatRock = FindBiggestThreat(activeTeamName);
         int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
         int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
@@ -873,6 +957,13 @@ public class AI_Strategy : MonoBehaviour
     {
         Debug.Log($"[IntentBased] ScoreTwoOrBlank - {phase} phase");
         
+        // 🎯 Check if we have a multi-shot plan to follow
+        if (TryExecutePlannedShot(rockCurrent, phase))
+        {
+            Debug.Log("[ScoreTwoOrBlank] ✅ Following multi-shot strategic plan!");
+            return true;
+        }
+        
         int threatRock = FindBiggestThreat(activeTeamName);
         int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
         
@@ -1068,6 +1159,13 @@ public class AI_Strategy : MonoBehaviour
     private bool TryIntentBasedShot_AggressiveNotHammer(int rockCurrent, string phase)
     {
         Debug.Log($"[IntentBased] AggressiveNotHammer - {phase} phase");
+        
+        // 🎯 Check if we have a multi-shot plan to follow
+        if (TryExecutePlannedShot(rockCurrent, phase))
+        {
+            Debug.Log("[AggressiveNotHammer] ✅ Following multi-shot strategic plan!");
+            return true;
+        }
         
         int threatRock = FindBiggestThreat(activeTeamName);
         int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
@@ -1274,6 +1372,13 @@ public class AI_Strategy : MonoBehaviour
     private bool TryIntentBasedShot_StealOrBlank(int rockCurrent, string phase)
     {
         Debug.Log($"[IntentBased] StealOrBlank - {phase} phase");
+        
+        // 🎯 Check if we have a multi-shot plan to follow
+        if (TryExecutePlannedShot(rockCurrent, phase))
+        {
+            Debug.Log("[StealOrBlank] ✅ Following multi-shot strategic plan!");
+            return true;
+        }
         
         int threatRock = FindBiggestThreat(activeTeamName);
         int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
