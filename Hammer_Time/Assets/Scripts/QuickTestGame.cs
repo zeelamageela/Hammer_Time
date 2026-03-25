@@ -29,7 +29,7 @@ public class QuickTestGame : MonoBehaviour
     public KeyCode runbackPracticeKey = KeyCode.E;
     
     [Tooltip("Number of rocks per team")]
-    public int rocksPerTeam = 4;
+    public int rocksPerTeam = 8;
     
     [Tooltip("Number of ends to play")]
     public int endsToPlay = 1;
@@ -178,7 +178,7 @@ public class QuickTestGame : MonoBehaviour
         }
         else
             gsp.redHammer = false;
-        Debug.Log($"[QuickTestGame] ?? LOCKED: Score 6-2, YELLOW has hammer");
+        Debug.Log($"[QuickTestGame] ?? LOCKED: Score {gsp.redScore}-{gsp.yellowScore}, {(gsp.redHammer ? "RED" : "YELLOW")} has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];
@@ -286,7 +286,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 85/85"); //(NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 85/100"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");

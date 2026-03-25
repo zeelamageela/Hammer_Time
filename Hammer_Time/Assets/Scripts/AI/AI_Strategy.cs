@@ -18,6 +18,23 @@ public class AI_Strategy : MonoBehaviour
     
     private EVEvaluationSystem evSystem;
     private MultiShotPlanner multiShotPlanner;
+    
+    // ✅ PHASE 2: Cached house analysis (calculated once per turn)
+    private HouseAnalysis _cachedHouseAnalysis = null;
+    
+    /// <summary>
+    /// House state analysis - cached for performance
+    /// Calculated ONCE per turn, reused across all strategy decisions
+    /// </summary>
+    private class HouseAnalysis
+    {
+        public int myRocksInHouse;
+        public int oppRocksInHouse;
+        public float myBestDistance = 999f;
+        public float oppBestDistance = 999f;
+        public bool amWinningHouse;
+        public int threatRock = -1;
+    }
 
     public Transform cenGuard;
     public Transform tCenGuard;
@@ -254,6 +271,68 @@ public class AI_Strategy : MonoBehaviour
     }
     
     /// <summary>
+    /// ✅ NEW: Should we remove threat instead of placing guard?
+    /// CRITICAL: Threat removal should be prioritized over guard placement
+    /// </summary>
+    private bool ShouldRemoveThreat(HouseAnalysis house, string phase, bool hasHammer)
+    {
+        // NO THREATS - don't remove
+        if (house.threatRock < 0) return false;
+        
+        // CRITICAL: Opponent has shot rock AND we're losing house
+        if (!house.amWinningHouse && house.oppRocksInHouse >= 1)
+        {
+            return true; // ALWAYS remove when losing
+        }
+        
+        // EARLY PHASE: Remove opponent rocks immediately (don't let them build)
+        if (phase == "early")
+        {
+            return true; // Aggressive early - clear everything
+        }
+        
+        // MIDDLE PHASE: Remove if they have 2+ rocks (multi-point threat)
+        if (phase == "middle" && house.oppRocksInHouse >= 2)
+        {
+            return true; // Don't let them build big end
+        }
+        
+        // LATE PHASE WITHOUT HAMMER: Remove to steal
+        if (phase == "late" && !hasHammer && house.oppRocksInHouse >= 1)
+        {
+            return true; // Need to clear to steal
+        }
+        
+        // LATE PHASE WITH HAMMER: Remove if multiple threats
+        if (phase == "late" && hasHammer && house.oppRocksInHouse >= 2)
+        {
+            return true; // Clear for big end
+        }
+        
+        // DEFAULT: Threat exists but not urgent
+        return false;
+    }
+    
+    /// <summary>
+    /// ✅ NEW: Get shooter skills to determine shot style
+    /// High finesse → fancy shots (freeze, tick, runback)
+    /// High weight → power shots (takeout, heavy draw)
+    /// </summary>
+    private (float finesse, float weight, float aim) GetShooterSkillProfile(int rockCurrent)
+    {
+        CharacterStats shooter = GetShooterStats(rockCurrent);
+        
+        if (shooter == null)
+            return (50f, 50f, 50f); // Default balanced
+        
+        return (
+            shooter.finesseAccuracy.GetValue(),
+            shooter.weightAccuracy.GetValue(),
+            shooter.aimAccuracy.GetValue()
+        );
+    }
+    
+    /// <summary>
     /// Count how many rocks a team has in the house (any scoring rocks)
     /// </summary>
     private int CountRocksInHouse(string teamName)
@@ -267,6 +346,71 @@ public class AI_Strategy : MonoBehaviour
             }
         }
         return count;
+    }
+    
+    /// <summary>
+    /// ✅ PHASE 2: Get cached house analysis (calculated once per turn)
+    /// This replaces 5+ duplicate calculations of rock counts and distances
+    /// </summary>
+    private HouseAnalysis GetHouseAnalysis()
+    {
+        // Return cached if already calculated this turn
+        if (_cachedHouseAnalysis != null) return _cachedHouseAnalysis;
+        
+        var analysis = new HouseAnalysis
+        {
+            threatRock = FindBiggestThreat(activeTeamName)
+        };
+        
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        foreach (var rock in gm.houseList)
+        {
+            bool isMine = (rock.rockInfo.teamName == activeTeamName);
+            float dist = Vector2.Distance(rock.rock.transform.position, button);
+            
+            if (isMine)
+            {
+                analysis.myRocksInHouse++;
+                if (dist < analysis.myBestDistance)
+                    analysis.myBestDistance = dist;
+            }
+            else
+            {
+                analysis.oppRocksInHouse++;
+                if (dist < analysis.oppBestDistance)
+                    analysis.oppBestDistance = dist;
+            }
+        }
+        
+        analysis.amWinningHouse = (analysis.myBestDistance < analysis.oppBestDistance);
+        
+        _cachedHouseAnalysis = analysis;
+        return analysis;
+    }
+    
+    /// <summary>
+    /// ✅ PHASE 1: Execute shot with automatic EV evaluation
+    /// Eliminates 25+ duplicate blocks of the same 5 lines
+    /// </summary>
+    private bool ExecuteShot(ShotIntent intent, int targetRock, int rockCurrent, 
+                            bool acceptRisk = false, bool mustScore = false, Vector2? targetPos = null)
+    {
+        ShotContext context = new ShotContext(intent, targetRock);
+        context.acceptRisk = acceptRisk;
+        context.mustScore = mustScore;
+        
+        if (targetPos.HasValue)
+            context.idealFinalPosition = targetPos.Value;
+        
+        // Automatic EV evaluation (if enabled)
+        if (evSystem != null && useEVOptimization)
+        {
+            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+        }
+        
+        aiTarg.ExecuteIntent(context, rockCurrent);
+        return true;
     }
     
     /// <summary>
@@ -387,195 +531,123 @@ public class AI_Strategy : MonoBehaviour
         // STEP 2: No plan - use single-shot intent logic
         Debug.Log("[ConservativeSteal] No plan - using single-shot intent logic");
         
-        // PHASE 1: Identify the situation
-        int threatRock = FindBiggestThreat(activeTeamName);
-        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
-        bool hasGuards = (gm.gList.Count > 0);
+        // ✅ REFACTORED: Use cached house analysis and ExecuteShot helper
+        var house = GetHouseAnalysis();
+        bool hasHammer = (rockCurrent % 2 != 0);
         
-        // PHASE 2: Decide intent based on situation
-        ShotContext context;
+        // Get shooter skills for decision making
+        var (finesse, weight, aim) = GetShooterSkillProfile(rockCurrent);
+        bool isHighFinesse = (finesse >= 70f);
+        bool isHighPower = (weight >= 70f && aim >= 70f);
         
         // EARLY PHASE: Setup game
         if (phase == "early")
         {
-            if (threatRock >= 0)
+            // PRIORITY 1: Remove threats FIRST (don't let them build)
+            if (ShouldRemoveThreat(house, phase, hasHammer))
             {
-                // They have a rock in play - remove it
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false;
-                
-                // EV EVALUATION (optional - only if enabled!)
-                if (evSystem != null && useEVOptimization)
-                {
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                }
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
+            }
+            
+            // PRIORITY 2: Protect my rocks if I have any
+            if (house.myRocksInHouse >= 1)
+            {
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent); // Guard my rocks
+            }
+            
+            // PRIORITY 3: Clean house - setup OR aggressive draw
+            // High power teams → Draw aggressively
+            // High finesse teams → Guard + draw behind
+            if (isHighPower)
+            {
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent); // Draw to button
             }
             else
             {
-                // Guards in play, weight behind them
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                
-                // EV EVALUATION (optional)
-                if (evSystem != null && useEVOptimization)
-                {
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                }
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent); // Guard + draw next
             }
         }
         
         // MIDDLE PHASE: Build position or remove threats
         else if (phase == "middle")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Remove biggest threat
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = (myRocksInHouse > 0);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, 
+                                  acceptRisk: house.myRocksInHouse > 0);
             }
-            else if (myRocksInHouse > 1)
+            else if (house.myRocksInHouse > 1)
             {
                 // We're in good shape - protect lead
-                context = new ShotContext(ShotIntent.ProtectLead);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
             }
             else
             {
                 // Keep building
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
         // LATE PHASE: WITHOUT HAMMER - Steal or limit damage
         else if (phase == "late")
         {
-            int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
-            
+            // ✅ REFACTORED: Use cached house analysis
             // SCENARIO 1: We have NO rocks, opponent has rock(s)
-            if (myRocksInHouse == 0 && threatRock >= 0)
+            if (house.myRocksInHouse == 0 && house.threatRock >= 0)
             {
                 // Must remove threat to have ANY chance at stealing
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             
             // SCENARIO 2: We're WINNING the house
-            else if (myRocksInHouse > 0 && myRocksInHouse > oppRocksInHouse)
+            else if (house.myRocksInHouse > 0 && house.myRocksInHouse > house.oppRocksInHouse)
             {
                 // We're stealing! Protect what we have
-                if (threatRock >= 0)
+                if (house.threatRock >= 0)
                 {
                     // Threat exists - evaluate distance
                     float threatDist = Vector2.Distance(
-                        gm.rockList[threatRock].rock.transform.position,
+                        gm.rockList[house.threatRock].rock.transform.position,
                         new Vector2(0f, 6.5f)
                     );
                     
                     if (threatDist < urgentThreatDistance)
                     {
                         // Must remove it
-                        context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                        context.acceptRisk = true;
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                     }
                     else
                     {
                         // Threat is far - finesse what we have
-                        context = new ShotContext(ShotIntent.ProtectLead);
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                     }
                 }
                 else
                 {
                     // No threats - protect lead with finesse
-                    context = new ShotContext(ShotIntent.ProtectLead);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
             }
             
             // SCENARIO 3: We're TIED or LOSING the house
-            else if (myRocksInHouse > 0 && threatRock >= 0)
+            else if (house.myRocksInHouse > 0 && house.threatRock >= 0)
             {
                 // Evaluate: Can we steal by removing threat?
                 float threatDist = Vector2.Distance(
-                    gm.rockList[threatRock].rock.transform.position,
+                    gm.rockList[house.threatRock].rock.transform.position,
                     new Vector2(0f, 6.5f)
                 );
                 
                 if (threatDist < closeThreatDistance)
                 {
                     // Remove threat (might steal)
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
                 else
                 {
                     // Draw another rock (try to outscore them)
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             
@@ -583,14 +655,7 @@ public class AI_Strategy : MonoBehaviour
             else
             {
                 // No one has rocks - weight to button
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
@@ -692,94 +757,61 @@ public class AI_Strategy : MonoBehaviour
             return true;
         }
         
-        int threatRock = FindBiggestThreat(activeTeamName);
-        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
-        int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
+        // ✅ REFACTORED: Use cached house analysis
+        var house = GetHouseAnalysis();
+        bool hasHammer = (rockCurrent % 2 != 0);
         
-        ShotContext context;
+        // Get shooter skills
+        var (finesse, weight, aim) = GetShooterSkillProfile(rockCurrent);
+        bool isHighPower = (weight >= 70f && aim >= 70f);
         
-        // EARLY: Build aggressive setup
+        // EARLY: Aggressive setup with hammer
         if (phase == "early")
         {
-            if (rockCurrent < 2)
+            // PRIORITY 1: Remove threats ALWAYS (aggressive with hammer)
+            if (house.threatRock >= 0)
             {
-                // First 2 rocks - aggressive corner guards
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
-
-            if (threatRock >= 0)
+            
+            // PRIORITY 2: High power teams → Draw aggressively (no guards needed)
+            if (isHighPower)
             {
-                // Remove any opposition rock immediately
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent); // Draw to button
             }
+            
+            // PRIORITY 3: Finesse teams → Build setup (guards + draws)
             else
             {
-                // Build guards for corner game
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                // First rocks - setup for multi-point
+                if (rockCurrent < 4)
+                {
+                    return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent); // Guard
+                }
+                else
+                {
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent); // Draw behind guards
+                }
             }
         }
         
         // MIDDLE: Aggressive removal or setup multi-point end
         else if (phase == "middle")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Always remove threats when aggressive
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
-            else if (myRocksInHouse >= 1)
+            else if (house.myRocksInHouse >= 1)
             {
                 // Build on our position
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
             else
             {
                 // Keep setting up
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
             }
         }
         
@@ -792,12 +824,6 @@ public class AI_Strategy : MonoBehaviour
             if (isLastRock)
             {
                 Debug.Log("[AggressiveHammer] HAMMER LAST ROCK - SMART low-risk strategy!");
-                
-                // PHILOSOPHY: Accept force of 1 rather than risk blank on failed takeout!
-                // ONLY attempt risky takeout if:
-                // 1. Clear shot (no guards blocking)
-                // 2. Multiple opponent rocks (2+) in scoring
-                // 3. We have 2+ rocks that will remain after takeout
                 
                 // Check for guard interference
                 bool hasGuardInterference = false;
@@ -813,146 +839,73 @@ public class AI_Strategy : MonoBehaviour
                 }
                 
                 // DECISION: Risky takeout vs safe draw?
-                bool shouldAttemptTakeout = false;
+                bool shouldAttemptTakeout = (house.oppRocksInHouse >= 2 && !hasGuardInterference && house.myRocksInHouse >= 2);
                 
-                if (oppRocksInHouse >= 2 && !hasGuardInterference && myRocksInHouse >= 2)
-                {
-                    // ONLY attempt if VERY SAFE: No guards, we have 2+ backup rocks
-                    shouldAttemptTakeout = true;
-                    Debug.Log($"[HAMMER LAST ROCK] High-confidence takeout (clear shot, our rocks: {myRocksInHouse}, opponent: {oppRocksInHouse})");
-                }
-                else
-                {
-                    Debug.Log($"[HAMMER LAST ROCK] RISKY takeout avoided (guards: {hasGuardInterference}, our rocks: {myRocksInHouse}, opp: {oppRocksInHouse}) - DRAWING TO BUTTON!");
-                }
-                
-                if (shouldAttemptTakeout && threatRock >= 0)
+                if (shouldAttemptTakeout && house.threatRock >= 0)
                 {
                     // Attempt high-confidence takeout
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    context.mustScore = true;
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                 }
                 
                 // DEFAULT: SAFE DRAW TO BUTTON
-                // Accept force of 1 - MUCH better than blank end!
                 Debug.Log($"[HAMMER LAST ROCK] Drawing to button - accept force of 1, avoid blank!");
-                context = new ShotContext(ShotIntent.ScorePoints);
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
             
             // Not last rock - general late-game logic
-            if (threatRock >= 0 && activeTeamScore < oppTeamScore)
+            if (house.threatRock >= 0 && activeTeamScore < oppTeamScore)
             {
                 // Behind in game score - desperate removal
-                context = new ShotContext(ShotIntent.Desperation, threatRock);
-                context.acceptRisk = true;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.Desperation, house.threatRock, rockCurrent, acceptRisk: true);
             }
-            else if (threatRock >= 0 && oppRocksInHouse >= 2)
+            else if (house.threatRock >= 0 && house.oppRocksInHouse >= 2)
             {
                 // They're building points - evaluate removal vs scoring
-                if (myRocksInHouse > oppRocksInHouse)
+                if (house.myRocksInHouse > house.oppRocksInHouse)
                 {
                     // We're winning house - keep scoring
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
                 else
                 {
                     // They're winning house - must remove
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
             }
-            else if (myRocksInHouse == 0 && threatRock < 0)
+            else if (house.myRocksInHouse == 0 && house.threatRock < 0)
             {
                 // Clean house - weight for steal
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
-            else if (threatRock >= 0)
+            else if (house.threatRock >= 0)
             {
                 // Single threat rock - evaluate distance and position
                 float threatDist = Vector2.Distance(
-                    gm.rockList[threatRock].rock.transform.position,
+                    gm.rockList[house.threatRock].rock.transform.position,
                     new Vector2(0f, 6.5f)
                 );
                 
                 // If threat is close to button and winning, remove it
                 if (threatDist < urgentThreatDistance)
                 {
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
                 else
                 {
                     // Threat is far or we're ahead - keep scoring
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             else
             {
                 // No threats - just score!
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
         return false;
     }
     
-    /// <summary>
-    /// ?? Intent-based: ConservativeScoreTwoOrBlankHammer - Need 2 points or keep hammer
-    /// </summary>
     private bool TryIntentBasedShot_ScoreTwoOrBlank(int rockCurrent, string phase)
     {
         Debug.Log($"[IntentBased] ScoreTwoOrBlank - {phase} phase");
@@ -964,82 +917,43 @@ public class AI_Strategy : MonoBehaviour
             return true;
         }
         
-        int threatRock = FindBiggestThreat(activeTeamName);
-        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
-        
-        ShotContext context;
+        // ✅ REFACTORED: Use cached house analysis
+        var house = GetHouseAnalysis();
         
         // Strategy: Clear any threats, build multiple scoring rocks
         
         // EARLY: Remove threats immediately, build corners
         if (phase == "early")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Can't let them have anything - remove it
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else
             {
                 // Draw to corners for 2-point setup
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
         // MIDDLE: Keep clearing, spread rocks
         else if (phase == "middle")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Remove anything in our way
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
-            else if (myRocksInHouse >= 2)
+            else if (house.myRocksInHouse >= 2)
             {
                 // We have 2+ rocks - protect them!
-                context = new ShotContext(ShotIntent.ProtectLead);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
             }
             else
             {
                 // Keep building
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
@@ -1047,7 +961,6 @@ public class AI_Strategy : MonoBehaviour
         else if (phase == "late")
         {
             bool isLastRock = (rockCurrent >= 15);
-            int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
             
             // LAST ROCK LOGIC: Must score something!
             if (isLastRock)
@@ -1055,97 +968,70 @@ public class AI_Strategy : MonoBehaviour
                 Debug.Log("[ScoreTwoOrBlank] LAST ROCK - must score!");
                 
                 // Have 2+ rocks already? Add more!
-                if (myRocksInHouse >= 1)
+                if (house.myRocksInHouse >= 1)
                 {
-                    if (threatRock < 0)
+                    if (house.threatRock < 0)
                     {
-                        context = new ShotContext(ShotIntent.ScorePoints);
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                     }
                     else
                     {
                         if (gm.houseList[0].rockInfo.teamName != activeTeamName || gm.houseList[1].rockInfo.teamName != activeTeamName)
                         {
-                            context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                            context.acceptRisk = true;
-                            context.mustScore = true; // MUST score after removal
-                            aiTarg.ExecuteIntent(context, rockCurrent);
-                            return true;
+                            return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                         }
                         else
                         {
                             // We have 2+ rocks - add more to secure 2 points
-                            context = new ShotContext(ShotIntent.ScorePoints);
-                            aiTarg.ExecuteIntent(context, rockCurrent);
-                            return true;
+                            return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                         }
                     }
                 }
                 // Threats exist? Remove and try to score
-                else if (threatRock >= 0)
+                else if (house.threatRock >= 0)
                 {
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    context.mustScore = true; // MUST score after removal
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                 }
                 // Nothing good? Blank to keep hammer next end
                 else
                 {
-                    context = new ShotContext(ShotIntent.ForceBlank);
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
                 }
             }
             
             // NOT LAST ROCK: Build for 2-point end or blank
             
             // Already have 1+? Add more or remove threats!
-            if (myRocksInHouse >= 1)
+            if (house.myRocksInHouse >= 1)
             {
-                if (threatRock < 0)
+                if (house.threatRock < 0)
                 {
                     // No threats - add more rocks!
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
                 else
                 {
                     // Threat exists - finesse our lead
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    context.mustScore = true; // MUST score after removal
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                 }
             }
             // Have 0 rocks? Decide: blank or try for 2
             else
             {
-                if (threatRock >= 0)
+                if (house.threatRock >= 0)
                 {
                     // Remove threats (might blank)
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = false;
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
                 }
-                else if (oppRocksInHouse == 0)
+                else if (house.oppRocksInHouse == 0)
                 {
                     // Clean house - can still build for 2
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
                 else
                 {
                     // Can't score 2 - force blank
-                    context = new ShotContext(ShotIntent.ForceBlank);
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
                 }
             }
         }
@@ -1153,9 +1039,6 @@ public class AI_Strategy : MonoBehaviour
         return false;
     }
     
-    /// <summary>
-    /// ?? Intent-based: AggressiveNotHammer - Steal at all costs without hammer
-    /// </summary>
     private bool TryIntentBasedShot_AggressiveNotHammer(int rockCurrent, string phase)
     {
         Debug.Log($"[IntentBased] AggressiveNotHammer - {phase} phase");
@@ -1167,136 +1050,81 @@ public class AI_Strategy : MonoBehaviour
             return true;
         }
         
-        int threatRock = FindBiggestThreat(activeTeamName);
-        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
-        bool hasGuards = (gm.gList.Count > 0);
+        // ✅ REFACTORED: Use cached house analysis
+        var house = GetHouseAnalysis();
+        bool hasHammer = (rockCurrent % 2 != 0);
         
-        ShotContext context;
+        // Get shooter skills
+        var (finesse, weight, aim) = GetShooterSkillProfile(rockCurrent);
+        bool isHighFinesse = (finesse >= 70f);
 
-        // EARLY: Aggressive setup, ignore removal of early threats (they can be dealt with later)
+        // EARLY: Aggressive without hammer - steal at all costs
         if (phase == "early")
         {
-            // First rocks - aggressive centre guards to set up steal
-            context = new ShotContext(ShotIntent.CreateOpportunity);
+            // PRIORITY 1: Remove any threats immediately (can't let them build)
+            if (ShouldRemoveThreat(house, phase, hasHammer))
+            {
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+            }
             
-            // EV EVALUATION
-            if (evSystem != null && useEVOptimization)
-                context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+            // PRIORITY 2: High finesse → Setup steal (guard + draw)
+            if (isHighFinesse && rockCurrent < 4)
+            {
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent); // Guard for steal
+            }
             
-            aiTarg.ExecuteIntent(context, rockCurrent);
-            return true;
+            // PRIORITY 3: Default → Aggressive draw (try to steal immediately)
+            return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
         }
         
         // MIDDLE: Keep pressure, remove threats
         else if (phase == "middle")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
-                if (myRocksInHouse > 0)
+                if (house.myRocksInHouse > 0)
                 {
                     // Build on position
-                    context = new ShotContext(ShotIntent.CreateOpportunity);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
                 }
                 else
                 {
                     // No rocks in house - try to steal by removing threat
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = true;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
             }
             else
             {
                 // Keep setting up
-                context = new ShotContext(ShotIntent.CreateOpportunity);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
             }
         }
         
         // LATE: WITHOUT HAMMER - All-in for steal
         else if (phase == "late")
         {
-            int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
-            
             // SCENARIO 1: No rocks vs threat - desperate removal
-            if (myRocksInHouse == 0 && threatRock >= 0)
+            if (house.myRocksInHouse == 0 && house.threatRock >= 0)
             {
                 // Must remove to have ANY chance
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = true;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             
             // SCENARIO 2: We have rocks AND threats exist
-            else if (myRocksInHouse > 0 && threatRock >= 0)
+            else if (house.myRocksInHouse > 0 && house.threatRock >= 0)
             {
-                // Find best rock from each team
-                float myBestDist = 999f;
-                float theirBestDist = 999f;
-                
-                foreach (var rock in gm.houseList)
-                {
-                    float dist = Vector2.Distance(rock.rock.transform.position, new Vector2(0f, 6.5f));
-                    if (rock.rockInfo.teamName == activeTeamName && dist < myBestDist)
-                        myBestDist = dist;
-                    else if (rock.rockInfo.teamName != activeTeamName && dist < theirBestDist)
-                        theirBestDist = dist;
-                }
-                
                 // They're winning - ATTACK!
-                if (theirBestDist < myBestDist)
+                if (!house.amWinningHouse)
                 {
                     // Behind in game score? DESPERATION!
                     if (activeTeamScore <= oppTeamScore)
                     {
-                        context = new ShotContext(ShotIntent.Desperation, threatRock);
-                        context.acceptRisk = true;
-                        context.mustScore = true;
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.Desperation, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                     }
                     else
                     {
                         // Just remove threat
-                        context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                        context.acceptRisk = true;
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                     }
                 }
                 // We're winning house - BUILD LEAD!
@@ -1304,71 +1132,39 @@ public class AI_Strategy : MonoBehaviour
                 {
                     // Threat close? Remove it first
                     float threatDist = Vector2.Distance(
-                        gm.rockList[threatRock].rock.transform.position,
+                        gm.rockList[house.threatRock].rock.transform.position,
                         new Vector2(0f, 6.5f)
                     );
                     
                     if (threatDist < closeThreatDistance)
                     {
-                        context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                        context.acceptRisk = true;
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                     }
                     else
                     {
                         // Add more rocks to steal multiple
-                        context = new ShotContext(ShotIntent.ScorePoints);
-                        
-                        // EV EVALUATION
-                        if (evSystem != null && useEVOptimization)
-                            context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                        
-                        aiTarg.ExecuteIntent(context, rockCurrent);
-                        return true;
+                        return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                     }
                 }
             }
             
             // SCENARIO 3: We have rocks, NO threats - keep scoring!
-            else if (myRocksInHouse > 0)
+            else if (house.myRocksInHouse > 0)
             {
                 // We're stealing - add more!
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
             
             // SCENARIO 4: Clean house - weight for steal
             else
             {
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
         return false;
     }
     
-    /// <summary>
-    /// ?? Intent-based: ConservativeStealOrBlank - Force them to 1 or blank the end
-    /// </summary>
     private bool TryIntentBasedShot_StealOrBlank(int rockCurrent, string phase)
     {
         Debug.Log($"[IntentBased] StealOrBlank - {phase} phase");
@@ -1380,95 +1176,48 @@ public class AI_Strategy : MonoBehaviour
             return true;
         }
         
-        int threatRock = FindBiggestThreat(activeTeamName);
-        int myRocksInHouse = CountMyRocksInScoring(activeTeamName);
-        int oppRocksInHouse = gm.houseList.Count - myRocksInHouse;
-        
-        ShotContext context;
+        // ✅ REFACTORED: Use cached house analysis
+        var house = GetHouseAnalysis();
         
         // Strategy: Deny them points, steal if possible, blank acceptable
         
         // EARLY: Remove any threats, don't build unless safe
         if (phase == "early")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Remove it - can't let them build
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
-            else if (myRocksInHouse > 0)
+            else if (house.myRocksInHouse > 0)
             {
                 // We have rocks - finesse them
-                context = new ShotContext(ShotIntent.ProtectLead);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
             }
             else
             {
                 // Draw for steal attempt
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
         // MIDDLE: Keep clearing, build cautiously
         else if (phase == "middle")
         {
-            if (threatRock >= 0)
+            if (house.threatRock >= 0)
             {
                 // Remove threats
-                context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                context.acceptRisk = false;
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
-            else if (myRocksInHouse > 0)
+            else if (house.myRocksInHouse > 0)
             {
                 // Protect what we have
-                context = new ShotContext(ShotIntent.ProtectLead);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
             }
             else
             {
                 // Draw cautiously
-                context = new ShotContext(ShotIntent.ScorePoints);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
         
@@ -1478,104 +1227,53 @@ public class AI_Strategy : MonoBehaviour
             // Primary goal: Force them to 1 point OR steal OR blank
             
             // SCENARIO 1: They have 2+ rocks - DANGER!
-            if (oppRocksInHouse >= 2)
+            if (house.oppRocksInHouse >= 2)
             {
-                if (threatRock >= 0)
+                if (house.threatRock >= 0)
                 {
                     // Remove their best rock (try to reduce to 1 point)
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = false;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
                 }
                 else
                 {
                     // No clear removal - force blank
-                    context = new ShotContext(ShotIntent.ForceBlank);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
                 }
             }
             
             // SCENARIO 2: They have 1 rock only
-            else if (oppRocksInHouse == 1)
+            else if (house.oppRocksInHouse == 1)
             {
-                if (myRocksInHouse > 0)
+                if (house.myRocksInHouse > 0)
                 {
                     // We're stealing! Protect what we have
-                    context = new ShotContext(ShotIntent.ProtectLead);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
-                else if (threatRock >= 0)
+                else if (house.threatRock >= 0)
                 {
                     // Remove their single rock (steal or blank)
-                    context = new ShotContext(ShotIntent.RemoveThreat, threatRock);
-                    context.acceptRisk = false;
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
                 }
                 else
                 {
                     // Try to steal
-                    context = new ShotContext(ShotIntent.ScorePoints);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             
             // SCENARIO 3: We're winning the house!
-            else if (myRocksInHouse > 0)
+            else if (house.myRocksInHouse > 0)
             {
                 // Stealing! Protect the steal
-                if (threatRock >= 0)
+                if (house.threatRock >= 0)
                 {
                     // Small threat exists - finesse instead of removing
-                    context = new ShotContext(ShotIntent.ProtectLead);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
                 else
                 {
                     // No threats - finesse the steal
-                    context = new ShotContext(ShotIntent.ProtectLead);
-                    
-                    // EV EVALUATION
-                    if (evSystem != null && useEVOptimization)
-                        context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                    
-                    aiTarg.ExecuteIntent(context, rockCurrent);
-                    return true;
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
             }
             
@@ -1583,14 +1281,7 @@ public class AI_Strategy : MonoBehaviour
             else
             {
                 // Blank is fine - keeps hammer for them but no damage
-                context = new ShotContext(ShotIntent.ForceBlank);
-                
-                // EV EVALUATION
-                if (evSystem != null && useEVOptimization)
-                    context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                
-                aiTarg.ExecuteIntent(context, rockCurrent);
-                return true;
+                return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
             }
         }
         
@@ -1603,6 +1294,9 @@ public class AI_Strategy : MonoBehaviour
 
     public void OnShot(int rockCurrent)
     {
+        // ✅ PHASE 2: Clear analysis cache at start of each turn
+        _cachedHouseAnalysis = null;
+        
         if (gm.houseList.Count != 0)
         {
             closestRock = gm.houseList[0].rock;

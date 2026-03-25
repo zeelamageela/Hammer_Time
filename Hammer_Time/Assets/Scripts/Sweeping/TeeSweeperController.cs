@@ -100,6 +100,11 @@ public class TeeSweeperController : MonoBehaviour
             UpdateRotation();
             CheckRockStatus();
             
+            // ? NEW: INTELLIGENT AUTO-SWEEPING LOGIC
+            // Tee line sweeping is ALWAYS automated (no player control over sweep/whoa decisions)
+            // Players can tap to ATTACH sweeper, but sweeping decisions are AI-controlled
+            EvaluateAndSweep();
+            
             if (isSweeping)
             {
                 sweepTimeRemaining -= Time.deltaTime;
@@ -111,6 +116,141 @@ public class TeeSweeperController : MonoBehaviour
         }
         
         DetectRockTaps();
+    }
+    
+    
+    /// <summary>
+    /// ? NEW: INTELLIGENT TEE LINE SWEEPING LOGIC
+    /// 
+    /// Automatically decides whether to SWEEP or WHOA based on:
+    /// 1. Rock ownership (friendly vs opponent)
+    /// 2. Rock trajectory (moving toward vs away from scoring)
+    /// 
+    /// LOGIC:
+    /// - FRIENDLY rock moving TOWARD scoring ? SWEEP (help it reach)
+    /// - FRIENDLY rock moving AWAY from scoring ? WHOA (don't make it worse)
+    /// - OPPONENT rock moving TOWARD scoring ? WHOA (don't help them score)
+    /// - OPPONENT rock moving AWAY from scoring ? SWEEP (push it further away!)
+    /// 
+    /// This is FULLY AUTOMATED - players have no control over sweep/whoa decisions.
+    /// Players can only TAP to attach sweeper to a rock.
+    /// </summary>
+    void EvaluateAndSweep()
+    {
+        if (attachedRockRB == null || attachedRockGO == null) return;
+        
+        // Get rock info to determine ownership
+        Component rockInfo = attachedRockGO.GetComponent("Rock_Info");
+        if (rockInfo == null) return;
+        
+        FieldInfo teamNameField = rockInfo.GetType().GetField("teamName");
+        if (teamNameField == null) return;
+        
+        string rockTeamName = teamNameField.GetValue(rockInfo) as string;
+        
+        // Get current team name to determine if rock is friendly or opponent
+        Component gspComp = FindFirstObjectByType(Type.GetType("GameSettingsPersist")) as Component;
+        if (gspComp == null) return;
+        
+        FieldInfo redTeamNameField = gspComp.GetType().GetField("redTeamName");
+        FieldInfo redHammerField = gm.GetType().GetField("redHammer");
+        FieldInfo rockCurrentField = gm.GetType().GetField("rockCurrent");
+        
+        if (redTeamNameField == null || redHammerField == null || rockCurrentField == null) return;
+        
+        string redTeamName = redTeamNameField.GetValue(gspComp) as string;
+        bool redHammer = (bool)redHammerField.GetValue(gm);
+        int rockCurrent = (int)rockCurrentField.GetValue(gm);
+        
+        // Determine current team (team that just threw this rock)
+        bool isRedTeamTurn = (rockCurrent % 2 == 0) ? redHammer : !redHammer;
+        string currentTeamName = isRedTeamTurn ? redTeamName : ((MonoBehaviour)gm).GetType().GetField("yellowTeamName")?.GetValue(gm) as string;
+        
+        // Is this rock friendly (our team) or opponent?
+        bool isFriendlyRock = (rockTeamName == currentTeamName);
+        
+        // ========================================
+        // TRAJECTORY ANALYSIS: Moving toward or away from scoring?
+        // ========================================
+        Vector2 button = new Vector2(0f, 6.5f);
+        Vector2 currentPos = attachedRockGO.transform.position;
+        Vector2 velocity = attachedRockRB.linearVelocity;
+        
+        // Calculate direction to button from current position
+        Vector2 toButton = button - currentPos;
+        float distToButton = toButton.magnitude;
+        
+        // Dot product: positive = moving toward button, negative = moving away
+        float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
+        
+        bool movingTowardButton = dotProduct > 0.3f; // At least ~70° toward button (cos 70° ? 0.3)
+        bool inScoringZone = (currentPos.y >= 5.0f && currentPos.y <= 9.0f); // In the house
+        
+        // Check if rock is moving AWAY from scoring (backward or out sideways)
+        bool movingBackward = velocity.y < 0.1f; // Moving backward or barely forward
+        bool movingOutSideways = !inScoringZone && Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y); // Outside house, moving more sideways than forward
+        
+        bool movingAwayFromScoring = movingBackward || movingOutSideways;
+        bool movingTowardScoring = movingTowardButton && inScoringZone && !movingAwayFromScoring;
+        
+        // ========================================
+        // DECISION LOGIC: SWEEP or WHOA?
+        // ========================================
+        bool shouldSweep = false;
+        string reason = "";
+        
+        if (isFriendlyRock)
+        {
+            // FRIENDLY ROCK LOGIC
+            if (movingTowardScoring)
+            {
+                shouldSweep = true;
+                reason = $"FRIENDLY rock moving TOWARD scoring (dot={dotProduct:F2}, Y={currentPos.y:F2}) ? SWEEP!";
+            }
+            else
+            {
+                shouldSweep = false;
+                reason = $"FRIENDLY rock moving AWAY from scoring (dot={dotProduct:F2}, Y vel={velocity.y:F2}) ? WHOA!";
+            }
+        }
+        else
+        {
+            // OPPONENT ROCK LOGIC (OPPOSITE!)
+            if (movingAwayFromScoring || !movingTowardButton)
+            {
+                shouldSweep = true;
+                reason = $"OPPONENT rock moving AWAY from scoring (dot={dotProduct:F2}) ? SWEEP! (push it further!)";
+            }
+            else
+            {
+                shouldSweep = false;
+                reason = $"OPPONENT rock moving TOWARD scoring (dot={dotProduct:F2}, Y={currentPos.y:F2}) ? WHOA! (don't help them!)";
+            }
+        }
+        
+        // ========================================
+        // APPLY DECISION: Start or stop sweeping
+        // ========================================
+        if (shouldSweep && !isSweeping)
+        {
+            // Should be sweeping but isn't - start sweeping!
+            Debug.Log($"[TeeSweeperController] AUTO-SWEEP: {reason}");
+            StartSweeping();
+        }
+        else if (!shouldSweep && isSweeping)
+        {
+            // Should NOT be sweeping but is - stop sweeping!
+            Debug.Log($"[TeeSweeperController] AUTO-WHOA: {reason}");
+            StopSweeping(false);
+        }
+        
+        // Log evaluation every 0.5 seconds to avoid spam
+        if (Time.frameCount % 30 == 0) // Every ~0.5s at 60fps
+        {
+            Debug.Log($"[TeeSweeperController] Evaluation: {(isFriendlyRock ? "FRIENDLY" : "OPPONENT")} rock, " +
+                      $"MovingToward={movingTowardScoring}, MovingAway={movingAwayFromScoring}, " +
+                      $"Sweeping={isSweeping}, Decision: {reason}");
+        }
     }
     
     void DetectRockTaps()

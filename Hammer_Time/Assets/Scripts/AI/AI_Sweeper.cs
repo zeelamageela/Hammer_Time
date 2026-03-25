@@ -1512,83 +1512,112 @@ public class AI_Sweeper : MonoBehaviour
                 // ========================================
                 // PHILOSOPHY: After collision, only sweep if it helps SCORING
                 // 
-                // TWO SCENARIOS where post-collision sweeping is VALUABLE:
-                // 1. Rock moving toward BUTTON (0, 6.5) → sweep to maximize distance
+                // CRITICAL CHECK #1: Is rock moving AWAY from scoring position?
+                // If YES → IMMEDIATE WHOA (sweeping makes it worse!)
+                // 
+                // VALUABLE SCENARIOS (only sweep if rock passes all checks):
+                // 1. Rock moving toward BUTTON (0, 6.5) AND in house → sweep to maximize distance
                 // 2. Rock in SCORING POSITION behind guard → sweep to protect/extend
                 // 
                 // ALL OTHER scenarios → WHOA (collision physics is chaotic, sweeping is useless)
                 
                 Vector2 button = new Vector2(0f, 6.5f);
                 Vector2 velocity = rockRB.linearVelocity;
+                bool inScoringZone = (currentPos.y >= 5.0f && currentPos.y <= 9.0f); // In the house
                 
-                // SCENARIO 1: Check if rock is moving TOWARD button
-                // Calculate direction to button from current position
-                Vector2 toButton = button - currentPos;
-                float distToButton = toButton.magnitude;
+                // ✅ CRITICAL CHECK: Is rock moving AWAY from house/scoring position?
+                // Rock moving backward (negative Y velocity) OR moving out sideways = WHOA!
+                bool movingBackward = velocity.y < 0.1f; // Moving backward or barely forward
+                bool movingOutSideways = !inScoringZone && Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y); // Outside house, moving more sideways than forward
                 
-                // Dot product: positive = moving toward button, negative = moving away
-                float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
-                
-                bool movingTowardButton = dotProduct > 0.5f; // At least 60° toward button (cos 60° = 0.5)
-                bool closeToButton = distToButton < 2.0f; // Within 2 units of button
-                
-                if (movingTowardButton && closeToButton)
+                if (movingBackward)
                 {
-                    // SWEEP: Rock is heading toward button and close - maximize distance!
-                    desiredState = "Weight";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) → SWEEP for distance!");
+                    // IMMEDIATE WHOA: Rock is moving BACKWARD (away from house)
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving BACKWARD (Y velocity={velocity.y:F2}) → WHOA! Stop sweeping!");
+                }
+                else if (movingOutSideways)
+                {
+                    // IMMEDIATE WHOA: Rock is moving OUT sideways (not toward house)
+                    desiredState = "None";
+                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving OUT sideways (X={velocity.x:F2}, Y={velocity.y:F2}) → WHOA! Stop sweeping!");
                 }
                 else
                 {
-                    // SCENARIO 2: Check if rock is in scoring position behind guard
-                    bool behindGuard = false;
-                    bool inScoringZone = (currentPos.y >= 5.0f && currentPos.y <= 9.0f); // In the house
+                    // Rock is still moving forward - check if it's in a scoring trajectory
                     
-                    if (inScoringZone)
-                    {
-                        // Check if there's a guard protecting this position
-                        foreach (var guard in gm.gList)
-                        {
-                            if (guard.lastTransform == null) continue;
-                            
-                            Vector2 guardPos = guard.lastTransform.position;
-                            
-                            // Check if guard is IN FRONT (lower Y) and ALIGNED (similar X)
-                            bool guardInFront = guardPos.y < currentPos.y;
-                            float lateralAlignment = Mathf.Abs(guardPos.x - currentPos.x);
-                            bool guardAligned = lateralAlignment < 0.6f; // Within 60cm laterally
-                            
-                            if (guardInFront && guardAligned)
-                            {
-                                behindGuard = true;
-                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}), protected scoring position!");
-                                break;
-                            }
-                        }
-                    }
+                    // SCENARIO 1: Check if rock is moving TOWARD button AND in scoring zone
+                    // Calculate direction to button from current position
+                    Vector2 toButton = button - currentPos;
+                    float distToButton = toButton.magnitude;
                     
-                    if (behindGuard && inScoringZone)
+                    // Dot product: positive = moving toward button, negative = moving away
+                    float dotProduct = Vector2.Dot(velocity.normalized, toButton.normalized);
+                    
+                    bool movingTowardButton = dotProduct > 0.5f; // At least 60° toward button (cos 60° = 0.5)
+                    bool closeToButton = distToButton < 2.0f; // Within 2 units of button
+                    
+                    if (movingTowardButton && closeToButton && inScoringZone)
                     {
-                        // SWEEP: Rock is in protected scoring position - extend it!
+                        // SWEEP: Rock is heading toward button, close, AND in scoring zone - maximize distance!
                         desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) → SWEEP to extend!");
+                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button IN HOUSE (dot={dotProduct:F2}, dist={distToButton:F2}, Y={currentPos.y:F2}) → SWEEP for distance!");
                     }
                     else
                     {
-                        // WHOA: Neither moving toward button nor in scoring position
-                        desiredState = "None";
+                        // SCENARIO 2: Check if rock is in scoring position behind guard
+                        bool behindGuard = false;
                         
-                        if (!movingTowardButton && !closeToButton)
+                        if (inScoringZone)
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}, dist={distToButton:F2}) → WHOA");
+                            // Check if there's a guard protecting this position
+                            foreach (var guard in gm.gList)
+                            {
+                                if (guard.lastTransform == null) continue;
+                                
+                                Vector2 guardPos = guard.lastTransform.position;
+                                
+                                // Check if guard is IN FRONT (lower Y) and ALIGNED (similar X)
+                                bool guardInFront = guardPos.y < currentPos.y;
+                                float lateralAlignment = Mathf.Abs(guardPos.x - currentPos.x);
+                                bool guardAligned = lateralAlignment < 0.6f; // Within 60cm laterally
+                                
+                                if (guardInFront && guardAligned)
+                                {
+                                    behindGuard = true;
+                                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}), protected scoring position!");
+                                    break;
+                                }
+                            }
                         }
-                        else if (!inScoringZone)
+                        
+                        if (behindGuard && inScoringZone)
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) → WHOA");
+                            // SWEEP: Rock is in protected scoring position - extend it!
+                            desiredState = "Weight";
+                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) → SWEEP to extend!");
                         }
                         else
                         {
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) → WHOA");
+                            // WHOA: Neither moving toward button in house nor in scoring position
+                            desiredState = "None";
+                            
+                            if (!movingTowardButton)
+                            {
+                                Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}) → WHOA");
+                            }
+                            else if (!closeToButton)
+                            {
+                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Too far from button (dist={distToButton:F2}) → WHOA");
+                            }
+                            else if (!inScoringZone)
+                            {
+                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) → WHOA");
+                            }
+                            else
+                            {
+                                Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) → WHOA");
+                            }
                         }
                     }
                 }

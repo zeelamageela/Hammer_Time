@@ -146,7 +146,7 @@ public class CameraManager : MonoBehaviour
             vcam_ft.Damping = new Vector3(1.2f, 1.2f, 1.2f);
         }
 
-        vcam_ft.TargetOffset = new Vector3(0f, -10f, 0f); // Offset to keep rock centered
+        vcam_ft.TargetOffset = new Vector3(0f, -12.5f, 0f); // Offset to keep rock centered
 
         vcam.Target.TrackingTarget = launcher;
         

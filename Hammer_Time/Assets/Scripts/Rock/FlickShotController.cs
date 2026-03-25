@@ -1245,8 +1245,9 @@ public class FlickShotController : MonoBehaviour
             Debug.Log($"[FlickShot] *** CYAN LINE DRAWN AT Y={predictedStopY:F2} (Watch where rock actually stops!) ***");
         }
         
-        // ?? FIX: Hide cyan line after short delay (matches trajectory line behavior)
-        StartCoroutine(HidePredictionLineAfterDelay(0.5f));
+        // ?? FIX: Hide cyan line when rock STOPS moving (not after 0.5s)
+        // This way you can see the prediction vs actual result!
+        StartCoroutine(HidePredictionLineWhenRockStops());
         
         // Show detailed speed callout that FOLLOWS the rock - USING STACKING!
         if (showSpeedFeedback)
@@ -1410,6 +1411,44 @@ public class FlickShotController : MonoBehaviour
     private IEnumerator HidePredictionLineAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        HidePredictionLine();
+    }
+    
+    /// <summary>
+    /// ?? NEW: Hide cyan line when rock STOPS moving (not on timer)
+    /// This lets you compare prediction vs actual stop position!
+    /// </summary>
+    private IEnumerator HidePredictionLineWhenRockStops()
+    {
+        if (rb == null) yield break;
+        
+        // Wait for rock to start moving first
+        yield return new WaitForSeconds(0.5f);
+        
+        // Now wait for rock to stop (velocity < 0.1 m/s for 0.5 seconds)
+        float stoppedTime = 0f;
+        Vector2 lastPos = rb.position;
+        
+        while (stoppedTime < 0.5f)
+        {
+            yield return new WaitForSeconds(0.1f);
+            
+            float distMoved = Vector2.Distance(rb.position, lastPos);
+            
+            if (distMoved < 0.01f && rb.linearVelocity.magnitude < 0.1f)
+            {
+                stoppedTime += 0.1f;
+            }
+            else
+            {
+                stoppedTime = 0f; // Reset if rock is still moving
+            }
+            
+            lastPos = rb.position;
+        }
+        
+        // Rock has stopped - now hide the cyan line
+        Debug.Log($"[FlickShot] ?? Rock stopped at Y={rb.position.y:F2} - hiding cyan prediction line");
         HidePredictionLine();
     }
     

@@ -279,6 +279,103 @@ public static class StrategyPatternLibrary
     
     #endregion
     
+    #region FREEZE SHOT STRATEGIES
+    
+    /// <summary>
+    /// ?? Freeze-Guard-Remove: Setup future double takeout (3 shots)
+    /// Rock 1: Freeze to opponent's shot rock
+    /// Rock 2: Guard the frozen pair
+    /// Rock 3: Attempt double takeout to score 2+
+    /// </summary>
+    public static EndPlan FreezeGuardRemove_Setup(GameManager gm, string myTeam, int rockCurrent)
+    {
+        var plan = new EndPlan
+        {
+            strategyName = "Freeze-Guard-Remove (Setup Double)",
+            reasoning = "Freeze to opponent's rock, then remove both for points",
+            expectedOutcome = "Frozen rock setup for future double takeout",
+            planCreatedAtRock = rockCurrent,
+            confidence = 0.70f
+        };
+        
+        // Find opponent's best rock to freeze to
+        GameObject targetRock = FindOpponentShotRock(gm, myTeam);
+        
+        if (targetRock != null)
+        {
+            Vector2 freezePos = CalculateFreezePosition(targetRock);
+            
+            // Shot 1: FREEZE to opponent's rock
+            plan.plannedIntents.Add(ShotIntent.ProtectLead); // Reuse intent for freeze
+            plan.targetPositions.Add(freezePos);
+            plan.targetRocks.Add(targetRock.GetComponent<Rock_Info>().rockIndex);
+            
+            // Shot 2: Guard the frozen pair
+            plan.plannedIntents.Add(ShotIntent.CreateOpportunity);
+            plan.targetPositions.Add(CalculateProtectionGuardPosition(targetRock, 2.5f));
+            plan.targetRocks.Add(-1);
+            
+            // Shot 3: Attempt double takeout
+            plan.plannedIntents.Add(ShotIntent.RemoveThreat);
+            plan.targetPositions.Add(Vector2.zero);
+            plan.targetRocks.Add(targetRock.GetComponent<Rock_Info>().rockIndex);
+            
+            plan.reasoning += $" | Freezing to rock at {targetRock.transform.position}";
+        }
+        else
+        {
+            // No good freeze target - fall back to standard strategy
+            plan.confidence = 0.0f; // Invalidate plan
+        }
+        
+        return plan;
+    }
+    
+    /// <summary>
+    /// Calculate freeze position (directly in front of target rock)
+    /// </summary>
+    private static Vector2 CalculateFreezePosition(GameObject targetRock)
+    {
+        Vector2 rockPos = targetRock.transform.position;
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        // Freeze position is between button and rock, touching rock
+        Vector2 direction = (rockPos - button).normalized;
+        float rockRadius = 0.14f;
+        
+        // Position rock TOUCHING target (2 * radius apart)
+        Vector2 freezePos = rockPos - direction * (rockRadius * 2.1f); // Slightly separated
+        
+        return freezePos;
+    }
+    
+    /// <summary>
+    /// Find opponent's best rock (closest to button)
+    /// </summary>
+    private static GameObject FindOpponentShotRock(GameManager gm, string myTeam)
+    {
+        GameObject bestRock = null;
+        float bestDist = 999f;
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        foreach (var rockEntry in gm.houseList)
+        {
+            if (rockEntry.rockInfo.teamName != myTeam)
+            {
+                float dist = Vector2.Distance(rockEntry.rock.transform.position, button);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    bestRock = rockEntry.rock;
+                }
+            }
+        }
+        
+        return bestRock;
+    }
+    
+    #endregion
+    
     #region LATE GAME STRATEGIES
     
     /// <summary>
@@ -354,46 +451,34 @@ public static class StrategyPatternLibrary
     
     /// <summary>
     /// Calculate optimal guard position to protect a specific rock
-    /// Guard is placed in front of rock, blocking direct path from hog line
+    /// ? CORRECT: Guard placed in front of MY rock to block opponent takeouts
     /// </summary>
     public static Vector2 CalculateProtectionGuardPosition(GameObject protectRock, float guardDistance = 2.5f)
     {
         if (protectRock == null) 
-            return new Vector2(0f, guardDistance); // Default center guard
+            return new Vector2(0f, guardDistance);
         
         Vector2 rockPos = protectRock.transform.position;
+        Vector2 launcher = new Vector2(0f, -25f);
         
-        // Guard should be between hog line (Y ~= -16) and rock
-        // Place it at guardDistance Y position, same X as rock we're protecting
-        Vector2 guardPos = new Vector2(rockPos.x, guardDistance);
+        // ? CORRECT: Place guard on TAKEOUT LINE from launcher to MY rock
+        // This blocks opponent's most direct attack angle
+        Vector2 toRock = (rockPos - launcher).normalized;
         
-        return guardPos;
-    }
-    
-    /// <summary>
-    /// Calculate optimal guard position to block opponent's rock
-    /// Guard is placed between button and opponent's rock to make takeout difficult
-    /// </summary>
-    public static Vector2 CalculateBlockingGuardPosition(GameObject blockRock, float guardDistance = 2.5f)
-    {
-        if (blockRock == null)
-            return new Vector2(0f, guardDistance); // Default center guard
+        // Guard positioned along attack line at guardDistance Y
+        float t = (guardDistance - launcher.y) / toRock.y;
+        float guardX = launcher.x + toRock.x * t;
         
-        Vector2 rockPos = blockRock.transform.position;
-        Vector2 button = new Vector2(0f, 6.5f);
+        // Add slight perpendicular offset (15cm) to make runbacks harder
+        Vector2 perpendicular = new Vector2(-toRock.y, toRock.x); // 90° rotation
+        float offsetX = perpendicular.x * 0.15f;
         
-        // Place guard on the line between button and opponent's rock
-        // This maximizes blocking effectiveness
-        Vector2 direction = (button - rockPos).normalized;
+        guardX += offsetX;
         
-        // Guard at guardDistance Y, but shifted slightly toward opponent's rock
-        float xOffset = rockPos.x * 0.6f; // 60% of rock's X position
-        Vector2 guardPos = new Vector2(xOffset, guardDistance);
+        // Clamp to reasonable range
+        guardX = Mathf.Clamp(guardX, -1.5f, 1.5f);
         
-        // Clamp to reasonable range (don't go too far to corners)
-        guardPos.x = Mathf.Clamp(guardPos.x, -1.2f, 1.2f);
-        
-        return guardPos;
+        return new Vector2(guardX, guardDistance);
     }
     
     /// <summary>
@@ -409,7 +494,7 @@ public static class StrategyPatternLibrary
     
     /// <summary>
     /// Smart guard placement - analyzes situation and picks best guard type
-    /// This is the main entry point for intelligent guard placement
+    /// ? CORRECT: Guards are OFFENSIVE - protect MY rocks or create opportunities!
     /// </summary>
     public static Vector2 CalculateSmartGuardPosition(
         GameManager gm,
@@ -421,9 +506,7 @@ public static class StrategyPatternLibrary
         // ANALYSIS: What's in the house?
         int myRocksInHouse = 0;
         int oppRocksInHouse = 0;
-        GameObject oppBestRock = null;
         GameObject myBestRock = null;
-        float oppBestDist = 999f;
         float myBestDist = 999f;
         
         Vector2 button = new Vector2(0f, 6.5f);
@@ -442,39 +525,22 @@ public static class StrategyPatternLibrary
                     myBestRock = rockEntry.rock;
                 }
             }
-            else
-            {
-                oppRocksInHouse++;
-                if (dist < oppBestDist)
-                {
-                    oppBestDist = dist;
-                    oppBestRock = rockEntry.rock;
-                }
-            }
         }
         
-        // DECISION TREE: What type of guard do we need?
+        // ? CORRECT DECISION TREE: Guards are OFFENSIVE tools!
         
-        // SCENARIO 1: We have scoring rocks - PROTECT them!
+        // SCENARIO 1: I have rocks in house - PROTECT THEM!
+        // Guards prevent opponent from taking out my counters
         if (myRocksInHouse >= 1 && myBestRock != null)
         {
-            guardReasoning = $"Protecting our counter at X={myBestRock.transform.position.x:F1}";
+            guardReasoning = $"PROTECTING our counter at X={myBestRock.transform.position.x:F1}";
             return CalculateProtectionGuardPosition(myBestRock, 2.5f);
         }
         
-        // SCENARIO 2: Opponent has scoring rocks - BLOCK them!
-        else if (oppRocksInHouse >= 1 && oppBestRock != null)
-        {
-            guardReasoning = $"Blocking opponent's counter at X={oppBestRock.transform.position.x:F1}";
-            return CalculateBlockingGuardPosition(oppBestRock, 2.5f);
-        }
-        
-        // SCENARIO 3: Clean house - CENTER GUARD (classic setup)
-        else
-        {
-            guardReasoning = "Center guard for steal setup (clean house)";
-            return new Vector2(0f, 2.5f);
-        }
+        // SCENARIO 2: Clean house - CENTER GUARD (create opportunity)
+        // Next shot can draw behind this guard for protected counter
+        guardReasoning = "Center guard for draw setup (clean house)";
+        return new Vector2(0f, 2.5f);
     }
     
     /// <summary>

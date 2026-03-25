@@ -88,7 +88,7 @@ public class TrajectoryLine : MonoBehaviour
     
     [Tooltip("Maximum velocity (m/s) from largest pullback. Controls strongest possible shot.")]
     [Range(10.0f, 25.0f)]
-    public float maxVelocity = 13.0f;
+    public float maxVelocity = 16.0f;
     
     // Track previous values to detect changes
     private float lastIceFriction = -1f; // FIXED: Initialize to -1 to force first update
