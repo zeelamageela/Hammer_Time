@@ -100,24 +100,169 @@ public class TeeSweeperController : MonoBehaviour
             UpdateRotation();
             CheckRockStatus();
             
+            // ? NEW: Check if main sweepers stopped and tee sweeper needs to take over
+            CheckMainSweeperHandoff();
+            
             // ? NEW: INTELLIGENT AUTO-SWEEPING LOGIC
             // Tee line sweeping is ALWAYS automated (no player control over sweep/whoa decisions)
             // Players can tap to ATTACH sweeper, but sweeping decisions are AI-controlled
             EvaluateAndSweep();
             
-            if (isSweeping)
+            // ? REMOVED: endurance-based sweeping timeout
+            // Tee sweepers sweep continuously until rock stops
+            // No need to check sweepTimeRemaining
+        }
+        
+        // ? NEW: AUTOMATIC ROCK DETECTION
+        // Instead of waiting for player tap, automatically detect rocks crossing tee line
+        AutoDetectAndAttach();
+    }
+    
+    
+    
+    /// <summary>
+    /// ? NEW: CHECK IF MAIN SWEEPERS STOPPED - TEE SWEEPER TAKEOVER
+    /// 
+    /// If rock crossed tee line with main sweepers active (they continued sweeping),
+    /// but then main sweepers stop (whoa called), tee sweeper should take over!
+    /// 
+    /// This handles the handoff: Main sweepers ? Tee sweeper
+    /// </summary>
+    void CheckMainSweeperHandoff()
+    {
+        // Only check if tee sweeper is tracking but NOT visible (standby mode)
+        if (activeSweeper == null || activeSweeper.gameObject.activeInHierarchy) return;
+        
+        // Check if main sweepers are still active
+        bool mainSweepersSweeping = false;
+        
+        if (sm != null)
+        {
+            System.Type smType = sm.GetType();
+            FieldInfo sweeperLField = smType.GetField("sweeperL");
+            FieldInfo sweeperRField = smType.GetField("sweeperR");
+            
+            if (sweeperLField != null && sweeperRField != null)
             {
-                sweepTimeRemaining -= Time.deltaTime;
-                if (sweepTimeRemaining <= 0)
+                MonoBehaviour sweeperL = sweeperLField.GetValue(sm) as MonoBehaviour;
+                MonoBehaviour sweeperR = sweeperRField.GetValue(sm) as MonoBehaviour;
+                
+                // Check if either sweeper is actively sweeping
+                if (sweeperL != null && sweeperL.gameObject.activeInHierarchy)
                 {
-                    StopSweeping(false);
+                    Component sweepComp = sweeperL.GetComponent("Sweep");
+                    if (sweepComp != null)
+                    {
+                        FieldInfo sweepingField = sweepComp.GetType().GetField("isSweeping");
+                        if (sweepingField != null)
+                        {
+                            mainSweepersSweeping = (bool)sweepingField.GetValue(sweepComp);
+                        }
+                    }
+                }
+                
+                if (!mainSweepersSweeping && sweeperR != null && sweeperR.gameObject.activeInHierarchy)
+                {
+                    Component sweepComp = sweeperR.GetComponent("Sweep");
+                    if (sweepComp != null)
+                    {
+                        FieldInfo sweepingField = sweepComp.GetType().GetField("isSweeping");
+                        if (sweepingField != null)
+                        {
+                            mainSweepersSweeping = (bool)sweepingField.GetValue(sweepComp);
+                        }
+                    }
                 }
             }
         }
         
-        DetectRockTaps();
+        // Main sweepers stopped? Activate tee sweeper!
+        if (!mainSweepersSweeping)
+        {
+            Debug.Log($"[TeeSweeperController] HANDOFF: Main sweepers STOPPED - activating tee sweeper");
+            
+            // Deactivate main sweepers completely
+            if (sm != null)
+            {
+                System.Type smType = sm.GetType();
+                FieldInfo sweeperLField = smType.GetField("sweeperL");
+                FieldInfo sweeperRField = smType.GetField("sweeperR");
+                
+                if (sweeperLField != null)
+                {
+                    MonoBehaviour sweeperL = sweeperLField.GetValue(sm) as MonoBehaviour;
+                    if (sweeperL != null && sweeperL.gameObject.activeInHierarchy)
+                    {
+                        sweeperL.gameObject.SetActive(false);
+                    }
+                }
+                
+                if (sweeperRField != null)
+                {
+                    MonoBehaviour sweeperR = sweeperRField.GetValue(sm) as MonoBehaviour;
+                    if (sweeperR != null && sweeperR.gameObject.activeInHierarchy)
+                    {
+                        sweeperR.gameObject.SetActive(false);
+                    }
+                }
+            }
+            
+            // Activate tee sweeper
+            activeSweeper.gameObject.SetActive(true);
+            
+            // ? NEW: TEXT CALLOUT FOR HANDOFF
+            if (attachedRockGO != null)
+            {
+                Component rockInfo = attachedRockGO.GetComponent("Rock_Info");
+                if (rockInfo != null)
+                {
+                    FieldInfo teamNameField = rockInfo.GetType().GetField("teamName");
+                    if (teamNameField != null)
+                    {
+                        string rockTeamName = teamNameField.GetValue(rockInfo) as string;
+                        
+                        Component gspComp = FindFirstObjectByType(Type.GetType("GameSettingsPersist")) as Component;
+                        if (gspComp != null)
+                        {
+                            FieldInfo redTeamNameField = gspComp.GetType().GetField("redTeamName");
+                            if (redTeamNameField != null)
+                            {
+                                string redTeamName = redTeamNameField.GetValue(gspComp) as string;
+                                bool isRedRock = (rockTeamName == redTeamName);
+                                
+                                string sweepingTeamName = isRedRock ? "Yellow" : "Red";
+                                string calloutMessage = $"{sweepingTeamName} is sweeping behind T-Line";
+                                
+                                // Show callout
+                                Component textCalloutManager = FindFirstObjectByType(Type.GetType("TextCalloutManager")) as Component;
+                                if (textCalloutManager != null)
+                                {
+                                    Vector3 rockPos = attachedRockGO.transform.position;
+                                    Vector3 calloutPos = rockPos + new Vector3(0f, 1.0f, 0f);
+                                    
+                                    System.Type calloutType = textCalloutManager.GetType();
+                                    MethodInfo showCalloutMethod = calloutType.GetMethod("ShowCallout", 
+                                        new Type[] { typeof(Vector3), typeof(string), typeof(bool), typeof(Transform), typeof(float) });
+                                    
+                                    if (showCalloutMethod != null)
+                                    {
+                                        showCalloutMethod.Invoke(textCalloutManager, new object[] { 
+                                            calloutPos, calloutMessage, false, null, 3.0f 
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            Debug.Log($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE (handoff): {activeSweeper.name}");
+            
+            // Start sweeping with tee sweeper
+            StartSweeping();
+        }
     }
-    
     
     /// <summary>
     /// ? NEW: INTELLIGENT TEE LINE SWEEPING LOGIC
@@ -253,8 +398,73 @@ public class TeeSweeperController : MonoBehaviour
         }
     }
     
+    
+    /// <summary>
+    /// ? NEW: AUTOMATIC ROCK DETECTION AND ATTACHMENT
+    /// 
+    /// Continuously scans for rocks crossing the tee line (Y > 6.5)
+    /// Automatically attaches sweeper when eligible rock detected
+    /// NO PLAYER INPUT REQUIRED - fully automated!
+    /// </summary>
+    void AutoDetectAndAttach()
+    {
+        // If already attached to a rock, don't scan for new ones
+        if (isActive && attachedRockRB != null) return;
+        
+        // Get GameManager to access rock list
+        if (gm == null) return;
+        
+        // Access rockList via reflection
+        System.Type gmType = gm.GetType();
+        FieldInfo rockListField = gmType.GetField("rockList");
+        if (rockListField == null) return;
+        
+        var rockList = rockListField.GetValue(gm) as System.Collections.IList;
+        if (rockList == null) return;
+        
+        // Scan all rocks for one that just crossed tee line
+        foreach (var rockEntry in rockList)
+        {
+            // Get rock GameObject from rockEntry
+            System.Type entryType = rockEntry.GetType();
+            FieldInfo rockField = entryType.GetField("rock");
+            if (rockField == null) continue;
+            
+            GameObject rock = rockField.GetValue(rockEntry) as GameObject;
+            if (rock == null || !rock.activeInHierarchy) continue;
+            
+            // Check if rock is eligible for tee sweeping
+            if (IsEligibleForTeeSweep(rock))
+            {
+                // Check if rock JUST crossed tee line (Y between 6.5 and 6.8)
+                // This prevents attaching to rocks already in the house
+                float rockY = rock.transform.position.y;
+                
+                if (rockY > TEE_LINE_Y && rockY < TEE_LINE_Y + 0.3f)
+                {
+                    // Found an eligible rock that just crossed tee line!
+                    Debug.Log($"[TeeSweeperController] AUTO-ATTACH: Rock {rock.name} crossed tee line at Y={rockY:F2}");
+                    AttachToRock(rock);
+                    return; // Only attach to one rock at a time
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// LEGACY: Manual tap detection (DISABLED by default)
+    /// Kept for backward compatibility if manual control is ever needed
+    /// Set enableManualTapControl = true in Inspector to re-enable
+    /// </summary>
+    public bool enableManualTapControl = false; // DISABLED: Fully automatic now!
+    
     void DetectRockTaps()
     {
+        // ? AUTOMATIC MODE: Tap detection disabled (tee sweepers attach automatically)
+        if (!enableManualTapControl) return;
+        
+        // LEGACY CODE BELOW (only runs if enableManualTapControl = true)
+        
         // CRITICAL: Don't interfere with flick shot mode!
         // Check if flick shot mode is active using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
@@ -397,32 +607,148 @@ public class TeeSweeperController : MonoBehaviour
         attachedRockRB = rock.GetComponent<Rigidbody2D>();
         attachedRockGO = rock;
         
-        // GameObject is already active (doesn't disable anymore)
-        // Just activate the specific sweeper - THIS MAKES IT VISIBLE!
-        activeSweeper.gameObject.SetActive(true);
-        isActive = true;
+        // ? NEW: SWEEPER HANDOFF LOGIC
+        // Check if main sweepers (L/R) are currently sweeping this rock
+        bool mainSweepersSweeping = false;
         
-        Debug.Log($"[TeeSweeperController] SWEEPER NOW VISIBLE: {activeSweeper.name}");
+        if (sm != null)
+        {
+            // Check if SweeperManager has active sweeping
+            System.Type smType = sm.GetType();
+            FieldInfo sweeperLField = smType.GetField("sweeperL");
+            FieldInfo sweeperRField = smType.GetField("sweeperR");
+            
+            if (sweeperLField != null && sweeperRField != null)
+            {
+                MonoBehaviour sweeperL = sweeperLField.GetValue(sm) as MonoBehaviour;
+                MonoBehaviour sweeperR = sweeperRField.GetValue(sm) as MonoBehaviour;
+                
+                // Check if either sweeper is actively sweeping
+                if (sweeperL != null && sweeperL.gameObject.activeInHierarchy)
+                {
+                    // Check if sweeper is in "sweeping" state (has Sweep component with isSweeping flag)
+                    Component sweepComp = sweeperL.GetComponent("Sweep");
+                    if (sweepComp != null)
+                    {
+                        FieldInfo sweepingField = sweepComp.GetType().GetField("isSweeping");
+                        if (sweepingField != null)
+                        {
+                            mainSweepersSweeping = (bool)sweepingField.GetValue(sweepComp);
+                        }
+                    }
+                }
+                
+                if (!mainSweepersSweeping && sweeperR != null && sweeperR.gameObject.activeInHierarchy)
+                {
+                    Component sweepComp = sweeperR.GetComponent("Sweep");
+                    if (sweepComp != null)
+                    {
+                        FieldInfo sweepingField = sweepComp.GetType().GetField("isSweeping");
+                        if (sweepingField != null)
+                        {
+                            mainSweepersSweeping = (bool)sweepingField.GetValue(sweepComp);
+                        }
+                    }
+                }
+            }
+        }
         
-        StartSweeping();
-        
-        Debug.Log($"[TeeSweeperController] Attached - {(isRedRock ? "Yellow" : "Red")} sweeping rock {rock.name}");
+        if (mainSweepersSweeping)
+        {
+            // Main sweepers are active - let them continue!
+            Debug.Log($"[TeeSweeperController] Main sweepers are ACTIVE - keeping them, tee sweeper on standby");
+            
+            // Don't activate tee sweeper yet - main sweepers have priority
+            // Tee sweeper will activate only if main sweepers stop
+            isActive = true; // Track rock but don't show tee sweeper yet
+            activeSweeper.gameObject.SetActive(false); // Keep hidden
+            
+            return; // Exit without starting tee sweeper
+        }
+        else
+        {
+            // Main sweepers are NOT active - remove them and activate tee sweeper
+            Debug.Log($"[TeeSweeperController] Main sweepers INACTIVE - removing them, activating tee sweeper");
+            
+            // Deactivate main sweepers (they're not sweeping anyway)
+            if (sm != null)
+            {
+                System.Type smType = sm.GetType();
+                FieldInfo sweeperLField = smType.GetField("sweeperL");
+                FieldInfo sweeperRField = smType.GetField("sweeperR");
+                
+                if (sweeperLField != null)
+                {
+                    MonoBehaviour sweeperL = sweeperLField.GetValue(sm) as MonoBehaviour;
+                    if (sweeperL != null && sweeperL.gameObject.activeInHierarchy)
+                    {
+                        sweeperL.gameObject.SetActive(false);
+                        Debug.Log($"[TeeSweeperController] Deactivated left main sweeper");
+                    }
+                }
+                
+                if (sweeperRField != null)
+                {
+                    MonoBehaviour sweeperR = sweeperRField.GetValue(sm) as MonoBehaviour;
+                    if (sweeperR != null && sweeperR.gameObject.activeInHierarchy)
+                    {
+                        sweeperR.gameObject.SetActive(false);
+                        Debug.Log($"[TeeSweeperController] Deactivated right main sweeper");
+                    }
+                }
+            }
+            
+            // Activate tee sweeper
+            activeSweeper.gameObject.SetActive(true);
+            isActive = true;
+            
+            Debug.Log($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE: {activeSweeper.name}");
+            
+            // ? NEW: TEXT CALLOUT
+            // Show callout: "{Team Name} is sweeping behind T-Line"
+            string sweepingTeamName = isRedRock ? "Yellow" : "Red"; // Opposite team sweeps
+            string calloutMessage = $"{sweepingTeamName} is sweeping behind T-Line";
+            
+            // Find TextCalloutManager and show callout
+            Component textCalloutManager = FindFirstObjectByType(Type.GetType("TextCalloutManager")) as Component;
+            if (textCalloutManager != null)
+            {
+                // Get rock position for callout location
+                Vector3 rockPos = rock.transform.position;
+                Vector3 calloutPos = rockPos + new Vector3(0f, 1.0f, 0f); // 1 unit above rock
+                
+                // Call ShowCallout method via reflection
+                System.Type calloutType = textCalloutManager.GetType();
+                MethodInfo showCalloutMethod = calloutType.GetMethod("ShowCallout", 
+                    new Type[] { typeof(Vector3), typeof(string), typeof(bool), typeof(Transform), typeof(float) });
+                
+                if (showCalloutMethod != null)
+                {
+                    showCalloutMethod.Invoke(textCalloutManager, new object[] { 
+                        calloutPos,      // position
+                        calloutMessage,  // message
+                        false,           // followTarget (false - fixed position)
+                        null,            // target (null - no follow)
+                        3.0f             // duration (3 seconds)
+                    });
+                    
+                    Debug.Log($"[TeeSweeperController] TEXT CALLOUT: '{calloutMessage}' at {calloutPos}");
+                }
+            }
+            
+            StartSweeping();
+            
+            Debug.Log($"[TeeSweeperController] Attached - {(isRedRock ? "Yellow" : "Red")} sweeping rock {rock.name}");
+        }
     }
     
     void StartSweeping()
     {
         if (isSweeping || activeSweeper == null || activeSweeperStats == null) return;
         
-        PropertyInfo enduranceProp = activeSweeperStats.GetType().GetProperty("sweepEndurance");
-        if (enduranceProp != null)
-        {
-            object statObj = enduranceProp.GetValue(activeSweeperStats);
-            MethodInfo getValueMethod = statObj.GetType().GetMethod("GetValue");
-            if (getValueMethod != null)
-            {
-                sweepTimeRemaining = (float)getValueMethod.Invoke(statObj, null) * 0.02f;
-            }
-        }
+        // ? FIX: Set sweepTimeRemaining to VERY HIGH value for continuous sweeping
+        // Tee sweepers should sweep until rock stops, not based on endurance timer
+        sweepTimeRemaining = 999999f; // Effectively infinite
         
         isSweeping = true;
         
@@ -437,7 +763,7 @@ public class TeeSweeperController : MonoBehaviour
         if (sweepButton != null) sweepButton.SetActive(false);
         if (whoaButton != null) whoaButton.SetActive(true);
         
-        Debug.Log($"[TeeSweeperController] Started sweeping - {sweepTimeRemaining:F2}s (silent mode to avoid audio conflicts)");
+        Debug.Log($"[TeeSweeperController] Started sweeping - continuous until rock stops");
     }
     
     void StopSweeping(bool playerCalled)
