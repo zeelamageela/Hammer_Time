@@ -3815,41 +3815,21 @@ public class AI_Target : MonoBehaviour
             // Strategy said "RemoveThreat" but we can't remove anything
             // This is a STRATEGIC DISASTER - opponent has rocks, we can't hit them!
             
-            // LAST RESORT: Try hitting ANYTHING opponent has with RELAXED constraints
-            Debug.LogWarning("[AI_Target] 🚨 DESPERATE MODE: Trying ANY opponent rock with relaxed physics");
+            // ========================================
+            // FALLBACK PRIORITY SYSTEM
+            // ========================================
+            // Instead of throwing away rocks, try scoring options FIRST
+            // Philosophy: Can't remove? Then focus on scoring ourselves!
             
-            foreach (var houseRock in gm.houseList)
-            {
-                if (houseRock.rockInfo.teamName == currentRockInfo.teamName)
-                    continue; // Skip our rocks
-                
-                // Try basic takeout with NO physics validation (just aim and shoot!)
-                Debug.LogWarning($"[DESPERATE] Attempting rock #{houseRock.rockInfo.rockIndex} at {houseRock.rock.transform.position}");
-                
-                // Force a shot even if physics says it's bad
-                OnTarget("Take Out", rockCurrent, houseRock.rockInfo.rockIndex);
-                return; // Take the shot!
-            }
+            Debug.LogWarning("[AI_Target] 🎯 FALLBACK 1: Trying SCORING OPTIONS (can't remove, so let's score!)");
             
-            // If STILL no rocks found (impossible?), try guards
-            foreach (var guard in gm.gList)
-            {
-                if (guard.lastTransform == null)
-                    continue;
-                
-                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
-                if (guardInfo != null && guardInfo.teamName != currentRockInfo.teamName)
-                {
-                    Debug.LogWarning($"[DESPERATE] Attempting finesse #{guardInfo.rockIndex} at {guard.lastTransform.position}");
-                    OnTarget("Take Out", rockCurrent, guardInfo.rockIndex);
-                    return;
-                }
-            }
+            // Call scoring evaluation with context flag so it knows we failed removal
+            ShotContext scoringContext = context;
+            scoringContext.intent = ShotIntent.ScorePoints; // Switch intent
+            EvaluateScoringOptions(scoringContext, rockCurrent);
             
-            // ABSOLUTE LAST RESORT: If we're here, opponent has NO rocks (shouldn't happen with RemoveThreat intent)
-            Debug.LogError("[AI_Target] 🚨 CATASTROPHIC: Can't find ANY opponent rocks to hit!");
-            Debug.LogError("[AI_Target] Switching to scoring as absolute last resort");
-            EvaluateScoringOptions(context, rockCurrent);
+            // EvaluateScoringOptions will execute a shot (draw, freeze, etc.) and return
+            // No need to continue to desperate mode!
             return;
         }
         

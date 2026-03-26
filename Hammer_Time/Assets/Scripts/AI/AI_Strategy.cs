@@ -333,6 +333,219 @@ public class AI_Strategy : MonoBehaviour
     }
     
     /// <summary>
+    /// ✅ NEW: Evaluate potential scoring benefit of removing a threat rock
+    /// 
+    /// Simulates: "If I remove this rock, would I be sitting shot rock? Multiple?"
+    /// Returns: Score boost value (0 = no benefit, 1-5 = increasing benefit)
+    /// </summary>
+    private float EvaluateRemovalScoringBenefit(int threatRockIndex)
+    {
+        if (threatRockIndex < 0 || threatRockIndex >= gm.rockList.Count) return 0f;
+        
+        GameObject threatRock = gm.rockList[threatRockIndex].rock;
+        if (threatRock == null) return 0f;
+        
+        Rock_Info threatInfo = gm.rockList[threatRockIndex].rockInfo;
+        Vector2 button = new Vector2(0f, 6.5f);
+        
+        // Build list of rocks AFTER removal (simulate removing threat)
+        var remainingRocks = new List<(GameObject rock, string team, float dist)>();
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            // Skip the rock we're planning to remove
+            if (houseRock.rockInfo.rockIndex == threatRockIndex) continue;
+            
+            float dist = Vector2.Distance(houseRock.rock.transform.position, button);
+            remainingRocks.Add((houseRock.rock, houseRock.rockInfo.teamName, dist));
+        }
+        
+        // Sort by distance (closest = shot rock)
+        remainingRocks.Sort((a, b) => a.dist.CompareTo(b.dist));
+        
+        // Count how many MY rocks would be scoring
+        int myRocksScoring = 0;
+        int oppRocksScoring = 0;
+        bool iHaveShotRock = false;
+        
+        for (int i = 0; i < remainingRocks.Count; i++)
+        {
+            var rockEntry = remainingRocks[i];
+            bool isMine = (rockEntry.team == activeTeamName);
+            
+            if (i == 0 && isMine)
+            {
+                iHaveShotRock = true; // I would have shot rock!
+            }
+            
+            if (isMine)
+            {
+                myRocksScoring++;
+            }
+            else
+            {
+                // Opponent rock - stops my scoring
+                break;
+            }
+        }
+        
+        // Calculate score boost based on potential scoring
+        float scoreBoost = 0f;
+        
+        if (iHaveShotRock)
+        {
+            // Base boost for getting shot rock
+            scoreBoost += 2.0f;
+            
+            // Additional boost for multi-point potential
+            if (myRocksScoring >= 2)
+                scoreBoost += 1.5f; // Sitting 2!
+            
+            if (myRocksScoring >= 3)
+                scoreBoost += 1.0f; // Sitting 3+!
+            
+            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would sit {myRocksScoring} (shot rock: {iHaveShotRock}) [Boost: +{scoreBoost:F1}]");
+        }
+        else if (myRocksScoring > oppRocksScoring)
+        {
+            // Would be winning house (but not shot rock)
+            scoreBoost += 0.5f;
+            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would win house {myRocksScoring}-{oppRocksScoring} [Boost: +{scoreBoost:F1}]");
+        }
+        else
+        {
+            // No scoring benefit
+            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → No scoring benefit (opponent still ahead)");
+        }
+        
+        return scoreBoost;
+    }
+    
+    /// <summary>
+    /// ✅ NEW: Should AI play defensively (more takeouts)?
+    /// LOOSER CRITERIA than simple "leading" check
+    /// 
+    /// Philosophy: AI should be defensive when protecting a lead OR in close games
+    /// </summary>
+    private bool ShouldPlayDefensive(int rockCurrent, bool hasHammer, string phase)
+    {
+        int scoreDiff = activeTeamScore - oppTeamScore;
+        int rocksRemaining = 16 - rockCurrent;
+        bool isLastEnd = (gm.endTotal - gm.endCurrent == 1);
+        
+        // CRITERION 1: Clearly leading (2+ points ahead)
+        if (scoreDiff >= 2)
+        {
+            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} points");
+            return true;
+        }
+        
+        // CRITERION 2: Leading by 1 point in last end
+        if (scoreDiff >= 1 && isLastEnd)
+        {
+            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} in last end");
+            return true;
+        }
+        
+        // CRITERION 3: Tied game in late phase (protect position)
+        if (scoreDiff == 0 && phase == "late")
+        {
+            Debug.Log($"[ShouldPlayDefensive] YES - Tied game in late phase (protect house)");
+            return true;
+        }
+        
+        // CRITERION 4: Leading without hammer in late phase (extra defensive)
+        if (scoreDiff >= 1 && !hasHammer && phase == "late")
+        {
+            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} without hammer in late phase");
+            return true;
+        }
+        
+        // CRITERION 5: Last 3 rocks and ANY lead
+        if (scoreDiff >= 1 && rocksRemaining <= 3)
+        {
+            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} with only {rocksRemaining} rocks left");
+            return true;
+        }
+        
+        // DEFAULT: Offensive (trailing or tied early/middle)
+        Debug.Log($"[ShouldPlayDefensive] NO - Offensive mode (score diff: {scoreDiff}, phase: {phase})");
+        return false;
+    }
+    
+    /// <summary>
+    /// ✅ NEW: Should we prioritize removing this threat rock?
+    /// Enhanced with POST-REMOVAL SCORING EVALUATION
+    /// 
+    /// Philosophy: Remove rocks that:
+    ///   1. Threaten our lead (defensive)
+    ///   2. Give us scoring opportunities (offensive benefit from removal)
+    /// </summary>
+    private bool ShouldRemoveThreatEnhanced(HouseAnalysis house, int rockCurrent, bool hasHammer, string phase)
+    {
+        // NO THREATS - don't remove
+        if (house.threatRock < 0) return false;
+        
+        // ✅ NEW: Evaluate post-removal scoring benefit
+        float removalBenefit = EvaluateRemovalScoringBenefit(house.threatRock);
+        
+        // HIGH SCORING BENEFIT: Always worth removing (even if not strictly defensive)
+        if (removalBenefit >= 2.0f)
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - High scoring benefit ({removalBenefit:F1}) from removing threat!");
+            return true;
+        }
+        
+        // MEDIUM SCORING BENEFIT: Worth removing in middle/late phases
+        if (removalBenefit >= 1.0f && (phase == "middle" || phase == "late"))
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Medium scoring benefit ({removalBenefit:F1}) in {phase} phase");
+            return true;
+        }
+        
+        // Continue with original threat removal logic (defensive criteria)
+        
+        // CRITICAL: Opponent has shot rock AND we're losing house
+        if (!house.amWinningHouse && house.oppRocksInHouse >= 1)
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Losing house (defensive priority)");
+            return true; // ALWAYS remove when losing
+        }
+        
+        // EARLY PHASE: Remove opponent rocks immediately (don't let them build)
+        if (phase == "early")
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Early phase (clear everything)");
+            return true; // Aggressive early - clear everything
+        }
+        
+        // MIDDLE PHASE: Remove if they have 2+ rocks (multi-point threat)
+        if (phase == "middle" && house.oppRocksInHouse >= 2)
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Middle phase, opponent has {house.oppRocksInHouse} rocks");
+            return true; // Don't let them build big end
+        }
+        
+        // LATE PHASE WITHOUT HAMMER: Remove to steal
+        if (phase == "late" && !hasHammer && house.oppRocksInHouse >= 1)
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Late phase without hammer (need to clear)");
+            return true; // Need to clear to steal
+        }
+        
+        // LATE PHASE WITH HAMMER: Remove if multiple threats
+        if (phase == "late" && hasHammer && house.oppRocksInHouse >= 2)
+        {
+            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Late phase with hammer, {house.oppRocksInHouse} opponent rocks");
+            return true; // Clear for big end
+        }
+        
+        // DEFAULT: Threat exists but not urgent
+        Debug.Log($"[ShouldRemoveThreatEnhanced] NO - Threat exists but no strong removal criteria");
+        return false;
+    }
+    
+    /// <summary>
     /// Count how many rocks a team has in the house (any scoring rocks)
     /// </summary>
     private int CountRocksInHouse(string teamName)
@@ -543,9 +756,10 @@ public class AI_Strategy : MonoBehaviour
         // EARLY PHASE: Setup game
         if (phase == "early")
         {
-            // PRIORITY 1: Remove threats FIRST (don't let them build)
-            if (ShouldRemoveThreat(house, phase, hasHammer))
+            // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
+            if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
+                Debug.Log($"[ConservativeSteal] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             
@@ -571,9 +785,10 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE PHASE: Build position or remove threats
         else if (phase == "middle")
         {
+            // ✅ FIX: Simplified - always remove threats when they exist
             if (house.threatRock >= 0)
             {
-                // Remove biggest threat
+                Debug.Log($"[ConservativeSteal] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, 
                                   acceptRisk: house.myRocksInHouse > 0);
             }
@@ -592,6 +807,38 @@ public class AI_Strategy : MonoBehaviour
         // LATE PHASE: WITHOUT HAMMER - Steal or limit damage
         else if (phase == "late")
         {
+            // ✅ IMPROVED: Use looser defensive criteria
+            bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
+            
+            if (isDefensive)
+            {
+                Debug.Log($"[ConservativeSteal] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                
+                // SCENARIO 1: Opponent has rocks - REMOVE THEM!
+                if (house.threatRock >= 0)
+                {
+                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                }
+                
+                // SCENARIO 2: No threats, but we have rocks - protect them
+                else if (house.myRocksInHouse > 0)
+                {
+                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
+                }
+                
+                // SCENARIO 3: Clean house - conservative draw
+                else
+                {
+                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Clean house, drawing conservatively");
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
+                }
+            }
+            
+            // OFFENSIVE MODE (trailing or tied) - original steal logic
+            Debug.Log($"[ConservativeSteal] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            
             // ✅ REFACTORED: Use cached house analysis
             // SCENARIO 1: We have NO rocks, opponent has rock(s)
             if (house.myRocksInHouse == 0 && house.threatRock >= 0)
@@ -919,15 +1166,17 @@ public class AI_Strategy : MonoBehaviour
         
         // ✅ REFACTORED: Use cached house analysis
         var house = GetHouseAnalysis();
+        bool hasHammer = (rockCurrent % 2 != 0);
         
         // Strategy: Clear any threats, build multiple scoring rocks
         
         // EARLY: Remove threats immediately, build corners
         if (phase == "early")
         {
-            if (house.threatRock >= 0)
+            // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
+            if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                // Can't let them have anything - remove it
+                Debug.Log($"[ScoreTwoOrBlank] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else
@@ -940,9 +1189,10 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE: Keep clearing, spread rocks
         else if (phase == "middle")
         {
+            // ✅ FIX: Simplified - always remove threats
             if (house.threatRock >= 0)
             {
-                // Remove anything in our way
+                Debug.Log($"[ScoreTwoOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse >= 2)
@@ -967,24 +1217,39 @@ public class AI_Strategy : MonoBehaviour
             {
                 Debug.Log("[ScoreTwoOrBlank] LAST ROCK - must score!");
                 
-                // Have 2+ rocks already? Add more!
+                // Have 2+ rocks already? Add more OR remove threats!
                 if (house.myRocksInHouse >= 1)
                 {
-                    if (house.threatRock < 0)
+                    // ✅ CRITICAL FIX: ALWAYS remove threats first on last rock when leading
+                    // Philosophy: When you have hammer + lead, DON'T RISK opponent scoring
+                    if (house.threatRock >= 0)
                     {
-                        return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
-                    }
-                    else
-                    {
-                        if (gm.houseList[0].rockInfo.teamName != activeTeamName || gm.houseList[1].rockInfo.teamName != activeTeamName)
+                        // Check if opponent has shot rock or close rocks
+                        bool opponentHasShotRock = false;
+                        if (gm.houseList.Count > 0)
                         {
+                            Rock_Info shotRockInfo = gm.houseList[0].rockInfo;
+                            opponentHasShotRock = (shotRockInfo.teamName != activeTeamName);
+                        }
+                        
+                        bool isDefensiveLastRock = (activeTeamScore > oppTeamScore);
+                        
+                        // DEFENSIVE + opponent has shot rock = MUST REMOVE!
+                        if (isDefensiveLastRock || opponentHasShotRock)
+                        {
+                            Debug.Log($"[ScoreTwoOrBlank] LAST ROCK DEFENSIVE: Removing threat #{house.threatRock}!");
                             return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                         }
                         else
                         {
-                            // We have 2+ rocks - add more to secure 2 points
+                            // We have 2+ rocks AND we're trailing - add more to score
                             return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                         }
+                    }
+                    else
+                    {
+                        // No threats - add more rocks!
+                        return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                     }
                 }
                 // Threats exist? Remove and try to score
@@ -1000,6 +1265,38 @@ public class AI_Strategy : MonoBehaviour
             }
             
             // NOT LAST ROCK: Build for 2-point end or blank
+            
+            // ✅ IMPROVED: Use looser defensive criteria
+            bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
+            
+            if (isDefensive)
+            {
+                Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                
+                // SCENARIO 1: Opponent has rocks - REMOVE THEM!
+                if (house.threatRock >= 0)
+                {
+                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
+                }
+                
+                // SCENARIO 2: No threats, we have rocks - protect them
+                else if (house.myRocksInHouse >= 1)
+                {
+                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
+                }
+                
+                // SCENARIO 3: Clean house - can still build for 2
+                else
+                {
+                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Clean house, building for 2");
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
+                }
+            }
+            
+            // OFFENSIVE MODE (trailing or tied) - original 2-or-blank logic
+            Debug.Log($"[ScoreTwoOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
             
             // Already have 1+? Add more or remove threats!
             if (house.myRocksInHouse >= 1)
@@ -1062,8 +1359,10 @@ public class AI_Strategy : MonoBehaviour
         if (phase == "early")
         {
             // PRIORITY 1: Remove any threats immediately (can't let them build)
-            if (ShouldRemoveThreat(house, phase, hasHammer))
+            // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
+            if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
+                Debug.Log($"[AggressiveNotHammer] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             
@@ -1080,18 +1379,16 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE: Keep pressure, remove threats
         else if (phase == "middle")
         {
+            // ✅ FIX: Simplified logic - if threat exists, REMOVE IT (defensive play)
             if (house.threatRock >= 0)
             {
-                if (house.myRocksInHouse > 0)
-                {
-                    // Build on position
-                    return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
-                }
-                else
-                {
-                    // No rocks in house - try to steal by removing threat
-                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
-                }
+                Debug.Log($"[AggressiveNotHammer] MIDDLE: Removing threat rock #{house.threatRock}");
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+            }
+            else if (house.myRocksInHouse > 0)
+            {
+                // Build on position
+                return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
             }
             else
             {
@@ -1103,6 +1400,38 @@ public class AI_Strategy : MonoBehaviour
         // LATE: WITHOUT HAMMER - All-in for steal
         else if (phase == "late")
         {
+            // ✅ IMPROVED: Use looser defensive criteria
+            bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
+            
+            if (isDefensive)
+            {
+                Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                
+                // SCENARIO 1: Opponent has rocks - REMOVE THEM!
+                if (house.threatRock >= 0)
+                {
+                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                }
+                
+                // SCENARIO 2: No threats, but we have rocks - protect them
+                else if (house.myRocksInHouse > 0)
+                {
+                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
+                }
+                
+                // SCENARIO 3: Clean house - conservative draw or force blank
+                else
+                {
+                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Clean house, drawing conservatively");
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
+                }
+            }
+            
+            // OFFENSIVE MODE (trailing or tied) - original aggressive logic
+            Debug.Log($"[AggressiveNotHammer] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            
             // SCENARIO 1: No rocks vs threat - desperate removal
             if (house.myRocksInHouse == 0 && house.threatRock >= 0)
             {
@@ -1178,15 +1507,17 @@ public class AI_Strategy : MonoBehaviour
         
         // ✅ REFACTORED: Use cached house analysis
         var house = GetHouseAnalysis();
+        bool hasHammer = (rockCurrent % 2 != 0);
         
         // Strategy: Deny them points, steal if possible, blank acceptable
         
         // EARLY: Remove any threats, don't build unless safe
         if (phase == "early")
         {
-            if (house.threatRock >= 0)
+            // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
+            if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                // Remove it - can't let them build
+                Debug.Log($"[StealOrBlank] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse > 0)
@@ -1204,9 +1535,10 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE: Keep clearing, build cautiously
         else if (phase == "middle")
         {
+            // ✅ FIX: Simplified - always remove threats
             if (house.threatRock >= 0)
             {
-                // Remove threats
+                Debug.Log($"[StealOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse > 0)
@@ -1224,6 +1556,38 @@ public class AI_Strategy : MonoBehaviour
         // LATE: WITHOUT HAMMER - Deny points or steal
         else if (phase == "late")
         {
+            // ✅ IMPROVED: Use looser defensive criteria
+            bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
+            
+            if (isDefensive)
+            {
+                Debug.Log($"[StealOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                
+                // SCENARIO 1: Opponent has rocks - REMOVE THEM!
+                if (house.threatRock >= 0)
+                {
+                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
+                }
+                
+                // SCENARIO 2: No threats, we have rocks - protect them
+                else if (house.myRocksInHouse > 0)
+                {
+                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
+                }
+                
+                // SCENARIO 3: Clean house - blank is acceptable to deny points
+                else
+                {
+                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Clean house, forcing blank");
+                    return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
+                }
+            }
+            
+            // OFFENSIVE MODE (tied or trailing) - original steal/blank logic
+            Debug.Log($"[StealOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            
             // Primary goal: Force them to 1 point OR steal OR blank
             
             // SCENARIO 1: They have 2+ rocks - DANGER!
