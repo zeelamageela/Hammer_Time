@@ -2556,7 +2556,70 @@ public class AI_Target : MonoBehaviour
         // CANDIDATE 1: Direct to target (baseline - MUST try this!)
         candidateTargets.Add(targetPosition);
         
-        // CANDIDATE 2-N: TIGHTER RADIAL SWEEP around TARGET
+        // NEW: CANDIDATE 2: OPEN SIDE DRAWS (strategic spread when we have rocks!)
+        // If we already have rocks in the house, consider drawing to the OPPOSITE side
+        // This spreads rocks to score multiple points or makes removal harder
+        int myRocksInHouse = 0;
+        float myRocksAverageX = 0f;
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName == currentRockInfo.teamName)
+            {
+                myRocksInHouse++;
+                myRocksAverageX += houseRock.rock.transform.position.x;
+            }
+        }
+        
+        if (myRocksInHouse >= 1)
+        {
+            myRocksAverageX /= myRocksInHouse;
+            
+            // Determine which side is MORE OPEN
+            // If rocks are on the left (negative X), draw to RIGHT side (positive X)
+            // If rocks are on the right (positive X), draw to LEFT side (negative X)
+            float openSideX = (myRocksAverageX < 0f) ? 0.8f : -0.8f; // Opposite side, ~0.8 units from center
+            
+            // Check if open side is actually clear (no opponent rocks blocking)
+            bool openSideIsClear = true;
+            float openSideTolerance = 0.6f; // Within 60cm of open side X
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                Vector2 rockPos = houseRock.rock.transform.position;
+                
+                // Check if opponent rock is on the open side
+                if (houseRock.rockInfo.teamName != currentRockInfo.teamName &&
+                    Mathf.Abs(rockPos.x - openSideX) < openSideTolerance)
+                {
+                    openSideIsClear = false;
+                    break;
+                }
+            }
+            
+            if (openSideIsClear)
+            {
+                // STRATEGIC OPEN SIDE DRAW: Add as HIGH PRIORITY candidate!
+                Vector2 openSideTarget = new Vector2(openSideX, targetPosition.y);
+                candidateTargets.Insert(1, openSideTarget); // Insert after direct target (high priority!)
+                
+                Debug.Log($"[Open Side Draw] We have {myRocksInHouse} rock(s) at avg X={myRocksAverageX:F2} " +
+                          $"→ Open side is X={openSideX:F2} (clear: {openSideIsClear}) " +
+                          $"→ Added strategic spread target: ({openSideTarget.x:F2}, {openSideTarget.y:F2})");
+                
+                // ALSO add positions slightly around the open side for flexibility
+                candidateTargets.Add(new Vector2(openSideX + 0.2f, targetPosition.y));
+                candidateTargets.Add(new Vector2(openSideX - 0.2f, targetPosition.y));
+                candidateTargets.Add(new Vector2(openSideX, targetPosition.y + 0.3f)); // Slightly deeper
+                candidateTargets.Add(new Vector2(openSideX, targetPosition.y - 0.3f)); // Slightly shallower
+            }
+            else
+            {
+                Debug.Log($"[Open Side Draw] We have {myRocksInHouse} rock(s) but open side X={openSideX:F2} is BLOCKED by opponent - not adding spread targets");
+            }
+        }
+        
+        // CANDIDATE 3-N: TIGHTER RADIAL SWEEP around TARGET
         // PRECISION TARGETING: Radii kept VERY tight (max 0.4m from target)
         // Philosophy: We want to hit EXACTLY where we aim, not "close enough"
         float[] radii = new float[] { 0.10f, 0.20f, 0.30f, 0.40f }; // Much tighter - within 40cm max
@@ -2858,6 +2921,63 @@ public class AI_Target : MonoBehaviour
                 
                 score += houseBonus;
                 
+                // PART 5: OPEN SIDE STRATEGIC BONUS (40 points max) - Reward spreading rocks!
+                // If we already have rocks in the house AND this shot is on the OPPOSITE side, HUGE bonus!
+                float openSideBonus = 0f;
+                
+                if (myRocksInHouse >= 1)
+                {
+                    // Check if final position is on the OPPOSITE side from our existing rocks
+                    float finalPosX = finalPos.x;
+                    
+                    // Determine if this is on the open side
+                    bool isOnOpenSide = false;
+                    
+                    if (myRocksAverageX < -0.3f && finalPosX > 0.3f)
+                    {
+                        // Rocks are on LEFT, shot is on RIGHT - perfect spread!
+                        isOnOpenSide = true;
+                    }
+                    else if (myRocksAverageX > 0.3f && finalPosX < -0.3f)
+                    {
+                        // Rocks are on RIGHT, shot is on LEFT - perfect spread!
+                        isOnOpenSide = true;
+                    }
+                    
+                    if (isOnOpenSide)
+                    {
+                        // STRATEGIC SPREAD BONUS!
+                        // Base bonus: 20 points
+                        openSideBonus = 20f;
+                        
+                        // SCALING BONUSES:
+                        // - More rocks already in house = bigger bonus (spreading is more valuable)
+                        if (myRocksInHouse >= 2)
+                        {
+                            openSideBonus += 10f; // 2+ rocks = extra bonus (harder to remove all!)
+                        }
+                        
+                        // - Better lateral separation = bigger bonus
+                        float lateralSeparation = Mathf.Abs(finalPosX - myRocksAverageX);
+                        if (lateralSeparation > 1.0f)
+                        {
+                            openSideBonus += 10f; // Wide spread (>1 unit) = extra bonus
+                        }
+                        else if (lateralSeparation > 0.6f)
+                        {
+                            openSideBonus += 5f; // Moderate spread (>0.6 units) = small bonus
+                        }
+                        
+                        Debug.Log($"[Open Side Bonus] ✓ STRATEGIC SPREAD!\n" +
+                                  $"  Existing rocks: {myRocksInHouse} at avg X={myRocksAverageX:F2}\n" +
+                                  $"  This shot: X={finalPosX:F2}\n" +
+                                  $"  Lateral separation: {lateralSeparation:F2}\n" +
+                                  $"  BONUS: +{openSideBonus:F1} (base 20 + scaling)");
+                    }
+                }
+                
+                score += openSideBonus;
+                
                 // ========================================
                 // LOG COMPREHENSIVE SCORING BREAKDOWN
                 // ========================================
@@ -2867,7 +2987,9 @@ public class AI_Target : MonoBehaviour
                           $"  Scoring Position: {scoringPositionScore * 25f:F1}/25 (dist to button: {myDistToButton:F2}, opponent closest: {closestOpponentDistToButton:F2})\n" +
                           $"  Collision Context: {collisionPenalty:F1} {(collisionInfo.hasCollision ? $"(hit {collisionInfo.hitRock.name})" : "(clean)")}\n" +
                           $"  In-House Bonus: {houseBonus:F1}/15\n" +
-                          $"  TOTAL SCORE: {score:F1}/122");
+                          $"  Open Side Bonus: {openSideBonus:F1}/40 {(openSideBonus > 0 ? "← STRATEGIC SPREAD!" : "")}\n" +
+                          $"  TOTAL SCORE: {score:F1}/162");
+                
                 
                 if (score > bestScore)
                 {
@@ -2882,29 +3004,30 @@ public class AI_Target : MonoBehaviour
         }
         
         // ========================================
-        // ACCEPTANCE CRITERIA: Demand HIGH QUALITY weight shots
+        // ACCEPTANCE CRITERIA: Demand HIGH QUALITY draw shots
         // ========================================
-        // Threshold: 45.0 (out of 122 max) to demand precision
-        // With tighter radii (0.4m max) + proximity-dominant scoring, we should find accurate shots!
+        // Threshold: 45.0 (out of 162 max) to demand precision
+        // With tighter radii (0.4m max) + proximity-dominant scoring + open side bonus, we should find accurate shots!
         // Score breakdown for reference:
         //   70 points = proximity (<8cm = 70, <15cm = 65, <25cm = 56) ← DOMINANT!
         //   25 points = scoring position (beat opponent, close to button)
-        //   12 points = finesse protection
+        //   12 points = guard protection
         //   15 points = in-house bonus
+        //   40 points = open side bonus (strategic spread when we have rocks!)
         //   -25 to +5 = collision context
-        // Threshold of 45 requires: <15cm proximity (65 pts) OR <25cm + good scoring/house
+        // Threshold of 45 requires: <15cm proximity (65 pts) OR <25cm + good scoring/house OR open side spread
         if (bestScore > float.MinValue && bestScore >= 45f)
         {
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
             
-            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/122 (threshold: 45)\n" +
+            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/162 (threshold: 45)\n" +
                       $"  Final position: ({bestFinalPos.x:F2}, {bestFinalPos.y:F2})\n" +
                       $"  Distance to target: {Vector2.Distance(bestFinalPos, targetPosition):F3}m\n" +
                       $"  Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3})\n" +
                       $"  Turn: {(bestInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
-                      $"  Tested {candidateTargets.Count} candidates (tight 0.4m radius)\n" +
-                      $"  Strategy: PROXIMITY-DOMINANT scoring (70/122 pts), late collisions OK");
+                      $"  Tested {candidateTargets.Count} candidates (tight 0.4m radius + open side spreads)\n" +
+                      $"  Strategy: PROXIMITY-DOMINANT scoring (70/162 pts), late collisions OK, open side spreads encouraged");
             return true;
         }
         

@@ -131,13 +131,13 @@ public class Sweep : MonoBehaviour
             statCalc = 80f; // Default sweeper strength for testing
         }
         
-        // ✅ CRITICAL FIX: Player sweeping logic was BACKWARDS!
+        // ✅ CRITICAL FIX: Player sweeping logic for LEFT sweep
         // PHYSICS: Sweep LEFT → Rock goes RIGHT (asymmetric friction pulls toward swept side)
         // 
         // OUT-TURN (curls LEFT ←):
-        //   - Sweep LEFT → Want rock to go RIGHT → Use CURL (enhance left curl → pulls right)
+        //   - Sweep LEFT → Want rock to go RIGHT → Use LINE (reduce left curl → goes right)
         // IN-TURN (curls RIGHT →):
-        //   - Sweep LEFT → Want rock to go RIGHT → Use LINE (reduce right curl → goes right)
+        //   - Sweep LEFT → Want rock to go RIGHT → Use CURL (enhance right curl → goes right)
         
         if (!rm.inturn)  // OUT-TURN (curls LEFT ←)
         {
@@ -145,7 +145,7 @@ public class Sweep : MonoBehaviour
         }
         else  // IN-TURN (curls RIGHT →)
         {
-            StartCoroutine(SweepCurl(true));  // ✅ Enhance curl → rock pushes RIGHT
+            StartCoroutine(SweepCurl(true));  // ✅ Enhance curl RIGHT → rock goes RIGHT
         }
         
     }
@@ -168,21 +168,21 @@ public class Sweep : MonoBehaviour
             statCalc = 80f; // Default sweeper strength for testing
         }
         
-        // ✅ CRITICAL FIX: Player sweeping logic was BACKWARDS!
+        // ✅ CRITICAL FIX: Player sweeping logic for RIGHT sweep
         // PHYSICS: Sweep RIGHT → Rock goes LEFT (asymmetric friction pulls toward swept side)
         // 
         // OUT-TURN (curls LEFT ←):
-        //   - Sweep RIGHT → Want rock to go LEFT → Use LINE (reduce left curl → goes left)
+        //   - Sweep RIGHT → Want rock to go LEFT → Use CURL (enhance left curl → goes left)
         // IN-TURN (curls RIGHT →):
-        //   - Sweep RIGHT → Want rock to go LEFT → Use CURL (enhance right curl → pulls left)
+        //   - Sweep RIGHT → Want rock to go LEFT → Use LINE (reduce right curl → goes left)
         
         if (!rm.inturn)  // OUT-TURN (curls LEFT ←)
         {
-            StartCoroutine(SweepCurl(false));   // ✅ Enhance curl → rock goes LEFT
+            StartCoroutine(SweepCurl(false));   // ✅ Enhance curl LEFT → rock goes LEFT
         }
         else  // IN-TURN (curls RIGHT →)
         {
-            StartCoroutine(SweepLine(true));  // ✅ Reduce curl → rock pulls LEFT
+            StartCoroutine(SweepLine(true));  // ✅ Reduce curl RIGHT → rock goes LEFT
         }
     }
 

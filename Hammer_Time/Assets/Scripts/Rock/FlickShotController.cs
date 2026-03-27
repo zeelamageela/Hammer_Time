@@ -34,6 +34,9 @@ public class FlickShotController : MonoBehaviour
     [Tooltip("Line renderer for predicted stop position")]
     private LineRenderer predictedStopLine;
     
+    [Tooltip("Velocity guide indicator - shows player the correct swipe speed")]
+    private VelocityGuideIndicator velocityGuide;
+    
     [Tooltip("Track cursor positions during swipe")]
     private List<Vector3> swipePoints = new List<Vector3>();
     
@@ -115,6 +118,7 @@ public class FlickShotController : MonoBehaviour
     private Vector2 aimDirection;
     private float aimAngle;
     private Vector3 lastMousePosition;
+    private Vector2 storedPullbackPosition; // CRITICAL: Store pullback position from aim phase
     
     // Power phase state
     private Vector2 powerDragStartPos;
@@ -211,6 +215,16 @@ public class FlickShotController : MonoBehaviour
         predictedStopLine.endColor = cyanColor;
         predictedStopLine.material = new Material(Shader.Find("Sprites/Default"));
         Debug.Log("[FlickShot] Predicted stop line created (cyan horizontal)");
+        
+        // Create velocity guide indicator
+        GameObject velocityGuideObj = new GameObject("VelocityGuide");
+        velocityGuide = velocityGuideObj.AddComponent<VelocityGuideIndicator>();
+        velocityGuide.startY = -24.66f;  // Launcher position (updated)
+        velocityGuide.endY = -16.5f;     // Hog line position (updated)
+        velocityGuide.pauseDuration = 1.5f; // Pause at hogline (1.5s total)
+        velocityGuide.fadeOutDuration = 0.5f; // Fade out over last 0.5s
+        velocityGuide.lineWidth = 0.2f;
+        Debug.Log("[FlickShot] Velocity guide indicator created with 1.5s pause + 0.5s fade-out");
         
         // Subscribe to flick shot mode changes using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
@@ -345,10 +359,14 @@ public class FlickShotController : MonoBehaviour
         aimDirection = -direction.normalized;  // NEGATIVE!
         aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         
+        // CRITICAL FIX: Store the pullback position for velocity calculation later
+        storedPullbackPosition = rockPosition;
+        
         // Transition to AimSet phase - ready for power click
         currentPhase = FlickShotPhase.AimSet;
         
         Debug.Log($"[FlickShot] Aim position set - Rock: {rockPosition}, Launcher: {launcherPosition}, Pullback: {direction}, Aim Direction (FLIPPED): {aimDirection}, Angle: {aimAngle:F1}°, Distance: {pullbackDistance:F2}");
+        Debug.Log($"[FlickShot] Stored pullback position: {storedPullbackPosition}");
         Debug.Log($"[FlickShot] Aim locked! Click on launcher (0, -25) to start power phase.");
     }
     
@@ -440,6 +458,55 @@ public class FlickShotController : MonoBehaviour
         // Initialize speed slider
         InitializeSpeedSlider();
         
+        // Start velocity guide indicator
+        if (velocityGuide != null)
+        {
+            // CRITICAL FIX: Get target velocity from TrajectoryLine (based on aim/trajectory endpoint)
+            // NOT from drag timing - that comes later!
+            float targetVelocity = GetTargetVelocityFromTrajectory();
+            
+            if (targetVelocity <= 0f)
+            {
+                Debug.LogWarning("[FlickShot] Failed to get target velocity from trajectory - using fallback");
+                targetVelocity = 10f; // Fallback to medium velocity
+            }
+            
+            // Get the shooting knob color directly (it already calculates color based on aim circle Y)
+            Color guideColor = Color.white;
+            if (shootingKnobObj != null)
+            {
+                SpriteRenderer knobSprite = shootingKnobObj.GetComponent<SpriteRenderer>();
+                if (knobSprite != null)
+                {
+                    guideColor = knobSprite.color;
+                    // Set to 60% opacity for velocity guide
+                    guideColor.a = 0.6f;
+                    Debug.Log($"[FlickShot] Using shooting knob color at 60% opacity: {guideColor}");
+                }
+            }
+            
+            velocityGuide.StartGuide(targetVelocity, guideColor);
+            Debug.Log($"[FlickShot] Velocity guide started - {targetVelocity:F2} m/s (from trajectory), Color: {guideColor}");
+            
+            // Show velocity callout at launcher using TextCalloutManager directly
+            if (showSpeedFeedback && TextCalloutManager.Instance != null)
+            {
+                // Calculate ideal drag time for this velocity
+                float distance = velocityGuide.endY - velocityGuide.startY; // -16.5 - (-24.66) = 8.16 units
+                float idealTime = distance / targetVelocity; // Time guide takes to animate
+                
+                Vector2 launcherPos = launcher.transform.position;
+                string velocityMessage = $"Target: {targetVelocity:F1} m/s";
+                string timeMessage = $"Swipe in {idealTime:F2}s";
+                
+                // Show velocity and time as stacked callouts
+                TextCalloutManager.Instance.ShowCallout(launcherPos, velocityMessage, followTarget: false, target: null, duration: 5f);
+                TextCalloutManager.Instance.ShowCallout(launcherPos, timeMessage, followTarget: false, target: null, duration: 5f);
+                
+                Debug.Log($"[FlickShot] Velocity callouts shown: {velocityMessage} | {timeMessage}");
+            }
+        }
+        
         // DISABLED: Shooter animation control removed
         // if (shooterAnim != null)
         // {
@@ -480,6 +547,10 @@ public class FlickShotController : MonoBehaviour
                 isPowerDragging = true;
                 powerDragStartTime = Time.time;
                 swipePoints.Clear();
+                
+                // KEEP velocity guide running during drag (don't stop it!)
+                // This allows player to time their swipe to the animation
+                Debug.Log("[FlickShot] Power swipe started - velocity guide continues animating");
                 
                 // Add starting point at launcher
                 Vector3 startPos = launcher.transform.position;
@@ -587,6 +658,113 @@ public class FlickShotController : MonoBehaviour
             
             ReleaseFlickShot(dragTime, dragDistance);
         }
+    }
+    
+    /// <summary>
+    /// Get target velocity from TrajectoryLine based on current aim/trajectory endpoint
+    /// This is the velocity needed to reach the aimed position
+    /// FIXED: Use stored pullback position from aim phase (not current position!)
+    /// </summary>
+    private float GetTargetVelocityFromTrajectory()
+    {
+        if (trajLine == null)
+        {
+            Debug.LogWarning("[FlickShot] trajLine is null - cannot get target velocity");
+            return 10f; // Fallback
+        }
+        
+        // CRITICAL FIX: Use stored pullback position from aim phase!
+        // The rock has been moved back to launcher by StartPowerPhase(), so we can't use current position
+        if (storedPullbackPosition == Vector2.zero)
+        {
+            Debug.LogWarning("[FlickShot] No stored pullback position - aim not set yet");
+            return 10f;
+        }
+        
+        if (launcher == null)
+        {
+            Debug.LogWarning("[FlickShot] Launcher is null");
+            return 10f;
+        }
+        
+        Vector2 pullbackPos = storedPullbackPosition; // Use stored position from aim phase
+        Vector2 launcherPos = launcher.transform.position;
+        
+        System.Type trajType = trajLine.GetType();
+        
+        // Get parameters from TrajectoryLine (use correct field types!)
+        float velocityMult = 5.0f;
+        float minPullback = 1f;
+        float maxPullback = 2.75f;
+        float minVel = 5f;
+        float maxVel = 16f;
+        
+        // CRITICAL: velocityMultiplier is a PUBLIC FIELD, not property
+        System.Reflection.FieldInfo velocityMultField = trajType.GetField("velocityMultiplier", 
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        System.Reflection.FieldInfo minPullProp = trajType.GetField("minPullbackDistance",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        System.Reflection.FieldInfo maxPullProp = trajType.GetField("maxPullbackDistance",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        System.Reflection.FieldInfo minVelProp = trajType.GetField("minVelocity",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        System.Reflection.FieldInfo maxVelProp = trajType.GetField("maxVelocity",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        if (velocityMultField != null)
+        {
+            object multObj = velocityMultField.GetValue(trajLine);
+            if (multObj != null) velocityMult = (float)multObj;
+        }
+        if (minPullProp != null)
+        {
+            object obj = minPullProp.GetValue(trajLine);
+            if (obj != null) minPullback = (float)obj;
+        }
+        if (maxPullProp != null)
+        {
+            object obj = maxPullProp.GetValue(trajLine);
+            if (obj != null) maxPullback = (float)obj;
+        }
+        if (minVelProp != null)
+        {
+            object obj = minVelProp.GetValue(trajLine);
+            if (obj != null) minVel = (float)obj;
+        }
+        if (maxVelProp != null)
+        {
+            object obj = maxVelProp.GetValue(trajLine);
+            if (obj != null) maxVel = (float)obj;
+        }
+        
+        // CRITICAL: Use TrajectorySimulator's static method to get EXACT velocity
+        Vector2 initialVelocity = TrajectorySimulator.CalculateInitialVelocityFromPullback(
+            pullbackPos,
+            launcherPos,
+            velocityMult,
+            minPullback,
+            maxPullback,
+            minVel,
+            maxVel
+        );
+        
+        float targetVel = initialVelocity.magnitude;
+        
+        // Calculate what the trajectory line sees
+        Vector2 displacement = launcherPos - pullbackPos;
+        float actualPullbackDist = displacement.magnitude;
+        
+        Debug.Log($"[FlickShot] Got velocity using STORED pullback position: {targetVel:F2} m/s");
+        Debug.Log($"  Stored pullback pos: {pullbackPos} (from aim phase)");
+        Debug.Log($"  Launcher pos: {launcherPos}");
+        Debug.Log($"  Displacement vector: {displacement}");
+        Debug.Log($"  Actual pullback distance: {actualPullbackDist:F2} units");
+        Debug.Log($"  Parameters: velocityMult={velocityMult:F2}, minPull={minPullback:F2}, maxPull={maxPullback:F2}");
+        Debug.Log($"  Velocity range: {minVel:F2} to {maxVel:F2}");
+        Debug.Log($"  Initial velocity vector: {initialVelocity}");
+        Debug.Log($"  Normalized pullback: {Mathf.InverseLerp(minPullback, maxPullback, actualPullbackDist):F3}");
+        
+        return targetVel;
     }
     
     /// <summary>
@@ -1212,6 +1390,13 @@ public class FlickShotController : MonoBehaviour
     {
         currentPhase = FlickShotPhase.Released;
         isPowerDragging = false;
+        
+        // Stop velocity guide if still active
+        if (velocityGuide != null && velocityGuide.IsActive)
+        {
+            velocityGuide.StopGuide();
+            Debug.Log("[FlickShot] Velocity guide stopped on release");
+        }
         
         // DISABLED: Shooter animation control removed
         // if (isShooterAnimControlActive && shooterAnim != null)
