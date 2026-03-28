@@ -1701,6 +1701,53 @@ public class AI_Strategy : MonoBehaviour
                 oppTeamScore = gm.redScore;
             }
         }
+
+        // ✅ CRITICAL: DEFENSIVE TAKEOUT PRIORITY CHECK
+        // When playing defensively, REMOVAL is FIRST PRIORITY before any other strategy!
+        bool hasHammer = (rockCurrent % 2 != 0);
+        
+        // Calculate phase inline
+        string phase;
+        if (rockCurrent < 4)
+            phase = "early";
+        else if (rockCurrent < 10)
+            phase = "middle";
+        else
+            phase = "late";
+        
+        bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
+        
+        if (isDefensive)
+        {
+            var house = GetHouseAnalysis();
+            
+            // DEFENSIVE MODE: If opponent has ANY rocks in house, REMOVE THEM FIRST!
+            if (house.threatRock >= 0)
+            {
+                Debug.Log($"[DEFENSIVE PRIORITY] Leading {activeTeamScore}-{oppTeamScore} - REMOVE threat rock #{house.threatRock} BEFORE any other shot!");
+                Debug.Log($"[DEFENSIVE PRIORITY] Opponent has {house.oppRocksInHouse} rock(s) in house - takeout is FIRST PRIORITY");
+                
+                // Build removal context
+                ShotContext removeContext = new ShotContext(ShotIntent.RemoveThreat, house.threatRock);
+                removeContext.acceptRisk = true; // Accept collision risk to remove threat
+                
+                // Apply EV evaluation if enabled
+                if (evSystem != null && useEVOptimization)
+                {
+                    removeContext = evSystem.EvaluateShot(removeContext, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+                }
+                
+                // Execute immediate takeout
+                aiTarg.ExecuteIntent(removeContext, rockCurrent);
+                return; // DONE - defensive takeout executed!
+            }
+            else
+            {
+                Debug.Log($"[DEFENSIVE PRIORITY] Leading {activeTeamScore}-{oppTeamScore} but no threat rocks - proceed to normal strategy");
+            }
+        }
+        
+        // Continue with normal strategy routing...
         //early phase is shots 1-2 in an 8 rock game
         if (rockCurrent < 4)
         {

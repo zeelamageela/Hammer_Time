@@ -5720,15 +5720,65 @@ public class AI_Target : MonoBehaviour
     /// - WITH HAMMER (conservative): Corner guards (X = 0.7-0.85, Y = 1.5-4.5) to clear center
     /// 
     /// REACTIVE STRATEGY (rocks in house):
-    /// - Protect unguarded friendly rock: Low finesse matching X (Y = 3.0-4.5)
+    /// - Protect unguarded friendly rock: Low guard matching X (Y = 3.0-4.5)
     /// - Guard shot rock (closest to button)
-    /// - Counter opponent's finesse placement
+    /// - Counter opponent's guard placement
     /// - Late game: Tight guards (Y = 4.0-4.5)
+    /// 
+    /// GUARD LIMIT (AGGRESSIVE PLAY):
+    /// - MAX 2 guards before getting rocks into scoring position
+    /// - Prevents excessive guarding without establishing house position
     /// </summary>
     private void PlaceStrategicGuard(ShotContext context, int rockCurrent)
     {
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         bool hasHammer = (rockCurrent % 2 == 1) ? gm.redHammer : !gm.redHammer;
+        
+        // CRITICAL: Count guards thrown this end (to limit consecutive guarding)
+        int myGuardsThrown = 0;
+        int myRocksInHouse = 0;
+        string myTeamName = currentRockInfo.teamName;
+        
+        // Count rocks in guard zone vs house
+        foreach (var guard in gm.gList)
+        {
+            if (guard.lastTransform == null) continue;
+            Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
+            if (guardInfo != null && guardInfo.teamName == myTeamName)
+            {
+                myGuardsThrown++;
+            }
+        }
+        
+        foreach (var houseRock in gm.houseList)
+        {
+            if (houseRock.rockInfo.teamName == myTeamName)
+            {
+                myRocksInHouse++;
+            }
+        }
+        
+        // GUARD LIMIT ENFORCEMENT (Aggressive play)
+        // Rule: MAX 2 guards before getting rocks in scoring position
+        // Exception: If we already have rocks in house, we can guard them
+        bool guardLimitReached = (myGuardsThrown >= 2 && myRocksInHouse == 0);
+        
+        if (guardLimitReached)
+        {
+            Debug.Log($"[Strategic Guard] GUARD LIMIT REACHED! {myGuardsThrown} guards thrown, {myRocksInHouse} rocks in house");
+            Debug.Log($"[Strategic Guard] ➜ FORCING DRAW instead - need to establish house position!");
+            
+            // FORCE A DRAW SHOT instead of another guard
+            // Target: Front of house (Y = 5.5-6.5) to establish position
+            Vector2 drawTarget = new Vector2(
+                Random.Range(-0.5f, 0.5f), // Slight lateral variation
+                Random.Range(5.5f, 6.8f)   // Front to mid house
+            );
+            
+            Debug.Log($"[Strategic Guard] Drawing to ({drawTarget.x:F2}, {drawTarget.y:F2}) instead of guard");
+            StartCoroutine(DrawTarget(rockCurrent, drawTarget));
+            return; // Exit early - we're drawing instead!
+        }
         
         Vector2 guardTarget = Vector2.zero;
         string guardType = "Center Guard"; // For logging
