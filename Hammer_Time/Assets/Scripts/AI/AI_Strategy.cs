@@ -12,6 +12,9 @@ public class AI_Strategy : MonoBehaviour
     public AI_Shooter aiShoot;
     public AI_Target aiTarg;
 
+    // ✅ PHASE 1: AI Enhancement Systems
+    private AIEnhancementSystems enhancements;
+
     Rock_Info rockInfo;
     Rock_Flick rockFlick;
     Rigidbody2D rockRB;
@@ -119,6 +122,14 @@ public class AI_Strategy : MonoBehaviour
     
     void Start()
     {
+        // ✅ PHASE 1: Initialize AI Enhancement Systems
+        enhancements = new AIEnhancementSystems();
+        
+        Debug.Log("[AI_Strategy] Phase 1 Enhancement Systems initialized:");
+        Debug.Log("  ✅ Skill-Based Shot Selection");
+        Debug.Log("  ✅ Clutch Performance Modifiers");
+        Debug.Log("  ✅ Simple Counter-Strategy");
+        
         // Initialize EV system
         GameObject evObj = new GameObject("EVSystem");
         evObj.transform.SetParent(transform);
@@ -616,10 +627,113 @@ public class AI_Strategy : MonoBehaviour
         if (targetPos.HasValue)
             context.idealFinalPosition = targetPos.Value;
         
+        // Track which systems are active for callout display
+        List<string> activeSystems = new List<string>();
+        bool skillBasedActive = false;
+        bool clutchActive = false;
+        bool counterActive = false;
+        bool evActive = false;
+        bool multiShotActive = false;
+        
+        // ✅ PHASE 1 ENHANCEMENT 1: Skill-Based Shot Selection
+        if (enhancements != null)
+        {
+            CharacterStats shooter = GetShooterStats(rockCurrent);
+            string shooterName = GetShooterName(rockCurrent);
+            
+            context = enhancements.skillBased.AdjustForSkills(context, shooter, shooterName);
+            skillBasedActive = true;
+            activeSystems.Add("SKILL");
+            
+            // Set AI personality based on shooter skills
+            enhancements.clutchPerformance.SetPersonalityFromStats(shooter);
+        }
+        
+        // ✅ PHASE 1 ENHANCEMENT 2: Clutch Performance Modifiers
+        if (enhancements != null)
+        {
+            AIGameState gameState = BuildGameState(rockCurrent);
+            float pressure = enhancements.clutchPerformance.CalculatePressure(gameState, rockCurrent);
+            
+            if (pressure >= 30f) // Medium or high pressure
+            {
+                context = enhancements.clutchPerformance.ApplyClutchModifiers(context, pressure, gameState);
+                clutchActive = true;
+                activeSystems.Add(pressure >= 60f ? "HIGH CLUTCH" : "CLUTCH");
+            }
+        }
+        
+        // ✅ PHASE 1 ENHANCEMENT 3: Counter-Strategy (check if we should override)
+        if (enhancements != null)
+        {
+            var detectedStrategy = enhancements.counterStrategy.GetCurrentStrategy();
+            
+            if (enhancements.counterStrategy.ShouldCounterStrategy(detectedStrategy))
+            {
+                ShotIntent counterIntent = enhancements.counterStrategy.GetCounterIntent(detectedStrategy, context.intent);
+                
+                // Only override if counter-intent is different
+                if (counterIntent != context.intent)
+                {
+                    Debug.Log($"[Counter] OVERRIDING {context.intent} with {counterIntent}");
+                    context.intent = counterIntent;
+                    counterActive = true;
+                    activeSystems.Add("COUNTER");
+                }
+            }
+        }
+        
         // Automatic EV evaluation (if enabled)
         if (evSystem != null && useEVOptimization)
         {
+            ShotContext originalContext = context;
             context = evSystem.EvaluateShot(context, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
+            
+            // Check if EV actually changed the shot
+            if (context.intent != originalContext.intent)
+            {
+                evActive = true;
+                activeSystems.Add("EV OVERRIDE");
+            }
+            else if (useEVOptimization)
+            {
+                evActive = true;
+                activeSystems.Add("EV");
+            }
+        }
+        
+        // 🎨 SHOW CALLOUT: Display active AI systems on the rock
+        if (activeSystems.Count > 0)
+        {
+            TextCalloutManager calloutManager = FindObjectOfType<TextCalloutManager>();
+            if (calloutManager != null)
+            {
+                string systemsText;
+                
+                // Break into multiple lines if more than 2 systems active
+                if (activeSystems.Count > 2)
+                {
+                    systemsText = "AI SYSTEMS:\n" + string.Join("\n", activeSystems);
+                }
+                else
+                {
+                    systemsText = "AI: " + string.Join(" + ", activeSystems);
+                }
+                
+                // FIXED: Attach to launcher position (0, -19) for proper stacking
+                Vector3 launcherPosition = new Vector3(0f, -19f, 0f);
+                
+                // Show callout at launcher (will stack with other launcher callouts)
+                calloutManager.ShowCallout(
+                    launcherPosition,
+                    systemsText,
+                    followTarget: false, // Stay at launcher, don't follow anything
+                    target: null,
+                    duration: 3.0f
+                );
+                
+                Debug.Log($"[AI Systems] Rock #{rockCurrent}: {string.Join(" + ", activeSystems)}");
+            }
         }
         
         aiTarg.ExecuteIntent(context, rockCurrent);
@@ -670,6 +784,25 @@ public class AI_Strategy : MonoBehaviour
         return null;
     }
     
+    /// <summary>
+    /// Get shooter name for tracking purposes
+    /// </summary>
+    private string GetShooterName(int rockCurrent)
+    {
+        TeamManager tm = FindObjectOfType<TeamManager>();
+        if (tm == null) return "Unknown";
+        
+        int memberIndex = rockCurrent / 4;
+        memberIndex = Mathf.Clamp(memberIndex, 0, 3);
+        
+        bool isRedTeam = (rockCurrent % 2 == 0) ? gm.redHammer : !gm.redHammer;
+        string teamName = isRedTeam ? "Red" : "Yellow";
+        
+        string[] positions = new string[] { "Lead", "Second", "Third", "Skip" };
+        
+        return $"{teamName}_{positions[memberIndex]}";
+    }
+    
     #region INTENT-BASED SHOT SELECTION METHODS
     
     /// <summary>
@@ -701,6 +834,24 @@ public class AI_Strategy : MonoBehaviour
         Vector2 targetPos = plan.GetCurrentTargetPosition();
         
         Debug.Log($"[MultiShot] Executing plan '{plan.strategyName}' step {plan.currentStep + 1}/{plan.plannedIntents.Count}: {plannedIntent}");
+        
+        // 🎨 SHOW CALLOUT: Display multi-shot plan info
+        TextCalloutManager calloutManager = FindObjectOfType<TextCalloutManager>();
+        if (calloutManager != null)
+        {
+            string planText = $"MULTI-SHOT: {plan.strategyName}\nStep {plan.currentStep + 1}/{plan.plannedIntents.Count}";
+            
+            // FIXED: Attach to launcher position (0, -19) for proper stacking
+            Vector3 launcherPosition = new Vector3(0f, -19f, 0f);
+            
+            calloutManager.ShowCallout(
+                launcherPosition,
+                planText,
+                followTarget: false, // Stay at launcher, don't follow anything
+                target: null,
+                duration: 3.5f
+            );
+        }
         
         // Build shot context from plan
         ShotContext context = new ShotContext(plannedIntent, targetRock);
@@ -1702,8 +1853,9 @@ public class AI_Strategy : MonoBehaviour
             }
         }
 
-        // ✅ CRITICAL: DEFENSIVE TAKEOUT PRIORITY CHECK
-        // When playing defensively, REMOVAL is FIRST PRIORITY before any other strategy!
+        // ✅ CRITICAL: UNIVERSAL REMOVAL CHECK
+        // Check if we should be removing threats BEFORE any strategy routing!
+        // This applies to BOTH defensive (protecting lead) AND offensive (too many opponent rocks)
         bool hasHammer = (rockCurrent % 2 != 0);
         
         // Calculate phase inline
@@ -1717,37 +1869,106 @@ public class AI_Strategy : MonoBehaviour
         
         bool isDefensive = ShouldPlayDefensive(rockCurrent, hasHammer, phase);
         
-        if (isDefensive)
+        // Count opponent rocks in house
+        int oppRocksInHouse = 0;
+        int myRocksInHouse = 0;
+        
+        foreach (var houseRock in gm.houseList)
         {
-            var house = GetHouseAnalysis();
-            
-            // DEFENSIVE MODE: If opponent has ANY rocks in house, REMOVE THEM FIRST!
-            if (house.threatRock >= 0)
+            if (houseRock.rockInfo.teamName != activeTeamName)
             {
-                Debug.Log($"[DEFENSIVE PRIORITY] Leading {activeTeamScore}-{oppTeamScore} - REMOVE threat rock #{house.threatRock} BEFORE any other shot!");
-                Debug.Log($"[DEFENSIVE PRIORITY] Opponent has {house.oppRocksInHouse} rock(s) in house - takeout is FIRST PRIORITY");
-                
-                // Build removal context
-                ShotContext removeContext = new ShotContext(ShotIntent.RemoveThreat, house.threatRock);
-                removeContext.acceptRisk = true; // Accept collision risk to remove threat
-                
-                // Apply EV evaluation if enabled
-                if (evSystem != null && useEVOptimization)
-                {
-                    removeContext = evSystem.EvaluateShot(removeContext, BuildGameState(rockCurrent), GetShooterStats(rockCurrent));
-                }
-                
-                // Execute immediate takeout
-                aiTarg.ExecuteIntent(removeContext, rockCurrent);
-                return; // DONE - defensive takeout executed!
+                oppRocksInHouse++;
             }
             else
             {
-                Debug.Log($"[DEFENSIVE PRIORITY] Leading {activeTeamScore}-{oppTeamScore} but no threat rocks - proceed to normal strategy");
+                myRocksInHouse++;
             }
         }
         
-        // Continue with normal strategy routing...
+        // 🚨 REMOVAL PRIORITY 1: DEFENSIVE (protecting lead with opponent rocks)
+        if (isDefensive && oppRocksInHouse > 0)
+        {
+            var house = GetHouseAnalysis();
+            
+            Debug.LogError($"[UNIVERSAL DEFENSIVE] Leading {activeTeamScore}-{oppTeamScore}, opponent has {oppRocksInHouse} rocks!");
+            Debug.LogError($"[UNIVERSAL DEFENSIVE] FORCING REMOVAL BEFORE ANY STRATEGY!");
+            
+            if (house.threatRock >= 0)
+            {
+                Debug.LogError($"[UNIVERSAL DEFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
+                
+                // Execute shot through ExecuteShot (will apply all enhancements)
+                ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                return; // DONE - defensive removal executed!
+            }
+        }
+        
+        // 🚨 REMOVAL PRIORITY 2: OFFENSIVE (opponent building too many rocks)
+        // Even when trailing, if opponent has 3+ rocks, we MUST start clearing!
+        if (!isDefensive && oppRocksInHouse >= 3)
+        {
+            var house = GetHouseAnalysis();
+            
+            Debug.LogError($"[UNIVERSAL OFFENSIVE] Opponent has {oppRocksInHouse} rocks - TOO MANY!");
+            Debug.LogError($"[UNIVERSAL OFFENSIVE] FORCING REMOVAL even though trailing!");
+            
+            if (house.threatRock >= 0)
+            {
+                Debug.LogError($"[UNIVERSAL OFFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
+                
+                // Execute shot through ExecuteShot (will apply all enhancements)
+                ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                return; // DONE - offensive removal executed!
+            }
+        }
+        
+        // 🚨 REMOVAL PRIORITY 3: LATE GAME WITHOUT HAMMER (must clear to steal)
+        // If late game without hammer and opponent has 2+ rocks, we should clear
+        if (phase == "late" && !hasHammer && oppRocksInHouse >= 2)
+        {
+            var house = GetHouseAnalysis();
+            
+            Debug.LogError($"[UNIVERSAL STEAL ATTEMPT] Late game without hammer, opponent has {oppRocksInHouse} rocks!");
+            Debug.LogError($"[UNIVERSAL STEAL ATTEMPT] FORCING REMOVAL to setup steal!");
+            
+            if (house.threatRock >= 0)
+            {
+                Debug.LogError($"[UNIVERSAL STEAL ATTEMPT] Targeting threat rock #{house.threatRock} for immediate removal!");
+                
+                // Execute shot through ExecuteShot (will apply all enhancements)
+                ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                return; // DONE - steal setup removal executed!
+            }
+        }
+        
+        // 🚨 REMOVAL PRIORITY 4: LOSING HOUSE (opponent winning shot rock position)
+        // If opponent is closer to button than us AND has multiple rocks, clear them!
+        if (oppRocksInHouse > myRocksInHouse && oppRocksInHouse >= 2)
+        {
+            var house = GetHouseAnalysis();
+            
+            // Check if opponent has shot rock (closest to button)
+            bool opponentHasShotRock = false;
+            if (gm.houseList.Count > 0 && gm.houseList[0].rockInfo.teamName != activeTeamName)
+            {
+                opponentHasShotRock = true;
+            }
+            
+            if (opponentHasShotRock && house.threatRock >= 0)
+            {
+                Debug.LogError($"[UNIVERSAL LOSING HOUSE] Opponent has shot rock + {oppRocksInHouse} total rocks!");
+                Debug.LogError($"[UNIVERSAL LOSING HOUSE] FORCING REMOVAL to contest house!");
+                Debug.LogError($"[UNIVERSAL LOSING HOUSE] Targeting threat rock #{house.threatRock} for immediate removal!");
+                
+                // Execute shot through ExecuteShot (will apply all enhancements)
+                ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
+                return; // DONE - house contest removal executed!
+            }
+        }
+        
+        // Only continue to normal strategy routing if NO removal priority triggered
+        
+        // Continue with normal strategy routing only if NOT in defensive removal mode...
         //early phase is shots 1-2 in an 8 rock game
         if (rockCurrent < 4)
         {

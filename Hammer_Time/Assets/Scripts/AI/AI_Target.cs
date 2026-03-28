@@ -3619,10 +3619,55 @@ public class AI_Target : MonoBehaviour
         
         Debug.Log($"[Removal] Option 0: DOUBLE TAKEOUT - Score: {doubleTakeoutScore:F2} 🎯🎯 REMOVES TWO ROCKS!");
         
+        // DEFENSIVE BOOST APPLIES TO ALL REMOVAL OPTIONS!
+        // Calculate defensive bonus once, apply to ALL removal shots
+        bool isDefensiveSituation = (aiStrat.activeTeamScore > aiStrat.oppTeamScore) || 
+                                    (isLateGame && aiStrat.activeTeamScore >= aiStrat.oppTeamScore);
+        
+        float defensiveBonus = 0f;
+        
+        if (isDefensiveSituation)
+        {
+            int scoreGap = aiStrat.activeTeamScore - aiStrat.oppTeamScore;
+            
+            if (scoreGap >= 3)
+            {
+                defensiveBonus = 60f; // Huge lead - MAXIMUM defensive priority for ALL removals!
+                Debug.Log($"[Removal] BIG LEAD (gap={scoreGap}) - MASSIVE removal bonus +60 (ALL REMOVAL OPTIONS!)");
+            }
+            else if (scoreGap >= 2)
+            {
+                defensiveBonus = 45f; // Good lead - very high defensive priority
+                Debug.Log($"[Removal] GOOD LEAD (gap={scoreGap}) - Major removal bonus +45 (ALL REMOVAL OPTIONS!)");
+            }
+            else if (scoreGap >= 1)
+            {
+                defensiveBonus = 30f; // Small lead - high defensive priority
+                Debug.Log($"[Removal] SMALL LEAD (gap={scoreGap}) - Removal bonus +30 (ALL REMOVAL OPTIONS!)");
+            }
+            else // Tied late game
+            {
+                defensiveBonus = 20f; // Tied late - moderate defensive priority
+                Debug.Log($"[Removal] TIED LATE GAME - Removal bonus +20 (ALL REMOVAL OPTIONS!)");
+            }
+        }
+        
+        // Apply defensive bonus to double takeout
+        if (doubleTakeoutScore > 0f)
+        {
+            doubleTakeoutScore += defensiveBonus;
+        }
+        
         // ========================================
         // PRIORITY 1: DIRECT TAKEOUT (always try first!)
         // ========================================
         float takeoutScore = SimulateTakeout(targetRock, context.targetRockIndex, rockCurrent);
+        
+        // Apply defensive bonus to direct takeout
+        if (takeoutScore > 0f)
+        {
+            takeoutScore += defensiveBonus;
+        }
         
         // BONUS: Late game direct takeouts are more valuable (no time to waste)
         if (isLateGame && takeoutScore > 0f)
@@ -3631,7 +3676,7 @@ public class AI_Target : MonoBehaviour
             Debug.Log($"[Removal] LATE GAME BONUS: Takeout +15 → {takeoutScore:F2}");
         }
         
-        Debug.Log($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY");
+        Debug.Log($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
         
         // ========================================
         // PRIORITY 2: RUNBACK (removes 2 rocks! finesse + target)
@@ -3661,16 +3706,24 @@ public class AI_Target : MonoBehaviour
                 // RUNBACK BASE BONUS: Removes 2 rocks instead of 1!
                 thisRunbackScore += 25f; // Big bonus for double removal
                 
-                // CONTEXT BONUSES:
-                if (isLateGame && thisRunbackScore > 0f)
+                // DEFENSIVE BOOST: Runbacks are EXCELLENT when protecting lead!
+                // They remove TWO rocks (guard + target) - even better than single takeout!
+                if (isDefensiveSituation && thisRunbackScore > 0f)
                 {
-                    thisRunbackScore += 20f; // Late game: CRITICAL to remove multiple rocks
+                    thisRunbackScore += defensiveBonus; // SAME bonus as direct takeout!
+                    Debug.Log($"[Removal] DEFENSIVE BOOST: Runback removes 2 rocks - bonus +{defensiveBonus:F1}");
+                }
+                
+                // CONTEXT BONUSES:
+                if (isLateGame && thisRunbackScore > 0f && !isDefensiveSituation)
+                {
+                    thisRunbackScore += 20f; // Late game OFFENSIVE: remove multiple rocks
                     Debug.Log($"[Removal] LATE GAME RUNBACK BONUS: +20 → {thisRunbackScore:F2}");
                 }
                 
-                if (rocksInHouse >= 3 && thisRunbackScore > 0f)
+                if (rocksInHouse >= 3 && thisRunbackScore > 0f && !isDefensiveSituation)
                 {
-                    thisRunbackScore += 15f; // Multiple rocks: clearing is URGENT
+                    thisRunbackScore += 15f; // Multiple rocks OFFENSIVE: clearing is urgent
                     Debug.Log($"[Removal] MULTIPLE ROCKS BONUS: +15 → {thisRunbackScore:F2}");
                 }
                 
@@ -3679,7 +3732,7 @@ public class AI_Target : MonoBehaviour
                     runbackScore = thisRunbackScore;
                 }
                 
-                Debug.Log($"[Removal] Option 2: RUNBACK through finesse #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL");
+                Debug.Log($"[Removal] Option 2: RUNBACK through finesse #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
             }
         }
         
@@ -3815,8 +3868,17 @@ public class AI_Target : MonoBehaviour
                     // Apply context-aware penalty (if primary is shot rock, alternates are penalized)
                     altScore += alternatePenalty;
                     
-                    // CONTEXT BONUS: Late game alternates are valuable (but already penalized if primary is shot rock)
-                    if (isLateGame && alternatePenalty == 0f) // Only if no penalty applied
+                    // DEFENSIVE BOOST (REDUCED): Alternates still remove a rock, just not the primary one
+                    // Give them 50% of the defensive bonus (better than drawing, but prefer primary)
+                    if (isDefensiveSituation && altScore > 0f)
+                    {
+                        float alternateDefensiveBonus = defensiveBonus * 0.5f;
+                        altScore += alternateDefensiveBonus;
+                        Debug.Log($"[Removal] DEFENSIVE BOOST (alternate): Still removes a rock - bonus +{alternateDefensiveBonus:F1} (50% of primary)");
+                    }
+                    
+                    // CONTEXT BONUS: Late game alternates are valuable (but already penalized if primary is shot rock OR defensive)
+                    if (isLateGame && alternatePenalty == 0f && !isDefensiveSituation) // Only if no penalty applied AND not defensive
                     {
                         altScore += 15f;
                         Debug.Log($"[Removal] LATE GAME ALTERNATE BONUS: +15");
@@ -3856,13 +3918,22 @@ public class AI_Target : MonoBehaviour
         // ========================================
         float tickScore = SimulateTick(targetRock, context.targetRockIndex, rockCurrent);
         
-        if (tickScore > 0f && isLateGame)
+        // DEFENSIVE BOOST (SMALL): Tick shots still remove the rock, just less reliably
+        // Give them 25% of the defensive bonus
+        if (isDefensiveSituation && tickScore > 0f)
         {
-            tickScore += 10f; // Small late game bonus
+            float tickDefensiveBonus = defensiveBonus * 0.25f;
+            tickScore += tickDefensiveBonus;
+            Debug.Log($"[Removal] DEFENSIVE BOOST (tick): Still removes rock - bonus +{tickDefensiveBonus:F1} (25% of primary)");
+        }
+        
+        if (tickScore > 0f && isLateGame && !isDefensiveSituation)
+        {
+            tickScore += 10f; // Small late game bonus (OFFENSIVE only)
             Debug.Log($"[Removal] LATE GAME TICK BONUS: +10 → {tickScore:F2}");
         }
         
-        Debug.Log($"[Removal] Option 4: TICK SHOT - Score: {tickScore:F2}");
+        Debug.Log($"[Removal] Option 4: TICK SHOT - Score: {tickScore:F2} {(isDefensiveSituation ? "(DEFENSIVE BOOST)" : "")}");
         
         // ========================================
         // PRIORITY 5: PEEL GUARD (LAST RESORT!)
@@ -3879,21 +3950,30 @@ public class AI_Target : MonoBehaviour
         if (shouldConsiderPeel)
         {
             // Find blocking finesse
-            foreach (var guard in gm.gList)
+            foreach (var peelGuard in gm.gList)
             {
-                if (guard.lastTransform == null)
+                if (peelGuard.lastTransform == null)
                     continue;
 
-                Rock_Info guardInfo = guard.lastTransform.GetComponent<Rock_Info>();
-                if (guardInfo == null || guardInfo.teamName == currentRockInfo.teamName)
+                Rock_Info peelGuardInfo = peelGuard.lastTransform.GetComponent<Rock_Info>();
+                if (peelGuardInfo == null || peelGuardInfo.teamName == currentRockInfo.teamName)
                     continue; // Skip our own guards
 
-                if (IsGuardBlocking(guard.lastTransform, targetRock, tolerance: 0.3f))
+                if (IsGuardBlocking(peelGuard.lastTransform, targetRock, tolerance: 0.3f))
                 {
-                    guardToPeel = guardInfo.rockIndex;
-                    peelScore = SimulatePeel(guard.lastTransform.gameObject, guardToPeel, rockCurrent);
+                    guardToPeel = peelGuardInfo.rockIndex;
+                    peelScore = SimulatePeel(peelGuard.lastTransform.gameObject, guardToPeel, rockCurrent);
                     
                     // PENALTIES FOR PEEL:
+                    if (isDefensiveSituation && peelScore > 0f)
+                    {
+                        // MASSIVE DEFENSIVE PENALTY: Peel only removes the guard, NOT the threat!
+                        // This is almost NEVER correct when protecting a lead
+                        float defensivePeelPenalty = -50f; // Huge penalty
+                        peelScore += defensivePeelPenalty;
+                        Debug.Log($"[Removal] DEFENSIVE PENALTY: Peel doesn't remove threat - MASSIVE penalty {defensivePeelPenalty}");
+                    }
+                    
                     if (isLateGame && peelScore > 0f)
                     {
                         peelScore -= 20f; // Late game: peel is WEAK option
@@ -4940,24 +5020,73 @@ public class AI_Target : MonoBehaviour
     private float SimulateDraw(Vector2 targetPosition, int rockCurrent)
     {
         Vector2 launcherPos = new Vector2(0f, -25f);
-        
-        // Base score: how close can we get to button with a clean weight?
-        float baseScore = 70f; // Drawing is always a solid option
-        
-        // PENALTY: If opponent already has rocks closer to button
-        float closestOpponentDist = float.MaxValue;
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
+        
+        // CRITICAL: UNIVERSAL DRAW PENALTY
+        // Draws are being used TOO OFTEN - add base penalty to encourage more variety
+        float baseScore = 70f; // Drawing is always a solid option
+        float universalDrawPenalty = -15f; // UNIVERSAL penalty to reduce draw frequency
+        
+        Debug.Log($"[Simulate Draw] UNIVERSAL DRAW PENALTY: {universalDrawPenalty} (reduce draw spam!)");
+        baseScore += universalDrawPenalty;
+        
+        // CRITICAL: DEFENSIVE PENALTY - Drawing when opponent has rocks is BAD!
+        // Count opponent rocks in house
+        int opponentRocksInHouse = 0;
+        float closestOpponentDist = float.MaxValue;
         
         foreach (var houseRock in gm.houseList)
         {
             if (houseRock.rockInfo.teamName != currentRockInfo.teamName)
             {
+                opponentRocksInHouse++;
                 float dist = Vector2.Distance(houseRock.rock.transform.position, targetPosition);
                 if (dist < closestOpponentDist)
                 {
                     closestOpponentDist = dist;
                 }
             }
+        }
+        
+        // DEFENSIVE SITUATION CHECK
+        bool isDefensiveSituation = (aiStrat.activeTeamScore > aiStrat.oppTeamScore);
+        
+        if (isDefensiveSituation && opponentRocksInHouse > 0)
+        {
+            // MASSIVE PENALTY: Drawing when opponent has rocks AND we're leading is TERRIBLE strategy!
+            int scoreGap = aiStrat.activeTeamScore - aiStrat.oppTeamScore;
+            float defensiveDrawPenalty = 0f;
+            
+            // Base penalty scales with number of opponent rocks
+            float rockCountPenalty = opponentRocksInHouse * 20f; // -20 per opponent rock!
+            
+            // Score gap multiplier
+            if (scoreGap >= 3)
+            {
+                defensiveDrawPenalty = rockCountPenalty * 1.5f; // 150% penalty (huge lead)
+                Debug.Log($"[Simulate Draw] DEFENSIVE DISASTER: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - REMOVE THEM! Penalty: -{defensiveDrawPenalty:F1}");
+            }
+            else if (scoreGap >= 2)
+            {
+                defensiveDrawPenalty = rockCountPenalty * 1.25f; // 125% penalty (good lead)
+                Debug.Log($"[Simulate Draw] DEFENSIVE ERROR: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - should takeout! Penalty: -{defensiveDrawPenalty:F1}");
+            }
+            else if (scoreGap >= 1)
+            {
+                defensiveDrawPenalty = rockCountPenalty; // 100% penalty (small lead)
+                Debug.Log($"[Simulate Draw] DEFENSIVE MISTAKE: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - prefer takeout! Penalty: -{defensiveDrawPenalty:F1}");
+            }
+            
+            baseScore -= defensiveDrawPenalty;
+        }
+        
+        // OFFENSIVE PENALTY: Too many draws even when trailing!
+        // If opponent has multiple rocks, drawing is usually wrong
+        if (!isDefensiveSituation && opponentRocksInHouse >= 2)
+        {
+            float offensiveDrawPenalty = opponentRocksInHouse * 10f; // -10 per rock
+            baseScore -= offensiveDrawPenalty;
+            Debug.Log($"[Simulate Draw] OFFENSIVE PENALTY: Opponent has {opponentRocksInHouse} rocks - prefer removal! Penalty: -{offensiveDrawPenalty:F1}");
         }
         
         // If opponent is close to button, drawing is less valuable (hard to beat them)
@@ -4990,6 +5119,8 @@ public class AI_Target : MonoBehaviour
             // Rock is exposed, not behind any guards
             baseScore -= 30f;
         }
+        
+        Debug.Log($"[Simulate Draw] Final Score: {Mathf.Max(0f, baseScore):F1} (after universal penalty + context penalties)");
         
         return Mathf.Max(0f, baseScore);
     }
@@ -5728,6 +5859,10 @@ public class AI_Target : MonoBehaviour
     /// GUARD LIMIT (AGGRESSIVE PLAY):
     /// - MAX 2 guards before getting rocks into scoring position
     /// - Prevents excessive guarding without establishing house position
+    /// 
+    /// DEFENSIVE PENALTY (NEW!):
+    /// - When leading AND opponent has rocks in house, guards are TERRIBLE strategy!
+    /// - Should be removing threats, not building more guards
     /// </summary>
     private void PlaceStrategicGuard(ShotContext context, int rockCurrent)
     {
@@ -5737,6 +5872,7 @@ public class AI_Target : MonoBehaviour
         // CRITICAL: Count guards thrown this end (to limit consecutive guarding)
         int myGuardsThrown = 0;
         int myRocksInHouse = 0;
+        int opponentRocksInHouse = 0;
         string myTeamName = currentRockInfo.teamName;
         
         // Count rocks in guard zone vs house
@@ -5756,6 +5892,55 @@ public class AI_Target : MonoBehaviour
             {
                 myRocksInHouse++;
             }
+            else
+            {
+                opponentRocksInHouse++;
+            }
+        }
+        
+        // DEFENSIVE DISASTER CHECK: Leading + opponent has rocks = NEVER GUARD!
+        bool isDefensiveSituation = (aiStrat.activeTeamScore > aiStrat.oppTeamScore);
+        
+        if (isDefensiveSituation && opponentRocksInHouse > 0)
+        {
+            int scoreGap = aiStrat.activeTeamScore - aiStrat.oppTeamScore;
+            
+            Debug.LogError($"[Strategic Guard] ❌ DEFENSIVE DISASTER! Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks in house!");
+            Debug.LogError($"[Strategic Guard] ➜ GUARDS ARE TERRIBLE STRATEGY - Should be removing their rocks!");
+            Debug.LogError($"[Strategic Guard] ➜ FORCING REMOVAL EVALUATION instead!");
+            
+            // FORCE REMOVAL EVALUATION - opponent has rocks, we should clear them!
+            ShotContext removalContext = context;
+            removalContext.intent = ShotIntent.RemoveThreat;
+            
+            // Find the shot rock (closest opponent rock to button)
+            GameObject shotRock = null;
+            int shotRockIndex = -1;
+            
+            foreach (var houseRock in gm.houseList)
+            {
+                if (houseRock.rockInfo.teamName != myTeamName)
+                {
+                    shotRock = houseRock.rock;
+                    shotRockIndex = houseRock.rockInfo.rockIndex;
+                    break; // First in sorted list = closest to button
+                }
+            }
+            
+            if (shotRockIndex >= 0)
+            {
+                removalContext.targetRockIndex = shotRockIndex;
+                Debug.LogError($"[Strategic Guard] ➜ Targeting opponent shot rock #{shotRockIndex} for removal!");
+                EvaluateRemovalOptions(removalContext, rockCurrent);
+            }
+            else
+            {
+                // Shouldn't happen, but fallback to draw
+                Debug.LogError($"[Strategic Guard] ➜ ERROR: No opponent rock found, falling back to draw");
+                OnTarget("Auto Draw Four Foot", rockCurrent, 0);
+            }
+            
+            return; // Exit early - we're removing, not guarding!
         }
         
         // GUARD LIMIT ENFORCEMENT (Aggressive play)
