@@ -49749,7 +49749,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: useEVOptimization
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: closeThreatDistance
@@ -49761,6 +49761,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
       propertyPath: urgentThreatDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
+      propertyPath: useMultiShotPlanning
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8901575970831046904, guid: d67cc911acb3d4014996420d44298e4d, type: 3}
