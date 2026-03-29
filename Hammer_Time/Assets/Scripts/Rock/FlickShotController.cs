@@ -34,6 +34,9 @@ public class FlickShotController : MonoBehaviour
     [Tooltip("Line renderer for predicted stop position")]
     private LineRenderer predictedStopLine;
     
+    [Tooltip("Line renderer for input zone border (shows valid drag area)")]
+    private LineRenderer inputZoneBorder;
+    
     [Tooltip("Velocity guide indicator - shows player the correct swipe speed")]
     private VelocityGuideIndicator velocityGuide;
     
@@ -53,25 +56,46 @@ public class FlickShotController : MonoBehaviour
     [Tooltip("Start position for power drag (Y coordinate)")]
     public float powerDragStartY = -25f;
     
-    [Tooltip("Target position for power drag (Y coordinate, near hog line)")]
-    public float powerDragTargetY = -16f;
+    [Tooltip("Target position for power drag (Y coordinate, AT hog line)")]
+    public float powerDragTargetY = -16f; // Exactly at hog line
     
-    [Tooltip("Minimum drag time to register shot (seconds)")]
+    [Header("Input Zone Validation")]
+    [Tooltip("Maximum X distance from center (±X units) for valid input")]
+    [Range(0.5f, 2.0f)]
+    public float inputZoneMaxX = 1.0f;
+    
+    [Tooltip("Y buffer below launcher (how far below launcher to allow clicks)")]
+    [Range(0.0f, 2.0f)]
+    public float inputZoneBufferY = 0.5f;
+    
+    [Tooltip("Y buffer above hog line - SET TO 0 to end exactly at hog line (-16f)")]
+    [Range(0.0f, 2.0f)]
+    public float inputZoneBufferAboveHog = 0.0f; // ? Changed from 0.5f to 0.0f - zone ends at Y=-16
+    
+    [Header("Visual Feedback")]
+    [Tooltip("Minimum distance cursor must move before adding to line (prevents tiny segments)")]
     [Range(0.05f, 0.5f)]
-    public float minDragTime = 0.1f;
+    public float minDrawDistance = 0.20f;
     
-    [Tooltip("Maximum drag time for fastest shot (seconds)")]
-    [Range(0.2f, 2.0f)]
-    public float maxDragTime = 1.5f;
+    [Header("Velocity Calculation (Distance/Time)")]
+    [Tooltip("Minimum drag velocity for slowest shot (units/second)")]
+    [Range(1.0f, 10.0f)]
+    public float minDragVelocity = 5.0f;
     
-    [Header("Speed Quantization")]
-    [Tooltip("Number of speed bands (e.g., 7 for more precision: Very Slow, Slow, Slow-Med, Medium, Med-Fast, Fast, Very Fast)")]
-    [Range(3, 10)]
-    public int speedBands = 7; // Was 5, now 7 for more precision
+    [Tooltip("Maximum drag velocity for fastest shot (units/second)")]
+    [Range(10.0f, 50.0f)]
+    public float maxDragVelocity = 16.0f; // ? NEW: Closer to rock velocity (was 80.0f)
     
-    [Tooltip("Tolerance for 'Perfect' speed band (% above/below center)")]
-    [Range(0.05f, 0.3f)]
-    public float perfectTolerance = 0.15f;
+    [Tooltip("Velocity scale multiplier - adjusts how drag velocity maps to rock velocity (1.0 = 1:1 mapping)")]
+    [Range(0.5f, 2.0f)]
+    public float velocityScaleMultiplier = 1.0f; // ? NEW: Fine-tune feel (1.0 = natural)
+    
+    [Header("(DEPRECATED - No longer using speed bands)")]
+    [Tooltip("DEPRECATED: Speed bands removed - now using continuous velocity")]
+    public int speedBands = 7; // DEPRECATED - kept for backward compatibility
+    
+    [Tooltip("DEPRECATED: No longer using tolerance bands")]
+    public float perfectTolerance = 0.15f; // DEPRECATED
     
     [Header("Skill Tuning")]
     [Tooltip("Forgiveness factor - higher = more forgiving (easier to hit speed bands)")]
@@ -134,8 +158,8 @@ public class FlickShotController : MonoBehaviour
     private float lastPlayerSliderValue = 0f;
     
     // Calculated values
-    private float calculatedSpeed;
-    private int speedBand;
+    private float calculatedSpeed; // 0-1 normalized speed (continuous, not banded)
+    private float dragVelocity; // Actual drag velocity (distance/time) in units/second
     
     // Cached references (using dynamic types to avoid compilation issues)
     private bool isEnabled = false;
@@ -216,15 +240,29 @@ public class FlickShotController : MonoBehaviour
         predictedStopLine.material = new Material(Shader.Find("Sprites/Default"));
         Debug.Log("[FlickShot] Predicted stop line created (cyan horizontal)");
         
+        // Create input zone border (green rectangle showing valid drag area)
+        GameObject inputZoneObj = new GameObject("InputZoneBorder");
+        inputZoneBorder = inputZoneObj.AddComponent<LineRenderer>();
+        inputZoneBorder.enabled = false;
+        inputZoneBorder.startWidth = 0.05f;
+        inputZoneBorder.endWidth = 0.05f;
+        inputZoneBorder.positionCount = 5; // Rectangle (4 corners + close loop)
+        Color zoneColor = new Color(0f, 1f, 0f, 0.3f); // Green, transparent
+        inputZoneBorder.startColor = zoneColor;
+        inputZoneBorder.endColor = zoneColor;
+        inputZoneBorder.material = new Material(Shader.Find("Sprites/Default"));
+        inputZoneBorder.useWorldSpace = true;
+        Debug.Log("[FlickShot] Input zone border created (green rectangle)");
+        
         // Create velocity guide indicator
         GameObject velocityGuideObj = new GameObject("VelocityGuide");
         velocityGuide = velocityGuideObj.AddComponent<VelocityGuideIndicator>();
-        velocityGuide.startY = -24.66f;  // Launcher position (updated)
-        velocityGuide.endY = -16.5f;     // Hog line position (updated)
+        velocityGuide.startY = powerDragStartY;  // Launcher position (-25f)
+        velocityGuide.endY = powerDragTargetY;   // ? NEW: Exactly at hog line (-16f, not -16.5f)
         velocityGuide.pauseDuration = 1.5f; // Pause at hogline (1.5s total)
         velocityGuide.fadeOutDuration = 0.5f; // Fade out over last 0.5s
         velocityGuide.lineWidth = 0.2f;
-        Debug.Log("[FlickShot] Velocity guide indicator created with 1.5s pause + 0.5s fade-out");
+        Debug.Log($"[FlickShot] Velocity guide created: {velocityGuide.startY:F1} to {velocityGuide.endY:F1} (swipe zone matches exactly!)");
         
         // Subscribe to flick shot mode changes using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
@@ -450,6 +488,10 @@ public class FlickShotController : MonoBehaviour
             Debug.Log("[FlickShot] Swipe trail enabled - ready to draw");
         }
         
+        // ? NEW: Show input zone border ONLY in flick shot mode during power phase
+        // Configured in SetupInputZoneBorder() - will be visible when player can actually swipe
+        SetupInputZoneBorder();
+        
         // Power drag starts at launcher Y position
         powerDragStartPos = new Vector2(launcher.transform.position.x, powerDragStartY);
         powerDragStartTime = Time.time;
@@ -461,15 +503,21 @@ public class FlickShotController : MonoBehaviour
         // Start velocity guide indicator
         if (velocityGuide != null)
         {
-            // CRITICAL FIX: Get target velocity from TrajectoryLine (based on aim/trajectory endpoint)
-            // NOT from drag timing - that comes later!
-            float targetVelocity = GetTargetVelocityFromTrajectory();
+            // ? NEW: Calculate DRAG VELOCITY (units/s input speed) not rock velocity!
+            // Rock velocity tells us how fast the rock will travel
+            // Drag velocity tells us how fast WE need to swipe!
             
-            if (targetVelocity <= 0f)
+            float targetRockVelocity = GetTargetVelocityFromTrajectory();
+            
+            if (targetRockVelocity <= 0f)
             {
                 Debug.LogWarning("[FlickShot] Failed to get target velocity from trajectory - using fallback");
-                targetVelocity = 10f; // Fallback to medium velocity
+                targetRockVelocity = 10f; // Fallback to medium velocity
             }
+            
+            // ? CRITICAL: Map rock velocity ? ideal drag velocity
+            // We need to show how fast to SWIPE, not how fast rock travels!
+            float idealDragVelocity = CalculateIdealDragVelocityForRockSpeed(targetRockVelocity);
             
             // Get the shooting knob color directly (it already calculates color based on aim circle Y)
             Color guideColor = Color.white;
@@ -485,25 +533,31 @@ public class FlickShotController : MonoBehaviour
                 }
             }
             
-            velocityGuide.StartGuide(targetVelocity, guideColor);
-            Debug.Log($"[FlickShot] Velocity guide started - {targetVelocity:F2} m/s (from trajectory), Color: {guideColor}");
+            // ? Pass DRAG VELOCITY to guide (how fast to swipe!)
+            velocityGuide.StartGuide(idealDragVelocity, guideColor);
+            Debug.Log($"[FlickShot] ? Velocity guide started:");
+            Debug.Log($"  Rock velocity: {targetRockVelocity:F2} m/s (how fast rock travels)");
+            Debug.Log($"  Drag velocity: {idealDragVelocity:F1} units/s (how fast YOU swipe!)");
+            Debug.Log($"  Color: {guideColor}");
             
             // Show velocity callout at launcher using TextCalloutManager directly
             if (showSpeedFeedback && TextCalloutManager.Instance != null)
             {
-                // Calculate ideal drag time for this velocity
+                // Calculate ideal drag time based on drag velocity
                 float distance = velocityGuide.endY - velocityGuide.startY; // -16.5 - (-24.66) = 8.16 units
-                float idealTime = distance / targetVelocity; // Time guide takes to animate
+                float idealTime = distance / idealDragVelocity; // Time guide takes to animate
                 
                 Vector2 launcherPos = launcher.transform.position;
-                string velocityMessage = $"Target: {targetVelocity:F1} m/s";
-                string timeMessage = $"Swipe in {idealTime:F2}s";
+                string velocityMessage = $"Rock: {targetRockVelocity:F1} m/s";
+                string swipeMessage = $"Swipe: {idealDragVelocity:F0} units/s";
+                string timeMessage = $"Time: {idealTime:F2}s";
                 
                 // Show velocity and time as stacked callouts
                 TextCalloutManager.Instance.ShowCallout(launcherPos, velocityMessage, followTarget: false, target: null, duration: 5f);
+                TextCalloutManager.Instance.ShowCallout(launcherPos, swipeMessage, followTarget: false, target: null, duration: 5f);
                 TextCalloutManager.Instance.ShowCallout(launcherPos, timeMessage, followTarget: false, target: null, duration: 5f);
                 
-                Debug.Log($"[FlickShot] Velocity callouts shown: {velocityMessage} | {timeMessage}");
+                Debug.Log($"[FlickShot] Velocity callouts shown: {velocityMessage} | {swipeMessage} | {timeMessage}");
             }
         }
         
@@ -539,11 +593,24 @@ public class FlickShotController : MonoBehaviour
         // Update speed slider animation
         UpdateSpeedSlider();
         
-        // Wait for mouse down to start dragging
+        // Wait for mouse down to start dragging (with input zone validation!)
         if (!isPowerDragging)
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Vector2 clickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                
+                // ? VALIDATE: Click must be in valid input zone!
+                if (!IsInValidInputZone(clickPos))
+                {
+                    Debug.LogWarning($"[FlickShot] Click OUTSIDE valid zone ({clickPos.x:F2}, {clickPos.y:F2}) - IGNORED!");
+                    if (TextCalloutManager.Instance != null)
+                    {
+                        TextCalloutManager.Instance.ShowCallout(clickPos, "Click in green zone!", false, null, 2f);
+                    }
+                    return; // Block rogue clicks!
+                }
+                
                 isPowerDragging = true;
                 powerDragStartTime = Time.time;
                 swipePoints.Clear();
@@ -552,12 +619,11 @@ public class FlickShotController : MonoBehaviour
                 // This allows player to time their swipe to the animation
                 Debug.Log("[FlickShot] Power swipe started - velocity guide continues animating");
                 
-                // Add starting point at launcher
-                Vector3 startPos = launcher.transform.position;
-                startPos.z = -1f; // In front of everything
+                // Add starting point at click position (not launcher!)
+                Vector3 startPos = new Vector3(clickPos.x, clickPos.y, -1f);
                 swipePoints.Add(startPos);
                 
-                Debug.Log("[FlickShot] Power swipe started - draw your path!");
+                Debug.Log($"[FlickShot] Power swipe started at {clickPos} - draw your path!");
             }
             return;
         }
@@ -566,12 +632,19 @@ public class FlickShotController : MonoBehaviour
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 mousePos3D = new Vector3(mouseWorldPos.x, mouseWorldPos.y, -1f);
         
-        // CRITICAL FIX: Calculate velocity DURING drag for real-time preview!
+        // ? NEW: Calculate velocity from DISTANCE/TIME (actual velocity!)
         float currentDragTime = Time.time - powerDragStartTime;
-        if (currentDragTime > 0.01f) // Avoid divide by zero
+        if (currentDragTime > 0.01f && swipePoints.Count > 0) // Avoid divide by zero
         {
-            // Calculate speed continuously (use unified formula!)
-            calculatedSpeed = CalculateSpeedFromDragTime(currentDragTime);
+            // Calculate DISTANCE traveled (Y-axis)
+            Vector3 startPos = swipePoints[0]; // First point
+            float distanceTraveled = Mathf.Abs(mouseWorldPos.y - startPos.y);
+            
+            // Calculate VELOCITY = distance / time (units/second)
+            dragVelocity = distanceTraveled / currentDragTime;
+            
+            // Normalize and calculate speed (0-1)
+            calculatedSpeed = CalculateSpeedFromVelocity(dragVelocity);
             float previewVelocity = GetPredictedVelocity();
             float previewStopY = CalculatePredictedStopPosition(previewVelocity);
             
@@ -600,11 +673,9 @@ public class FlickShotController : MonoBehaviour
             // }
         }
         
-        // Add cursor position to trail with smoothing (reduce jitter)
-        // Only sample if cursor moved far enough to avoid dense clustering
-        float minSampleDistance = 0.15f; // Sample every 15cm (smoother, less jagged)
-        
-        if (swipePoints.Count == 0 || Vector3.Distance(swipePoints[swipePoints.Count - 1], mousePos3D) > minSampleDistance)
+        // ? NEW: Add cursor position with minimum draw distance (cleaner lines!)
+        // Only add point if moved far enough from LAST point (prevents tiny segments)
+        if (swipePoints.Count == 0 || Vector3.Distance(swipePoints[swipePoints.Count - 1], mousePos3D) > minDrawDistance)
         {
             swipePoints.Add(mousePos3D);
             
@@ -636,8 +707,10 @@ public class FlickShotController : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             float dragTime = Time.time - powerDragStartTime;
-            float currentY = Mathf.Clamp(mouseWorldPos.y, powerDragTargetY, powerDragStartY);
-            float dragDistance = Mathf.Abs(currentY - powerDragStartY);
+            
+            // ? NEW: Calculate final distance traveled (Y-axis)
+            Vector3 startPos = swipePoints.Count > 0 ? swipePoints[0] : launcher.transform.position;
+            float dragDistance = Mathf.Abs(mouseWorldPos.y - startPos.y);
             
             // DISABLED: Shooter animation control removed
             // if (isShooterAnimControlActive && shooterAnim != null)
@@ -950,49 +1023,70 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate speed multiplier (0-1) from drag time
-    /// Used by both preview and final velocity calculation
-    /// UNIFIED FORMULA - matches slider timing!
+    /// ? NEW: Calculate speed multiplier (0-1) from drag VELOCITY (distance/time)
+    /// This is the REAL physics-based approach!
     /// </summary>
-    private float CalculateSpeedFromDragTime(float dragTime)
+    private float CalculateSpeedFromVelocity(float dragVelocity)
     {
-        float normalizedSpeed;
+        // Map drag velocity (units/second) to normalized speed (0-1)
+        // Fast swipe = high velocity = high speed
+        // Slow swipe = low velocity = low speed
+        float normalizedSpeed = Mathf.InverseLerp(minDragVelocity, maxDragVelocity, dragVelocity);
         
-        if (dragTime <= minDragTime)
-        {
-            // Ultra-fast drag = maximum speed
-            normalizedSpeed = 1.0f;
-        }
-        else if (dragTime >= maxDragTime)
-        {
-            // Ultra-slow drag = minimum speed
-            normalizedSpeed = 0.0f;
-        }
-        else
-        {
-            // Linear interpolation: faster drag = higher speed
-            // Invert so shorter time = higher speed
-            normalizedSpeed = 1.0f - ((dragTime - minDragTime) / (maxDragTime - minDragTime));
-        }
-        
-        // Apply forgiveness factor (optional - makes it easier)
+        // Apply forgiveness factor (smooth extremes toward middle)
         normalizedSpeed = Mathf.Lerp(0.5f, normalizedSpeed, 1f / forgivenessFactor);
         
         return Mathf.Clamp01(normalizedSpeed);
     }
     
     /// <summary>
-    /// Calculate which speed band the drag falls into
-    /// Now uses unified formula from CalculateSpeedFromDragTime
+    /// DEPRECATED: Old time-based calculation (kept for reference)
+    /// Now using velocity-based calculation instead!
     /// </summary>
-    private void CalculateSpeedBand(float dragTime, float dragDistance)
+    private float CalculateSpeedFromDragTime(float dragTime)
     {
-        // Use unified formula
-        calculatedSpeed = CalculateSpeedFromDragTime(dragTime);
+        Debug.LogWarning("[FlickShot] DEPRECATED: Using old time-based calculation - should use velocity-based!");
         
-        // Calculate speed band from calculatedSpeed
-        speedBand = Mathf.FloorToInt(calculatedSpeed * speedBands);
-        speedBand = Mathf.Clamp(speedBand, 0, speedBands - 1);
+        float normalizedSpeed;
+        
+        if (dragTime <= 0.1f)
+        {
+            normalizedSpeed = 1.0f;
+        }
+        else if (dragTime >= 1.5f)
+        {
+            normalizedSpeed = 0.0f;
+        }
+        else
+        {
+            normalizedSpeed = 1.0f - ((dragTime - 0.1f) / (1.5f - 0.1f));
+        }
+        
+        normalizedSpeed = Mathf.Lerp(0.5f, normalizedSpeed, 1f / forgivenessFactor);
+        
+        return Mathf.Clamp01(normalizedSpeed);
+    }
+    
+    /// <summary>
+    /// ? REFACTORED: Calculate final velocity from drag velocity (distance/time)
+    /// NO MORE SPEED BANDS - continuous velocity for realism!
+    /// </summary>
+    private void CalculateFinalVelocity(float dragTime, float dragDistance)
+    {
+        // Calculate drag velocity (distance / time)
+        if (dragTime > 0.01f)
+        {
+            dragVelocity = dragDistance / dragTime;
+        }
+        else
+        {
+            dragVelocity = maxDragVelocity; // Ultra-fast = max
+        }
+        
+        // Calculate normalized speed (0-1) from velocity
+        calculatedSpeed = CalculateSpeedFromVelocity(dragVelocity);
+        
+        Debug.Log($"[FlickShot] Drag: {dragDistance:F2}m in {dragTime:F2}s = {dragVelocity:F1} units/s ? speed {calculatedSpeed:F3} (continuous, no bands!)");
     }
     
     /// <summary>
@@ -1237,27 +1331,75 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate ideal drag time for current target speed band
-    /// FIXED: Now matches unified speed formula exactly!
-    /// Perfect (middle) = ~0.8s, Faster = shorter, Slower = longer
+    /// ? NEW: Calculate ideal drag time based on target velocity
+    /// Uses velocity-based calculation (distance/time)
     /// </summary>
     private float CalculateIdealDragTime()
     {
-        // Perfect band = middle band (0.5 normalized speed)
-        // From CalculateSpeedFromDragTime: 0.5 = midpoint between min and max drag time
+        // Get distance we'll be dragging (launcher to hog line)
+        float distance = Mathf.Abs(powerDragTargetY - powerDragStartY); // ~9 units
         
-        float perfectNormalized = 0.5f; // Middle speed band
+        // Calculate ideal velocity for "perfect" shot (middle speed = 0.5)
+        float perfectNormalized = 0.5f;
+        float idealVelocity = Mathf.Lerp(minDragVelocity, maxDragVelocity, perfectNormalized);
         
-        // Solve for drag time that gives 0.5 normalized speed:
-        // 0.5 = 1.0 - ((dragTime - minDragTime) / (maxDragTime - minDragTime))
-        // 0.5 = (dragTime - minDragTime) / (maxDragTime - minDragTime)
-        // dragTime = minDragTime + 0.5 * (maxDragTime - minDragTime)
+        // Calculate time needed: time = distance / velocity
+        float idealTime = distance / idealVelocity;
         
-        float idealTime = minDragTime + (perfectNormalized * (maxDragTime - minDragTime));
-        
-        Debug.Log($"[FlickShot] Ideal drag time calculated: {idealTime:F2}s (min: {minDragTime:F2}, max: {maxDragTime:F2})");
+        Debug.Log($"[FlickShot] Ideal drag: {distance:F1}m at {idealVelocity:F1} units/s = {idealTime:F2}s");
         
         return idealTime;
+    }
+    
+    /// <summary>
+    /// ? NEW: Calculate ideal DRAG velocity (units/s input speed) for a target rock velocity
+    /// This maps rock speed (m/s) ? input speed (units/s) using the inverse formula
+    /// </summary>
+    private float CalculateIdealDragVelocityForRockSpeed(float targetRockVelocity)
+    {
+        // Get velocity range from TrajectoryLine
+        float minVel = 5f;
+        float maxVel = 13f;
+        
+        if (minVelocityProp != null && trajLine != null)
+        {
+            object minVelObj = minVelocityProp.GetValue(trajLine);
+            if (minVelObj != null) minVel = (float)minVelObj;
+        }
+        if (maxVelocityProp != null && trajLine != null)
+        {
+            object maxVelObj = maxVelocityProp.GetValue(trajLine);
+            if (maxVelObj != null) maxVel = (float)maxVelObj;
+        }
+        
+        // Inverse mapping: rock velocity ? normalized speed (0-1)
+        float normalizedSpeed = Mathf.InverseLerp(minVel, maxVel, targetRockVelocity);
+        
+        // Reverse forgiveness factor
+        // calculatedSpeed = Lerp(0.5, normalizedSpeed, 1/forgiveness)
+        // Solve for normalizedSpeed before forgiveness:
+        // normalizedSpeed = 0.5 + (calculatedSpeed - 0.5) * forgiveness
+        float rawNormalized = 0.5f + (normalizedSpeed - 0.5f) * forgivenessFactor;
+        rawNormalized = Mathf.Clamp01(rawNormalized);
+        
+        // Map normalized speed ? drag velocity
+        float idealDragVel = Mathf.Lerp(minDragVelocity, maxDragVelocity, rawNormalized);
+        
+        // ? NEW: Apply velocity scaling for more natural feel
+        // velocityScaleMultiplier = 1.0 ? drag velocity ? rock velocity (intuitive!)
+        // velocityScaleMultiplier < 1.0 ? slower swipes (easier)
+        // velocityScaleMultiplier > 1.0 ? faster swipes (harder)
+        idealDragVel *= velocityScaleMultiplier;
+        
+        Debug.Log($"[FlickShot] Drag velocity calculation:");
+        Debug.Log($"  Target rock velocity: {targetRockVelocity:F2} m/s");
+        Debug.Log($"  Normalized speed: {normalizedSpeed:F3}");
+        Debug.Log($"  Raw normalized (pre-forgiveness): {rawNormalized:F3}");
+        Debug.Log($"  Base drag velocity: {idealDragVel / velocityScaleMultiplier:F1} units/s");
+        Debug.Log($"  Scaled drag velocity: {idealDragVel:F1} units/s (×{velocityScaleMultiplier:F2})");
+        Debug.Log($"  Drag velocity range: {minDragVelocity * velocityScaleMultiplier:F1} - {maxDragVelocity * velocityScaleMultiplier:F1} units/s");
+        
+        return idealDragVel;
     }
     
     /// <summary>
@@ -1320,32 +1462,29 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// Get feedback message for current speed with more precision (7 bands)
+    /// ? NEW: Get feedback message based on CONTINUOUS speed (no bands!)
+    /// Uses percentage deviation from perfect (0.5)
     /// </summary>
     private string GetSpeedFeedbackMessage()
     {
-        // 7 speed bands: 0=Very Slow, 1=Slow, 2=Slow-Med, 3=PERFECT, 4=Med-Fast, 5=Fast, 6=Very Fast
-        int perfectBand = speedBands / 2; // Middle band is "perfect" (band 3 for 7 bands)
+        // Calculate deviation from perfect (0.5 = ideal)
+        float deviation = calculatedSpeed - 0.5f;
+        float deviationPercent = Mathf.Abs(deviation) * 100f;
         
-        if (speedBand == perfectBand)
-            return "Perfect!";
-        else if (speedBand == perfectBand - 1)
-            return "Slightly Slow";
-        else if (speedBand == perfectBand + 1)
-            return "Slightly Fast";
-        else if (speedBand < perfectBand - 1)
+        // Give feedback based on continuous deviation (not bands!)
+        if (deviationPercent < 5f)
+            return "Perfect!"; // Within 5% of ideal
+        else if (deviationPercent < 15f)
         {
-            if (speedBand == 0)
-                return "Way Too Slow!";
-            else
-                return "Too Slow";
+            return deviation < 0 ? "Slightly Slow" : "Slightly Fast";
         }
-        else // speedBand > perfectBand + 1
+        else if (deviationPercent < 30f)
         {
-            if (speedBand == speedBands - 1)
-                return "Way Too Fast!";
-            else
-                return "Too Fast";
+            return deviation < 0 ? "Too Slow" : "Too Fast";
+        }
+        else
+        {
+            return deviation < 0 ? "Way Too Slow!" : "Way Too Fast!";
         }
     }
     
@@ -1406,12 +1545,12 @@ public class FlickShotController : MonoBehaviour
         //     Debug.Log("[FlickShot] Shooter animation released - natural follow-through!");
         // }
         
-        // Calculate final speed
-        CalculateSpeedBand(dragTime, dragDistance);
+        // ? NEW: Calculate final velocity (distance/time, no bands!)
+        CalculateFinalVelocity(dragTime, dragDistance);
         float targetSpeed = GetPredictedVelocity();
         float predictedStopY = CalculatePredictedStopPosition(targetSpeed);
         
-        Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Speed: {calculatedSpeed:F2}, Band: {speedBand}");
+        Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Distance: {dragDistance:F2}m, Velocity: {dragVelocity:F1} units/s, Speed: {calculatedSpeed:F3} (continuous!)");
         Debug.Log($"[FlickShot] *** CYAN LINE PREDICTION: Y = {predictedStopY:F2} ***");
         Debug.Log($"[FlickShot] *** TARGET VELOCITY: {targetSpeed:F2} m/s ***");
         Debug.Log($"[FlickShot] *** AIM DIRECTION: {aimDirection}, ANGLE: {aimAngle:F1}° ***");
@@ -1452,12 +1591,6 @@ public class FlickShotController : MonoBehaviour
                 if (maxVelObj != null) maxVel = (float)maxVelObj;
             }
             
-            // Calculate what "raw" input would have been (before quantization)
-            float rawNormalizedSpeed = Mathf.Lerp(calculatedSpeed, 0.5f, forgivenessFactor - 1f);
-            float rawDragTime = minDragTime + ((1f - rawNormalizedSpeed) * (maxDragTime - minDragTime));
-            float rawSpeed = Mathf.Lerp(minVel, maxVel, rawNormalizedSpeed);
-            float correctionAmount = targetSpeed - rawSpeed;
-            
             // STACKED CALLOUTS - each piece of info gets its own callout!
             if (TextCalloutManager.Instance != null)
             {
@@ -1470,22 +1603,16 @@ public class FlickShotController : MonoBehaviour
                 // Callout 2: Actual velocity
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s");
                 
-                // Callout 3: Adjustment (if any)
-                if (Mathf.Abs(correctionAmount) > 0.01f)
-                {
-                    string adjustmentText = correctionAmount > 0 ? 
-                        $"+{correctionAmount:F2} m/s" : 
-                        $"{correctionAmount:F2} m/s";
-                    TextCalloutManager.Instance.ShowRockCallout(gameObject, adjustmentText);
-                }
+                // Callout 3: Drag velocity (shows player their input)
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Swipe: {dragVelocity:F1} units/s");
                 
                 // Callout 4: Predicted stop
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Stop: Y={predictedStopY:F1}");
                 
-                // Callout 5: Input time
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Time: {dragTime:F2}s");
+                // Callout 5: Distance + Time
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{dragDistance:F1}m in {dragTime:F2}s");
                 
-                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s | Predicted Y={predictedStopY:F1} | Time={dragTime:F2}s ***");
+                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s | Swipe {dragVelocity:F1} units/s | Predicted Y={predictedStopY:F1} | {dragDistance:F1}m in {dragTime:F2}s ***");
             }
             else
             {
@@ -1975,6 +2102,12 @@ public class FlickShotController : MonoBehaviour
             Debug.Log("[FlickShot] Predicted stop line hidden (OnDisable)");
         }
         
+        if (inputZoneBorder != null)
+        {
+            inputZoneBorder.enabled = false;
+            Debug.Log("[FlickShot] Input zone border hidden (OnDisable)");
+        }
+        
         // Clean up speed slider
         CleanupSpeedSlider();
         
@@ -1993,6 +2126,64 @@ public class FlickShotController : MonoBehaviour
         {
             predictedStopLine.enabled = false;
             Debug.Log("[FlickShot] ?? Cyan prediction line hidden when shot released");
+        }
+    }
+    
+    /// <summary>
+    /// ? NEW: Check if mouse position is in valid input zone
+    /// Prevents rogue clicks outside intended drag area
+    /// </summary>
+    private bool IsInValidInputZone(Vector2 mousePos)
+    {
+        float minY = powerDragStartY - inputZoneBufferY;  // -25.5f (below launcher)
+        float maxY = powerDragTargetY + inputZoneBufferAboveHog; // -15.5f (above hog line)
+        float maxX = inputZoneMaxX; // ±1.0 unit from center
+        
+        bool inZone = mousePos.y >= minY && 
+                      mousePos.y <= maxY && 
+                      Mathf.Abs(mousePos.x) <= maxX;
+        
+        if (!inZone)
+        {
+            Debug.Log($"[FlickShot] Position ({mousePos.x:F2}, {mousePos.y:F2}) OUTSIDE zone: X must be ±{maxX}, Y must be {minY:F1} to {maxY:F1}");
+        }
+        
+        return inZone;
+    }
+    
+    /// <summary>
+    /// ? NEW: Setup and show input zone border (green rectangle)
+    /// Only visible during PowerPhase when player is using flick shot mode
+    /// </summary>
+    private void SetupInputZoneBorder()
+    {
+        if (inputZoneBorder == null) return;
+        
+        // Check if we should show input zone
+        // Only show if: flick shot mode is enabled AND we're in power phase
+        bool shouldShowZone = isEnabled && currentPhase == FlickShotPhase.PowerPhase;
+        
+        if (shouldShowZone)
+        {
+            float minY = powerDragStartY - inputZoneBufferY;  // -25.5f (below launcher)
+            float maxY = powerDragTargetY + inputZoneBufferAboveHog; // -15.5f (above hog line)
+            float maxX = inputZoneMaxX; // ±1.0 unit from center
+            
+            // Draw zone rectangle (5 points to close loop)
+            inputZoneBorder.SetPosition(0, new Vector3(-maxX, minY, -1f));
+            inputZoneBorder.SetPosition(1, new Vector3(maxX, minY, -1f));
+            inputZoneBorder.SetPosition(2, new Vector3(maxX, maxY, -1f));
+            inputZoneBorder.SetPosition(3, new Vector3(-maxX, maxY, -1f));
+            inputZoneBorder.SetPosition(4, new Vector3(-maxX, minY, -1f)); // Close loop
+            inputZoneBorder.enabled = true;
+            
+            Debug.Log($"[FlickShot] ? Input zone SHOWN (player's turn, flick mode enabled): X=±{maxX}, Y={minY} to {maxY}");
+        }
+        else
+        {
+            // Hide input zone if not in power phase or flick mode disabled
+            inputZoneBorder.enabled = false;
+            Debug.Log("[FlickShot] ? Input zone HIDDEN (not in power phase or flick mode disabled)");
         }
     }
 }

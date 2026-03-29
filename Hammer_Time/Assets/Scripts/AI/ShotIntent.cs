@@ -113,8 +113,14 @@ public class ShotOutcomeEvaluator
         float difficulty = CalculateShotDifficulty(context, gameState);
         float successRate = baseAccuracy * (1f - difficulty * 0.4f);
         
+        // ?? DEBUG LOGGING
+        Debug.Log($"[EV Success] {context.intent}: Accuracy={baseAccuracy:F2}, Difficulty={difficulty:F2}, Success={successRate:F2}");
+        
         if (gameState.MustScore() || gameState.IsDesperate())
+        {
             successRate *= 0.92f;
+            Debug.Log($"[EV Success] Pressure penalty applied ? {successRate:F2}");
+        }
         
         return Mathf.Clamp(successRate, 0.1f, 0.98f);
     }
@@ -187,18 +193,64 @@ public class ExpectedValueCalculator
             case ShotIntent.LastShotScoring:
                 float distToButton = Vector2.Distance(context.idealFinalPosition, button);
                 reward = Mathf.Max(0f, 10f - distToButton);
+                
+                Debug.Log($"[EV Reward] Draw base: {reward:F2} (dist to button: {distToButton:F2})");
+                
+                // ? NEW: Penalty for drawing when opponent has rocks (CONTEXT AWARE!)
+                // BUT: Don't penalize if it's last shot OR if we must score
+                bool isLastShot = (gameState.rockCurrent >= 15);
+                bool mustScore = (context.mustScore || gameState.MustScore());
+                
+                if (gameState.oppRocksInHouse >= 2 && !isLastShot && !mustScore)
+                {
+                    // Only penalize draws when NOT in scoring-critical situations
+                    float drawPenalty = gameState.oppRocksInHouse * 1.5f; // Gentler penalty
+                    reward -= drawPenalty;
+                    reward = Mathf.Max(0f, reward);
+                    Debug.Log($"[EV Reward] Draw penalty for {gameState.oppRocksInHouse} opp rocks: -{drawPenalty:F2} ? {reward:F2}");
+                }
+                else if (gameState.oppRocksInHouse >= 2 && (isLastShot || mustScore))
+                {
+                    Debug.Log($"[EV Reward] NO draw penalty - last shot or must score situation!");
+                }
+                
                 if (gameState.myRocksInHouse >= 1)
+                {
                     reward += 3f;
+                    Debug.Log($"[EV Reward] Draw +3 (my rocks in house) ? {reward:F2}");
+                }
                 if (!gameState.hasHammer && gameState.oppRocksInHouse == 0)
+                {
                     reward += 5f;
+                    Debug.Log($"[EV Reward] Draw +5 (no hammer, clean house) ? {reward:F2}");
+                }
+                
+                Debug.Log($"[EV Reward] Draw FINAL: {reward:F2}");
                 break;
             
             case ShotIntent.RemoveThreat:
-                reward = 8f;
+                reward = 15f; // ? INCREASED from 8!
+                Debug.Log($"[EV Reward] Removal base: {reward:F2} (INCREASED from 8!)");
+                
                 if (gameState.activeTeamScore < gameState.oppTeamScore)
-                    reward += 4f;
+                {
+                    reward += 6f; // ? INCREASED from 4!
+                    Debug.Log($"[EV Reward] Removal +6 (trailing, increased from 4) ? {reward:F2}");
+                }
                 if (gameState.hasGuardBlocking)
-                    reward += 3f;
+                {
+                    reward += 4f; // ? INCREASED from 3!
+                    Debug.Log($"[EV Reward] Removal +4 (guard blocking, increased from 3) ? {reward:F2}");
+                }
+                
+                // ? NEW: Scale with opponent rocks - removal is CRITICAL!
+                if (gameState.oppRocksInHouse >= 3)
+                {
+                    reward += 10f;
+                    Debug.Log($"[EV Reward] Removal +10 (3+ opp rocks - CRITICAL clearing needed!) ? {reward:F2}");
+                }
+                
+                Debug.Log($"[EV Reward] Removal FINAL: {reward:F2}");
                 break;
             
             case ShotIntent.CreateOpportunity:
@@ -234,12 +286,16 @@ public class ExpectedValueCalculator
                 penalty = 4f;
                 if (gameState.hasHammer && gameState.rockCurrent >= 14)
                     penalty = 18f;
+                
+                Debug.Log($"[EV Penalty] Draw failure: {penalty:F2}");
                 break;
             
             case ShotIntent.RemoveThreat:
-                penalty = 9f;
+                penalty = 6f; // ? REDUCED from 9!
                 if (gameState.guardsInPlay > 0)
-                    penalty += gameState.guardsInPlay * 2.5f;
+                    penalty += gameState.guardsInPlay * 1.5f; // ? REDUCED from 2.5!
+                
+                Debug.Log($"[EV Penalty] Removal failure: {penalty:F2} (base 6, reduced from 9!)");
                 break;
             
             case ShotIntent.CreateOpportunity:
@@ -309,24 +365,35 @@ public class EVEvaluationSystem : MonoBehaviour
         if (!useEVEvaluation)
             return intentShot;
         
-        if (verboseLogging)
-            Debug.Log($"[EV] Evaluating shot (Rock {gameState.rockCurrent})");
-        
+        // Calculate EVs
         float intentEV = CalculateShotEV(intentShot, gameState, shooterStats);
-        
         ShotContext bestAlt = FindBestAlternative(gameState, intentShot, shooterStats, out float bestAltEV);
         
+        // ?? COMPREHENSIVE DEBUG LOGGING
+        Debug.LogWarning($"[EV DEBUG] ==========================================");
+        Debug.LogWarning($"[EV DEBUG] Game State: Score {gameState.activeTeamScore}-{gameState.oppTeamScore}, Rock {gameState.rockCurrent}/16");
+        Debug.LogWarning($"[EV DEBUG] House: My Rocks={gameState.myRocksInHouse}, Opp Rocks={gameState.oppRocksInHouse}");
+        Debug.LogWarning($"[EV DEBUG] Hammer: {gameState.hasHammer}, Guards: {gameState.guardsInPlay}, Phase: {gameState.phase}");
+        Debug.LogWarning($"[EV DEBUG] Intent Shot: {intentShot.intent} ? EV: {intentEV:F2}");
+        Debug.LogWarning($"[EV DEBUG] Best Alt: {bestAlt.intent} ? EV: {bestAltEV:F2}");
+        
         float threshold = intentEV + (evWeight * (bestAltEV - intentEV));
+        Debug.LogWarning($"[EV DEBUG] Threshold (with weight {evWeight:F2}): {threshold:F2}");
         
         if (bestAlt.intent != ShotIntent.DrawToButton && bestAltEV > threshold)
         {
-            if (verboseLogging)
-                Debug.Log($"[EV] OVERRIDE! {bestAlt.intent} (EV: {bestAltEV:F2}) over {intentShot.intent} (EV: {intentEV:F2})");
+            Debug.LogError($"[EV DEBUG] ? OVERRIDE! Choosing {bestAlt.intent} (EV: {bestAltEV:F2}) over {intentShot.intent} (EV: {intentEV:F2})");
+            Debug.LogError($"[EV DEBUG] EV Difference: {(bestAltEV - intentEV):F2} (alt is {((bestAltEV / intentEV - 1) * 100):F1}% better)");
+            Debug.LogWarning($"[EV DEBUG] ==========================================");
             return bestAlt;
         }
         
-        if (verboseLogging)
-            Debug.Log($"[EV] Keeping {intentShot.intent} (EV: {intentEV:F2})");
+        Debug.Log($"[EV DEBUG] ? Keeping {intentShot.intent} (EV: {intentEV:F2})");
+        if (bestAltEV > intentEV)
+        {
+            Debug.Log($"[EV DEBUG] Alt was better but within threshold: {bestAltEV:F2} vs {threshold:F2}");
+        }
+        Debug.LogWarning($"[EV DEBUG] ==========================================");
         
         return intentShot;
     }

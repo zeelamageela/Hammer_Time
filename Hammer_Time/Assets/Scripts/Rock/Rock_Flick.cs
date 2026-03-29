@@ -491,32 +491,56 @@ public class Rock_Flick : MonoBehaviour
         
         Debug.Log($"[Rock_Flick] CALCULATED velocity: {velocity.magnitude:F2} m/s from pullback distance: {springDistance:F3} (using TrajectoryLine params)");
         
-        // Show detailed feedback callout for normal shot
+        // Show detailed feedback callout for normal shot (4 separate stacking callouts!)
         if (TextCalloutManager.Instance != null)
         {
             float actualVelocity = velocity.magnitude;
             float minVel = trajLine.minVelocity;
             float maxVel = trajLine.maxVelocity;
             
-            // Build comprehensive feedback message
-            string feedbackMessage = $"Shot Released!\n" +
-                                    $"{actualVelocity:F3} m/s\n" +
-                                    $"\nRange: {minVel:F1}-{maxVel:F1} m/s\n" +
-                                    $"Pullback: {springDistance:F3}m";
-            
             // FIXED: Use rock's actual Rigidbody2D position
             Vector3 rockPosition = (Vector3)rb.position;
             
-            // Show callout that FOLLOWS the rock
+            // Show 4 SEPARATE callouts that will stack vertically
+            // Each callout shows at same position - stacking system handles vertical spacing
+            
+            // Callout 1: Shot Released
             TextCalloutManager.Instance.ShowCallout(
-                rockPosition + Vector3.up * 0.5f,  // Use actual rock position
-                feedbackMessage,
+                rockPosition + Vector3.up * 0.5f,
+                "Shot Released!",
+                followTarget: true,
+                target: transform,
+                duration: 3f
+            );
+            
+            // Callout 2: Velocity
+            TextCalloutManager.Instance.ShowCallout(
+                rockPosition + Vector3.up * 0.5f,
+                $"Velocity: {actualVelocity:F2} m/s",
                 followTarget: true,
                 target: transform,
                 duration: 6f
             );
             
-            Debug.Log($"[Rock_Flick] Normal shot feedback at {rockPosition}: {feedbackMessage.Replace("\n", " | ")}");
+            // Callout 3: Range
+            TextCalloutManager.Instance.ShowCallout(
+                rockPosition + Vector3.up * 0.5f,
+                $"Range: {minVel:F1}-{maxVel:F1} m/s",
+                followTarget: true,
+                target: transform,
+                duration: 3f
+            );
+            
+            // Callout 4: Pullback
+            TextCalloutManager.Instance.ShowCallout(
+                rockPosition + Vector3.up * 0.5f,
+                $"Pullback: {springDistance:F2}m",
+                followTarget: true,
+                target: transform,
+                duration: 3f
+            );
+            
+            Debug.Log($"[Rock_Flick] Normal shot: 4 stacked callouts displayed at {rockPosition}");
         }
         
         // CRITICAL: Disable spring FIRST to prevent it from interfering!

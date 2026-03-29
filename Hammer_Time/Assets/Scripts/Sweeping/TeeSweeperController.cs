@@ -599,7 +599,7 @@ public class TeeSweeperController : MonoBehaviour
         activeSweeper = isRedRock ? sweeperYellowTee : sweeperRedTee;
         if (activeSweeper == null)
         {
-            Debug.LogError("[TeeSweeperController] Active sweeper is NULL!");
+            //Debug.LogError("[TeeSweeperController] Active sweeper is NULL!");
             return;
         }
         
