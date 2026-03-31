@@ -10,10 +10,15 @@ public class HealthBar : MonoBehaviour
 
     float healthScale;
 
+    public Color green;
+    public Color red;
+
     // Update is called once per frame
     void Update()
     {
         healthScale = stats.sweepHealth / 100f;
         bar.localScale = new Vector3(healthScale, 1, 1);
+
+
     }
 }

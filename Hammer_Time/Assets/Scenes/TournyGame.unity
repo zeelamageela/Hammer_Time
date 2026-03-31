@@ -6640,8 +6640,8 @@ Transform:
   m_GameObject: {fileID: 272161325}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -420, z: 0}
-  m_LocalScale: {x: 130, y: 130, z: 2}
+  m_LocalPosition: {x: 0, y: -449.2, z: 0}
+  m_LocalScale: {x: 80, y: 80, z: 1.2307693}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 558889063}
@@ -21150,9 +21150,9 @@ Transform:
   m_GameObject: {fileID: 919697563}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -420, z: 0}
-  m_LocalScale: {x: 130, y: 130, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: -449.2, z: 0}
+  m_LocalScale: {x: 80, y: 80, z: 0.61538464}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 558889063}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -29201,9 +29201,9 @@ MonoBehaviour:
   lookAheadCount: 5
   usePhysicsSimulation: 1
   iceFriction: 0.459
-  curlStrength: 25.635
-  lateBreakingIntensity: 1
-  lateBreakingCurve: 1.5
+  curlStrength: 25.63
+  lateBreakingIntensity: 19.05
+  lateBreakingCurve: 2.5
   velocityMultiplier: 2.75
   minPullbackDistance: 1.5
   maxPullbackDistance: 5.5

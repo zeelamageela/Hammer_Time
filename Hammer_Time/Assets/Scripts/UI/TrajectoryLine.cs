@@ -62,11 +62,11 @@ public class TrajectoryLine : MonoBehaviour
     public float curlStrength = 0.25f;  // TUNED: Reduced from 0.3 for less curl
     
     [Tooltip("How much curl increases at the end (0.0 = no late breaking, 3.0 = very dramatic)")]
-    [Range(0f, 5f)]
+    [Range(0f, 25f)]
     public float lateBreakingIntensity = 1.5f;  // TUNED: Reduced from 2.0 for less dramatic late breaking
     
     [Tooltip("Shape of the late breaking curve (0.01 = extremely subtle, 1.0 = linear, 2.0 = very exponential/late)")]
-    [Range(0.01f, 2.5f)]
+    [Range(0.01f, 25f)]
     public float lateBreakingCurve = 0.8f;
     
     [Header("Velocity Tuning - Player Feel")]

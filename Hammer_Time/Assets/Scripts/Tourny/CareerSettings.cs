@@ -122,6 +122,7 @@ public class CareerSettings : MonoBehaviour
         cm.LoadSettings();
         
         Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, week: {cm.week}");
+        Debug.Log($"[CareerSettings] Tournament flags - KO3: {gsp.KO3}, KO1: {gsp.KO1}");
 
         // CRITICAL FIX: Check flags in correct priority order:
         // 1. Mid-game save (highest priority) - load directly into game
@@ -141,12 +142,19 @@ public class CareerSettings : MonoBehaviour
             Debug.Log("[CareerSettings] Loading tournament (between games) ? Tournament Home");
             gsp.loadGame = false; // Don't try to load a game, just tournament state
             
-            if (gsp.KO3)
-                SceneManager.LoadScene("Tourny_Home_1");
-            else if (gsp.KO1)
+            // ? FIX: All tournaments use either Tourny_Home_1 or Tourny_Home_SingleK
+            // KO3, regular tournaments, and World Tour events all use Tourny_Home_1
+            if (gsp.KO1)
+            {
+                Debug.Log("[CareerSettings] ? Tourny_Home_SingleK (Single Knockout)");
                 SceneManager.LoadScene("Tourny_Home_SingleK");
+            }
             else
+            {
+                // Default: Tourny_Home_1 (used by Triple KO, regular tournaments, and World Tour)
+                Debug.Log("[CareerSettings] ? Tourny_Home_1 (Triple KO / Regular / World Tour)");
                 SceneManager.LoadScene("Tourny_Home_1");
+            }
         }
         else
         {

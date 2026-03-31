@@ -1036,9 +1036,15 @@ public class CareerManager : MonoBehaviour
         currentTournyTeams = new Team[currentTourny.teams];
 
         bool inList = false;
+        
+        // ? FIX: World Tour events are NO LONGER KO3 format!
+        // They now use Page Playoff system like regular tournaments
         if (currentTourny.tour)
         {
-            gsp.KO3 = true;
+            // World Tour events - use tourTeams array
+            gsp.KO3 = false;  // ? Tour events are NOT Triple Knockout anymore!
+            gsp.KO1 = false;
+            
             for (int i = 0; i < currentTourny.teams; i++)
             {
                 currentTournyTeams[i] = tourTeams[i];
@@ -1067,7 +1073,8 @@ public class CareerManager : MonoBehaviour
         }
         else
         {
-            gsp.KO3 = false;
+            // Regular tournaments or knockouts
+            gsp.KO3 = false;  // Triple KO format removed
 
             if (currentTourny.ko1)
                 gsp.KO1 = true;

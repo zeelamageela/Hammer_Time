@@ -799,9 +799,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -822,9 +822,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -858,9 +858,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4550,9 +4550,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4570,9 +4570,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4590,9 +4590,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4610,9 +4610,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4630,9 +4630,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4650,9 +4650,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4670,9 +4670,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4690,9 +4690,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4710,9 +4710,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4730,9 +4730,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4750,9 +4750,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4770,9 +4770,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4790,9 +4790,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4810,9 +4810,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4830,9 +4830,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4850,9 +4850,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4870,9 +4870,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4890,9 +4890,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4910,9 +4910,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4930,9 +4930,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4950,9 +4950,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4970,9 +4970,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -4990,9 +4990,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5010,9 +5010,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5030,9 +5030,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5050,9 +5050,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5070,9 +5070,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5090,9 +5090,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5110,9 +5110,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5130,9 +5130,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5150,9 +5150,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5170,9 +5170,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5190,9 +5190,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5210,9 +5210,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5230,9 +5230,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5250,9 +5250,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5270,9 +5270,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5290,9 +5290,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5310,9 +5310,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5330,9 +5330,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
@@ -5356,9 +5356,9 @@ MonoBehaviour:
     tourPoints: 0
     tourRecord: {x: 0, y: 0}
     players: []
-    draw: 0
-    takeOut: 0
-    guard: 0
+    weight: 0
+    aim: 0
+    finesse: 0
     sweepStrength: 0
     sweepEnduro: 0
     sweepCohesion: 0
