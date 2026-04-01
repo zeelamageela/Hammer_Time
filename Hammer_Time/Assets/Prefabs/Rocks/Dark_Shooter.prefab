@@ -115,8 +115,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 145
-  m_LinearDamping: 0.38
-  m_AngularDamping: 0.32
+  m_LinearDamping: 0.19
+  m_AngularDamping: 0.16
   m_GravityScale: 0
   m_Material: {fileID: 6200000, guid: 6768c3b512a9e4ed2a64a5d5289c58f0, type: 2}
   m_IncludeLayers:
@@ -245,13 +245,19 @@ MonoBehaviour:
   aimSensitivity: 1.5
   powerDragStartY: -25
   powerDragTargetY: -16
-  minDragTime: 0.1
-  maxDragTime: 1.5
+  inputZoneMaxX: 1
+  inputZoneBufferY: 0.5
+  inputZoneBufferAboveHog: 0.5
+  minDrawDistance: 0.2
+  minDragVelocity: 5
+  maxDragVelocity: 16
+  velocityScaleMultiplier: 1
   speedBands: 5
   perfectTolerance: 0.15
   forgivenessFactor: 1.2
   showSpeedFeedback: 1
   feedbackInterval: 0.1
+  speedSliderName: FlickShotSpeedSlider
   currentPhase: 0
 --- !u!114 &-5155953064966958067
 MonoBehaviour:

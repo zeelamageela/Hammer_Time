@@ -252,7 +252,7 @@ MonoBehaviour:
   velocityScaleMultiplier: 1
   speedBands: 5
   perfectTolerance: 0.15
-  forgivenessFactor: 1.4
+  forgivenessFactor: 1
   showSpeedFeedback: 1
   feedbackInterval: 0.1
   speedSliderName: FlickShotSpeedSlider

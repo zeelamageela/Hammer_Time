@@ -83,11 +83,11 @@ public class TrajectoryLine : MonoBehaviour
     public float maxPullbackDistance = 2.75f;
     
     [Tooltip("Minimum velocity (m/s) from smallest valid pullback. Controls weakest possible shot.")]
-    [Range(4.0f, 5.0f)]
+    [Range(0.1f, 5.0f)]
     public float minVelocity = 5f;
     
     [Tooltip("Maximum velocity (m/s) from largest pullback. Controls strongest possible shot.")]
-    [Range(10.0f, 25.0f)]
+    [Range(8.0f, 25.0f)]
     public float maxVelocity = 16.0f;
     
     // Track previous values to detect changes

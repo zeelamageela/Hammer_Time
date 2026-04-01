@@ -5,28 +5,22 @@ using UnityEngine.UI;
 /// Displays a timer below the rock showing time from release to hog line.
 /// Shows precise 3-decimal velocity on the rock itself.
 /// Timer starts at (0:00.000) and stops at next hog line, lingering before fade-out.
+/// Uses the existing TextCallout system for UI display.
 /// </summary>
 public class RockTimerDisplay : MonoBehaviour
 {
-    [Header("UI References")]
-    [Tooltip("Timer text displayed below rock")]
-    public Text timerText;
-    
-    [Tooltip("Velocity text displayed on/near rock")]
-    public Text velocityText;
-    
     [Header("Timer Settings")]
-    [Tooltip("Y offset below rock for timer display")]
+    [Tooltip("Y offset below rock for timer display (in world units)")]
     public float timerYOffset = -0.5f;
     
-    [Tooltip("Y offset from rock for velocity display")]
+    [Tooltip("Y offset from rock for velocity display (in world units)")]
     public float velocityYOffset = 0.3f;
     
     [Tooltip("How long timer lingers at hog line before disappearing")]
     public float lingerDuration = 2.0f;
     
     [Tooltip("Fade out duration after lingering")]
-    public float fadeOutDuration = 0.5f;
+    public float fadeOutDuration = 0.1f;
     
     [Header("Hog Line Positions")]
     [Tooltip("Starting hog line Y position (near launcher)")]
@@ -35,96 +29,39 @@ public class RockTimerDisplay : MonoBehaviour
     [Tooltip("Ending hog line Y position (at house)")]
     public float endHogLineY = 15f;
     
+    [Header("Text Appearance")]
+    [Tooltip("Timer text color")]
+    public Color timerColor = Color.white;
+    
+    [Tooltip("Velocity text color")]
+    public Color velocityColor = new Color(0f, 1f, 1f, 1f); // Cyan
+    
+    [Tooltip("Timer font size")]
+    public float timerFontSize = 24f;
+    
+    [Tooltip("Velocity font size")]
+    public float velocityFontSize = 20f;
+    
     // State tracking
     private bool isTimerActive = false;
     private bool hasReachedHogLine = false;
     private float startTime = 0f;
     private float elapsedTime = 0f;
-    private float lingerStartTime = 0f;
-    private bool isLingering = false;
     
     // Cached references
     private Rigidbody2D rb;
-    private Canvas parentCanvas;
-    private Camera mainCamera;
-    private RectTransform timerRect;
-    private RectTransform velocityRect;
+    private TextCallout timerCallout;
+    private TextCallout velocityCallout;
     
     void Awake()
     {
         // Get rock rigidbody
         rb = GetComponent<Rigidbody2D>();
         
-        // Find main camera
-        mainCamera = Camera.main;
-        
-        // Create UI if not assigned
-        if (timerText == null || velocityText == null)
+        if (rb == null)
         {
-            CreateTimerUI();
+            Debug.LogError("[RockTimerDisplay] No Rigidbody2D found on rock!");
         }
-        
-        // Initially hide displays
-        if (timerText != null) timerText.enabled = false;
-        if (velocityText != null) velocityText.enabled = false;
-    }
-    
-    /// <summary>
-    /// Create timer and velocity UI elements
-    /// </summary>
-    private void CreateTimerUI()
-    {
-        // Find or create canvas
-        GameObject canvasObj = GameObject.Find("Canvas");
-        if (canvasObj == null)
-        {
-            Debug.LogWarning("[RockTimer] No Canvas found! Timer UI will not display.");
-            return;
-        }
-        
-        parentCanvas = canvasObj.GetComponent<Canvas>();
-        
-        // Create timer text GameObject
-        GameObject timerObj = new GameObject("RockTimer");
-        timerObj.transform.SetParent(parentCanvas.transform, false);
-        
-        timerRect = timerObj.AddComponent<RectTransform>();
-        timerRect.sizeDelta = new Vector2(200, 50);
-        
-        timerText = timerObj.AddComponent<Text>();
-        timerText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-        timerText.fontSize = 24;
-        timerText.alignment = TextAnchor.MiddleCenter;
-        timerText.color = Color.white;
-        timerText.text = "(0:00.000)";
-        timerText.enabled = false;
-        
-        // Add outline for readability
-        Outline timerOutline = timerObj.AddComponent<Outline>();
-        timerOutline.effectColor = Color.black;
-        timerOutline.effectDistance = new Vector2(1, -1);
-        
-        // Create velocity text GameObject
-        GameObject velocityObj = new GameObject("RockVelocity");
-        velocityObj.transform.SetParent(parentCanvas.transform, false);
-        
-        velocityRect = velocityObj.AddComponent<RectTransform>();
-        velocityRect.sizeDelta = new Vector2(150, 40);
-        
-        velocityText = velocityObj.AddComponent<Text>();
-        velocityText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-        velocityText.fontSize = 20;
-        velocityText.alignment = TextAnchor.MiddleCenter;
-        velocityText.color = new Color(0f, 1f, 1f, 1f); // Cyan
-        velocityText.text = "0.000 m/s";
-        velocityText.enabled = false;
-        
-        // Add outline for readability
-        Outline velocityOutline = velocityObj.AddComponent<Outline>();
-        velocityOutline.effectColor = Color.black;
-        velocityOutline.effectDistance = new Vector2(1, -1);
-        
-        Debug.Log("[RockTimer] Timer and velocity UI created");
     }
     
     /// <summary>
@@ -133,44 +70,206 @@ public class RockTimerDisplay : MonoBehaviour
     /// </summary>
     public void StartTimer()
     {
-        if (timerText == null || velocityText == null)
+        if (TextCalloutManager.Instance == null)
         {
-            Debug.LogWarning("[RockTimer] Timer or velocity text not initialized!");
+            Debug.LogWarning("[RockTimer] TextCalloutManager not found!");
+            return;
+        }
+        
+        if (rb == null)
+        {
+            Debug.LogWarning("[RockTimer] Rigidbody2D not found!");
             return;
         }
         
         isTimerActive = true;
         hasReachedHogLine = false;
-        isLingering = false;
         startTime = Time.time;
         elapsedTime = 0f;
         
-        timerText.enabled = true;
-        velocityText.enabled = true;
+        // Create persistent callouts that follow the rock
+        // Use very long duration to keep them alive, we'll manually stop them
+        Vector3 rockPos = rb.position;
         
-        // Reset alpha
-        Color timerColor = timerText.color;
-        timerColor.a = 1f;
-        timerText.color = timerColor;
+        // Timer callout (below rock)
+        timerCallout = TextCalloutManager.Instance.ShowCallout(
+            targetPosition: rockPos + Vector3.up * timerYOffset,
+            text: "(0:00.000)",
+            followTarget: true,
+            target: transform,
+            duration: 999f, // Very long duration - we'll manually stop it
+            floatDistance: 0f, // Don't float - stay fixed relative to rock
+            textColor: timerColor,
+            fontSize: timerFontSize,
+            fadeDuration: fadeOutDuration
+        );
         
-        Color velColor = velocityText.color;
-        velColor.a = 1f;
-        velocityText.color = velColor;
+        // Velocity callout (above/on rock)
+        velocityCallout = TextCalloutManager.Instance.ShowCallout(
+            targetPosition: rockPos + Vector3.up * velocityYOffset,
+            text: "0.000 m/s",
+            followTarget: true,
+            target: transform,
+            duration: 999f, // Very long duration - we'll manually stop it
+            floatDistance: 0f, // Don't float - stay fixed relative to rock
+            textColor: velocityColor,
+            fontSize: velocityFontSize,
+            fadeDuration: fadeOutDuration
+        );
+        
+        // CRITICAL FIX: Set text to full opacity immediately after creation
+        // The callout animation starts at alpha=0 and fades in, but with floatDistance=0
+        // and very long duration, we need to force full visibility for persistent display
+        StartCoroutine(ForceCalloutVisibility());
         
         Debug.Log($"[RockTimer] Timer started at {startTime:F3}");
     }
     
     /// <summary>
-    /// Stop the timer and start lingering phase
+    /// Force callout visibility after creation
+    /// Needed because TextCallout starts at alpha=0 and with floatDistance=0,
+    /// the fade-in doesn't work properly for persistent displays
+    /// </summary>
+    private System.Collections.IEnumerator ForceCalloutVisibility()
+    {
+        // Wait one frame for callouts to be fully initialized
+        yield return null;
+        
+        // Force timer callout to full opacity and set to persistent mode
+        if (timerCallout != null)
+        {
+            // Stop the animation coroutine
+            timerCallout.StopAllCoroutines();
+            
+            // Set to full opacity
+            Text timerTextComp = timerCallout.GetComponent<Text>();
+            if (timerTextComp != null)
+            {
+                Color color = timerColor;
+                color.a = 1f;
+                timerTextComp.color = color;
+                Debug.Log($"[RockTimer] Timer callout forced to full opacity: {color}");
+            }
+            
+            // Start persistent follow coroutine to keep it following the rock
+            StartCoroutine(FollowRockPersistent(timerCallout, timerYOffset));
+        }
+        
+        // Force velocity callout to full opacity and set to persistent mode
+        if (velocityCallout != null)
+        {
+            // Stop the animation coroutine
+            velocityCallout.StopAllCoroutines();
+            
+            // Set to full opacity
+            Text velocityTextComp = velocityCallout.GetComponent<Text>();
+            if (velocityTextComp != null)
+            {
+                Color color = velocityColor;
+                color.a = 1f;
+                velocityTextComp.color = color;
+                Debug.Log($"[RockTimer] Velocity callout forced to full opacity: {color}");
+            }
+            
+            // Start persistent follow coroutine to keep it following the rock
+            StartCoroutine(FollowRockPersistent(velocityCallout, velocityYOffset));
+        }
+    }
+    
+    /// <summary>
+    /// Coroutine to keep a callout following the rock without animation
+    /// </summary>
+    private System.Collections.IEnumerator FollowRockPersistent(TextCallout callout, float yOffset)
+    {
+        if (callout == null || rb == null) yield break;
+        
+        // Get the UpdatePosition method via reflection
+        System.Type calloutType = callout.GetType();
+        System.Reflection.MethodInfo updatePosMethod = calloutType.GetMethod("UpdatePosition", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        
+        if (updatePosMethod == null)
+        {
+            Debug.LogError("[RockTimer] Could not find UpdatePosition method on TextCallout!");
+            yield break;
+        }
+        
+        // Keep updating position every frame while callout exists
+        while (callout != null && callout.gameObject != null && callout.gameObject.activeInHierarchy)
+        {
+            // Calculate world position relative to rock
+            Vector3 worldPos = (Vector3)rb.position + Vector3.up * yOffset;
+            
+            // Call UpdatePosition using reflection
+            updatePosMethod.Invoke(callout, new object[] { worldPos });
+            
+            yield return null;
+        }
+    }
+    
+    /// <summary>
+    /// Stop the timer and trigger linger/fade-out
     /// </summary>
     private void StopTimer()
     {
         isTimerActive = false;
         hasReachedHogLine = true;
-        isLingering = true;
-        lingerStartTime = Time.time;
         
-        Debug.Log($"[RockTimer] Timer stopped at {elapsedTime:F3}s, starting linger phase");
+        Debug.Log($"[RockTimer] Timer stopped at {elapsedTime:F3}s");
+        
+        // Start coroutine to handle linger and fade
+        StartCoroutine(LingerAndFade());
+    }
+    
+    /// <summary>
+    /// Handle lingering at hog line then fading out
+    /// </summary>
+    private System.Collections.IEnumerator LingerAndFade()
+    {
+        // Linger phase - keep displaying at full opacity
+        yield return new WaitForSeconds(lingerDuration);
+        
+        // Fade out phase
+        float fadeElapsed = 0f;
+        Color timerStartColor = timerColor;
+        Color velocityStartColor = velocityColor;
+        timerStartColor.a = 1f;
+        velocityStartColor.a = 1f;
+        
+        while (fadeElapsed < fadeOutDuration)
+        {
+            fadeElapsed += Time.deltaTime;
+            float alpha = 1f - (fadeElapsed / fadeOutDuration);
+            
+            // Fade timer
+            if (timerCallout != null)
+            {
+                Text timerTextComp = timerCallout.GetComponent<Text>();
+                if (timerTextComp != null)
+                {
+                    Color color = timerStartColor;
+                    color.a = alpha;
+                    timerTextComp.color = color;
+                }
+            }
+            
+            // Fade velocity
+            if (velocityCallout != null)
+            {
+                Text velocityTextComp = velocityCallout.GetComponent<Text>();
+                if (velocityTextComp != null)
+                {
+                    Color color = velocityStartColor;
+                    color.a = alpha;
+                    velocityTextComp.color = color;
+                }
+            }
+            
+            yield return null;
+        }
+        
+        // Fully faded - hide the callouts
+        HideTimer();
     }
     
     /// <summary>
@@ -178,17 +277,25 @@ public class RockTimerDisplay : MonoBehaviour
     /// </summary>
     public void HideTimer()
     {
-        if (timerText != null) timerText.enabled = false;
-        if (velocityText != null) velocityText.enabled = false;
+        if (timerCallout != null)
+        {
+            timerCallout.ForceStop();
+            timerCallout = null;
+        }
+        
+        if (velocityCallout != null)
+        {
+            velocityCallout.ForceStop();
+            velocityCallout = null;
+        }
         
         isTimerActive = false;
         hasReachedHogLine = false;
-        isLingering = false;
     }
     
     void Update()
     {
-        if (rb == null || timerText == null || velocityText == null)
+        if (rb == null)
             return;
         
         // Update timer if active
@@ -199,11 +306,15 @@ public class RockTimerDisplay : MonoBehaviour
             // Format as (M:SS.mmm)
             int minutes = Mathf.FloorToInt(elapsedTime / 60f);
             float seconds = elapsedTime % 60f;
-            timerText.text = $"({minutes}:{seconds:00.000})";
+            string timerText = $"({minutes}:{seconds:00.000})";
             
             // Update velocity (3 decimals)
             float velocity = rb.linearVelocity.magnitude;
-            velocityText.text = $"{velocity:F3} m/s";
+            string velocityText = $"{velocity:F3} m/s";
+            
+            // Update callout texts if they exist
+            UpdateCalloutText(timerCallout, timerText);
+            UpdateCalloutText(velocityCallout, velocityText);
             
             // Check if reached hog line
             float rockY = rb.position.y;
@@ -218,87 +329,20 @@ public class RockTimerDisplay : MonoBehaviour
                 StopTimer();
             }
         }
-        else if (isLingering)
-        {
-            // Linger phase - keep displaying but start fading after linger duration
-            float lingerElapsed = Time.time - lingerStartTime;
-            
-            if (lingerElapsed < lingerDuration)
-            {
-                // Still lingering - no fade yet
-                // Keep displaying final time and velocity
-            }
-            else
-            {
-                // Start fading out
-                float fadeElapsed = lingerElapsed - lingerDuration;
-                float fadeProgress = Mathf.Clamp01(fadeElapsed / fadeOutDuration);
-                float alpha = 1f - fadeProgress;
-                
-                // Fade both timer and velocity
-                Color timerColor = timerText.color;
-                timerColor.a = alpha;
-                timerText.color = timerColor;
-                
-                Color velColor = velocityText.color;
-                velColor.a = alpha;
-                velocityText.color = velColor;
-                
-                // Fully hidden - disable
-                if (fadeProgress >= 1f)
-                {
-                    HideTimer();
-                }
-            }
-        }
-        
-        // Update UI positions to follow rock
-        UpdateUIPositions();
     }
     
     /// <summary>
-    /// Update UI element positions to follow rock
+    /// Update the text of a callout without recreating it
     /// </summary>
-    private void UpdateUIPositions()
+    private void UpdateCalloutText(TextCallout callout, string newText)
     {
-        if (parentCanvas == null || mainCamera == null || rb == null)
+        if (callout == null || callout.gameObject == null)
             return;
         
-        // Get rock world position
-        Vector3 rockWorldPos = rb.position;
-        
-        // Update timer position (below rock)
-        if (timerText != null && timerText.enabled && timerRect != null)
+        Text textComponent = callout.GetComponent<Text>();
+        if (textComponent != null)
         {
-            Vector3 timerWorldPos = rockWorldPos + Vector3.up * timerYOffset;
-            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(mainCamera, timerWorldPos);
-            
-            Vector2 canvasPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                parentCanvas.transform as RectTransform,
-                screenPos,
-                mainCamera,
-                out canvasPos
-            );
-            
-            timerRect.anchoredPosition = canvasPos;
-        }
-        
-        // Update velocity position (above rock)
-        if (velocityText != null && velocityText.enabled && velocityRect != null)
-        {
-            Vector3 velocityWorldPos = rockWorldPos + Vector3.up * velocityYOffset;
-            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(mainCamera, velocityWorldPos);
-            
-            Vector2 canvasPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                parentCanvas.transform as RectTransform,
-                screenPos,
-                mainCamera,
-                out canvasPos
-            );
-            
-            velocityRect.anchoredPosition = canvasPos;
+            textComponent.text = newText;
         }
     }
     

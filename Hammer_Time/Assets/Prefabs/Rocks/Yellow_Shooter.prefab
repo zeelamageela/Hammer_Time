@@ -237,17 +237,25 @@ MonoBehaviour:
   launcher: {fileID: 0}
   trajectoryLineObj: {fileID: 0}
   gameManagerObj: {fileID: 0}
+  cameraManagerObj: {fileID: 0}
+  shootingKnobObj: {fileID: 0}
   aimLockDistance: 3.5
   aimSensitivity: 1.5
   powerDragStartY: -25
   powerDragTargetY: -16
-  minDragTime: 0.1
-  maxDragTime: 1.5
+  inputZoneMaxX: 1
+  inputZoneBufferY: 0.5
+  inputZoneBufferAboveHog: 0.5
+  minDrawDistance: 0.3
+  minDragVelocity: 5
+  maxDragVelocity: 16
+  velocityScaleMultiplier: 1
   speedBands: 5
   perfectTolerance: 0.15
-  forgivenessFactor: 1.2
+  forgivenessFactor: 1
   showSpeedFeedback: 1
   feedbackInterval: 0.1
+  speedSliderName: FlickShotSpeedSlider
   currentPhase: 0
 --- !u!114 &-2407443072647762307
 MonoBehaviour:

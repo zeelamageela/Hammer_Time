@@ -510,7 +510,7 @@ public class Rock_Flick : MonoBehaviour
                 "Shot Released!",
                 followTarget: true,
                 target: transform,
-                duration: 3f
+                duration: 4.8f
             );
             
             // Callout 2: Velocity
@@ -519,7 +519,7 @@ public class Rock_Flick : MonoBehaviour
                 $"Velocity: {actualVelocity:F2} m/s",
                 followTarget: true,
                 target: transform,
-                duration: 6f
+                duration: 4.6f
             );
             
             // Callout 3: Range
@@ -528,7 +528,7 @@ public class Rock_Flick : MonoBehaviour
                 $"Range: {minVel:F1}-{maxVel:F1} m/s",
                 followTarget: true,
                 target: transform,
-                duration: 3f
+                duration: 4.4f
             );
             
             // Callout 4: Pullback
@@ -537,7 +537,7 @@ public class Rock_Flick : MonoBehaviour
                 $"Pullback: {springDistance:F2}m",
                 followTarget: true,
                 target: transform,
-                duration: 3f
+                duration: 4.2f
             );
             
             Debug.Log($"[Rock_Flick] Normal shot: 4 stacked callouts displayed at {rockPosition}");

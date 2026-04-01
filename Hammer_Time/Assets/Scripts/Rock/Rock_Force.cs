@@ -92,8 +92,8 @@ public class Rock_Force : MonoBehaviour
         
         // Get min/max velocities from TrajectoryLine (same as trajectory preview)
         TrajectoryLine trajLine = FindFirstObjectByType<TrajectoryLine>();
-        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 5f;   // Default: 5 m/s
-        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 13f;  // Default: 13 m/s
+        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 1f;   // Default: 1 m/s
+        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 8f;  // Default: 8 m/s
         
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
@@ -104,7 +104,7 @@ public class Rock_Force : MonoBehaviour
 
         if (velocityRatio < 0.4f)
         {
-            curlMagnitude = Mathf.Lerp(0.6f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
+            curlMagnitude = Mathf.Lerp(0.55f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
         }
         else if (velocityRatio < 0.66f)
         {
