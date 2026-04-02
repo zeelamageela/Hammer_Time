@@ -105,7 +105,7 @@ public class TrajectorySimulator
         // Get min/max velocities from TrajectoryLine (if available)
         TrajectoryLine trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
         float minVelocity = (trajLine != null) ? trajLine.minVelocity : 5f;   // Default: 5 m/s
-        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 11f;  // Default: 11 m/s
+        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 15f;  // Default: 15 m/s
         
         // Calculate velocity ratio (0 = slowest, 1 = fastest)
         float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
@@ -120,11 +120,11 @@ public class TrajectorySimulator
         }
         else if (velocityRatio < 0.66f)
         {
-            curlMagnitude = Mathf.Lerp(0.48f, 0.15f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
+            curlMagnitude = Mathf.Lerp(0.48f, 0.21f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
         }
         else
         {
-            curlMagnitude = Mathf.Lerp(0.15f, 0.05f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
+            curlMagnitude = Mathf.Lerp(0.21f, 0.12f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
         }
 
         // Apply to curlVector (will be used throughout simulation)

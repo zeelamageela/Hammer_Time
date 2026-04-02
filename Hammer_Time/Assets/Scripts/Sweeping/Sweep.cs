@@ -225,9 +225,9 @@ public class Sweep : MonoBehaviour
         // ALSO add lateral straightening (like line sweep, but gentler)
         Vector2 currentVel = rb.linearVelocity;
         float forwardSpeed = Mathf.Abs(currentVel.y);
-        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.0f);
+        float speedMultiplier = Mathf.Clamp01(forwardSpeed / 1.5f);
         
-        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.005f * speedMultiplier; // Gentle straightening (was 0.01, now 50% weaker)
+        float lateralVelocityBoost = sweepAmt * sweepStrength * 0.01f * speedMultiplier; // Slightly less straightening than line sweep
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
         

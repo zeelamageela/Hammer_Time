@@ -29899,7 +29899,7 @@ MonoBehaviour:
   lookAheadCount: 5
   usePhysicsSimulation: 1
   iceFriction: 0.46
-  curlStrength: 25.63
+  curlStrength: 25.633
   lateBreakingIntensity: 19.05
   lateBreakingCurve: 2.5
   velocityMultiplier: 2.75

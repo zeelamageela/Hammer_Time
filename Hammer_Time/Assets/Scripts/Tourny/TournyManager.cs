@@ -742,7 +742,9 @@ public class TournyManager : MonoBehaviour
 
 	public void PlayDraw()
     {
-		gsp.TournySetup();
+		// CRITICAL: Pass forceNewGame=true to clear any previous game state
+		// This is starting a NEW game from the tournament home screen
+		gsp.TournySetup(btn: 0, forceNewGame: true);
 		SceneManager.LoadScene("End_Menu_Tourny_1");
     }
 

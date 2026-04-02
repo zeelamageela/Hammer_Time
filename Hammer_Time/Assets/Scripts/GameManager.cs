@@ -163,8 +163,20 @@ public class GameManager : MonoBehaviour
         // Don't clear it when continuing to next end (endCurrent > 0)
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
         {
-            Debug.Log($"[GameManager] Creating new score array for {endTotal + 1} ends (current array: {(gsp.score == null ? "NULL" : gsp.score.Length.ToString())})");
-            gsp.score = new Vector2Int[endTotal + 1];
+            Debug.Log($"[GameManager] Score array needs resize - current: {(gsp.score == null ? "NULL" : gsp.score.Length.ToString())}, needed: {endTotal + 1}");
+            
+            // CRITICAL: PRESERVE existing scores when resizing!
+            Vector2Int[] newArray = new Vector2Int[endTotal + 1];
+            if (gsp.score != null)
+            {
+                // Copy all existing scores
+                for (int i = 0; i < gsp.score.Length; i++)
+                {
+                    newArray[i] = gsp.score[i];
+                }
+                Debug.Log($"[GameManager] Copied {gsp.score.Length} existing scores to new array");
+            }
+            gsp.score = newArray;
         }
         else if (gsp.endCurrent == 0)
         {
@@ -180,7 +192,7 @@ public class GameManager : MonoBehaviour
         {
             // Preserve existing scores
             Debug.Log($"[GameManager] Preserving score array for end {gsp.endCurrent + 1}");
-            Debug.Log($"[GameManager]   Current scores: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({gsp.score[1].x},{gsp.score[1].y})");
+            Debug.Log($"[GameManager]   Current scores: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
         }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)

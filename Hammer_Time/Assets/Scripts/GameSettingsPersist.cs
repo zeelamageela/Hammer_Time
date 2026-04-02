@@ -376,10 +376,10 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log($"[GSP.LoadTournySettings] Save complete - games={games} should now be in save file");
     }
 
-    public void TournySetup(int btn = 0)
+    public void TournySetup(int btn = 0, bool forceNewGame = false)
     {
         // ? FIRST LOG - Before anything else!
-        Debug.Log($"[GSP.TournySetup] === ENTRY === btn={btn}");
+        Debug.Log($"[GSP.TournySetup] === ENTRY === btn={btn}, forceNewGame={forceNewGame}");
         
         // ? Log current state IMMEDIATELY
         if (score != null && score.Length > 0)
@@ -398,21 +398,24 @@ public class GameSettingsPersist : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         CashGames cg = FindFirstObjectByType<CashGames>();
         
-        // ? CRITICAL FIX: Determine if this is a NEW game or LOADING a saved game
-        // - NEW game: gameInProgress == false ? Reset everything
-        // - LOADING game: gameInProgress == true ? Preserve everything
-        bool isLoadingGame = gameInProgress;
+        // ? CRITICAL FIX: Determine if this is a NEW game or CONTINUING an existing game
+        // Priority order:
+        // 1. If forceNewGame=true ? NEW game (called from TournyManager.PlayDraw)
+        // 2. If endCurrent == 0 AND scores == 0 ? NEW game
+        // 3. If endCurrent > 0 OR scores > 0 ? CONTINUING game
+        bool isContinuingGame = !forceNewGame && ((endCurrent > 0) || (redScore > 0) || (yellowScore > 0));
         
-        Debug.Log($"[GSP.TournySetup] isLoadingGame={isLoadingGame} (gameInProgress={gameInProgress})");
+        Debug.Log($"[GSP.TournySetup] isContinuingGame={isContinuingGame} (forceNewGame={forceNewGame}, endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore})");
         
         // Always reset these flags (they control scene flow, not game state)
         gameInProgress = false;
         loadGame = false;
         
-        if (isLoadingGame)
+        if (isContinuingGame)
         {
-            // LOADING a saved game - preserve all game state
-            Debug.Log($"[GSP.TournySetup] LOADING game - preserving scores: endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore}");
+            // CONTINUING an existing game - preserve all game state
+            Debug.Log($"[GSP.TournySetup] CONTINUING game - preserving scores: endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore}");
+            Debug.Log($"[GSP.TournySetup]   Score array: End1=({(score != null && score.Length > 0 ? score[0].x : -1)},{(score != null && score.Length > 0 ? score[0].y : -1)}), End2=({(score != null && score.Length > 1 ? score[1].x : -1)},{(score != null && score.Length > 1 ? score[1].y : -1)})");
         }
         else
         {
@@ -421,6 +424,22 @@ public class GameSettingsPersist : MonoBehaviour
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
+            
+            // CRITICAL: Also clear the score array for the new game!
+            // This ensures old scores don't leak into the new game
+            if (score != null && score.Length > 0)
+            {
+                Debug.Log($"[GSP.TournySetup] NEW game - clearing score array ({score.Length} ends) - was [{score[0].x},{score[0].y}]");
+                for (int i = 0; i < score.Length; i++)
+                {
+                    score[i] = new Vector2Int(0, 0);
+                }
+            }
+            else
+            {
+                Debug.Log($"[GSP.TournySetup] NEW game - score array will be created in GameManager.SetupGame()");
+            }
+            
             Debug.Log($"[GSP.TournySetup] NEW game - reset game state: endCurrent=0, redScore=0, yellowScore=0");
         }
         
@@ -450,15 +469,18 @@ public class GameSettingsPersist : MonoBehaviour
             }
             score = newScore;
         }
-        else if (isLoadingGame)
+        else if (isContinuingGame)
         {
-            // Loading saved game - preserve array as-is
-            Debug.Log($"[GSP.TournySetup] LOADING game - score array ({score.Length} ends) preserved");
+            // Continuing existing game - preserve array as-is
+            Debug.Log($"[GSP.TournySetup] CONTINUING game - score array ({score.Length} ends) preserved");
             
             // Log current scores for debugging
             if (score.Length > 0 && endCurrent > 0 && endCurrent <= score.Length)
             {
-                Debug.Log($"[GSP.TournySetup]   End 1: Red={score[0].x}, Yellow={score[0].y}");
+                for (int i = 0; i < endCurrent; i++)
+                {
+                    Debug.Log($"[GSP.TournySetup]   End {i + 1}: Red={score[i].x}, Yellow={score[i].y}");
+                }
             }
         }
         else
@@ -471,7 +493,7 @@ public class GameSettingsPersist : MonoBehaviour
             }
         }
         
-        Debug.Log($"[GSP] TournySetup - game state configured (isLoadingGame={isLoadingGame})");
+        Debug.Log($"[GSP] TournySetup - game state configured (isContinuingGame={isContinuingGame})");
         Debug.Log($"[GSP] TournySetup - tournament settings: games={games}, ends={ends}, rocks={rocks}");
         
         careerLoad = false;

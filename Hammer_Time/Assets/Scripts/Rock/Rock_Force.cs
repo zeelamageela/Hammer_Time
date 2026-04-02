@@ -108,11 +108,11 @@ public class Rock_Force : MonoBehaviour
         }
         else if (velocityRatio < 0.66f)
         {
-            curlMagnitude = Mathf.Lerp(0.48f, 0.15f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
+            curlMagnitude = Mathf.Lerp(0.48f, 0.21f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
         }
         else
         {
-            curlMagnitude = Mathf.Lerp(0.15f, 0.05f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
+            curlMagnitude = Mathf.Lerp(0.21f, 0.12f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
         }
         // Apply to curl vector
         // KEY INSIGHT: vel.x = angularVelocity encodes rotation direction:
