@@ -101,9 +101,9 @@ public class TeamMenu : MonoBehaviour
                 oppStatBase = 10;
 
             // Calculate team base stats (sum of all 4 players)
-            int teamBaseDraw = 0;
-            int teamBaseGuard = 0;
-            int teamBaseTakeOut = 0;
+            int teamBaseAim = 0;
+            int teamBaseWeight = 0;
+            int teamBaseFinesse = 0;
             int teamBaseStrength = 0;
             int teamBaseEndurance = 0;
             int teamBaseCohesion = 0;
@@ -113,9 +113,9 @@ public class TeamMenu : MonoBehaviour
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    teamBaseDraw += cm.activePlayers[i].weight;
-                    teamBaseGuard += cm.activePlayers[i].finesse;
-                    teamBaseTakeOut += cm.activePlayers[i].aim;
+                    teamBaseAim += cm.activePlayers[i].aim;
+                    teamBaseWeight += cm.activePlayers[i].weight;
+                    teamBaseFinesse += cm.activePlayers[i].finesse;
                     teamBaseStrength += cm.activePlayers[i].sweepStrength;
                     teamBaseEndurance += cm.activePlayers[i].sweepEnduro;
                     teamBaseCohesion += cm.activePlayers[i].sweepCohesion;
@@ -123,25 +123,25 @@ public class TeamMenu : MonoBehaviour
             }
             
             // Add the Skip's (player character) stats
-            teamBaseDraw += cm.cStats.weightAccuracy;
-            teamBaseGuard += cm.cStats.finesseAccuracy;
-            teamBaseTakeOut += cm.cStats.aimAccuracy;
+            teamBaseAim += cm.cStats.aimAccuracy;
+            teamBaseWeight += cm.cStats.weightAccuracy;
+            teamBaseFinesse += cm.cStats.finesseAccuracy;
             teamBaseStrength += cm.cStats.sweepStrength;
             teamBaseEndurance += cm.cStats.sweepEndurance;
             teamBaseCohesion += cm.cStats.sweepCohesion;
             
             // Base sliders show TEAM total (all 4 players combined)
-            drawSlider.value = teamBaseDraw;
-            guardSlider.value = teamBaseGuard;
-            takeOutSlider.value = teamBaseTakeOut;
+            drawSlider.value = teamBaseAim;
+            guardSlider.value = teamBaseFinesse;
+            takeOutSlider.value = teamBaseWeight;
             strengthSlider.value = teamBaseStrength;
             enduranceSlider.value = teamBaseEndurance;
             healthSlider.value = teamBaseCohesion;
 
             // Mod sliders show TEAM total + equipment/sponsor bonuses
-            drawModSlider.value = teamBaseDraw + cm.modStats.weightAccuracy;
-            guardModSlider.value = teamBaseGuard + cm.modStats.finesseAccuracy;
-            takeOutModSlider.value = teamBaseTakeOut + cm.modStats.aimAccuracy;
+            drawModSlider.value = teamBaseAim + cm.modStats.aimAccuracy;
+            guardModSlider.value = teamBaseFinesse + cm.modStats.finesseAccuracy;
+            takeOutModSlider.value = teamBaseWeight + cm.modStats.weightAccuracy;
             strengthModSlider.value = teamBaseStrength + cm.modStats.sweepStrength;
             enduranceModSlider.value = teamBaseEndurance + cm.modStats.sweepEndurance;
             healthModSlider.value = teamBaseCohesion + cm.modStats.sweepCohesion;

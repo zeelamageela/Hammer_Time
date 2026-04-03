@@ -11182,7 +11182,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.78125, y: -3447.5664}
+  m_AnchoredPosition: {x: 913.5, y: -663.5221}
   m_SizeDelta: {x: 1124, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &306226387
@@ -27336,7 +27336,7 @@ GameObject:
   - component: {fileID: 726938093}
   - component: {fileID: 726938095}
   m_Layer: 5
-  m_Name: TakeOut
+  m_Name: Weight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27394,7 +27394,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Take Outs
+  m_Text: Weight
 --- !u!222 &726938094
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -29861,9 +29861,9 @@ MonoBehaviour:
     photo: {fileID: 5960969388404934734}
   dialogueGO: {fileID: 411147645}
   coachGreen: {fileID: 1671106720}
-  drawSlider: {fileID: 1031389333}
+  drawSlider: {fileID: 129308111}
   guardSlider: {fileID: 688450769}
-  takeOutSlider: {fileID: 129308111}
+  takeOutSlider: {fileID: 1031389333}
   strengthSlider: {fileID: 2118303033}
   enduranceSlider: {fileID: 582497831}
   healthSlider: {fileID: 1800557945}
@@ -29941,19 +29941,19 @@ MonoBehaviour:
   xpCostText: {fileID: 2033929369}
   xpTotal: {fileID: 1258817995}
   cash: {fileID: 487556524}
-  drawSlider: {fileID: 1216768750}
-  drawText: {fileID: 1148364386}
-  drawButtons:
+  aimSlider: {fileID: 1216768750}
+  aimText: {fileID: 2025912630}
+  aimButtons:
   - {fileID: 1944999939}
   - {fileID: 1904186948}
-  takeOutSlider: {fileID: 1689906694}
-  takeOutText: {fileID: 403387602}
-  takeOutButtons:
+  weighttSlider: {fileID: 1689906694}
+  weightText: {fileID: 726938093}
+  weightButtons:
   - {fileID: 1099468876}
   - {fileID: 1602195230}
-  guardSlider: {fileID: 641382790}
-  guardText: {fileID: 1717834914}
-  guardButtons:
+  finesseSlider: {fileID: 641382790}
+  finesseText: {fileID: 1671963234}
+  finesseButtons:
   - {fileID: 1071173239}
   - {fileID: 46333751}
   strengthSlider: {fileID: 1563354769}
@@ -36194,7 +36194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 938270499}
   m_Layer: 5
-  m_Name: Draw
+  m_Name: Aim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38930,7 +38930,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1020915837}
   m_Layer: 5
-  m_Name: TakeOut
+  m_Name: Weight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62379,7 +62379,7 @@ GameObject:
   - component: {fileID: 1671963234}
   - component: {fileID: 1671963236}
   m_Layer: 5
-  m_Name: Guard
+  m_Name: Finesse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62437,7 +62437,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Guards
+  m_Text: Finesse
 --- !u!222 &1671963235
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -70642,7 +70642,7 @@ GameObject:
   - component: {fileID: 1894112457}
   - component: {fileID: 1894112456}
   m_Layer: 5
-  m_Name: Strength (2)
+  m_Name: Shooting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71790,7 +71790,7 @@ GameObject:
   - component: {fileID: 1903364932}
   - component: {fileID: 1903364931}
   m_Layer: 5
-  m_Name: Strength (1)
+  m_Name: Sweeping
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72470,7 +72470,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1917582178}
   m_Layer: 5
-  m_Name: Guard
+  m_Name: Finesse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76188,7 +76188,7 @@ GameObject:
   - component: {fileID: 2025912630}
   - component: {fileID: 2025912632}
   m_Layer: 5
-  m_Name: Draw
+  m_Name: Aim
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76246,7 +76246,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Draws
+  m_Text: Aim
 --- !u!222 &2025912631
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -81496,9 +81496,9 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 578389196}
   - {fileID: 2123310476}
   - {fileID: 845426451}
-  - {fileID: 578389196}
   - {fileID: 760427076}
   - {fileID: 1700096514}
   - {fileID: 1611797431}

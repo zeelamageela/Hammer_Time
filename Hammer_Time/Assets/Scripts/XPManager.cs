@@ -32,15 +32,15 @@ public class XPManager : MonoBehaviour
     public Text xpTotal;
     public Text cash;
 
-    public Slider drawSlider;
-    public Text drawText;
-    public Button[] drawButtons;
-    public Slider takeOutSlider;
-    public Text takeOutText;
-    public Button[] takeOutButtons;
-    public Slider guardSlider;
-    public Text guardText;
-    public Button[] guardButtons;
+    public Slider aimSlider;
+    public Text aimText;
+    public Button[] aimButtons;
+    public Slider weighttSlider;
+    public Text weightText;
+    public Button[] weightButtons;
+    public Slider finesseSlider;
+    public Text finesseText;
+    public Button[] finesseButtons;
     public Slider strengthSlider;
     public Text strengthText;
     public Button[] strengthButtons;
@@ -105,27 +105,27 @@ public class XPManager : MonoBehaviour
         xpCostText.text = skillPointsTotal.ToString();
         //cash.text = "$" + cm.earnings.ToString("n0");
 
-        drawText.text = drawSlider.value.ToString();
-        takeOutText.text = takeOutSlider.value.ToString();
-        guardText.text = guardSlider.value.ToString();
+        aimText.text = aimSlider.value.ToString();
+        weightText.text = weighttSlider.value.ToString();
+        finesseText.text = finesseSlider.value.ToString();
         strengthText.text = strengthSlider.value.ToString();
         endurText.text = endurSlider.value.ToString();
         healthText.text = healthSlider.value.ToString();
 
         if (skillPoints <= 0)
         {
-            drawButtons[1].gameObject.SetActive(false);
-            takeOutButtons[1].gameObject.SetActive(false);
-            guardButtons[1].gameObject.SetActive(false);
+            aimButtons[1].gameObject.SetActive(false);
+            weightButtons[1].gameObject.SetActive(false);
+            finesseButtons[1].gameObject.SetActive(false);
             strengthButtons[1].gameObject.SetActive(false);
             endurButtons[1].gameObject.SetActive(false);
             healthButtons[1].gameObject.SetActive(false);
         }
         else
         {
-            drawButtons[1].gameObject.SetActive(true);
-            takeOutButtons[1].gameObject.SetActive(true);
-            guardButtons[1].gameObject.SetActive(true);
+            aimButtons[1].gameObject.SetActive(true);
+            weightButtons[1].gameObject.SetActive(true);
+            finesseButtons[1].gameObject.SetActive(true);
             strengthButtons[1].gameObject.SetActive(true);
             endurButtons[1].gameObject.SetActive(true);
             healthButtons[1].gameObject.SetActive(true);
@@ -159,18 +159,18 @@ public class XPManager : MonoBehaviour
         // Set sliders to match the selected player's stats
         if (select == 3)
         {
-            drawSlider.value = cm.cStats.weightAccuracy;
-            takeOutSlider.value = cm.cStats.aimAccuracy;
-            guardSlider.value = cm.cStats.finesseAccuracy;
+            aimSlider.value = cm.cStats.weightAccuracy;
+            weighttSlider.value = cm.cStats.aimAccuracy;
+            finesseSlider.value = cm.cStats.finesseAccuracy;
             strengthSlider.value = cm.cStats.sweepStrength;
             endurSlider.value = cm.cStats.sweepEndurance;
             healthSlider.value = cm.cStats.sweepCohesion;
         }
         else
         {
-            drawSlider.value = cm.activePlayers[select].weight;
-            takeOutSlider.value = cm.activePlayers[select].aim;
-            guardSlider.value = cm.activePlayers[select].finesse;
+            aimSlider.value = cm.activePlayers[select].weight;
+            weighttSlider.value = cm.activePlayers[select].aim;
+            finesseSlider.value = cm.activePlayers[select].finesse;
             strengthSlider.value = cm.activePlayers[select].sweepStrength;
             endurSlider.value = cm.activePlayers[select].sweepEnduro;
             healthSlider.value = cm.activePlayers[select].sweepCohesion;
@@ -184,18 +184,18 @@ public class XPManager : MonoBehaviour
         // Apply slider values to the selected player
         if (activePlayer == 3)
         {
-            cm.cStats.weightAccuracy = (int)drawSlider.value;
-            cm.cStats.aimAccuracy = (int)takeOutSlider.value;
-            cm.cStats.finesseAccuracy = (int)guardSlider.value;
+            cm.cStats.weightAccuracy = (int)aimSlider.value;
+            cm.cStats.aimAccuracy = (int)weighttSlider.value;
+            cm.cStats.finesseAccuracy = (int)finesseSlider.value;
             cm.cStats.sweepStrength = (int)strengthSlider.value;
             cm.cStats.sweepEndurance = (int)endurSlider.value;
             cm.cStats.sweepCohesion = (int)healthSlider.value;
         }
         else
         {
-            cm.activePlayers[activePlayer].weight = (int)drawSlider.value;
-            cm.activePlayers[activePlayer].aim = (int)takeOutSlider.value;
-            cm.activePlayers[activePlayer].finesse = (int)guardSlider.value;
+            cm.activePlayers[activePlayer].weight = (int)aimSlider.value;
+            cm.activePlayers[activePlayer].aim = (int)weighttSlider.value;
+            cm.activePlayers[activePlayer].finesse = (int)finesseSlider.value;
             cm.activePlayers[activePlayer].sweepStrength = (int)strengthSlider.value;
             cm.activePlayers[activePlayer].sweepEnduro = (int)endurSlider.value;
             cm.activePlayers[activePlayer].sweepCohesion = (int)healthSlider.value;
@@ -206,9 +206,9 @@ public class XPManager : MonoBehaviour
     {
         switch (skill)
         {
-            case 0: drawSlider.value += 1; break;
-            case 1: takeOutSlider.value += 1; break;
-            case 2: guardSlider.value += 1; break;
+            case 0: aimSlider.value += 1; break;
+            case 1: weighttSlider.value += 1; break;
+            case 2: finesseSlider.value += 1; break;
             case 3: strengthSlider.value += 1; break;
             case 4: endurSlider.value += 1; break;
             case 5: healthSlider.value += 1; break;
@@ -221,9 +221,9 @@ public class XPManager : MonoBehaviour
     {
         switch (skill)
         {
-            case 0: drawSlider.value -= 1; break;
-            case 1: takeOutSlider.value -= 1; break;
-            case 2: guardSlider.value -= 1; break;
+            case 0: aimSlider.value -= 1; break;
+            case 1: weighttSlider.value -= 1; break;
+            case 2: finesseSlider.value -= 1; break;
             case 3: strengthSlider.value -= 1; break;
             case 4: endurSlider.value -= 1; break;
             case 5: healthSlider.value -= 1; break;

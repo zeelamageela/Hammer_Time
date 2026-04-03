@@ -560,12 +560,12 @@ public class TeeSweeperController : MonoBehaviour
         }
         
         bool isMoving = (bool)movingField.GetValue(rockInfo);
-        Debug.Log($"[TeeSweeperController] Eligibility: Rock.moving = {isMoving}");
+        //Debug.Log($"[TeeSweeperController] Eligibility: Rock.moving = {isMoving}");
         
         if (!isMoving) return false;
         
         float rockY = rock.transform.position.y;
-        Debug.Log($"[TeeSweeperController] Eligibility: Rock Y = {rockY}, T-line = {TEE_LINE_Y}");
+        //Debug.Log($"[TeeSweeperController] Eligibility: Rock Y = {rockY}, T-line = {TEE_LINE_Y}");
         
         // Must be behind T-line (Y > 6.5)
         if (rockY <= TEE_LINE_Y)
