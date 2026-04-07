@@ -4767,7 +4767,7 @@ GameObject:
   - component: {fileID: 129308110}
   - component: {fileID: 129308111}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4842,7 +4842,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9410,7 +9410,7 @@ GameObject:
   - component: {fileID: 259501610}
   - component: {fileID: 259501611}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9435,8 +9435,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.8, y: 0}
+  m_SizeDelta: {x: 769.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &259501611
 MonoBehaviour:
@@ -9485,7 +9485,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -9500,7 +9500,7 @@ GameObject:
   - component: {fileID: 262368990}
   - component: {fileID: 262368991}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9525,8 +9525,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.4, y: 0}
+  m_SizeDelta: {x: 770.4, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &262368991
 MonoBehaviour:
@@ -9575,7 +9575,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -19265,7 +19265,7 @@ GameObject:
   - component: {fileID: 534570472}
   - component: {fileID: 534570473}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19290,8 +19290,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.8, y: 0}
+  m_SizeDelta: {x: 769.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &534570473
 MonoBehaviour:
@@ -19340,7 +19340,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -21204,7 +21204,7 @@ GameObject:
   - component: {fileID: 582497830}
   - component: {fileID: 582497831}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21279,7 +21279,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -26026,7 +26026,7 @@ GameObject:
   - component: {fileID: 688450768}
   - component: {fileID: 688450769}
   m_Layer: 5
-  m_Name: Slider Mod
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26101,7 +26101,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 3
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -39320,7 +39320,7 @@ GameObject:
   - component: {fileID: 1031389332}
   - component: {fileID: 1031389333}
   m_Layer: 5
-  m_Name: Slider Mod
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39395,7 +39395,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 3
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -56207,7 +56207,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 1
+    BG: 3
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: 09b0d24f22d8e444eba1c97fe80aeffb, type: 3}
@@ -56224,7 +56224,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 2
+    BG: 3
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e77c87378ad473db5afb025de146d9, type: 3}
@@ -56241,7 +56241,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 2
+    BG: 3
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: d169872e45ba54ec7a4e6fea70c3eab7, type: 3}
@@ -56258,7 +56258,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 2
+    BG: 3
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: f8db048751b754f4cb5ba6f317000690, type: 3}
@@ -56275,7 +56275,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 1
+    BG: 3
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e1f242e99de4f23b724bd280852357, type: 3}
@@ -56292,7 +56292,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 2
+    BG: 3
     crowdDensity: 10
     trophyWon: 0
     image: {fileID: 21300000, guid: 7970555c681a74e769c97ad31b7bd01b, type: 3}
@@ -56310,7 +56310,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 3
+    BG: 2
     crowdDensity: 3
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
@@ -56448,7 +56448,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
-    BG: 1
+    BG: 5
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: d4a80d2e2f9a440ffbdd2ec569681d52, type: 3}
@@ -56534,7 +56534,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
-    BG: 2
+    BG: 3
     crowdDensity: 11
     trophyWon: 0
     image: {fileID: 21300000, guid: 41015e0142a1b411fba68e02a0aad37f, type: 3}
@@ -62143,7 +62143,7 @@ GameObject:
   - component: {fileID: 1668279995}
   - component: {fileID: 1668279996}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62168,8 +62168,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.8, y: 0}
+  m_SizeDelta: {x: 769.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1668279996
 MonoBehaviour:
@@ -62218,7 +62218,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -66940,7 +66940,7 @@ GameObject:
   - component: {fileID: 1790636509}
   - component: {fileID: 1790636510}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66965,8 +66965,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.8, y: 0}
+  m_SizeDelta: {x: 769.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1790636510
 MonoBehaviour:
@@ -67015,7 +67015,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -67210,7 +67210,7 @@ GameObject:
   - component: {fileID: 1800557944}
   - component: {fileID: 1800557945}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67285,7 +67285,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -72942,7 +72942,7 @@ GameObject:
   - component: {fileID: 1936543154}
   - component: {fileID: 1936543155}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider Mod
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72967,8 +72967,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 655.6, y: 0}
-  m_SizeDelta: {x: 800, y: 100}
+  m_AnchoredPosition: {x: 670.8, y: 0}
+  m_SizeDelta: {x: 769.6, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1936543155
 MonoBehaviour:
@@ -73017,7 +73017,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 5
+  m_Value: 250
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -79846,9 +79846,9 @@ MonoBehaviour:
     weightAccuracy: 0
     aimAccuracy: 0
     finesseAccuracy: 0
-    sweepStrength: 5
-    sweepEndurance: 5
-    sweepCohesion: 5
+    sweepStrength: 0
+    sweepEndurance: 0
+    sweepCohesion: 0
   oppStats:
     weightAccuracy: 0
     aimAccuracy: 0
@@ -79863,7 +79863,7 @@ MonoBehaviour:
     sweepStrength: 0
     sweepEndurance: 0
     sweepCohesion: 0
-  skillPoints: 18
+  skillPoints: 5
   cardPUIDList: 
   cardSponsorIDList: 
   activeCardIDList: 
@@ -81311,7 +81311,7 @@ GameObject:
   - component: {fileID: 2118303032}
   - component: {fileID: 2118303033}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: Slider Stats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81386,7 +81386,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 500
   m_WholeNumbers: 1
-  m_Value: 4
+  m_Value: 200
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
