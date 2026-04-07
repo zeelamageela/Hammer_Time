@@ -78,17 +78,30 @@ public class FlickShotController : MonoBehaviour
     public float minDrawDistance = 0.20f;
     
     [Header("Velocity Calculation (Distance/Time)")]
-    [Tooltip("Minimum drag velocity for slowest shot (units/second)")]
+    [Tooltip("DEPRECATED - Now using dynamic velocity window based on target")]
     [Range(1.0f, 10.0f)]
-    public float minDragVelocity = 5.0f;
+    public float minDragVelocity = 5.0f; // DEPRECATED - kept for backward compatibility
     
-    [Tooltip("Maximum drag velocity for fastest shot (units/second)")]
+    [Tooltip("DEPRECATED - Now using dynamic velocity window based on target")]
     [Range(10.0f, 50.0f)]
-    public float maxDragVelocity = 16.0f; // ? NEW: Closer to rock velocity (was 80.0f)
+    public float maxDragVelocity = 16.0f; // DEPRECATED - kept for backward compatibility
     
     [Tooltip("Velocity scale multiplier - adjusts how drag velocity maps to rock velocity (1.0 = 1:1 mapping)")]
     [Range(0.5f, 2.0f)]
     public float velocityScaleMultiplier = 1.0f; // ? NEW: Fine-tune feel (1.0 = natural)
+    
+    [Header("Dynamic Velocity Window (NEW!)")]
+    [Tooltip("Velocity tolerance around target (±X m/s) - how much faster/slower than target is allowed")]
+    [Range(0.5f, 3.0f)]
+    public float velocityTolerance = 1.5f; // ±1.5 m/s window around target
+    
+    [Tooltip("Absolute minimum rock velocity (safety clamp)")]
+    [Range(3.0f, 7.0f)]
+    public float absoluteMinVelocity = 5.0f; // Never go below this
+    
+    [Tooltip("Absolute maximum rock velocity (safety clamp)")]
+    [Range(12.0f, 18.0f)]
+    public float absoluteMaxVelocity = 16.0f; // Never go above this
     
     [Header("(DEPRECATED - No longer using speed bands)")]
     [Tooltip("DEPRECATED: Speed bands removed - now using continuous velocity")]
@@ -100,7 +113,7 @@ public class FlickShotController : MonoBehaviour
     [Header("Skill Tuning")]
     [Tooltip("Forgiveness factor - higher = more forgiving (easier to hit speed bands)")]
     [Range(0.5f, 2.0f)]
-    public float forgivenessFactor = 1.2f;
+    public float forgivenessFactor = 1.7f;
     
     [Header("Visual Feedback")]
     [Tooltip("Show speed feedback text callouts during drag")]
@@ -160,6 +173,11 @@ public class FlickShotController : MonoBehaviour
     // Calculated values
     private float calculatedSpeed; // 0-1 normalized speed (continuous, not banded)
     private float dragVelocity; // Actual drag velocity (distance/time) in units/second
+    
+    // Dynamic velocity window (calculated per shot)
+    private float dynamicMinVelocity; // Target - tolerance
+    private float dynamicMaxVelocity; // Target + tolerance
+    private float targetRockVelocity; // The velocity we're aiming for
     
     // Cached references (using dynamic types to avoid compilation issues)
     private bool isEnabled = false;
@@ -503,17 +521,30 @@ public class FlickShotController : MonoBehaviour
         // Start velocity guide indicator
         if (velocityGuide != null)
         {
-            // ? NEW: Calculate DRAG VELOCITY (units/s input speed) not rock velocity!
-            // Rock velocity tells us how fast the rock will travel
-            // Drag velocity tells us how fast WE need to swipe!
-            
-            float targetRockVelocity = GetTargetVelocityFromTrajectory();
+            // ? NEW: Calculate target velocity and dynamic window!
+            targetRockVelocity = GetTargetVelocityFromTrajectory();
             
             if (targetRockVelocity <= 0f)
             {
                 Debug.LogWarning("[FlickShot] Failed to get target velocity from trajectory - using fallback");
                 targetRockVelocity = 10f; // Fallback to medium velocity
             }
+            
+            // ? DYNAMIC VELOCITY WINDOW: Calculate min/max around target
+            dynamicMinVelocity = targetRockVelocity - velocityTolerance;
+            dynamicMaxVelocity = targetRockVelocity + velocityTolerance;
+            
+            // Safety clamp to absolute limits (prevent going outside physics range)
+            dynamicMinVelocity = Mathf.Max(dynamicMinVelocity, absoluteMinVelocity);
+            dynamicMaxVelocity = Mathf.Min(dynamicMaxVelocity, absoluteMaxVelocity);
+            
+            Debug.Log($"[FlickShot] ? DYNAMIC VELOCITY WINDOW:");
+            Debug.Log($"  Target velocity: {targetRockVelocity:F2} m/s");
+            Debug.Log($"  Tolerance: ±{velocityTolerance:F2} m/s");
+            Debug.Log($"  Min velocity: {dynamicMinVelocity:F2} m/s (target - tolerance)");
+            Debug.Log($"  Max velocity: {dynamicMaxVelocity:F2} m/s (target + tolerance)");
+            Debug.Log($"  Window size: {dynamicMaxVelocity - dynamicMinVelocity:F2} m/s");
+            Debug.Log($"  Absolute limits: {absoluteMinVelocity:F2} - {absoluteMaxVelocity:F2} m/s");
             
             // ? CRITICAL: Map rock velocity ? ideal drag velocity
             // We need to show how fast to SWIPE, not how fast rock travels!
@@ -841,26 +872,22 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// Get predicted velocity based on current drag time
+    /// Get predicted velocity based on current drag speed
+    /// ? NEW: Uses DYNAMIC velocity window (centered on target!)
     /// </summary>
     private float GetPredictedVelocity()
     {
-        float minVel = 5f;
-        float maxVel = 13f;
+        // ? Map calculatedSpeed (0-1) to DYNAMIC velocity range!
+        // calculatedSpeed = 0.0 ? dynamicMinVelocity (target - tolerance)
+        // calculatedSpeed = 0.5 ? targetRockVelocity (PERFECT!)
+        // calculatedSpeed = 1.0 ? dynamicMaxVelocity (target + tolerance)
         
-        // Try to get velocity range from TrajectoryLine
-        if (minVelocityProp != null && trajLine != null)
-        {
-            object minVelObj = minVelocityProp.GetValue(trajLine);
-            if (minVelObj != null) minVel = (float)minVelObj;
-        }
-        if (maxVelocityProp != null && trajLine != null)
-        {
-            object maxVelObj = maxVelocityProp.GetValue(trajLine);
-            if (maxVelObj != null) maxVel = (float)maxVelObj;
-        }
+        float predictedVel = Mathf.Lerp(dynamicMinVelocity, dynamicMaxVelocity, calculatedSpeed);
         
-        return Mathf.Lerp(minVel, maxVel, calculatedSpeed);
+        // Safety clamp (should already be within range, but just in case)
+        predictedVel = Mathf.Clamp(predictedVel, absoluteMinVelocity, absoluteMaxVelocity);
+        
+        return predictedVel;
     }
     
     /// <summary>
@@ -1023,15 +1050,23 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// ? NEW: Calculate speed multiplier (0-1) from drag VELOCITY (distance/time)
-    /// This is the REAL physics-based approach!
+    /// ? REFACTORED: Calculate speed multiplier (0-1) from drag VELOCITY (distance/time)
+    /// Now maps to DYNAMIC min/max drag velocities (centered on target!)
     /// </summary>
     private float CalculateSpeedFromVelocity(float dragVelocity)
     {
-        // Map drag velocity (units/second) to normalized speed (0-1)
-        // Fast swipe = high velocity = high speed
-        // Slow swipe = low velocity = low speed
-        float normalizedSpeed = Mathf.InverseLerp(minDragVelocity, maxDragVelocity, dragVelocity);
+        // ? Calculate dynamic drag velocity range from rock velocity range
+        // We need to map: rock velocity range ? drag velocity range
+        
+        // Get ideal drag velocities for min/max rock velocities
+        float minDragVel = CalculateIdealDragVelocityForRockSpeed(dynamicMinVelocity);
+        float maxDragVel = CalculateIdealDragVelocityForRockSpeed(dynamicMaxVelocity);
+        
+        // Map player's drag velocity to normalized speed (0-1)
+        // dragVelocity = minDragVel ? normalizedSpeed = 0.0 (slowest)
+        // dragVelocity = midDragVel ? normalizedSpeed = 0.5 (PERFECT!)
+        // dragVelocity = maxDragVel ? normalizedSpeed = 1.0 (fastest)
+        float normalizedSpeed = Mathf.InverseLerp(minDragVel, maxDragVel, dragVelocity);
         
         // Apply forgiveness factor (smooth extremes toward middle)
         normalizedSpeed = Mathf.Lerp(0.5f, normalizedSpeed, 1f / forgivenessFactor);
@@ -1462,29 +1497,32 @@ public class FlickShotController : MonoBehaviour
     }
     
     /// <summary>
-    /// ? NEW: Get feedback message based on CONTINUOUS speed (no bands!)
-    /// Uses percentage deviation from perfect (0.5)
+    /// ? REFACTORED: Get feedback message based on CONTINUOUS speed (no bands!)
+    /// Now uses actual velocity deviation from target (more intuitive!)
     /// </summary>
     private string GetSpeedFeedbackMessage()
     {
-        // Calculate deviation from perfect (0.5 = ideal)
-        float deviation = calculatedSpeed - 0.5f;
-        float deviationPercent = Mathf.Abs(deviation) * 100f;
+        // Get actual velocity from current speed
+        float actualVelocity = GetPredictedVelocity();
         
-        // Give feedback based on continuous deviation (not bands!)
+        // Calculate deviation from target in m/s
+        float deviationVelocity = actualVelocity - targetRockVelocity;
+        float deviationPercent = Mathf.Abs(deviationVelocity / targetRockVelocity) * 100f;
+        
+        // Give feedback based on velocity deviation
         if (deviationPercent < 5f)
-            return "Perfect!"; // Within 5% of ideal
+            return "Perfect!"; // Within 5% of target
         else if (deviationPercent < 15f)
         {
-            return deviation < 0 ? "Slightly Slow" : "Slightly Fast";
+            return deviationVelocity < 0 ? "Slightly Slow" : "Slightly Fast";
         }
         else if (deviationPercent < 30f)
         {
-            return deviation < 0 ? "Too Slow" : "Too Fast";
+            return deviationVelocity < 0 ? "Too Slow" : "Too Fast";
         }
         else
         {
-            return deviation < 0 ? "Way Too Slow!" : "Way Too Fast!";
+            return deviationVelocity < 0 ? "Way Too Slow!" : "Way Too Fast!";
         }
     }
     
@@ -1576,21 +1614,6 @@ public class FlickShotController : MonoBehaviour
         // Show detailed speed callout that FOLLOWS the rock - USING STACKING!
         if (showSpeedFeedback)
         {
-            // Get velocity range from TrajectoryLine
-            float minVel = 5f;
-            float maxVel = 13f;
-            
-            if (minVelocityProp != null && trajLine != null)
-            {
-                object minVelObj = minVelocityProp.GetValue(trajLine);
-                if (minVelObj != null) minVel = (float)minVelObj;
-            }
-            if (maxVelocityProp != null && trajLine != null)
-            {
-                object maxVelObj = maxVelocityProp.GetValue(trajLine);
-                if (maxVelObj != null) maxVel = (float)maxVelObj;
-            }
-            
             // STACKED CALLOUTS - each piece of info gets its own callout!
             if (TextCalloutManager.Instance != null)
             {
@@ -1600,19 +1623,24 @@ public class FlickShotController : MonoBehaviour
                 string speedMessage = GetSpeedFeedbackMessage();
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, speedMessage);
                 
-                // Callout 2: Actual velocity
+                // Callout 2: Actual velocity (what we got)
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s");
                 
-                // Callout 3: Drag velocity (shows player their input)
+                // Callout 3: Target velocity (what we aimed for)
+                float velocityError = targetSpeed - targetRockVelocity;
+                string errorSign = velocityError > 0 ? "+" : "";
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Target: {targetRockVelocity:F2} m/s ({errorSign}{velocityError:F2})");
+                
+                // Callout 4: Drag velocity (shows player their input)
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Swipe: {dragVelocity:F1} units/s");
                 
-                // Callout 4: Predicted stop
+                // Callout 5: Predicted stop
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Stop: Y={predictedStopY:F1}");
                 
-                // Callout 5: Distance + Time
+                // Callout 6: Distance + Time
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{dragDistance:F1}m in {dragTime:F2}s");
                 
-                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s | Swipe {dragVelocity:F1} units/s | Predicted Y={predictedStopY:F1} | {dragDistance:F1}m in {dragTime:F2}s ***");
+                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s (target: {targetRockVelocity:F2}, error: {errorSign}{velocityError:F2}) | Swipe {dragVelocity:F1} units/s | Predicted Y={predictedStopY:F1} | {dragDistance:F1}m in {dragTime:F2}s ***");
             }
             else
             {
