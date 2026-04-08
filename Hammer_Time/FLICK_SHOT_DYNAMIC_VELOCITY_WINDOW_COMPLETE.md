@@ -1,8 +1,20 @@
-# Flick Shot Dynamic Velocity Window - Complete Implementation
+# Flick Shot Dynamic Velocity Window + Skill Scaling - Complete Implementation
 
 ## Overview
 
-Implemented a **dynamic velocity window** system that centers the velocity range around the target velocity for each shot. This makes the flick shot feel much more natural and forgiving - all shots have the same difficulty regardless of target distance.
+Implemented a **dynamic velocity window** system with **skill-based scaling** that makes flick shot feel natural and rewards character progression. The tolerance window centers around the target velocity and scales based on the shooter's weight accuracy skill.
+
+## Key Features
+
+### 1. Dynamic Velocity Window
+All shots have consistent difficulty regardless of target velocity - the window moves with the target!
+
+### 2. Skill-Based Scaling (NEW!)
+**INVERTED RELATIONSHIP** - Realistic skill progression:
+- **Low Weight Skill** (poor control) = **WIDER tolerance** (easier, more forgiving)
+- **High Weight Skill** (good control) = **TIGHTER tolerance** (harder, requires precision)
+
+Like real curling - beginners get help, experts must be precise!
 
 ## The Problem (Before)
 
@@ -38,9 +50,9 @@ Player must hit within ±1.5 m/s = much more forgiving!
 
 ```csharp
 [Header("Dynamic Velocity Window (NEW!)")]
-[Tooltip("Velocity tolerance around target (±X m/s) - how much faster/slower than target is allowed")]
+[Tooltip("BASE velocity tolerance around target (±X m/s) - modified by skill scaling")]
 [Range(0.5f, 3.0f)]
-public float velocityTolerance = 1.5f; // ±1.5 m/s window around target
+public float velocityTolerance = 1.5f; // ±1.5 m/s base window
 
 [Tooltip("Absolute minimum rock velocity (safety clamp)")]
 [Range(3.0f, 7.0f)]
@@ -49,35 +61,68 @@ public float absoluteMinVelocity = 5.0f; // Never go below this
 [Tooltip("Absolute maximum rock velocity (safety clamp)")]
 [Range(12.0f, 18.0f)]
 public float absoluteMaxVelocity = 16.0f; // Never go above this
+
+[Header("Skill-Based Tolerance Scaling")]
+[Tooltip("Enable skill-based tolerance (uses weight skill from CharacterStats)")]
+public bool useSkillScaling = true;
+
+[Tooltip("Tolerance multiplier at 0% weight skill (unskilled = WIDE tolerance, forgiving!)")]
+[Range(1.0f, 2.0f)]
+public float lowSkillScale = 1.4f; // Beginners get 140% tolerance (easier!)
+
+[Tooltip("Tolerance multiplier at 100% weight skill (skilled = TIGHT tolerance, precise!)")]
+[Range(0.5f, 1.0f)]
+public float highSkillScale = 0.7f; // Experts get 70% tolerance (harder!)
 ```
 
-### 2. Dynamic Window Calculation
+### 2. Skill-Scaled Tolerance Calculation
+
+**INVERTED relationship** - low skill = easier (wide window):
+
+```csharp
+// Get player's weight accuracy (0-100)
+float weightSkill = GetPlayerWeightSkill(); // From CareerManager.cStats or AI team
+
+// Calculate scaling factor (INVERTED!)
+// Low skill (0) ? lowSkillScale (1.4x) = WIDE tolerance
+// High skill (100) ? highSkillScale (0.7x) = TIGHT tolerance
+float normalizedSkill = weightSkill / 100f; // 0-1
+float scalingFactor = Mathf.Lerp(lowSkillScale, highSkillScale, normalizedSkill);
+
+// Apply to base tolerance
+float scaledTolerance = velocityTolerance * scalingFactor;
+```
+
+### 3. Dynamic Window Calculation
 
 At the start of each power phase:
 ```csharp
 // Get target velocity from trajectory
 targetRockVelocity = GetTargetVelocityFromTrajectory(); // e.g., 8.5 m/s
 
+// Scale tolerance based on weight skill
+float scaledTolerance = CalculateSkillScaledTolerance(); // e.g., 2.1 m/s for beginner
+
 // Calculate dynamic min/max around target
-dynamicMinVelocity = targetRockVelocity - velocityTolerance; // 7.0 m/s
-dynamicMaxVelocity = targetRockVelocity + velocityTolerance; // 10.0 m/s
+dynamicMinVelocity = targetRockVelocity - scaledTolerance; // 6.4 m/s
+dynamicMaxVelocity = targetRockVelocity + scaledTolerance; // 10.6 m/s
 
 // Safety clamp to absolute limits
 dynamicMinVelocity = Mathf.Max(dynamicMinVelocity, absoluteMinVelocity);
 dynamicMaxVelocity = Mathf.Min(dynamicMaxVelocity, absoluteMaxVelocity);
 ```
 
-### 3. Velocity Mapping
+### 4. Velocity Mapping
 
 Player's drag velocity is mapped to the dynamic range:
 ```csharp
 // Old (Fixed Range):
 normalizedSpeed = InverseLerp(5.0, 16.0, dragVelocity); // 0-1 across fixed range
 
-// New (Dynamic Range):
+// New (Dynamic + Skill-Scaled Range):
 float minDragVel = CalculateIdealDragVelocityForRockSpeed(dynamicMinVelocity);
 float maxDragVel = CalculateIdealDragVelocityForRockSpeed(dynamicMaxVelocity);
-normalizedSpeed = InverseLerp(minDragVel, maxDragVel, dragVelocity); // 0-1 across dynamic range
+normalizedSpeed = InverseLerp(minDragVel, maxDragVel, dragVelocity); // 0-1 across skill-scaled dynamic range
 ```
 
 ### 4. Enhanced Feedback

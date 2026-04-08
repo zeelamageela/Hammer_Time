@@ -603,22 +603,35 @@ public class TeamMenu : MonoBehaviour
         //    else
         //        teamDisplay[i].charName.transform.parent.gameObject.SetActive(true);
         //}
-        title.text = "Team Member";
-        navDisplay.charName.text = activePlayers[player].name;
-        navDisplay.cost.text = "$" + activePlayers[player].cost.ToString("N0");
-        navDisplay.photo.sprite = activePlayers[player].image;
-        navDisplay.description.text = activePlayers[player].description;
+
+        //title.text = "Team Member";
+        //navDisplay.charName.text = activePlayers[player].name;
+        //navDisplay.cost.text = "$" + activePlayers[player].cost.ToString("N0");
+        //navDisplay.photo.sprite = activePlayers[player].image;
+        //navDisplay.description.text = activePlayers[player].description;
+
+        playerSelect = player;
 
         if (playerSelect == 0)
             navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Lead";
         else if (playerSelect == 1)
             navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Second";
-        else
+        else if (playerSelect == 2)
             navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Third";
+        else
+            navDisplay.charName.transform.parent.GetChild(3).GetComponent<Text>().text = "Skip";
+
+        if (playerSelect == 3)
+        {
+            SkillMenu();
+        }
+        else
+        { 
+            ViewFreeAgents();
+        }  
 
         teamMenu.SetActive(false);
-        navMenu.SetActive(true);
-        playerSelect = player;
+        //navMenu.SetActive(true);
 
     }
 

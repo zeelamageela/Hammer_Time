@@ -91,9 +91,9 @@ public class FlickShotController : MonoBehaviour
     public float velocityScaleMultiplier = 1.0f; // ? NEW: Fine-tune feel (1.0 = natural)
     
     [Header("Dynamic Velocity Window (NEW!)")]
-    [Tooltip("Velocity tolerance around target (±X m/s) - how much faster/slower than target is allowed")]
+    [Tooltip("BASE velocity tolerance around target (±X m/s) - modified by skill scaling")]
     [Range(0.5f, 3.0f)]
-    public float velocityTolerance = 1.5f; // ±1.5 m/s window around target
+    public float velocityTolerance = 1.5f; // ±1.5 m/s base window
     
     [Tooltip("Absolute minimum rock velocity (safety clamp)")]
     [Range(3.0f, 7.0f)]
@@ -102,6 +102,18 @@ public class FlickShotController : MonoBehaviour
     [Tooltip("Absolute maximum rock velocity (safety clamp)")]
     [Range(12.0f, 18.0f)]
     public float absoluteMaxVelocity = 16.0f; // Never go above this
+    
+    [Header("Skill-Based Tolerance Scaling")]
+    [Tooltip("Enable skill-based tolerance (uses weight skill from CharacterStats)")]
+    public bool useSkillScaling = true;
+
+    [Tooltip("Tolerance multiplier at 0% weight skill (unskilled = WIDE tolerance, forgiving!)")]
+    [Range(1.0f, 2.0f)]
+    public float lowSkillScale = 1.4f; // Beginners get 140% tolerance (easier!)
+
+    [Tooltip("Tolerance multiplier at 100% weight skill (skilled = TIGHT tolerance, precise!)")]
+    [Range(0.5f, 1.0f)]
+    public float highSkillScale = 0.7f; // Experts get 70% tolerance (harder!)
     
     [Header("(DEPRECATED - No longer using speed bands)")]
     [Tooltip("DEPRECATED: Speed bands removed - now using continuous velocity")]
@@ -530,19 +542,23 @@ public class FlickShotController : MonoBehaviour
                 targetRockVelocity = 10f; // Fallback to medium velocity
             }
             
+            // ? SKILL-BASED TOLERANCE: Scale tolerance based on weight skill!
+            float scaledTolerance = CalculateSkillScaledTolerance();
+            
             // ? DYNAMIC VELOCITY WINDOW: Calculate min/max around target
-            dynamicMinVelocity = targetRockVelocity - velocityTolerance;
-            dynamicMaxVelocity = targetRockVelocity + velocityTolerance;
+            dynamicMinVelocity = targetRockVelocity - scaledTolerance;
+            dynamicMaxVelocity = targetRockVelocity + scaledTolerance;
             
             // Safety clamp to absolute limits (prevent going outside physics range)
             dynamicMinVelocity = Mathf.Max(dynamicMinVelocity, absoluteMinVelocity);
             dynamicMaxVelocity = Mathf.Min(dynamicMaxVelocity, absoluteMaxVelocity);
             
-            Debug.Log($"[FlickShot] ? DYNAMIC VELOCITY WINDOW:");
+            Debug.Log($"[FlickShot] ? DYNAMIC VELOCITY WINDOW (SKILL-SCALED):");
             Debug.Log($"  Target velocity: {targetRockVelocity:F2} m/s");
-            Debug.Log($"  Tolerance: ±{velocityTolerance:F2} m/s");
-            Debug.Log($"  Min velocity: {dynamicMinVelocity:F2} m/s (target - tolerance)");
-            Debug.Log($"  Max velocity: {dynamicMaxVelocity:F2} m/s (target + tolerance)");
+            Debug.Log($"  Base tolerance: ±{velocityTolerance:F2} m/s");
+            Debug.Log($"  Scaled tolerance: ±{scaledTolerance:F2} m/s (skill-adjusted!)");
+            Debug.Log($"  Min velocity: {dynamicMinVelocity:F2} m/s (target - scaled tolerance)");
+            Debug.Log($"  Max velocity: {dynamicMaxVelocity:F2} m/s (target + scaled tolerance)");
             Debug.Log($"  Window size: {dynamicMaxVelocity - dynamicMinVelocity:F2} m/s");
             Debug.Log($"  Absolute limits: {absoluteMinVelocity:F2} - {absoluteMaxVelocity:F2} m/s");
             
@@ -2177,6 +2193,124 @@ public class FlickShotController : MonoBehaviour
         }
         
         return inZone;
+    }
+    
+    /// <summary>
+    /// ? NEW: Calculate skill-scaled tolerance based on weight accuracy
+    /// INVERTED: Low skill = WIDE tolerance (easier), High skill = TIGHT tolerance (harder)
+    /// </summary>
+    private float CalculateSkillScaledTolerance()
+    {
+        if (!useSkillScaling)
+        {
+            Debug.Log($"[FlickShot Skill] Skill scaling DISABLED - using base tolerance: ±{velocityTolerance:F2} m/s");
+            return velocityTolerance; // Use base value
+        }
+        
+        float weightSkill = GetPlayerWeightSkill(); // 0-100
+        float normalizedSkill = weightSkill / 100f; // 0-1
+        
+        // INVERTED SCALING: Low skill (0) ? lowSkillScale (1.4x), High skill (1) ? highSkillScale (0.7x)
+        // This makes beginners have WIDER tolerance (easier), experts have TIGHTER tolerance (harder)
+        float scalingFactor = Mathf.Lerp(lowSkillScale, highSkillScale, normalizedSkill);
+        
+        // Apply to base tolerance
+        float scaledTolerance = velocityTolerance * scalingFactor;
+        
+        Debug.Log($"[FlickShot Skill] === SKILL-BASED TOLERANCE ===");
+        Debug.Log($"  Weight skill: {weightSkill:F1}% (normalized: {normalizedSkill:F3})");
+        Debug.Log($"  Scaling factor: {scalingFactor:F2}x (INVERTED: low skill = wider)");
+        Debug.Log($"  Base tolerance: ±{velocityTolerance:F2} m/s");
+        Debug.Log($"  Scaled tolerance: ±{scaledTolerance:F2} m/s");
+        Debug.Log($"  Skill range: {lowSkillScale:F2}x (0%) to {highSkillScale:F2}x (100%)");
+        
+        return scaledTolerance;
+    }
+    
+    /// <summary>
+    /// Get player's weight accuracy skill from CharacterStats
+    /// Returns value 0-100
+    /// </summary>
+    private float GetPlayerWeightSkill()
+    {
+        // Check if this is an AI shot or player shot
+        if (gm != null)
+        {
+            System.Type gmType = gm.GetType();
+            System.Reflection.FieldInfo aiTeamYellowField = gmType.GetField("aiTeamYellow");
+            System.Reflection.FieldInfo aiTeamRedField = gmType.GetField("aiTeamRed");
+            System.Reflection.FieldInfo redTurnField = gmType.GetField("redTurn");
+            
+            if (aiTeamYellowField != null && aiTeamRedField != null && redTurnField != null)
+            {
+                bool isAIYellow = (bool)aiTeamYellowField.GetValue(gm);
+                bool isAIRed = (bool)aiTeamRedField.GetValue(gm);
+                bool isRedTurn = (bool)redTurnField.GetValue(gm);
+                
+                // Determine if current shooter is AI
+                bool isAIShot = (isRedTurn && isAIRed) || (!isRedTurn && isAIYellow);
+                
+                if (isAIShot)
+                {
+                    // AI shot - get AI team's weight accuracy
+                    TeamManager teamManager = FindObjectOfType<TeamManager>();
+                    if (teamManager != null)
+                    {
+                        float aiWeight = GetAITeamWeightSkill(teamManager, isRedTurn);
+                        Debug.Log($"[FlickShot Skill] AI shot detected - weight skill: {aiWeight:F1}%");
+                        return aiWeight;
+                    }
+                }
+            }
+        }
+        
+        // Player shot - get from CareerManager
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        if (cm != null && cm.cStats != null)
+        {
+            float playerWeight = cm.cStats.weightAccuracy; // 0-100
+            Debug.Log($"[FlickShot Skill] Player shot detected - weight skill: {playerWeight:F1}%");
+            return playerWeight;
+        }
+        
+        Debug.LogWarning("[FlickShot Skill] Could not find weight skill - using default 50%");
+        return 50f; // Fallback: average skill
+    }
+    
+    /// <summary>
+    /// Get AI team's weight accuracy from TeamManager
+    /// </summary>
+    private float GetAITeamWeightSkill(TeamManager teamManager, bool isRedTeam)
+    {
+        System.Type tmType = teamManager.GetType();
+        
+        // Get the AI team (opposite of player team)
+        System.Reflection.FieldInfo redTeamField = tmType.GetField("redTeam");
+        System.Reflection.FieldInfo yellowTeamField = tmType.GetField("yellowTeam");
+        
+        if (redTeamField != null && yellowTeamField != null)
+        {
+            object redTeam = redTeamField.GetValue(teamManager);
+            object yellowTeam = yellowTeamField.GetValue(teamManager);
+            object aiTeam = isRedTeam ? redTeam : yellowTeam;
+            
+            if (aiTeam != null)
+            {
+                // Get weight field from Team
+                System.Type teamType = aiTeam.GetType();
+                System.Reflection.FieldInfo weightField = teamType.GetField("weight");
+                
+                if (weightField != null)
+                {
+                    int weight = (int)weightField.GetValue(aiTeam);
+                    Debug.Log($"[FlickShot Skill] AI team weight: {weight}");
+                    return (float)weight;
+                }
+            }
+        }
+        
+        Debug.LogWarning("[FlickShot Skill] Could not find AI team weight - using default 50");
+        return 50f; // Fallback
     }
     
     /// <summary>
