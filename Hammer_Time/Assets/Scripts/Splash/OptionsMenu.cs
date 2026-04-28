@@ -2,15 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TigerForge;
 
 public class OptionsMenu : MonoBehaviour
 {
     public AudioManager am;
     public Slider volumeSlider;
     public float volume;
-
-    EasyFileSave myFile;
 
 
     private void Start()
@@ -27,10 +24,7 @@ public class OptionsMenu : MonoBehaviour
 
     public void ClearHighScore()
     {
-        myFile = new EasyFileSave("my_hiscore_data");
-
-        myFile.Delete();
-
-        myFile.Dispose();
+        HighScoreService.DeleteHighScores();
+        Debug.Log("[OptionsMenu] High scores cleared via HighScoreService");
     }
 }

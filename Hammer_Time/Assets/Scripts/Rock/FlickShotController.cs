@@ -60,7 +60,7 @@ public class FlickShotController : MonoBehaviour
     public float powerDragTargetY = -16f; // Exactly at hog line
     
     [Header("Input Zone Validation")]
-    [Tooltip("Maximum X distance from center (±X units) for valid input")]
+    [Tooltip("Maximum X distance from center (ï¿½X units) for valid input")]
     [Range(0.5f, 2.0f)]
     public float inputZoneMaxX = 1.0f;
     
@@ -91,9 +91,9 @@ public class FlickShotController : MonoBehaviour
     public float velocityScaleMultiplier = 1.0f; // ? NEW: Fine-tune feel (1.0 = natural)
     
     [Header("Dynamic Velocity Window (NEW!)")]
-    [Tooltip("BASE velocity tolerance around target (±X m/s) - modified by skill scaling")]
+    [Tooltip("BASE velocity tolerance around target (ï¿½X m/s) - modified by skill scaling")]
     [Range(0.5f, 3.0f)]
-    public float velocityTolerance = 1.5f; // ±1.5 m/s base window
+    public float velocityTolerance = 1.5f; // ï¿½1.5 m/s base window
     
     [Tooltip("Absolute minimum rock velocity (safety clamp)")]
     [Range(3.0f, 7.0f)]
@@ -433,15 +433,34 @@ public class FlickShotController : MonoBehaviour
         // Transition to AimSet phase - ready for power click
         currentPhase = FlickShotPhase.AimSet;
         
-        Debug.Log($"[FlickShot] Aim position set - Rock: {rockPosition}, Launcher: {launcherPosition}, Pullback: {direction}, Aim Direction (FLIPPED): {aimDirection}, Angle: {aimAngle:F1}°, Distance: {pullbackDistance:F2}");
+        Debug.Log($"[FlickShot] Aim position set - Rock: {rockPosition}, Launcher: {launcherPosition}, Pullback: {direction}, Aim Direction (FLIPPED): {aimDirection}, Angle: {aimAngle:F1}ï¿½, Distance: {pullbackDistance:F2}");
         Debug.Log($"[FlickShot] Stored pullback position: {storedPullbackPosition}");
-        Debug.Log($"[FlickShot] Aim locked! Click on launcher (0, -25) to start power phase.");
+        Debug.Log($"[FlickShot] Aim locked! Click launcher to start power, or click rock to re-aim.");
     }
     
+    /// <summary>
+    /// Reset back to aiming phase - allows player to adjust aim after setting it
+    /// Called when player clicks rock in AimSet phase
+    /// </summary>
+    public void ResetToAiming()
+    {
+        currentPhase = FlickShotPhase.AimingPhase;
+        
+        // Re-enable rock collider so it can be clicked/dragged
+        CircleCollider2D rockCollider = GetComponent<CircleCollider2D>();
+        if (rockCollider != null)
+        {
+            rockCollider.enabled = true;
+        }
+        
+        Debug.Log("[FlickShot] Reset to AimingPhase - player can now adjust aim");
+    }
+
     /// <summary>
     /// Transition from aiming to power phase
     /// Triggered when player clicks on launcher
     /// </summary>
+    [System.Obsolete]
     private void StartPowerPhase()
     {
         currentPhase = FlickShotPhase.PowerPhase;
@@ -470,6 +489,14 @@ public class FlickShotController : MonoBehaviour
             Debug.Log($"[FlickShot] Rock positioned at launcher: {rb.position}, spring re-enabled");
         }
         
+        // Disable rock collider so it can't be clicked during power phase
+        CircleCollider2D rockCollider = GetComponent<CircleCollider2D>();
+        if (rockCollider != null)
+        {
+            rockCollider.enabled = false;
+            Debug.Log("[FlickShot] Rock collider disabled - can't click rock during power phase");
+        }
+        
         // Aim direction was already set by SetAimPosition() when player released pullback
         // It will be used when we release the power drag
         
@@ -490,23 +517,19 @@ public class FlickShotController : MonoBehaviour
             }
         }
         
-        // Disable aim camera
+        // Setup camera for power phase (frame drag zone from launcher to hog line)
         if (cameraManager != null)
         {
             System.Type camType = cameraManager.GetType();
-            System.Reflection.FieldInfo aimCameraField = camType.GetField("aim");
-            if (aimCameraField != null)
+            System.Reflection.MethodInfo powerPhaseSetupMethod = camType.GetMethod("PowerPhaseSetup");
+            if (powerPhaseSetupMethod != null)
             {
-                object aimCamera = aimCameraField.GetValue(cameraManager);
-                if (aimCamera != null)
-                {
-                    System.Reflection.PropertyInfo depthProp = aimCamera.GetType().GetProperty("depth");
-                    if (depthProp != null)
-                    {
-                        depthProp.SetValue(aimCamera, -1); // Disable aim camera
-                        Debug.Log("[FlickShot] Aim camera disabled (depth = -1)");
-                    }
-                }
+                powerPhaseSetupMethod.Invoke(cameraManager, null);
+                Debug.Log("[FlickShot] Power phase camera setup called");
+            }
+            else
+            {
+                Debug.LogWarning("[FlickShot] PowerPhaseSetup method not found on CameraManager");
             }
         }
         
@@ -555,8 +578,8 @@ public class FlickShotController : MonoBehaviour
             
             Debug.Log($"[FlickShot] ? DYNAMIC VELOCITY WINDOW (SKILL-SCALED):");
             Debug.Log($"  Target velocity: {targetRockVelocity:F2} m/s");
-            Debug.Log($"  Base tolerance: ±{velocityTolerance:F2} m/s");
-            Debug.Log($"  Scaled tolerance: ±{scaledTolerance:F2} m/s (skill-adjusted!)");
+            Debug.Log($"  Base tolerance: ï¿½{velocityTolerance:F2} m/s");
+            Debug.Log($"  Scaled tolerance: ï¿½{scaledTolerance:F2} m/s (skill-adjusted!)");
             Debug.Log($"  Min velocity: {dynamicMinVelocity:F2} m/s (target - scaled tolerance)");
             Debug.Log($"  Max velocity: {dynamicMaxVelocity:F2} m/s (target + scaled tolerance)");
             Debug.Log($"  Window size: {dynamicMaxVelocity - dynamicMinVelocity:F2} m/s");
@@ -621,7 +644,7 @@ public class FlickShotController : MonoBehaviour
         // }
         
         Debug.Log($"[FlickShot] Phase 2: POWER started - Drag from Y={powerDragStartY} to Y={powerDragTargetY} for speed!");
-        Debug.Log($"[FlickShot] Using aim direction: angle={aimAngle:F1}°, direction={aimDirection}");
+        Debug.Log($"[FlickShot] Using aim direction: angle={aimAngle:F1}ï¿½, direction={aimDirection}");
         
         // Show initial feedback
         if (showSpeedFeedback)
@@ -914,7 +937,7 @@ public class FlickShotController : MonoBehaviour
     {
         Debug.Log($"[FlickShot Prediction] ======== PREDICTION START ========");
         Debug.Log($"[FlickShot Prediction] Initial velocity: {initialVelocity:F2} m/s");
-        Debug.Log($"[FlickShot Prediction] Aim direction: {aimDirection}, angle: {aimAngle:F1}°");
+        Debug.Log($"[FlickShot Prediction] Aim direction: {aimDirection}, angle: {aimAngle:F1}ï¿½");
         
         // Use TrajectorySimulator to get REAL predicted stop position
         if (trajLine != null)
@@ -1029,7 +1052,7 @@ public class FlickShotController : MonoBehaviour
                 Vector2 finalPos = trajectory[trajectory.Count - 1];
                 
                 Debug.Log($"[FlickShot Prediction] *** TrajectorySimulator SUCCESS! ***");
-                Debug.Log($"  Velocity: {initialVelocity:F1} m/s, Direction: {aimDirection}, Angle: {aimAngle:F1}°");
+                Debug.Log($"  Velocity: {initialVelocity:F1} m/s, Direction: {aimDirection}, Angle: {aimAngle:F1}ï¿½");
                 Debug.Log($"  Turn: {(isInTurn ? "IN" : "OUT")}, Points simulated: {trajectory.Count}");
                 Debug.Log($"  Predicted UNSWEPT stop: Y = {finalPos.y:F2}");
                 
@@ -1139,11 +1162,12 @@ public class FlickShotController : MonoBehaviour
         
         Debug.Log($"[FlickShot] Drag: {dragDistance:F2}m in {dragTime:F2}s = {dragVelocity:F1} units/s ? speed {calculatedSpeed:F3} (continuous, no bands!)");
     }
-    
+
     /// <summary>
     /// Initialize speed slider for power phase
     /// Auto-detects slider and components in scene
     /// </summary>
+    [System.Obsolete]
     private void InitializeSpeedSlider()
     {
         // Auto-detect speed slider by name
@@ -1447,7 +1471,7 @@ public class FlickShotController : MonoBehaviour
         Debug.Log($"  Normalized speed: {normalizedSpeed:F3}");
         Debug.Log($"  Raw normalized (pre-forgiveness): {rawNormalized:F3}");
         Debug.Log($"  Base drag velocity: {idealDragVel / velocityScaleMultiplier:F1} units/s");
-        Debug.Log($"  Scaled drag velocity: {idealDragVel:F1} units/s (×{velocityScaleMultiplier:F2})");
+        Debug.Log($"  Scaled drag velocity: {idealDragVel:F1} units/s (ï¿½{velocityScaleMultiplier:F2})");
         Debug.Log($"  Drag velocity range: {minDragVelocity * velocityScaleMultiplier:F1} - {maxDragVelocity * velocityScaleMultiplier:F1} units/s");
         
         return idealDragVel;
@@ -1607,7 +1631,7 @@ public class FlickShotController : MonoBehaviour
         Debug.Log($"[FlickShot] RELEASED - Time: {dragTime:F3}s, Distance: {dragDistance:F2}m, Velocity: {dragVelocity:F1} units/s, Speed: {calculatedSpeed:F3} (continuous!)");
         Debug.Log($"[FlickShot] *** CYAN LINE PREDICTION: Y = {predictedStopY:F2} ***");
         Debug.Log($"[FlickShot] *** TARGET VELOCITY: {targetSpeed:F2} m/s ***");
-        Debug.Log($"[FlickShot] *** AIM DIRECTION: {aimDirection}, ANGLE: {aimAngle:F1}° ***");
+        Debug.Log($"[FlickShot] *** AIM DIRECTION: {aimDirection}, ANGLE: {aimAngle:F1}ï¿½ ***");
         
         // Show predicted stop line (CYAN horizontal line at predicted Y)
         if (predictedStopLine != null)
@@ -1642,21 +1666,7 @@ public class FlickShotController : MonoBehaviour
                 // Callout 2: Actual velocity (what we got)
                 TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s");
                 
-                // Callout 3: Target velocity (what we aimed for)
-                float velocityError = targetSpeed - targetRockVelocity;
-                string errorSign = velocityError > 0 ? "+" : "";
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Target: {targetRockVelocity:F2} m/s ({errorSign}{velocityError:F2})");
-                
-                // Callout 4: Drag velocity (shows player their input)
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Swipe: {dragVelocity:F1} units/s");
-                
-                // Callout 5: Predicted stop
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"Stop: Y={predictedStopY:F1}");
-                
-                // Callout 6: Distance + Time
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{dragDistance:F1}m in {dragTime:F2}s");
-                
-                Debug.Log($"[FlickShot] *** STACKED SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s (target: {targetRockVelocity:F2}, error: {errorSign}{velocityError:F2}) | Swipe {dragVelocity:F1} units/s | Predicted Y={predictedStopY:F1} | {dragDistance:F1}m in {dragTime:F2}s ***");
+                Debug.Log($"[FlickShot] *** SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s ***");
             }
             else
             {
@@ -1678,7 +1688,7 @@ public class FlickShotController : MonoBehaviour
         
         // Calculate and apply velocity
         Vector2 finalVelocity = aimDirection * targetSpeed;
-        Debug.Log($"[FlickShot] *** ACTUAL VELOCITY APPLIED: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}° ***");
+        Debug.Log($"[FlickShot] *** ACTUAL VELOCITY APPLIED: {finalVelocity.magnitude:F2} m/s at angle {aimAngle:F1}ï¿½ ***");
         
         ApplyFlickShotVelocity(finalVelocity);
         
@@ -1807,11 +1817,12 @@ public class FlickShotController : MonoBehaviour
         Debug.Log($"[FlickShot] ?? Rock stopped at Y={rb.position.y:F2} - hiding cyan prediction line");
         HidePredictionLine();
     }
-    
+
     /// <summary>
     /// Apply calculated velocity to rock using normal launch system
     /// Maps drag speed to synthetic pullback distance, then triggers normal Rock_Flick release
     /// </summary>
+    [System.Obsolete]
     private void ApplyFlickShotVelocity(Vector2 velocity)
     {
         // Get velocity and pullback ranges from TrajectoryLine
@@ -1986,15 +1997,16 @@ public class FlickShotController : MonoBehaviour
             rockSounds[1].enabled = true;
         }
         
-        Debug.Log($"[FlickShot] Rock launched directly with velocity: {velocity.magnitude:F2} m/s at angle {aimAngle:F1}°");
+        Debug.Log($"[FlickShot] Rock launched directly with velocity: {velocity.magnitude:F2} m/s at angle {aimAngle:F1}ï¿½");
         
         // Start coroutine to set released = true after rock starts moving
         StartCoroutine(SetReleasedAfterMoving());
     }
-    
+
     /// <summary>
     /// Wait for rock to actually start moving, then set released = true
     /// </summary>
+    [System.Obsolete]
     private IEnumerator SetReleasedAfterMoving()
     {
         // Wait for next FixedUpdate so physics applies velocity
@@ -2181,7 +2193,7 @@ public class FlickShotController : MonoBehaviour
     {
         float minY = powerDragStartY - inputZoneBufferY;  // -25.5f (below launcher)
         float maxY = powerDragTargetY + inputZoneBufferAboveHog; // -15.5f (above hog line)
-        float maxX = inputZoneMaxX; // ±1.0 unit from center
+        float maxX = inputZoneMaxX; // ï¿½1.0 unit from center
         
         bool inZone = mousePos.y >= minY && 
                       mousePos.y <= maxY && 
@@ -2189,7 +2201,7 @@ public class FlickShotController : MonoBehaviour
         
         if (!inZone)
         {
-            Debug.Log($"[FlickShot] Position ({mousePos.x:F2}, {mousePos.y:F2}) OUTSIDE zone: X must be ±{maxX}, Y must be {minY:F1} to {maxY:F1}");
+            Debug.Log($"[FlickShot] Position ({mousePos.x:F2}, {mousePos.y:F2}) OUTSIDE zone: X must be ï¿½{maxX}, Y must be {minY:F1} to {maxY:F1}");
         }
         
         return inZone;
@@ -2203,7 +2215,7 @@ public class FlickShotController : MonoBehaviour
     {
         if (!useSkillScaling)
         {
-            Debug.Log($"[FlickShot Skill] Skill scaling DISABLED - using base tolerance: ±{velocityTolerance:F2} m/s");
+            Debug.Log($"[FlickShot Skill] Skill scaling DISABLED - using base tolerance: ï¿½{velocityTolerance:F2} m/s");
             return velocityTolerance; // Use base value
         }
         
@@ -2220,17 +2232,18 @@ public class FlickShotController : MonoBehaviour
         Debug.Log($"[FlickShot Skill] === SKILL-BASED TOLERANCE ===");
         Debug.Log($"  Weight skill: {weightSkill:F1}% (normalized: {normalizedSkill:F3})");
         Debug.Log($"  Scaling factor: {scalingFactor:F2}x (INVERTED: low skill = wider)");
-        Debug.Log($"  Base tolerance: ±{velocityTolerance:F2} m/s");
-        Debug.Log($"  Scaled tolerance: ±{scaledTolerance:F2} m/s");
+        Debug.Log($"  Base tolerance: ï¿½{velocityTolerance:F2} m/s");
+        Debug.Log($"  Scaled tolerance: ï¿½{scaledTolerance:F2} m/s");
         Debug.Log($"  Skill range: {lowSkillScale:F2}x (0%) to {highSkillScale:F2}x (100%)");
         
         return scaledTolerance;
     }
-    
+
     /// <summary>
     /// Get player's weight accuracy skill from CharacterStats
     /// Returns value 0-100
     /// </summary>
+    [System.Obsolete]
     private float GetPlayerWeightSkill()
     {
         // Check if this is an AI shot or player shot
@@ -2329,7 +2342,7 @@ public class FlickShotController : MonoBehaviour
         {
             float minY = powerDragStartY - inputZoneBufferY;  // -25.5f (below launcher)
             float maxY = powerDragTargetY + inputZoneBufferAboveHog; // -15.5f (above hog line)
-            float maxX = inputZoneMaxX; // ±1.0 unit from center
+            float maxX = inputZoneMaxX; // ï¿½1.0 unit from center
             
             // Draw zone rectangle (5 points to close loop)
             inputZoneBorder.SetPosition(0, new Vector3(-maxX, minY, -1f));
@@ -2339,7 +2352,7 @@ public class FlickShotController : MonoBehaviour
             inputZoneBorder.SetPosition(4, new Vector3(-maxX, minY, -1f)); // Close loop
             inputZoneBorder.enabled = true;
             
-            Debug.Log($"[FlickShot] ? Input zone SHOWN (player's turn, flick mode enabled): X=±{maxX}, Y={minY} to {maxY}");
+            Debug.Log($"[FlickShot] ? Input zone SHOWN (player's turn, flick mode enabled): X=ï¿½{maxX}, Y={minY} to {maxY}");
         }
         else
         {

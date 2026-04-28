@@ -979,26 +979,31 @@ public class EquipmentManager : MonoBehaviour
                 {
                     temp[i].name = "Wooden Handle";
                     temp[i].img = gsImgs[0];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Fibreglass Handle";
                     temp[i].img = gsImgs[1];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Composite Handle";
                     temp[i].img = gsImgs[2];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Carbon Fibre Handle";
                     temp[i].img = gsImgs[3];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else
                 {
                     temp[i].name = "Exotic Carbon Fibre Handle";
                     temp[i].img = gsImgs[4];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
             }
             else if (type == "head")
@@ -1007,26 +1012,31 @@ public class EquipmentManager : MonoBehaviour
                 {
                     temp[i].name = "Basic Bristled Head";
                     temp[i].img = gsImgs[5];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Fabric Head";
                     temp[i].img = gsImgs[6];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Advanced Fabric Head";
                     temp[i].img = gsImgs[7];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Premium Fabric Head";
                     temp[i].img = gsImgs[7];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else
                 {
                     temp[i].name = "Exotic Fabric Head";
                     temp[i].img = gsImgs[8];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
             }
             else if (type == "footwear")
@@ -1035,26 +1045,31 @@ public class EquipmentManager : MonoBehaviour
                 {
                     temp[i].name = "Half Slider";
                     temp[i].img = gsImgs[9];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Full Slider";
                     temp[i].img = gsImgs[10];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Premium Slider";
                     temp[i].img = gsImgs[11];
+                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Premium Shoes";
                     temp[i].img = gsImgs[12];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else
                 {
                     temp[i].name = "Exotic Shoes";
                     temp[i].img = gsImgs[13];
+                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
             }
             else if (type == "apparel")

@@ -157,8 +157,23 @@ public class GameManager : MonoBehaviour
         aiTeamRed = gsp.aiRed;
         mixed = gsp.mixed;
 
-
-        rockCurrent = 2 * (8 - gsp.rocks);
+        // CRITICAL FIX: Only set default rockCurrent for NEW games
+        // For loaded games, preserve the rockCurrent from the save (set above at line 150)
+        if (!gsp.loadGame)
+        {
+            // rockCurrent = first player rock index (number of rocks to sim before player starts)
+            // If gsp.rocks=8: firstPlayerRock=0, no sims needed
+            // If gsp.rocks=1: firstPlayerRock=14, sim rocks 0-13 first
+            int firstPlayerRock = 16 - (gsp.rocks * 2);
+            rockCurrent = firstPlayerRock;
+            gsp.rockCurrent = rockCurrent;
+            Debug.Log($"[GameManager] NEW game - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
+        }
+        else
+        {
+            Debug.Log($"[GameManager] LOADED game - rockCurrent preserved from save: {rockCurrent}");
+        }
+        
         // CRITICAL FIX: Initialize score array at start of NEW game only!
         // Don't clear it when continuing to next end (endCurrent > 0)
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
@@ -440,7 +455,11 @@ public class GameManager : MonoBehaviour
         rockList.Clear();
 
         endCurrent++;
-        rockCurrent = 2 * (8 - rocksPerTeam);
+        // rockCurrent = first player rock index (number of rocks to sim before player starts)
+        int firstPlayerRock = 16 - (rocksPerTeam * 2);
+        rockCurrent = firstPlayerRock;
+        gsp.rockCurrent = rockCurrent;
+        Debug.Log($"[GM.CheckScore] New end {endCurrent} - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
         gHUD.SetHammer(redHammer);
 
         yield return StartCoroutine(SetupRocks());
@@ -469,14 +488,15 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // No sims needed - rockCurrent is 0, start first rock directly
+            rockBar.ResetBar(redHammer);
+            rockBar.EndUpdate(yellowScore, redScore);
+            yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+            rm.rrp.placed = true;
             if (redHammer)
-            {
                 OnYellowTurn();
-            }
             else
-            {
                 OnRedTurn();
-            }
         }
         
     }
@@ -875,7 +895,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
     }
 
-    IEnumerator CheckScore()
+    public IEnumerator CheckScore()
     {
         state = GameState.CHECKSCORE;
 
@@ -887,7 +907,16 @@ public class GameManager : MonoBehaviour
         Debug.Log("All Stopped");
         yield return new WaitForFixedUpdate();
 
-        rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
+        // CRITICAL FIX: Only update shot if a rock has been played (rockCurrent >= 0)
+        // When starting a fresh end, rockCurrent = -1 and there's no rock to update
+        if (rockCurrent >= 0 && rockCurrent < rockList.Count)
+        {
+            rockBar.ShotUpdate(rockCurrent, rockList[rockCurrent].rockInfo.outOfPlay);
+        }
+        else
+        {
+            Debug.Log($"[CheckScore] Skipping ShotUpdate - rockCurrent={rockCurrent} (no rocks placed yet)");
+        }
 
         houseList.Clear();
         gList.Clear();
@@ -1028,8 +1057,17 @@ public class GameManager : MonoBehaviour
         //Debug.Log("Current Rock is " + rockCurrent);
         
         //gsp.AutoSave();
-        if (rm.rrp.placed)
+        
+        // Determine if next rock is player-controlled or AI-controlled based on gsp.rocks
+        // gsp.rocks = number of rocks EACH TEAM shoots (so total player rocks = gsp.rocks * 2)
+        // Simmed rocks = 16 - (gsp.rocks * 2), then player shoots the final (gsp.rocks * 2) rocks
+        // Example: gsp.rocks=1 → sim 0-13, player shoots 14-15
+        // Example: gsp.rocks=8 → sim none, player shoots 0-15
+        bool nextRockIsPlayerControlled = rockCurrent >= (16 - gsp.rocks * 2);
+        
+        if (nextRockIsPlayerControlled)
         {
+            // Player shoots this rock manually - go to OnRedTurn/OnYellowTurn
             if (rockCurrent % 2 == 1)
             {
                 if (redHammer)
@@ -1055,6 +1093,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // AI sims this rock - call OnRockPlace for auto-placement
             if (gsp.aiRed)
             {
                 rm.rrp.OnRockPlace(rockCurrent, false);
@@ -1266,6 +1305,16 @@ public class GameManager : MonoBehaviour
             gsp.endCurrent = endCurrent;
             gsp.LoadFromGM();
             
+            // CRITICAL FIX: Clear rock positions when end finishes
+            // These rocks belong to the completed end, not the upcoming end
+            // When player continues, they'll start fresh with no rocks to restore
+            gsp.rockPos = null;
+            gsp.rockInPlay = null;
+            // CRITICAL: Reset rockCurrent for next end
+            int firstPlayerRock = 16 - (gsp.rocks * 2);
+            gsp.rockCurrent = firstPlayerRock;
+            Debug.Log($"[GameManager] Cleared rockPos and reset rockCurrent={gsp.rockCurrent} for end transition");
+            
             // CRITICAL FIX: When end finishes (not game), keep gameInProgress = true for next end
             gsp.gameInProgress = true;
             Debug.Log("[GameManager] End finished - gameInProgress remains true for next end");
@@ -1291,10 +1340,15 @@ public class GameManager : MonoBehaviour
 
         gsp.LoadFromGM();
         
+        // CRITICAL FIX: Clear rock positions when game ends
+        gsp.rockPos = null;
+        gsp.rockInPlay = null;
+        gsp.rockCurrent = 0; // Reset for potential replay
+        
         // CRITICAL FIX: Clear game state when game ends
         gsp.loadGame = false;
         gsp.gameInProgress = false;
-        Debug.Log("[GameManager] Game ended - cleared gameInProgress and loadGame flags");
+        Debug.Log("[GameManager] Game ended - cleared gameInProgress, loadGame flags, and rockPos");
         Debug.Log($"[GameManager] Final score: {redTeamName} {redScore} - {yellowTeamName} {yellowScore}");
         
         SaveGame();
@@ -1378,13 +1432,11 @@ public class GameManager : MonoBehaviour
         rockBar.ResetBar(redHammer);
         rockBar.EndUpdate(yellowScore, redScore);
         
-        // CRITICAL FIX: Don't subtract 1 from rockCurrent when loading!
-        // gsp.rockCurrent is already the LAST rock that was played (0-indexed)
-        // We need to restore ALL rocks from 0 to rockCurrent
-        // The saved rockCurrent already represents the index of the last played rock
+        // When loading, always use the saved rockCurrent value
+        // It was already set correctly by SetupGame (new game) or CheckScore (new end)
         rockCurrent = gsp.rockCurrent;
-        
-        Debug.Log($"[GameManager.LoadGame] Restoring rocks 0 to {rockCurrent} (total: {rockCurrent + 1} rocks)");
+        Debug.Log($"[GameManager.LoadGame] Restored rockCurrent from save: {rockCurrent}");
+        Debug.Log($"[GameManager.LoadGame] This means rocks 0-{rockCurrent} were already played. Next rock will be {rockCurrent + 1}");
 
         //yield return StartCoroutine(WaitForClick());
         //gsp.loadGame = false;
@@ -1395,18 +1447,73 @@ public class GameManager : MonoBehaviour
         if (gsp.playoffRound < 2 && !gsp.cashGame && !gsp.debug)
             yield return StartCoroutine(TournyIntro());
 
-        if (rockCurrent >= 0)
+        // CRITICAL FIX: Only place rocks if we have positions to restore
+        // When continuing from End Menu to start a fresh end, rockPos will be null/empty
+        if (rockCurrent >= 0 && gsp.rockPos != null && gsp.rockPos.Length > 0)
         {
             yield return StartCoroutine(PlaceRocks());
+            
+            // After restoring rocks, start the next turn directly
+            // Don't call CheckScore - rocks are already in final positions
+            Debug.Log($"[GameManager.LoadGame] Rocks restored, starting next turn (rock {rockCurrent + 1})");
+            NextTurn();
+            yield break; // Don't call CheckScore
+        }
+        else if (rockCurrent > 0 && (gsp.rockPos == null || gsp.rockPos.Length == 0))
+        {
+            // CRITICAL FIX: Fresh end - need to place rocks 0 through rockCurrent-1
+            // This simulates the first N rocks based on gsp.rocks setting
+            Debug.Log($"[GameManager.LoadGame] Fresh end - placing rocks 0 to {rockCurrent - 1} (gsp.rocks={gsp.rocks})");
+            
+            cm.HouseView();
+            rockBar.ResetBar(redHammer);
+            
+            // Place all simulated rocks
+            for (int i = 0; i < rockCurrent; i++)
+            {
+                rm.rrp.placed1 = false;
+                if (gsp.aiRed)
+                {
+                    yield return rm.rrp.OnRockPlace(i, false);
+                }
+                else if (gsp.aiYellow)
+                {
+                    yield return rm.rrp.OnRockPlace(i, true);
+                }
 
-            //if (myFile.Load())
-            //{
-                //rockCurrent = myFile.GetInt("Current Rock");
-                //if (rockCurrent < 0)
-                //{
-                //    rockCurrent = 0;
-                //}
-            //}
+                if (i % 2 == 0)
+                {
+                    if (redHammer)
+                        rockBar.ActiveRock(false, i);
+                    else
+                        rockBar.ActiveRock(true, i);
+                }
+                else if (i % 2 == 1)
+                {
+                    if (redHammer)
+                        rockBar.ActiveRock(true, i);
+                    else
+                        rockBar.ActiveRock(false, i);
+                }
+            }
+            
+            rockCurrent--; // CRITICAL: Decrement so NextTurn() increments to correct first rock
+            rm.rrp.placed = true;
+            Debug.Log($"[GameManager.LoadGame] Completed placing {rockCurrent + 1} rocks, decremented rockCurrent to {rockCurrent}");
+        }
+        else if (rockCurrent == 0)
+        {
+            // Fresh end with no sims - rockCurrent is 0, start first turn directly
+            Debug.Log($"[GameManager.LoadGame] Fresh end, no sims - starting first turn directly");
+            rockBar.ResetBar(redHammer);
+            rockBar.EndUpdate(yellowScore, redScore);
+            yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+            rm.rrp.placed = true;
+            if (redHammer)
+                OnYellowTurn();
+            else
+                OnRedTurn();
+            yield break; // Don't call CheckScore
         }
             
 
@@ -1578,6 +1685,9 @@ public class GameManager : MonoBehaviour
                     rockList[i].rockInfo.released = true;
                     rockList[i].rockInfo.stopped = true;
                     rockList[i].rockInfo.rest = true;
+                    
+                    // Update rock bar UI - rock is idle (played but in play)
+                    rockBar.IdleRock(i);
                 }
                 else
                 {
@@ -1586,6 +1696,9 @@ public class GameManager : MonoBehaviour
                     rockList[i].rock.SetActive(false);
                     rockList[i].rockInfo.inPlay = false;
                     rockList[i].rockInfo.outOfPlay = true;
+                    
+                    // Update rock bar UI - rock is dead (out of play)
+                    rockBar.DeadRock(i);
                 }
             }
             else

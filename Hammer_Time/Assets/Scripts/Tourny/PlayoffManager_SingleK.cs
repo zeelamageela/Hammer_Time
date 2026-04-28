@@ -494,7 +494,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
     void ConfigurePlayoffButtons(bool playerActive)
     {
         playButton.gameObject.SetActive(playerActive);
-        simButton.gameObject.SetActive(true);
+        simButton.gameObject.SetActive(!playerActive);
         contButton.gameObject.SetActive(false);
     }
 

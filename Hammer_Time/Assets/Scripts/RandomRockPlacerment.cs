@@ -75,7 +75,10 @@ public class RandomRockPlacerment : MonoBehaviour
     void Start()
     {
         placed = false;
-        rockPos = new Vector2[gm.rockCurrent];
+        // CRITICAL FIX: Size array for ALL rocks (16 total), not just gm.rockCurrent
+        // gm.rockCurrent can be 13 when starting fresh with 1 rock per team
+        // but we still need to place rocks 14-15
+        rockPos = new Vector2[16]; // Always 16 rocks (8 per team)
         HapticController.Play();
         Debug.Log("fldfdbk is " + fltFdbk);
         fltText = fltFdbk.GetFeedbackOfType<MMF_FloatingText>();
@@ -105,7 +108,16 @@ public class RandomRockPlacerment : MonoBehaviour
     {
         placed = false;
         rockCurrent = rockCrnt;
-        return StartCoroutine(StratSelect(redTeam, true));
+        
+        // Determine if this is an AI turn based on gsp.rocks setting
+        // gsp.rocks = number of rocks EACH TEAM shoots (total player rocks = gsp.rocks * 2)
+        // AI sims the first (16 - gsp.rocks * 2) rocks, player shoots the final (gsp.rocks * 2) rocks
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
+        bool aiTurn = rockCurrent < (16 - gsp.rocks * 2);
+        
+        Debug.Log($"[OnRockPlace] rockCurrent={rockCurrent}, gsp.rocks={gsp.rocks} (per team), aiTurn={aiTurn}");
+        
+        return StartCoroutine(StratSelect(redTeam, aiTurn));
     }
 
     public void Help()
@@ -332,8 +344,10 @@ public class RandomRockPlacerment : MonoBehaviour
         round++;
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         CareerManager cm = FindFirstObjectByType<CareerManager>();
-        if (!aiTurn)
-            playerStratGO.SetActive(true);
+        
+        // DISABLED: Strategy selection UI - player shoots without strategy popup
+        // if (!aiTurn)
+        //     playerStratGO.SetActive(true);
 
         gm.rockBar.EndUpdate(gsp.yellowScore, gsp.redScore);
 
@@ -349,8 +363,18 @@ public class RandomRockPlacerment : MonoBehaviour
         Debug.Log("RockCurrent is " + rockCurrent + " and aiTurn is " + aiTurn);
         //if (rockCurrent == 8 | rockCurrent == 12)
         //    round++;
-        if (rockCurrent < gm.rockCurrent + 1)
+        
+        // Only call Placement (auto-place) for AI turns
+        // Player turns should allow manual shooting
+        if (aiTurn && rockCurrent < gm.rockCurrent + 1)
             yield return StartCoroutine(Placement(redTeam));
+        else if (!aiTurn)
+        {
+            // Player's turn - don't auto-place, let them shoot manually
+            // Set placed = true so NextTurn() knows we're ready for player input
+            placed = true;
+            Debug.Log($"[StratSelect] Player's turn - ready for manual shot (rockCurrent={rockCurrent})");
+        }
         else
             playerStratGO.SetActive(false);
 
@@ -2626,21 +2650,20 @@ public class RandomRockPlacerment : MonoBehaviour
         const float MIN_SPACING_GAP = 0.08f; // Small gap between rocks (adjustable)
         const float MIN_SAFE_DISTANCE = (ROCK_RADIUS * 2f) + MIN_SPACING_GAP; // 0.28 + 0.08 = 0.36 units
 
-        for (int i = 0; i < rockCurrent + 1; i++)
+        // Mark all rocks as placed
+        for (int i = 0; i <= rockCurrent; i++)
         {
-
             gm.rockList[i].rockInfo.placed = true;
         }
 
-        for (int i = 0; i < rockCurrent + 1; i++)
+        // Place all rocks with spacing checks
+        for (int i = 0; i <= rockCurrent; i++)
         {
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().radius = 0.14f;
             gm.rockList[i].rock.GetComponent<SpriteRenderer>().enabled = false;
             gm.rockList[i].rock.GetComponent<SpringJoint2D>().enabled = false;
             gm.rockList[i].rock.GetComponent<Rock_Flick>().enabled = false;
             gm.rockList[i].rock.transform.parent = null;
-            //rm.rb.DeadRock(i);
-            //yield return new WaitForEndOfFrame();
             
             // SPACING CHECK: Ensure this rock doesn't touch any previously placed rocks
             bool tooClose = true;
@@ -2688,15 +2711,12 @@ public class RandomRockPlacerment : MonoBehaviour
                 Debug.LogWarning($"[Placement] Rock {i} couldn't find safe spacing after {maxAttempts} attempts, using best position");
             }
             
-            //Debug.Log("Rock Position " + i + " " + rockPos[i]);
             gm.rockList[i].rock.transform.position = rockPos[i];
 
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Release>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Force>().enabled = true;
             gm.rockList[i].rock.GetComponent<Rock_Colliders>().enabled = true;
-
-            //yield return new WaitForEndOfFrame();
 
             if (rockPos[i].y > 8f)
             {
@@ -2715,12 +2735,8 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rockInfo.released = true;
             gm.rockList[i].rockInfo.stopped = true;
             gm.rockList[i].rockInfo.rest = true;
-            //Debug.Log("i is equal to " + i);
-            //Handheld.Vibrate();
-            //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
-            //yield return new WaitForEndOfFrame();
+            
             yield return null;
-
         }
 
         gm.houseList.Clear();

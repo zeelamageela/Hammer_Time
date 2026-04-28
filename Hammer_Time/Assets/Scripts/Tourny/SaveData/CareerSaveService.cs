@@ -13,6 +13,10 @@ public static class CareerSaveService
     
     private static string SavePath => Path.Combine(Application.persistentDataPath, SAVE_FILE_NAME);
     private static string BackupPath => Path.Combine(Application.persistentDataPath, BACKUP_FILE_NAME);
+    
+    // CRITICAL: Prevent concurrent saves from causing corruption
+    private static bool _isSaving = false;
+    private static object _saveLock = new object();
         
         /// <summary>
         /// Saves career data to JSON file with automatic backup
@@ -23,6 +27,18 @@ public static class CareerSaveService
             {
                 Debug.LogError("[CareerSaveService] Cannot save null data");
                 return false;
+            }
+            
+            // CRITICAL: Prevent concurrent saves
+            lock (_saveLock)
+            {
+                if (_isSaving)
+                {
+                    Debug.LogWarning("[CareerSaveService] Save already in progress - skipping concurrent save");
+                    return false;
+                }
+                
+                _isSaving = true;
             }
             
             try
@@ -84,6 +100,13 @@ public static class CareerSaveService
             {
                 Debug.LogError($"[CareerSaveService] Failed to save career: {e.Message}\n{e.StackTrace}");
                 return false;
+            }
+            finally
+            {
+                lock (_saveLock)
+                {
+                    _isSaving = false;
+                }
             }
         }
         
@@ -153,7 +176,7 @@ public static class CareerSaveService
         }
         
         /// <summary>
-        /// Validates save data integrity
+        /// Validates save data integrity with comprehensive checks
         /// </summary>
         private static bool ValidateSaveData(CareerSaveData data)
         {
@@ -179,6 +202,22 @@ public static class CareerSaveService
             {
                 Debug.LogError($"[CareerSaveService] Invalid save version: {data.version}");
                 return false;
+            }
+            
+            // CRITICAL: Validate game state consistency if game in progress
+            if (data.currentGameState != null && data.currentGameState.gameInProgress)
+            {
+                if (data.currentGameState.endScores == null)
+                {
+                    Debug.LogWarning("[CareerSaveService] Game in progress but endScores is null - clearing gameInProgress flag");
+                    data.currentGameState.gameInProgress = false;
+                }
+                
+                if (data.currentGameState.ends <= 0 || data.currentGameState.rocks <= 0)
+                {
+                    Debug.LogWarning($"[CareerSaveService] Invalid game settings: ends={data.currentGameState.ends}, rocks={data.currentGameState.rocks} - clearing gameInProgress");
+                    data.currentGameState.gameInProgress = false;
+                }
             }
             
             return true;

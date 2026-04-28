@@ -407,22 +407,43 @@ public class CareerManager : MonoBehaviour
             // This ensures tournyInProgress and justFinishedGame are restored correctly
             if (saveData.currentGameState != null && gsp != null)
             {
-                // Always restore these flags
-                gsp.tournyInProgress = saveData.currentGameState.tournyInProgress;
-                gsp.justFinishedGame = saveData.currentGameState.justFinishedGame;
-                
-                Debug.Log($"[CareerManager] Restored flags from save - tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}");
-                Debug.Log($"[CareerManager] Save data had - tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
-                
-                // Only restore full game state if game was in progress
-                if (saveData.currentGameState.gameInProgress)
+                // CRITICAL: Null-safe flag restoration
+                try
                 {
-                    RestoreGameState(saveData.currentGameState, gsp);
+                    gsp.gameInProgress = saveData.currentGameState.gameInProgress;
+                    gsp.tournyInProgress = saveData.currentGameState.tournyInProgress;
+                    gsp.justFinishedGame = saveData.currentGameState.justFinishedGame;
+                    gsp.inEndMenu = saveData.currentGameState.inEndMenu;
+                    
+                    Debug.Log($"[CareerManager] Restored flags from save - gameInProgress: {gsp.gameInProgress}, tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}, inEndMenu: {gsp.inEndMenu}");
+                    Debug.Log($"[CareerManager] Save data had - gameInProgress: {saveData.currentGameState.gameInProgress}, tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
+                    
+                    // Restore full game state if game was in progress OR if we're in end menu
+                    if (saveData.currentGameState.gameInProgress || saveData.currentGameState.inEndMenu)
+                    {
+                        RestoreGameState(saveData.currentGameState, gsp);
+                    }
+                }
+                catch (Exception flagEx)
+                {
+                    Debug.LogError($"[CareerManager] Error restoring game state flags: {flagEx.Message}");
+                    Debug.LogWarning("[CareerManager] Clearing all game state flags to prevent corruption");
+                    // Graceful fallback - clear all game flags
+                    gsp.gameInProgress = false;
+                    gsp.inEndMenu = false;
+                    gsp.justFinishedGame = false;
                 }
             }
             else
             {
                 Debug.LogWarning($"[CareerManager] Could not restore flags - currentGameState is null: {saveData.currentGameState == null}, gsp is null: {gsp == null}");
+                if (gsp != null)
+                {
+                    // Ensure flags are cleared if no game state data
+                    gsp.gameInProgress = false;
+                    gsp.inEndMenu = false;
+                    gsp.justFinishedGame = false;
+                }
             }
             
             Debug.Log("[CareerManager] Career loaded successfully from JSON");
@@ -959,6 +980,7 @@ public class CareerManager : MonoBehaviour
                     gameInProgress = gsp.gameInProgress,
                     tournyInProgress = gsp.tournyInProgress,
                     justFinishedGame = gsp.justFinishedGame,  // CRITICAL: Save justFinishedGame flag!
+                    inEndMenu = gsp.inEndMenu,  // CRITICAL: Save inEndMenu flag!
                     isTournyGame = gsp.tourny,
                     ends = gsp.ends,
                     currentEnd = gsp.endCurrent,
@@ -1558,6 +1580,14 @@ public class CareerManager : MonoBehaviour
         // Reset qualifications
         provQual = false;
         tourQual = false;
+        
+        // CRITICAL FIX: Clear pending completion data for new career
+        // Without this, old tournament completion data persists across careers
+        pendingCompletedTournamentIDs = new List<int>();
+        pendingTrophyWonIDs = new List<int>();
+        pendingTourChampionshipComplete = false;
+        pendingProvChampionshipComplete = false;
+        Debug.Log("[CareerManager] Cleared pending completion data for new career");
 
         // Reset player character stats to starting values
         cStats.weightAccuracy = STARTING_STAT_VALUE;
@@ -2562,6 +2592,8 @@ public class CareerManager : MonoBehaviour
             tournamentEarnings = team.tournamentEarnings,
             rank = team.rank,
             nextOpp = team.nextOpp,
+            poolId = team.poolId,
+            pointDifferential = team.pointDifferential,
             
             // Season cumulative
             seasonWins = team.seasonWins,
@@ -2613,6 +2645,8 @@ public class CareerManager : MonoBehaviour
             tournamentEarnings = data.tournamentEarnings,
             rank = data.rank,
             nextOpp = data.nextOpp ?? "",
+            poolId = data.poolId,
+            pointDifferential = data.pointDifferential,
             
             // Season cumulative
             seasonWins = data.seasonWins,
@@ -2990,7 +3024,7 @@ public class CareerManager : MonoBehaviour
     /// <summary>
     /// Restores game state from save data (for mid-game resume)
     /// </summary>
-    private void RestoreGameState(GameStateData gameState, GameSettingsPersist gsp)
+    public void RestoreGameState(GameStateData gameState, GameSettingsPersist gsp)
     {
         if (gameState == null || gsp == null)
         {
@@ -3000,57 +3034,127 @@ public class CareerManager : MonoBehaviour
         
         Debug.Log("[CareerManager] Restoring game state...");
         
-        // Restore game progress flags
-        gsp.gameInProgress = gameState.gameInProgress;
-        gsp.tournyInProgress = gameState.tournyInProgress;
-        gsp.tourny = gameState.isTournyGame;
-        gsp.loadGame = true; // Signal to GameManager to load the saved game
-        
-        // Restore game settings
-        gsp.ends = gameState.ends;
-        gsp.endCurrent = gameState.currentEnd;
-        gsp.rocks = gameState.rocks;
-        gsp.rockCurrent = gameState.currentRock;
-        gsp.redHammer = gameState.redHammer;
-        gsp.aiYellow = gameState.aiYellow;
-        gsp.aiRed = gameState.aiRed;
-        
-        // Restore team names and scores
-        gsp.yellowTeamName = gameState.yellowTeamName;
-        gsp.redTeamName = gameState.redTeamName;
-        gsp.yellowScore = gameState.yellowScore;
-        gsp.redScore = gameState.redScore;
-        
-        // Restore rock positions
-        if (gameState.rockPositions != null && gameState.rockPositions.Count > 0)
+        try
         {
-            gsp.rockPos = new Vector2[gameState.rockPositions.Count];
-            for (int i = 0; i < gameState.rockPositions.Count; i++)
+            // CRITICAL FIX: DON'T restore workflow flags (gameInProgress, inEndMenu) from save!
+            // These flags are set by scene transition logic (Continue, SimEnd, etc.)
+            // Restoring them from save would overwrite the correct values
+            // Only restore the actual game state data below
+            
+            // Note: tourny and loadGame CAN be restored safely
+            gsp.tourny = gameState.isTournyGame;
+            gsp.loadGame = true; // Signal to GameManager to load the saved game
+            
+            Debug.Log($"[CareerManager] Preserved workflow flags - gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}");
+            
+            // CRITICAL: Validate and restore game settings
+            gsp.ends = gameState.ends > 0 ? gameState.ends : 8;
+            gsp.endCurrent = Mathf.Clamp(gameState.currentEnd, 0, gsp.ends);
+            gsp.rocks = gameState.rocks > 0 ? gameState.rocks : 8;
+            // CRITICAL FIX: Don't clamp rockCurrent to gsp.rocks (player's manual rocks)!
+            // rockCurrent can be 0-15 (total 16 rocks), not limited to gsp.rocks setting
+            gsp.rockCurrent = Mathf.Clamp(gameState.currentRock, -1, 15);
+            gsp.redHammer = gameState.redHammer;
+            gsp.aiYellow = gameState.aiYellow;
+            gsp.aiRed = gameState.aiRed;
+            
+            // Restore team names and scores 
+            gsp.yellowTeamName = !string.IsNullOrEmpty(gameState.yellowTeamName) ? gameState.yellowTeamName : "Yellow";
+            gsp.redTeamName = !string.IsNullOrEmpty(gameState.redTeamName) ? gameState.redTeamName : "Red";
+            gsp.yellowScore = Mathf.Max(0, gameState.yellowScore);
+            gsp.redScore = Mathf.Max(0, gameState.redScore);
+            
+            // CRITICAL: Null-safe rock positions restoration
+            if (gameState.rockPositions != null && gameState.rockPositions.Count > 0)
             {
-                gsp.rockPos[i] = gameState.rockPositions[i].ToVector2();
+                try
+                {
+                    gsp.rockPos = new Vector2[gameState.rockPositions.Count];
+                    for (int i = 0; i < gameState.rockPositions.Count; i++)
+                    {
+                        if (gameState.rockPositions[i] != null)
+                        {
+                            gsp.rockPos[i] = gameState.rockPositions[i].ToVector2();
+                        }
+                    }
+                }
+                catch (Exception rockPosEx)
+                {
+                    Debug.LogWarning($"[CareerManager] Failed to restore rock positions: {rockPosEx.Message}");
+                    gsp.rockPos = new Vector2[0]; // Empty array as fallback
+                }
+            }
+            
+            // CRITICAL: Null-safe rock in-play status
+            if (gameState.rockInPlay != null && gameState.rockInPlay.Count > 0)
+            {
+                try
+                {
+                    gsp.rockInPlay = gameState.rockInPlay.ToArray();
+                }
+                catch (Exception rockInPlayEx)
+                {
+                    Debug.LogWarning($"[CareerManager] Failed to restore rockInPlay: {rockInPlayEx.Message}");
+                    gsp.rockInPlay = new bool[0]; // Empty array as fallback
+                }
+            }
+            
+            // CRITICAL: Null-safe end scores restoration with auto-repair
+            if (gameState.endScores != null && gameState.endScores.Count > 0)
+            {
+                try
+                {
+                    Debug.Log($"[CareerManager] Restoring {gameState.endScores.Count} end scores to gsp.score");
+                    gsp.score = new Vector2Int[gameState.endScores.Count];
+                    for (int i = 0; i < gameState.endScores.Count; i++)
+                    {
+                        if (gameState.endScores[i] != null)
+                        {
+                            gsp.score[i] = gameState.endScores[i].ToVector2Int();
+                            Debug.Log($"[CareerManager]   End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
+                        }
+                        else
+                        {
+                            gsp.score[i] = new Vector2Int(0, 0);
+                            Debug.LogWarning($"[CareerManager]   End {i+1}: NULL - initialized to 0-0");
+                        }
+                    }
+                }
+                catch (Exception scoreEx)
+                {
+                    Debug.LogError($"[CareerManager] Failed to restore end scores: {scoreEx.Message}");
+                    // Create empty score array as fallback
+                    gsp.score = new Vector2Int[gsp.ends];
+                    for (int i = 0; i < gsp.score.Length; i++)
+                    {
+                        gsp.score[i] = new Vector2Int(0, 0);
+                    }
+                    Debug.LogWarning("[CareerManager] Initialized score array with zeros as fallback");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[CareerManager] No end scores in save data - gameState.endScores is {(gameState.endScores == null ? "NULL" : "empty")}");
+                // Auto-repair: Create score array if missing
+                if (gsp.endCurrent > 0)
+                {
+                    Debug.LogWarning($"[CareerManager] Auto-repair: Creating score array for {gsp.ends} ends");
+                    gsp.score = new Vector2Int[gsp.ends];
+                    for (int i = 0; i < gsp.score.Length; i++)
+                    {
+                        gsp.score[i] = new Vector2Int(0, 0);
+                    }
+                }
             }
         }
-        
-        // Restore rock in-play status
-        if (gameState.rockInPlay != null && gameState.rockInPlay.Count > 0)
+        catch (Exception restoreEx)
         {
-            gsp.rockInPlay = gameState.rockInPlay.ToArray();
-        }
-        
-        // Restore end scores
-        if (gameState.endScores != null && gameState.endScores.Count > 0)
-        {
-            Debug.Log($"[CareerManager] Restoring {gameState.endScores.Count} end scores to gsp.score");
-            gsp.score = new Vector2Int[gameState.endScores.Count];
-            for (int i = 0; i < gameState.endScores.Count; i++)
-            {
-                gsp.score[i] = gameState.endScores[i].ToVector2Int();
-                Debug.Log($"[CareerManager]   End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"[CareerManager] No end scores in save data - gameState.endScores is {(gameState.endScores == null ? "NULL" : "empty")}");
+            Debug.LogError($"[CareerManager] Critical error during game state restoration: {restoreEx.Message}");
+            Debug.LogError($"[CareerManager] Stack trace: {restoreEx.StackTrace}");
+            Debug.LogWarning("[CareerManager] Clearing game state to prevent crash");
+            // Last resort fallback
+            gsp.gameInProgress = false;
+            gsp.loadGame = false;
         }
         
         Debug.Log($"[CareerManager] Game state restored: End {gameState.currentEnd}/{gameState.ends}, Rock {gameState.currentRock}/{gameState.rocks}");

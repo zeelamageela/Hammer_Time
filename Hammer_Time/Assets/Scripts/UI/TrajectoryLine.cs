@@ -288,7 +288,8 @@ public class TrajectoryLine : MonoBehaviour
         if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
             return;
         
-        if (gm.rockCurrent >= gm.rockList.Count)
+        // CRITICAL FIX: Check for negative rockCurrent (before first rock)
+        if (gm.rockCurrent < 0 || gm.rockCurrent >= gm.rockList.Count)
             return;
         
         if (gm.rockList[gm.rockCurrent] == null || gm.rockList[gm.rockCurrent].rock == null)

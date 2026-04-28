@@ -255,5 +255,65 @@ public class DrawFormatList : MonoBehaviour
             Debug.LogError($"[DrawFormatList] Please check the DrawFormatList component in the Tourny_Home scene!");
         }
     }
+    
+    /// <summary>
+    /// Generate two separate 8-team round robin schedules for a two-pool tournament.
+    /// Pool A: teams 0-7, Pool B: teams 8-15
+    /// Returns combined format where both pools play simultaneously each draw.
+    /// </summary>
+    public void DrawSelector_TwoPool(int numberOfTeams, int gameLength, int games)
+    {
+        Debug.Log($"[DrawFormatList] DrawSelector_TwoPool called - numberOfTeams={numberOfTeams}, games={games}");
+        
+        if (numberOfTeams != 16)
+        {
+            Debug.LogError($"[DrawFormatList] Two-pool mode only supports 16 teams! Got {numberOfTeams}");
+            currentFormat = null;
+            return;
+        }
+        
+        // Verify that team8 is populated (we'll use it for each pool)
+        if (team8 == null || team8.Length == 0)
+        {
+            Debug.LogError("[DrawFormatList] CRITICAL: team8 array is null or empty! Cannot generate two-pool format!");
+            currentFormat = null;
+            return;
+        }
+        
+        // Create combined format: each draw has 8 games (4 from Pool A, 4 from Pool B)
+        int numDraws = team8.Length; // Number of draws in a full 8-team round robin
+        if (games > 0 && games < numDraws)
+        {
+            numDraws = games; // Use shortened format if requested
+        }
+        
+        currentFormat = new DrawFormat[numDraws];
+        
+        for (int draw = 0; draw < numDraws; draw++)
+        {
+            // Each draw has 8 games total (4 from each pool)
+            DrawFormat combinedDraw = new DrawFormat();
+            combinedDraw.game = new Vector2Int[8];
+            
+            // Pool A: Copy games from team8, teams are indices 0-7
+            for (int game = 0; game < 4; game++)
+            {
+                combinedDraw.game[game] = team8[draw].game[game];
+            }
+            
+            // Pool B: Copy games from team8, but offset team indices by 8
+            // So team 0 in the template becomes team 8, team 1 becomes 9, etc.
+            for (int game = 0; game < 4; game++)
+            {
+                Vector2Int poolBGame = team8[draw].game[game];
+                combinedDraw.game[game + 4] = new Vector2Int(poolBGame.x + 8, poolBGame.y + 8);
+            }
+            
+            currentFormat[draw] = combinedDraw;
+        }
+        
+        Debug.Log($"[DrawFormatList] Two-pool format generated - {currentFormat.Length} draws with 8 games each");
+    }
 }
+
 

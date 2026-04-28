@@ -64,6 +64,7 @@ public class GameSettingsPersist : MonoBehaviour
     public bool tournyInProgress;
     public bool gameInProgress;
     public bool justFinishedGame;  // NEW: Flag to indicate a game just finished (vs loading between games)
+    public bool inEndMenu;  // NEW: Flag to indicate we're viewing end menu (for save/load to end menu)
 
     public List<Team_List> teamList;
     public Team[] teams;
@@ -145,6 +146,7 @@ public class GameSettingsPersist : MonoBehaviour
         rockCurrent = 0;
         redScore = 0;
         yellowScore = 0;
+        inEndMenu = false;  // Clear end menu flag - starting new game
         redHammer = gs.redHammer;
         aiYellow = gs.aiYellow;
         aiRed = gs.aiRed;
@@ -333,6 +335,7 @@ public class GameSettingsPersist : MonoBehaviour
         Debug.Log("Player Team Index in GSP is " + playerTeamIndex);
 
         endCurrent = 0;
+        inEndMenu = false;  // Clear end menu flag - starting new tournament
         numberOfTeams = ts.currentTourny.teams;
         prize = ts.currentTourny.prizeMoney;
         teams = cm.currentTournyTeams;
@@ -360,6 +363,7 @@ public class GameSettingsPersist : MonoBehaviour
         else
             ends = ts.ends;
         endCurrent = 0;
+        inEndMenu = false;  // Clear end menu flag - starting new tournament
         rocks = ts.rocks;
         //numberOfTeams = ts.teams;
         prize = ts.prize;
@@ -424,6 +428,7 @@ public class GameSettingsPersist : MonoBehaviour
             endCurrent = 0;
             redScore = 0;
             yellowScore = 0;
+            inEndMenu = false;  // Clear end menu flag - only save file should set this
             
             // CRITICAL: Also clear the score array for the new game!
             // This ensures old scores don't leak into the new game
@@ -440,7 +445,7 @@ public class GameSettingsPersist : MonoBehaviour
                 Debug.Log($"[GSP.TournySetup] NEW game - score array will be created in GameManager.SetupGame()");
             }
             
-            Debug.Log($"[GSP.TournySetup] NEW game - reset game state: endCurrent=0, redScore=0, yellowScore=0");
+            Debug.Log($"[GSP.TournySetup] NEW game - reset game state: endCurrent=0, redScore=0, yellowScore=0, inEndMenu=false");
         }
         
         // ? Handle score array initialization
@@ -655,6 +660,7 @@ public class GameSettingsPersist : MonoBehaviour
         endCurrent = 0;
         redScore = 0;
         yellowScore = 0;
+        inEndMenu = false;  // Clear end menu flag - starting new playoff game
 
         //Debug.Log("Loading Tourny Settings to GSP");
         //playerGO = tm.playerGO;
@@ -753,8 +759,9 @@ public class GameSettingsPersist : MonoBehaviour
         {
             Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
             
-            // CRITICAL FIX: Even when skipping full reload, we MUST restore KO1/KO3 flags AND playoffTeams!
-            // These determine which scene we route to after the game and enable bracket advancement
+            // CRITICAL FIX: Even when skipping full reload, we MUST restore:
+            // 1. KO1/KO3 flags and playoff teams (for tournament routing)
+            // 2. Game state (rockPos, rockCurrent, etc.) for mid-game loads
             CareerSaveData saveData = CareerSaveService.LoadCareer();
             if (saveData != null && saveData.currentTournamentState != null)
             {
@@ -791,6 +798,14 @@ public class GameSettingsPersist : MonoBehaviour
                 else
                 {
                     Debug.Log("[GameSettingsPersist] No playoff bracket teams in save - regular tournament");
+                }
+                
+                // CRITICAL FIX: Restore game state (rockPos, rockCurrent, etc.)
+                // This is essential for continuing from End Menu to TournyGame
+                if (saveData.currentGameState != null)
+                {
+                    Debug.Log("[GameSettingsPersist] Restoring game state (rockPos, rockCurrent, etc.) from save");
+                    cm.RestoreGameState(saveData.currentGameState, this);
                 }
             }
             else
@@ -842,6 +857,23 @@ public class GameSettingsPersist : MonoBehaviour
             if (yellowTeam == null)
             {
                 Debug.LogError($"[GameSettingsPersist] Could not find yellowTeam '{yellowTeamName}' in teams array!");
+            }
+            
+            // CRITICAL FIX: Set playerTeam to whichever team is the player's
+            // This is needed for playoff logic to determine win/loss
+            if (redTeam != null && redTeam.id == cm.playerTeamIndex)
+            {
+                playerTeam = redTeam;
+                Debug.Log($"[GameSettingsPersist] Player team is RED: {playerTeam.name}");
+            }
+            else if (yellowTeam != null && yellowTeam.id == cm.playerTeamIndex)
+            {
+                playerTeam = yellowTeam;
+                Debug.Log($"[GameSettingsPersist] Player team is YELLOW: {playerTeam.name}");
+            }
+            else
+            {
+                Debug.LogWarning($"[GameSettingsPersist] Could not determine player team! cm.playerTeamIndex={cm.playerTeamIndex}, redTeam.id={redTeam?.id}, yellowTeam.id={yellowTeam?.id}");
             }
         }
         else

@@ -61,6 +61,22 @@ public class Rock_Force : MonoBehaviour
         rockSounds = GetComponents<AudioSource>();
     }
 
+    void OnDisable()
+    {
+        // CRITICAL: Stop any looping haptics when rock is disabled
+        // This prevents the slide haptic from continuing after scene changes or rock pooling
+        HapticController.Loop(false);
+        HapticController.Stop();
+    }
+
+    void OnDestroy()
+    {
+        // CRITICAL: Stop any looping haptics when rock is destroyed/game ends
+        // This prevents the slide haptic from continuing after game reset
+        HapticController.Loop(false);
+        HapticController.Stop();
+    }
+
 
     public void Release()
     {

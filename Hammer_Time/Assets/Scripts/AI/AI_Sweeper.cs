@@ -1439,21 +1439,12 @@ public class AI_Sweeper : MonoBehaviour
                 idealPosAhead = currentPos; // Rock is at end of trajectory, no shortfall prediction possible
             }
             
-            float predictedShortfall = sweepingGoal.y - idealPosAhead.y;  // Will we reach the goal?
-            
-            // SANITY CHECK: If predicted shortfall is absurdly large (>20m), something is wrong
-            // This prevents spam sweeping due to bad trajectory data
-            if (predictedShortfall > 20f || predictedShortfall < -20f)
-            {
-                Debug.LogWarning($"[AI_Sweeper] INSANE shortfall detected: {predictedShortfall:F2}m - resetting to 0 (trajectory data invalid)");
-                predictedShortfall = 0f; // Don't sweep based on bad data
-            }
-            
             // COLLISION DETECTION: Check if rock will hit obstacles in next 2 meters
             collisionImminent = false;
             float collisionLookaheadDistance = 2.0f;
             
             // Re-simulate from current position to check for imminent collisions
+            // AND to predict where rock will actually stop
             List<Vector2> lookaheadPath = trajectorySimulator.SimulateTrajectory(
                 currentPos,
                 rockRB.linearVelocity,
@@ -1464,6 +1455,29 @@ public class AI_Sweeper : MonoBehaviour
             );
             
             TrajectorySimulator.CollisionInfo lookaheadCollision = trajectorySimulator.GetCollisionInfo();
+            
+            // CRITICAL FIX: Calculate shortfall based on PREDICTED FINAL POSITION from real-time simulation
+            // The lookaheadPath shows where rock will ACTUALLY stop based on CURRENT velocity/position
+            // This is much more accurate than using the pre-calculated actualTrajectory from launch
+            float predictedFinalY = (lookaheadPath != null && lookaheadPath.Count > 0) 
+                ? lookaheadPath[lookaheadPath.Count - 1].y 
+                : currentPos.y;  // Fallback to current if no trajectory data
+            
+            float predictedShortfall = sweepingGoal.y - predictedFinalY;  // Will we reach the goal?
+            
+            // DEBUG: Show what we're comparing (every 30 frames to avoid spam)
+            if (Time.frameCount % 30 == 0)
+            {
+                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: Predicted stop={predictedFinalY:F2}, Goal={sweepingGoal.y:F2}, Shortfall={predictedShortfall:F2}m, Velocity={rockRB.linearVelocity.magnitude:F2}m/s");
+            }
+            
+            // SANITY CHECK: If predicted shortfall is absurdly large (>20m), something is wrong
+            // This prevents spam sweeping due to bad trajectory data
+            if (predictedShortfall > 20f || predictedShortfall < -20f)
+            {
+                Debug.LogWarning($"[AI_Sweeper] INSANE shortfall detected: {predictedShortfall:F2}m - resetting to 0 (trajectory data invalid)");
+                predictedShortfall = 0f; // Don't sweep based on bad data
+            }
             
             if (lookaheadCollision.hasCollision)
             {

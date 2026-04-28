@@ -54,6 +54,14 @@ public class TournyManager : MonoBehaviour
 	public int playerTeam;
 	public int oppTeam;
 	
+	// Two-pool tournament tracking
+	public int currentPoolView;        // 0 for Pool A, 1 for Pool B
+	public bool isTwoPoolTournament;   // True if this is a 2-pool tournament
+	public GameObject poolUIParent;    // Parent GameObject containing pool label and buttons
+	public Text poolLabel;             // UI Text to display "Pool A" or "Pool B"
+	public Button poolLeftButton;      // Button to switch to Pool A (previous)
+	public Button poolRightButton;     // Button to switch to Pool B (next)
+	
 	public Vector2 careerRecord;
 	public float careerEarnings;
 	string teamName;
@@ -185,6 +193,12 @@ public class TournyManager : MonoBehaviour
 
 			standDisplay[i] = rv.standDisplay;
 		}
+		
+		// Initialize pool UI as hidden (will be shown if needed)
+		if (poolUIParent != null)
+		{
+			poolUIParent.SetActive(false);
+		}
 
         if (gsp.draw > 0)
         {
@@ -227,7 +241,52 @@ public class TournyManager : MonoBehaviour
 
             // Initialize drawFormat
             Debug.Log($"[TournyManager.SetupStandings] Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
-            dfList.DrawSelector(teams.Length, 1, gsp.games);
+            
+            if (teams.Length == 16)
+            {
+                // Check if this is a two-pool tournament by checking team poolIds
+                bool hasPools = false;
+                for (int i = 0; i < teams.Length; i++)
+                {
+                    if (teams[i].poolId >= 0)
+                    {
+                        hasPools = true;
+                        break;
+                    }
+                }
+                
+                if (hasPools)
+                {
+                    dfList.DrawSelector_TwoPool(teams.Length, 1, gsp.games);
+                    isTwoPoolTournament = true;
+                    currentPoolView = teams[playerTeam].poolId;
+                    
+                    // Show pool UI
+                    if (poolUIParent != null)
+                    {
+                        poolUIParent.SetActive(true);
+                    }
+                    
+                    if (poolLabel != null)
+                    {
+                        poolLabel.text = currentPoolView == 0 ? "Pool A" : "Pool B";
+                    }
+                    
+                    // Update button visibility
+                    UpdatePoolButtonVisibility();
+                    
+                    Debug.Log($"[TournyManager] Restored two-pool tournament, viewing Pool {(currentPoolView == 0 ? "A" : "B")}");
+                }
+                else
+                {
+                    dfList.DrawSelector(teams.Length, 1, gsp.games);
+                }
+            }
+            else
+            {
+                dfList.DrawSelector(teams.Length, 1, gsp.games);
+            }
+            
             yield return new WaitForEndOfFrame();
             drawFormat = dfList.currentFormat;
 
@@ -245,6 +304,12 @@ public class TournyManager : MonoBehaviour
             {
 				pm.enabled = true;
 				standings.SetActive(false);
+				
+				// Hide pool UI when entering playoffs
+				if (poolUIParent != null)
+				{
+					poolUIParent.SetActive(false);
+				}
 			}
 			else if (gsp.justFinishedGame)
 			{
@@ -345,8 +410,21 @@ public class TournyManager : MonoBehaviour
 			cm.teamRecords = new Vector4[teams.Length];
 			
 			// CRITICAL FIX: Initialize drawFormat for NEW tournament
+			// For 16-team tournaments, use two-pool format (Pool A and Pool B)
 			Debug.Log($"[TournyManager.SetupStandings] NEW tournament - Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
-			dfList.DrawSelector(teams.Length, 1, gsp.games);
+			
+			if (teams.Length == 16)
+			{
+				// Use two-pool format for 16-team tournaments
+				dfList.DrawSelector_TwoPool(teams.Length, 1, gsp.games);
+				Debug.Log("[TournyManager] Using two-pool format for 16 teams");
+			}
+			else
+			{
+				// Use regular format for other team counts
+				dfList.DrawSelector(teams.Length, 1, gsp.games);
+			}
+			
 			yield return new WaitForEndOfFrame();
 			drawFormat = dfList.currentFormat;
 			Debug.Log($"[TournyManager.SetupStandings] drawFormat.Length={drawFormat?.Length ?? 0}");
@@ -391,6 +469,13 @@ public class TournyManager : MonoBehaviour
 			//teamList[playerTeam].team.name = gsp.teamName;
 			teamList.Sort();
 			yield return new WaitForEndOfFrame();
+			
+			// Set up two-pool tournament if we have 16 teams
+			if (teams.Length == 16)
+			{
+				SetupTwoPoolTournament();
+			}
+			
 			if (!gsp.KO1) 
 				SetDraw();
 		}
@@ -428,39 +513,71 @@ public class TournyManager : MonoBehaviour
 		int tempRank;
 		teamList.Sort();
 
-		for (int i = 0; i < teamList.Count; i++)
-        {
-			standDisplay[i].name.text = teamList[i].team.name;
-            standDisplay[i].wins.text = teamList[i].team.wins.ToString();
-            standDisplay[i].loss.text = teamList[i].team.loss.ToString();
-            standDisplay[i].nextOpp.text = teamList[i].team.nextOpp;
-            teamList[i].team.rank = i + 1;
-        }
+		// Filter teams by pool if this is a two-pool tournament
+		List<Team_List> displayTeams = teamList;
+		if (isTwoPoolTournament)
+		{
+			displayTeams = new List<Team_List>();
+			for (int i = 0; i < teamList.Count; i++)
+			{
+				if (teamList[i].team.poolId == currentPoolView)
+				{
+					displayTeams.Add(teamList[i]);
+				}
+			}
+			Debug.Log($"[TournyManager] PrintRows - Filtered to {displayTeams.Count} teams for Pool {(currentPoolView == 0 ? "A" : "B")}");
+		}
+
+		// Assign ranks within the pool
+		for (int i = 0; i < displayTeams.Count; i++)
+		{
+			displayTeams[i].team.rank = i + 1;
+		}
+
+		// Display teams (only show teams from current pool)
+		for (int i = 0; i < displayTeams.Count; i++)
+		{
+			row[i].SetActive(true);
+			standDisplay[i].name.text = displayTeams[i].team.name;
+			standDisplay[i].wins.text = displayTeams[i].team.wins.ToString();
+			standDisplay[i].loss.text = displayTeams[i].team.loss.ToString();
+			standDisplay[i].nextOpp.text = displayTeams[i].team.nextOpp;
+		}
+		
+		// Hide unused display rows for two-pool tournaments
+		if (isTwoPoolTournament)
+		{
+			for (int i = displayTeams.Count; i < standDisplay.Length; i++)
+			{
+				row[i].SetActive(false);
+			}
+		}
 
 		vsDisplay[0].name.text = teams[playerTeam].name;
 		vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
 
-		for (int i = 0; i < teamList.Count; i++)
-        {
-			if (teams[playerTeam].name == teamList[i].team.name)
+		for (int i = 0; i < displayTeams.Count; i++)
+		{
+			if (teams[playerTeam].name == displayTeams[i].team.name)
 				standDisplay[i].panel.enabled = true;
 			else
 				standDisplay[i].panel.enabled = false;
 
-			if (teams[playerTeam].nextOpp == teamList[i].team.name)
+			if (teams[playerTeam].nextOpp == displayTeams[i].team.name)
 			{
 				tempRank = i + 1;
-				vsDisplay[1].name.text = teamList[i].team.name;
-				vsDisplay[1].rank.text = teamList[i].team.rank.ToString();
+				vsDisplay[1].name.text = displayTeams[i].team.name;
+				vsDisplay[1].rank.text = displayTeams[i].team.rank.ToString();
 			}
 		}
 
-		standScrollBar.value = (teams[playerTeam].rank - numberOfTeams) / (1f - numberOfTeams);
+		int displayTeamCount = isTwoPoolTournament ? displayTeams.Count : numberOfTeams;
+		standScrollBar.value = (teams[playerTeam].rank - displayTeamCount) / (1f - displayTeamCount);
 		StartCoroutine(RefreshPanel());
 
 		// Save tournament state using CareerManager's save system
 		cm.SaveCareer();
-    }
+	}
 
 	/// <summary>
 	/// Processes player's match result and updates wins/losses
@@ -468,14 +585,20 @@ public class TournyManager : MonoBehaviour
 	void ProcessPlayerMatchResult()
 	{
 		bool playerWon = false;
+		int playerScore = 0;
+		int oppScore = 0;
 		
 		// Determine if player won based on their team color
 		if (teams[playerTeam].name == gsp.redTeamName)
 		{
+			playerScore = gsp.redScore;
+			oppScore = gsp.yellowScore;
 			playerWon = gsp.redScore > gsp.yellowScore;
 		}
 		else if (teams[playerTeam].name == gsp.yellowTeamName)
 		{
+			playerScore = gsp.yellowScore;
+			oppScore = gsp.redScore;
 			playerWon = gsp.yellowScore > gsp.redScore;
 		}
 		else
@@ -495,9 +618,126 @@ public class TournyManager : MonoBehaviour
 			teams[oppTeam].wins++;
 			teams[playerTeam].loss++;
 		}
+		
+		// Update point differential for two-pool tournaments
+		if (isTwoPoolTournament)
+		{
+			int differential = playerScore - oppScore;
+			teams[playerTeam].pointDifferential += differential;
+			teams[oppTeam].pointDifferential -= differential;
+			Debug.Log($"[TournyManager] Point differential updated: {teams[playerTeam].name} = {teams[playerTeam].pointDifferential}, {teams[oppTeam].name} = {teams[oppTeam].pointDifferential}");
+		}
 
-		Debug.Log($"[TournyManager] Player match result: {teams[playerTeam].name} ({gsp.redScore}) vs {teams[oppTeam].name} ({gsp.yellowScore}) - Player won: {playerWon}");
+		Debug.Log($"[TournyManager] Player match result: {teams[playerTeam].name} ({playerScore}) vs {teams[oppTeam].name} ({oppScore}) - Player won: {playerWon}");
 		Debug.Log($"[TournyManager] {teams[playerTeam].name}: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L, {teams[oppTeam].name}: {teams[oppTeam].wins}W-{teams[oppTeam].loss}L");
+	}
+
+	/// <summary>
+	/// Sets up a two-pool tournament by assigning teams to pools
+	/// </summary>
+	void SetupTwoPoolTournament()
+	{
+		Debug.Log("[TournyManager] Setting up two-pool tournament");
+		
+		// Assign teams to pools: 0-7 = Pool A, 8-15 = Pool B
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (i < 8)
+			{
+				teams[i].poolId = 0; // Pool A
+			}
+			else
+			{
+				teams[i].poolId = 1; // Pool B
+			}
+			Debug.Log($"[TournyManager] Team {i}: {teams[i].name} assigned to Pool {(teams[i].poolId == 0 ? "A" : "B")}");
+		}
+		
+		// Find which pool the player is in and set it as the current view
+		for (int i = 0; i < teams.Length; i++)
+		{
+			if (teams[i].player)
+			{
+				currentPoolView = teams[i].poolId;
+				Debug.Log($"[TournyManager] Player team found in Pool {(currentPoolView == 0 ? "A" : "B")}");
+				break;
+			}
+		}
+		
+		// Show pool UI
+		if (poolUIParent != null)
+		{
+			poolUIParent.SetActive(true);
+		}
+		
+		// Set pool label text
+		if (poolLabel != null)
+		{
+			poolLabel.text = currentPoolView == 0 ? "Pool A" : "Pool B";
+		}
+		
+		// Update button visibility
+		UpdatePoolButtonVisibility();
+		
+		isTwoPoolTournament = true;
+	}
+
+	/// <summary>
+	/// Updates which pool navigation buttons are visible based on current pool
+	/// Pool A (0): Only show right arrow
+	/// Pool B (1): Only show left arrow
+	/// </summary>
+	void UpdatePoolButtonVisibility()
+	{
+		if (poolLeftButton != null && poolRightButton != null)
+		{
+			if (currentPoolView == 0) // Pool A
+			{
+				poolLeftButton.gameObject.SetActive(false);
+				poolRightButton.gameObject.SetActive(true);
+			}
+			else // Pool B
+			{
+				poolLeftButton.gameObject.SetActive(true);
+				poolRightButton.gameObject.SetActive(false);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Switch to Pool A (called by left button)
+	/// </summary>
+	public void SwitchToPoolA()
+	{
+		if (isTwoPoolTournament && currentPoolView != 0)
+		{
+			currentPoolView = 0;
+			if (poolLabel != null)
+			{
+				poolLabel.text = "Pool A";
+			}
+			UpdatePoolButtonVisibility();
+			PrintRows();
+			Debug.Log("[TournyManager] Switched to Pool A");
+		}
+	}
+
+	/// <summary>
+	/// Switch to Pool B (called by right button)
+	/// </summary>
+	public void SwitchToPoolB()
+	{
+		if (isTwoPoolTournament && currentPoolView != 1)
+		{
+			currentPoolView = 1;
+			if (poolLabel != null)
+			{
+				poolLabel.text = "Pool B";
+			}
+			UpdatePoolButtonVisibility();
+			PrintRows();
+			Debug.Log("[TournyManager] Switched to Pool B");
+		}
 	}
 
     #region Set
@@ -552,26 +792,35 @@ public class TournyManager : MonoBehaviour
 		{
 			if (i % 2 == 0)
 			{
-				if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
+				int team1Score = Random.Range(0, games[i].strength + 1);
+				int team2Score = Random.Range(0, games[i + 1].strength + 1);
+				
+				if (team1Score > team2Score)
 				{
 					games[i + 1].loss++;
-                    games[i].wins++;
-
-                    //if (games[i].name == teams[playerTeam].name)
-                    //    gsp.record.x++;
-                    //if (games[i + 1].name == teams[playerTeam].name)
-                    //    gsp.record.y++;
-                }
+					games[i].wins++;
+					
+					// Update point differential for two-pool tournaments
+					if (isTwoPoolTournament)
+					{
+						int differential = team1Score - team2Score;
+						games[i].pointDifferential += differential;
+						games[i + 1].pointDifferential -= differential;
+					}
+				}
 				else
 				{
 					games[i].loss++;
-                    games[i + 1].wins++;
-
-                    //if (games[i].name == teams[playerTeam].name)
-                    //    gsp.record.y++;
-                    //if (games[i + 1].name == teams[playerTeam].name)
-                    //    gsp.record.x++;
-                }
+					games[i + 1].wins++;
+					
+					// Update point differential for two-pool tournaments
+					if (isTwoPoolTournament)
+					{
+						int differential = team2Score - team1Score;
+						games[i + 1].pointDifferential += differential;
+						games[i].pointDifferential -= differential;
+					}
+				}
 			}
 		}
 

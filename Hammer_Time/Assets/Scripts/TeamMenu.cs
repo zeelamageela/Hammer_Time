@@ -419,9 +419,21 @@ public class TeamMenu : MonoBehaviour
                 teamDisplay[i].charName.text = "2nd - " + activePlayers[i].name;
             if (i == 2)
                 teamDisplay[i].charName.text = "3rd - " + activePlayers[i].name;
-            teamDisplay[i].cost.text = "$" + activePlayers[i].cost.ToString("N0");
-            teamDisplay[i].photo.sprite = activePlayers[i].image;
-            teamDisplay[i].description.text = activePlayers[i].description;
+            if (i == 3)
+                teamDisplay[i].charName.text = "Skip - " + cm.playerName + " " + cm.teamName;
+
+            if (i != 3)
+            {
+                teamDisplay[i].cost.text = "$" + activePlayers[i].cost.ToString("N0");
+                teamDisplay[i].photo.sprite = activePlayers[i].image;
+                teamDisplay[i].description.text = activePlayers[i].description;
+            }
+            else
+            {
+                teamDisplay[i].cost.text = " ";
+                teamDisplay[i].photo.enabled = false;
+                teamDisplay[i].description.text = "Your character.";
+            }
         }
     }
 

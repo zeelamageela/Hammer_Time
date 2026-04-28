@@ -156,6 +156,77 @@ public class CameraManager : MonoBehaviour
         vcam.enabled = true;
     }
 
+    public void PowerPhaseSetup()
+    {
+        // Configure camera for flick shot power phase (drag input from launcher to hog line)
+        // Shows Y=-25 (launcher) to Y=-16 (hog line) = 9 units vertical span
+        vcam.enabled = false;
+        
+        // Set orthographic size to comfortably fit drag zone with buffer
+        // 9 units of drag zone + buffer = 6.5 ortho size (shows ~13 units vertically)
+        var lens = vcam.Lens;
+        lens.OrthographicSize = 6.5f;
+        vcam.Lens = lens;
+        
+        Debug.Log("[CameraManager] Power Phase Setup - Framing drag zone (Y=-25 to Y=-16)");
+        
+        // Configure camera depths
+        main.depth = 1;
+        house.depth = -1;
+        ui.depth = 3;
+        top.depth = 2;
+        aim.depth = -1;  // Disable aim camera
+        
+        main.rect = new Rect(new Vector2(0f, 0f), new Vector2(1f, 1f));
+        
+        // Instant transition (no damping) for immediate power phase feedback
+        if (vcam_ft != null)
+        {
+            vcam_ft.Damping = new Vector3(0f, 0f, 0f);  // Instant positioning
+            
+            // Position launcher low on screen (bottom quarter) so player sees full drag path above
+            var composition = vcam_ft.Composition;
+            float screenY = 0.20f;  // Bottom quarter positioning
+            composition.ScreenPosition = new Vector2(0f, screenY);
+            
+            // Calculate target offset to align screen position correctly
+            // This ensures the launcher appears at the specified screen position
+            float targetOffsetY = -(lens.OrthographicSize * (1f - screenY));
+            vcam_ft.TargetOffset = new Vector3(0f, targetOffsetY, 0f);
+            
+            // Tight dead zone for responsive camera during power input
+            composition.DeadZone = new ScreenComposerSettings.DeadZoneSettings
+            {
+                Enabled = true,
+                Size = new Vector2(0.05f, 0.05f)  // Tight dead zone
+            };
+            
+            // Standard hard limits
+            composition.HardLimits = new ScreenComposerSettings.HardLimitSettings
+            {
+                Enabled = true,
+                Size = new Vector2(0.9f, 0.9f),
+                Offset = Vector2.zero
+            };
+            
+            vcam_ft.Composition = composition;
+        }
+        
+        // Track launcher position (where player starts power drag)
+        vcam.Target.TrackingTarget = launcher;
+        
+        // Disable composition easing (not needed during power phase)
+        isEasingComposition = false;
+        
+        vcam.enabled = true;
+        
+        Debug.Log($"[CameraManager] Power phase camera active - Ortho size: {lens.OrthographicSize}, Screen Y: 0.20");
+    }
+    
+    // Power phase constants (match FlickShotController values)
+    private float powerDragStartY = -25f;  // Launcher Y
+    private float powerDragTargetY = -16f;  // Hog line Y
+
     public void Trajectory()
     {
         //Debug.Log("Trajectory");

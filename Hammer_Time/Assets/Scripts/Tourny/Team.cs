@@ -15,6 +15,8 @@ public class Team
     public float tournamentEarnings;
     public int rank;               // Placement in current tournament
     public string nextOpp;         // Next opponent in current tournament
+    public int poolId;             // 0 for Pool A, 1 for Pool B (-1 for no pool)
+    public int pointDifferential;  // For-Against points scored (for tie-breaking)
     
     // SEASON CUMULATIVE (reset each season)
     public int seasonWins;
@@ -131,6 +133,8 @@ public class Team
         tournamentEarnings = 0;
         rank = 0;
         nextOpp = "";
+        poolId = -1;
+        pointDifferential = 0;
     }
     
     /// <summary>

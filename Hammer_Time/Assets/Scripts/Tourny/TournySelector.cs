@@ -133,7 +133,11 @@ public class TournySelector : MonoBehaviour
 
         if (cm.week == 0)
         {
-            // CRITICAL FIX: Starting new career - don't try to load save data
+            // CRITICAL FIX: Starting new career - clear all tournament completion flags
+            Debug.Log("[TournySelector] New career (week 0) - clearing all completion flags");
+            ClearAllCompletionFlags();
+            
+            // Then set up new season
             Debug.Log("[TournySelector] New career (week 0) - calling NewSeason()");
             cm.NewSeason();
         }
@@ -252,6 +256,118 @@ public class TournySelector : MonoBehaviour
         }
         
         Debug.Log("[TournySelector] ? Completion sync complete");
+    }
+    
+    /// <summary>
+    /// Clears all tournament completion flags for a new career/season
+    /// Call this when starting a brand new career to reset all tournaments
+    /// </summary>
+    public void ClearAllCompletionFlags()
+    {
+        Debug.Log("[TournySelector] Clearing ALL tournament completion flags for new career...");
+        
+        int clearedCount = 0;
+        
+        // Clear regular tournaments
+        if (tournies != null)
+        {
+            for (int i = 0; i < tournies.Length; i++)
+            {
+                if (tournies[i] != null)
+                {
+                    tournies[i].complete = false;
+                    tournies[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        // Clear tour tournaments
+        if (tour != null)
+        {
+            for (int i = 0; i < tour.Length; i++)
+            {
+                if (tour[i] != null)
+                {
+                    tour[i].complete = false;
+                    tour[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        // Clear provincial qualifiers
+        if (provQual != null)
+        {
+            for (int i = 0; i < provQual.Length; i++)
+            {
+                if (provQual[i] != null)
+                {
+                    provQual[i].complete = false;
+                    provQual[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        // Clear tour qualifiers
+        if (tourQual != null)
+        {
+            for (int i = 0; i < tourQual.Length; i++)
+            {
+                if (tourQual[i] != null)
+                {
+                    tourQual[i].complete = false;
+                    tourQual[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        // Clear championships
+        if (tourChampionship != null)
+        {
+            tourChampionship.complete = false;
+            tourChampionship.trophyWon = false;
+            clearedCount++;
+        }
+        
+        if (provChampionship != null)
+        {
+            provChampionship.complete = false;
+            provChampionship.trophyWon = false;
+            clearedCount++;
+        }
+        
+        // Clear majors
+        if (majors != null)
+        {
+            for (int i = 0; i < majors.Length; i++)
+            {
+                if (majors[i] != null)
+                {
+                    majors[i].complete = false;
+                    majors[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        // Clear single KOs
+        if (singleKOs != null)
+        {
+            for (int i = 0; i < singleKOs.Length; i++)
+            {
+                if (singleKOs[i] != null)
+                {
+                    singleKOs[i].complete = false;
+                    singleKOs[i].trophyWon = false;
+                    clearedCount++;
+                }
+            }
+        }
+        
+        Debug.Log($"[TournySelector] ? Cleared {clearedCount} tournament completion flags");
     }
 
     IEnumerator WaitForDialogue()

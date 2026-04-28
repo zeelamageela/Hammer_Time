@@ -157,6 +157,8 @@ public class CareerSaveData
         public float tournamentEarnings;
         public int rank;               // Placement in current tournament
         public string nextOpp;         // Next opponent in current tournament
+        public int poolId;             // 0 for Pool A, 1 for Pool B (-1 for no pool)
+        public int pointDifferential;  // For-Against points scored (for tie-breaking)
         
         // SEASON CUMULATIVE (reset each season)
         public int seasonWins;
@@ -296,6 +298,7 @@ public class CareerSaveData
         public bool gameInProgress;
         public bool tournyInProgress;
         public bool justFinishedGame;  // NEW: Flag to indicate a game just finished
+        public bool inEndMenu;  // NEW: Flag to indicate we're viewing end menu
         public bool isTournyGame;
         public int ends;
         public int currentEnd;

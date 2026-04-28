@@ -86,14 +86,10 @@ public class CareerSettings : MonoBehaviour
 
         cm.LoadCareer();
         
-        // Check if we're coming from Main Menu Continue button
-        // If career exists and careerLoad flag is set, auto-load to correct scene
-        if (cm.SaveFileExists() && gsp.careerLoad)
-        {
-            Debug.Log("[CareerSettings] Auto-loading saved career...");
-            LoadToCM();
-            return; // Don't show UI, just load
-        }
+        // Always show Career Settings screen (even if gsp.careerLoad is true)
+        // This gives players the option to start a new career if save is corrupted
+        // Continue button will call LoadToCM() to route to correct scene
+        Debug.Log("[CareerSettings] Career loaded - showing UI with Continue option");
         
         Player(!cm.gameOver);
     }
@@ -121,20 +117,61 @@ public class CareerSettings : MonoBehaviour
         cm = FindFirstObjectByType<CareerManager>();
         cm.LoadSettings();
         
-        Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, week: {cm.week}");
+        Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}, week: {cm.week}");
         Debug.Log($"[CareerSettings] Tournament flags - KO3: {gsp.KO3}, KO1: {gsp.KO1}");
+        
+        // TEMP DEBUG: Log exactly which route we're taking
+        if (gsp.gameInProgress && gsp.inEndMenu)
+        {
+            Debug.Log("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=true → End_Menu");
+        }
+        else if (gsp.gameInProgress && !gsp.inEndMenu)
+        {
+            Debug.Log("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=false → TournyGame");
+        }
+        else if (gsp.inEndMenu)
+        {
+            Debug.Log("[CareerSettings] ROUTE: gameInProgress=false AND inEndMenu=true → End_Menu");
+        }
+        else if (gsp.tournyInProgress)
+        {
+            Debug.Log("[CareerSettings] ROUTE: tournyInProgress=true → Tournament Home");
+        }
+        else
+        {
+            Debug.Log("[CareerSettings] ROUTE: Default → Arena_Selector");
+        }
 
         // CRITICAL FIX: Check flags in correct priority order:
         // 1. Mid-game save (highest priority) - load directly into game
-        // 2. Tournament in progress - load tournament home
-        // 3. Normal career - load arena selector
+        // 2. End menu (viewing results) - load to end menu
+        // 3. Tournament in progress - load tournament home
+        // 4. Normal career - load arena selector
         
         if (gsp.gameInProgress)
         {
-            // Mid-game save - load directly into game
-            Debug.Log("[CareerSettings] Loading mid-game save ? TournyGame");
-            gsp.loadGame = true; // Signal to GameManager to load saved positions
-            SceneManager.LoadScene("TournyGame");
+            // Game in progress - check if we're in end menu or mid-game
+            if (gsp.inEndMenu)
+            {
+                // In end menu viewing results
+                Debug.Log("[CareerSettings] Loading to end menu (game finished) ? End_Menu_Tourny_1");
+                gsp.loadGame = false;
+                SceneManager.LoadScene("End_Menu_Tourny_1");
+            }
+            else
+            {
+                // Mid-game save - load directly into game
+                Debug.Log("[CareerSettings] Loading mid-game save ? TournyGame");
+                gsp.loadGame = true; // Signal to GameManager to load saved positions
+                SceneManager.LoadScene("TournyGame");
+            }
+        }
+        else if (gsp.inEndMenu)
+        {
+            // Viewing end menu - load to end menu scene with saved scores
+            Debug.Log("[CareerSettings] Loading to end menu ? End_Menu_Tourny_1");
+            gsp.loadGame = false;
+            SceneManager.LoadScene("End_Menu_Tourny_1");
         }
         else if (gsp.tournyInProgress)
         {

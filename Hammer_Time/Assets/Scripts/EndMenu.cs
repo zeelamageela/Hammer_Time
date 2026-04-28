@@ -231,8 +231,6 @@ public class EndMenu : MonoBehaviour
                     draw.text = "Round " + gsp.playoffRound.ToString();
                 else if (gsp.KO1)
                 {
-                    if (gsp.KO1)
-                    {
                         if (gsp.playoffRound == 1)
                         {
                             draw.text = "Round of 16";
@@ -249,19 +247,21 @@ public class EndMenu : MonoBehaviour
                         {
                             draw.text = "Finals";
                         }
-                    }
                 }
                 else
                 {
                     draw.text = "Playoff Round " + gsp.playoffRound.ToString(); 
                     if (gsp.playoffRound == 1)
-                        draw.text = "Round of 16";
+                    {
+                        if (gsp.redTeam.rank > 2 || gsp.yellowTeam.rank > 2)
+                            draw.text = "Page Playoff 3 vs 4";
+                        else
+                            draw.text = "Page Playoff 1 vs 2";
+                    }
                     if (gsp.playoffRound == 2)
-                        draw.text = "Quarterfinals";
+                        draw.text = "Semifinal";
                     if (gsp.playoffRound == 3)
-                        draw.text = "Semifinals";
-                    if (gsp.playoffRound == 4)
-                        draw.text = "Finals";
+                        draw.text = "Final";
                 }
             }
             //else
@@ -351,6 +351,19 @@ public class EndMenu : MonoBehaviour
             yellowTotalScore.text = tempTotal.y.ToString();
             
             Debug.Log($"[EndMenu] Score totals recalculated - Red: {tempTotal.x}, Yellow: {tempTotal.y} (from {gsp.endCurrent} ends)");
+            
+            // Set end menu flag and auto-save for tournament games
+            if (gsp.tourny)
+            {
+                // CRITICAL: Clear gameInProgress FIRST so save/load routes to end menu, not TournyGame
+                gsp.gameInProgress = false;
+                gsp.inEndMenu = true;
+                if (cm != null)
+                {
+                    Debug.Log("[EndMenu] Auto-saving career in end menu...");
+                    cm.SaveCareer();
+                }
+            }
         }
     }
 
@@ -370,6 +383,12 @@ public class EndMenu : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         gsp = FindFirstObjectByType<GameSettingsPersist>();
 
+        // CRITICAL: Set flags for resuming gameplay
+        gsp.gameInProgress = true;
+        gsp.inEndMenu = false;
+        gsp.loadGame = true;  // Tell GameManager to restore team data via LoadTourny()
+        Debug.Log("[EndMenu] Continue - set gameInProgress=true, loadGame=true, cleared inEndMenu, loading TournyGame");
+
         SceneManager.LoadScene("TournyGame");
     }
 
@@ -377,7 +396,6 @@ public class EndMenu : MonoBehaviour
 	{
 		Debug.Log("[EndMenu] SimEnd called - simulating to end of game");
         gsp.endCurrent++;
-        gsp.gameInProgress = true;
 
         int endsLeft = gsp.ends - gsp.endCurrent;
         bool lastTwoEnds = gsp.endCurrent >= gsp.ends - 1; // true for last two ends
@@ -652,17 +670,16 @@ public class EndMenu : MonoBehaviour
 
                 if (gsp.playoffRound == 1)
                 {
-                    draw.text = "Round of 16";
+                    if (gsp.redTeam.rank > 2 || gsp.yellowTeam.rank > 2)
+                        draw.text = "Page Playoff 3 vs 4";
+                    else
+                        draw.text = "Page Playoff 1 vs 2";
                 }
                 if (gsp.playoffRound == 2)
                 {
-                    draw.text = "Quarterfinals";
-                }
-                if (gsp.playoffRound == 3)
-                {
                     draw.text = "Semifinals";
                 }
-                if (gsp.playoffRound == 4)
+                if (gsp.playoffRound == 3)
                 {
                     draw.text = "Finals";
                 }
@@ -804,6 +821,18 @@ public class EndMenu : MonoBehaviour
             Debug.Log("[EndMenu.SimEnd] Game complete after simulation - player must click End Game button");
             // The button is already visible from the UI logic above, player clicks it to continue
         }
+        
+        // CRITICAL: Reset flags back to End Menu state before saving!
+        // After simulating, we're still viewing End Menu results, NOT in gameplay
+        gsp.gameInProgress = false;
+        gsp.inEndMenu = true;
+        
+        // Save after simulating the end
+        if (cm != null && gsp.tourny)
+        {
+            Debug.Log("[EndMenu.SimEnd] Saving career after simulating end (gameInProgress=false, inEndMenu=true)...");
+            cm.SaveCareer();
+        }
     }
 
     /// <summary>
@@ -897,7 +926,9 @@ public class EndMenu : MonoBehaviour
         // CRITICAL FIX: Set justFinishedGame flag FIRST, before any scene loading
         // This ensures playoff managers know to process the game result
         gsp.justFinishedGame = true;
+        gsp.inEndMenu = false;
         Debug.Log("[EndMenu.EndGame] Set justFinishedGame = true");
+        Debug.Log("[EndMenu.EndGame] Cleared inEndMenu flag");
 
         if (gsp.cashGame)
         {

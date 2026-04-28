@@ -161,20 +161,36 @@ public class Rock_Flick : MonoBehaviour
     {
         if (!GetComponent<Rock_Info>().released)
         {
-            // CRITICAL: In flick shot mode, block all clicks once aim is set
+            // CRITICAL: In flick shot mode, handle clicks based on phase
             if (isFlickShotMode && flickShotController != null)
             {
-                // Check if we're in AimSet or PowerPhase - block all clicks!
+                // Check current phase
                 System.Reflection.PropertyInfo phaseProp = flickShotController.GetType().GetProperty("currentPhase");
                 if (phaseProp != null)
                 {
                     object phase = phaseProp.GetValue(flickShotController);
                     string phaseName = phase.ToString();
                     
-                    if (phaseName == "AimSet" || phaseName == "PowerPhase" || phaseName == "Released")
+                    // In AimSet phase: Allow clicking rock to re-aim!
+                    if (phaseName == "AimSet")
+                    {
+                        Debug.Log("[Rock_Flick] Click detected in AimSet - returning to aim adjustment mode");
+                        
+                        // Reset to AimingPhase via reflection
+                        System.Reflection.MethodInfo resetMethod = flickShotController.GetType().GetMethod("ResetToAiming");
+                        if (resetMethod != null)
+                        {
+                            resetMethod.Invoke(flickShotController, null);
+                        }
+                        
+                        // Allow normal pullback to proceed (don't return)
+                        // Fall through to normal click handling below
+                    }
+                    // In PowerPhase or Released: Block all clicks
+                    else if (phaseName == "PowerPhase" || phaseName == "Released")
                     {
                         Debug.Log($"[Rock_Flick] Ignoring click - in {phaseName} phase (aim locked)");
-                        return; // Block clicks once aim is set!
+                        return; // Block clicks during power phase!
                     }
                 }
             }
@@ -284,15 +300,10 @@ public class Rock_Flick : MonoBehaviour
                     spring.enabled = false;
                 }
                 
-                Debug.Log($"[Rock_Flick] Flick shot mode: Aim set at position {aimPosition}. Click launcher to start power flick (or drag rock to adjust aim).");
+                Debug.Log($"[Rock_Flick] Flick shot mode: Aim set at position {aimPosition}. Click launcher to start power flick, or click rock to re-aim.");
                 
-                // Disable rock collider so we can't click it again
-                CircleCollider2D rockCollider = GetComponent<CircleCollider2D>();
-                if (rockCollider != null)
-                {
-                    rockCollider.enabled = false;
-                    Debug.Log("[Rock_Flick] Rock collider disabled - can't click rock anymore");
-                }
+                // KEEP rock collider enabled so player can click to re-aim!
+                // CircleCollider2D remains enabled for re-aiming
                 
                 // Keep shooting knob visible at aimed position
                 shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = false; // Hide mouse circle
@@ -504,14 +515,14 @@ public class Rock_Flick : MonoBehaviour
             // Show 4 SEPARATE callouts that will stack vertically
             // Each callout shows at same position - stacking system handles vertical spacing
             
-            // Callout 1: Shot Released
-            TextCalloutManager.Instance.ShowCallout(
-                rockPosition + Vector3.up * 0.5f,
-                "Shot Released!",
-                followTarget: true,
-                target: transform,
-                duration: 4.8f
-            );
+            // // Callout 1: Shot Released
+            // TextCalloutManager.Instance.ShowCallout(
+            //     rockPosition + Vector3.up * 0.5f,
+            //     "Shot Released!",
+            //     followTarget: true,
+            //     target: transform,
+            //     duration: 4.8f
+            // );
             
             // Callout 2: Velocity
             TextCalloutManager.Instance.ShowCallout(
@@ -522,23 +533,23 @@ public class Rock_Flick : MonoBehaviour
                 duration: 4.6f
             );
             
-            // Callout 3: Range
-            TextCalloutManager.Instance.ShowCallout(
-                rockPosition + Vector3.up * 0.5f,
-                $"Range: {minVel:F1}-{maxVel:F1} m/s",
-                followTarget: true,
-                target: transform,
-                duration: 4.4f
-            );
+            // // Callout 3: Range
+            // TextCalloutManager.Instance.ShowCallout(
+            //     rockPosition + Vector3.up * 0.5f,
+            //     $"Range: {minVel:F1}-{maxVel:F1} m/s",
+            //     followTarget: true,
+            //     target: transform,
+            //     duration: 4.4f
+            // );
             
-            // Callout 4: Pullback
-            TextCalloutManager.Instance.ShowCallout(
-                rockPosition + Vector3.up * 0.5f,
-                $"Pullback: {springDistance:F2}m",
-                followTarget: true,
-                target: transform,
-                duration: 4.2f
-            );
+            // // Callout 4: Pullback
+            // TextCalloutManager.Instance.ShowCallout(
+            //     rockPosition + Vector3.up * 0.5f,
+            //     $"Pullback: {springDistance:F2}m",
+            //     followTarget: true,
+            //     target: transform,
+            //     duration: 4.2f
+            // );
             
             Debug.Log($"[Rock_Flick] Normal shot: 4 stacked callouts displayed at {rockPosition}");
         }

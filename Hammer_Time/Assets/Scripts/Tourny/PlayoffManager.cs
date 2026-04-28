@@ -35,8 +35,8 @@ public class PlayoffManager : MonoBehaviour
 
 	private void Start()
 	{
-		gsp = FindObjectOfType<GameSettingsPersist>();
-		cm = FindObjectOfType<CareerManager>();
+		gsp = FindFirstObjectByType<GameSettingsPersist>();
+		cm = FindFirstObjectByType<CareerManager>();
 
         playoffs.SetActive(true);
 
@@ -85,17 +85,72 @@ public class PlayoffManager : MonoBehaviour
 
 	public void SetSeeding(int numberOfTeams)
     {
-
 		//pTeams = 4;
 		playoffTeams = new Team[9];
 		heading.text = "Page Playoff";
 
 		playoffRound++;
+		
+		// Check if this is a two-pool tournament
+		if (tm.isTwoPoolTournament)
+		{
+			Debug.Log("[PlayoffManager] Two-pool tournament - selecting top 2 from each pool");
+			
+			// Separate teams by pool
+			List<Team_List> poolA = new List<Team_List>();
+			List<Team_List> poolB = new List<Team_List>();
+			
+			foreach (var teamEntry in tm.teamList)
+			{
+				if (teamEntry.team.poolId == 0)
+					poolA.Add(teamEntry);
+				else if (teamEntry.team.poolId == 1)
+					poolB.Add(teamEntry);
+			}
+			
+			// Sort each pool separately
+			poolA.Sort();
+			poolB.Sort();
+			
+			// Take top 2 from each pool and assign seeding
+			// Seeding: 1A (rank 1), 1B (rank 2), 2A (rank 3), 2B (rank 4)
+			if (poolA.Count >= 2 && poolB.Count >= 2)
+			{
+				playoffTeams[0] = poolA[0].team;
+				playoffTeams[0].rank = 1;
+				
+				playoffTeams[1] = poolB[0].team;
+				playoffTeams[1].rank = 2;
+				
+				playoffTeams[2] = poolA[1].team;
+				playoffTeams[2].rank = 3;
+				
+				playoffTeams[3] = poolB[1].team;
+				playoffTeams[3].rank = 4;
+				
+				Debug.Log($"[PlayoffManager] Pool A Top 2: {poolA[0].team.name}, {poolA[1].team.name}");
+				Debug.Log($"[PlayoffManager] Pool B Top 2: {poolB[0].team.name}, {poolB[1].team.name}");
+				Debug.Log($"[PlayoffManager] Playoff seeding: 1-{playoffTeams[0].name}, 2-{playoffTeams[1].name}, 3-{playoffTeams[2].name}, 4-{playoffTeams[3].name}");
+			}
+			else
+			{
+				Debug.LogError("[PlayoffManager] Not enough teams in pools for playoffs!");
+			}
+		}
+		else
+		{
+			// Standard seeding - take top 4 teams
+			for (int i = 0; i < 4; i++)
+			{
+				playoffTeams[i] = tm.teamList[i].team;
+			}
+		}
+		
+		// Set up bracket display
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
 			if (i < 4)
             {
-				playoffTeams[i] = tm.teamList[i].team;
 				brackDisplay[i].name.text = playoffTeams[i].name;
 				brackDisplay[i].rank.text = playoffTeams[i].rank.ToString();
 			}
@@ -104,6 +159,7 @@ public class PlayoffManager : MonoBehaviour
 				playoffTeams[i] = tm.tTeamList.nullTeam;
             }
 		}
+		
 		tm.playoffRound = playoffRound;
 		SetPlayoffs();
 	}

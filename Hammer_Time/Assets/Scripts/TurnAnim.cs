@@ -96,7 +96,8 @@ public class TurnAnim : MonoBehaviour
     
     void Update()
     {
-        if (gm.rockList.Count != 0 && gm.rockCurrent < gm.rockList.Count)
+        // CRITICAL FIX: Check for negative rockCurrent (before first rock)
+        if (gm.rockList.Count != 0 && gm.rockCurrent >= 0 && gm.rockCurrent < gm.rockList.Count)
         {
             rock = gm.rockList[gm.rockCurrent].rock;
             bool inturn = rm.inturn;
