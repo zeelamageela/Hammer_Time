@@ -45,7 +45,11 @@ public class StorylineManager: MonoBehaviour
     private void Start()
     {
         cm = FindObjectOfType<CareerManager>();
-        skipTutorials = cm.inProgress;
+        skipTutorials = cm != null ? cm.inProgress : true;
+        if (cm == null)
+        {
+            Debug.Log("StorylineManager: No CareerManager found, skipping storyline progression.");
+        }
     }
 
     private void Update()

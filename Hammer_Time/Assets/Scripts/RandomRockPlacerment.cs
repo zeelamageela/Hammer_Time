@@ -2638,7 +2638,7 @@ public class RandomRockPlacerment : MonoBehaviour
             
         //ShotSelector(guardCount, shotSelector, houseCount, guardCounter, takeOutSelector, freezeSelector, shooter);
 
-        yield return new WaitUntil(() => placed = true);
+        yield return new WaitUntil(() => placed == true);
 
         yield return StartCoroutine(CompletePlacement());
     }

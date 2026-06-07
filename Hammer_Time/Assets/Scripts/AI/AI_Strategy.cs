@@ -1890,12 +1890,12 @@ public class AI_Strategy : MonoBehaviour
         {
             var house = GetHouseAnalysis();
             
-            Debug.LogError($"[UNIVERSAL DEFENSIVE] Leading {activeTeamScore}-{oppTeamScore}, opponent has {oppRocksInHouse} rocks!");
-            Debug.LogError($"[UNIVERSAL DEFENSIVE] FORCING REMOVAL BEFORE ANY STRATEGY!");
+            Debug.LogWarning($"[UNIVERSAL DEFENSIVE] Leading {activeTeamScore}-{oppTeamScore}, opponent has {oppRocksInHouse} rocks!");
+            Debug.LogWarning($"[UNIVERSAL DEFENSIVE] FORCING REMOVAL BEFORE ANY STRATEGY!");
             
             if (house.threatRock >= 0)
             {
-                Debug.LogError($"[UNIVERSAL DEFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
+                Debug.LogWarning($"[UNIVERSAL DEFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
                 
                 // Execute shot through ExecuteShot (will apply all enhancements)
                 ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
@@ -1909,12 +1909,12 @@ public class AI_Strategy : MonoBehaviour
         {
             var house = GetHouseAnalysis();
             
-            Debug.LogError($"[UNIVERSAL OFFENSIVE] Opponent has {oppRocksInHouse} rocks - TOO MANY!");
-            Debug.LogError($"[UNIVERSAL OFFENSIVE] FORCING REMOVAL even though trailing!");
+            Debug.LogWarning($"[UNIVERSAL OFFENSIVE] Opponent has {oppRocksInHouse} rocks - TOO MANY!");
+            Debug.LogWarning($"[UNIVERSAL OFFENSIVE] FORCING REMOVAL even though trailing!");
             
             if (house.threatRock >= 0)
             {
-                Debug.LogError($"[UNIVERSAL OFFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
+                Debug.LogWarning($"[UNIVERSAL OFFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
                 
                 // Execute shot through ExecuteShot (will apply all enhancements)
                 ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);

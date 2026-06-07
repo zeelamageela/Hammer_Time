@@ -2366,8 +2366,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1872185687}
   m_HandleRect: {fileID: 1872185686}
   m_Direction: 0
-  m_Value: 0.49999994
-  m_Size: 0.33677807
+  m_Value: 0.5
+  m_Size: 0.3367781
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10476,7 +10476,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 294809508}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a55f9ebbdca0435aa5e771acf3476da, type: 3}
   m_Name: 
@@ -14446,6 +14446,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6899141913651481762, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
   m_PrefabInstance: {fileID: 1333619049}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &411147647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411147645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ed63f97e222c44349d33a8c1f5095a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueCanvas: {fileID: 411147645}
+  nameText: {fileID: 1133365703}
+  dialogueText: {fileID: 1818454158}
+  continueButton: {fileID: 1333619054}
+  continueButtonText: {fileID: 34346417}
+  coachHead: {fileID: 1333619051}
+  announcerHead: {fileID: 1333619050}
+  typingSpeed: 0.09
+  skipTypingOnClick: 1
 --- !u!1 &412018067
 GameObject:
   m_ObjectHideFlags: 0
@@ -19864,7 +19885,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.96326, y: -473.52213}
+  m_AnchoredPosition: {x: 562.8199, y: -473.52213}
   m_SizeDelta: {x: 1125, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &556640676
@@ -20092,6 +20113,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &559313266
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -20110,6 +20132,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -20131,9 +20155,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -20143,7 +20169,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &559558746
 GameObject:
@@ -26381,6 +26406,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e350b30b4f54c64905e065a2e37602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &697139215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 697139217}
+  - component: {fileID: 697139216}
+  m_Layer: 0
+  m_Name: TutorialSequenceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &697139216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697139215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39402ca5f601948d3a56be3f714b60cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialSequenceManager
+  availableTutorials:
+  - {fileID: 11400000, guid: e495af1a761524dd98f7fa59899ae97b, type: 2}
+  skipButton: {fileID: 0}
+  spotlightOverlay: {fileID: 0}
+  cutoutMask: {fileID: 0}
+  enableTutorials: 1
+--- !u!4 &697139217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697139215}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.16321, y: -24.7272, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &698283904
 GameObject:
   m_ObjectHideFlags: 0
@@ -37614,6 +37689,7 @@ RectTransform:
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &974104640
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -37632,6 +37708,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -37653,9 +37731,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 25
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -37665,7 +37745,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &978981983
 GameObject:
@@ -43793,6 +43872,7 @@ RectTransform:
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &1146988377
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -43811,6 +43891,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -43832,9 +43914,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 25
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -43844,7 +43928,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1148052520
 GameObject:
@@ -46105,6 +46188,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -49070,6 +49154,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6899141912123469867, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6899141912123469868, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -296
@@ -49092,7 +49180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6899141913651481762, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6899141913651481764, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_UiScaleMode
@@ -49114,6 +49202,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 2047974762}
+    - target: {fileID: 6899141913651481765, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6899141913651481765, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
       propertyPath: m_SortingOrder
       value: 15
@@ -49229,7 +49321,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6899141913651481762, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 411147647}
   m_SourcePrefab: {fileID: 100100000, guid: 339809e49b19b49ebab8b39025833ec1, type: 3}
 --- !u!1 &1333619050 stripped
 GameObject:
@@ -56010,7 +56105,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xpm: {fileID: 794133085}
   em: {fileID: 794133088}
+  dialogueCanvas: {fileID: 0}
   dialogueGO: {fileID: 411147645}
+  dialogueData: {fileID: 0}
   coachGreen: {fileID: 1671106720}
   mode: 
   buttonOutline_pressed: {fileID: 21300000, guid: 7f07ba02bcc9f485e8bbc2e565832dd2, type: 3}
@@ -56052,6 +56149,17 @@ MonoBehaviour:
     crowdDensity: 1
     trophyWon: 0
     image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Club Night
     id: 51
     location: St Thomas, Ontario
@@ -56069,6 +56177,17 @@ MonoBehaviour:
     crowdDensity: 1
     trophyWon: 0
     image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Underground Gambling Den
     id: 52
     location: Undisclosed Location
@@ -56086,6 +56205,17 @@ MonoBehaviour:
     crowdDensity: 9
     trophyWon: 0
     image: {fileID: 21300000, guid: c476ea5f4d8bb4c4f99351f55aa3e327, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   tournies:
   - name: The Fall Rookie Invitational
     id: 0
@@ -56104,6 +56234,17 @@ MonoBehaviour:
     crowdDensity: 1
     trophyWon: 0
     image: {fileID: 21300000, guid: 72b4b1869a73c4c308673e96736873af, type: 3}
+    introDialogue: {fileID: 11400000, guid: bf733da510b7b40349a8923c6e7840c7, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Jim Jumbo Memorial Spiel
     id: 1
     location: Victoria, British Columbia
@@ -56121,6 +56262,17 @@ MonoBehaviour:
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: f54650d5d08e043fba8adab150ffd60e, type: 3}
+    introDialogue: {fileID: 11400000, guid: a5ec0c64f3a2443d99d713062ae3beaa, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The LA Open
     id: 2
     location: Vernon, California
@@ -56138,6 +56290,17 @@ MonoBehaviour:
     crowdDensity: 6
     trophyWon: 0
     image: {fileID: 21300000, guid: 4c09d9b15d3d34f998b847e7cf7e040e, type: 3}
+    introDialogue: {fileID: 11400000, guid: bc1f0c09dabcd43a5ad7bffdae9d8118, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Tallinn International Challenger
     id: 3
     location: Tallinn, Estonia
@@ -56155,6 +56318,17 @@ MonoBehaviour:
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: d4a80d2e2f9a440ffbdd2ec569681d52, type: 3}
+    introDialogue: {fileID: 11400000, guid: fd48d5dccb957411daa665d5c633d308, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Big Ben's Big Cash $piel
     id: 4
     location: Las Vegas, Nevada
@@ -56172,6 +56346,17 @@ MonoBehaviour:
     crowdDensity: 6
     trophyWon: 0
     image: {fileID: 21300000, guid: 83597c05776474aa498c7dcb31bfd182, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Match Town Trophy
     id: 5
     location: Jonkoping, Sweden
@@ -56189,6 +56374,17 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: b27633245ad274ee4b3c8c4a6ad84e12, type: 3}
+    introDialogue: {fileID: 11400000, guid: 288827670a2334885a41bf9ac886b8ab, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Tony's Pizza Cup
     id: 6
     location: Laval, Quebec
@@ -56206,6 +56402,17 @@ MonoBehaviour:
     crowdDensity: 3
     trophyWon: 0
     image: {fileID: 21300000, guid: 7e6ce9392961d4cfdae852046741f05c, type: 3}
+    introDialogue: {fileID: 11400000, guid: 748fa4b3d202448b6b2f5c7d03b6806c, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: T. Rox Jurassic Classic
     id: 7
     location: Drumheller, Alberta
@@ -56223,6 +56430,17 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 2e1d4969a9b9946c19b0d9c910b7a773, type: 3}
+    introDialogue: {fileID: 11400000, guid: 16f2c0c528326409ab46a6c12bfbfd4f, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Federal Bank Challenge
     id: 8
     location: Swift Current, Saskatchewan
@@ -56240,6 +56458,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: ce049ef1f65514869af722cb123ba768, type: 3}
+    introDialogue: {fileID: 11400000, guid: 0b7153f81806846c7a5c623ac2758aa7, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Spring Ring
     id: 9
     location: Spokane, Washington
@@ -56257,6 +56486,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: 32cf04c85935b466baa61d00e2d08554, type: 3}
+    introDialogue: {fileID: 11400000, guid: d9fe607c853aa4358a2abc5e3d796e71, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Easter Spiel
     id: 10
     location: Kenora, Ontario
@@ -56274,6 +56514,17 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 607156c430dbd4a758813693106e4c57, type: 3}
+    introDialogue: {fileID: 11400000, guid: 7a58e6ed2e1774560998680df1d60155, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Festival Cup
     id: 11
     location: Okinawa, Japan
@@ -56291,6 +56542,17 @@ MonoBehaviour:
     crowdDensity: 9
     trophyWon: 0
     image: {fileID: 21300000, guid: 88c8027b28f46425db57c8c27fe85a09, type: 3}
+    introDialogue: {fileID: 11400000, guid: 16f2c0c528326409ab46a6c12bfbfd4f, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   tourQual: []
   tour:
   - name: World Tour - Hokkaido Curling Classic
@@ -56310,6 +56572,17 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: 09b0d24f22d8e444eba1c97fe80aeffb, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: World Tour - The Swiss Cup
     id: 21
     location: Basel, Switzerland
@@ -56327,6 +56600,17 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e77c87378ad473db5afb025de146d9, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: World Tour - The Prague Classic
     id: 22
     location: Prague, Czechia
@@ -56344,6 +56628,17 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: d169872e45ba54ec7a4e6fea70c3eab7, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: World Tour - The Hat Classic
     id: 23
     location: Medicine Hat, Alberta
@@ -56361,6 +56656,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: f8db048751b754f4cb5ba6f317000690, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: World Tour - The US Open
     id: 24
     location: Blaine, Minnesota
@@ -56378,6 +56684,17 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e1f242e99de4f23b724bd280852357, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: World Tour - The Masters
     id: 25
     location: Oakville, Ontario
@@ -56395,6 +56712,17 @@ MonoBehaviour:
     crowdDensity: 10
     trophyWon: 0
     image: {fileID: 21300000, guid: 7970555c681a74e769c97ad31b7bd01b, type: 3}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   provQual:
   - name: Tour Qualifier #1
     id: 50
@@ -56413,6 +56741,17 @@ MonoBehaviour:
     crowdDensity: 3
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
+    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Tour Qualifier #2
     id: 51
     location: St Petersburg, Russia
@@ -56430,6 +56769,17 @@ MonoBehaviour:
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
+    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Tour Qualifier #3
     id: 52
     location: Sherwood Park, Alberta
@@ -56447,6 +56797,17 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
+    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Last Chance Tour Qualifier
     id: 53
     location: Karlstad, Sweden
@@ -56464,6 +56825,17 @@ MonoBehaviour:
     crowdDensity: 7
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
+    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   majors:
   - name: The US Open
     id: 2
@@ -56482,6 +56854,17 @@ MonoBehaviour:
     crowdDensity: 6
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Player's Championship
     id: 7
     location: Drumheller, Alberta
@@ -56499,6 +56882,17 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The National
     id: 8
     location: Swift Current, Saskatchewan
@@ -56516,6 +56910,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Ken's Highly Legal Cash Game
     id: 9
     location: Off the coast of Japan
@@ -56533,6 +56938,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   singleKOs:
   - name: The Tallinn International Challenger
     id: 3
@@ -56551,6 +56967,17 @@ MonoBehaviour:
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: d4a80d2e2f9a440ffbdd2ec569681d52, type: 3}
+    introDialogue: {fileID: 11400000, guid: fd48d5dccb957411daa665d5c633d308, type: 2}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Big Ben's Big Cash $piel
     id: 4
     location: Las Vegas, Nevada
@@ -56568,6 +56995,17 @@ MonoBehaviour:
     crowdDensity: 6
     trophyWon: 0
     image: {fileID: 21300000, guid: 83597c05776474aa498c7dcb31bfd182, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Match Town Trophy
     id: 5
     location: Jonkoping, Sweden
@@ -56585,6 +57023,17 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: b27633245ad274ee4b3c8c4a6ad84e12, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: Federal Bank Challenge
     id: 8
     location: Swift Current, Saskatchewan
@@ -56602,6 +57051,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: ce049ef1f65514869af722cb123ba768, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: The Spring Ring
     id: 9
     location: Spokane, Washington
@@ -56619,6 +57079,17 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: 32cf04c85935b466baa61d00e2d08554, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   tourChampionship:
     name: The Tour Championship
     id: 100
@@ -56637,6 +57108,17 @@ MonoBehaviour:
     crowdDensity: 11
     trophyWon: 0
     image: {fileID: 21300000, guid: 41015e0142a1b411fba68e02a0aad37f, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   provChampionship:
     name: The World Championship
     id: 101
@@ -56655,6 +57137,17 @@ MonoBehaviour:
     crowdDensity: 9
     trophyWon: 0
     image: {fileID: 21300000, guid: 68a8362e0b33044809af6b49f27c9747, type: 3}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   panel1Tournies: []
   panel2Tournies: []
   activeTournies:
@@ -56675,6 +57168,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -56692,6 +57196,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -56709,6 +57224,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   panelGOs:
   - {fileID: 1705527687}
   - {fileID: 1369229442}
@@ -56731,6 +57257,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   currentTourny:
     name: 
     id: 0
@@ -56749,6 +57286,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   green:
   - {r: 0.12941177, g: 0.29803923, b: 0.12941177, a: 1}
   - {r: 0.5254902, g: 0.94509804, b: 0.25490198, a: 1}
@@ -69427,6 +69975,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -69450,6 +70000,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -69471,6 +70023,7 @@ MonoBehaviour:
   gameInProgress: 0
   justFinishedGame: 0
   inEndMenu: 0
+  tournyIntroShown: 0
   teams: []
   playoffTeams: []
   cgp: []
@@ -69487,6 +70040,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80359,6 +80914,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80379,6 +80936,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80399,6 +80958,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80419,6 +80980,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80439,6 +81002,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80459,6 +81024,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80479,6 +81046,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80499,6 +81068,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80519,6 +81090,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80539,6 +81112,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80559,6 +81134,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80579,6 +81156,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80599,6 +81178,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80619,6 +81200,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80639,6 +81222,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80659,6 +81244,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80679,6 +81266,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80699,6 +81288,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80719,6 +81310,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80739,6 +81332,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80759,6 +81354,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80779,6 +81376,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80799,6 +81398,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80819,6 +81420,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80839,6 +81442,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80859,6 +81464,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80879,6 +81486,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80899,6 +81508,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80919,6 +81530,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80939,6 +81552,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80959,6 +81574,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80979,6 +81596,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -80999,6 +81618,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81019,6 +81640,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81039,6 +81662,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81059,6 +81684,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81079,6 +81706,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81099,6 +81728,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81119,6 +81750,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81139,6 +81772,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81165,6 +81800,8 @@ MonoBehaviour:
     tournamentEarnings: 0
     rank: 0
     nextOpp: 
+    poolId: 0
+    pointDifferential: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -81198,6 +81835,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   cgp: []
   tournies: []
   tour: []
@@ -81220,6 +81868,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   - name: 
     id: 0
     location: 
@@ -81237,6 +81896,17 @@ MonoBehaviour:
     crowdDensity: 0
     trophyWon: 0
     image: {fileID: 0}
+    introDialogue: {fileID: 0}
+    topSeedsDialogue: {fileID: 0}
+    bottomSeedsDialogue: {fileID: 0}
+    qfDialogue: {fileID: 0}
+    sfDialogue: {fileID: 0}
+    finalDialogue: {fileID: 0}
+    firstDialogue: {fileID: 0}
+    secondDialogue: {fileID: 0}
+    thirdDialogue: {fileID: 0}
+    notInPlayoffsDialogue: {fileID: 0}
+    loseDialogue: {fileID: 0}
   activeTournies: []
   coachDialogue: 
   qualDialogue: 
@@ -94979,3 +95649,4 @@ SceneRoots:
   - {fileID: 794133084}
   - {fileID: 5988287463674546519}
   - {fileID: 993131276609913283}
+  - {fileID: 697139217}

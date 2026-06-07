@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
+  m_Name: Menu-Play
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
+  stepName: Play
+  dialogue: {fileID: 11400000, guid: e53d0bd74750f4e2180bd342ed88e604, type: 2}
+  conditionType: 2
+  waitDuration: 1
+  targetGameState: 0
+  rockIndex: -1
+  objectsToHighlight: []
+  aimCirclePrefab: {fileID: 0}
+  useSpotlight: 1
+  spotlightTarget: {fileID: 0}
+  manualCutoutPosition: {x: 0, y: 0}
+  manualCutoutSize: {x: 1125, y: 120}
+  spotlightPadding: 10
+  pauseGame: 0
+  timeScale: 1
+  onStepStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onStepEnd:
+    m_PersistentCalls:
+      m_Calls: []

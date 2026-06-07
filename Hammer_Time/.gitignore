@@ -1,0 +1,44 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity auto-generated solution/project files
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Mono crash dumps
+mono_crash.mem.*.blob
+mono_crash.*.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.swp
+
+# Session / AI handoff files (keep only SESSION_HANDOFF.md)
+*.ps1
+temp_*.txt
+APPLY_THIS_FIX.txt

@@ -4011,8 +4011,8 @@ public class AI_Target : MonoBehaviour
         
         if (bestScore <= 0f)
         {
-            Debug.LogError("[AI_Target] ❌ ALL REMOVAL OPTIONS FAILED - This should NOT happen with rocks in house!");
-            Debug.LogError($"[AI_Target] Context: {rocksInHouse} rocks in house, opponent likely scoring!");
+            Debug.LogWarning("[AI_Target] ALL REMOVAL OPTIONS FAILED - using scoring fallback.");
+            Debug.LogWarning($"[AI_Target] Context: {rocksInHouse} rocks in house, opponent likely scoring.");
             
             // CRITICAL: If ALL physics-based removal failed, something is VERY wrong
             // Strategy said "RemoveThreat" but we can't remove anything

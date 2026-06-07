@@ -16,7 +16,10 @@ public class TournySelector : MonoBehaviour
     CareerManager cm;
     public XPManager xpm;
     public EquipmentManager em;
+    [Header("Dialogue")]
+    public Canvas dialogueCanvas;
     public GameObject dialogueGO;
+    public DialogueData dialogueData;
     public DialogueTrigger coachGreen;
 
     public string mode;
@@ -114,6 +117,7 @@ public class TournySelector : MonoBehaviour
     public void SetUp()
     {
 
+        GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         SponsorManager pm = FindFirstObjectByType<SponsorManager>();
 
         Debug.Log("TSel cm.week is " + cm.week);
@@ -150,7 +154,17 @@ public class TournySelector : MonoBehaviour
             
             // CRITICAL FIX: Apply any pending completion data that was stored during load
             // This handles the case where LoadCareer() was called from CareerSettings (before TournySelector existed)
+            // If the save was created before teams were included in the JSON format,
+            // teams will be an empty array. Rebuild from pool so tournaments can proceed.
+            if (cm.teams == null || cm.teams.Length == 0)
+            {
+                Debug.LogWarning("[TournySelector] Teams missing from save — rebuilding from team pool");
+                cm.RebuildTeamsFromPool();
+            }
+
+            Debug.Log("[TournySelector] Calling ApplyPendingCompletionData() to sync any stored completion IDs");
             cm.ApplyPendingCompletionData(this);
+            Debug.Log("[TournySelector] ApplyPendingCompletionData() returned - verifying CM arrays and pending state");
             
             // CRITICAL FIX: After loading, sync completion status from CareerManager arrays
             // This handles the case where we just returned from a tournament
@@ -158,7 +172,7 @@ public class TournySelector : MonoBehaviour
             SyncCompletionFromCareerManager();
             
             Debug.Log($"[TournySelector] SetUp() - Checking tournament arrays AFTER loading/syncing:");
-            
+
             // DEBUG: Check state after loading
             if (tournies != null)
             {
@@ -172,6 +186,9 @@ public class TournySelector : MonoBehaviour
             }
         }
 
+        // Safety: ensure any pending completion data gets applied again before UI builds
+        Debug.Log("[TournySelector] Final sync before opening team menu: invoking ApplyPendingCompletionData() as safety");
+        cm.ApplyPendingCompletionData(this);
         teamMenu.TeamMenuOpen();
         pm.SetUp();
 
@@ -182,7 +199,7 @@ public class TournySelector : MonoBehaviour
 
         SetActiveTournies();
     }
-    
+
     /// <summary>
     /// Syncs tournament completion status from CareerManager arrays to TournySelector arrays
     /// This is needed when TournySelector is recreated after a tournament

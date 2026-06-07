@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
+  m_Name: Ann-LA Intro 1
+  m_EditorClassIdentifier: 
+  characterName: Announcer
+  dialogueLines:
+  - "Lights, Camera, and curling action in the bright lights of Hollywood!  16 teams
+    will fight for the prestigious LA Open title!\t"
+  - Team {TEAM_NAME} will look for their big break in sunny Southern California!
+  pauseGame: 1
+  autoAdvanceDelay: 0
+  useTextReplacement: 1

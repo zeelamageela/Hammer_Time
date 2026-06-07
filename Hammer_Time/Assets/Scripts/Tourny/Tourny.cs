@@ -26,4 +26,17 @@ public class Tourny
 
     public bool trophyWon;
     public Sprite image;
+
+    [Header("Dialogue")]
+    public DialogueData introDialogue;
+    public DialogueData topSeedsDialogue;
+    public DialogueData bottomSeedsDialogue;
+    public DialogueData qfDialogue;
+    public DialogueData sfDialogue;
+    public DialogueData finalDialogue;
+    public DialogueData firstDialogue;
+    public DialogueData secondDialogue;
+    public DialogueData thirdDialogue;
+    public DialogueData notInPlayoffsDialogue;
+    public DialogueData loseDialogue;
 }

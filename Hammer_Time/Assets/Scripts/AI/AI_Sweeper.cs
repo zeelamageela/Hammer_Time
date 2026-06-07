@@ -1294,7 +1294,7 @@ public class AI_Sweeper : MonoBehaviour
         }
         else if (actualTrajectory.Count < 100)
         {
-            Debug.LogError($"[Trajectory Verification] ACTUAL trajectory only has {actualTrajectory.Count} points but NO COLLISION! Velocity might have hit zero prematurely!");
+            Debug.LogWarning($"[Trajectory Verification] ACTUAL trajectory only has {actualTrajectory.Count} points but NO COLLISION. Velocity might have hit zero prematurely.");
         }
 
         // Wait until rock crosses hog line (Y > -16.15)

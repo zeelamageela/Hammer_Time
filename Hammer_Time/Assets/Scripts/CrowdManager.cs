@@ -37,41 +37,60 @@ public class CrowdManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gsp = FindObjectOfType<GameSettingsPersist>();
-        cm = FindObjectOfType<CareerManager>();
+        gsp = FindAnyObjectByType<GameSettingsPersist>();
+        cm = FindAnyObjectByType<CareerManager>();
 
-        crowdDensity = cm.currentTourny.crowdDensity;
-        if (cm.currentTourny.BG == 0)
-            ClubCrowd();
-        else if (cm.currentTourny.BG == 1)
+        int bgIndex = 0;
+        if (cm != null && cm.currentTourny != null)
         {
-            RinkCrowd();
+            crowdDensity = cm.currentTourny.crowdDensity;
+            bgIndex = cm.currentTourny.BG;
         }
-        else if (cm.currentTourny.BG == 2)
+        else if (gsp != null)
         {
-            BleacherCrowd();
+            crowdDensity = gsp.crowdDensity;
+            bgIndex = gsp.bg;
         }
-        else if (cm.currentTourny.BG == 3)
+        else
         {
-            if (Random.Range(0f, 1f) < 0.5f)
-                StadiumCrowd(false);
-            else
-                StadiumCrowd(true);
-
-            if (crowdDensity > 5)
-                cameraMen.SetActive(true);
-            else
-                cameraMen.SetActive(false);
-        }
-        else if (cm.currentTourny.BG == 4)
-        {
-            OutdoorCrowd();
-        }
-        else if (cm.currentTourny.BG == 5)
-        {
-            DenCrowd();
+            // Fallback defaults for tutorial / standalone scenes
+            crowdDensity = 5;
+            bgIndex = 0;
         }
 
+        switch (bgIndex)
+        {
+            case 0:
+                ClubCrowd();
+                break;
+            case 1:
+                RinkCrowd();
+                break;
+            case 2:
+                BleacherCrowd();
+                break;
+            case 3:
+                if (Random.Range(0f, 1f) < 0.5f)
+                    StadiumCrowd(false);
+                else
+                    StadiumCrowd(true);
+
+                if (crowdDensity > 5)
+                    cameraMen.SetActive(true);
+                else if (cameraMen != null)
+                    cameraMen.SetActive(false);
+                break;
+            case 4:
+                OutdoorCrowd();
+                break;
+            case 5:
+                DenCrowd();
+                break;
+            default:
+                Debug.LogWarning($"CrowdManager: Unsupported bgIndex {bgIndex}, defaulting to ClubCrowd.");
+                ClubCrowd();
+                break;
+        }
     }
 
     // Update is called once per frame

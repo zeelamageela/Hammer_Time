@@ -418,11 +418,10 @@ public class CareerManager : MonoBehaviour
                     Debug.Log($"[CareerManager] Restored flags from save - gameInProgress: {gsp.gameInProgress}, tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}, inEndMenu: {gsp.inEndMenu}");
                     Debug.Log($"[CareerManager] Save data had - gameInProgress: {saveData.currentGameState.gameInProgress}, tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
                     
-                    // Restore full game state if game was in progress OR if we're in end menu
-                    if (saveData.currentGameState.gameInProgress || saveData.currentGameState.inEndMenu)
-                    {
-                        RestoreGameState(saveData.currentGameState, gsp);
-                    }
+                    // Always restore saved game state whenever it exists.
+                    // This covers tournament games that are set up but not yet actively in progress,
+                    // as well as games loaded from the End Menu or mid-game resumes.
+                    RestoreGameState(saveData.currentGameState, gsp);
                 }
                 catch (Exception flagEx)
                 {
@@ -877,10 +876,19 @@ public class CareerManager : MonoBehaviour
     TeamMenu teamSel = null,
     TournySelector tSel = null,
     StorylineManager slm = null,
-    EquipmentManager em = null, 
+    EquipmentManager em = null,
     SponsorManager sm = null
 )
     {
+        // Never write career save data during the tutorial — it would overwrite valid career state
+        // with tutorial-specific game state (wrong team names, rock counts, etc.)
+        TutorialGameManager tutGM = TutorialGameManager.Instance;
+        if (tutGM != null && tutGM.isTutorialGame)
+        {
+            Debug.Log("[CareerManager] SaveCareer skipped: tutorial mode active");
+            return;
+        }
+
         // Auto-find if not provided
         if (gsp == null) gsp = FindFirstObjectByType<GameSettingsPersist>();
         if (teamSel == null) teamSel = FindFirstObjectByType<TeamMenu>();
@@ -952,6 +960,81 @@ public class CareerManager : MonoBehaviour
     {
         return CareerSaveService.GetSaveInfo();
     }
+
+    private bool NormalizeGameStateForSave(GameSettingsPersist gsp, out string reason)
+    {
+        reason = string.Empty;
+
+        if (gsp == null)
+        {
+            reason = "GameSettingsPersist is null";
+            return false;
+        }
+
+        gsp.ends = Mathf.Clamp(gsp.ends, 1, 16);
+        gsp.rocks = Mathf.Clamp(gsp.rocks, 1, 8);
+        gsp.endCurrent = Mathf.Clamp(gsp.endCurrent, 0, gsp.ends);
+        gsp.rockCurrent = Mathf.Clamp(gsp.rockCurrent, -1, 15);
+        gsp.redScore = Mathf.Max(0, gsp.redScore);
+        gsp.yellowScore = Mathf.Max(0, gsp.yellowScore);
+
+        if (string.IsNullOrWhiteSpace(gsp.redTeamName) && gsp.redTeam != null && !string.IsNullOrWhiteSpace(gsp.redTeam.name))
+            gsp.redTeamName = gsp.redTeam.name;
+
+        if (string.IsNullOrWhiteSpace(gsp.yellowTeamName) && gsp.yellowTeam != null && !string.IsNullOrWhiteSpace(gsp.yellowTeam.name))
+            gsp.yellowTeamName = gsp.yellowTeam.name;
+
+        if (string.IsNullOrWhiteSpace(gsp.redTeamName))
+            gsp.redTeamName = "Red";
+
+        if (string.IsNullOrWhiteSpace(gsp.yellowTeamName))
+            gsp.yellowTeamName = "Yellow";
+
+        if (gsp.score == null)
+        {
+            gsp.score = new Vector2Int[gsp.ends];
+            for (int i = 0; i < gsp.score.Length; i++)
+                gsp.score[i] = new Vector2Int(0, 0);
+        }
+        else if (gsp.score.Length < gsp.ends)
+        {
+            Vector2Int[] expanded = new Vector2Int[gsp.ends];
+            for (int i = 0; i < expanded.Length; i++)
+                expanded[i] = i < gsp.score.Length ? gsp.score[i] : new Vector2Int(0, 0);
+            gsp.score = expanded;
+        }
+
+        if (gsp.gameInProgress)
+        {
+            if (string.IsNullOrWhiteSpace(gsp.redTeamName) || string.IsNullOrWhiteSpace(gsp.yellowTeamName))
+            {
+                reason = "team names are still empty";
+                return false;
+            }
+
+            if (gsp.rockCurrent > 15)
+            {
+                reason = $"invalid rockCurrent {gsp.rockCurrent}";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private bool IsTutorialStateStableForSave(GameSettingsPersist gsp)
+    {
+        TutorialGameManager tutorialGameManager = TutorialGameManager.Instance;
+        if (tutorialGameManager == null || !tutorialGameManager.isTutorialGame)
+            return true;
+
+        bool hasTeamNames = !string.IsNullOrWhiteSpace(gsp.redTeamName) && !string.IsNullOrWhiteSpace(gsp.yellowTeamName);
+        bool hasValidRocks = gsp.rocks >= 1 && gsp.rocks <= 8;
+        bool hasValidRockCurrent = gsp.rockCurrent >= -1 && gsp.rockCurrent <= 15;
+        bool hasScoreArray = gsp.score != null && gsp.score.Length >= gsp.ends;
+
+        return hasTeamNames && hasValidRocks && hasValidRockCurrent && hasScoreArray;
+    }
     
     /// <summary>
     /// New JSON-based save
@@ -973,7 +1056,18 @@ public class CareerManager : MonoBehaviour
             // This ensures we save justFinishedGame and tournyInProgress flags even after game ends
             if (gsp != null && (gsp.gameInProgress || gsp.tournyInProgress))
             {
-                Debug.Log($"[CareerManager] Saving game state - gameInProgress:{gsp.gameInProgress}, tournyInProgress:{gsp.tournyInProgress}, score array length:{(gsp.score != null ? gsp.score.Length : 0)}");
+                // Normalize all game state fields before saving so we never write garbage values.
+                // This runs every save; it corrects bad values in-place rather than blocking the save.
+                NormalizeGameStateForSave(gsp, out _);
+
+                // CRITICAL: Validate rocks value before saving
+                if (gsp.rocks <= 0 || gsp.rocks > 8)
+                {
+                    Debug.LogWarning($"[CareerManager] Invalid gsp.rocks={gsp.rocks} detected before save! This should be 1-8. Correcting to 8.");
+                    gsp.rocks = 8;
+                }
+                
+                Debug.Log($"[CareerManager] Saving game state - gameInProgress:{gsp.gameInProgress}, tournyInProgress:{gsp.tournyInProgress}, rocks:{gsp.rocks}, score array length:{(gsp.score != null ? gsp.score.Length : 0)}");
                 
                 saveData.currentGameState = new GameStateData
                 {
@@ -981,10 +1075,11 @@ public class CareerManager : MonoBehaviour
                     tournyInProgress = gsp.tournyInProgress,
                     justFinishedGame = gsp.justFinishedGame,  // CRITICAL: Save justFinishedGame flag!
                     inEndMenu = gsp.inEndMenu,  // CRITICAL: Save inEndMenu flag!
+                    tournyIntroShown = gsp.tournyIntroShown,  // Save whether intro has been shown
                     isTournyGame = gsp.tourny,
                     ends = gsp.ends,
                     currentEnd = gsp.endCurrent,
-                    rocks = gsp.rocks,
+                    rocks = gsp.rocks > 0 ? gsp.rocks : 8,  // Safety: Never save 0 or negative rocks
                     currentRock = gsp.rockCurrent,
                     redHammer = gsp.redHammer,
                     aiYellow = gsp.aiYellow,
@@ -1053,7 +1148,18 @@ public class CareerManager : MonoBehaviour
     
     public void SetupTourny(TournySelector tSel, GameSettingsPersist gsp)
     {
-        currentTourny = tSel.currentTourny;
+        if (tSel != null)
+        {
+            currentTourny = tSel.currentTourny;
+        }
+
+        if (currentTourny == null)
+        {
+            Debug.LogError("[CareerManager] SetupTourny called without a current tournament selected");
+            return;
+        }
+
+        gsp.tournyIntroShown = false;  // Reset flag for new tournament
         Shuffle(teams);
         currentTournyTeams = new Team[currentTourny.teams];
 
@@ -1147,6 +1253,56 @@ public class CareerManager : MonoBehaviour
         Debug.Log("Player Team is " + playerTeamIndex);
         gsp.teams = currentTournyTeams;
         SaveCareer();
+    }
+
+    public void PrepareFirstTournyForWeekOne(GameSettingsPersist gsp)
+    {
+        if (gsp == null)
+            gsp = FindFirstObjectByType<GameSettingsPersist>();
+
+        if (gsp == null)
+        {
+            Debug.LogError("[CareerManager] Cannot prepare first week tournament - GameSettingsPersist missing");
+            return;
+        }
+
+        if (currentTourny == null)
+        {
+            if (tournies != null && tournies.Length > 0)
+            {
+                currentTourny = tournies[0];
+                Debug.Log($"[CareerManager] Selected first tournament for week 1: {currentTourny.name} (ID {currentTourny.id})");
+            }
+            else
+            {
+                Debug.LogError("[CareerManager] No tournament definitions available to start week 1");
+                Debug.LogError("[CareerManager] Aborting PrepareFirstTournyForWeekOne because the tournament list has not been initialized yet");
+                gsp.tournyInProgress = false;
+                gsp.tourny = false;
+                return;
+            }
+        }
+
+        gsp.tourny = true;
+        gsp.tournyInProgress = true;
+        gsp.KO1 = currentTourny.ko1;
+        gsp.KO3 = currentTourny.ko3;
+        gsp.cashGame = currentTourny.championship ? false : gsp.cashGame;
+        gsp.numberOfTeams = currentTourny.teams;
+        gsp.prize = currentTourny.prizeMoney;
+        gsp.draw = 0;
+        gsp.playoffRound = 0;
+        gsp.tournyEarnings = 0;
+        gsp.tournyCash = 0;
+        gsp.tournyRecord = Vector2.zero;
+
+        if (gsp.ends <= 0)
+            gsp.ends = 8;
+        if (gsp.rocks <= 0)
+            gsp.rocks = 8;
+
+        SetupTourny(null, gsp);
+        Debug.Log("[CareerManager] Prepared week 1 direct tournament state and synced team list");
     }
 
     public void TournyResults()
@@ -1989,6 +2145,70 @@ public class CareerManager : MonoBehaviour
         Debug.Log($"[CareerManager] Updated player team strength: {playerTeamData.strength} (after equipment/upgrades)");
     }
     
+    /// <summary>
+    /// Rebuilds the teams and tourTeams arrays from teamPool without resetting any career progress.
+    /// Called when an old save file loaded successfully but had no team data.
+    /// </summary>
+    public void RebuildTeamsFromPool()
+    {
+        if (teamPool == null || teamPool.Length < totalTeams)
+        {
+            Debug.LogError($"[CareerManager] RebuildTeamsFromPool: teamPool too small ({teamPool?.Length ?? 0} < {totalTeams})");
+            return;
+        }
+
+        Debug.LogWarning("[CareerManager] RebuildTeamsFromPool: old save had no team data — rebuilding from pool");
+
+        Shuffle(teamPool);
+        teams = new Team[totalTeams];
+        provRankList = new List<Standings_List>();
+
+        System.Random rand = new System.Random();
+        string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron" };
+        string[] lastNames  = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King" };
+
+        for (int i = 0; i < totalTeams; i++)
+        {
+            teams[i] = teamPool[i];
+            teams[i].player = false;
+            teams[i].players = new List<Player>();
+
+            for (int p = 0; p < 4; p++)
+            {
+                teams[i].players.Add(new Player
+                {
+                    id = p,
+                    name = firstNames[rand.Next(firstNames.Length)] + " " + lastNames[rand.Next(lastNames.Length)],
+                    weight = 50, aim = 50, finesse = 50,
+                    sweepStrength = 50, sweepEnduro = 50, sweepCohesion = 50
+                });
+            }
+
+            teams[i].UpdateTeamSkillsFromPlayers();
+            provRankList.Add(new Standings_List(teams[i]));
+        }
+
+        // Restore player team identity
+        teams[0].name = teamName;
+        teams[0].player = true;
+        playerTeamIndex = teams[0].id;
+
+        if (activePlayers != null && activePlayers.Length > 0)
+        {
+            teams[0].players = new List<Player>(activePlayers);
+            if (playerCharacter != null)
+                teams[0].players.Add(playerCharacter);
+            teams[0].UpdateTeamSkillsFromPlayers();
+        }
+
+        // Rebuild tour teams slice
+        tourTeams = new Team[totalTourTeams];
+        for (int i = 0; i < totalTourTeams; i++)
+            tourTeams[i] = teams[i];
+
+        Debug.Log($"[CareerManager] RebuildTeamsFromPool complete: {teams.Length} teams, player={teams[0].name}");
+    }
+
     #region JSON SAVE/LOAD CONVERSION METHODS
     
     /// <summary>
@@ -2556,15 +2776,30 @@ public class CareerManager : MonoBehaviour
         activeTournies = new Tourny[data.activeTournamentIDs.Count];
         // Tournament arrays (tournies, tour, prov) are restored by TournySelector
         
-        // Dialogue Flags
-        coachDialogue = data.dialogueFlags.coachDialogue;
-        qualDialogue = data.dialogueFlags.qualDialogue;
-        reviewDialogue = data.dialogueFlags.reviewDialogue;
-        introDialogue = data.dialogueFlags.introDialogue;
-        helpDialogue = data.dialogueFlags.helpDialogue;
-        strategyDialogue = data.dialogueFlags.strategyDialogue;
-        storyDialogue = data.dialogueFlags.storyDialogue;
-        storyBlock = data.dialogueFlags.storyBlockIndex;
+        // Dialogue Flags — null-guard for saves created before DialogueFlagsData was added
+        if (data.dialogueFlags != null)
+        {
+            coachDialogue = data.dialogueFlags.coachDialogue;
+            qualDialogue = data.dialogueFlags.qualDialogue;
+            reviewDialogue = data.dialogueFlags.reviewDialogue;
+            introDialogue = data.dialogueFlags.introDialogue;
+            helpDialogue = data.dialogueFlags.helpDialogue;
+            strategyDialogue = data.dialogueFlags.strategyDialogue;
+            storyDialogue = data.dialogueFlags.storyDialogue;
+            storyBlock = data.dialogueFlags.storyBlockIndex;
+        }
+        else
+        {
+            coachDialogue = new bool[0];
+            qualDialogue = new bool[0];
+            reviewDialogue = new bool[0];
+            introDialogue = new bool[0];
+            helpDialogue = new bool[0];
+            strategyDialogue = new bool[0];
+            storyDialogue = new bool[0];
+            storyBlock = 0;
+            Debug.LogWarning("[CareerManager] dialogueFlags missing from save (old format) — initialized to defaults");
+        }
         
         // Trophies
         allTimeTrophyList = new List<bool>(data.allTimeTrophies);
@@ -3044,16 +3279,54 @@ public class CareerManager : MonoBehaviour
             // Note: tourny and loadGame CAN be restored safely
             gsp.tourny = gameState.isTournyGame;
             gsp.loadGame = true; // Signal to GameManager to load the saved game
+            gsp.tournyIntroShown = gameState.tournyIntroShown;  // Restore intro shown flag
             
             Debug.Log($"[CareerManager] Preserved workflow flags - gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}");
             
             // CRITICAL: Validate and restore game settings
             gsp.ends = gameState.ends > 0 ? gameState.ends : 8;
             gsp.endCurrent = Mathf.Clamp(gameState.currentEnd, 0, gsp.ends);
-            gsp.rocks = gameState.rocks > 0 ? gameState.rocks : 8;
-            // CRITICAL FIX: Don't clamp rockCurrent to gsp.rocks (player's manual rocks)!
-            // rockCurrent can be 0-15 (total 16 rocks), not limited to gsp.rocks setting
-            gsp.rockCurrent = Mathf.Clamp(gameState.currentRock, -1, 15);
+            
+            // CRITICAL FIX: Preserve gsp.rocks if gameState.rocks is invalid (0 or negative)
+            // This can happen if the save data is corrupted or from an older save version
+            int restoredRocks = gameState.rocks;
+            if (restoredRocks <= 0 || restoredRocks > 8)
+            {
+                // Invalid rocks value - try to preserve existing gsp.rocks or default to 8
+                int existingRocks = gsp.rocks;
+                if (existingRocks > 0 && existingRocks <= 8)
+                {
+                    restoredRocks = existingRocks;
+                    Debug.LogWarning($"[CareerManager] Invalid gameState.rocks={gameState.rocks}, preserving existing gsp.rocks={existingRocks}");
+                }
+                else
+                {
+                    restoredRocks = 8;
+                    Debug.LogWarning($"[CareerManager] Invalid gameState.rocks={gameState.rocks} and gsp.rocks={existingRocks}, defaulting to 8");
+                }
+            }
+            gsp.rocks = restoredRocks;
+            Debug.Log($"[CareerManager] Restored rocks={gsp.rocks} from save (gameState.rocks was {gameState.rocks})");
+            
+            // CRITICAL FIX: When starting a new end, recalculate rockCurrent based on gsp.rocks
+            // rockCurrent = 16 - (rocks * 2) is the starting rock index for each end
+            // If saved rockCurrent is 0 or < expected starting position, we're starting a new end
+            int expectedStartRock = 16 - (gsp.rocks * 2);
+            int savedRockCurrent = gameState.currentRock;
+            
+            if (savedRockCurrent >= 0 && savedRockCurrent < expectedStartRock)
+            {
+                // Saved value suggests we're at start of end - recalculate for this rock count
+                gsp.rockCurrent = expectedStartRock;
+                Debug.Log($"[CareerManager] Recalculated rockCurrent={gsp.rockCurrent} for {gsp.rocks} rocks/team (saved was {savedRockCurrent})");
+            }
+            else
+            {
+                // Mid-end or valid position - restore as-is
+                gsp.rockCurrent = Mathf.Clamp(savedRockCurrent, -1, 15);
+                Debug.Log($"[CareerManager] Restored rockCurrent={gsp.rockCurrent} from save (mid-end continuation)");
+            }
+            
             gsp.redHammer = gameState.redHammer;
             gsp.aiYellow = gameState.aiYellow;
             gsp.aiRed = gameState.aiRed;

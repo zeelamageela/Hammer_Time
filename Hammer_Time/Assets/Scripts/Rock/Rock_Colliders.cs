@@ -321,7 +321,8 @@ void OnEnable()
             outOfPlay = true;
             inPlay = false;
             Debug.Log("collider boards");
-            StartCoroutine(OutOfPlay());
+            if (isActiveAndEnabled && gameObject.activeInHierarchy)
+                StartCoroutine(OutOfPlay());
             rockSounds[2].enabled = true;
             HapticController.Play(sideHap);
         }

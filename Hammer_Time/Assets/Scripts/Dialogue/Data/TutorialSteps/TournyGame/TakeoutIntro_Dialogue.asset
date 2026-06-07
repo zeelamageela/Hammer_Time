@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
+  m_Name: TakeoutIntro_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  characterName: Coach
+  dialogueLines:
+  - Alright, if we wanna stay in this game, we're gonna have to throw a TAKEOUT.
+  - A TAKEOUT shot removes an opponent's stone from play.
+  pauseGame: 0
+  autoAdvanceDelay: 0
+  useTextReplacement: 1

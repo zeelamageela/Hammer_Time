@@ -9,7 +9,6 @@ public class MainMenu : MonoBehaviour
 {
     public AudioManager am;
     public GameSettingsPersist gsp;
-    public GameObject contButton;
 
     [Header("High Score Display")]
     public Text topPlayerName;
@@ -33,7 +32,6 @@ public class MainMenu : MonoBehaviour
         // }
         // else
         // {
-            contButton.SetActive(false);
             Debug.Log("[MainMenu] No save file - Continue button disabled");
         // }
 
@@ -132,9 +130,10 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        am = FindObjectOfType<AudioManager>();
+        am = Object.FindAnyObjectByType<AudioManager>();
         SceneManager.LoadScene("AIGame");
-        am.Play("Theme");
+        if (am != null)
+            am.Play("Theme");
     }
 
     public void QuitGame()
@@ -149,17 +148,20 @@ public class MainMenu : MonoBehaviour
     }
     public void Tutorial()
     {
-        gsp.tutorial = true;
-        am = FindObjectOfType<AudioManager>();
-        SceneManager.LoadScene("Tutorial_1");
-        am.Play("Theme");
+        if (am == null)
+            am = Object.FindAnyObjectByType<AudioManager>();
+
+        SceneManager.LoadScene("TutorialGame");
+        if (am != null)
+            am.Play("Theme");
     }
 
     public void AIGame()
     {
-        am = FindObjectOfType<AudioManager>();
+        am = Object.FindAnyObjectByType<AudioManager>();
         SceneManager.LoadScene("AIGame_2");
-        am.Play("Theme");
+        if (am != null)
+            am.Play("Theme");
     }
 
     public void Continue()
@@ -172,7 +174,7 @@ public class MainMenu : MonoBehaviour
             gsp.careerLoad = true; // Signal to CareerSettings to auto-load
         }
         
-        am = FindObjectOfType<AudioManager>();
+        am = Object.FindAnyObjectByType<AudioManager>();
         if (am != null)
         {
             am.Play("Theme");

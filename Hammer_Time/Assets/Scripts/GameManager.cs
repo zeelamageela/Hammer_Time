@@ -75,6 +75,22 @@ public class GameManager : MonoBehaviour
 
     public DialogueManager coachGreen;
 
+    [Header("Dialogue")]
+    [Tooltip("Dialogue to show at tournament intro")]
+    public Canvas dialogueCanvas;
+    public DialogueData Coach_Welcome;
+    public DialogueData[] Announcer_Welcome;
+    public DialogueData[] Announcer_Winning_By_1;
+    public DialogueData[] Announcer_Losing_By_1;
+    public DialogueData[] Announcer_Winning_By_Many;
+    public DialogueData[] Announcer_Losing_By_Many;
+    public DialogueData[] Announcer_Winning_By_1_Late;
+    public DialogueData[] Announcer_Losing_By_1_Late;
+    public DialogueData[] Announcer_Winning_By_Many_Late;
+    public DialogueData[] Announcer_Losing_By_Many_Late;
+    public DialogueData[] Announcer_Won;
+    public DialogueData[] Announcer_Lost;
+
     public GameObject targetButtons;
     public GameObject targetAi;
     public GameObject targetPlayer;
@@ -124,10 +140,68 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SetupGame());
     }
 
+    private string InferTeamNameFromRockIndex(int rockIndex)
+    {
+        if (string.IsNullOrWhiteSpace(redTeamName) || string.IsNullOrWhiteSpace(yellowTeamName))
+            return string.Empty;
+
+        int notHammer = redHammer ? 1 : 0;
+        int i = rockIndex + 1;
+        bool isYellowRock = (i % 2) == notHammer;
+        return isYellowRock ? yellowTeamName : redTeamName;
+    }
+
+    private void SyncRockTeamNamesIfMissing()
+    {
+        if (rockList == null)
+            return;
+
+        foreach (Rock_List rockEntry in rockList)
+        {
+            if (rockEntry == null || rockEntry.rockInfo == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(rockEntry.rockInfo.teamName))
+            {
+                rockEntry.rockInfo.teamName = InferTeamNameFromRockIndex(rockEntry.rockInfo.rockIndex);
+            }
+
+            if (rockEntry.rock != null && !string.IsNullOrWhiteSpace(rockEntry.rockInfo.teamName))
+            {
+                string expectedPrefix = rockEntry.rockInfo.teamName + " ";
+                if (!rockEntry.rock.name.StartsWith(expectedPrefix))
+                {
+                    rockEntry.rock.name = rockEntry.rockInfo.teamName + " " + rockEntry.rockInfo.rockNumber;
+                }
+            }
+        }
+    }
+
     #region "Setup and Reset"
     IEnumerator SetupGame()
     {
-        gsp = FindFirstObjectByType<GameSettingsPersist>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+        // If running standalone (tutorial) scene, create a minimal runtime GSP to avoid NREs
+        if (gsp == null)
+        {
+            Debug.Log("GameManager: No GameSettingsPersist found, creating runtime instance with tutorial defaults.");
+            GameObject gspGO = new GameObject("GameSettingsPersist_Runtime");
+            gsp = gspGO.AddComponent<GameSettingsPersist>();
+            gsp.tutorial = true;
+            gsp.ends = 8;
+            gsp.rocks = 8;
+            gsp.redHammer = true;
+            gsp.aiYellow = true;
+            gsp.aiRed = false;
+            gsp.mixed = false;
+            gsp.debug = false;
+            gsp.loadGame = false;
+            gsp.bg = 0;
+            gsp.redTeamName = "Newbie";
+            gsp.yellowTeamName = "Opponent";
+            gsp.score = new Vector2Int[gsp.ends + 1];
+            for (int i = 0; i < gsp.score.Length; i++) gsp.score[i] = new Vector2Int(0, 0);
+        }
         //gHUD.SetHUD(redRock);
         Debug.Log("[GameManager] Game Start - loadGame: " + (gsp.loadGame ? "TRUE" : "FALSE"));
 
@@ -150,6 +224,7 @@ public class GameManager : MonoBehaviour
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
+        Debug.Log($"[GameManager] After load/setup: rocksPerTeam={rocksPerTeam}, gsp.rocks={gsp.rocks}, rockCurrent={rockCurrent}");
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
         //rockTotal = 16;
@@ -239,7 +314,8 @@ public class GameManager : MonoBehaviour
 
         gHUD.SetHammer(redHammer);
 
-        cm.ui.enabled = true;
+        if (cm != null && cm.ui != null)
+            cm.ui.enabled = true;
 
         if (endCurrent > 1)
         {
@@ -248,6 +324,11 @@ public class GameManager : MonoBehaviour
                 //gHUD.ScoringPanel();
             }
         }
+        // else
+        // {
+        //     // First end, show intro dialogue
+        //     yield return StartCoroutine(TournyIntro());
+        // }
         if (gsp.loadGame)
         {
             StartCoroutine(LoadGame());
@@ -262,9 +343,27 @@ public class GameManager : MonoBehaviour
 
             yield return new WaitUntil(() => rockList.Count == 16);
 
-            // Only show intro for tournament games (not quick/cash/debug games) on the first end
-            if (endCurrent == 0 && !gsp.cashGame && !gsp.debug)
+            // TUTORIAL HOOK: Replace simulation loop with pre-configured rock placement
+            TutorialGameManager tutorialGM = TutorialGameManager.Instance;
+            if (tutorialGM != null && tutorialGM.isTutorialGame)
+            {
+                yield return StartCoroutine(tutorialGM.RepositionPreConfiguredRocks());
+                rockCurrent--;  // Step back so CheckScore → NextTurn lands on first player rock
+                rockBar.ResetBar(redHammer);
+                rockBar.EndUpdate(yellowScore, redScore);
+                yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
+                rm.rrp.placed = true;
+                StartCoroutine(CheckScore());
+                yield break;
+            }
+
+            // Show intro for tournament games on the first played game in the tournament
+            if (!gsp.tournyIntroShown && !gsp.cashGame && !gsp.debug)
+            {
                 yield return StartCoroutine(TournyIntro());
+                gsp.tournyIntroShown = true;  // Mark intro as shown
+                Debug.Log("[GameManager] Tourny intro shown and flag set");
+            }
 
             if (rockCurrent > 0)
             {
@@ -465,6 +564,24 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(SetupRocks());
         yield return new WaitUntil(() => rockList.Count == 16);
 
+        // Show announcer dialogue at the START of the end (before placing rocks)
+        // Skip on end 1 (endCurrent == 0) as that's the very first end with no score yet
+        if (endCurrent >= 1 && !gsp.cashGame && !gsp.debug)
+        {
+            DialogueData selectedDialogue = SelectDialogueBasedOnGameState();
+            if (selectedDialogue != null && DialogueController.Instance != null)
+            {
+                // Enable dialogue canvas before showing
+                if (dialogueCanvas != null)
+                    dialogueCanvas.enabled = true;
+                    
+                DialogueController.Instance.Show(selectedDialogue);
+                // Wait for dialogue to complete before continuing
+                yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
+                Debug.Log("[GameManager] Announcer dialogue shown at start of end " + endCurrent);
+            }
+        }
+
         if (rockCurrent > 0)
         {
             if (gsp.aiRed)
@@ -565,6 +682,7 @@ public class GameManager : MonoBehaviour
         
         boardCollider.enabled = false;
         launchCollider.enabled = false;
+        
         //StartCoroutine(SaveGame());
         StartCoroutine(RedTurn());
     }
@@ -614,6 +732,14 @@ public class GameManager : MonoBehaviour
                 gHUD.Message(redTeamName + "'s Last Rock");
             if (rockCurrent >= 15)
                 gHUD.Message("Last Rock");
+
+            // TUTORIAL HOOK: Fire tutorial sequence for this player rock
+            TutorialGameManager tutGM = TutorialGameManager.Instance;
+            if (tutGM != null && tutGM.isTutorialGame && tutGM.ShouldTriggerTutorial(rockCurrent, out string redTutorialId))
+            {
+                if (TutorialSequenceManager.Instance != null)
+                    TutorialSequenceManager.Instance.PlaySequence(redTutorialId);
+            }
         }
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
@@ -747,7 +873,6 @@ public class GameManager : MonoBehaviour
         launchCollider.enabled = false;
 
         sm.SetupSweepers(false);
-
         StartCoroutine(YellowTurn());
     }
 
@@ -797,6 +922,14 @@ public class GameManager : MonoBehaviour
                 gHUD.Message(yellowTeamName + "'s Last Rock");
             if (rockCurrent >= 15)
                 gHUD.Message("Last Rock");
+
+            // TUTORIAL HOOK: Fire tutorial sequence for this player rock
+            TutorialGameManager tutGM = TutorialGameManager.Instance;
+            if (tutGM != null && tutGM.isTutorialGame && tutGM.ShouldTriggerTutorial(rockCurrent, out string yellowTutorialId))
+            {
+                if (TutorialSequenceManager.Instance != null)
+                    TutorialSequenceManager.Instance.PlaySequence(yellowTutorialId);
+            }
         }
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
@@ -1150,11 +1283,24 @@ public class GameManager : MonoBehaviour
 
             int houseScore = 0;
             string winningTeamName = houseList[0].rockInfo.teamName;
+
+            if (string.IsNullOrWhiteSpace(winningTeamName))
+            {
+                winningTeamName = InferTeamNameFromRockIndex(houseList[0].rockInfo.rockIndex);
+                houseList[0].rockInfo.teamName = winningTeamName;
+                Debug.LogWarning($"[GameManager.Scoring] winningTeamName was empty. Inferred '{winningTeamName}' from rock index {houseList[0].rockInfo.rockIndex}.");
+            }
+
             bool stopCounting = false;
 
             // lets loop the list
             for (int i = 0; i < houseList.Count; i++)
             {
+                if (string.IsNullOrWhiteSpace(houseList[i].rockInfo.teamName))
+                {
+                    houseList[i].rockInfo.teamName = InferTeamNameFromRockIndex(houseList[i].rockInfo.rockIndex);
+                }
+
                 if (!stopCounting)
                 {
                     // lets only count until the team changes
@@ -1239,7 +1385,11 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[GameManager.Scoring] ERROR: winningTeamName '{winningTeamName}' doesn't match redTeamName '{redTeamName}' or yellowTeamName '{yellowTeamName}'!");
+                Debug.LogWarning($"[GameManager.Scoring] winningTeamName '{winningTeamName}' doesn't match redTeamName '{redTeamName}' or yellowTeamName '{yellowTeamName}'. Falling back to red team score update to avoid losing score state.");
+                gsp.score[endCurrent] = new Vector2Int(houseScore, 0);
+                redScore += houseScore;
+                redHammer = false;
+                gHUD.SetHammer(redHammer);
             }
 
             //endScoreRed[endCurrent] = redScore;
@@ -1287,12 +1437,13 @@ public class GameManager : MonoBehaviour
                 gHUD.ScoringUI(yellowTeamName, " ", 0);
                 gHUD.SetHammer(redHammer);
             }
+
         }
 
         rockBar.EndUpdate(yellowScore, redScore);
-
+        
+        // Wait for player to acknowledge scoring before continuing to next end
         yield return StartCoroutine(WaitForClick());
-
 
         if (endCurrent < endTotal)
         {
@@ -1442,10 +1593,33 @@ public class GameManager : MonoBehaviour
         //gsp.loadGame = false;
         yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
 
-        // Show intro only for tournament games (not quick/cash/debug games) 
-        // and only on first game (playoffRound < 2) or when not loading from save
-        if (gsp.playoffRound < 2 && !gsp.cashGame && !gsp.debug)
+        // Show intro for tournament games on the first played game in the tournament
+        // This handles loading saved games where intro hasn't been shown yet
+        if (!gsp.tournyIntroShown && !gsp.cashGame && !gsp.debug)
+        {
             yield return StartCoroutine(TournyIntro());
+            gsp.tournyIntroShown = true;  // Mark intro as shown
+            Debug.Log("[GameManager] Tourny intro shown and flag set (loaded game)");
+        }
+
+        // Show announcer dialogue at the START of the end (before placing rocks)
+        // Skip on end 1 (endCurrent == 0) as that's the very first end with no score yet
+        // This covers the "continue from End Menu" flow
+        if (endCurrent >= 1 && !gsp.cashGame && !gsp.debug && (gsp.rockPos == null || gsp.rockPos.Length == 0))
+        {
+            DialogueData selectedDialogue = SelectDialogueBasedOnGameState();
+            if (selectedDialogue != null && DialogueController.Instance != null)
+            {
+                // Enable dialogue canvas before showing
+                if (dialogueCanvas != null)
+                    dialogueCanvas.enabled = true;
+                    
+                DialogueController.Instance.Show(selectedDialogue);
+                // Wait for dialogue to complete before continuing
+                yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
+                Debug.Log("[GameManager] Announcer dialogue shown at start of loaded end " + endCurrent);
+            }
+        }
 
         // CRITICAL FIX: Only place rocks if we have positions to restore
         // When continuing from End Menu to start a fresh end, rockPos will be null/empty
@@ -1721,28 +1895,43 @@ public class GameManager : MonoBehaviour
 
     IEnumerator TournyIntro()
     {
-        CareerManager careerM = FindObjectOfType<CareerManager>();
+        CareerManager careerM = FindFirstObjectByType<CareerManager>();
+        if (careerM != null)
+            Debug.Log("ID is " + careerM.currentTourny.id);
 
-        Debug.Log("ID is " + careerM.currentTourny.id);
-
+        // Check if tourny intro components exist
+        if (tournyIntroGO == null)
+        {
+            Debug.LogWarning("[TournyIntro] tournyIntroGO is null, skipping intro");
+            yield break;
+        }
+        
         tournyIntroGO.SetActive(true);
 
-        if (careerM.currentTourny.id < 50 | careerM.currentTourny.id == 100 | careerM.currentTourny.id == 101)
+        // Only set animator if it exists and has a controller
+        if (tournyIntro != null && tournyIntro.runtimeAnimatorController != null)
         {
-            tournyIntro.SetInteger("Tourny", careerM.currentTourny.id);
-
-            yield return new WaitForEndOfFrame();
-
-            //tournyIntroGO.SetActive(true);
-        }
-        else if (careerM.currentTourny.id >= 50 & careerM.currentTourny.id < 54)
-        {
-            tournyIntro.SetInteger("Tourny", 50);
-            yield return new WaitForEndOfFrame();
+            if (careerM.currentTourny.id < 50 | careerM.currentTourny.id == 100 | careerM.currentTourny.id == 101)
+            {
+                tournyIntro.SetInteger("Tourny", careerM.currentTourny.id);
+                yield return new WaitForEndOfFrame();
+            }
+            else if (careerM.currentTourny.id >= 50 & careerM.currentTourny.id < 54)
+            {
+                tournyIntro.SetInteger("Tourny", 50);
+                yield return new WaitForEndOfFrame();
+            }
         }
         else
-            tournyIntroGO.SetActive(false);
-
+        {
+            Debug.LogWarning("[TournyIntro] Animator is null or has no controller, showing intro without animation");
+            // Show intro without animation, or just skip it
+            if (careerM.currentTourny.id >= 50 && careerM.currentTourny.id < 100)
+            {
+                tournyIntroGO.SetActive(false);
+            }
+        }
+        
         // Wait for 6 seconds OR click to skip
         float elapsed = 0f;
         while (elapsed < 6f && !Input.GetMouseButtonDown(0))
@@ -1757,6 +1946,123 @@ public class GameManager : MonoBehaviour
         }
 
         tournyIntroGO.SetActive(false);
+        
+        // Show tournament intro dialogue
+        if (DialogueController.Instance != null)
+        {
+            DialogueData introToShow = null;
+            
+            // Try to use tournament-specific intro dialogue first
+            if (careerM.currentTourny != null && careerM.currentTourny.introDialogue != null)
+            {
+                introToShow = careerM.currentTourny.introDialogue;
+                Debug.Log($"[GameManager] Showing tournament-specific intro for {careerM.currentTourny.name}");
+            }
+            // Fallback to generic Coach_Welcome if no tournament intro assigned
+            else if (Coach_Welcome != null)
+            {
+                introToShow = Coach_Welcome;
+                Debug.Log("[GameManager] No tournament intro assigned, using Coach_Welcome");
+            }
+            
+            // Show the dialogue and wait for it to complete
+            if (introToShow != null)
+            {
+                // Enable dialogue canvas before showing
+                if (dialogueCanvas != null)
+                    dialogueCanvas.enabled = true;
+                    
+                DialogueController.Instance.Show(introToShow);
+                yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
+                Debug.Log("[GameManager] Intro dialogue completed");
+            }
+            else
+            {
+                Debug.LogWarning("[GameManager] No intro dialogue available (neither tournament intro nor Coach_Welcome assigned)");
+            }
+        }
+        else
+        {
+            Debug.LogError("[GameManager] DialogueController not found in scene! Add a GameObject with DialogueController component.");
+        }
+    }
+    
+    /// <summary>
+    /// Selects dialogue based on current game state (winning/losing, margin, timing)
+    /// </summary>
+    private DialogueData SelectDialogueBasedOnGameState()
+    {
+        // Determine if player is red or yellow
+        bool playerIsRed = !aiTeamRed && aiTeamYellow;
+        int playerScore = playerIsRed ? redScore : yellowScore;
+        int opponentScore = playerIsRed ? yellowScore : redScore;
+        int scoreDifference = playerScore - opponentScore;
+        
+        // Define "late game" as more than halfway through total ends
+        bool isLateGame = endCurrent > (endTotal / 2);
+        
+        // Select dialogue based on score and timing
+        if (scoreDifference > 0)
+        {
+            // Player is winning
+            if (scoreDifference == 1)
+            {
+                // Winning by 1
+                if (isLateGame && Announcer_Winning_By_1_Late != null && Announcer_Winning_By_1_Late.Length > 0)
+                {
+                    return Announcer_Winning_By_1_Late[Random.Range(0, Announcer_Winning_By_1_Late.Length)];
+                }
+                else if (!isLateGame && Announcer_Winning_By_1 != null && Announcer_Winning_By_1.Length > 0)
+                {
+                    return Announcer_Winning_By_1[Random.Range(0, Announcer_Winning_By_1.Length)];
+                }
+            }
+            else
+            {
+                // Winning by 2+
+                if (isLateGame && Announcer_Winning_By_Many_Late != null && Announcer_Winning_By_Many_Late.Length > 0)
+                {
+                    return Announcer_Winning_By_Many_Late[Random.Range(0, Announcer_Winning_By_Many_Late.Length)];
+                }
+                else if (!isLateGame && Announcer_Winning_By_Many != null && Announcer_Winning_By_Many.Length > 0)
+                {
+                    return Announcer_Winning_By_Many[Random.Range(0, Announcer_Winning_By_Many.Length)];
+                }
+            }
+        }
+        else if (scoreDifference < 0)
+        {
+            // Player is losing
+            int deficit = Mathf.Abs(scoreDifference);
+            
+            if (deficit == 1)
+            {
+                // Losing by 1
+                if (isLateGame && Announcer_Losing_By_1_Late != null && Announcer_Losing_By_1_Late.Length > 0)
+                {
+                    return Announcer_Losing_By_1_Late[Random.Range(0, Announcer_Losing_By_1_Late.Length)];
+                }
+                else if (!isLateGame && Announcer_Losing_By_1 != null && Announcer_Losing_By_1.Length > 0)
+                {
+                    return Announcer_Losing_By_1[Random.Range(0, Announcer_Losing_By_1.Length)];
+                }
+            }
+            else
+            {
+                // Losing by 2+
+                if (isLateGame && Announcer_Losing_By_Many_Late != null && Announcer_Losing_By_Many_Late.Length > 0)
+                {
+                    return Announcer_Losing_By_Many_Late[Random.Range(0, Announcer_Losing_By_Many_Late.Length)];
+                }
+                else if (!isLateGame && Announcer_Losing_By_Many != null && Announcer_Losing_By_Many.Length > 0)
+                {
+                    return Announcer_Losing_By_Many[Random.Range(0, Announcer_Losing_By_Many.Length)];
+                }
+            }
+        }
+        
+        // Tied or no appropriate dialogue - return null to use fallback
+        return null;
     }
     #endregion
 }

@@ -27,9 +27,11 @@ public class TeamManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cm = FindFirstObjectByType<CareerManager>();
-        gsp = FindFirstObjectByType<GameSettingsPersist>();
-        if (gsp.tourny)
+        cm = FindObjectOfType<CareerManager>();
+        gsp = FindObjectOfType<GameSettingsPersist>();
+
+        // If running in tutorial/standalone scenes, avoid dereferencing null career or gsp
+        if (gsp != null && gsp.tourny && cm != null)
         {
             Shuffle(teamRed);
             Shuffle(teamYellow);
@@ -37,14 +39,8 @@ public class TeamManager : MonoBehaviour
             teamRedColour = gsp.redTeamColour;
             teamYellowColour = gsp.yellowTeamColour;
 
-            //if (gsp.week < 5)
-            //    aiStats = 5;
-            //else if (gsp.week < 10)
-            //    aiStats = 7;
-            //else
-                aiStats = 10;
-            Debug.Log("Ai Stats are " + aiStats + " in Week " + cm.week);
-
+            aiStats = 10;
+            Debug.Log("Ai Stats are " + aiStats + " in Week " + (cm != null ? cm.week.ToString() : "N/A"));
         }
         else
         {
@@ -96,6 +92,21 @@ public class TeamManager : MonoBehaviour
 
         if (aiTurn)
         {
+            // No CareerManager in tutorial/standalone — use GSP yellow team stats directly
+            if (cm == null)
+            {
+                int stat = 50;
+                if (gsp != null && gsp.yellowTeam != null && gsp.yellowTeam.players != null && gsp.yellowTeam.players.Count > 0)
+                    stat = gsp.yellowTeam.players[0].sweepStrength;
+                sweeperL.name = "AI Sweeper Left";
+                sweeperR.name = "AI Sweeper Right";
+                sweeperT.name = "AI Skip";
+                sweeperL.sweepStrength.SetBaseValue(stat);  sweeperR.sweepStrength.SetBaseValue(stat);  sweeperT.sweepStrength.SetBaseValue(stat);
+                sweeperL.sweepEndurance.SetBaseValue(stat); sweeperR.sweepEndurance.SetBaseValue(stat); sweeperT.sweepEndurance.SetBaseValue(stat);
+                sweeperL.sweepCohesion.SetBaseValue(stat);  sweeperR.sweepCohesion.SetBaseValue(stat);  sweeperT.sweepCohesion.SetBaseValue(stat);
+                return;
+            }
+
             // AI's turn - they're shooting, so we need AI stats for their sweepers
             // Find opponent team's stats
             Team opponentTeam = null;
@@ -207,6 +218,21 @@ public class TeamManager : MonoBehaviour
         }
         else
         {
+            // No CareerManager in tutorial/standalone — use GSP red team stats directly
+            if (cm == null)
+            {
+                int stat = 45;
+                if (gsp != null && gsp.redTeam != null && gsp.redTeam.players != null && gsp.redTeam.players.Count > 0)
+                    stat = gsp.redTeam.players[0].sweepStrength;
+                sweeperL.name = "Player Sweeper Left";
+                sweeperR.name = "Player Sweeper Right";
+                sweeperT.name = "Player Skip";
+                sweeperL.sweepStrength.SetBaseValue(stat);  sweeperR.sweepStrength.SetBaseValue(stat);  sweeperT.sweepStrength.SetBaseValue(stat);
+                sweeperL.sweepEndurance.SetBaseValue(stat); sweeperR.sweepEndurance.SetBaseValue(stat); sweeperT.sweepEndurance.SetBaseValue(stat);
+                sweeperL.sweepCohesion.SetBaseValue(stat);  sweeperR.sweepCohesion.SetBaseValue(stat);  sweeperT.sweepCohesion.SetBaseValue(stat);
+                return;
+            }
+
             // Player's turn - determine which players are sweeping based on who's shooting
             // T-line sweeper is ALWAYS the skip (for player team, that's cm.playerCharacter at index 3)
 
@@ -280,6 +306,64 @@ public class TeamManager : MonoBehaviour
         }
     }
 
+    private void EnsureTeamData()
+    {
+        if (gsp == null)
+            return;
+
+        if (gsp.redTeam == null || gsp.redTeam.players == null || gsp.redTeam.players.Count < 4)
+        {
+            Debug.LogWarning("[TeamManager] Creating fallback red team data.");
+            gsp.redTeam = new Team
+            {
+                name = string.IsNullOrEmpty(gsp.redTeamName) ? "Newbie" : gsp.redTeamName,
+                player = true,
+                players = new List<Player>()
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                gsp.redTeam.players.Add(new Player
+                {
+                    id = i,
+                    name = i == 3 ? "Newbie Skip" : i == 0 ? "Newbie Lead" : i == 1 ? "Newbie Second" : "Newbie Third",
+                    weight = 45,
+                    finesse = 45,
+                    aim = 45,
+                    sweepStrength = 45,
+                    sweepEnduro = 45,
+                    sweepCohesion = 45
+                });
+            }
+        }
+
+        if (gsp.yellowTeam == null || gsp.yellowTeam.players == null || gsp.yellowTeam.players.Count < 4)
+        {
+            Debug.LogWarning("[TeamManager] Creating fallback yellow team data.");
+            string opponentName = string.IsNullOrEmpty(gsp.yellowTeamName) ? "Opponent" : gsp.yellowTeamName;
+            int statValue = gsp.aiYellow ? 100 : 45;
+            gsp.yellowTeam = new Team
+            {
+                name = opponentName,
+                player = false,
+                players = new List<Player>()
+            };
+            for (int i = 0; i < 4; i++)
+            {
+                gsp.yellowTeam.players.Add(new Player
+                {
+                    id = 100 + i,
+                    name = i == 3 ? opponentName + " Skip" : i == 0 ? opponentName + " Lead" : i == 1 ? opponentName + " Second" : opponentName + " Third",
+                    weight = statValue,
+                    finesse = statValue,
+                    aim = statValue,
+                    sweepStrength = statValue,
+                    sweepEnduro = statValue,
+                    sweepCohesion = statValue
+                });
+            }
+        }
+    }
+
     public void SetCharacter(int rockCurrent, bool redTurn)
     {
         // CRITICAL: Null safety checks for loaded games
@@ -288,6 +372,8 @@ public class TeamManager : MonoBehaviour
             Debug.LogError("[TeamManager] gsp is null!");
             return;
         }
+
+        EnsureTeamData();
         
         if (redTurn)
         {

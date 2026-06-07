@@ -54,9 +54,9 @@ public class CareerSettings : MonoBehaviour
 
     void Start()
     {
-        am = FindFirstObjectByType<AudioManager>();
-        cm = FindFirstObjectByType<CareerManager>();
-        gsp = FindFirstObjectByType<GameSettingsPersist>();
+        am = FindAnyObjectByType<AudioManager>();
+        cm = FindAnyObjectByType<CareerManager>();
+        gsp = FindAnyObjectByType<GameSettingsPersist>();
         gradient = new Gradient();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
@@ -114,7 +114,7 @@ public class CareerSettings : MonoBehaviour
 
     public void LoadToCM()
     {
-        cm = FindFirstObjectByType<CareerManager>();
+        cm = FindAnyObjectByType<CareerManager>();
         cm.LoadSettings();
         
         Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}, week: {cm.week}");
@@ -195,7 +195,7 @@ public class CareerSettings : MonoBehaviour
         }
         else
         {
-            // No tournament or game in progress - normal arena selector
+            // No tournament or game in progress - normal Arena Selector route
             Debug.Log("[CareerSettings] No tournament/game in progress ? Arena Selector");
             gsp.loadGame = false;
             gsp.gameInProgress = false;
@@ -272,8 +272,8 @@ public class CareerSettings : MonoBehaviour
 
     public void New()
     {
-        cm = FindFirstObjectByType<CareerManager>();
-        gsp = FindFirstObjectByType<GameSettingsPersist>();
+        cm = FindAnyObjectByType<CareerManager>();
+        gsp = FindAnyObjectByType<GameSettingsPersist>();
 
         // Delete existing save before starting new career
         if (cm.SaveFileExists())
@@ -302,13 +302,110 @@ public class CareerSettings : MonoBehaviour
         
         Debug.Log("[CareerSettings] New career - cleared all game state flags");
         
+        // Reset tutorial completion for new career
+        PlayerPrefs.DeleteKey("CompletedTutorials");
+        PlayerPrefs.Save();
+        Debug.Log("[CareerSettings] Reset tutorial completion for new career");
+        
         record = Vector2.zero;
-        week = 0;
+        week = 0;  // Must be 0 so TournySelector.SetUp() takes the new-career path (ClearAllCompletionFlags + NewSeason)
         season = 0;
         cm.cash = 1000f;
         cm.inProgress = false;
 
-        cm.inventoryID = null;
+        // Initialize player character (Skip) stats
+        if (cm.cStats == null)
+        {
+            cm.cStats = new CareerStats();
+        }
+        cm.cStats.weightAccuracy = 45;      // Rookie Skip starting stats
+        cm.cStats.finesseAccuracy = 45;
+        cm.cStats.aimAccuracy = 45;
+        cm.cStats.sweepStrength = 45;
+        cm.cStats.sweepEndurance = 45;
+        cm.cStats.sweepCohesion = 45;
+        cm.cStats.weightAccuracy = 45;
+        cm.cStats.aimAccuracy = 45;
+        cm.cStats.finesseAccuracy = 45;
+        
+        // Initialize player character object (Skip)
+        // Use playerPool sprite for visual representation
+        Sprite playerSprite = null;
+        if (cm.playerPool != null && cm.playerPool.Length > 3)
+        {
+            // Use index 3 sprite (indices 0-2 are used for team members)
+            playerSprite = cm.playerPool[3].image;
+        }
+        else if (cm.playerPool != null && cm.playerPool.Length > 0)
+        {
+            // Fallback to first sprite if pool is small
+            playerSprite = cm.playerPool[0].image;
+        }
+        
+        cm.playerCharacter = new Player
+        {
+            id = 999,  // Special ID for player character
+            name = cm.playerName,
+            image = playerSprite,
+            active = true,
+            weight = 45,
+            finesse = 45,
+            aim = 45,
+            sweepStrength = 45,
+            sweepEnduro = 45,
+            sweepCohesion = 45
+        };
+        
+        // Initialize team from playerPool (first 3 available players)
+        if (cm.playerPool != null && cm.playerPool.Length >= 3)
+        {
+            cm.activePlayers = new Player[3];
+            for (int i = 0; i < 3; i++)
+            {
+                // Clone from playerPool so changes don't affect the pool
+                cm.activePlayers[i] = new Player
+                {
+                    id = cm.playerPool[i].id,
+                    name = cm.playerPool[i].name,
+                    description = cm.playerPool[i].description,
+                    cost = cm.playerPool[i].cost,
+                    image = cm.playerPool[i].image,
+                    active = true,
+                    weight = cm.playerPool[i].weight,
+                    finesse = cm.playerPool[i].finesse,
+                    aim = cm.playerPool[i].aim,
+                    sweepStrength = cm.playerPool[i].sweepStrength,
+                    sweepEnduro = cm.playerPool[i].sweepEnduro,
+                    sweepCohesion = cm.playerPool[i].sweepCohesion
+                };
+            }
+            Debug.Log("[CareerSettings] Initialized team from playerPool");
+        }
+        else
+        {
+            Debug.LogWarning("[CareerSettings] playerPool not available, creating default team");
+            // Fallback: create basic team if playerPool isn't set up
+            cm.activePlayers = new Player[3];
+            for (int i = 0; i < 3; i++)
+            {
+                cm.activePlayers[i] = new Player
+                {
+                    id = i,
+                    name = i == 0 ? "Lead" : i == 1 ? "Second" : "Third",
+                    active = true,
+                    weight = 40,
+                    finesse = 40,
+                    aim = 40,
+                    sweepStrength = 40,
+                    sweepEnduro = 40,
+                    sweepCohesion = 40
+                };
+            }
+        }
+        
+        // Initialize default equipment (basic starter gear)
+        cm.activeEquipID = new int[] { 0, 30, 60, 90 };  // Handle, Head, Footwear, Apparel defaults
+        cm.inventoryID = new int[] { 0, 30, 60, 90 };    // Own the starter equipment
 
         load.SetActive(false);
         player.SetActive(true);

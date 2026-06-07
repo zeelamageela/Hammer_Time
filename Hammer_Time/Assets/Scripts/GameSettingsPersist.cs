@@ -65,6 +65,7 @@ public class GameSettingsPersist : MonoBehaviour
     public bool gameInProgress;
     public bool justFinishedGame;  // NEW: Flag to indicate a game just finished (vs loading between games)
     public bool inEndMenu;  // NEW: Flag to indicate we're viewing end menu (for save/load to end menu)
+    public bool tournyIntroShown;  // NEW: Flag to track if tournament intro has been shown for first played game
 
     public List<Team_List> teamList;
     public Team[] teams;

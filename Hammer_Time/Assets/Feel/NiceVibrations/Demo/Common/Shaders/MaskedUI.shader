@@ -1,4 +1,4 @@
-Shader "MoreMountains/MaskedUI"
+ok Shader "MoreMountains/MaskedUI"
 {
 	Properties
 	{

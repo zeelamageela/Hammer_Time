@@ -299,6 +299,7 @@ public class CareerSaveData
         public bool tournyInProgress;
         public bool justFinishedGame;  // NEW: Flag to indicate a game just finished
         public bool inEndMenu;  // NEW: Flag to indicate we're viewing end menu
+        public bool tournyIntroShown;  // NEW: Flag to track if tournament intro has been shown
         public bool isTournyGame;
         public int ends;
         public int currentEnd;

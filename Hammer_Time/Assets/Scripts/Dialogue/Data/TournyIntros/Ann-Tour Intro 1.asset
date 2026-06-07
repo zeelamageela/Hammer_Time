@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
+  m_Name: Ann-Tour Intro 1
+  m_EditorClassIdentifier: 
+  characterName: Announcer
+  dialogueLines:
+  - Tour points and big prizes are up for grabs this week!
+  - Team {TEAM_NAME} will be among the best in the world competing for a spot in
+    the Tour Championship.
+  - Let's get to the action!
+  pauseGame: 1
+  autoAdvanceDelay: 0
+  useTextReplacement: 1

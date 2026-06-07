@@ -118,14 +118,30 @@ public class SweeperManager : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (redTurn)
         {
-            sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
-            sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
-            sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
-            sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
+            if (sweeperRedL != null)
+                sweeperL = Instantiate(sweeperRedL, sweepSel.gameObject.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperRedL prefab is missing.");
+
+            if (sweeperRedR != null)
+                sweeperR = Instantiate(sweeperRedR, sweepSel.gameObject.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperRedR prefab is missing.");
+
+            if (sweeperRedTee != null)
+                sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperRedTee prefab is missing.");
+
+            if (sweeperYellowTee != null)
+                sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperYellowTee prefab is missing.");
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
 
-            if (gsp.redTeamName == cm.teamName)
+            bool redIsPlayerTeam = cm != null ? (gsp.redTeamName == cm.teamName) : !gm.aiTeamRed;
+            if (redIsPlayerTeam)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
@@ -136,14 +152,30 @@ public class SweeperManager : MonoBehaviour
         }
         else
         {
-            sweeperL = Instantiate(sweeperYellowL, sweepSel.gameObject.transform);
-            sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
-            sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
-            sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
+            if (sweeperYellowL != null)
+                sweeperL = Instantiate(sweeperYellowL, sweepSel.gameObject.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperYellowL prefab is missing.");
+
+            if (sweeperYellowR != null)
+                sweeperR = Instantiate(sweeperYellowR, sweepSel.gameObject.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperYellowR prefab is missing.");
+
+            if (sweeperRedTee != null)
+                sweeperRedTee = Instantiate(sweeperRedTee, sweepSel.tSweepParent.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperRedTee prefab is missing.");
+
+            if (sweeperYellowTee != null)
+                sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
+            else
+                Debug.LogError("[SweeperManager] sweeperYellowTee prefab is missing.");
             //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
             //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
 
-            if (gsp.redTeamName != cm.teamName)
+            bool yellowIsPlayerTeam = cm != null ? (gsp.redTeamName != cm.teamName) : !gm.aiTeamYellow;
+            if (yellowIsPlayerTeam)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperRedTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
             }
@@ -151,6 +183,12 @@ public class SweeperManager : MonoBehaviour
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, true);
             }
+        }
+
+        if (sweeperL == null || sweeperR == null)
+        {
+            Debug.LogError("[SweeperManager] Missing instantiated sweepers, aborting SetupSweepers.");
+            return;
         }
 
         sweeperL.gameObject.SetActive(true);

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb4719ad8e7f47b39aecb4a60eda73a, type: 3}
+  m_Name: ArenaSelector
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialSequence
+  sequenceId: ArenaSelector
+  displayName: Tutorial
+  description: Main Menu item descriptions
+  steps:
+  - {fileID: 11400000, guid: 9086b283db45d4236ad8ab6e972ace30, type: 2}
+  - {fileID: 11400000, guid: f09081a68ae0c42d2884eeabc3ae557d, type: 2}
+  - {fileID: 11400000, guid: 9086b283db45d4236ad8ab6e972ace30, type: 2}
+  canSkip: 1
+  autoStart: 0
+  autoStartCondition:
+    checkWeek: 0
+    requiredWeek: 1
+    checkFirstTime: 1
+    checkScene: 0
+    requiredSceneName: 

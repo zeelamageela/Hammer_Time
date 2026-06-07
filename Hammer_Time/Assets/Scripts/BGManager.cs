@@ -22,13 +22,48 @@ public class BGManager : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         carM = FindObjectOfType<CareerManager>();
 
-        gsp.bg = carM.currentTourny.BG;
-        randBoards = Instantiate(boards[gsp.bg], transform);
-        randBoards.name = "Boards_CREATED";
-        Instantiate(ice[gsp.bg], transform);
-        cm.main.backgroundColor = camBG[gsp.bg];
-        cm.house.backgroundColor = camBG[gsp.bg];
-        boards[gsp.bg].GetComponent<Collider2D>().enabled = false;
+        int bgIndex = 0;
+        if (carM != null && carM.currentTourny != null)
+        {
+            bgIndex = carM.currentTourny.BG;
+        }
+        else if (gsp != null)
+        {
+            bgIndex = gsp.bg;
+        }
+
+        if (gsp != null)
+        {
+            gsp.bg = bgIndex;
+        }
+
+        if (bgIndex >= 0 && bgIndex < boards.Length)
+        {
+            randBoards = Instantiate(boards[bgIndex], transform);
+            randBoards.name = "Boards_CREATED";
+            boards[bgIndex].GetComponent<Collider2D>().enabled = false;
+        }
+        else
+        {
+            Debug.LogWarning($"BGManager: Invalid bgIndex {bgIndex} for boards array.");
+        }
+
+        if (bgIndex >= 0 && bgIndex < ice.Length)
+        {
+            Instantiate(ice[bgIndex], transform);
+        }
+        else
+        {
+            Debug.LogWarning($"BGManager: Invalid bgIndex {bgIndex} for ice array.");
+        }
+
+        if (cm != null)
+        {
+            if (cm.main != null)
+                cm.main.backgroundColor = camBG[Mathf.Clamp(bgIndex, 0, camBG.Length - 1)];
+            if (cm.house != null)
+                cm.house.backgroundColor = camBG[Mathf.Clamp(bgIndex, 0, camBG.Length - 1)];
+        }
     }
 
     // Update is called once per frame

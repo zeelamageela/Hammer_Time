@@ -146,7 +146,8 @@ public class TrajectoryLine : MonoBehaviour
 
         dots = new List<GameObject>();
         trajectorySpeed = new List<float>();
-        aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+        if (aimCircle != null)
+            aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         
         // Subscribe to visualization settings
         visualSettings = GameVisualizationSettings.Instance;
@@ -167,8 +168,11 @@ public class TrajectoryLine : MonoBehaviour
         Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
         lr.enabled = false;
-        CareerManager cm = FindAnyObjectByType<CareerManager>();
-        lkAhd = Mathf.RoundToInt(lookAheadCount * cm.cStats.sweepEndurance);
+        CareerManager cm = FindObjectOfType<CareerManager>();
+        if (cm != null && cm.cStats != null)
+            lkAhd = Mathf.RoundToInt(lookAheadCount * cm.cStats.sweepEndurance);
+        else
+            lkAhd = Mathf.RoundToInt(lookAheadCount * 1f); // fallback
         
         // Create actual path line renderer (follows rock)
         actualPathLineObj = new GameObject("ActualPathLine");

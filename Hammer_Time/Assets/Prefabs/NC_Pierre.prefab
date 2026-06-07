@@ -38,6 +38,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1761734525812176538
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -56,6 +57,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -77,11 +80,13 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 8485781458292051904, guid: 5e9705da0889a014abbcb3e50bafbf44, type: 3}
-  m_Color: {r: 0.493136, g: 0.5987689, b: 0.6465697, a: 1}
+  m_Color: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -89,7 +94,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &1761734525812176540
 Animator:
@@ -222,6 +226,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6672064197766881349
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -240,6 +245,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -261,9 +268,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 4
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 6515774126543579902, guid: 8e376facc75743c4484275ebed74aa40, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -273,7 +282,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &6672064197766881347
 Animator:
@@ -415,7 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0.493136, g: 0.5987689, b: 0.6465697, a: 1}
+  colour1: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -434,17 +442,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Pierre
   weightAccuracy:
-    baseValue: 85
+    baseValue: 0
   aimAccuracy:
-    baseValue: 85
+    baseValue: 0
   finesseAccuracy:
-    baseValue: 85
+    baseValue: 0
   sweepStrength:
-    baseValue: 85
+    baseValue: 8
   sweepEndurance:
-    baseValue: 85
+    baseValue: 8
   sweepCohesion:
-    baseValue: 85
+    baseValue: 8
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0
