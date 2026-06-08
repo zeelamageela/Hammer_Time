@@ -13,13 +13,17 @@ public class TutorialGameManager : MonoBehaviour
     
     [Header("Configuration")]
     [SerializeField] private TutorialGameSetup tutorialSetup;
-    
+    [Tooltip("Tutorial setup used when Flick Shot Mode is enabled. Falls back to tutorialSetup if null.")]
+    [SerializeField] private TutorialGameSetup flickShotTutorialSetup;
+
     [Header("State")]
     public bool isTutorialGame = false;
 
     [Header("Diagnostics")]
     [SerializeField] private bool runTutorialValidationLogs = true;
-    
+
+    // Resolved once in InitializeTutorialGame() — either flickShotTutorialSetup or tutorialSetup
+    private TutorialGameSetup activeSetup;
     private GameManager gameManager;
     
     private void Awake()
@@ -104,26 +108,31 @@ public class TutorialGameManager : MonoBehaviour
         }
         
         isTutorialGame = true;
-        
+
+        // Pick flick or pull-release tutorial based on the player's shot style setting
+        bool useFlick = GameVisualizationSettings.Instance != null && GameVisualizationSettings.Instance.FlickShotMode;
+        activeSetup = (useFlick && flickShotTutorialSetup != null) ? flickShotTutorialSetup : tutorialSetup;
+        Debug.Log($"[TutorialGameManager] Shot style: {(useFlick ? "FlickShot" : "PullRelease")} — using setup: {activeSetup?.name ?? "NULL"}");
+
         Debug.Log("[TutorialGameManager] Initializing tutorial game:");
-        Debug.Log($"  - Starting End: {tutorialSetup.startingEnd}");
-        Debug.Log($"  - Score: {tutorialSetup.startingScore.x}-{tutorialSetup.startingScore.y}");
-        Debug.Log($"  - Player has hammer: {tutorialSetup.playerHasHammer}");
-        Debug.Log($"  - Rocks per team: {tutorialSetup.rocksPerTeam}");
+        Debug.Log($"  - Starting End: {activeSetup.startingEnd}");
+        Debug.Log($"  - Score: {activeSetup.startingScore.x}-{activeSetup.startingScore.y}");
+        Debug.Log($"  - Player has hammer: {activeSetup.playerHasHammer}");
+        Debug.Log($"  - Rocks per team: {activeSetup.rocksPerTeam}");
         
         // Get GSP to update runtime team data (if present)
         GameSettingsPersist gsp = Object.FindAnyObjectByType<GameSettingsPersist>();
         
         // Set game state in both GameManager and GSP
-        gameManager.endCurrent = tutorialSetup.startingEnd - 1; // -1 because it increments at start
-        gameManager.redScore = (int)tutorialSetup.startingScore.y;
-        gameManager.yellowScore = (int)tutorialSetup.startingScore.x;
-        gameManager.redHammer = tutorialSetup.playerHasHammer;  // Set hammer from tutorial setup
-        gameManager.rocksPerTeam = tutorialSetup.rocksPerTeam;
+        gameManager.endCurrent = activeSetup.startingEnd - 1; // -1 because it increments at start
+        gameManager.redScore = (int)activeSetup.startingScore.y;
+        gameManager.yellowScore = (int)activeSetup.startingScore.x;
+        gameManager.redHammer = activeSetup.playerHasHammer;  // Set hammer from tutorial setup
+        gameManager.rocksPerTeam = activeSetup.rocksPerTeam;
         
         // Set rockCurrent based on rocksPerTeam (e.g., rocksPerTeam=2 means rockCurrent=12)
         // This means 12 rocks are "already placed" and player shoots rocks 12-15
-        gameManager.rockCurrent = 16 - (tutorialSetup.rocksPerTeam * 2);
+        gameManager.rockCurrent = 16 - (activeSetup.rocksPerTeam * 2);
         
         // Resolve player team name: prefer career name from gsp, fall back to CareerManager, then "Newbie"
         CareerManager cm = FindAnyObjectByType<CareerManager>();
@@ -133,7 +142,7 @@ public class TutorialGameManager : MonoBehaviour
         else if (cm != null && !string.IsNullOrEmpty(cm.teamName))
             playerTeam = cm.teamName;
 
-        string opponentTeam = string.IsNullOrEmpty(tutorialSetup.opponentTeamName) ? "Opponent" : tutorialSetup.opponentTeamName;
+        string opponentTeam = string.IsNullOrEmpty(activeSetup.opponentTeamName) ? "Opponent" : activeSetup.opponentTeamName;
         Color playerColor = Color.red;
         Color opponentColor = new Color(0.9f, 0.9f, 0.3f);
 
@@ -143,12 +152,12 @@ public class TutorialGameManager : MonoBehaviour
 
         if (gsp != null)
         {
-            gsp.endCurrent = tutorialSetup.startingEnd - 1;
-            gsp.redScore = (int)tutorialSetup.startingScore.y;
-            gsp.yellowScore = (int)tutorialSetup.startingScore.x;
-            gsp.redHammer = tutorialSetup.playerHasHammer;
-            gsp.rocks = tutorialSetup.rocksPerTeam;
-            gsp.rockCurrent = 16 - (tutorialSetup.rocksPerTeam * 2);
+            gsp.endCurrent = activeSetup.startingEnd - 1;
+            gsp.redScore = (int)activeSetup.startingScore.y;
+            gsp.yellowScore = (int)activeSetup.startingScore.x;
+            gsp.redHammer = activeSetup.playerHasHammer;
+            gsp.rocks = activeSetup.rocksPerTeam;
+            gsp.rockCurrent = 16 - (activeSetup.rocksPerTeam * 2);
             gsp.redTeamName = playerTeam;
             gsp.yellowTeamName = opponentTeam;
             gsp.redTeamColour = playerColor;
@@ -222,6 +231,19 @@ public class TutorialGameManager : MonoBehaviour
         
         Debug.Log($"[TutorialGameManager] Team setup: Player={playerTeam}, Opponent={opponentTeam}");
         
+        // Prevent any career game-in-progress save from resuming during tutorial.
+        // LoadFromSaveData() may have restored gameInProgress=true earlier; clear it here
+        // so GameManager doesn't try to restore career rock positions/scores over tutorial state.
+        if (gsp != null)
+        {
+            gsp.gameInProgress = false;
+            gsp.tournyInProgress = false;
+            gsp.justFinishedGame = false;
+            gsp.inEndMenu = false;
+        }
+        if (cm != null)
+            cm.loadedFromSave = false;
+
         // Force GameHUD to refresh with new team names
         GameHUD gHUD = Object.FindAnyObjectByType<GameHUD>();
         if (gHUD != null)
@@ -241,10 +263,10 @@ public class TutorialGameManager : MonoBehaviour
     /// </summary>
     public IEnumerator RepositionPreConfiguredRocks()
     {
-        if (tutorialSetup == null || gameManager == null || !isTutorialGame)
+        if (activeSetup == null || gameManager == null || !isTutorialGame)
             yield break;
         
-        if (tutorialSetup.prePlacedRocks == null || tutorialSetup.prePlacedRocks.Length == 0)
+        if (activeSetup.prePlacedRocks == null || activeSetup.prePlacedRocks.Length == 0)
         {
             Debug.Log("[TutorialGameManager] No pre-placed rocks configured");
             yield break;
@@ -254,7 +276,7 @@ public class TutorialGameManager : MonoBehaviour
         
         Debug.Log("[TutorialGameManager] Placing tutorial rocks");
         
-        int rockCurrent = 16 - (tutorialSetup.rocksPerTeam * 2);
+        int rockCurrent = 16 - (activeSetup.rocksPerTeam * 2);
         Debug.Log($"[TutorialGameManager] rockCurrent={rockCurrent}, marking rocks 0-{rockCurrent-1} as placed");
         
         // First, mark rocks 0 to (rockCurrent-1) as placed and out of play
@@ -286,10 +308,10 @@ public class TutorialGameManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[TutorialGameManager] Placing {tutorialSetup.prePlacedRocks.Length} pre-configured rocks");
+        Debug.Log($"[TutorialGameManager] Placing {activeSetup.prePlacedRocks.Length} pre-configured rocks");
         
         // Now place ONLY the pre-configured rocks
-        foreach (var prePlacedRock in tutorialSetup.prePlacedRocks)
+        foreach (var prePlacedRock in activeSetup.prePlacedRocks)
         {
             if (prePlacedRock.rockIndex < 0 || prePlacedRock.rockIndex >= gameManager.rockList.Count)
             {
@@ -353,9 +375,9 @@ public class TutorialGameManager : MonoBehaviour
     private void ValidatePostInitState()
     {
         GameSettingsPersist gsp = Object.FindAnyObjectByType<GameSettingsPersist>();
-        int expectedRockCurrent = TotalRocks - (tutorialSetup.rocksPerTeam * 2);
+        int expectedRockCurrent = TotalRocks - (activeSetup.rocksPerTeam * 2);
 
-        LogTutorialCheck("Tutorial setup assigned", tutorialSetup != null, "tutorialSetup reference exists");
+        LogTutorialCheck("Tutorial setup assigned", activeSetup != null, "activeSetup reference resolved");
         LogTutorialCheck("Tutorial mode active", isTutorialGame, "isTutorialGame=true");
         LogTutorialCheck("GameManager exists", gameManager != null, "gameManager reference resolved");
 
@@ -363,18 +385,18 @@ public class TutorialGameManager : MonoBehaviour
         {
             LogTutorialCheck("GameManager rockCurrent", gameManager.rockCurrent == expectedRockCurrent,
                 $"expected={expectedRockCurrent}, actual={gameManager.rockCurrent}");
-            LogTutorialCheck("GameManager hammer", gameManager.redHammer == tutorialSetup.playerHasHammer,
-                $"expected={tutorialSetup.playerHasHammer}, actual={gameManager.redHammer}");
-            LogTutorialCheck("GameManager rocksPerTeam", gameManager.rocksPerTeam == tutorialSetup.rocksPerTeam,
-                $"expected={tutorialSetup.rocksPerTeam}, actual={gameManager.rocksPerTeam}");
+            LogTutorialCheck("GameManager hammer", gameManager.redHammer == activeSetup.playerHasHammer,
+                $"expected={activeSetup.playerHasHammer}, actual={gameManager.redHammer}");
+            LogTutorialCheck("GameManager rocksPerTeam", gameManager.rocksPerTeam == activeSetup.rocksPerTeam,
+                $"expected={activeSetup.rocksPerTeam}, actual={gameManager.rocksPerTeam}");
         }
 
         if (gsp != null)
         {
             LogTutorialCheck("GSP rockCurrent", gsp.rockCurrent == expectedRockCurrent,
                 $"expected={expectedRockCurrent}, actual={gsp.rockCurrent}");
-            LogTutorialCheck("GSP hammer", gsp.redHammer == tutorialSetup.playerHasHammer,
-                $"expected={tutorialSetup.playerHasHammer}, actual={gsp.redHammer}");
+            LogTutorialCheck("GSP hammer", gsp.redHammer == activeSetup.playerHasHammer,
+                $"expected={activeSetup.playerHasHammer}, actual={gsp.redHammer}");
             LogTutorialCheck("GSP red team ready", gsp.redTeam != null && gsp.redTeam.players != null && gsp.redTeam.players.Count >= 4,
                 gsp.redTeam == null || gsp.redTeam.players == null ? "red team missing" : $"red players={gsp.redTeam.players.Count}");
             LogTutorialCheck("GSP yellow team ready", gsp.yellowTeam != null && gsp.yellowTeam.players != null && gsp.yellowTeam.players.Count >= 4,
@@ -398,9 +420,9 @@ public class TutorialGameManager : MonoBehaviour
         for (int i = 0; i < TotalRocks; i++)
             shouldBeInPlay[i] = false;
 
-        for (int i = 0; i < tutorialSetup.prePlacedRocks.Length; i++)
+        for (int i = 0; i < activeSetup.prePlacedRocks.Length; i++)
         {
-            int idx = tutorialSetup.prePlacedRocks[i].rockIndex;
+            int idx = activeSetup.prePlacedRocks[i].rockIndex;
             if (idx >= 0 && idx < rockCurrent)
                 shouldBeInPlay[idx] = true;
         }
@@ -439,9 +461,9 @@ public class TutorialGameManager : MonoBehaviour
     private int CountConfiguredRocksInRange(int rockCurrent)
     {
         int count = 0;
-        for (int i = 0; i < tutorialSetup.prePlacedRocks.Length; i++)
+        for (int i = 0; i < activeSetup.prePlacedRocks.Length; i++)
         {
-            int idx = tutorialSetup.prePlacedRocks[i].rockIndex;
+            int idx = activeSetup.prePlacedRocks[i].rockIndex;
             if (idx >= 0 && idx < rockCurrent)
                 count++;
         }
@@ -463,38 +485,38 @@ public class TutorialGameManager : MonoBehaviour
     {
         tutorialId = null;
         
-        if (!isTutorialGame || tutorialSetup == null)
+        if (!isTutorialGame || activeSetup == null)
             return false;
 
-        int baseRockIndex = TotalRocks - (tutorialSetup.rocksPerTeam * 2);
+        int baseRockIndex = TotalRocks - (activeSetup.rocksPerTeam * 2);
         GameSettingsPersist gsp = Object.FindAnyObjectByType<GameSettingsPersist>();
         bool playerIsRed = gsp == null || !gsp.aiRed;
         int firstPlayerRockIndex = playerIsRed
-            ? baseRockIndex + (tutorialSetup.playerHasHammer ? 1 : 0)
-            : baseRockIndex + (tutorialSetup.playerHasHammer ? 0 : 1);
+            ? baseRockIndex + (activeSetup.playerHasHammer ? 1 : 0)
+            : baseRockIndex + (activeSetup.playerHasHammer ? 0 : 1);
         
         // Check pull/release tutorial
-        if (rockIndex == tutorialSetup.pullReleaseTutorialRockIndex)
+        if (rockIndex == activeSetup.pullReleaseTutorialRockIndex)
         {
-            tutorialId = tutorialSetup.pullReleaseTutorialId;
+            tutorialId = activeSetup.pullReleaseTutorialId;
             Debug.Log($"[TutorialGameManager] Triggering pull/release tutorial for rock {rockIndex}");
             return true;
         }
 
         // Fallback: if configured pull index is stale, trigger on first player-controlled rock
         if (rockIndex == firstPlayerRockIndex &&
-            tutorialSetup.pullReleaseTutorialRockIndex != firstPlayerRockIndex &&
-            !string.IsNullOrEmpty(tutorialSetup.pullReleaseTutorialId))
+            activeSetup.pullReleaseTutorialRockIndex != firstPlayerRockIndex &&
+            !string.IsNullOrEmpty(activeSetup.pullReleaseTutorialId))
         {
-            tutorialId = tutorialSetup.pullReleaseTutorialId;
-            Debug.LogWarning($"[TutorialGameManager] Pull tutorial index mismatch (configured={tutorialSetup.pullReleaseTutorialRockIndex}, liveFirstPlayer={firstPlayerRockIndex}). Using live index fallback.");
+            tutorialId = activeSetup.pullReleaseTutorialId;
+            Debug.LogWarning($"[TutorialGameManager] Pull tutorial index mismatch (configured={activeSetup.pullReleaseTutorialRockIndex}, liveFirstPlayer={firstPlayerRockIndex}). Using live index fallback.");
             return true;
         }
         
         // Check takeout tutorial
-        if (rockIndex == tutorialSetup.takeoutTutorialRockIndex)
+        if (rockIndex == activeSetup.takeoutTutorialRockIndex)
         {
-            tutorialId = tutorialSetup.takeoutTutorialId;
+            tutorialId = activeSetup.takeoutTutorialId;
             Debug.Log($"[TutorialGameManager] Triggering takeout tutorial for rock {rockIndex}");
             return true;
         }
@@ -507,10 +529,10 @@ public class TutorialGameManager : MonoBehaviour
     /// </summary>
     public AIShotSuggestion GetAIShotSuggestion(int rockIndex)
     {
-        if (!isTutorialGame || tutorialSetup == null || tutorialSetup.aiShotSuggestions == null)
+        if (!isTutorialGame || activeSetup == null || activeSetup.aiShotSuggestions == null)
             return null;
         
-        foreach (var suggestion in tutorialSetup.aiShotSuggestions)
+        foreach (var suggestion in activeSetup.aiShotSuggestions)
         {
             if (suggestion.rockIndex == rockIndex)
             {

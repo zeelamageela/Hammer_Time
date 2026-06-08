@@ -411,14 +411,25 @@ public class TutorialSequenceManager : MonoBehaviour
             }
             else if (step.spotlightWorldTarget != null)
             {
-                // Auto-position to match world object (convert world to screen space)
+                // Auto-position to match world object.
+                // We must convert through ScreenPointToLocalPointInRectangle so the result
+                // is in the parent rect's local space — direct assignment of WorldToScreenPoint
+                // to RectTransform.position breaks when a CanvasScaler scales the canvas.
                 Camera mainCam = Camera.main;
                 if (mainCam != null)
                 {
                     Vector3 screenPos = mainCam.WorldToScreenPoint(step.spotlightWorldTarget.position);
-                    cutoutMask.position = screenPos;
+                    RectTransform parentRect = cutoutMask.parent as RectTransform;
+                    Canvas parentCanvas = cutoutMask.GetComponentInParent<Canvas>();
+                    Camera canvasCam = (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                        ? parentCanvas.worldCamera : null;
+                    if (parentRect != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        parentRect, new Vector2(screenPos.x, screenPos.y), canvasCam, out Vector2 localPoint))
+                    {
+                        cutoutMask.anchoredPosition = localPoint;
+                    }
                     cutoutMask.sizeDelta = step.manualCutoutSize + Vector2.one * step.spotlightPadding;
-                    Debug.Log($"[TutorialSequenceManager] Spotlight world target: {step.spotlightWorldTarget.name} at world {step.spotlightWorldTarget.position} -> screen {screenPos}, size: {cutoutMask.sizeDelta}");
+                    Debug.Log($"[TutorialSequenceManager] Spotlight world target: {step.spotlightWorldTarget.name} at world {step.spotlightWorldTarget.position} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
                 }
                 else
                 {

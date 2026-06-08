@@ -14,25 +14,23 @@ Unity curling simulation (iOS/Android). Core loop: player throws rocks, sweepers
 
 **Save system:** JSON to `Application.persistentDataPath/career_save.json` via `CareerSaveService`
 
+**Shot style flag:** `GameVisualizationSettings.Instance.FlickShotMode` (persisted in PlayerPrefs as `"FlickShotMode"`) — `true` = flick shot, `false` = pull/release
+
 ---
 
 ## What was last worked on
 
-### Save/load system overhaul (all fixed)
+### Tutorial system fixes (all done)
 
-1. **Old saves without `dialogueFlags` crashed on load** — null guard added in `CareerManager.LoadFromSaveData()`.
+1. **Tutorial save isolation** — `TutorialGameManager.InitializeTutorialGame()` now explicitly clears `gsp.gameInProgress`, `gsp.tournyInProgress`, `gsp.justFinishedGame`, `gsp.inEndMenu`, and `cm.loadedFromSave` at the end of setup. This prevents a career game-in-progress save from bleeding into tutorial (GameManager won't try to restore career rock positions/scores over tutorial state). Save guard was already in place (`SaveCareer()` returns early when `isTutorialGame = true`).
 
-2. **Tutorial auto-saved over career saves** — `SaveCareer()` now returns early if `TutorialGameManager.Instance.isTutorialGame` is true.
+2. **Multiple tutorial support** — `TutorialGameManager` now has two setup fields:
+   - `tutorialSetup` — pull/release tutorial (existing, default)
+   - `flickShotTutorialSetup` — flick shot tutorial (new field, assign in Inspector when ready)
 
-3. **`IndexOutOfRangeException` in `SetupTourny()`** — old saves had no `teams` field in JSON. Added `RebuildTeamsFromPool()` to `CareerManager`; called from `TournySelector.SetUp()` when `cm.teams` is empty.
+   At init, it reads `GameVisualizationSettings.Instance.FlickShotMode` and resolves `activeSetup` (either flick or pull/release). All downstream methods (`RepositionPreConfiguredRocks`, `ShouldTriggerTutorial`, `GetAIShotSuggestion`, validation) use `activeSetup`. **To-do:** create the flick shot `TutorialGameSetup` ScriptableObject and assign it in the Inspector.
 
-4. **`NullReferenceException` in `DialogueController.AdvanceDialogue()`** — null guard added at top of method.
-
-5. **Hardcoded "Newbie"/"Tutorial Opponent" team names** — `TutorialGameManager` now resolves names from `gsp.redTeamName` → `cm.teamName` → "Newbie" fallback.
-
-6. **Tutorial auto-triggered in TournyGame scene** — `TutorialGameManager.Start()` now returns immediately if active scene name is not `"TutorialGame"`.
-
-7. **New career started with completed tournaments from old save** — `CareerSettings.New()` set `week = 1`, causing `TournySelector` to take the existing-career path (LoadCareer → stale ScriptableObject flags). Fixed by changing to `week = 0` so `TournySelector.SetUp()` calls `ClearAllCompletionFlags()` + `NewSeason()`.
+3. **Spotlight centering fixed** — `TutorialSequenceManager.SetupStep()` world-target spotlight was using `cutoutMask.position = WorldToScreenPoint(...)` which breaks when a `CanvasScaler` is present. Now uses `RectTransformUtility.ScreenPointToLocalPointInRectangle()` → `cutoutMask.anchoredPosition`, which correctly handles all Canvas render modes and scale factors.
 
 ### Key flow to understand
 
@@ -46,4 +44,7 @@ Unity curling simulation (iOS/Android). Core loop: player throws rocks, sweepers
 
 ## Known state / no pending bugs
 
-All 7 save/load bugs resolved. No known open issues at end of last session.
+All 3 tutorial fixes resolved. No known open issues at end of last session.
+
+### Upcoming work (not started)
+- Create flick shot `TutorialGameSetup` ScriptableObject and wire it to `TutorialGameManager.flickShotTutorialSetup` in the Inspector

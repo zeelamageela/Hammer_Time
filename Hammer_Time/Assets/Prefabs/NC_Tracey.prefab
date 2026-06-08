@@ -86,7 +86,7 @@ SpriteRenderer:
   m_SortingOrder: 4
   m_MaskInteraction: 0
   m_Sprite: {fileID: -5308903297352747561, guid: de7cfa27be0e05840927f0255e93b5dd, type: 3}
-  m_Color: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -423,7 +423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020c1fc982d9dc74bb5d54521a5ed821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colour1: {r: 0.9056604, g: 0.5662434, b: 0.16660735, a: 1}
+  colour1: {r: 1, g: 0, b: 0, a: 1}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
   - {fileID: 1761734525812176538}
@@ -442,17 +442,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   charName: Tracey
   weightAccuracy:
-    baseValue: 0
+    baseValue: 20
   aimAccuracy:
-    baseValue: 0
+    baseValue: 20
   finesseAccuracy:
-    baseValue: 0
+    baseValue: 20
   sweepStrength:
-    baseValue: 10
+    baseValue: 20
   sweepEndurance:
-    baseValue: 8
+    baseValue: 20
   sweepCohesion:
-    baseValue: 10
+    baseValue: 20
   sweepHealth: 70
   sweeping: 0
   sweepingHard: 0
