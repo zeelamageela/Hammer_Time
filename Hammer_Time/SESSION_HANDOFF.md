@@ -20,17 +20,26 @@ Unity curling simulation (iOS/Android). Core loop: player throws rocks, sweepers
 
 ## What was last worked on
 
-### Tutorial system fixes (all done)
+### Tutorial system improvements (all done)
 
-1. **Tutorial save isolation** — `TutorialGameManager.InitializeTutorialGame()` now explicitly clears `gsp.gameInProgress`, `gsp.tournyInProgress`, `gsp.justFinishedGame`, `gsp.inEndMenu`, and `cm.loadedFromSave` at the end of setup. This prevents a career game-in-progress save from bleeding into tutorial (GameManager won't try to restore career rock positions/scores over tutorial state). Save guard was already in place (`SaveCareer()` returns early when `isTutorialGame = true`).
+1. **Tutorial save isolation** — `TutorialGameManager.InitializeTutorialGame()` explicitly clears `gsp.gameInProgress`, `gsp.tournyInProgress`, `gsp.justFinishedGame`, `gsp.inEndMenu`, and `cm.loadedFromSave`. Prevents career save state bleeding into tutorial.
 
-2. **Multiple tutorial support** — `TutorialGameManager` now has two setup fields:
-   - `tutorialSetup` — pull/release tutorial (existing, default)
-   - `flickShotTutorialSetup` — flick shot tutorial (new field, assign in Inspector when ready)
+2. **Multiple tutorial support** — `TutorialGameManager` has two setup fields:
+   - `tutorialSetup` — pull/release tutorial (existing)
+   - `flickShotTutorialSetup` — flick shot tutorial (new, assign in Inspector when ready)
+   Resolves `activeSetup` at init based on `FlickShotMode`.
 
-   At init, it reads `GameVisualizationSettings.Instance.FlickShotMode` and resolves `activeSetup` (either flick or pull/release). All downstream methods (`RepositionPreConfiguredRocks`, `ShouldTriggerTutorial`, `GetAIShotSuggestion`, validation) use `activeSetup`. **To-do:** create the flick shot `TutorialGameSetup` ScriptableObject and assign it in the Inspector.
+3. **Spotlight centering fixed** — Uses `RectTransformUtility.ScreenPointToLocalPointInRectangle()` → `cutoutMask.anchoredPosition` for correct CanvasScaler handling.
 
-3. **Spotlight centering fixed** — `TutorialSequenceManager.SetupStep()` world-target spotlight was using `cutoutMask.position = WorldToScreenPoint(...)` which breaks when a `CanvasScaler` is present. Now uses `RectTransformUtility.ScreenPointToLocalPointInRectangle()` → `cutoutMask.anchoredPosition`, which correctly handles all Canvas render modes and scale factors.
+4. **New tutorial conditions** — Added to `TutorialConditionType`: `MouseReleased` (wait for mouse up) and `RockReachedYPosition` (wait until rock Y crosses a threshold). `WaitForSeconds` fixed to use `WaitForSecondsRealtime` so it works when `pauseGame = true`.
+
+5. **Spotlight name/tag targeting** — `TutorialStep` has `spotlightTargetName` (supports reserved keywords `$currentRock`, `$shooter`, `$launcher`) and `spotlightTargetTag` for runtime scene object lookup without drag-and-drop.
+
+6. **Dialogue auto-repositioning** — `DialogueController.PositionAroundSpotlight(normalizedPos)` moves the dialogue panel to the opposite vertical half of the screen from the spotlight. `ResetDialoguePosition()` restores it. Called from `TutorialSequenceManager.SetupStep()`.
+
+7. **Character head Z-order fix** — `coachHead` and `announcerHead` are SpriteRenderer-based world-space objects. `EnsureDialogueOnTop()` now calls `BumpSpriteRenderers()` on both, setting their sorting layer to match the dialogue canvas and their `sortingOrder` to `forceSortingOrder + 1` (501). Fixes them appearing behind `Panel (1)` when the canvas is raised to sortingOrder 500.
+   - Also bumps any nested `Canvas` components with `overrideSorting = true` to `forceSortingOrder + 1`.
+   - **Inspector:** ensure `dialogueCanvas` on `DialogueController` points to the `DialogueCanvas` root (the GO with the Canvas component), not a child panel.
 
 ### Key flow to understand
 
@@ -44,7 +53,7 @@ Unity curling simulation (iOS/Android). Core loop: player throws rocks, sweepers
 
 ## Known state / no pending bugs
 
-All 3 tutorial fixes resolved. No known open issues at end of last session.
+All fixes resolved. No known open issues at end of last session.
 
 ### Upcoming work (not started)
 - Create flick shot `TutorialGameSetup` ScriptableObject and wire it to `TutorialGameManager.flickShotTutorialSetup` in the Inspector

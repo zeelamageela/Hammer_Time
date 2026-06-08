@@ -14,17 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
   stepName: ReleaseRock
   dialogue: {fileID: 11400000, guid: f43732406b1a74ae5846d2caf7223679, type: 2}
-  startCondition: 7
+  startCondition: 8
   endCondition: 2
   waitDuration: 1
   targetGameState: 0
   rockIndex: -1
   pullbackThreshold: 0
+  targetYPosition: 0
+  targetYAbove: 1
   objectsToHighlight: []
   aimCirclePrefab: {fileID: 0}
   useSpotlight: 0
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
+  spotlightTargetName: 
+  spotlightTargetTag: 
   manualCutoutPosition: {x: 0, y: 25}
   manualCutoutSize: {x: 400, y: 400}
   spotlightPadding: 10

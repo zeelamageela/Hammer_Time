@@ -15,7 +15,9 @@ MonoBehaviour:
   sequenceId: TakeoutTutorial
   displayName: Tutorial
   description: TakeoutTutorial
-  steps: []
+  steps:
+  - {fileID: 11400000, guid: 0ac87ee7c2b7746a1b141b0ccdc2d420, type: 2}
+  - {fileID: 0}
   canSkip: 1
   autoStart: 0
   autoStartCondition:

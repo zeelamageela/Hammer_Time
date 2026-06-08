@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - Alright, if we wanna stay in this game, we're gonna have to throw a TAKEOUT.
+  - Next we''re going to throw a TAKEOUT.
   - A TAKEOUT shot removes an opponent's stone from play.
   pauseGame: 0
   autoAdvanceDelay: 0

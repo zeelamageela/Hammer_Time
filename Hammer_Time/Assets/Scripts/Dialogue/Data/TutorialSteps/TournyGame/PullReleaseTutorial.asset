@@ -28,4 +28,4 @@ MonoBehaviour:
     requiredWeek: 1
     checkFirstTime: 1
     checkScene: 1
-    requiredSceneName: TournyGame
+    requiredSceneName: TutorialGame

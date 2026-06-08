@@ -23,6 +23,14 @@ public class DialogueController : MonoBehaviour
     [SerializeField] private GameObject coachHead;
     [SerializeField] private GameObject announcerHead;
     
+    [Header("Auto-Positioning (Spotlight Avoidance)")]
+    [Tooltip("The RectTransform to reposition when a spotlight is active. Leave empty to use dialogueCanvas itself.")]
+    [SerializeField] private RectTransform dialoguePanel;
+    [Tooltip("anchoredPosition.y when dialogue moves to the top of screen")]
+    [SerializeField] private float dialogueTopY = 250f;
+    [Tooltip("anchoredPosition.y when dialogue moves to the bottom of screen")]
+    [SerializeField] private float dialogueBottomY = -250f;
+
     [Header("Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
     [SerializeField] private bool skipTypingOnClick = true;
@@ -40,6 +48,8 @@ public class DialogueController : MonoBehaviour
     private Canvas dialogueRootCanvas;
     private float allowInputAtTime;
     private bool waitForMouseRelease;
+    private Vector2 dialoguePanelDefaultPos;
+    private bool dialoguePanelDefaultCached;
     
     // Events
     public event Action<DialogueData> OnDialogueStart;
@@ -183,6 +193,34 @@ public class DialogueController : MonoBehaviour
         {
             dialogueBackground.enabled = visible;
         }
+    }
+
+    /// <summary>
+    /// Reposition the dialogue panel to avoid overlapping the spotlight.
+    /// normalizedSpotlightPos is the spotlight center in 0-1 screen space (0=bottom, 1=top).
+    /// Dialogue moves to the opposite vertical half.
+    /// </summary>
+    public void PositionAroundSpotlight(Vector2 normalizedSpotlightPos)
+    {
+        RectTransform panel = GetDialoguePanel();
+        if (panel == null) return;
+
+        CacheDefaultPanelPos(panel);
+
+        float targetY = normalizedSpotlightPos.y > 0.5f ? dialogueBottomY : dialogueTopY;
+        panel.anchoredPosition = new Vector2(panel.anchoredPosition.x, targetY);
+        Debug.Log($"[DialogueController] Panel repositioned to Y={targetY} (spotlight at normalized {normalizedSpotlightPos.y:F2})");
+    }
+
+    /// <summary>
+    /// Return the dialogue panel to its original position.
+    /// </summary>
+    public void ResetDialoguePosition()
+    {
+        if (!dialoguePanelDefaultCached) return;
+        RectTransform panel = GetDialoguePanel();
+        if (panel != null)
+            panel.anchoredPosition = dialoguePanelDefaultPos;
     }
     
     #endregion
@@ -424,6 +462,20 @@ public class DialogueController : MonoBehaviour
             dialogueBackground = GetComponentInChildren<Image>(true);
     }
 
+    private RectTransform GetDialoguePanel()
+    {
+        if (dialoguePanel != null) return dialoguePanel;
+        if (dialogueCanvas != null) return dialogueCanvas.GetComponent<RectTransform>();
+        return null;
+    }
+
+    private void CacheDefaultPanelPos(RectTransform panel)
+    {
+        if (dialoguePanelDefaultCached) return;
+        dialoguePanelDefaultPos = panel.anchoredPosition;
+        dialoguePanelDefaultCached = true;
+    }
+
     private void EnsureDialogueOnTop()
     {
         if (dialogueCanvas != null)
@@ -434,6 +486,34 @@ public class DialogueController : MonoBehaviour
             dialogueRootCanvas.overrideSorting = true;
             if (dialogueRootCanvas.sortingOrder < forceSortingOrder)
                 dialogueRootCanvas.sortingOrder = forceSortingOrder;
+        }
+
+        // Any nested Canvas with overrideSorting (e.g. character head images) must sort above
+        // the root canvas, otherwise they render behind Panel (1) regardless of sibling order.
+        if (dialogueCanvas != null)
+        {
+            foreach (Canvas nested in dialogueCanvas.GetComponentsInChildren<Canvas>(true))
+            {
+                if (nested == dialogueRootCanvas) continue;
+                if (nested.overrideSorting)
+                    nested.sortingOrder = forceSortingOrder + 1;
+            }
+        }
+
+        // SpriteRenderer-based character heads live in world space and need their sorting
+        // layer/order bumped to render in front of the dialogue canvas.
+        BumpSpriteRenderers(coachHead);
+        BumpSpriteRenderers(announcerHead);
+    }
+
+    private void BumpSpriteRenderers(GameObject go)
+    {
+        if (go == null) return;
+        string layerName = dialogueRootCanvas != null ? dialogueRootCanvas.sortingLayerName : "Default";
+        foreach (SpriteRenderer sr in go.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            sr.sortingLayerName = layerName;
+            sr.sortingOrder = forceSortingOrder + 1;
         }
     }
     

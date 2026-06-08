@@ -14,18 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
   stepName: TakeoutIntro
   dialogue: {fileID: 11400000, guid: 1eeec754caabd4271aa0ad276b10172f, type: 2}
-  startCondition: 0
+  startCondition: 5
   endCondition: 2
   waitDuration: 1
   targetGameState: 0
   rockIndex: -1
   pullbackThreshold: 0.5
+  targetYPosition: 0
+  targetYAbove: 1
   objectsToHighlight:
   - {fileID: 0}
   aimCirclePrefab: {fileID: 0}
   useSpotlight: 0
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
+  spotlightTargetName: 
+  spotlightTargetTag: 
   manualCutoutPosition: {x: 0, y: 0}
   manualCutoutSize: {x: 150, y: 150}
   spotlightPadding: 10

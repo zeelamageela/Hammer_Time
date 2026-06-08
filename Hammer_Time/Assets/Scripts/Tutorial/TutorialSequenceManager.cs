@@ -402,14 +402,16 @@ public class TutorialSequenceManager : MonoBehaviour
             }
             
             // Position and size the cutout based on target or manual settings
+            Vector2? spotlightScreenPos = null;
             if (step.spotlightTarget != null)
             {
                 // Auto-position to match target UI element
                 cutoutMask.position = step.spotlightTarget.position;
                 cutoutMask.sizeDelta = step.spotlightTarget.sizeDelta + Vector2.one * step.spotlightPadding;
+                spotlightScreenPos = step.spotlightTarget.position; // world pos == screen pos on Overlay canvas
                 Debug.Log($"[TutorialSequenceManager] Spotlight UI target: {step.spotlightTarget.name} at {cutoutMask.position}");
             }
-            else if (step.spotlightWorldTarget != null)
+            else if (ResolveWorldTarget(step) is Transform worldTarget)
             {
                 // Auto-position to match world object.
                 // We must convert through ScreenPointToLocalPointInRectangle so the result
@@ -418,7 +420,8 @@ public class TutorialSequenceManager : MonoBehaviour
                 Camera mainCam = Camera.main;
                 if (mainCam != null)
                 {
-                    Vector3 screenPos = mainCam.WorldToScreenPoint(step.spotlightWorldTarget.position);
+                    Vector3 screenPos = mainCam.WorldToScreenPoint(worldTarget.position);
+                    spotlightScreenPos = new Vector2(screenPos.x, screenPos.y);
                     RectTransform parentRect = cutoutMask.parent as RectTransform;
                     Canvas parentCanvas = cutoutMask.GetComponentInParent<Canvas>();
                     Camera canvasCam = (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
@@ -429,7 +432,7 @@ public class TutorialSequenceManager : MonoBehaviour
                         cutoutMask.anchoredPosition = localPoint;
                     }
                     cutoutMask.sizeDelta = step.manualCutoutSize + Vector2.one * step.spotlightPadding;
-                    Debug.Log($"[TutorialSequenceManager] Spotlight world target: {step.spotlightWorldTarget.name} at world {step.spotlightWorldTarget.position} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
+                    Debug.Log($"[TutorialSequenceManager] Spotlight world target: {worldTarget.name} at world {worldTarget.position} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
                 }
                 else
                 {
@@ -438,17 +441,27 @@ public class TutorialSequenceManager : MonoBehaviour
             }
             else
             {
-                // Use manual position/size
+                // Use manual position/size — no screen pos available, dialogue stays at default
                 cutoutMask.anchoredPosition = step.manualCutoutPosition;
                 cutoutMask.sizeDelta = step.manualCutoutSize;
                 Debug.Log($"[TutorialSequenceManager] Spotlight manual position: {step.manualCutoutPosition}, size: {step.manualCutoutSize}");
+            }
+
+            // Reposition dialogue to avoid covering the spotlight
+            if (spotlightScreenPos.HasValue && DialogueController.Instance != null)
+            {
+                Vector2 normalized = new Vector2(
+                    spotlightScreenPos.Value.x / Screen.width,
+                    spotlightScreenPos.Value.y / Screen.height);
+                DialogueController.Instance.PositionAroundSpotlight(normalized);
             }
         }
         else if (spotlightOverlay != null)
         {
             // No spotlight for this step
             spotlightOverlay.SetActive(false);
-            
+            DialogueController.Instance?.ResetDialoguePosition();
+
             // Restore dialogue background when not using spotlight
             if (DialogueController.Instance != null)
             {
@@ -486,10 +499,11 @@ public class TutorialSequenceManager : MonoBehaviour
         {
             spotlightOverlay.SetActive(false);
         }
-        
-        // Restore dialogue background when cleaning up
+
+        // Restore dialogue position and background
         if (DialogueController.Instance != null)
         {
+            DialogueController.Instance.ResetDialoguePosition();
             DialogueController.Instance.SetBackgroundVisible(true);
         }
         
@@ -535,7 +549,12 @@ public class TutorialSequenceManager : MonoBehaviour
                 break;
                 
             case TutorialConditionType.WaitForSeconds:
-                yield return new WaitForSeconds(step.waitDuration);
+                // WaitForSecondsRealtime is unaffected by Time.timeScale, so this works even when pauseGame=true
+                yield return new WaitForSecondsRealtime(step.waitDuration);
+                break;
+
+            case TutorialConditionType.MouseReleased:
+                yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
                 break;
                 
             case TutorialConditionType.CameraStoppedMoving:
@@ -563,7 +582,11 @@ public class TutorialSequenceManager : MonoBehaviour
             case TutorialConditionType.RockStopped:
                 yield return WaitForRockStopped(step.rockIndex);
                 break;
-                
+
+            case TutorialConditionType.RockReachedYPosition:
+                yield return WaitForRockReachedY(step.rockIndex, step.targetYPosition, step.targetYAbove);
+                break;
+
             case TutorialConditionType.GameStateChange:
                 yield return WaitForGameState(step.targetGameState);
                 break;
@@ -902,11 +925,89 @@ public class TutorialSequenceManager : MonoBehaviour
             gameManager.rockList[index].rockInfo.rest);
     }
     
+    /// <summary>
+    /// Resolves the world-space Transform to spotlight for a step.
+    /// Priority: spotlightWorldTarget (direct ref) > spotlightTargetName (by name) > spotlightTargetTag (by tag).
+    /// Returns null if none resolve — SetupStep falls through to manual positioning.
+    /// </summary>
+    private Transform ResolveWorldTarget(TutorialStep step)
+    {
+        if (step.spotlightWorldTarget != null)
+            return step.spotlightWorldTarget;
+
+        if (!string.IsNullOrEmpty(step.spotlightTargetName))
+        {
+            // Reserved keywords for runtime objects that can't be found by static name
+            switch (step.spotlightTargetName)
+            {
+                case "$currentRock":
+                    if (gameManager?.rockList != null && gameManager.rockCurrent < gameManager.rockList.Count)
+                        return gameManager.rockList[gameManager.rockCurrent].rock?.transform;
+                    Debug.LogWarning("[TutorialSequenceManager] $currentRock: rock not available");
+                    return null;
+                case "$shooter":
+                    if (gameManager?.shooterGO != null)
+                        return gameManager.shooterGO.transform;
+                    Debug.LogWarning("[TutorialSequenceManager] $shooter: shooterGO is null");
+                    return null;
+                case "$launcher":
+                    GameObject launcher = GameObject.FindWithTag("Launcher");
+                    if (launcher != null) return launcher.transform;
+                    Debug.LogWarning("[TutorialSequenceManager] $launcher: no object tagged 'Launcher'");
+                    return null;
+            }
+
+            GameObject found = GameObject.Find(step.spotlightTargetName);
+            if (found != null)
+            {
+                Debug.Log($"[TutorialSequenceManager] Resolved spotlight by name: '{step.spotlightTargetName}'");
+                return found.transform;
+            }
+            Debug.LogWarning($"[TutorialSequenceManager] spotlightTargetName '{step.spotlightTargetName}' not found in scene");
+        }
+
+        if (!string.IsNullOrEmpty(step.spotlightTargetTag))
+        {
+            GameObject found = GameObject.FindWithTag(step.spotlightTargetTag);
+            if (found != null)
+            {
+                Debug.Log($"[TutorialSequenceManager] Resolved spotlight by tag: '{step.spotlightTargetTag}'");
+                return found.transform;
+            }
+            Debug.LogWarning($"[TutorialSequenceManager] spotlightTargetTag '{step.spotlightTargetTag}' not found in scene");
+        }
+
+        return null;
+    }
+
+    private IEnumerator WaitForRockReachedY(int rockIndex, float targetY, bool waitUntilAbove)
+    {
+        if (gameManager == null)
+            yield break;
+
+        int index = rockIndex >= 0 ? rockIndex : gameManager.rockCurrent;
+
+        Debug.Log($"[TutorialSequenceManager] Waiting for rock {index} to reach Y {(waitUntilAbove ? ">=" : "<=")} {targetY}");
+
+        yield return new WaitUntil(() =>
+        {
+            if (gameManager.rockList == null || index >= gameManager.rockList.Count)
+                return false;
+            GameObject rock = gameManager.rockList[index].rock;
+            if (rock == null || !rock.activeInHierarchy)
+                return false;
+            float y = rock.transform.position.y;
+            return waitUntilAbove ? y >= targetY : y <= targetY;
+        });
+
+        Debug.Log($"[TutorialSequenceManager] Rock {index} reached Y target {targetY}");
+    }
+
     private IEnumerator WaitForGameState(GameState targetState)
     {
         if (gameManager == null)
             yield break;
-        
+
         yield return new WaitUntil(() => gameManager.state == targetState);
     }
     
