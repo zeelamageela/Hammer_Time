@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
-  m_Name: DrawGrab
+  m_Name: SweepWeight
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
-  stepName: Grab the Rock
-  dialogue: {fileID: 11400000, guid: ee87f09080fcc40d899147df4b3bd47e, type: 2}
-  startCondition: 4
+  stepName: SweepIntro
+  dialogue: {fileID: 11400000, guid: 1e7ba202f0b209d469aa0058438efe77, type: 2}
+  startCondition: 2
   endCondition: 2
   waitDuration: 1
   targetGameState: 0
@@ -22,19 +22,26 @@ MonoBehaviour:
   pullbackThreshold: 0.5
   targetYPosition: 0
   targetYAbove: 1
-  objectsToHighlight:
-  - {fileID: 0}
+  objectsToHighlight: []
   aimCirclePrefab: {fileID: 0}
   useSpotlight: 1
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
-  spotlightTargetName: 
+  spotlightTargetName: $currentRock
   spotlightTargetTag: 
-  manualCutoutPosition: {x: 0, y: -25}
-  manualCutoutSize: {x: 400, y: 400}
+  useSpotlightWorldPosition: 0
+  spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  manualCutoutPosition: {x: 0, y: 0}
+  manualCutoutSize: {x: 200, y: 200}
   spotlightPadding: 10
-  pauseGame: 0
+  dynamicSpotlight: 1
+  pauseGame: 1
   timeScale: 1
+  branchCondition: 0
+  branchTargetPosition: {x: 0, y: 0, z: 0}
+  branchThreshold: 1
+  onSuccessStep: 
+  onFailureStep: 
   onStepStart:
     m_PersistentCalls:
       m_Calls: []

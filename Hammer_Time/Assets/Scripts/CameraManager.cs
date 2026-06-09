@@ -232,7 +232,6 @@ public class CameraManager : MonoBehaviour
         //Debug.Log("Trajectory");
         main.depth = 1;
         house.depth = -1;
-        ui.depth = 3;
 
         aim.orthographicSize = Mathf.Lerp(3.5f, 4.2f, (trajTarget.position.y) / 10f);
 
@@ -256,6 +255,11 @@ public class CameraManager : MonoBehaviour
             aim.depth = -1;
             aimMover.position = new Vector3(0f, 3.5f, 0f);
         }
+
+        // UI camera must always render above the aim camera.
+        // When aim is active (depth 3), push UI to depth 4 so the spotlight
+        // overlay and other HUD elements composite on top of the aim camera view.
+        ui.depth = aim.depth > 0 ? aim.depth + 1 : 3;
         //vcam.LookAt = trajTarget;
         //vcam.Follow = trajTarget;
         //vcam.enabled = true;

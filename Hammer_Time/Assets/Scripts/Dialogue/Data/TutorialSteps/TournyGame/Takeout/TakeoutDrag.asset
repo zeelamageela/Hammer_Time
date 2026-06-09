@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
+  m_Name: TakeoutDrag
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
+  stepName: Aim for your target
+  dialogue: {fileID: 11400000, guid: ad4361e057bb69d42a6fde251dd3aed9, type: 2}
+  startCondition: 11
+  endCondition: 3
+  waitDuration: 2
+  targetGameState: 0
+  rockIndex: -1
+  pullbackThreshold: 0.2
+  targetYPosition: -28
+  targetYAbove: 0
+  objectsToHighlight:
+  - {fileID: 0}
+  aimCirclePrefab: {fileID: 0}
+  useSpotlight: 1
+  spotlightTarget: {fileID: 0}
+  spotlightWorldTarget: {fileID: 0}
+  spotlightTargetName: 
+  spotlightTargetTag: 
+  useSpotlightWorldPosition: 1
+  spotlightWorldPosition: {x: -0.01, y: 6.5, z: 0}
+  manualCutoutPosition: {x: 0, y: 0}
+  manualCutoutSize: {x: 175, y: 175}
+  spotlightPadding: 10
+  dynamicSpotlight: 1
+  pauseGame: 0
+  timeScale: 1
+  branchCondition: 0
+  branchTargetPosition: {x: 0, y: 0, z: 0}
+  branchThreshold: 1
+  onSuccessStep: 
+  onFailureStep: 
+  onStepStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onStepEnd:
+    m_PersistentCalls:
+      m_Calls: []

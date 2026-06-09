@@ -2,6 +2,20 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
+/// Condition evaluated immediately after a step's end condition fires.
+/// Determines which named step the sequence jumps to next.
+/// </summary>
+public enum TutorialBranchConditionType
+{
+    None,                    // No branching — always advance to next step in order
+    AimPositionNearTarget,   // TrajectoryLine.aimCircle within branchThreshold of branchTargetPosition
+    AimPositionFarFromTarget,// TrajectoryLine.aimCircle farther than branchThreshold from branchTargetPosition
+    RockPositionNearTarget,  // Rock world position within branchThreshold (useful after RockStopped)
+    FlickVelocityAbove,      // Release speed (rb.velocity.magnitude) above branchThreshold
+    FlickVelocityBelow,      // Release speed below branchThreshold
+}
+
+/// <summary>
 /// Defines when a tutorial condition should be checked
 /// </summary>
 public enum TutorialConditionType
@@ -87,6 +101,14 @@ public class TutorialStep : ScriptableObject
     [Tooltip("Find spotlight target by Tag at runtime (e.g. 'GameController'). Used if spotlightTargetName is empty.")]
     public string spotlightTargetTag;
 
+    [Tooltip("If true, use spotlightWorldPosition as the cutout target instead of a GameObject reference. " +
+             "The position is projected through the active camera (aim camera when live) every frame when dynamicSpotlight=true.")]
+    public bool useSpotlightWorldPosition = false;
+
+    [Tooltip("Fixed world-space position to spotlight (e.g. the house centre at (0, 6.5, 0)). " +
+             "Enable useSpotlightWorldPosition and dynamicSpotlight so the cutout re-projects as the aim camera pans.")]
+    public Vector3 spotlightWorldPosition;
+
     [Tooltip("Manual cutout position (if no target specified)")]
     public Vector2 manualCutoutPosition;
     
@@ -95,6 +117,10 @@ public class TutorialStep : ScriptableObject
     
     [Tooltip("Padding around spotlight target (makes cutout bigger)")]
     public float spotlightPadding = 10f;
+
+    [Tooltip("If true, the spotlight cutout position updates every frame to track a moving target. " +
+             "Required for $aimTarget (aim circle) which moves as the player drags.")]
+    public bool dynamicSpotlight = false;
     
     [Header("Game Control")]
     [Tooltip("Should the game be paused during this step?")]
@@ -103,10 +129,27 @@ public class TutorialStep : ScriptableObject
     [Tooltip("Set time scale (1 = normal, 0.5 = half speed, etc)")]
     public float timeScale = 1f;
     
+    [Header("Branching")]
+    [Tooltip("Condition evaluated right after the end condition fires. Success/failure determines which step to jump to.")]
+    public TutorialBranchConditionType branchCondition = TutorialBranchConditionType.None;
+
+    [Tooltip("World position used as the reference point for position-based branch conditions.")]
+    public Vector3 branchTargetPosition;
+
+    [Tooltip("For position conditions: max distance (world units) that counts as success.\n" +
+             "For velocity conditions: speed (units/sec) threshold.")]
+    public float branchThreshold = 1f;
+
+    [Tooltip("Name of the step to jump to when the branch condition is TRUE. Leave empty to continue to the next step in order.")]
+    public string onSuccessStep;
+
+    [Tooltip("Name of the step to jump to when the branch condition is FALSE. Leave empty to continue to the next step in order.")]
+    public string onFailureStep;
+
     [Header("Events")]
     [Tooltip("Custom actions to invoke when entering this step")]
     public UnityEvent onStepStart;
-    
+
     [Tooltip("Custom actions to invoke when exiting this step")]
     public UnityEvent onStepEnd;
 }

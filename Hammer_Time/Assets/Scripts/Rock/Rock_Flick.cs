@@ -117,6 +117,9 @@ public class Rock_Flick : MonoBehaviour
         if (isPressed)
         {
             rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
+            // Sync rb.position → transform.position immediately so DrawTrajectory and parented
+            // objects (ShootingKnob) see the current position, not last physics step's value.
+            Physics2D.SyncTransforms();
             shootKnob.mouseCircle.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
             trajLine.DrawTrajectory();

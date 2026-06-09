@@ -31,6 +31,12 @@ public class TutorialSequenceManager : MonoBehaviour
     private Coroutine playCoroutine;
     private GameObject[] currentHighlights;
     private GameObject currentAimCircle;
+    private Coroutine dynamicSpotlightCoroutine;
+
+    // Captured game-state values used by branch condition evaluation.
+    // Updated whenever the relevant end condition fires.
+    private float lastCapturedSpeed;       // rb.velocity.magnitude at rock release
+    private Vector3 lastCapturedAimPos;    // aimCircle world position at rock release
     
     // Completed tutorials tracking
     private HashSet<string> completedTutorials = new HashSet<string>();
@@ -270,22 +276,40 @@ public class TutorialSequenceManager : MonoBehaviour
         for (currentStepIndex = 0; currentStepIndex < currentSequence.StepCount; currentStepIndex++)
         {
             TutorialStep step = currentSequence.GetStep(currentStepIndex);
-            
+
             if (step == null)
             {
                 Debug.LogWarning($"Null step at index {currentStepIndex}");
                 continue;
             }
-            
+
             yield return StartCoroutine(PlayStep(step));
-            
+
             if (!isPlaying)
-            {
-                // Tutorial was stopped/skipped
                 yield break;
+
+            // Branching: evaluate the condition and jump to the named success or failure step.
+            if (step.branchCondition != TutorialBranchConditionType.None)
+            {
+                bool passed = EvaluateBranchCondition(step);
+                string jumpTo = passed ? step.onSuccessStep : step.onFailureStep;
+                if (!string.IsNullOrEmpty(jumpTo))
+                {
+                    int jumpIdx = FindStepByName(jumpTo);
+                    if (jumpIdx >= 0)
+                    {
+                        // Subtract 1 because the for-loop will increment before the next iteration.
+                        currentStepIndex = jumpIdx - 1;
+                        Debug.Log($"[TutorialSequenceManager] Branch {(passed ? "SUCCESS" : "FAILURE")} → jumping to '{jumpTo}' (index {jumpIdx})");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[TutorialSequenceManager] Branch target step '{jumpTo}' not found in sequence — continuing in order");
+                    }
+                }
             }
         }
-        
+
         // Tutorial complete
         CompleteTutorial(onComplete);
     }
@@ -336,13 +360,15 @@ public class TutorialSequenceManager : MonoBehaviour
 
             Debug.Log($"[TutorialSequenceManager] Showing dialogue for step end condition: {step.endCondition}");
             
-            // For action-based conditions, show dialogue but DON'T wait for acknowledgment
-            // Let the player's action complete the step
-            if (step.endCondition == TutorialConditionType.RockBeingDragged || 
-                step.endCondition == TutorialConditionType.RockGrabbed)
+            // For action-based conditions the player's physical action ends the step,
+            // so dialogue must not intercept input or require a click to dismiss.
+            if (step.endCondition == TutorialConditionType.RockBeingDragged ||
+                step.endCondition == TutorialConditionType.RockGrabbed ||
+                step.endCondition == TutorialConditionType.MouseReleased ||
+                step.endCondition == TutorialConditionType.RockReleased)
             {
                 Debug.Log($"[TutorialSequenceManager] Showing non-blocking dialogue for action-based step");
-                dialogueController.Show(step.dialogue, null);
+                dialogueController.Show(step.dialogue, null, nonBlocking: true);
             }
             else
             {
@@ -383,25 +409,90 @@ public class TutorialSequenceManager : MonoBehaviour
         // Invoke unity events
         step.onStepStart?.Invoke();
         
-        // Set time scale
-        Time.timeScale = step.timeScale;
-        
-        // Set pause state
-        if (step.pauseGame)
-            Time.timeScale = 0f;
+        // Action-based end conditions require physics to keep running so the player
+        // can drag, aim, and release. Rigidbody2D.position only syncs to the transform
+        // during a physics step — if timeScale=0, FixedUpdate never runs and the
+        // shooting knob/rock position freezes even though Update() still executes.
+        bool requiresPlayerInput =
+            step.endCondition == TutorialConditionType.RockBeingDragged  ||
+            step.endCondition == TutorialConditionType.RockGrabbed        ||
+            step.endCondition == TutorialConditionType.MouseReleased      ||
+            step.endCondition == TutorialConditionType.RockReleased       ||
+            step.endCondition == TutorialConditionType.RockReachedYPosition;
+
+        if (requiresPlayerInput && (step.pauseGame || step.timeScale == 0f))
+        {
+            // Never freeze physics on interactive steps — the player can't drag/aim/release a frozen rock.
+            Time.timeScale = 1f;
+            Debug.LogWarning($"[TutorialSequenceManager] Step '{step.stepName}': " +
+                             $"pauseGame={step.pauseGame}, timeScale={step.timeScale} would freeze physics " +
+                             $"but endCondition={step.endCondition} requires player input — forcing timeScale=1.");
+        }
+        else
+        {
+            Time.timeScale = step.timeScale;
+            if (step.pauseGame)
+                Time.timeScale = 0f;
+        }
         
         // Setup spotlight
         if (step.useSpotlight && spotlightOverlay != null && cutoutMask != null)
         {
             spotlightOverlay.SetActive(true);
-            
+
+            // Ensure the spotlight canvas is visible and correctly configured.
+            Canvas spotlightCanvas = spotlightOverlay.GetComponent<Canvas>();
+            if (spotlightCanvas == null)
+                spotlightCanvas = spotlightOverlay.GetComponentInParent<Canvas>(true);
+            if (spotlightCanvas != null)
+            {
+                // The spotlight must render over ALL game cameras (including the aim camera).
+                // Screen Space - Camera mode with the UI camera is the only way to guarantee
+                // the overlay appears on top regardless of which game camera is active.
+                CameraManager camMgr = FindAnyObjectByType<CameraManager>();
+                if (camMgr != null && camMgr.ui != null)
+                {
+                    if (spotlightCanvas.renderMode == RenderMode.WorldSpace ||
+                        (spotlightCanvas.renderMode == RenderMode.ScreenSpaceCamera && spotlightCanvas.worldCamera == null))
+                    {
+                        spotlightCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                        spotlightCanvas.worldCamera = camMgr.ui;
+                        spotlightCanvas.planeDistance = 1f;
+                        Debug.Log($"[TutorialSequenceManager] Spotlight canvas set to Screen Space - Camera with '{camMgr.ui.name}'");
+                    }
+                }
+
+                spotlightCanvas.overrideSorting = true;
+                spotlightCanvas.sortingOrder = 490;
+
+                // Spotlight must never intercept pointer events — the game needs mouse input during dragging steps.
+                CanvasGroup spotlightCG = spotlightOverlay.GetComponent<CanvasGroup>();
+                if (spotlightCG == null) spotlightCG = spotlightOverlay.AddComponent<CanvasGroup>();
+                spotlightCG.blocksRaycasts = false;
+
+                Debug.Log($"[TutorialSequenceManager] Spotlight canvas: " +
+                          $"renderMode={spotlightCanvas.renderMode}, " +
+                          $"worldCamera={(spotlightCanvas.worldCamera != null ? spotlightCanvas.worldCamera.name : "NULL")}, " +
+                          $"sortingOrder={spotlightCanvas.sortingOrder}, " +
+                          $"activeInHierarchy={spotlightOverlay.activeInHierarchy}");
+            }
+            else
+            {
+                Debug.LogWarning("[TutorialSequenceManager] Spotlight overlay has no Canvas component — it will not render. " +
+                                 "Add a Canvas component to the spotlightOverlay GameObject or one of its parents.");
+            }
+
             // Hide dialogue background when using spotlight (spotlight has its own background)
             if (DialogueController.Instance != null)
             {
                 DialogueController.Instance.SetBackgroundVisible(false);
             }
             
-            // Position and size the cutout based on target or manual settings
+            // Position and size the cutout based on target or manual settings.
+            // Call ResolveWorldTarget once so we don't search the scene twice.
+            Transform resolvedWorldTarget = ResolveWorldTarget(step);
+            bool hasWorldTarget = step.useSpotlightWorldPosition || resolvedWorldTarget != null;
+
             Vector2? spotlightScreenPos = null;
             if (step.spotlightTarget != null)
             {
@@ -411,16 +502,23 @@ public class TutorialSequenceManager : MonoBehaviour
                 spotlightScreenPos = step.spotlightTarget.position; // world pos == screen pos on Overlay canvas
                 Debug.Log($"[TutorialSequenceManager] Spotlight UI target: {step.spotlightTarget.name} at {cutoutMask.position}");
             }
-            else if (ResolveWorldTarget(step) is Transform worldTarget)
+            else if (hasWorldTarget)
             {
-                // Auto-position to match world object.
-                // We must convert through ScreenPointToLocalPointInRectangle so the result
-                // is in the parent rect's local space — direct assignment of WorldToScreenPoint
-                // to RectTransform.position breaks when a CanvasScaler scales the canvas.
-                Camera mainCam = Camera.main;
-                if (mainCam != null)
+                // Project a world-space point through the active camera.
+                // useSpotlightWorldPosition uses a fixed Vector3 (e.g. house centre at (0, 6.5, 0)).
+                // Otherwise we use the resolved Transform (keyword or GameObject reference).
+                // The aim camera (depth > 0) shows a completely different area than the main camera,
+                // so we must project through whichever camera is currently rendering that world region.
+                Vector3 targetWorldPos = step.useSpotlightWorldPosition
+                    ? step.spotlightWorldPosition
+                    : resolvedWorldTarget.position;
+
+                CameraManager camMgr2 = FindAnyObjectByType<CameraManager>();
+                Camera renderCam = (camMgr2?.aim != null && camMgr2.aim.depth > 0) ? camMgr2.aim : Camera.main;
+
+                if (renderCam != null)
                 {
-                    Vector3 screenPos = mainCam.WorldToScreenPoint(worldTarget.position);
+                    Vector3 screenPos = renderCam.WorldToScreenPoint(targetWorldPos);
                     spotlightScreenPos = new Vector2(screenPos.x, screenPos.y);
                     RectTransform parentRect = cutoutMask.parent as RectTransform;
                     Canvas parentCanvas = cutoutMask.GetComponentInParent<Canvas>();
@@ -432,11 +530,20 @@ public class TutorialSequenceManager : MonoBehaviour
                         cutoutMask.anchoredPosition = localPoint;
                     }
                     cutoutMask.sizeDelta = step.manualCutoutSize + Vector2.one * step.spotlightPadding;
-                    Debug.Log($"[TutorialSequenceManager] Spotlight world target: {worldTarget.name} at world {worldTarget.position} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
+                    Debug.Log($"[TutorialSequenceManager] Spotlight world pos {targetWorldPos} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
                 }
                 else
                 {
-                    Debug.LogWarning($"[TutorialSequenceManager] Main camera not found for world spotlight!");
+                    Debug.LogWarning($"[TutorialSequenceManager] No active camera found for world spotlight!");
+                }
+
+                // dynamicSpotlight keeps the cutout re-projecting every frame.
+                // Required whenever the camera can pan (e.g. aim camera tracking the house).
+                if (step.dynamicSpotlight)
+                {
+                    if (dynamicSpotlightCoroutine != null)
+                        StopCoroutine(dynamicSpotlightCoroutine);
+                    dynamicSpotlightCoroutine = StartCoroutine(DynamicSpotlightUpdate(step));
                 }
             }
             else
@@ -494,6 +601,13 @@ public class TutorialSequenceManager : MonoBehaviour
     
     private void CleanupStep()
     {
+        // Stop dynamic spotlight tracking (no-op if not running)
+        if (dynamicSpotlightCoroutine != null)
+        {
+            StopCoroutine(dynamicSpotlightCoroutine);
+            dynamicSpotlightCoroutine = null;
+        }
+
         // Hide spotlight
         if (spotlightOverlay != null)
         {
@@ -533,6 +647,134 @@ public class TutorialSequenceManager : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Runs every frame while the spotlight is active, repositioning the cutout to
+    /// track a moving world-space target through whichever camera is currently live.
+    /// Handles the aim camera (depth > 0) switching in automatically.
+    /// </summary>
+    private IEnumerator DynamicSpotlightUpdate(TutorialStep step)
+    {
+        CameraManager camMgr = FindAnyObjectByType<CameraManager>();
+        // Fixed world position takes priority over a Transform reference.
+        bool useFixedPos = step.useSpotlightWorldPosition;
+        Transform target = useFixedPos ? null : ResolveWorldTarget(step);
+        RectTransform parentRect = cutoutMask.parent as RectTransform;
+        Canvas parentCanvas = cutoutMask.GetComponentInParent<Canvas>();
+
+        while (spotlightOverlay != null && spotlightOverlay.activeInHierarchy)
+        {
+            // Resolve world position this frame
+            Vector3 worldPos;
+            if (useFixedPos)
+            {
+                worldPos = step.spotlightWorldPosition;
+            }
+            else if (target != null)
+            {
+                worldPos = target.position;
+            }
+            else
+            {
+                yield return null;
+                continue;
+            }
+
+            if (cutoutMask != null)
+            {
+                // Project through whichever camera is currently rendering that world region.
+                // The aim camera (depth > 0) shows the house area; main camera shows the hack.
+                Camera renderCam = (camMgr?.aim != null && camMgr.aim.depth > 0) ? camMgr.aim : Camera.main;
+
+                if (renderCam != null)
+                {
+                    Vector3 screenPos = renderCam.WorldToScreenPoint(worldPos);
+                    if (screenPos.z > 0f)
+                    {
+                        Camera canvasCam = (parentCanvas != null && parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                            ? parentCanvas.worldCamera : null;
+                        if (parentRect != null && RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                            parentRect, new Vector2(screenPos.x, screenPos.y), canvasCam, out Vector2 localPoint))
+                        {
+                            cutoutMask.anchoredPosition = localPoint;
+                        }
+                    }
+                }
+            }
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Evaluates the step's branch condition synchronously using captured and current game state.
+    /// Returns true on success, false on failure.
+    /// </summary>
+    private bool EvaluateBranchCondition(TutorialStep step)
+    {
+        switch (step.branchCondition)
+        {
+            case TutorialBranchConditionType.AimPositionNearTarget:
+            case TutorialBranchConditionType.AimPositionFarFromTarget:
+            {
+                // Use the position captured at the moment of release (aimCircle retains its last
+                // position after DrawTrajectory stops). Fall back to current aimCircle if fresh.
+                Vector3 aimPos = lastCapturedAimPos;
+                TrajectoryLine tLine = FindAnyObjectByType<TrajectoryLine>();
+                if (tLine != null && tLine.aimCircle != null)
+                    aimPos = tLine.aimCircle.transform.position;
+
+                float dist = Vector3.Distance(aimPos, step.branchTargetPosition);
+                bool near = dist <= step.branchThreshold;
+                bool pass = step.branchCondition == TutorialBranchConditionType.AimPositionNearTarget ? near : !near;
+                Debug.Log($"[TutorialSequenceManager] Branch {step.branchCondition}: aimPos={aimPos}, target={step.branchTargetPosition}, dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                return pass;
+            }
+
+            case TutorialBranchConditionType.RockPositionNearTarget:
+            {
+                if (gameManager?.rockList == null) return false;
+                int idx = gameManager.rockCurrent;
+                if (idx >= gameManager.rockList.Count) return false;
+                GameObject rock = gameManager.rockList[idx].rock;
+                if (rock == null) return false;
+                float dist = Vector3.Distance(rock.transform.position, step.branchTargetPosition);
+                bool pass = dist <= step.branchThreshold;
+                Debug.Log($"[TutorialSequenceManager] Branch RockPositionNearTarget: dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                return pass;
+            }
+
+            case TutorialBranchConditionType.FlickVelocityAbove:
+            {
+                bool pass = lastCapturedSpeed > step.branchThreshold;
+                Debug.Log($"[TutorialSequenceManager] Branch FlickVelocityAbove: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                return pass;
+            }
+
+            case TutorialBranchConditionType.FlickVelocityBelow:
+            {
+                bool pass = lastCapturedSpeed < step.branchThreshold;
+                Debug.Log($"[TutorialSequenceManager] Branch FlickVelocityBelow: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                return pass;
+            }
+
+            default:
+                return true;
+        }
+    }
+
+    /// <summary>
+    /// Returns the index of the step with the given stepName in the current sequence, or -1 if not found.
+    /// </summary>
+    private int FindStepByName(string name)
+    {
+        if (currentSequence == null || string.IsNullOrEmpty(name)) return -1;
+        for (int i = 0; i < currentSequence.StepCount; i++)
+        {
+            TutorialStep s = currentSequence.GetStep(i);
+            if (s != null && s.stepName == name) return i;
+        }
+        return -1;
+    }
+
     private IEnumerator WaitForCondition(TutorialStep step, TutorialConditionType conditionType)
     {
         switch (conditionType)
@@ -602,13 +844,32 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         if (gameManager == null)
             yield break;
-        
+
         int index = rockIndex >= 0 ? rockIndex : gameManager.rockCurrent;
-        
-        yield return new WaitUntil(() => 
-            gameManager.rockList != null && 
+
+        yield return new WaitUntil(() =>
+            gameManager.rockList != null &&
             index < gameManager.rockList.Count &&
             gameManager.rockList[index].rockInfo.released);
+
+        // Capture branch-condition data at the moment of release.
+        // Aim position: aimCircle retains its last DrawTrajectory position after the mouse is released.
+        TrajectoryLine tLine = FindAnyObjectByType<TrajectoryLine>();
+        if (tLine != null && tLine.aimCircle != null)
+            lastCapturedAimPos = tLine.aimCircle.transform.position;
+
+        // Release speed: yield one physics frame so the rigidbody has its launch velocity applied.
+        yield return new WaitForFixedUpdate();
+        if (gameManager.rockList != null && index < gameManager.rockList.Count)
+        {
+            GameObject rock = gameManager.rockList[index].rock;
+            if (rock != null)
+            {
+                Rigidbody2D rb = rock.GetComponent<Rigidbody2D>();
+                lastCapturedSpeed = rb != null ? rb.velocity.magnitude : 0f;
+                Debug.Log($"[TutorialSequenceManager] Captured release speed={lastCapturedSpeed:F2}, aimPos={lastCapturedAimPos}");
+            }
+        }
     }
     
     private IEnumerator WaitForRockGrabbed(int rockIndex)
@@ -954,6 +1215,11 @@ public class TutorialSequenceManager : MonoBehaviour
                     GameObject launcher = GameObject.FindWithTag("Launcher");
                     if (launcher != null) return launcher.transform;
                     Debug.LogWarning("[TutorialSequenceManager] $launcher: no object tagged 'Launcher'");
+                    return null;
+                case "$aimTarget":
+                    TrajectoryLine tLine = FindAnyObjectByType<TrajectoryLine>();
+                    if (tLine != null && tLine.aimCircle != null) return tLine.aimCircle.transform;
+                    Debug.LogWarning("[TutorialSequenceManager] $aimTarget: TrajectoryLine or aimCircle not found");
                     return null;
             }
 

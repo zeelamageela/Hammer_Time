@@ -56,10 +56,7 @@ public class TutorialGameManager : MonoBehaviour
             return;
         }
 
-        if (!isTutorialGame)
-        {
-            InitializeTutorialGame();
-        }
+        InitializeTutorialGame();
     }
 
     private IEnumerator WaitForGameManagerThenInitialize()
@@ -79,10 +76,7 @@ public class TutorialGameManager : MonoBehaviour
             yield break;
         }
 
-        if (!isTutorialGame)
-        {
-            InitializeTutorialGame();
-        }
+        InitializeTutorialGame();
     }
     
     /// <summary>
@@ -106,7 +100,14 @@ public class TutorialGameManager : MonoBehaviour
             Debug.LogWarning("[TutorialGameManager] Cannot initialize - missing setup or GameManager");
             return;
         }
-        
+
+#if UNITY_EDITOR
+        // In editor builds, always reset completion so tutorial can be iterated without clearing PlayerPrefs manually.
+        PlayerPrefs.DeleteKey("CompletedTutorials");
+        PlayerPrefs.Save();
+        Debug.Log("[TutorialGameManager] EDITOR: Cleared CompletedTutorials PlayerPrefs for fresh run");
+#endif
+
         isTutorialGame = true;
 
         // Pick flick or pull-release tutorial based on the player's shot style setting
@@ -243,6 +244,10 @@ public class TutorialGameManager : MonoBehaviour
         }
         if (cm != null)
             cm.loadedFromSave = false;
+
+        // Prevent the LoadGame branch in SetupGame from running instead of the tutorial path
+        if (gsp != null)
+            gsp.loadGame = false;
 
         // Force GameHUD to refresh with new team names
         GameHUD gHUD = Object.FindAnyObjectByType<GameHUD>();

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 922e4754bd4294754a1d1baea425f92d, type: 3}
+  m_Name: PRTutorialGameSetup
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialGameSetup
+  startingEnd: 2
+  startingScore: {x: 1, y: 0}
+  playerHasHammer: 0
+  rocksPerTeam: 2
+  opponentTeamName: Coach
+  prePlacedRocks:
+  - rockIndex: 1
+    isYellow: 1
+    position: {x: -0.13, y: 2.74}
+    rotation: 0
+  - rockIndex: 3
+    isYellow: 1
+    position: {x: 1.14, y: 6.84}
+    rotation: 0
+  pullReleaseTutorialRockIndex: 13
+  pullReleaseTutorialId: PullReleaseTutorial
+  takeoutTutorialRockIndex: 15
+  takeoutTutorialId: TakeoutTutorial
+  aiShotSuggestions: []

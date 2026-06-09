@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb4719ad8e7f47b39aecb4a60eda73a, type: 3}
+  m_Name: FlickShotTutorial
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialSequence
+  sequenceId: FlickShotTutorial
+  displayName: Flick Shooting Tutorial
+  description: How to shoot, flick mode.
+  steps:
+  - {fileID: 11400000, guid: 30389ba5d42dc24469ce3edaeff58b07, type: 2}
+  - {fileID: 11400000, guid: d0422706523e64408a1eb10815f900ed, type: 2}
+  - {fileID: 11400000, guid: 0563b82714e2748a1b28fe42abfe2cd5, type: 2}
+  - {fileID: 11400000, guid: 30db019dcf348194f8c6d518b0be5835, type: 2}
+  - {fileID: 11400000, guid: a9b77c0df3363764eb8359b46adcabfe, type: 2}
+  - {fileID: 11400000, guid: 7a2ce87f6f1d444938ec3312e3e55f4d, type: 2}
+  - {fileID: 11400000, guid: 53dd654147f074160b70a65aa08f69ce, type: 2}
+  - {fileID: 11400000, guid: 53dd654147f074160b70a65aa08f69ce, type: 2}
+  canSkip: 0
+  autoStart: 1
+  autoStartCondition:
+    checkWeek: 0
+    requiredWeek: 1
+    checkFirstTime: 1
+    checkScene: 1
+    requiredSceneName: TutorialGame

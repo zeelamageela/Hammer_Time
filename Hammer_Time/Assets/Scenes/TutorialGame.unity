@@ -6277,7 +6277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialGameManager
   tutorialSetup: {fileID: 11400000, guid: d3442aafa44064278a9f7c6039d45ff1, type: 2}
-  flickShotTutorialSetup: {fileID: 0}
+  flickShotTutorialSetup: {fileID: 11400000, guid: 0aa1bcc30e0746342bf7fc6397c617c2, type: 2}
   isTutorialGame: 0
   runTutorialValidationLogs: 1
 --- !u!1 &241035818
@@ -22640,7 +22640,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &930328286
 Canvas:
   m_ObjectHideFlags: 0
@@ -42571,6 +42571,8 @@ MonoBehaviour:
   availableTutorials:
   - {fileID: 11400000, guid: 135154bbc84014b41870f740e6d4da87, type: 2}
   - {fileID: 11400000, guid: 14a78b5bde7d14b4ea428a7d854a9fc5, type: 2}
+  - {fileID: 11400000, guid: 9af3950c158088f428ff5f0fa9256376, type: 2}
+  - {fileID: 11400000, guid: 9af3950c158088f428ff5f0fa9256376, type: 2}
   skipButton: {fileID: 1112520747}
   spotlightOverlay: {fileID: 930328283}
   cutoutMask: {fileID: 1523811284}

@@ -50,6 +50,9 @@ public class DialogueController : MonoBehaviour
     private bool waitForMouseRelease;
     private Vector2 dialoguePanelDefaultPos;
     private bool dialoguePanelDefaultCached;
+    // When true: click-to-advance is suppressed and the canvas doesn't block raycasts.
+    // Used for passive hint dialogue shown during active player input (e.g. rock drag).
+    private bool nonBlockingMode;
     
     // Events
     public event Action<DialogueData> OnDialogueStart;
@@ -86,8 +89,9 @@ public class DialogueController : MonoBehaviour
     
     private void Update()
     {
-        // Allow clicking anywhere to advance if typing is done
-        if (Input.GetMouseButtonDown(0) && dialogueCanvas != null && dialogueCanvas.activeSelf)
+        // Allow clicking anywhere to advance if typing is done.
+        // Suppressed in nonBlockingMode — the player's click belongs to the game, not the dialogue.
+        if (!nonBlockingMode && Input.GetMouseButtonDown(0) && dialogueCanvas != null && dialogueCanvas.activeSelf)
         {
             if (Time.unscaledTime < allowInputAtTime)
                 return;
@@ -114,9 +118,12 @@ public class DialogueController : MonoBehaviour
     #region Public API
     
     /// <summary>
-    /// Show dialogue from DialogueData asset
+    /// Show dialogue from DialogueData asset.
+    /// Pass nonBlocking:true for passive hint dialogue shown during active player input
+    /// (e.g. while dragging a rock). In this mode the canvas does not intercept mouse
+    /// events and clicking will not advance or dismiss the dialogue.
     /// </summary>
-    public void Show(DialogueData dialogue, Action onComplete = null)
+    public void Show(DialogueData dialogue, Action onComplete = null, bool nonBlocking = false)
     {
         ResolveMissingReferences();
 
@@ -135,8 +142,11 @@ public class DialogueController : MonoBehaviour
         currentDialogue = dialogue;
         currentLineIndex = 0;
         onCompleteCallback = onComplete;
+        nonBlockingMode = nonBlocking;
         allowInputAtTime = Time.unscaledTime + inputDebounceSeconds;
         waitForMouseRelease = Input.GetMouseButton(0);
+
+        SetCanvasRaycastBlocking(!nonBlocking);
 
         ShowDialogue();
         SetupDialogueUI();
@@ -231,12 +241,12 @@ public class DialogueController : MonoBehaviour
     {
         if (nameText != null)
             nameText.text = currentDialogue.characterName;
-        
+
         // Show appropriate character sprite
         ShowCharacterSprite(currentDialogue.characterName);
-        
-        // Handle game pause
-        if (currentDialogue.pauseGame)
+
+        // Never pause when nonBlocking — physics must keep running for player input (e.g. rock drag).
+        if (currentDialogue.pauseGame && !nonBlockingMode)
             Time.timeScale = 0f;
     }
     
@@ -279,9 +289,21 @@ public class DialogueController : MonoBehaviour
     {
         if (dialogueCanvas != null)
             dialogueCanvas.SetActive(false);
-        
+
+        // Always restore normal input blocking when dialogue hides
+        nonBlockingMode = false;
+        SetCanvasRaycastBlocking(true);
+
         if (coachHead != null) coachHead.SetActive(false);
         if (announcerHead != null) announcerHead.SetActive(false);
+    }
+
+    private void SetCanvasRaycastBlocking(bool blocks)
+    {
+        if (dialogueCanvas == null) return;
+        CanvasGroup cg = dialogueCanvas.GetComponent<CanvasGroup>();
+        if (cg == null) cg = dialogueCanvas.AddComponent<CanvasGroup>();
+        cg.blocksRaycasts = blocks;
     }
     
     private void DisplayCurrentLine()
@@ -328,18 +350,19 @@ public class DialogueController : MonoBehaviour
         }
 
         dialogueText.text = "";
-        
+
         foreach (char c in text)
         {
             dialogueText.text += c;
-            
-            // Handle time scale for paused games
-            if (currentDialogue.pauseGame)
+
+            // Use real-time when the game is paused (timeScale=0). In nonBlocking mode the
+            // game is never paused, so regular WaitForSeconds (which respects timeScale) is fine.
+            if (currentDialogue.pauseGame && !nonBlockingMode)
                 yield return new WaitForSecondsRealtime(typingSpeed);
             else
                 yield return new WaitForSeconds(typingSpeed);
         }
-        
+
         isTyping = false;
     }
     
@@ -399,17 +422,21 @@ public class DialogueController : MonoBehaviour
     private void EndDialogue()
     {
         OnDialogueEnd?.Invoke(currentDialogue);
-        
+
+        // Capture before HideDialogue() resets nonBlockingMode.
+        bool wasPausingGame  = currentDialogue != null && currentDialogue.pauseGame;
+        bool wasNonBlocking  = nonBlockingMode;
+
         HideDialogue();
-        
-        // Resume game if it was paused
-        if (currentDialogue != null && currentDialogue.pauseGame)
+
+        // Only restore timeScale if we actually paused it (never paused in nonBlocking mode).
+        if (wasPausingGame && !wasNonBlocking)
             Time.timeScale = 1f;
-        
+
         // Trigger callback
         onCompleteCallback?.Invoke();
         onCompleteCallback = null;
-        
+
         currentDialogue = null;
         currentLineIndex = 0;
     }
