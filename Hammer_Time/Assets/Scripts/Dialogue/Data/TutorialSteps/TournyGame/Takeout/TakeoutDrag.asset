@@ -16,6 +16,7 @@ MonoBehaviour:
   dialogue: {fileID: 11400000, guid: ad4361e057bb69d42a6fde251dd3aed9, type: 2}
   startCondition: 11
   endCondition: 3
+  stepTimeout: 5
   waitDuration: 2
   targetGameState: 0
   rockIndex: -1
@@ -34,7 +35,7 @@ MonoBehaviour:
   spotlightWorldPosition: {x: 0, y: 0, z: 0}
   spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
-  manualCutoutSize: {x: 375, y: 375}
+  manualCutoutSize: {x: 125, y: 125}
   spotlightPadding: 10
   dynamicSpotlight: 1
   useHouseCamera: 0

@@ -16,6 +16,7 @@ MonoBehaviour:
   dialogue: {fileID: 11400000, guid: b95915ff0965f4c6587930ea5ca86715, type: 2}
   startCondition: 11
   endCondition: 3
+  stepTimeout: 7.5
   waitDuration: 2
   targetGameState: 0
   rockIndex: -1
@@ -37,6 +38,7 @@ MonoBehaviour:
   manualCutoutSize: {x: 400, y: 400}
   spotlightPadding: 10
   dynamicSpotlight: 1
+  useHouseCamera: 0
   pauseGame: 0
   timeScale: 1
   branchCondition: 1

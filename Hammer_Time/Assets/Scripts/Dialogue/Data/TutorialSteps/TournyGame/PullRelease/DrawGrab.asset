@@ -16,6 +16,7 @@ MonoBehaviour:
   dialogue: {fileID: 11400000, guid: ee87f09080fcc40d899147df4b3bd47e, type: 2}
   startCondition: 0
   endCondition: 2
+  stepTimeout: 5
   waitDuration: 1
   targetGameState: 0
   rockIndex: -1
@@ -32,12 +33,19 @@ MonoBehaviour:
   spotlightTargetTag: 
   useSpotlightWorldPosition: 0
   spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: -25}
   manualCutoutSize: {x: 400, y: 400}
   spotlightPadding: 10
   dynamicSpotlight: 0
+  useHouseCamera: 0
   pauseGame: 0
   timeScale: 1
+  branchCondition: 0
+  branchTargetPosition: {x: 0, y: 0, z: 0}
+  branchThreshold: 1
+  onSuccessStep: 
+  onFailureStep: 
   onStepStart:
     m_PersistentCalls:
       m_Calls: []
