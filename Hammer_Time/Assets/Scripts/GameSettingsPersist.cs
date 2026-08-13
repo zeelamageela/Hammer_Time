@@ -351,14 +351,21 @@ public class GameSettingsPersist : MonoBehaviour
     public void LoadTournySettings(TournySettings ts)
     {
         Debug.Log($"[GSP.LoadTournySettings] BEFORE: games={games}, ts.games={ts.games}");
-        
+
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         Debug.Log("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
-        teamColour = cm.teamColour;
+        if (cm != null) teamColour = cm.teamColour;
         //earnings = ts.earnings;
         games = ts.games;
+        // Ensure games is valid — if TournySettings couldn't set it (e.g. slider not yet active),
+        // calculate a sensible default so DrawSelector never receives 0.
+        if (games <= 0)
+        {
+            games = ts.teams > 12 ? 5 : ts.teams > 8 ? 4 : 3;
+            Debug.LogWarning($"[GSP.LoadTournySettings] ts.games was {ts.games} — defaulted to {games} for {ts.teams} teams");
+        }
         if (cashGame)
             ends = 1;
         else
@@ -373,11 +380,11 @@ public class GameSettingsPersist : MonoBehaviour
         
         Debug.Log($"[GSP.LoadTournySettings] AFTER: games={games}, ends={ends}, rocks={rocks}");
         Debug.Log($"[GSP.LoadTournySettings] Calling cm.SaveCareer() to persist tournament settings...");
-        
+
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
-        cm.SaveCareer(this);
-        
+        if (cm != null) cm.SaveCareer(this);
+
         Debug.Log($"[GSP.LoadTournySettings] Save complete - games={games} should now be in save file");
     }
 
@@ -573,6 +580,10 @@ public class GameSettingsPersist : MonoBehaviour
             }
         }
 
+        Debug.Log($"[GSP.TournySetup] Assigning teams — teams.Length={teams?.Length ?? 0}");
+        for (int dbg = 0; dbg < (teams?.Length ?? 0); dbg++)
+            Debug.Log($"[GSP.TournySetup]   teams[{dbg}] = {teams[dbg]?.name ?? "NULL"} (player={teams[dbg]?.player}, nextOpp={teams[dbg]?.nextOpp})");
+
         if (Random.Range(0f, 1f) < 0.5f)
         {
             aiYellow = true;
@@ -583,6 +594,12 @@ public class GameSettingsPersist : MonoBehaviour
                 if (teams[i].player)
                     redTeam = teams[i];
             }
+
+            if (redTeam == null)
+            {
+                Debug.LogError("[GSP.TournySetup] redTeam is null — no team has player=true! Falling back to teams[0]");
+                redTeam = teams[0];
+            }
             redTeamColour = teamColour;
             redTeamName = redTeam.name;
 
@@ -592,7 +609,14 @@ public class GameSettingsPersist : MonoBehaviour
                     yellowTeam = teams[i];
             }
 
-            yellowTeamName = yellowTeam.name;
+            if (yellowTeam == null)
+            {
+                Debug.LogError($"[GSP.TournySetup] yellowTeam is null — nextOpp '{redTeam.nextOpp}' not found in teams array! Falling back to first non-player team");
+                for (int i = 0; i < teams.Length; i++)
+                    if (!teams[i].player) { yellowTeam = teams[i]; break; }
+            }
+
+            yellowTeamName = yellowTeam?.name ?? "Unknown";
             yellowTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
@@ -607,7 +631,13 @@ public class GameSettingsPersist : MonoBehaviour
             for (int i = 0; i < teams.Length; i++)
             {
                 if (teams[i].player)
-                    yellowTeam = teams[i]; 
+                    yellowTeam = teams[i];
+            }
+
+            if (yellowTeam == null)
+            {
+                Debug.LogError("[GSP.TournySetup] yellowTeam is null — no team has player=true! Falling back to teams[0]");
+                yellowTeam = teams[0];
             }
             yellowTeamColour = teamColour;
             yellowTeamName = yellowTeam.name;
@@ -617,13 +647,23 @@ public class GameSettingsPersist : MonoBehaviour
                 if (yellowTeam.nextOpp == teams[i].name)
                     redTeam = teams[i];
             }
-            redTeamName = redTeam.name;
+
+            if (redTeam == null)
+            {
+                Debug.LogError($"[GSP.TournySetup] redTeam is null — nextOpp '{yellowTeam.nextOpp}' not found in teams array! Falling back to first non-player team");
+                for (int i = 0; i < teams.Length; i++)
+                    if (!teams[i].player) { redTeam = teams[i]; break; }
+            }
+
+            redTeamName = redTeam?.name ?? "Unknown";
             redTeamColour = new Color(
                 Random.Range(0f, 1f),
                 Random.Range(0f, 1f),
-                Random.Range(0f, 1f)); 
-            
+                Random.Range(0f, 1f));
+
         }
+
+        Debug.Log($"[GSP.TournySetup] *** FINAL team names set: red='{redTeamName}' yellow='{yellowTeamName}'");
 
         if (Random.Range(0f, 1f) < 0.5f)
         {
@@ -745,7 +785,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTourny()
     {
-        Debug.Log("[GameSettingsPersist] LoadTourny called");
+        Debug.Log($"[GameSettingsPersist] LoadTourny called — tournyInProgress={tournyInProgress}, ends={ends}, rocks={rocks}, red='{redTeamName}', yellow='{yellowTeamName}'");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         // CRITICAL FIX: Don't reload career if tournament is already in progress
@@ -753,13 +793,154 @@ public class GameSettingsPersist : MonoBehaviour
         // Reloading would overwrite them with stale data
         if (!tournyInProgress)
         {
-            Debug.Log("[GameSettingsPersist] Loading career for tournament setup");
+            Debug.Log("[GameSettingsPersist] tournyInProgress=false — running recovery load for tournament setup");
+
+            // Capture the player's in-memory selections BEFORE LoadCareer can overwrite them.
+            // RestoreGameState uses old save data (e.g. ends=8 from a previous game's autosave),
+            // which would clobber what the player just selected in TournySettings.
+            int preLoadEnds  = ends;
+            int preLoadRocks = rocks;
+            string preLoadRedName    = redTeamName;
+            string preLoadYellowName = yellowTeamName;
+            Debug.Log($"[LoadTourny] Recovery: captured pre-load ends={preLoadEnds}, rocks={preLoadRocks}, red='{preLoadRedName}', yellow='{preLoadYellowName}'");
+
             cm.LoadCareer(this);
+
+            // RECOVERY: tournyInProgress was false in memory, so LoadCareer's RestoreTournamentState
+            // was skipped (it only runs when the save has tournyInProgress=true). Rocks and team names
+            // must be fixed from tournament state or career teams.
+
+            // 1. Restore the player's actual selection if it was valid. RestoreGameState may have
+            //    overwritten ends/rocks with stale save data (e.g. a previous game's autosave).
+            //    The pre-load in-memory value is the authoritative player choice.
+            CareerSaveData saveData = CareerSaveService.LoadCareer();
+
+            if (preLoadRocks > 0 && preLoadRocks <= 8)
+            {
+                if (rocks != preLoadRocks)
+                    Debug.Log($"[LoadTourny] Recovery: rocks={preLoadRocks} from pre-load selection (RestoreGameState had set it to {rocks})");
+                rocks = preLoadRocks;
+            }
+            else if (rocks <= 0 || rocks > 8)
+            {
+                Debug.Log($"[LoadTourny] Recovery: reset rocks=8 (was {rocks}, invalid)");
+                rocks = 8;
+            }
+
+            if (preLoadEnds > 0 && preLoadEnds <= 10)
+            {
+                if (ends != preLoadEnds)
+                    Debug.Log($"[LoadTourny] Recovery: ends={preLoadEnds} from pre-load selection (RestoreGameState had set it to {ends})");
+                ends = preLoadEnds;
+            }
+            else if (ends <= 0 || ends > 10)
+            {
+                Debug.Log($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
+                ends = 8;
+            }
+
+            // Recalculate rockCurrent for the corrected rocks value now that rocks is confirmed.
+            // (The earlier rockCurrent correction below will also run, but capture rocks is needed first.)
+
+            // Read tournament state to double-check saved rocks/ends (e.g. if pre-load was also stale).
+            int savedTournyRocks = saveData?.currentTournamentState != null ? saveData.currentTournamentState.rocks : 0;
+            if (savedTournyRocks > 0 && savedTournyRocks <= 8 && preLoadRocks <= 0)
+            {
+                // Only use tournament state as fallback when pre-load was also invalid
+                Debug.Log($"[LoadTourny] Recovery: rocks={savedTournyRocks} from tournament state (pre-load was invalid)");
+                rocks = savedTournyRocks;
+            }
+
+            // Tournament state ends: only use as fallback when pre-load was also invalid.
+            // If pre-load had a valid selection, we already applied it above — don't let stale
+            // tournament state (e.g. from a previous game's autosave) override the player's choice.
+            int savedTournyEnds = saveData?.currentTournamentState != null ? saveData.currentTournamentState.ends : 0;
+            if (savedTournyEnds > 0 && savedTournyEnds <= 10 && preLoadEnds <= 0)
+            {
+                Debug.Log($"[LoadTourny] Recovery: ends={savedTournyEnds} from tournament state (pre-load was invalid)");
+                ends = savedTournyEnds;
+            }
+            else if (ends <= 0 || ends > 10)
+            {
+                Debug.Log($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
+                ends = 8;
+            }
+
+            // 2. Fix team names — but only if the pre-load names were invalid (empty / placeholder).
+            // TournySetup already picked correct opponents for this match; if we have valid names
+            // from before LoadCareer, preserve them to avoid changing opponents mid-match.
+            bool namesAlreadyValid = !string.IsNullOrEmpty(preLoadRedName)
+                                  && !string.IsNullOrEmpty(preLoadYellowName)
+                                  && preLoadRedName  != "Red"
+                                  && preLoadYellowName != "Yellow";
+            if (namesAlreadyValid)
+            {
+                redTeamName    = preLoadRedName;
+                yellowTeamName = preLoadYellowName;
+                Debug.Log($"[LoadTourny] Recovery: preserved pre-load team names — red='{redTeamName}' yellow='{yellowTeamName}'");
+            }
+
+            bool namesFixed = namesAlreadyValid;
+            if (!namesFixed && saveData?.currentTournamentState?.teams != null && saveData.currentTournamentState.teams.Count > 0)
+            {
+                TeamData playerTD = null, oppTD = null;
+                foreach (var td in saveData.currentTournamentState.teams)
+                    if (td.isPlayer) { playerTD = td; break; }
+                if (playerTD != null)
+                    foreach (var td in saveData.currentTournamentState.teams)
+                        if (td.name == playerTD.nextOpp) { oppTD = td; break; }
+
+                if (playerTD != null && oppTD != null &&
+                    !string.IsNullOrEmpty(playerTD.name) && !string.IsNullOrEmpty(oppTD.name))
+                {
+                    if (aiYellow) { redTeamName = playerTD.name; yellowTeamName = oppTD.name; }
+                    else          { yellowTeamName = playerTD.name; redTeamName = oppTD.name; }
+                    namesFixed = true;
+                    Debug.Log($"[LoadTourny] Recovery: team names from tournament state — red='{redTeamName}' yellow='{yellowTeamName}'");
+                }
+            }
+
+            if (!namesFixed && cm.teams != null)
+            {
+                // Fallback: derive from career teams (nextOpp field)
+                Team playerT = null;
+                foreach (var t in cm.teams)
+                    if (t != null && t.player) { playerT = t; break; }
+                if (playerT != null && !string.IsNullOrEmpty(playerT.nextOpp))
+                {
+                    Team oppT = null;
+                    foreach (var t in cm.teams)
+                        if (t != null && t.name == playerT.nextOpp) { oppT = t; break; }
+                    if (oppT != null)
+                    {
+                        if (aiYellow) { redTeamName = playerT.name; yellowTeamName = oppT.name; }
+                        else          { yellowTeamName = playerT.name; redTeamName = oppT.name; }
+                        namesFixed = true;
+                        Debug.Log($"[LoadTourny] Recovery: team names from career teams — red='{redTeamName}' yellow='{yellowTeamName}'");
+                    }
+                }
+            }
+
+            if (!namesFixed)
+                Debug.LogWarning("[LoadTourny] Recovery: could not find real team names — defaulting to Red/Yellow");
+
+            // Recalculate rockCurrent for the corrected rocks value.
+            // RestoreGameState set rockCurrent based on the stale (old) rocks count; after we
+            // fixed rocks above, rockCurrent is now wrong.  16 - (rocks*2) is always the
+            // correct starting rock index for a fresh game of N rocks/team.
+            int correctStartRock = 16 - (rocks * 2);
+            if (rockCurrent != correctStartRock)
+            {
+                Debug.Log($"[LoadTourny] Recovery: recalculated rockCurrent={correctStartRock} (was {rockCurrent}, rocks={rocks})");
+                rockCurrent = correctStartRock;
+            }
+
+            tournyInProgress = true;
         }
         else
         {
             Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
-            
+
             // CRITICAL FIX: Even when skipping full reload, we MUST restore:
             // 1. KO1/KO3 flags and playoff teams (for tournament routing)
             // 2. Game state (rockPos, rockCurrent, etc.) for mid-game loads
@@ -769,9 +950,9 @@ public class GameSettingsPersist : MonoBehaviour
                 KO1 = saveData.currentTournamentState.KO1;
                 KO3 = saveData.currentTournamentState.KO3;
                 Debug.Log($"[GameSettingsPersist] Restored tournament type flags: KO1={KO1}, KO3={KO3}");
-                
+
                 // CRITICAL FIX: Restore playoff bracket teams for Single-K/Triple-K
-                if (saveData.currentTournamentState.playoffTeams != null && 
+                if (saveData.currentTournamentState.playoffTeams != null &&
                     saveData.currentTournamentState.playoffTeams.Count > 0)
                 {
                     Debug.Log($"[GameSettingsPersist] Found {saveData.currentTournamentState.playoffTeams.Count} playoff teams in save");
@@ -782,8 +963,8 @@ public class GameSettingsPersist : MonoBehaviour
                     }
                     Debug.Log($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from save");
                 }
-                else if ((saveData.currentTournamentState.KO1 || saveData.currentTournamentState.KO3) && 
-                         saveData.currentTournamentState.teams != null && 
+                else if ((saveData.currentTournamentState.KO1 || saveData.currentTournamentState.KO3) &&
+                         saveData.currentTournamentState.teams != null &&
                          saveData.currentTournamentState.teams.Count > 0)
                 {
                     // FALLBACK: Old save format - playoff bracket was saved to 'teams' list
@@ -800,13 +981,33 @@ public class GameSettingsPersist : MonoBehaviour
                 {
                     Debug.Log("[GameSettingsPersist] No playoff bracket teams in save - regular tournament");
                 }
-                
+
                 // CRITICAL FIX: Restore game state (rockPos, rockCurrent, etc.)
                 // This is essential for continuing from End Menu to TournyGame
                 if (saveData.currentGameState != null)
                 {
-                    Debug.Log("[GameSettingsPersist] Restoring game state (rockPos, rockCurrent, etc.) from save");
+                    // TournySetup already set the correct real team names in gsp.
+                    // Capture them before RestoreGameState can overwrite with save's "Red"/"Yellow" placeholders.
+                    string tournyRed    = redTeamName;
+                    string tournyYellow = yellowTeamName;
+                    Debug.Log($"[GameSettingsPersist] Before RestoreGameState: red='{tournyRed}', yellow='{tournyYellow}'");
+
                     cm.RestoreGameState(saveData.currentGameState, this);
+
+                    // If RestoreGameState replaced the real names with generic placeholders, put them back.
+                    bool tournyRedReal    = !string.IsNullOrEmpty(tournyRed)    && tournyRed    != "Red" && tournyRed    != "Yellow";
+                    bool tournyYellowReal = !string.IsNullOrEmpty(tournyYellow) && tournyYellow != "Red" && tournyYellow != "Yellow";
+                    if (tournyRedReal && (string.IsNullOrEmpty(redTeamName) || redTeamName == "Red" || redTeamName == "Yellow"))
+                    {
+                        redTeamName = tournyRed;
+                        Debug.Log($"[GameSettingsPersist] Reinstated red team name from TournySetup: '{redTeamName}'");
+                    }
+                    if (tournyYellowReal && (string.IsNullOrEmpty(yellowTeamName) || yellowTeamName == "Red" || yellowTeamName == "Yellow"))
+                    {
+                        yellowTeamName = tournyYellow;
+                        Debug.Log($"[GameSettingsPersist] Reinstated yellow team name from TournySetup: '{yellowTeamName}'");
+                    }
+                    Debug.Log($"[GameSettingsPersist] After RestoreGameState: red='{redTeamName}', yellow='{yellowTeamName}'");
                 }
             }
             else
@@ -876,12 +1077,28 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 Debug.LogWarning($"[GameSettingsPersist] Could not determine player team! cm.playerTeamIndex={cm.playerTeamIndex}, redTeam.id={redTeam?.id}, yellowTeam.id={yellowTeam?.id}");
             }
+
+            // Sync AI flags with the identified player team. The save used for recovery
+            // was made before TournySetup ran, so aiRed/aiYellow may be stale (both false).
+            // Exactly one team is the player; the other must be AI.
+            if (playerTeam == redTeam)
+            {
+                aiRed = false;
+                aiYellow = true;
+                Debug.Log("[GameSettingsPersist] AI flags synced: player=red, AI=yellow");
+            }
+            else if (playerTeam == yellowTeam)
+            {
+                aiRed = true;
+                aiYellow = false;
+                Debug.Log("[GameSettingsPersist] AI flags synced: player=yellow, AI=red");
+            }
         }
         else
         {
             Debug.LogWarning("[GameSettingsPersist] teams array is null or empty - cannot restore team objects");
         }
-        
+
         Debug.Log("teamList Count is " + teamList.Count);
     }
 

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
+  m_Name: SweepSkip
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
+  stepName: SweepSkip
+  dialogue: {fileID: 11400000, guid: 000acf80c0c784f73ab704e81f3f07f1, type: 2}
+  startCondition: 11
+  endCondition: 2
+  waitDuration: 1
+  targetGameState: 0
+  rockIndex: -1
+  pullbackThreshold: 0.5
+  targetYPosition: 6.5
+  targetYAbove: 1
+  objectsToHighlight: []
+  aimCirclePrefab: {fileID: 0}
+  useSpotlight: 1
+  spotlightTarget: {fileID: 0}
+  spotlightWorldTarget: {fileID: 0}
+  spotlightTargetName: $currentRock
+  spotlightTargetTag: 
+  useSpotlightWorldPosition: 0
+  spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 1, z: 0}
+  manualCutoutPosition: {x: 0, y: 0}
+  manualCutoutSize: {x: 450, y: 450}
+  spotlightPadding: 10
+  dynamicSpotlight: 1
+  useHouseCamera: 0
+  pauseGame: 1
+  timeScale: 1
+  branchCondition: 0
+  branchTargetPosition: {x: 0, y: 0, z: 0}
+  branchThreshold: 1
+  onSuccessStep: 
+  onFailureStep: 
+  onStepStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onStepEnd:
+    m_PersistentCalls:
+      m_Calls: []

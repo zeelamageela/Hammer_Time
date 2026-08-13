@@ -30,11 +30,20 @@ MonoBehaviour:
   spotlightWorldTarget: {fileID: 0}
   spotlightTargetName: 
   spotlightTargetTag: 
+  useSpotlightWorldPosition: 0
+  spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
   manualCutoutSize: {x: 150, y: 150}
   spotlightPadding: 10
+  dynamicSpotlight: 0
   pauseGame: 0
   timeScale: 1
+  branchCondition: 0
+  branchTargetPosition: {x: 0, y: 0, z: 0}
+  branchThreshold: 1
+  onSuccessStep: 
+  onFailureStep: 
   onStepStart:
     m_PersistentCalls:
       m_Calls: []

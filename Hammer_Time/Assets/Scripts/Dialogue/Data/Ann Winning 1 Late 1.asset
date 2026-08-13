@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And Team {TEAM_NAME} has a slight edge going into the last end.
-  - They'll need to continue with their {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2}
-    to hold on for the win.
+  - 'And Team {TEAM_NAME} has a {PICK: slight lead| slight edge| lead} going into
+    the last end.'
+  - 'They have a great shot at a {PICK: win| victory| boost in the standings}.  Can
+    they hang on? '
   - Let's get back to the action!
   pauseGame: 1
   autoAdvanceDelay: 0

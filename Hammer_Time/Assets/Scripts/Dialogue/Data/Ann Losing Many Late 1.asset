@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - Team {TEAM_NAME} is down by a score of  {OPPONENT_SCORE} to {PLAYER_SCORE}.
-  - Team {TEAM_NAME} will need to rely on their  {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2}
-    to have any chance at coming back.
-  - The last end, when we return!
+  - Team {TEAM_NAME} is {PICK:down by a score of|is losing -|is at a disadvantage,
+    down} {OPPONENT_SCORE} to {PLAYER_SCORE}.
+  - Team {TEAM_NAME} will need to rely on their {PLAYER_TOP_SKILL_1} and {PICK:improved|better} 
+    {PLAYER_TOP_SKILL_2} to have any chance at coming back.
+  - Back to the action!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

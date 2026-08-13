@@ -28,9 +28,12 @@ public class TutorialSequence : ScriptableObject
     
     [Tooltip("Should this tutorial auto-start under certain conditions?")]
     public bool autoStart = false;
-    
+
     [Tooltip("Condition that must be true for auto-start (e.g., week == 1)")]
     public TutorialAutoStartCondition autoStartCondition;
+
+    [Tooltip("Sequence ID to play immediately after this one completes (leave empty for none)")]
+    public string chainSequenceId;
     
     /// <summary>
     /// Returns total number of steps in this sequence

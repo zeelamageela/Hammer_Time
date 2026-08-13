@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
   m_Name: SweepWeight
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
-  stepName: SweepIntro
+  stepName: SweepWeight
   dialogue: {fileID: 11400000, guid: 1e7ba202f0b209d469aa0058438efe77, type: 2}
-  startCondition: 2
+  startCondition: 0
   endCondition: 2
   waitDuration: 1
   targetGameState: 0
@@ -31,10 +31,12 @@ MonoBehaviour:
   spotlightTargetTag: 
   useSpotlightWorldPosition: 0
   spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: -1, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
-  manualCutoutSize: {x: 200, y: 200}
+  manualCutoutSize: {x: 450, y: 450}
   spotlightPadding: 10
   dynamicSpotlight: 1
+  useHouseCamera: 0
   pauseGame: 1
   timeScale: 1
   branchCondition: 0

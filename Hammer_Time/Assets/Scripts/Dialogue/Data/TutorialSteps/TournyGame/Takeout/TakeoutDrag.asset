@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8d14c4354f2e4f698de6bb4dc623c06, type: 3}
   m_Name: TakeoutDrag
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
-  stepName: Aim for your target
+  stepName: Takeout Drag
   dialogue: {fileID: 11400000, guid: ad4361e057bb69d42a6fde251dd3aed9, type: 2}
   startCondition: 11
   endCondition: 3
@@ -28,14 +28,16 @@ MonoBehaviour:
   useSpotlight: 1
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
-  spotlightTargetName: 
+  spotlightTargetName: Coach 7
   spotlightTargetTag: 
-  useSpotlightWorldPosition: 1
-  spotlightWorldPosition: {x: -0.01, y: 6.5, z: 0}
+  useSpotlightWorldPosition: 0
+  spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
-  manualCutoutSize: {x: 175, y: 175}
+  manualCutoutSize: {x: 375, y: 375}
   spotlightPadding: 10
   dynamicSpotlight: 1
+  useHouseCamera: 0
   pauseGame: 0
   timeScale: 1
   branchCondition: 0

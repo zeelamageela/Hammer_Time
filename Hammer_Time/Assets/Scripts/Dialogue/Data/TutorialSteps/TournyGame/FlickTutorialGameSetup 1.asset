@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 922e4754bd4294754a1d1baea425f92d, type: 3}
   m_Name: FlickTutorialGameSetup 1
   m_EditorClassIdentifier: Assembly-CSharp::TutorialGameSetup
-  startingEnd: 1
-  startingScore: {x: 0, y: 0}
+  startingEnd: 2
+  startingScore: {x: 1, y: 0}
   playerHasHammer: 0
-  rocksPerTeam: 6
+  rocksPerTeam: 2
   opponentTeamName: Coach
   prePlacedRocks:
   - rockIndex: 0
@@ -26,8 +26,11 @@ MonoBehaviour:
     isYellow: 1
     position: {x: 1.14, y: 6.84}
     rotation: 0
-  pullReleaseTutorialRockIndex: 3
-  pullReleaseTutorialId: FlickShotTutorial
-  takeoutTutorialRockIndex: 5
-  takeoutTutorialId: TakeoutTutorial
+  tutorialTriggers:
+  - tutorialId: FlickShotTutorial
+    rockIndex: 13
+    triggerOnFirstPlayerRock: 1
+  - tutorialId: TakeoutTutorial
+    rockIndex: 14
+    triggerOnFirstPlayerRock: 0
   aiShotSuggestions: []

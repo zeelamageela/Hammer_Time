@@ -15,7 +15,7 @@ MonoBehaviour:
   characterName: Announcer
   dialogueLines:
   - Welcome to Laval, and the always-entertaining Pizza Cup!
-  - I know that Team {TEAM_NAME} would love to throw the Golden Slice in their trophy
+  - I know that Team {TEAM_NAME} would LOVE to throw the Golden Slice in their trophy
     cabinet!
   pauseGame: 1
   autoAdvanceDelay: 0

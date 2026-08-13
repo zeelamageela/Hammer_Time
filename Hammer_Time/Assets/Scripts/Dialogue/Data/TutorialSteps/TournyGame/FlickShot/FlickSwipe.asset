@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
   stepName: How to Swipe
   dialogue: {fileID: 11400000, guid: 0940699ab9f9410488e5c7641168a4eb, type: 2}
-  startCondition: 2
+  startCondition: 5
   endCondition: 2
   waitDuration: 1
   targetGameState: 0
@@ -32,11 +32,12 @@ MonoBehaviour:
   spotlightTargetTag: 
   useSpotlightWorldPosition: 0
   spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
   manualCutoutSize: {x: 150, y: 150}
   spotlightPadding: 10
   dynamicSpotlight: 0
-  pauseGame: 0
+  pauseGame: 1
   timeScale: 1
   branchCondition: 0
   branchTargetPosition: {x: 0, y: 0, z: 0}

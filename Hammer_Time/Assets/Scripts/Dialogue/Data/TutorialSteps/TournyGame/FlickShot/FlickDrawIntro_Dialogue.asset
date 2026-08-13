@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - Ok, let's make sure we've got the basics here.
+  - Alright, let's make sure we've got the basics before we get going!
   pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

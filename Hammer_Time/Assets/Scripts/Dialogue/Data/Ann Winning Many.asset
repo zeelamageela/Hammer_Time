@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And {PLAYER_NAME} {TEAM_NAME} has a comfortable lead after {END_CURRENT}.
-  - There doesn't seem to be an answe for Team {TEAM_NAME}'s  superior {PLAYER_TOP_SKILL_1}
-    and {PLAYER_TOP_SKILL_2}.
-  - Still {ENDS_REMAINING} ends remaining, lots of action left!
+  - Looks like TEAM_NAME} has a comfortable lead after {END_PREVIOUS}.
+  - 'There doesn''t seem to be an answer for Team {TEAM_NAME}''s  superior {PICK:
+    shotmaking|experience|team cohesion}.'
+  - Still {ENDS_REMAINING} to go - lots of action left!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And Team {TEAM_NAME} with the slight lead after {END_CURRENT}.
-  - Their {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} seem to be the difference
-    makers here.
+  - 'And Team {TEAM_NAME} with the slight {PICK: lead| edge} after {END_PREVIOUS}.'
+  - 'Can they hang on?  Or will {OPPONENT_NAME} spoil {TEAM_NAME}''s {PICK: party|
+    victory| fun}? '
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

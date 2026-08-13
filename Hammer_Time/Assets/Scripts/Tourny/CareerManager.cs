@@ -3331,9 +3331,21 @@ public class CareerManager : MonoBehaviour
             gsp.aiYellow = gameState.aiYellow;
             gsp.aiRed = gameState.aiRed;
             
-            // Restore team names and scores 
-            gsp.yellowTeamName = !string.IsNullOrEmpty(gameState.yellowTeamName) ? gameState.yellowTeamName : "Yellow";
-            gsp.redTeamName = !string.IsNullOrEmpty(gameState.redTeamName) ? gameState.redTeamName : "Red";
+            // Restore team names with priority: gsp (set by TournySetup) > save > fallback
+            // "Red"/"Yellow" in either gsp or save are generic placeholders, not real team names.
+            // TournySetup always sets real names in gsp before the game scene loads, so we prefer
+            // gsp's current value. Only fall back to save if gsp has no real name (e.g. mid-game
+            // resume after app restart where TournySetup hasn't run yet).
+            bool gspRedReal    = !string.IsNullOrEmpty(gsp.redTeamName)          && gsp.redTeamName          != "Red"    && gsp.redTeamName    != "Yellow";
+            bool gspYellowReal = !string.IsNullOrEmpty(gsp.yellowTeamName)       && gsp.yellowTeamName       != "Yellow" && gsp.yellowTeamName != "Red";
+            bool saveRedReal   = !string.IsNullOrEmpty(gameState.redTeamName)    && gameState.redTeamName    != "Red"    && gameState.redTeamName    != "Yellow";
+            bool saveYellowReal= !string.IsNullOrEmpty(gameState.yellowTeamName) && gameState.yellowTeamName != "Yellow" && gameState.yellowTeamName != "Red";
+
+            if (!gspRedReal)
+                gsp.redTeamName    = saveRedReal    ? gameState.redTeamName    : "Red";
+            if (!gspYellowReal)
+                gsp.yellowTeamName = saveYellowReal ? gameState.yellowTeamName : "Yellow";
+            Debug.Log($"[CareerManager.RestoreGameState] Team names — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (save had red='{gameState.redTeamName}' yellow='{gameState.yellowTeamName}')");
             gsp.yellowScore = Mathf.Max(0, gameState.yellowScore);
             gsp.redScore = Mathf.Max(0, gameState.redScore);
             

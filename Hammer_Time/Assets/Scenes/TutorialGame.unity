@@ -36182,7 +36182,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.819e-12, y: -156}
+  m_AnchoredPosition: {x: 1.819e-12, y: -1056.2}
   m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1523811285
@@ -36219,7 +36219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 2100000, guid: fd8ff98256acd40bca43b74e4525f74e, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.019607844}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.08627451}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -42572,7 +42572,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 135154bbc84014b41870f740e6d4da87, type: 2}
   - {fileID: 11400000, guid: 14a78b5bde7d14b4ea428a7d854a9fc5, type: 2}
   - {fileID: 11400000, guid: 9af3950c158088f428ff5f0fa9256376, type: 2}
-  - {fileID: 11400000, guid: 9af3950c158088f428ff5f0fa9256376, type: 2}
+  - {fileID: 11400000, guid: b1302db0893b0384c946849c96a8b4a7, type: 2}
   skipButton: {fileID: 1112520747}
   spotlightOverlay: {fileID: 930328283}
   cutoutMask: {fileID: 1523811284}

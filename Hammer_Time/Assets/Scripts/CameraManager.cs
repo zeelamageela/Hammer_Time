@@ -479,6 +479,18 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    public void HouseViewOn()
+    {
+        house.depth = 5;
+        ui.depth = 6;
+    }
+
+    public void HouseViewOff()
+    {
+        house.depth = -1;
+        ui.depth = 3;
+    }
+
     public void TopViewAuto()
     {
         Debug.Log("Top View Auto");

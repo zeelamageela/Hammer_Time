@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - TAP below the rock to sweep.
+  - TAP below the rock to sweep with BOTH sweepers.
+  - Sweep for LINE when you really need extra weight on your shot.
+  - Using both sweepers makes the rock go STRAIGHTER, but gives you a lot of extra
+    distance.
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

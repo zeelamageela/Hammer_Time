@@ -182,6 +182,8 @@ public class EndMenu : MonoBehaviour
                 {
                     info.text = "Tie Game!";
                     ends++;
+                    gsp.ends = ends;  // sync so LoadTourny preserves the extra end
+                    Debug.Log($"[EndMenu] Tie game — extended ends to {ends}, gsp.ends={gsp.ends}");
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
                     simButton.gameObject.SetActive(true);
@@ -298,6 +300,7 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
             }
             
+            Debug.Log($"[EndMenu] Team names from gsp — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (endCurrent={gsp.endCurrent}, ends={ends})");
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
 

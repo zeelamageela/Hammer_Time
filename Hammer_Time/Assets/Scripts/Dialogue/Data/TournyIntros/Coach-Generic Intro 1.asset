@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - Alright {PLAYER_NAME} {TEAM_NAME}, the team are raring to go!
-  - Good luck!
+  - Alright {PLAYER_NAME}, Team {TEAM_NAME} is raring to go!
+  - Play your game and you've got this in the bag!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

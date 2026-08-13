@@ -25,6 +25,19 @@ public class TutorialGameManager : MonoBehaviour
     // Resolved once in InitializeTutorialGame() — either flickShotTutorialSetup or tutorialSetup
     private TutorialGameSetup activeSetup;
     private GameManager gameManager;
+
+    // Snapshot of career-critical gsp flags captured before the tutorial clobbers them.
+    // Restored in RestoreCareerGspState() before returning to SplashMenu.
+    private struct GspSnapshot
+    {
+        public bool gameInProgress;
+        public bool tournyInProgress;
+        public bool justFinishedGame;
+        public bool inEndMenu;
+        public bool loadGame;
+        public bool captured;
+    }
+    private GspSnapshot _gspSnapshot;
     
     private void Awake()
     {
@@ -101,12 +114,10 @@ public class TutorialGameManager : MonoBehaviour
             return;
         }
 
-#if UNITY_EDITOR
-        // In editor builds, always reset completion so tutorial can be iterated without clearing PlayerPrefs manually.
+        // Always reset on entry — TutorialGame scene is only reached by explicitly choosing Tutorial,
+        // so the player always wants a fresh run regardless of prior completions.
         PlayerPrefs.DeleteKey("CompletedTutorials");
         PlayerPrefs.Save();
-        Debug.Log("[TutorialGameManager] EDITOR: Cleared CompletedTutorials PlayerPrefs for fresh run");
-#endif
 
         isTutorialGame = true;
 
@@ -232,6 +243,22 @@ public class TutorialGameManager : MonoBehaviour
         
         Debug.Log($"[TutorialGameManager] Team setup: Player={playerTeam}, Opponent={opponentTeam}");
         
+        // Snapshot the career flags before the tutorial clobbers them so we can restore
+        // them when returning to SplashMenu, keeping career continuation working correctly.
+        if (gsp != null && !_gspSnapshot.captured)
+        {
+            _gspSnapshot = new GspSnapshot
+            {
+                gameInProgress  = gsp.gameInProgress,
+                tournyInProgress = gsp.tournyInProgress,
+                justFinishedGame = gsp.justFinishedGame,
+                inEndMenu       = gsp.inEndMenu,
+                loadGame        = gsp.loadGame,
+                captured        = true,
+            };
+            Debug.Log($"[TutorialGameManager] Snapshotted career gsp state: gameInProgress={_gspSnapshot.gameInProgress}, tournyInProgress={_gspSnapshot.tournyInProgress}, loadGame={_gspSnapshot.loadGame}");
+        }
+
         // Prevent any career game-in-progress save from resuming during tutorial.
         // LoadFromSaveData() may have restored gameInProgress=true earlier; clear it here
         // so GameManager doesn't try to restore career rock positions/scores over tutorial state.
@@ -489,8 +516,8 @@ public class TutorialGameManager : MonoBehaviour
     public bool ShouldTriggerTutorial(int rockIndex, out string tutorialId)
     {
         tutorialId = null;
-        
-        if (!isTutorialGame || activeSetup == null)
+
+        if (!isTutorialGame || activeSetup == null || activeSetup.tutorialTriggers == null)
             return false;
 
         int baseRockIndex = TotalRocks - (activeSetup.rocksPerTeam * 2);
@@ -499,33 +526,22 @@ public class TutorialGameManager : MonoBehaviour
         int firstPlayerRockIndex = playerIsRed
             ? baseRockIndex + (activeSetup.playerHasHammer ? 1 : 0)
             : baseRockIndex + (activeSetup.playerHasHammer ? 0 : 1);
-        
-        // Check pull/release tutorial
-        if (rockIndex == activeSetup.pullReleaseTutorialRockIndex)
+
+        foreach (TutorialTrigger trigger in activeSetup.tutorialTriggers)
         {
-            tutorialId = activeSetup.pullReleaseTutorialId;
-            Debug.Log($"[TutorialGameManager] Triggering pull/release tutorial for rock {rockIndex}");
-            return true;
+            if (string.IsNullOrEmpty(trigger.tutorialId))
+                continue;
+
+            int triggerRockIndex = trigger.triggerOnFirstPlayerRock ? firstPlayerRockIndex : trigger.rockIndex;
+            if (rockIndex == triggerRockIndex)
+            {
+                tutorialId = trigger.tutorialId;
+                Debug.Log($"[TutorialGameManager] Triggering tutorial '{tutorialId}' for rock {rockIndex}" +
+                    (trigger.triggerOnFirstPlayerRock ? " (first player rock)" : ""));
+                return true;
+            }
         }
 
-        // Fallback: if configured pull index is stale, trigger on first player-controlled rock
-        if (rockIndex == firstPlayerRockIndex &&
-            activeSetup.pullReleaseTutorialRockIndex != firstPlayerRockIndex &&
-            !string.IsNullOrEmpty(activeSetup.pullReleaseTutorialId))
-        {
-            tutorialId = activeSetup.pullReleaseTutorialId;
-            Debug.LogWarning($"[TutorialGameManager] Pull tutorial index mismatch (configured={activeSetup.pullReleaseTutorialRockIndex}, liveFirstPlayer={firstPlayerRockIndex}). Using live index fallback.");
-            return true;
-        }
-        
-        // Check takeout tutorial
-        if (rockIndex == activeSetup.takeoutTutorialRockIndex)
-        {
-            tutorialId = activeSetup.takeoutTutorialId;
-            Debug.Log($"[TutorialGameManager] Triggering takeout tutorial for rock {rockIndex}");
-            return true;
-        }
-        
         return false;
     }
     
@@ -556,10 +572,60 @@ public class TutorialGameManager : MonoBehaviour
     {
         if (!isTutorialGame)
             return;
-        
+
         Debug.Log("[TutorialGameManager] Tutorial game completed - continuing tournament normally");
         isTutorialGame = false;
-        
+
         // Don't mark tutorials complete here - they're marked complete when actually finished
+    }
+
+    /// <summary>
+    /// Restores the career-critical gsp flags that InitializeTutorialGame() overwrote.
+    /// Call this before loading SplashMenu so the player's career continuation state is intact.
+    /// Also destroys the tutorial's CareerManager so the career flow can create a properly
+    /// configured one with all inspector references intact.
+    /// </summary>
+    public void RestoreCareerGspState()
+    {
+        if (!_gspSnapshot.captured)
+            return;
+
+        GameSettingsPersist gsp = Object.FindAnyObjectByType<GameSettingsPersist>();
+        if (gsp == null)
+            return;
+
+        gsp.gameInProgress   = _gspSnapshot.gameInProgress;
+        gsp.tournyInProgress = _gspSnapshot.tournyInProgress;
+        gsp.justFinishedGame = _gspSnapshot.justFinishedGame;
+        gsp.inEndMenu        = _gspSnapshot.inEndMenu;
+        gsp.loadGame         = _gspSnapshot.loadGame;
+        // Clear tutorial-injected values that don't belong in the career context
+        gsp.tourny     = _gspSnapshot.tournyInProgress; // tourny flag should match tournyInProgress
+        gsp.tutorial   = false; // tutorial game sets this true; clear it on return to career
+        gsp.rocks      = 0;   // career flow will re-set via TournySettings sliders
+        gsp.draw       = 0;   // no in-progress tournament draw
+        gsp.careerLoad = false;
+        // Clear tutorial team names — TournySetup() will assign correct career team names later
+        gsp.redTeamName = "";
+        gsp.yellowTeamName = "";
+
+        Debug.Log($"[TutorialGameManager] Restored career gsp state: gameInProgress={gsp.gameInProgress}, tournyInProgress={gsp.tournyInProgress}, loadGame={gsp.loadGame}");
+        _gspSnapshot.captured = false;
+
+        // The tutorial scene's CareerManager persisted via DontDestroyOnLoad and may lack the
+        // full inspector wiring needed for career play (teamPool, playerPool, etc.).
+        // Destroy it if it was a fresh tutorial CM (week == 0), so the career flow creates
+        // a properly-configured one. If week > 0 the player already had a career — keep it.
+        CareerManager cm = Object.FindAnyObjectByType<CareerManager>();
+        if (cm != null && cm.week == 0)
+        {
+            Debug.Log("[TutorialGameManager] Destroying tutorial CareerManager (week=0) so career flow can create a fresh one");
+            CareerManager.instance = null;
+            Object.Destroy(cm.gameObject);
+        }
+        else if (cm != null)
+        {
+            Debug.Log($"[TutorialGameManager] Keeping CareerManager (week={cm.week} — existing career)");
+        }
     }
 }

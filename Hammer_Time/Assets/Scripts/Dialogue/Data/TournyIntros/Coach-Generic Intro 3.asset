@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - You've got this!
+  - Make the easy shot, and you'll stay in control.  Good luck, but you won't need
+    it!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

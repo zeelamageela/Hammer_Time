@@ -56,7 +56,10 @@ public class TutorialStep : ScriptableObject
     
     [Tooltip("END condition: What condition must be met to advance to next step")]
     public TutorialConditionType endCondition = TutorialConditionType.WaitForClick;
-    
+
+    [Tooltip("Auto-advance after this many seconds if the end condition never fires (0 = no timeout)")]
+    public float stepTimeout = 0f;
+
     [Tooltip("For WaitForSeconds condition: how long to wait")]
     public float waitDuration = 1f;
     
@@ -109,6 +112,10 @@ public class TutorialStep : ScriptableObject
              "Enable useSpotlightWorldPosition and dynamicSpotlight so the cutout re-projects as the aim camera pans.")]
     public Vector3 spotlightWorldPosition;
 
+    [Tooltip("World-space offset added to the resolved spotlight position (Transform target or fixed world pos). " +
+             "Useful for highlighting an area beside or below the target, e.g. (0, -0.5, 0) to spotlight below the rock.")]
+    public Vector3 spotlightWorldOffset;
+
     [Tooltip("Manual cutout position (if no target specified)")]
     public Vector2 manualCutoutPosition;
     
@@ -123,6 +130,9 @@ public class TutorialStep : ScriptableObject
     public bool dynamicSpotlight = false;
     
     [Header("Game Control")]
+    [Tooltip("Switch to the house camera for this step's duration, then restore when the step ends.")]
+    public bool useHouseCamera = false;
+
     [Tooltip("Should the game be paused during this step?")]
     public bool pauseGame = false;
     

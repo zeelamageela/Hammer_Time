@@ -30,21 +30,26 @@ public class TutorialGameSetup : ScriptableObject
     public PrePlacedRock[] prePlacedRocks;
     
     [Header("Tutorial Triggers")]
-    [Tooltip("Which rock index triggers the pull/release tutorial (usually first player rock)")]
-    public int pullReleaseTutorialRockIndex = 7;
-    
-    [Tooltip("Tutorial sequence ID for pull/release")]
-    public string pullReleaseTutorialId = "PullReleaseTutorial";
-    
-    [Tooltip("Which rock index triggers the takeout tutorial (usually last player rock)")]
-    public int takeoutTutorialRockIndex = 8;
-    
-    [Tooltip("Tutorial sequence ID for takeout")]
-    public string takeoutTutorialId = "TakeoutTutorial";
-    
+    [Tooltip("Tutorial sequences to fire as the player reaches specific rocks during the tutorial game")]
+    public TutorialTrigger[] tutorialTriggers;
+
     [Header("AI Behavior (Optional Overrides)")]
     [Tooltip("Suggest AI shot types for specific rocks (leave empty for normal AI)")]
     public AIShotSuggestion[] aiShotSuggestions;
+}
+
+[Serializable]
+public class TutorialTrigger
+{
+    [Tooltip("Tutorial sequence ID to play (must match a TutorialSequence.sequenceId)")]
+    public string tutorialId;
+
+    [Tooltip("Which rock index triggers this tutorial")]
+    public int rockIndex;
+
+    [Tooltip("If true, ignore rockIndex and trigger when the player reaches their first rock this end. " +
+             "Safety net for when hammer/AI flags shift which rock index is actually first.")]
+    public bool triggerOnFirstPlayerRock;
 }
 
 [Serializable]

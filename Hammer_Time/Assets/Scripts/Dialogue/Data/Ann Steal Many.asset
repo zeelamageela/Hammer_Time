@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And {TEAM_NAME} has secured a win!  A fantastic win.
+  - And {TEAM_NAME} has secured a win!  Fantastic performance!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

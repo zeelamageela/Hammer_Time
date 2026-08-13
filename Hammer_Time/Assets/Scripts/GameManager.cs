@@ -187,7 +187,9 @@ public class GameManager : MonoBehaviour
             Debug.Log("GameManager: No GameSettingsPersist found, creating runtime instance with tutorial defaults.");
             GameObject gspGO = new GameObject("GameSettingsPersist_Runtime");
             gsp = gspGO.AddComponent<GameSettingsPersist>();
-            gsp.tutorial = true;
+            // Only mark as tutorial if we're actually in the tutorial scene.
+            // Career TournyGame scenes can reach this block too (no persistent GSP on first launch).
+            gsp.tutorial = (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialGame");
             gsp.ends = 8;
             gsp.rocks = 8;
             gsp.redHammer = true;
@@ -201,6 +203,7 @@ public class GameManager : MonoBehaviour
             gsp.yellowTeamName = "Opponent";
             gsp.score = new Vector2Int[gsp.ends + 1];
             for (int i = 0; i < gsp.score.Length; i++) gsp.score[i] = new Vector2Int(0, 0);
+            gsp.oppStats = new CareerStats();
         }
         //gHUD.SetHUD(redRock);
         Debug.Log("[GameManager] Game Start - loadGame: " + (gsp.loadGame ? "TRUE" : "FALSE"));
@@ -224,9 +227,10 @@ public class GameManager : MonoBehaviour
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
-        Debug.Log($"[GameManager] After load/setup: rocksPerTeam={rocksPerTeam}, gsp.rocks={gsp.rocks}, rockCurrent={rockCurrent}");
+        Debug.Log($"[GameManager] After load/setup: rocksPerTeam={rocksPerTeam}, gsp.rocks={gsp.rocks}, rockCurrent={rockCurrent}, gsp.ends={gsp.ends}");
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
+        Debug.Log($"[GameManager] endTotal set to {endTotal} from gsp.ends");
         //rockTotal = 16;
         aiTeamYellow = gsp.aiYellow;
         aiTeamRed = gsp.aiRed;
@@ -292,6 +296,7 @@ public class GameManager : MonoBehaviour
             cm.ui.enabled = false;
         }
 
+        Debug.Log($"[GameManager] *** TEAM NAMES at line 295: red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (loadGame was {gsp.loadGame})");
         redTeamName = gsp.redTeamName;
         yellowTeamName = gsp.yellowTeamName;
 
@@ -1038,6 +1043,11 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(AllStopped());
 
         Debug.Log("All Stopped");
+
+        // Notify tutorial that the throw phase is over — any step still waiting on a
+        // grab/drag/pullback/release condition gets force-advanced so the sequence can continue.
+        TutorialSequenceManager.Instance?.NotifyTurnComplete();
+
         yield return new WaitForFixedUpdate();
 
         // CRITICAL FIX: Only update shot if a rock has been played (rockCurrent >= 0)
@@ -1472,7 +1482,14 @@ public class GameManager : MonoBehaviour
             
             SaveGame();
             yield return new WaitForEndOfFrame();
-            SceneManager.LoadScene("End_Menu_Tourny_1");
+
+            if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame)
+            {
+                TutorialGameManager.Instance.RestoreCareerGspState();
+                SceneManager.LoadScene("SplashMenu");
+            }
+            else
+                SceneManager.LoadScene("End_Menu_Tourny_1");
         }
         else if (endCurrent >= endTotal)
         {
@@ -1484,26 +1501,33 @@ public class GameManager : MonoBehaviour
     IEnumerator EndOfGame()
     {
         gHUD.EndOfGame(redScore, redTeamName, yellowScore, yellowTeamName);
-        
+
         yield return new WaitForSeconds(2f);
 
         endCurrent++;
 
         gsp.LoadFromGM();
-        
+
         // CRITICAL FIX: Clear rock positions when game ends
         gsp.rockPos = null;
         gsp.rockInPlay = null;
         gsp.rockCurrent = 0; // Reset for potential replay
-        
+
         // CRITICAL FIX: Clear game state when game ends
         gsp.loadGame = false;
         gsp.gameInProgress = false;
         Debug.Log("[GameManager] Game ended - cleared gameInProgress, loadGame flags, and rockPos");
         Debug.Log($"[GameManager] Final score: {redTeamName} {redScore} - {yellowTeamName} {yellowScore}");
-        
+
         SaveGame();
-        SceneManager.LoadScene("End_Menu_Tourny_1");
+
+        if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame)
+        {
+            TutorialGameManager.Instance.RestoreCareerGspState();
+            SceneManager.LoadScene("SplashMenu");
+        }
+        else
+            SceneManager.LoadScene("End_Menu_Tourny_1");
     }
     #endregion
 

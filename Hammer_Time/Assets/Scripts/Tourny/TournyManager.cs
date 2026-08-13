@@ -117,10 +117,18 @@ public class TournyManager : MonoBehaviour
 			prize = gsp.prize;
 			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 
+			int cmTeamCount = (cm != null && cm.currentTournyTeams != null) ? cm.currentTournyTeams.Length : 0;
+			Debug.Log($"[TournyManager.Start] numberOfTeams={numberOfTeams}, cm.currentTournyTeams.Length={cmTeamCount}, gsp.draw={gsp.draw}");
+
 			if (numberOfTeams > 0)
 				teams = new Team[numberOfTeams];
+			else if (cmTeamCount > 0)
+				teams = new Team[cmTeamCount];
 			else
-				teams = new Team[cm.currentTournyTeams.Length];
+			{
+				Debug.LogError($"[TournyManager] numberOfTeams=0 and cm.currentTournyTeams unavailable — defaulting to 8 teams to avoid hang");
+				teams = new Team[8];
+			}
 
 			teamList = new List<Team_List>();
 
@@ -178,7 +186,12 @@ public class TournyManager : MonoBehaviour
 		row = new GameObject[teams.Length];
 		//Debug.Log("Setup Stand Team Length is " + teams.Length);
 		yield return new WaitUntil(() => teams.Length > 0);
-		
+
+		// Clear any pre-existing children (e.g. template rows placed in the scene for layout reference)
+		foreach (Transform child in standTextParent)
+			Destroy(child.gameObject);
+		yield return new WaitForEndOfFrame();
+
 		// CRITICAL FIX: Always initialize drawFormat, even when loading saved tournament
 		// This was skipped when weight > 0, causing drawFormat.Length = 0
 		for (int i = 0; i < teams.Length; i++)
@@ -405,10 +418,28 @@ public class TournyManager : MonoBehaviour
 		}
 		else
         {
+			if (cm == null || cm.currentTournyTeams == null || cm.currentTournyTeams.Length == 0)
+			{
+				Debug.LogError($"[TournyManager] Cannot start tournament: CareerManager.currentTournyTeams is {(cm == null ? "null (no CareerManager)" : cm.currentTournyTeams == null ? "null" : "empty")}. Was SetupTourny() called?");
+				yield break;
+			}
 			teams = cm.currentTournyTeams;
 			gsp.teams = teams;
+			Debug.Log($"[TournyManager.SetupStandings] NEW tourny — teams.Length={teams.Length}, row.Length={row.Length}, standDisplay.Length={standDisplay.Length}");
+			if (teams.Length != row.Length)
+				Debug.LogWarning($"[TournyManager.SetupStandings] MISMATCH: teams({teams.Length}) != row({row.Length}) — extra rows will be hidden");
 			cm.teamRecords = new Vector4[teams.Length];
 			
+			// Ensure gsp.games is valid before handing it to DrawSelector.
+			// If LoadTournySettings wasn't reached (e.g. cm null crash), games stays 0 and
+			// DrawSelector returns an empty format, which crashes SetDraw().
+			if (gsp.games <= 0)
+			{
+				int defaultGames = teams.Length > 12 ? 5 : teams.Length > 8 ? 4 : 3;
+				Debug.LogWarning($"[TournyManager] gsp.games={gsp.games} is invalid — defaulting to {defaultGames} for {teams.Length} teams");
+				gsp.games = defaultGames;
+			}
+
 			// CRITICAL FIX: Initialize drawFormat for NEW tournament
 			// For 16-team tournaments, use two-pool format (Pool A and Pool B)
 			Debug.Log($"[TournyManager.SetupStandings] NEW tournament - Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
@@ -534,8 +565,11 @@ public class TournyManager : MonoBehaviour
 			displayTeams[i].team.rank = i + 1;
 		}
 
-		// Display teams (only show teams from current pool)
-		for (int i = 0; i < displayTeams.Count; i++)
+		// Display teams — cap at available display slots to avoid index-out-of-bounds
+		int showCount = Mathf.Min(displayTeams.Count, standDisplay.Length, row.Length);
+		if (showCount < displayTeams.Count)
+			Debug.LogWarning($"[TournyManager.PrintRows] Team count ({displayTeams.Count}) > display slots ({showCount}) — truncating display");
+		for (int i = 0; i < showCount; i++)
 		{
 			row[i].SetActive(true);
 			standDisplay[i].name.text = displayTeams[i].team.name;
@@ -543,20 +577,17 @@ public class TournyManager : MonoBehaviour
 			standDisplay[i].loss.text = displayTeams[i].team.loss.ToString();
 			standDisplay[i].nextOpp.text = displayTeams[i].team.nextOpp;
 		}
-		
-		// Hide unused display rows for two-pool tournaments
-		if (isTwoPoolTournament)
+
+		// Hide unused display rows (always, not just for two-pool)
+		for (int i = showCount; i < row.Length; i++)
 		{
-			for (int i = displayTeams.Count; i < standDisplay.Length; i++)
-			{
-				row[i].SetActive(false);
-			}
+			row[i].SetActive(false);
 		}
 
 		vsDisplay[0].name.text = teams[playerTeam].name;
 		vsDisplay[0].rank.text = teams[playerTeam].rank.ToString();
 
-		for (int i = 0; i < displayTeams.Count; i++)
+		for (int i = 0; i < showCount; i++)
 		{
 			if (teams[playerTeam].name == displayTeams[i].team.name)
 				standDisplay[i].panel.enabled = true;
@@ -571,7 +602,7 @@ public class TournyManager : MonoBehaviour
 			}
 		}
 
-		int displayTeamCount = isTwoPoolTournament ? displayTeams.Count : numberOfTeams;
+		int displayTeamCount = isTwoPoolTournament ? displayTeams.Count : showCount;
 		standScrollBar.value = (teams[playerTeam].rank - displayTeamCount) / (1f - displayTeamCount);
 		StartCoroutine(RefreshPanel());
 
@@ -994,6 +1025,11 @@ public class TournyManager : MonoBehaviour
 		// CRITICAL: Pass forceNewGame=true to clear any previous game state
 		// This is starting a NEW game from the tournament home screen
 		gsp.TournySetup(btn: 0, forceNewGame: true);
+		// Save immediately after TournySetup so the disk save reflects current tournament state
+		// (team names, ends, rocks, tournyInProgress=true, current bracket).
+		// Without this, the recovery branch in LoadTourny reads a stale save.
+		if (cm == null) cm = FindFirstObjectByType<CareerManager>();
+		if (cm != null) cm.SaveCareer();
 		SceneManager.LoadScene("End_Menu_Tourny_1");
     }
 

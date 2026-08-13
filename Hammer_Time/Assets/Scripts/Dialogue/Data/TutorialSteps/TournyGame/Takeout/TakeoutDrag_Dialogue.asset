@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - Give this shot some extra power to knock it out of play!
+  - 'Aim at this rock, but give it some extra WEIGHT to knock it out of play! '
   pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

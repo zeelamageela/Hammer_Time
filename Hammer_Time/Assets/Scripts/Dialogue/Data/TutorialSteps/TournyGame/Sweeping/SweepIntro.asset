@@ -20,11 +20,11 @@ MonoBehaviour:
   targetGameState: 0
   rockIndex: -1
   pullbackThreshold: 0.5
-  targetYPosition: 0
+  targetYPosition: -5
   targetYAbove: 1
   objectsToHighlight: []
   aimCirclePrefab: {fileID: 0}
-  useSpotlight: 1
+  useSpotlight: 0
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
   spotlightTargetName: $currentRock

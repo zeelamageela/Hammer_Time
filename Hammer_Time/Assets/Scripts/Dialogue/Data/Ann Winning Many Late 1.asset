@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And Team {TEAM_NAME} has a is in good shape after {END_CURRENT}.
-  - Team {TEAM_NAME}'s  superior {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} have
-    dictated the flow of this game.
+  - 'Team {TEAM_NAME} {PICK: is in good shape|looks good|holds the advantage} after
+    {END_PREVIOUS}.'
+  - 'Team {TEAM_NAME}''s  {PICK: superior| excellent|strong} {PLAYER_TOP_SKILL_1}
+    has dictated the flow of this game.'
   - The final end, coming up next!
   pauseGame: 1
   autoAdvanceDelay: 0

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Coach
   dialogueLines:
-  - Hey {PLAYER_NAME}!  Let's see what we can do out there!
+  - 'Alright, {PLAYER_NAME}, you  {PLAYER_HAS_HAMMER} the hammer.  {PICK: You''ve
+    got this!|Show ''em what you''ve got!|Make the simple shots, this one''s yours!} '
   - Good luck!
   pauseGame: 1
   autoAdvanceDelay: 0

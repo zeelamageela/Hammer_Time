@@ -15,9 +15,9 @@ MonoBehaviour:
   characterName: Announcer
   dialogueLines:
   - And Team {TEAM_NAME} has fallen behind, {OPPONENT_SCORE} to {PLAYER_SCORE}.
-  - Team {TEAM_NAME}'s  {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} haven't quite
-    been there yet.
-  - Let's get back to the action!
+  - Team {TEAM_NAME}'s  {PLAYER_TOP_SKILL_1} {PICK:has failed them so far|is notably
+    absent|hasn't made the difference predicted}.
+  - Can they pull out a win?  Let's find out!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

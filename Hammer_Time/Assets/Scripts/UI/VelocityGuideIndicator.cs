@@ -216,6 +216,19 @@ public class VelocityGuideIndicator : MonoBehaviour
     }
     
     /// <summary>
+    /// Update the rendered line width. Call after setting lineWidth if Awake() has already run.
+    /// </summary>
+    public void SetWidth(float width)
+    {
+        lineWidth = width;
+        if (lineRenderer != null)
+        {
+            lineRenderer.startWidth = width;
+            lineRenderer.endWidth = width;
+        }
+    }
+
+    /// <summary>
     /// Check if guide is currently active
     /// </summary>
     public bool IsActive => isActive;

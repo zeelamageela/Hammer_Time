@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - DRAG the rock DOWN to aim.
+  - Click and DRAG backwards to aim.
   pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

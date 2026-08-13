@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - This week we're in Sweden, and the competition is heating up for the hotly contested
+  - This week we're in Sweden, and the competition is heating up for the legendary
     Match Town Trophy!
   - It's single elimination in this knockout tournament - does Team {TEAM_NAME} have
     the goods this week?  Let's find out!

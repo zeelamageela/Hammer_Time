@@ -17,9 +17,10 @@ MonoBehaviour:
   description: TakeoutTutorial
   steps:
   - {fileID: 11400000, guid: 0ac87ee7c2b7746a1b141b0ccdc2d420, type: 2}
+  - {fileID: 11400000, guid: 7b70f2664e4cf4cf7b172e4d7f424ac5, type: 2}
   - {fileID: 11400000, guid: d0422706523e64408a1eb10815f900ed, type: 2}
   - {fileID: 11400000, guid: 39d8fce9485584d40b4906937fa873bb, type: 2}
-  canSkip: 1
+  canSkip: 0
   autoStart: 0
   autoStartCondition:
     checkWeek: 0
@@ -27,3 +28,4 @@ MonoBehaviour:
     checkFirstTime: 1
     checkScene: 0
     requiredSceneName: 
+  chainSequenceId: 

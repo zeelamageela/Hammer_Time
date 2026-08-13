@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   characterName: Coach
   dialogueLines:
-  - SWIPE inside the green box.
-  - Try to match the speed of the guide.
-  pauseGame: 0
+  - 'SWIPE inside the green box. '
+  - Slower than the guide line will go SHORTER than the target.  Faster than the
+    guide line - LONGER than the target.
+  pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

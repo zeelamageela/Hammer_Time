@@ -523,11 +523,18 @@ public class AI_Strategy : MonoBehaviour
             return true; // ALWAYS remove when losing
         }
         
-        // EARLY PHASE: Remove opponent rocks immediately (don't let them build)
+        // EARLY PHASE: Only remove if the rock is inside the 8-foot circle.
+        // Early draws build scoring position; clearing far rocks wastes shots.
         if (phase == "early")
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Early phase (clear everything)");
-            return true; // Aggressive early - clear everything
+            if (house.threatRock >= 0 && house.threatRock < gm.rockList.Count && gm.rockList[house.threatRock].rock != null)
+            {
+                float earlyDist = Vector2.Distance(gm.rockList[house.threatRock].rock.transform.position, new Vector2(0f, 6.5f));
+                bool closeEnoughToRemove = earlyDist < 1.22f; // 8-foot radius
+                Debug.Log($"[ShouldRemoveThreatEnhanced] Early phase — threat dist {earlyDist:F2}m → {(closeEnoughToRemove ? "removing" : "drawing instead")}");
+                return closeEnoughToRemove;
+            }
+            return false;
         }
         
         // MIDDLE PHASE: Remove if they have 2+ rocks (multi-point threat)
@@ -936,21 +943,25 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE PHASE: Build position or remove threats
         else if (phase == "middle")
         {
-            // ✅ FIX: Simplified - always remove threats when they exist
             if (house.threatRock >= 0)
             {
-                Debug.Log($"[ConservativeSteal] MIDDLE: Removing threat rock #{house.threatRock}");
-                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, 
+                // If we have shot rock, adding another draw is higher-percentage than a takeout
+                if (house.amWinningHouse)
+                {
+                    Debug.Log($"[ConservativeSteal] MIDDLE: We have shot rock — drawing instead of removing #{house.threatRock}");
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
+                }
+                // Opponent has shot rock — remove it
+                Debug.Log($"[ConservativeSteal] MIDDLE: Opponent has shot rock #{house.threatRock} — removing");
+                return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent,
                                   acceptRisk: house.myRocksInHouse > 0);
             }
             else if (house.myRocksInHouse > 1)
             {
-                // We're in good shape - protect lead
                 return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
             }
             else
             {
-                // Keep building
                 return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
         }
@@ -1198,17 +1209,20 @@ public class AI_Strategy : MonoBehaviour
         {
             if (house.threatRock >= 0)
             {
-                // Always remove threats when aggressive
+                // Prefer drawing when we already have shot rock — adds to our scoring count
+                if (house.amWinningHouse)
+                {
+                    Debug.Log($"[AggressiveHammer] MIDDLE: We have shot rock — drawing to build end instead of removing #{house.threatRock}");
+                    return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
+                }
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             else if (house.myRocksInHouse >= 1)
             {
-                // Build on our position
                 return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
             else
             {
-                // Keep setting up
                 return ExecuteShot(ShotIntent.CreateOpportunity, -1, rockCurrent);
             }
         }
@@ -1886,21 +1900,23 @@ public class AI_Strategy : MonoBehaviour
         }
         
         // 🚨 REMOVAL PRIORITY 1: DEFENSIVE (protecting lead with opponent rocks)
+        // Only force removal when the OPPONENT has shot rock (is winning the end).
+        // If we already have shot rock, a draw is higher-percentage — don't take out
+        // a far rock just because we're leading on the scoreboard.
         if (isDefensive && oppRocksInHouse > 0)
         {
             var house = GetHouseAnalysis();
-            
-            Debug.LogWarning($"[UNIVERSAL DEFENSIVE] Leading {activeTeamScore}-{oppTeamScore}, opponent has {oppRocksInHouse} rocks!");
-            Debug.LogWarning($"[UNIVERSAL DEFENSIVE] FORCING REMOVAL BEFORE ANY STRATEGY!");
-            
-            if (house.threatRock >= 0)
+
+            bool opponentHasShotRock = !house.amWinningHouse; // opponent is closer to button than us
+
+            if (opponentHasShotRock && house.threatRock >= 0)
             {
-                Debug.LogWarning($"[UNIVERSAL DEFENSIVE] Targeting threat rock #{house.threatRock} for immediate removal!");
-                
-                // Execute shot through ExecuteShot (will apply all enhancements)
+                Debug.LogWarning($"[UNIVERSAL DEFENSIVE] Leading {activeTeamScore}-{oppTeamScore}, opponent has shot rock — forcing removal of #{house.threatRock}!");
                 ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
-                return; // DONE - defensive removal executed!
+                return;
             }
+
+            Debug.Log($"[UNIVERSAL DEFENSIVE] Leading but WE have shot rock — letting strategy decide (draw preferred).");
         }
         
         // 🚨 REMOVAL PRIORITY 2: OFFENSIVE (opponent building too many rocks)

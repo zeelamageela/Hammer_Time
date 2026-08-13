@@ -291,8 +291,9 @@ public class FlickShotController : MonoBehaviour
         velocityGuide.endY = powerDragTargetY;   // ? NEW: Exactly at hog line (-16f, not -16.5f)
         velocityGuide.pauseDuration = 1.5f; // Pause at hogline (1.5s total)
         velocityGuide.fadeOutDuration = 0.5f; // Fade out over last 0.5s
-        velocityGuide.lineWidth = 0.2f;
-        Debug.Log($"[FlickShot] Velocity guide created: {velocityGuide.startY:F1} to {velocityGuide.endY:F1} (swipe zone matches exactly!)");
+        // Match guide width to the green input zone box (inputZoneMaxX * 2)
+        velocityGuide.SetWidth(inputZoneMaxX * 2f);
+        Debug.Log($"[FlickShot] Velocity guide created: {velocityGuide.startY:F1} to {velocityGuide.endY:F1}, width={velocityGuide.lineWidth:F2} (matches green box)");
         
         // Subscribe to flick shot mode changes using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");

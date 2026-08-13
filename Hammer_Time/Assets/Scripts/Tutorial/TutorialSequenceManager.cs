@@ -37,6 +37,9 @@ public class TutorialSequenceManager : MonoBehaviour
     // Updated whenever the relevant end condition fires.
     private float lastCapturedSpeed;       // rb.velocity.magnitude at rock release
     private Vector3 lastCapturedAimPos;    // aimCircle world position at rock release
+
+    private bool stepHouseViewActive;     // true while a step with useHouseCamera is running
+    private bool _forceAdvanceStep;       // set by NotifyTurnComplete() to unstick throw-phase conditions
     
     // Completed tutorials tracking
     private HashSet<string> completedTutorials = new HashSet<string>();
@@ -166,6 +169,19 @@ public class TutorialSequenceManager : MonoBehaviour
         playCoroutine = StartCoroutine(PlaySequenceCoroutine(onComplete));
     }
     
+    /// <summary>
+    /// Called at the end of each turn (rock stopped + score checked).
+    /// Force-advances any step that is stuck waiting on a throw-phase condition
+    /// (RockGrabbed, RockBeingDragged, RockPullbackThreshold, RockReleased).
+    /// Steps that fire AFTER the throw (RockStopped, WaitForClick, etc.) are unaffected.
+    /// </summary>
+    public void NotifyTurnComplete()
+    {
+        if (!isPlaying) return;
+        _forceAdvanceStep = true;
+        Debug.Log("[TutorialSequenceManager] NotifyTurnComplete — forcing any stuck throw-phase step to advance");
+    }
+
     /// <summary>
     /// Skip the current tutorial
     /// </summary>
@@ -408,6 +424,17 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         // Invoke unity events
         step.onStepStart?.Invoke();
+
+        // House camera
+        if (step.useHouseCamera)
+        {
+            CameraManager camMgr = FindAnyObjectByType<CameraManager>();
+            if (camMgr != null)
+            {
+                camMgr.HouseViewOn();
+                stepHouseViewActive = true;
+            }
+        }
         
         // Action-based end conditions require physics to keep running so the player
         // can drag, aim, and release. Rigidbody2D.position only syncs to the transform
@@ -509,9 +536,9 @@ public class TutorialSequenceManager : MonoBehaviour
                 // Otherwise we use the resolved Transform (keyword or GameObject reference).
                 // The aim camera (depth > 0) shows a completely different area than the main camera,
                 // so we must project through whichever camera is currently rendering that world region.
-                Vector3 targetWorldPos = step.useSpotlightWorldPosition
+                Vector3 targetWorldPos = (step.useSpotlightWorldPosition
                     ? step.spotlightWorldPosition
-                    : resolvedWorldTarget.position;
+                    : resolvedWorldTarget.position) + step.spotlightWorldOffset;
 
                 CameraManager camMgr2 = FindAnyObjectByType<CameraManager>();
                 Camera renderCam = (camMgr2?.aim != null && camMgr2.aim.depth > 0) ? camMgr2.aim : Camera.main;
@@ -601,6 +628,15 @@ public class TutorialSequenceManager : MonoBehaviour
     
     private void CleanupStep()
     {
+        // Restore house camera if it was activated for this step
+        if (stepHouseViewActive)
+        {
+            CameraManager camMgr = FindAnyObjectByType<CameraManager>();
+            if (camMgr != null)
+                camMgr.HouseViewOff();
+            stepHouseViewActive = false;
+        }
+
         // Stop dynamic spotlight tracking (no-op if not running)
         if (dynamicSpotlightCoroutine != null)
         {
@@ -667,11 +703,11 @@ public class TutorialSequenceManager : MonoBehaviour
             Vector3 worldPos;
             if (useFixedPos)
             {
-                worldPos = step.spotlightWorldPosition;
+                worldPos = step.spotlightWorldPosition + step.spotlightWorldOffset;
             }
             else if (target != null)
             {
-                worldPos = target.position;
+                worldPos = target.position + step.spotlightWorldOffset;
             }
             else
             {
@@ -775,21 +811,80 @@ public class TutorialSequenceManager : MonoBehaviour
         return -1;
     }
 
+    private static bool IsThrowPhaseCondition(TutorialConditionType t) =>
+        t == TutorialConditionType.RockGrabbed       ||
+        t == TutorialConditionType.RockBeingDragged  ||
+        t == TutorialConditionType.RockPullbackThreshold ||
+        t == TutorialConditionType.RockReleased;
+
     private IEnumerator WaitForCondition(TutorialStep step, TutorialConditionType conditionType)
+    {
+        // Run through the interruptible wrapper when:
+        //   (a) a fixed timeout is set, OR
+        //   (b) this is a throw-phase condition that should clear when NotifyTurnComplete() fires.
+        // WaitForSeconds / None manage themselves and are never interrupted.
+        bool useWrapper = conditionType == step.endCondition
+            && conditionType != TutorialConditionType.WaitForSeconds
+            && conditionType != TutorialConditionType.None
+            && (step.stepTimeout > 0f || IsThrowPhaseCondition(conditionType));
+
+        if (useWrapper)
+        {
+            yield return StartCoroutine(WaitForConditionWithTimeout(step, conditionType));
+            yield break;
+        }
+
+        yield return StartCoroutine(WaitForConditionCore(step, conditionType));
+    }
+
+    private IEnumerator WaitForConditionWithTimeout(TutorialStep step, TutorialConditionType conditionType)
+    {
+        bool conditionMet = false;
+        _forceAdvanceStep = false; // clear any stale flag from last turn
+
+        IEnumerator conditionRoutine = WaitForConditionCore(step, conditionType, onComplete: () => conditionMet = true);
+        Coroutine running = StartCoroutine(conditionRoutine);
+
+        float timeout = step.stepTimeout > 0f ? step.stepTimeout : float.MaxValue;
+        float elapsed = 0f;
+
+        while (!conditionMet && elapsed < timeout)
+        {
+            // NotifyTurnComplete() was called — only bail on throw-phase conditions
+            if (_forceAdvanceStep && IsThrowPhaseCondition(conditionType))
+            {
+                Debug.Log($"[TutorialSequenceManager] Step '{step.stepName}' force-advanced by NotifyTurnComplete (condition: {conditionType})");
+                break;
+            }
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (!conditionMet)
+        {
+            StopCoroutine(running);
+            if (elapsed >= timeout && step.stepTimeout > 0f)
+                Debug.Log($"[TutorialSequenceManager] Step '{step.stepName}' timed out after {step.stepTimeout}s — auto-advancing");
+        }
+
+        _forceAdvanceStep = false; // consume the flag
+    }
+
+    private IEnumerator WaitForConditionCore(TutorialStep step, TutorialConditionType conditionType, Action onComplete = null)
     {
         switch (conditionType)
         {
             case TutorialConditionType.None:
                 break;
-                
+
             case TutorialConditionType.WaitForInput:
                 yield return new WaitUntil(() => Input.anyKeyDown);
                 break;
-                
+
             case TutorialConditionType.WaitForClick:
                 yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
                 break;
-                
+
             case TutorialConditionType.WaitForSeconds:
                 // WaitForSecondsRealtime is unaffected by Time.timeScale, so this works even when pauseGame=true
                 yield return new WaitForSecondsRealtime(step.waitDuration);
@@ -798,29 +893,29 @@ public class TutorialSequenceManager : MonoBehaviour
             case TutorialConditionType.MouseReleased:
                 yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
                 break;
-                
+
             case TutorialConditionType.CameraStoppedMoving:
                 yield return WaitForCameraStop();
                 break;
-                
+
             case TutorialConditionType.RockGrabbed:
                 yield return WaitForRockGrabbed(step.rockIndex);
                 break;
-                
+
             case TutorialConditionType.RockBeingDragged:
                 yield return WaitForRockBeingDragged(step.rockIndex);
                 break;
-                
+
             case TutorialConditionType.RockPullbackThreshold:
                 // Only pass dialogue if this is the END condition (dialogue shows when threshold reached)
                 DialogueData dialogueToShow = (conditionType == step.endCondition) ? step.dialogue : null;
                 yield return WaitForRockPullbackThreshold(step.rockIndex, step.pullbackThreshold, dialogueToShow);
                 break;
-                
+
             case TutorialConditionType.RockReleased:
                 yield return WaitForRockReleased(step.rockIndex);
                 break;
-                
+
             case TutorialConditionType.RockStopped:
                 yield return WaitForRockStopped(step.rockIndex);
                 break;
@@ -832,12 +927,14 @@ public class TutorialSequenceManager : MonoBehaviour
             case TutorialConditionType.GameStateChange:
                 yield return WaitForGameState(step.targetGameState);
                 break;
-                
+
             case TutorialConditionType.CustomCondition:
                 // Can be extended with custom condition functions
                 Debug.LogWarning("Custom condition not implemented");
                 break;
         }
+
+        onComplete?.Invoke();
     }
     
     private IEnumerator WaitForRockReleased(int rockIndex)
@@ -866,7 +963,7 @@ public class TutorialSequenceManager : MonoBehaviour
             if (rock != null)
             {
                 Rigidbody2D rb = rock.GetComponent<Rigidbody2D>();
-                lastCapturedSpeed = rb != null ? rb.velocity.magnitude : 0f;
+                lastCapturedSpeed = rb != null ? rb.linearVelocity.magnitude : 0f;
                 Debug.Log($"[TutorialSequenceManager] Captured release speed={lastCapturedSpeed:F2}, aimPos={lastCapturedAimPos}");
             }
         }
@@ -1279,22 +1376,30 @@ public class TutorialSequenceManager : MonoBehaviour
     
     private void CompleteTutorial(Action onComplete)
     {
+        TutorialSequence completedSequence = currentSequence;
+
         if (currentSequence != null)
         {
             MarkTutorialComplete(currentSequence.sequenceId);
             OnTutorialComplete?.Invoke(currentSequence);
         }
-        
+
         if (skipButton != null)
             skipButton.SetActive(false);
-        
+
         Time.timeScale = 1f;
         isPlaying = false;
-        
+
         onComplete?.Invoke();
-        
+
         currentSequence = null;
         currentStepIndex = 0;
+
+        if (completedSequence != null && !string.IsNullOrEmpty(completedSequence.chainSequenceId))
+        {
+            Debug.Log($"[TutorialSequenceManager] Chaining to '{completedSequence.chainSequenceId}' after '{completedSequence.sequenceId}'");
+            PlaySequence(completedSequence.chainSequenceId);
+        }
     }
     
     private TutorialSequence GetSequenceById(string sequenceId)
@@ -1315,6 +1420,16 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         if (!enableTutorials || availableTutorials == null)
             return;
+
+        // Don't auto-fire tutorials when loading/continuing a career game.
+        // gsp.tutorial=true means this is explicitly tutorial/practice mode;
+        // gsp.loadGame=true means we're resuming a saved career game.
+        GameSettingsPersist gsp = UnityEngine.Object.FindAnyObjectByType<GameSettingsPersist>();
+        if (gsp != null && !gsp.tutorial && gsp.loadGame)
+        {
+            Debug.Log("[TutorialSequenceManager] Skipping auto-start tutorials: career game load in progress (loadGame=true)");
+            return;
+        }
         
         foreach (var tutorial in availableTutorials)
         {

@@ -32,12 +32,18 @@ MonoBehaviour:
   spotlightTargetTag: 
   useSpotlightWorldPosition: 1
   spotlightWorldPosition: {x: -0.01, y: 6.5, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: 0}
-  manualCutoutSize: {x: 175, y: 175}
+  manualCutoutSize: {x: 400, y: 400}
   spotlightPadding: 10
   dynamicSpotlight: 1
   pauseGame: 0
   timeScale: 1
+  branchCondition: 1
+  branchTargetPosition: {x: 0, y: 6.5, z: 0}
+  branchThreshold: 0.25
+  onSuccessStep: 
+  onFailureStep: 
   onStepStart:
     m_PersistentCalls:
       m_Calls: []

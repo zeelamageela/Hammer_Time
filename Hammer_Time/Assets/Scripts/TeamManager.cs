@@ -89,6 +89,8 @@ public class TeamManager : MonoBehaviour
     public void SetSweepers(CharacterStats sweeperL, CharacterStats sweeperR, CharacterStats sweeperT, int rockCurrent, bool aiTurn)
     {
         cm = FindFirstObjectByType<CareerManager>();
+        if (gsp != null && gsp.oppStats == null)
+            gsp.oppStats = new CareerStats();
 
         if (aiTurn)
         {

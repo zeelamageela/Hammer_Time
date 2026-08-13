@@ -25,13 +25,14 @@ MonoBehaviour:
   objectsToHighlight:
   - {fileID: 0}
   aimCirclePrefab: {fileID: 0}
-  useSpotlight: 1
+  useSpotlight: 0
   spotlightTarget: {fileID: 0}
   spotlightWorldTarget: {fileID: 0}
   spotlightTargetName: 
   spotlightTargetTag: 
   useSpotlightWorldPosition: 0
   spotlightWorldPosition: {x: 0, y: 0, z: 0}
+  spotlightWorldOffset: {x: 0, y: 0, z: 0}
   manualCutoutPosition: {x: 0, y: -25}
   manualCutoutSize: {x: 150, y: 150}
   spotlightPadding: 10

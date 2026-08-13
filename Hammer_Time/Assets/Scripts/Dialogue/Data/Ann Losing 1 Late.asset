@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - Only one separates the two teams.
-  - Team {TEAM_NAME} will need to rely on their  {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2}
-    to come out with a win.
+  - Only one separates {TEAM_NAME} and {OPPONENT_NAME}.
+  - '{TEAM_NAME} {PLAYER_HAS_HAMMER} the hammer.  Tension rising.'
   - The exciting conclusion, coming up next!
   pauseGame: 1
   autoAdvanceDelay: 0

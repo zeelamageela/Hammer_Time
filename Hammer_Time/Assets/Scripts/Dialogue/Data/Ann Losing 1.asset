@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - And Team {TEAM_NAME} trails by 1 after {END_CURRENT}.
-  - Team {TEAM_NAME}'s  {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} will need be
-    big factors for the rest of this game.
+  - ...And Team {TEAM_NAME} trails by 1 after {END_PREVIOUS}.
+  - ' {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} {PICK:will need to be better|will
+    need to improve|will need more attention} or {TEAM_NAME} {PICK:will let this
+    one slip away|will take a plus 1 to the loss column|risks losing this one}.'
   - Let's get back to the action!
   pauseGame: 1
   autoAdvanceDelay: 0

@@ -26,8 +26,11 @@ MonoBehaviour:
     isYellow: 1
     position: {x: 1.14, y: 6.84}
     rotation: 0
-  pullReleaseTutorialRockIndex: 13
-  pullReleaseTutorialId: PullReleaseTutorial
-  takeoutTutorialRockIndex: 15
-  takeoutTutorialId: TakeoutTutorial
+  tutorialTriggers:
+  - tutorialId: PullReleaseTutorial
+    rockIndex: 13
+    triggerOnFirstPlayerRock: 1
+  - tutorialId: TakeoutTutorial
+    rockIndex: 14
+    triggerOnFirstPlayerRock: 0
   aiShotSuggestions: []

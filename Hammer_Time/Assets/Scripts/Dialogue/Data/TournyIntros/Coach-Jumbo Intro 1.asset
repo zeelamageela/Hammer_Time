@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Coach
   dialogueLines:
-  - Alright, {PLAYER_NAME}, we're playing in honour of a local legend.
-  - Do Mr Jumbo proud!  Good luck out there!
+  - Alright, {PLAYER_NAME}, this weekend we're playing in honour of a local legend.
+  - Do Old Man Jumbo proud!  The competition is strong, good luck!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

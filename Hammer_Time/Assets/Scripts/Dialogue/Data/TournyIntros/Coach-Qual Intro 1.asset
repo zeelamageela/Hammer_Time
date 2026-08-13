@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Coach
   dialogueLines:
-  - Let's do this {PLAYER_NAME}, I know you've dreamed of playing on the tour.
-  - We've got a good shot at it, good luck!
+  - '{PLAYER_NAME}, most curlers only DREAM of playing on the tour.'
+  - You've got a big chance here, just gotta finish in the Top 4 to qualify.
+  - Play the easy shots, and let's some Ws!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

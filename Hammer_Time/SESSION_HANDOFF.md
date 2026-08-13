@@ -34,153 +34,153 @@ Spotlight canvas is **Screen Space - Camera** mode using the `ui` camera (forced
 
 ---
 
-## What was last worked on
+## Tutorial system architecture
 
-### Session before last — Tutorial system improvements (all done)
+### TutorialGameManager (TutorialGame scene only)
+- Reads `GameVisualizationSettings.Instance.FlickShotMode` and resolves `activeSetup` to either `tutorialSetup` (PRTutorialGameSetup) or `flickShotTutorialSetup` (FlickTutorialGameSetup 1).
+- `ShouldTriggerTutorial(rockCurrent, out tutorialId)` — iterates `activeSetup.tutorialTriggers[]` and returns the matching `tutorialId`. Entries with `triggerOnFirstPlayerRock = true` use the live-computed first-player rock index (safety net against hammer/AI flag changes). Called from `GameManager.RedTurn()` / `GameManager.YellowTurn()` before `WaitUntil shotTaken`.
 
-1. **Tutorial save isolation** — `TutorialGameManager.InitializeTutorialGame()` explicitly clears `gsp.gameInProgress`, `gsp.tournyInProgress`, `gsp.justFinishedGame`, `gsp.inEndMenu`, and `cm.loadedFromSave`.
+### TutorialGameSetup (ScriptableObject)
+Fields that matter:
+- `rocksPerTeam`, `startingEnd`, `startingScore`, `playerHasHammer`
+- `prePlacedRocks[]` — rocks positioned before the tutorial starts
+- `tutorialTriggers[]` — list of `{ tutorialId, rockIndex, triggerOnFirstPlayerRock }`. Adding a new tutorial type is just adding a row here; no code changes needed.
+- `aiShotSuggestions[]` — override AI shot type per rock index
 
-2. **Multiple tutorial support** — `TutorialGameManager` has `tutorialSetup` (pull/release) and `flickShotTutorialSetup` (flick shot, assign in Inspector). Resolves `activeSetup` at init from `FlickShotMode`.
+### TutorialSequence (ScriptableObject)
+- `sequenceId` — must match what `tutorialTriggers[].tutorialId` references
+- `steps[]` — ordered `TutorialStep` assets
+- `autoStart` / `autoStartCondition` — for `CheckAutoStartTutorials()` at scene Start (mostly used by shooting tutorials)
+- `chainSequenceId` — sequence to play automatically when this one completes. Used so SweepTutorial runs at end of both shooting tutorials without duplication.
 
-3. **Spotlight centering** — Uses `RectTransformUtility.ScreenPointToLocalPointInRectangle()` → `cutoutMask.anchoredPosition`.
-
-4. **New tutorial conditions** — `MouseReleased`, `RockReachedYPosition`. `WaitForSeconds` uses `WaitForSecondsRealtime`.
-
-5. **Spotlight name/tag targeting** — `spotlightTargetName` supports `$currentRock`, `$shooter`, `$launcher`, `$aimTarget` keywords. `spotlightTargetTag` for tag-based lookup.
-
-6. **Dialogue auto-repositioning** — `PositionAroundSpotlight(normalizedPos)` moves dialogue to opposite vertical half. Called from `SetupStep()`.
-
-7. **Character head Z-order fix** — `BumpSpriteRenderers()` sets coach/announcer sorting layer + order to `forceSortingOrder + 1` (501).
-
----
-
-### Last session — fixes and new features
-
-#### Bug fix: trajectory and shooting knob freeze mid-drag when tutorial step fires
-
-**Root cause:** `DialogueData` ScriptableObjects have their own `pauseGame` field, independent of `TutorialStep.pauseGame`. When the tutorial step fires and shows dialogue, `DialogueController.SetupDialogueUI()` was reading `currentDialogue.pauseGame` and calling `Time.timeScale = 0f` even though the step itself had `pauseGame = false` and `timeScale = 1`. With timeScale=0, `FixedUpdate` stops, `Rigidbody2D.position` writes never sync to `transform.position`, and the knob/trajectory appear frozen.
-
-**Fix — `Assets/Scripts/Dialogue/DialogueController.cs`:**
-- `SetupDialogueUI()`: `if (currentDialogue.pauseGame && !nonBlockingMode)` — never pauses during nonBlocking dialogue (shown while player is dragging)
-- `TypeText()`: same guard for `WaitForSecondsRealtime` vs `WaitForSeconds`
-- `EndDialogue()`: captures `wasNonBlocking` before `HideDialogue()` resets the flag, then conditionally restores timeScale
-
-**Practical rule:** When setting up a tutorial step that fires during player input (dragging, aiming), check the `DialogueData` asset itself in the Inspector and ensure its `pauseGame = false`. The `TutorialStep` guard is a safety net, not a substitute.
+### TutorialStep (ScriptableObject)
+Key fields:
+- `startCondition` / `endCondition` — `TutorialConditionType` enum (None, WaitForClick, MouseReleased, WaitForSeconds, RockGrabbed, RockBeingDragged, RockPullbackThreshold, RockReleased, RockStopped, RockReachedYPosition, GameStateChange)
+- `rockIndex` — `-1` = current rock
+- `targetYPosition` / `targetYAbove` — for `RockReachedYPosition` condition
+- `pauseGame` / `timeScale`
+- `spotlightTargetName` — keyword or name: `$currentRock`, `$shooter`, `$launcher`, `$aimTarget`
+- `spotlightWorldOffset` — world-space offset applied to spotlight position before screen projection; tracks dynamically. e.g. `(0, -1, 0)` = one unit below the rock
+- `dynamicSpotlight` — re-projects the cutout every frame (required for moving targets)
+- `useSpotlightWorldPosition` / `spotlightWorldPosition` — fixed world point (e.g. house centre)
+- `branchCondition` / `onSuccessStep` / `onFailureStep` — branching/retry support
 
 ---
 
-#### Bug fix: deterministic pullback engine — rb.position not syncing to transform
+## Tutorial sequence map (current)
 
-**Root cause:** Rock pullback was rebuilt from spring-physics to direct `rb.position = mousePosition` in `Rock_Flick.Update()`. For kinematic Rigidbody2D, `rb.position` updates the physics body but `transform.position` only syncs at the start of each `FixedUpdate`. `DrawTrajectory()` reads `transform.position`, so it was one physics step stale. `ShootingKnob` is parented to the rock transform, so it also appeared to lag/freeze.
+### PRTutorialGameSetup — Pull/Release mode
+`rocksPerTeam: 2`, rocks 13 (player) + 14 (player), `playerHasHammer: false`
 
-**Fix — `Assets/Scripts/Rock/Rock_Flick.cs`:**
-```csharp
-rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
-Physics2D.SyncTransforms(); // ← added: syncs rb.position → transform.position immediately
-```
-
----
-
-#### New: spotlight fixed world-position mode
-
-The spotlight cutout can now be locked to a fixed world-space coordinate projected through the aim camera every frame as it pans.
-
-**`Assets/Scripts/Tutorial/TutorialStep.cs` — new fields:**
-- `bool useSpotlightWorldPosition` — enable fixed-position mode
-- `Vector3 spotlightWorldPosition` — the world point (e.g. house centre `(0, 6.5, 0)`)
-
-**`Assets/Scripts/Tutorial/TutorialSequenceManager.cs`:**
-- `SetupStep()`: calls `ResolveWorldTarget()` once, then uses the Vector3 or Transform as appropriate
-- `DynamicSpotlightUpdate()`: resolves world position per-frame from either the fixed Vector3 or a Transform
-
-**Inspector setup for "Aim for the House" TutorialStep** ← STILL NEEDS DOING:
-| Field | Value |
+| Rock | Tutorial triggered |
 |---|---|
-| `useSpotlight` | ✅ |
-| `useSpotlightWorldPosition` | ✅ |
-| `spotlightWorldPosition` | `(0, 6.5, 0)` |
-| `dynamicSpotlight` | ✅ |
-| `manualCutoutSize` | `(200, 200)` — tune in play mode |
+| 13 | PullReleaseTutorial (`triggerOnFirstPlayerRock: true`) |
+| 14 | TakeoutTutorial |
+
+### FlickTutorialGameSetup 1 — Flick Shot mode
+`rocksPerTeam: 6`, player rocks 3 and 5
+
+| Rock | Tutorial triggered |
+|---|---|
+| 3 | FlickShotTutorial (`triggerOnFirstPlayerRock: true`) |
+| 5 | TakeoutTutorial |
 
 ---
 
-#### New: conditional / branching tutorial steps
+## Tutorial sequences — step breakdown
 
-After a step's end condition fires, a `branchCondition` is evaluated synchronously and the sequence jumps to a named step (by `stepName`). Supports retry loops and success/failure paths.
+### PullReleaseTutorial → chains to SweepTutorial
+`DrawIntro → DrawGrab → DrawDrag → DrawRelease`
+- Ends at DrawRelease: fires when rock reaches Y ≥ -24 (just released, rock still moving). On completion, SweepTutorial starts immediately while rock is in flight.
 
-**`Assets/Scripts/Tutorial/TutorialStep.cs` — new enum + fields:**
-```
-TutorialBranchConditionType:
-  None
-  AimPositionNearTarget    — aimCircle within branchThreshold of branchTargetPosition
-  AimPositionFarFromTarget — inverse of above
-  RockPositionNearTarget   — rock.transform.position within branchThreshold (good after RockStopped)
-  FlickVelocityAbove       — rb.velocity.magnitude at release > branchThreshold
-  FlickVelocityBelow       — rb.velocity.magnitude at release < branchThreshold
+### FlickShotTutorial → chains to SweepTutorial
+`FlickDrawIntro → DrawGrab → DrawDrag → FlickShooterClick → FlickSwipe → DrawRelease`
+- Same chain behaviour. (Had a duplicate DrawOutro bug — removed this session.)
 
-Fields on TutorialStep:
-  branchCondition        TutorialBranchConditionType
-  branchTargetPosition   Vector3  — world position reference for position conditions
-  branchThreshold        float    — distance (units) or speed (units/sec) cutoff
-  onSuccessStep          string   — stepName to jump to on true  (empty = continue in order)
-  onFailureStep          string   — stepName to jump to on false (empty = continue in order)
-```
+### SweepTutorial (standalone, `autoStart: 0`)
+`SweepIntro → SweepWeight → SweepLine → SweepCurl → SweepOutro`
 
-**`Assets/Scripts/Tutorial/TutorialSequenceManager.cs`:**
-- New fields: `lastCapturedSpeed` (float), `lastCapturedAimPos` (Vector3)
-- `WaitForRockReleased()`: after condition fires, captures `aimCircle.transform.position`, yields one `WaitForFixedUpdate`, captures `rb.velocity.magnitude`
-- `PlaySequenceCoroutine()`: after each step, calls `EvaluateBranchCondition()`, jumps via `currentStepIndex = jumpIdx - 1`
-- `EvaluateBranchCondition(TutorialStep)`: reads captured + live state, returns bool
-- `FindStepByName(string)`: searches `currentSequence.steps` by `stepName`
+| Step | startCondition | Spotlight | Notes |
+|---|---|---|---|
+| SweepIntro | RockReachedYPosition Y≥-5 | off | "To alter your rock's path, you'll need to SWEEP!" Fires while rock is mid-flight. |
+| SweepWeight | None (immediate) | $currentRock offset (0,-1,0) | "TAP below the rock to sweep with BOTH sweepers." |
+| SweepLine | RockReachedYPosition Y≥-4.5 | $currentRock offset (-1,0,0) | "TAP the sweeper INSIDE the curl to sweep LINE." |
+| SweepCurl | None (immediate) | $currentRock offset (1,0,0) | Curl tip — spotlight right of rock |
+| SweepOutro | None (immediate) | off | Outro wrap-up, pauseGame |
 
-**Branch wiring example — aim check:**
-| Field | Value |
-|---|---|
-| `endCondition` | `RockReleased` |
-| `branchCondition` | `AimPositionNearTarget` |
-| `branchTargetPosition` | `(0, 6.5, 0)` |
-| `branchThreshold` | `1.5` — tune via console logs |
-| `onSuccessStep` | `"GreatShot"` — must match another step's `stepName` exactly |
-| `onFailureStep` | `"MissedHouse"` |
+### TakeoutTutorial
+`TakeoutIntro → TakeoutTurn → DrawGrab → TakeoutDrag`
 
-**Branch wiring example — flick velocity:**
-| Field | Value |
-|---|---|
-| `branchCondition` | `FlickVelocityAbove` |
-| `branchThreshold` | `5.0` — read `lastCapturedSpeed` from logs to calibrate |
-| `onSuccessStep` | `"GoodFlick"` |
-| `onFailureStep` | `"TooSlow"` |
+| Step | startCondition | Notes |
+|---|---|---|
+| TakeoutIntro | CameraStoppedMoving | Intro before shot, no pause |
+| TakeoutTurn | None | Turn selection UI explanation |
+| DrawGrab | None | Shared step — grab the rock |
+| TakeoutDrag | RockReachedYPosition Y≤-28 | nonBlocking dialogue, spotlight on house (0, 6.5) dynamic. Fires just after release. |
 
 ---
 
-## Spotlight keyword reference
+## Spotlight world offset — how it works
 
-Set in `spotlightTargetName` on `TutorialStep`. All require `dynamicSpotlight = true` if the target moves.
-
-| Keyword | Resolves to |
-|---|---|
-| `$currentRock` | `gameManager.rockList[rockCurrent].rock.transform` |
-| `$shooter` | `gameManager.shooterGO.transform` |
-| `$launcher` | GameObject tagged `"Launcher"` |
-| `$aimTarget` | `TrajectoryLine.aimCircle.transform` — trajectory endpoint, updated every frame by `DrawTrajectory()` |
-
----
-
-## Pending / not started
-
-- **Inspector wiring** for "Aim for the House" `TutorialStep` asset (see world-position spotlight table above)
-- **Calibrate branch thresholds**: run aim tutorial, read `lastCapturedSpeed` and aim distance from console logs, set `branchThreshold` values accordingly
-- **Flick shot tutorial**: create a `TutorialGameSetup` ScriptableObject (`Assets > Create > Tutorial > Game Setup`) and assign to `TutorialGameManager.flickShotTutorialSetup` in the Inspector. `TutorialGameSetup` supports pre-placed rocks, starting score/end/hammer, rock count, and per-rock AI overrides.
+`TutorialStep.spotlightWorldOffset` (Vector3) is added to the resolved world position before `WorldToScreenPoint` in both the initial `SetupStep()` call and the per-frame `DynamicSpotlightUpdate()` coroutine. Works for Transform targets (`$currentRock` etc.) and fixed-world-position targets. Tuned in Play mode with `dynamicSpotlight: true`.
 
 ---
 
 ## Key files
 
 ```
-Assets/Scripts/Dialogue/DialogueController.cs       — nonBlocking pauseGame guard
-Assets/Scripts/Rock/Rock_Flick.cs                   — Physics2D.SyncTransforms() after rb.position
-Assets/Scripts/Tutorial/TutorialStep.cs             — spotlight world-pos fields, branch fields + enum
-Assets/Scripts/Tutorial/TutorialSequenceManager.cs  — SetupStep, DynamicSpotlightUpdate, branch eval
-Assets/Scripts/CameraManager.cs                     — ui.depth = aim.depth + 1
-Assets/Scripts/Tutorial/TutorialGameSetup.cs        — ScriptableObject for scripted game state (read only)
+Assets/Scripts/Tutorial/TutorialGameSetup.cs              — TutorialTrigger[] generic trigger list
+Assets/Scripts/Tutorial/TutorialGameManager.cs            — ShouldTriggerTutorial iterates trigger list
+Assets/Scripts/Tutorial/TutorialSequence.cs               — chainSequenceId field
+Assets/Scripts/Tutorial/TutorialSequenceManager.cs        — chain in CompleteTutorial; spotlightWorldOffset applied
+Assets/Scripts/Tutorial/TutorialStep.cs                   — spotlightWorldOffset Vector3 field
+Assets/Scripts/Dialogue/DialogueController.cs             — nonBlocking pauseGame guard
+Assets/Scripts/Rock/Rock_Flick.cs                         — Physics2D.SyncTransforms() after rb.position
+Assets/Scripts/CameraManager.cs                           — ui.depth = aim.depth + 1
+
+Assets/Scripts/Dialogue/Data/TutorialSteps/TournyGame/
+  PRTutorialGameSetup.asset                               — PR trigger list (rocks 13 + 14)
+  FlickTutorialGameSetup 1.asset                          — Flick trigger list (rocks 3 + 5)
+  PullRelease/PullReleaseTutorial.asset                   — 4 steps, chainSequenceId: SweepTutorial
+  FlickShot/FlickShotTutorial.asset                       — 6 steps, chainSequenceId: SweepTutorial
+  Sweeping/SweepTutorial.asset                            — 5 steps, autoStart: 0
+  Takeout/TakeoutTutorial.asset                           — 4 steps wired and in-use
 ```
+
+---
+
+## iOS / Xcode build notes
+
+Unity 6000.4.5f1 + Xcode 26 requires three fixes to the generated project. These are applied automatically by `Assets/Editor/XcodePostProcess.cs` on every export. If building from a pre-existing Xcode project (no re-export), patch manually via the pbxproj or Xcode Build Settings:
+
+| Setting | Target | Value | Why |
+|---|---|---|---|
+| `CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER` | UnityFramework | NO | PluginBase headers use `"double-quoted"` includes, now an error in Xcode 15+ framework targets |
+| `ENABLE_MODULE_VERIFIER` | UnityFramework | NO | Module verifier rejects Unity's PluginBase headers regardless of warning suppression |
+| `ENABLE_USER_SCRIPT_SANDBOXING` | Both targets | NO | Xcode 15+ sandbox blocks IL2CPP from loading `libhostfxr.dylib`, so `il2cpp.a` never builds and the linker fails |
+
+**First-launch on device:** IL2CPP + Metal shader compilation can take 2–5 minutes on first install. Normal. Subsequent launches are fast.
+
+**If the app immediately crashes after a hang-kill:** Delete the app from the device (corrupted install), Clean Build Folder in Xcode, reinstall.
+
+---
+
+## Uncommitted changes (working tree)
+
+Everything below is modified but not yet committed:
+- All tutorial code and asset changes described above
+- `GameManager.cs` — `EndOfEnd` + `EndOfGame` redirect to `SplashMenu` when `TutorialGameManager.isTutorialGame` is true
+- `Assets/Editor/XcodePostProcess.cs` — new file, auto-patches Xcode project on iOS export
+- NC_Hal / NC_Pierre / NC_Sandy / NC_Tracey prefabs — `colour1` changed from orange to cyan/teal
+- 5 deleted `.meta` files under `Assets/Feel/` (demo package cleanup)
+- Editor layout / `.slnx` / `EditorUserSettings` — Unity housekeeping, commit as-is
+
+---
+
+## Pending / not started
+
+- **Sweep thresholds** — confirmed working well on device
+- **Tutorial branching** — infrastructure exists, no steps wired yet. Next: decide which steps should retry (DrawRelease aim check? FlickSwipe velocity?), set assets, tune thresholds from console logs (`lastCapturedSpeed`, aim position logged at release)
+- **Menu tutorials** — needs design discussion before any code
+- **Flick shot tutorial setup** — `FlickTutorialGameSetup 1.asset` may need additional pre-placed rocks reviewed for the 6-rock scenario
+- **General device playtesting** — in progress, reporting issues as found

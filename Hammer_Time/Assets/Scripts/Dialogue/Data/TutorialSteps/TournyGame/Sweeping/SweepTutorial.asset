@@ -15,12 +15,19 @@ MonoBehaviour:
   sequenceId: SweepTutorial
   displayName: Sweeping Tutorial
   description: How to sweep
-  steps: []
-  canSkip: 1
-  autoStart: 1
+  steps:
+  - {fileID: 11400000, guid: 42b66098e1ee3d6488d3d5fc5b90c71a, type: 2}
+  - {fileID: 11400000, guid: 9351bac44e9c64b729147bafb59f39cf, type: 2}
+  - {fileID: 11400000, guid: 4966e6451dee44c66a87c522c38a5ac1, type: 2}
+  - {fileID: 11400000, guid: 2fe78c218ea83db48980aac998be001d, type: 2}
+  - {fileID: 11400000, guid: 06aa7794ac30546329b20cc312d8f0e2, type: 2}
+  - {fileID: 11400000, guid: d23ff2ba67a8d426b81b2fe72a56a521, type: 2}
+  canSkip: 0
+  autoStart: 0
   autoStartCondition:
     checkWeek: 0
     requiredWeek: 1
     checkFirstTime: 1
     checkScene: 1
     requiredSceneName: TutorialGame
+  chainSequenceId: 

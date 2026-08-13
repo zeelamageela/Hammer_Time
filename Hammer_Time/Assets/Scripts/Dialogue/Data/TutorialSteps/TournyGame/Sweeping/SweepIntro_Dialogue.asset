@@ -15,6 +15,9 @@ MonoBehaviour:
   characterName: Coach
   dialogueLines:
   - To alter your rock's path, you'll need to SWEEP!
+  - You can sweep for LINE, CURL or WEIGHT.
+  - You can use either or both sweepers, depending on where you need that rock to
+    go!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

@@ -22,8 +22,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 30db019dcf348194f8c6d518b0be5835, type: 2}
   - {fileID: 11400000, guid: a9b77c0df3363764eb8359b46adcabfe, type: 2}
   - {fileID: 11400000, guid: 7a2ce87f6f1d444938ec3312e3e55f4d, type: 2}
-  - {fileID: 11400000, guid: 53dd654147f074160b70a65aa08f69ce, type: 2}
-  - {fileID: 11400000, guid: 53dd654147f074160b70a65aa08f69ce, type: 2}
   canSkip: 0
   autoStart: 1
   autoStartCondition:
@@ -32,3 +30,4 @@ MonoBehaviour:
     checkFirstTime: 1
     checkScene: 1
     requiredSceneName: TutorialGame
+  chainSequenceId: SweepTutorial
