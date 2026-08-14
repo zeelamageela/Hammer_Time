@@ -71,7 +71,7 @@ public class TournyManager : MonoBehaviour
 	void Start()
 	{
 		cm = FindFirstObjectByType<CareerManager>();
-		gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+		gsp = GameSettingsPersist.instance;
 		//Debug.Log("Number of Teams at top of start - " + gsp.numberOfTeams);
 
 		careerEarnings = cm.earnings;

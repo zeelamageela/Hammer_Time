@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 using UnityEngine;
 
 /// <summary>
@@ -461,6 +462,9 @@ public class TutorialSequenceManager : MonoBehaviour
             if (step.pauseGame)
                 Time.timeScale = 0f;
         }
+
+        if (Time.timeScale == 0f)
+            HapticController.Stop();
         
         // Setup spotlight
         if (step.useSpotlight && spotlightOverlay != null && cutoutMask != null)

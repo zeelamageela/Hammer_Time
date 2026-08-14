@@ -909,6 +909,15 @@ public class AI_Sweeper : MonoBehaviour
 
         switch (playerShotType)
         {
+            case "Button":
+            case "Top Four Foot":
+            case "Back Four Foot":
+            case "Top Twelve Foot":
+            case "Back Twelve Foot":
+            case "Left Four Foot":
+            case "Right Four Foot":
+            case "Left Twelve Foot":
+            case "Right Twelve Foot":
             case "Draw To Target":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
                 Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
@@ -916,57 +925,57 @@ public class AI_Sweeper : MonoBehaviour
                 float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
                 Debug.Log("y = -7 velLimit is " + velLimit);
                 if (rockRB.linearVelocity.y <= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep!!");
+                    ShowSweepCallout(rock,"Sweep!!");
                 else
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Leave it!!");
+                    ShowSweepCallout(rock,"Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
                 Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEP!!");
+                    ShowSweepCallout(rock,"SWEEP!!");
                 else
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Nope!!");
+                    ShowSweepCallout(rock,"Nope!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
                 Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 0 xPos is " + rock.transform.position.x);
                 velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEEEEP!!");
+                    ShowSweepCallout(rock,"SWEEEEEP!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.65f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.65f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Leave it!!");
+                    ShowSweepCallout(rock,"Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
                 Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "SWEEEEEEEEEP HARD!!");
+                    ShowSweepCallout(rock,"SWEEEEEEEEEP HARD!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.55f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.55f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "It's good!!");
+                    ShowSweepCallout(rock,"It's good!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
                 Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 Debug.Log("y = 5 xPos is " + rock.transform.position.x);
                 velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
                 if (rockRB.linearVelocity.y <= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "HARRRRRD!! GO GO GO!!!");
+                    ShowSweepCallout(rock,"HARRRRRD!! GO GO GO!!!");
                 else if (inturn && rock.transform.position.x <= target.x - 0.4f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else if (!inturn && rock.transform.position.x >= target.x + 0.4f)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "Sweep the Curl!!");
+                    ShowSweepCallout(rock,"Sweep the Curl!!");
                 else
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "It's good!!");
+                    ShowSweepCallout(rock,"It's good!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= target.x);
                 velLimit = 0.5f * ((target.y - 5.225f) / 2.55f);
                 if (rockRB.linearVelocity.y >= velLimit)
-                    TextCalloutManager.Instance.ShowRockCallout(rock, "We're there!!");
+                    ShowSweepCallout(rock,"We're there!!");
                 break;
 
             case "Guard To Target":
@@ -1887,6 +1896,11 @@ public class AI_Sweeper : MonoBehaviour
     /// Show visual callout on rock to display AI sweeping decisions
     /// Helps players understand what the AI is thinking during sweeps
     /// </summary>
+    private void ShowSweepCallout(GameObject rock, string msg)
+    {
+        TextCalloutManager.Instance?.ShowRockCallout(rock, msg, alwaysShow: true);
+    }
+
     private void ShowAISweepingCallout(GameObject rock, string state, float lateralError, float predictedShortfall, bool postCollision, bool isTakeout)
     {
         if (TextCalloutManager.Instance == null || rock == null) return;

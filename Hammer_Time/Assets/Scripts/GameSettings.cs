@@ -40,7 +40,7 @@ public class GameSettings : MonoBehaviour
         //ends = gsp.ends;
         //rocks = gsp.rocks;
 
-        gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        gsp = GameSettingsPersist.instance;
         gsp.LoadSettings();
     }
     private void Update()
@@ -87,7 +87,7 @@ public class GameSettings : MonoBehaviour
 
     public void PlayGame()
     {
-        GameSettingsPersist gsp = GameObject.Find("GameSettingsPersist").GetComponent<GameSettingsPersist>();
+        GameSettingsPersist gsp = GameSettingsPersist.instance;
         gsp.LoadSettings();
 
         SceneManager.LoadScene("AiGame");

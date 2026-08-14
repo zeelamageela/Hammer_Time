@@ -201,8 +201,12 @@ public class TextCalloutManager : MonoBehaviour
         float? floatDistance = null,
         Color? textColor = null,
         float? fontSize = null,
-        float? fadeDuration = null)
+        float? fadeDuration = null,
+        bool alwaysShow = false)
     {
+        if (!alwaysShow && GameSettingsPersist.instance != null && !GameSettingsPersist.instance.debug)
+            return null;
+
         if (calloutPrefab == null)
         {
             Debug.LogError("[TextCalloutManager] Cannot show callout - prefab not assigned!");
@@ -330,7 +334,7 @@ public class TextCalloutManager : MonoBehaviour
     /// Quick callout for rock objects (common use case)
     /// FIXED: Uses Rigidbody2D position for accuracy during physics simulation
     /// </summary>
-    public TextCallout ShowRockCallout(GameObject rock, string text)
+    public TextCallout ShowRockCallout(GameObject rock, string text, bool alwaysShow = false)
     {
         if (rock == null)
         {
@@ -354,7 +358,8 @@ public class TextCalloutManager : MonoBehaviour
             targetPosition: rockPosition,
             text: text,
             followTarget: true,
-            target: rock.transform
+            target: rock.transform,
+            alwaysShow: alwaysShow
         );
     }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,11 +14,25 @@ public class PauseMenu : MonoBehaviour
 
     public Slider volumeSlider;
     public float volume;
+    public Toggle debugToggle;
+
     // Update is called once per frame
     private void Start()
     {
         am = FindObjectOfType<AudioManager>();
         am.PlayBG(3);
+
+        if (debugToggle != null)
+        {
+            debugToggle.isOn = GameSettingsPersist.instance != null && GameSettingsPersist.instance.debug;
+            debugToggle.onValueChanged.AddListener(OnDebugToggleChanged);
+        }
+    }
+
+    public void OnDebugToggleChanged(bool on)
+    {
+        if (GameSettingsPersist.instance != null)
+            GameSettingsPersist.instance.debug = on;
     }
     void Update()
     {
@@ -57,6 +72,7 @@ public class PauseMenu : MonoBehaviour
     public void Pause()
     {
         Time.timeScale = 0f;
+        HapticController.Stop();
         pauseMenuUI.SetActive(true);
         GameIsPaused = true;
         gHUD.scoreCheck = true;

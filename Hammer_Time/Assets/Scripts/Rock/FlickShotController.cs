@@ -1662,10 +1662,10 @@ public class FlickShotController : MonoBehaviour
                 
                 // Callout 1: Speed feedback message (Perfect!/Too Fast/etc.)
                 string speedMessage = GetSpeedFeedbackMessage();
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, speedMessage);
-                
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, speedMessage, alwaysShow: true);
+
                 // Callout 2: Actual velocity (what we got)
-                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s");
+                TextCalloutManager.Instance.ShowRockCallout(gameObject, $"{targetSpeed:F2} m/s", alwaysShow: true);
                 
                 Debug.Log($"[FlickShot] *** SPEED CALLOUTS: {speedMessage} | {targetSpeed:F2} m/s ***");
             }
