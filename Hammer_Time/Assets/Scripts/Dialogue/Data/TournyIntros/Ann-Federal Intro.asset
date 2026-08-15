@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
+  m_Name: Ann-Federal Intro
+  m_EditorClassIdentifier: 
+  characterName: Announcer
+  dialogueLines:
+  - "The Federal Bank Challenge showcases the best rising talent in professional
+    curling!\t"
+  - It's single elimination action in Swift Current, with everyone clamouring for
+    that $16,500 purse.
+  - Let's get to the aciton!
+  pauseGame: 0
+  autoAdvanceDelay: 0
+  useTextReplacement: 1

@@ -15,7 +15,8 @@ MonoBehaviour:
   characterName: Coach
   dialogueLines:
   - Alright, {PLAYER_NAME}, this weekend we're playing in honour of a local legend.
-  - Do Old Man Jumbo proud!  The competition is strong, good luck!
+  - Do Old Man Jumbo proud!  {PICK:GIve 'em hell out there!|The competition is fierce,
+    good luck!|Play your game, and I think you've got a good shot!}
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

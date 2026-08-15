@@ -17,7 +17,7 @@ MonoBehaviour:
   - 'We''ve travelled to Estonia to see 16 teams go head to head in the Tallinn International
     Challenger. '
   - Team {TEAM_NAME} would love to grab a share of that $50,000 purse.
-  - Let's get to the action!
-  pauseGame: 1
+  - Single knockout action starts now!
+  pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

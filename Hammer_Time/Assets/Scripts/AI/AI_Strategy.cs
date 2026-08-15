@@ -624,9 +624,20 @@ public class AI_Strategy : MonoBehaviour
     /// ✅ PHASE 1: Execute shot with automatic EV evaluation
     /// Eliminates 25+ duplicate blocks of the same 5 lines
     /// </summary>
-    private bool ExecuteShot(ShotIntent intent, int targetRock, int rockCurrent, 
+    private bool ExecuteShot(ShotIntent intent, int targetRock, int rockCurrent,
                             bool acceptRisk = false, bool mustScore = false, Vector2? targetPos = null)
     {
+        // FREE GUARD ZONE RULE: every RemoveThreat call in this file (~80 call sites)
+        // routes through here, so this is the one place we need to veto a removal
+        // attempt on a protected opponent guard - no need to touch every call site.
+        // Redirect to a draw instead of executing the illegal removal.
+        if (intent == ShotIntent.RemoveThreat && gm.IsProtectedFreeGuardZoneRock(targetRock, activeTeamName))
+        {
+            Debug.Log($"[AI_Strategy] FGZ WINDOW: rock #{targetRock} is a protected opponent guard - redirecting RemoveThreat to ScorePoints instead of peeling it");
+            intent = ShotIntent.ScorePoints;
+            targetRock = -1;
+        }
+
         ShotContext context = new ShotContext(intent, targetRock);
         context.acceptRisk = acceptRisk;
         context.mustScore = mustScore;

@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
   m_Name: Coach-Generic Intro 1
   m_EditorClassIdentifier: 
-  characterName: Announcer
+  characterName: Coach
   dialogueLines:
   - Alright {PLAYER_NAME}, Team {TEAM_NAME} is raring to go!
-  - Play your game and you've got this in the bag!
+  - '{PICK:Play your game and you''ve got this in the bag!|Make the easy shots, and
+    let the game come to you.|Let''s take a win here, and give the fans a show!|Play
+    smart, and sweep hard!}'
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

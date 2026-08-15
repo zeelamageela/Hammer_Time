@@ -14459,14 +14459,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueCanvas: {fileID: 411147645}
+  dialogueBackground: {fileID: 0}
   nameText: {fileID: 1133365703}
   dialogueText: {fileID: 1818454158}
   continueButton: {fileID: 1333619054}
   continueButtonText: {fileID: 34346417}
   coachHead: {fileID: 1333619051}
   announcerHead: {fileID: 1333619050}
+  dialoguePanel: {fileID: 0}
+  dialogueTopY: 250
+  dialogueBottomY: -250
   typingSpeed: 0.09
   skipTypingOnClick: 1
+  forceSortingOrder: 500
+  inputDebounceSeconds: 0.2
 --- !u!1 &412018067
 GameObject:
   m_ObjectHideFlags: 0
@@ -26441,6 +26447,7 @@ MonoBehaviour:
   spotlightOverlay: {fileID: 0}
   cutoutMask: {fileID: 0}
   enableTutorials: 1
+  enableAutoStartTutorials: 0
 --- !u!4 &697139217
 Transform:
   m_ObjectHideFlags: 0
@@ -56430,7 +56437,7 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 2e1d4969a9b9946c19b0d9c910b7a773, type: 3}
-    introDialogue: {fileID: 11400000, guid: 16f2c0c528326409ab46a6c12bfbfd4f, type: 2}
+    introDialogue: {fileID: 11400000, guid: b0322d6180f66214a8b243f362fd439a, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56458,7 +56465,7 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: ce049ef1f65514869af722cb123ba768, type: 3}
-    introDialogue: {fileID: 11400000, guid: 0b7153f81806846c7a5c623ac2758aa7, type: 2}
+    introDialogue: {fileID: 11400000, guid: 060af75010d80814c8d0075d0102f06e, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56486,7 +56493,7 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: 32cf04c85935b466baa61d00e2d08554, type: 3}
-    introDialogue: {fileID: 11400000, guid: d9fe607c853aa4358a2abc5e3d796e71, type: 2}
+    introDialogue: {fileID: 11400000, guid: bc0f097a9be2b4e47aa2e7cf70cbc130, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56514,7 +56521,7 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 607156c430dbd4a758813693106e4c57, type: 3}
-    introDialogue: {fileID: 11400000, guid: 7a58e6ed2e1774560998680df1d60155, type: 2}
+    introDialogue: {fileID: 11400000, guid: 66daf1b5dbf805d4687bb401db639ac7, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56542,7 +56549,7 @@ MonoBehaviour:
     crowdDensity: 9
     trophyWon: 0
     image: {fileID: 21300000, guid: 88c8027b28f46425db57c8c27fe85a09, type: 3}
-    introDialogue: {fileID: 11400000, guid: 16f2c0c528326409ab46a6c12bfbfd4f, type: 2}
+    introDialogue: {fileID: 11400000, guid: ed75ceabcfa09a24f8658e0dd6935c4b, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56572,7 +56579,7 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: 09b0d24f22d8e444eba1c97fe80aeffb, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: 351b2b1b2d26bfd46a3a1766a4b1e843, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56600,7 +56607,7 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e77c87378ad473db5afb025de146d9, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: 7881bb3a9b4218f4fa50842265074c6c, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56628,7 +56635,7 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: d169872e45ba54ec7a4e6fea70c3eab7, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: 7d15cc2230fe4b34e88e9bac3bffe485, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56656,7 +56663,7 @@ MonoBehaviour:
     crowdDensity: 8
     trophyWon: 0
     image: {fileID: 21300000, guid: f8db048751b754f4cb5ba6f317000690, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: 67c3fb17ccb9360449c7053844834a12, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56684,7 +56691,7 @@ MonoBehaviour:
     crowdDensity: 5
     trophyWon: 0
     image: {fileID: 21300000, guid: 15e1f242e99de4f23b724bd280852357, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: 3c1ab64b89df02442ba0c66b718cd97c, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56712,7 +56719,7 @@ MonoBehaviour:
     crowdDensity: 10
     trophyWon: 0
     image: {fileID: 21300000, guid: 7970555c681a74e769c97ad31b7bd01b, type: 3}
-    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
+    introDialogue: {fileID: 11400000, guid: b6fafc013b25dc340836da47c8f9e880, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56769,7 +56776,7 @@ MonoBehaviour:
     crowdDensity: 2
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
-    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    introDialogue: {fileID: 11400000, guid: da1ed6a8f23c4794dadb63d6b38c16f9, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56797,7 +56804,7 @@ MonoBehaviour:
     crowdDensity: 4
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
-    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    introDialogue: {fileID: 11400000, guid: 1a42b319fa785f2418c648b61a545c5f, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -56825,7 +56832,7 @@ MonoBehaviour:
     crowdDensity: 7
     trophyWon: 0
     image: {fileID: 21300000, guid: 98adda3640e8b4bcd8ba0de524a1201f, type: 3}
-    introDialogue: {fileID: 11400000, guid: c1d46c96dd4324f79829ee92ee3d967d, type: 2}
+    introDialogue: {fileID: 11400000, guid: 5d51f1fe976beb84f9c6c3c3eb3c7d7f, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -57108,7 +57115,7 @@ MonoBehaviour:
     crowdDensity: 11
     trophyWon: 0
     image: {fileID: 21300000, guid: 41015e0142a1b411fba68e02a0aad37f, type: 3}
-    introDialogue: {fileID: 0}
+    introDialogue: {fileID: 11400000, guid: a61e41c59d565453780d58964240464a, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}
@@ -57137,7 +57144,7 @@ MonoBehaviour:
     crowdDensity: 9
     trophyWon: 0
     image: {fileID: 21300000, guid: 68a8362e0b33044809af6b49f27c9747, type: 3}
-    introDialogue: {fileID: 0}
+    introDialogue: {fileID: 11400000, guid: 16f2c0c528326409ab46a6c12bfbfd4f, type: 2}
     topSeedsDialogue: {fileID: 0}
     bottomSeedsDialogue: {fileID: 0}
     qfDialogue: {fileID: 0}

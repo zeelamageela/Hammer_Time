@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - 'And Team {TEAM_NAME} has a {PICK: slight lead| slight edge| lead} going into
-    the last end.'
-  - 'They have a great shot at a {PICK: win| victory| boost in the standings}.  Can
-    they hang on? '
-  - Let's get back to the action!
+  - ...And Team {TEAM_NAME} has a {PICK:slight lead|slight edge|slight advantage}
+    and {HAMMER_TEAM} has the hammer.
+  - 'They have a great shot at a {PICK:good win here|hard-fought victory|boost in
+    the standings}.  Can they hang on? '
+  - Let's find out!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

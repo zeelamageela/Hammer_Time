@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - ...And Team {TEAM_NAME} trails by 1 after {END_PREVIOUS}.
-  - ' {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} {PICK:will need to be better|will
-    need to improve|will need more attention} or {TEAM_NAME} {PICK:will let this
-    one slip away|will take a plus 1 to the loss column|risks losing this one}.'
-  - Let's get back to the action!
+  - ...And Team {TEAM_NAME} trails by 1 after the {END_PREVIOUS}.
+  - They {PICK:will just need to be better|will need to pull things together|will
+    need more attention to detail|will need to right the ship|will have to turn this
+    game around} or {TEAM_NAME} {PICK:they'll let this one slip away|they'll walk
+    away with a loss|they risk losing this one|they'll let this one get away from
+    them|suffer defeat}.
+  - Can they turn this around with {ENDS_REMAINING}?  Let's find out!
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

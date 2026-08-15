@@ -116,6 +116,18 @@ public class GameManager : MonoBehaviour
     public GameObject tournyIntroGO;
 
     EasyFileSave myFile;
+
+    // FREE GUARD ZONE RULE state - see SnapshotFreeGuardZone()/CheckFreeGuardZoneViolation()
+    private class FgzSnapshotEntry
+    {
+        public GameObject rock;
+        public Rock_Info rockInfo;
+        public Vector2 position;
+        public float rotation;
+        public Sprite sprite;
+        public bool wasProtected;
+    }
+    private List<FgzSnapshotEntry> fgzSnapshot = new List<FgzSnapshotEntry>();
     #endregion
 
     void Start()
@@ -717,6 +729,7 @@ public class GameManager : MonoBehaviour
                 gHUD.Message(redTeamName + "'s Last Rock");
             if (rockCurrent >= 15)
                 gHUD.Message("Last Rock");
+
             aim.OnShot(rockCurrent);
         }
         else if (target)
@@ -745,7 +758,16 @@ public class GameManager : MonoBehaviour
                 if (TutorialSequenceManager.Instance != null)
                     TutorialSequenceManager.Instance.PlaySequence(redTutorialId);
             }
+
+            // Wait for the player to grab the rock (Rock_Flick.isPressed set true on OnMouseDown).
+            // shotTaken is the fallback in case the rock is grabbed some other way (debug/loaded state).
+            Rock_Flick redRockGrabFlick = redRock_1.GetComponent<Rock_Flick>();
+            yield return new WaitUntil(() => redRockGrabFlick.isPressed || redRock.shotTaken);
+
+            gHUD.MainDisplayOff();
         }
+
+        SnapshotFreeGuardZone(redTeamName);
 
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
@@ -935,7 +957,17 @@ public class GameManager : MonoBehaviour
                 if (TutorialSequenceManager.Instance != null)
                     TutorialSequenceManager.Instance.PlaySequence(yellowTutorialId);
             }
+
+            // Wait for the player to grab the rock (Rock_Flick.isPressed set true on OnMouseDown).
+            // shotTaken is the fallback in case the rock is grabbed some other way (debug/loaded state).
+            Rock_Flick yellowRockGrabFlick = yellowRock_1.GetComponent<Rock_Flick>();
+            yield return new WaitUntil(() => yellowRockGrabFlick.isPressed || yellowRock.shotTaken);
+
+            gHUD.MainDisplayOff();
         }
+
+        SnapshotFreeGuardZone(yellowTeamName);
+
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
         if (target)
@@ -1018,6 +1050,117 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Free Guard Zone
+
+    // First 5 rocks of the FULL end (absolute index 0-4) are the FGZ-protected window -
+    // NOT relative to where live play starts. Practice/quick-test sessions with a small
+    // rocksPerTeam pre-place the earlier rocks as "already played" (see RandomRockPlacerment.cs)
+    // and only let the player actually throw the last few; if live play starts at or after
+    // rock 5, the window has already passed and the rule never triggers for that session -
+    // exactly like a mid-end practice scenario where the free guard zone rocks are long gone.
+    public bool IsFreeGuardZoneWindow()
+    {
+        if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame)
+            return false;
+
+        return rockCurrent < 5;
+    }
+
+    // True if rockIndex is an opponent (relative to attackingTeamName) rock currently
+    // sitting in the free guard zone during the FGZ window - i.e. a rock that would
+    // trigger a violation if knocked out of play right now. Exposed publicly so AI
+    // strategy code can avoid ever choosing to target a protected rock in the first
+    // place, not just so GameManager can detect/undo a violation after the fact.
+    public bool IsProtectedFreeGuardZoneRock(int rockIndex, string attackingTeamName)
+    {
+        if (!IsFreeGuardZoneWindow())
+            return false;
+        if (rockIndex < 0 || rockIndex >= rockList.Count)
+            return false;
+
+        Rock_Info info = rockList[rockIndex].rockInfo;
+        if (!info.inPlay || info.teamName == attackingTeamName)
+            return false;
+
+        return !info.inHouse && rockList[rockIndex].rock.transform.position.y <= 6.5f;
+    }
+
+    // FREE GUARD ZONE RULE: during the first 5 rocks of each end, an opponent's rock
+    // sitting in the free guard zone (between the hog line and tee line, not in the
+    // house) cannot be knocked out of play. Snapshot every in-play rock's position
+    // before the shot so a violation can be fully undone afterward - see
+    // CheckFreeGuardZoneViolation(). Called right before the shooter's rock can move.
+    private void SnapshotFreeGuardZone(string throwingTeamName)
+    {
+        fgzSnapshot.Clear();
+
+        if (!IsFreeGuardZoneWindow())
+            return;
+
+        for (int i = 0; i < rockList.Count; i++)
+        {
+            if (i == rockCurrent)
+                continue; // the rock about to be thrown isn't in play yet
+
+            Rock_Info info = rockList[i].rockInfo;
+            if (!info.inPlay)
+                continue;
+
+            Transform rockTransform = rockList[i].rock.transform;
+
+            fgzSnapshot.Add(new FgzSnapshotEntry
+            {
+                rock = rockList[i].rock,
+                rockInfo = info,
+                position = rockTransform.position,
+                rotation = rockTransform.eulerAngles.z,
+                sprite = rockList[i].rock.GetComponent<SpriteRenderer>().sprite,
+                wasProtected = IsProtectedFreeGuardZoneRock(i, throwingTeamName)
+            });
+        }
+    }
+
+    // Called from CheckScore() once AllStopped() resolves for a throw taken during the
+    // FGZ window. If any opponent rock that was in the zone got knocked out of play,
+    // removes the offending rock and restores every other rock to its pre-shot spot.
+    private void CheckFreeGuardZoneViolation()
+    {
+        if (fgzSnapshot.Count == 0)
+            return;
+
+        bool violation = fgzSnapshot.Exists(e => e.wasProtected && e.rockInfo.outOfPlay);
+
+        if (violation)
+        {
+            Debug.Log($"[GameManager] FGZ violation on rock {rockCurrent} - removing shot, restoring {fgzSnapshot.Count} rocks");
+
+            // Use the floating callout system, not gHUD.Message() - CheckScore() overwrites
+            // mainDisplay with the "X is Sitting Y" house review a few lines after this runs,
+            // which would stomp a gHUD.Message() before the player ever saw it.
+            if (TextCalloutManager.Instance != null)
+            {
+                Vector3 calloutPos = rockCurrent >= 0 && rockCurrent < rockList.Count
+                    ? rockList[rockCurrent].rock.transform.position
+                    : new Vector3(0f, 6.5f, 0f);
+                TextCalloutManager.Instance.ShowCallout(calloutPos, "Free Guard Zone Violation!", alwaysShow: true, duration: 3f);
+            }
+
+            if (rockCurrent >= 0 && rockCurrent < rockList.Count)
+            {
+                rockList[rockCurrent].rock.GetComponent<Rock_Colliders>().ForceOutOfPlay();
+            }
+
+            foreach (FgzSnapshotEntry entry in fgzSnapshot)
+            {
+                entry.rock.GetComponent<Rock_Colliders>().RestoreForFreeGuardZone(entry.position, entry.rotation, entry.sprite);
+            }
+            Physics2D.SyncTransforms();
+        }
+
+        fgzSnapshot.Clear();
+    }
+    #endregion
+
     #region End of Turn
     IEnumerator AllStopped()
     {
@@ -1048,6 +1191,12 @@ public class GameManager : MonoBehaviour
         // grab/drag/pullback/release condition gets force-advanced so the sequence can continue.
         TutorialSequenceManager.Instance?.NotifyTurnComplete();
 
+        yield return new WaitForFixedUpdate();
+
+        CheckFreeGuardZoneViolation();
+
+        // Let Rock_Info's FixedUpdate mirror any Rock_Colliders changes made by the FGZ
+        // check above (outOfPlay flag, restored positions) before anything below reads them.
         yield return new WaitForFixedUpdate();
 
         // CRITICAL FIX: Only update shot if a rock has been played (rockCurrent >= 0)

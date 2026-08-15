@@ -93,6 +93,51 @@ void OnEnable()
         }
     }
 
+    // Used by the Free Guard Zone rule to remove the offending rock as the penalty
+    // for knocking a protected opponent guard out of play.
+    public void ForceOutOfPlay()
+    {
+        if (!outOfPlay && !outOfPlayCoroutineStarted)
+        {
+            outOfPlayCoroutineStarted = true;
+            StartCoroutine(OutOfPlay());
+        }
+    }
+
+    // Used by the Free Guard Zone rule to put a displaced rock back exactly as it was
+    // before an illegal shot - including a rock that had already been marked out of
+    // play and mid-way through its OutOfPlay() animation/deactivation delay, whose
+    // Animator would otherwise leave the sprite stuck on whatever frame it reached.
+    public void RestoreForFreeGuardZone(Vector2 position, float rotation, Sprite sprite)
+    {
+        StopAllCoroutines();
+        outOfPlayCoroutineStarted = false;
+        outOfPlay = false;
+
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+            col.enabled = true;
+
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+            animator.enabled = false;
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = sprite;
+        }
+
+        body.position = position;
+        body.rotation = rotation;
+        body.linearVelocity = Vector2.zero;
+        body.angularVelocity = 0f;
+    }
+
     IEnumerator OutOfPlay()
     {
         HapticController.Play(outHap);

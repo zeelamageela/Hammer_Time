@@ -279,7 +279,7 @@ public class CameraManager : MonoBehaviour
 
     public void RockFollow(Transform tFollowTarget)
     {
-        //Debug.Log("Rock Follow");
+        Debug.Log($"[CameraManager] RockFollow - setting house.depth=-1 (was {house.depth})");
         
         // CRITICAL: Lock camera X position to 0 IMMEDIATELY
         // This prevents Cinemachine from tracking rock's X position
@@ -481,12 +481,14 @@ public class CameraManager : MonoBehaviour
 
     public void HouseViewOn()
     {
+        Debug.Log("[CameraManager] HouseViewOn");
         house.depth = 5;
         ui.depth = 6;
     }
 
     public void HouseViewOff()
     {
+        Debug.Log("[CameraManager] HouseViewOff");
         house.depth = -1;
         ui.depth = 3;
     }

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
   m_Name: Coach-Generic Intro 2
   m_EditorClassIdentifier: 
-  characterName: Announcer
+  characterName: Coach
   dialogueLines:
-  - Alright Team {TEAM_NAME}, you know what to do!  Give 'em hell out there!
+  - Alright Team {TEAM_NAME}, {PICK:you know what to do!|gIve 'em hell out there!|let's
+    have fun out there!}
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

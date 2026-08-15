@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - 'Team {TEAM_NAME} {PICK: is in good shape|looks good|holds the advantage} after
-    {END_PREVIOUS}.'
-  - 'Team {TEAM_NAME}''s  {PICK: superior| excellent|strong} {PLAYER_TOP_SKILL_1}
-    has dictated the flow of this game.'
-  - The final end, coming up next!
+  - ...Team {TEAM_NAME} {PICK:is in good shape|looks good|holds the advantage|is
+    dominating their opponent|is pulling away} after the {END_PREVIOUS}.
+  - Team {TEAM_NAME}'s {PLAYER_TOP_SKILL_1} and {PLAYER_TOP_SKILL_2} have dictated
+    the flow of this game.
+  - '{ROCKS_REMAINING}, coming up next!'
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

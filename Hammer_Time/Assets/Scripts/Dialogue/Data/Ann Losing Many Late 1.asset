@@ -14,11 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - Team {TEAM_NAME} is {PICK:down by a score of|is losing -|is at a disadvantage,
-    down} {OPPONENT_SCORE} to {PLAYER_SCORE}.
-  - Team {TEAM_NAME} will need to rely on their {PLAYER_TOP_SKILL_1} and {PICK:improved|better} 
-    {PLAYER_TOP_SKILL_2} to have any chance at coming back.
-  - Back to the action!
+  - Team {TEAM_NAME} is {PICK:down by a score of|is losing, down|is at a disadvantage,
+    down} {OPPONENT_SCORE} to {PLAYER_SCORE} after the {END_PREVIOUS}.
+  - 'So far, they haven''t be able to match {OPPONENT_TEAM}''s {OPPONENT_TOP_SKILL_1}.  '
+  - '{HAMMER_TEAM} has the hammer - back to the action!'
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

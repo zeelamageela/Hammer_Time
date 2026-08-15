@@ -92,11 +92,28 @@ public static class TextReplacementUtility
                 ("Sweep Endurance", cm.cStats.sweepEndurance  + cm.activePlayers.Sum(p => p.sweepEnduro)   + cm.modStats.sweepEndurance),
                 ("Sweep Cohesion",  cm.cStats.sweepCohesion   + cm.activePlayers.Sum(p => p.sweepCohesion) + cm.modStats.sweepCohesion)
             }.OrderByDescending(s => s.Item2).ToArray();
-
-            text = text.Replace("{PLAYER_TOP_SKILL_1}",       skills[0].Item1);
-            text = text.Replace("{PLAYER_TOP_SKILL_2}",       skills[1].Item1);
+            
             text = text.Replace("{PLAYER_TOP_SKILL_1_VALUE}", skills[0].Item2.ToString());
             text = text.Replace("{PLAYER_TOP_SKILL_2_VALUE}", skills[1].Item2.ToString());
+            
+            switch (skills[0].Item1)
+            {
+                case "Weight":          text = text.Replace("{PLAYER_TOP_SKILL_1}", "excellent ice judgement"); break;
+                case "Finesse":         text = text.Replace("{PLAYER_TOP_SKILL_1}", "confident shotmaking"); break;
+                case "Aim":             text = text.Replace("{PLAYER_TOP_SKILL_1}", "deadly precision"); break;
+                case "Sweep Strength":  text = text.Replace("{PLAYER_TOP_SKILL_1}", "muscular sweeping"); break;
+                case "Sweep Endurance": text = text.Replace("{PLAYER_TOP_SKILL_1}", "superior conditioning"); break;
+                case "Sweep Cohesion":  text = text.Replace("{PLAYER_TOP_SKILL_1}", "vibrant team spirit"); break;
+            }
+            switch (skills[1].Item1)
+            {
+                case "Weight":          text = text.Replace("{PLAYER_TOP_SKILL_2}", "accurate weight"); break;
+                case "Finesse":         text = text.Replace("{PLAYER_TOP_SKILL_2}", "a little more finesse"); break;
+                case "Aim":             text = text.Replace("{PLAYER_TOP_SKILL_2}", "deadly precision"); break;
+                case "Sweep Strength":  text = text.Replace("{PLAYER_TOP_SKILL_2}", "reliable sweeping"); break;
+                case "Sweep Endurance": text = text.Replace("{PLAYER_TOP_SKILL_2}", "great conditioning"); break;
+                case "Sweep Cohesion":  text = text.Replace("{PLAYER_TOP_SKILL_2}", "some real team spirit"); break;
+            }
         }
 
         // Game state replacements (scores, hammer, ends, rocks in house, etc.)
@@ -120,14 +137,46 @@ public static class TextReplacementUtility
         text = text.Replace("{SCORE_DIFF}", diff.ToString());
 
         // Hammer info
-        text = text.Replace("{HAMMER}",      gm.redHammer ? gm.redTeamName : gm.yellowTeamName);
-        text = text.Replace("{HAMMER_TEAM}", gm.redHammer ? "Red" : "Yellow");
+        text = text.Replace("{HAMMER_TEAM}",      gm.redHammer ? gm.redTeamName : gm.yellowTeamName);
+        text = text.Replace("{HAMMER_COLOR}", gm.redHammer ? "Red" : "Yellow");
 
         // End info
-        text = text.Replace("{END_CURRENT}",   (gm.endCurrent + 1).ToString()); // 1-indexed
-        text = text.Replace("{END_PREVIOUS}",  gm.endCurrent.ToString());        // just-completed end, 1-indexed
-        text = text.Replace("{END_TOTAL}",     gm.endTotal.ToString());
-        text = text.Replace("{ENDS_REMAINING}", (gm.endTotal - gm.endCurrent).ToString());
+        switch(gm.endCurrent)
+        {
+            case 1: text = text.Replace("{END_CURRENT}", "first end"); break;
+            case 2: text = text.Replace("{END_CURRENT}", "second end"); break;
+            case 3: text = text.Replace("{END_CURRENT}", "third end"); break;
+            case 4: text = text.Replace("{END_CURRENT}", "fourth end"); break;
+            case 5: text = text.Replace("{END_CURRENT}", "fifth end"); break;
+            case 6: text = text.Replace("{END_CURRENT}", "sixth end"); break;
+            case 7: text = text.Replace("{END_CURRENT}", "seventh end"); break;
+            case 8: text = text.Replace("{END_CURRENT}", "eighth end"); break;
+            case 9: text = text.Replace("{END_CURRENT}", "ninth end"); break;
+            case 10: text = text.Replace("{END_CURRENT}", "tenth end"); break;
+            default: text = text.Replace("{END_CURRENT}", gm.endCurrent.ToString() + "th end"); break;
+        }
+        
+        switch (gm.endCurrent)
+        {
+            case 1: text = text.Replace("{END_PREVIOUS}", "first end"); break;
+            case 2: text = text.Replace("{END_PREVIOUS}", "second end"); break;
+            case 3: text = text.Replace("{END_PREVIOUS}", "third end"); break;
+            case 4: text = text.Replace("{END_PREVIOUS}", "fourth end"); break;
+            case 5: text = text.Replace("{END_PREVIOUS}", "fifth end"); break;
+            case 6: text = text.Replace("{END_PREVIOUS}", "sixth end"); break;
+            case 7: text = text.Replace("{END_PREVIOUS}", "seventh end"); break;
+            case 8: text = text.Replace("{END_PREVIOUS}", "eighth end"); break;
+            case 9: text = text.Replace("{END_PREVIOUS}", "ninth end"); break;
+            case 10: text = text.Replace("{END_PREVIOUS}", "tenth end"); break;
+            case 11: text = text.Replace("{END_PREVIOUS}", "extra end"); break;
+            default: text = text.Replace("{END_PREVIOUS}", "another end"); break;
+        }
+
+        text = text.Replace("{END_TOTAL}",     gm.endTotal.ToString() + " ends");
+        if ((gm.endTotal - gm.endCurrent) == 1)
+            text = text.Replace("{ENDS_REMAINING}", (gm.endTotal - gm.endCurrent).ToString() + " end remaining");
+        else
+            text = text.Replace("{ENDS_REMAINING}", (gm.endTotal - gm.endCurrent).ToString() + " ends remaining");
 
         // Rocks remaining this end
         int totalRocksPerEnd = gm.rocksPerTeam * 2;
@@ -135,7 +184,10 @@ public static class TextReplacementUtility
         {
             int rocksIntoEnd  = gm.rockCurrent % totalRocksPerEnd;
             int rocksRemaining = Mathf.Max(0, totalRocksPerEnd - rocksIntoEnd);
-            text = text.Replace("{ROCKS_REMAINING}", rocksRemaining.ToString());
+            if (rocksRemaining == 1)
+                text = text.Replace("{ROCKS_REMAINING}", rocksRemaining.ToString() + " last rock");
+            else
+                text = text.Replace("{ROCKS_REMAINING}", rocksRemaining.ToString() + " rocks");
         }
 
         // Rocks in house (all rocks)
@@ -149,9 +201,14 @@ public static class TextReplacementUtility
                 else if (rock.rockInfo.teamName == gm.yellowTeamName) yellowInHouse++;
             }
         }
-
-        text = text.Replace("{RED_IN_HOUSE}",    redInHouse.ToString());
-        text = text.Replace("{YELLOW_IN_HOUSE}", yellowInHouse.ToString());
+        if (redInHouse == 1)
+            text = text.Replace("{RED_IN_HOUSE}", redInHouse.ToString() + " rock");
+        else
+            text = text.Replace("{RED_IN_HOUSE}", redInHouse.ToString() + " rocks");
+        if (yellowInHouse == 1)
+            text = text.Replace("{YELLOW_IN_HOUSE}", yellowInHouse.ToString() + " rock");
+        else
+            text = text.Replace("{YELLOW_IN_HOUSE}", yellowInHouse.ToString() + " rocks");
 
         // Rocks in scoring position (leading team's rocks until opponent's first)
         int redInScoring    = 0;
@@ -170,8 +227,15 @@ public static class TextReplacementUtility
             }
         }
 
-        text = text.Replace("{RED_IN_SCORING}",    redInScoring.ToString());
-        text = text.Replace("{YELLOW_IN_SCORING}", yellowInScoring.ToString());
+        if (redInScoring == 1)
+            text = text.Replace("{RED_IN_SCORING}", "1 rock");
+        else
+            text = text.Replace("{RED_IN_SCORING}", redInScoring.ToString() + " rocks");
+
+        if (yellowInScoring == 1)
+            text = text.Replace("{YELLOW_IN_SCORING}", "1 rock");
+        else
+            text = text.Replace("{YELLOW_IN_SCORING}", yellowInScoring.ToString() + " rocks");
 
         // Perspective-based tokens (require knowing which team is the player)
         if (cm != null)
@@ -196,7 +260,8 @@ public static class TextReplacementUtility
             // Hammer possession
             bool playerHasHammer = (playerIsRed && gm.redHammer) || (!playerIsRed && !gm.redHammer);
             text = text.Replace("{PLAYER_HAMMER}",     playerHasHammer ? "Yes" : "No");
-            text = text.Replace("{PLAYER_HAS_HAMMER}", playerHasHammer ? "have" : "don't have");
+            text = text.Replace("{PLAYER_HAS_HAMMER}", playerHasHammer ? "has" : "doesn't have");
+            text = text.Replace("{PLAYER_HAVE_HAMMER}", playerHasHammer ? "have" : "do not have");
 
             // Points player scored in the most recently completed end
             string lastEndScore = "0";
@@ -234,10 +299,24 @@ public static class TextReplacementUtility
                         ("Sweep Cohesion",  opponentTeam.players.Sum(p => p.sweepCohesion))
                     }.OrderByDescending(s => s.Item2).ToArray();
 
-                    text = text.Replace("{OPPONENT_TOP_SKILL_1}",       oppSkills[0].Item1);
-                    text = text.Replace("{OPPONENT_TOP_SKILL_2}",       oppSkills[1].Item1);
-                    text = text.Replace("{OPPONENT_TOP_SKILL_1_VALUE}", oppSkills[0].Item2.ToString());
-                    text = text.Replace("{OPPONENT_TOP_SKILL_2_VALUE}", oppSkills[1].Item2.ToString());
+                    switch (oppSkills[0].Item1)
+                    {
+                        case "Weight":          text = text.Replace("{OPPONENT_TOP_SKILL_1}", "superior shotmaking"); break;
+                        case "Finesse":         text = text.Replace("{OPPONENT_TOP_SKILL_1}", "a bit more finesse"); break;
+                        case "Aim":             text = text.Replace("{OPPONENT_TOP_SKILL_1}", "more accurate shooting"); break;
+                        case "Sweep Strength":  text = text.Replace("{OPPONENT_TOP_SKILL_1}", "better sweeping"); break;
+                        case "Sweep Endurance": text = text.Replace("{OPPONENT_TOP_SKILL_1}", "stronger conditioning"); break;
+                        case "Sweep Cohesion":  text = text.Replace("{OPPONENT_TOP_SKILL_1}", "more team spirit"); break;
+                    }
+                    switch (oppSkills[1].Item1)
+                    {
+                        case "Weight":          text = text.Replace("{OPPONENT_TOP_SKILL_2}", "accurate weight"); break;
+                        case "Finesse":         text = text.Replace("{OPPONENT_TOP_SKILL_2}", "a little more finesse"); break;
+                        case "Aim":             text = text.Replace("{OPPONENT_TOP_SKILL_2}", "better accuracy"); break;
+                        case "Sweep Strength":  text = text.Replace("{OPPONENT_TOP_SKILL_2}", "more reliable sweeping"); break;
+                        case "Sweep Endurance": text = text.Replace("{OPPONENT_TOP_SKILL_2}", "better conditioning"); break;
+                        case "Sweep Cohesion":  text = text.Replace("{OPPONENT_TOP_SKILL_2}", "a bit more team spirit"); break;
+                    }
                 }
             }
         }

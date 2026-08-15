@@ -17,6 +17,6 @@ MonoBehaviour:
   - $160,000 is up for grabs in the annual Big Cash spiel!
   - Does Team {TEAM_NAME} feel lucky in grabbing their share of the prize?  Let's
     find out!
-  pauseGame: 1
+  pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

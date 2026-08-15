@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Coach
   dialogueLines:
-  - 'Alright, {PLAYER_NAME}, you  {PLAYER_HAS_HAMMER} the hammer.  {PICK: You''ve
-    got this!|Show ''em what you''ve got!|Make the simple shots, this one''s yours!} '
+  - 'Alright, {PLAYER_NAME}, {HAMMER_TEAM} the hammer.  {PICK:You''ve got this!|Show
+    ''em what you''ve got!|Make the simple shots, this one''s yours!|You''ve got
+    a good chance here...|Should be a cake walk for you.} '
   - Good luck!
   pauseGame: 1
   autoAdvanceDelay: 0

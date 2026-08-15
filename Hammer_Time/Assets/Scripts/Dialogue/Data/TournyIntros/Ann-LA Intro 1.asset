@@ -17,6 +17,6 @@ MonoBehaviour:
   - "Lights, Camera, and curling action in the bright lights of Hollywood!  16 teams
     will fight for the prestigious LA Open title!\t"
   - Team {TEAM_NAME} will look for their big break in sunny Southern California!
-  pauseGame: 1
+  pauseGame: 0
   autoAdvanceDelay: 0
   useTextReplacement: 1

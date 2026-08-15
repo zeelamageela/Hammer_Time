@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69bccab59003341d7bde019a42101df6, type: 3}
   m_Name: Coach-Generic Intro 4
   m_EditorClassIdentifier: 
-  characterName: Announcer
+  characterName: Coach
   dialogueLines:
-  - Keep it simple and stay in control.  You've got this!
+  - '{HAMMER_TEAM} has the hammer, {PICK:just play your game out there}keep making
+    those smart plays|keep managing the ice out there}.  You''ve got this!'
   pauseGame: 1
   autoAdvanceDelay: 0
   useTextReplacement: 1

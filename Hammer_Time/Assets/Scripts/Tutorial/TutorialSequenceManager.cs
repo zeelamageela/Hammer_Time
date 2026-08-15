@@ -1425,13 +1425,14 @@ public class TutorialSequenceManager : MonoBehaviour
         if (!enableTutorials || availableTutorials == null)
             return;
 
-        // Don't auto-fire tutorials when loading/continuing a career game.
-        // gsp.tutorial=true means this is explicitly tutorial/practice mode;
-        // gsp.loadGame=true means we're resuming a saved career game.
+        // Don't auto-fire tutorials when loading/continuing a career game, or during a
+        // QuickTestGame debug session (gsp.debug=true, set only by QuickTestGame — real
+        // games always reset it to false). gsp.tutorial=true means this is explicitly
+        // tutorial/practice mode and always takes priority over both skips.
         GameSettingsPersist gsp = UnityEngine.Object.FindAnyObjectByType<GameSettingsPersist>();
-        if (gsp != null && !gsp.tutorial && gsp.loadGame)
+        if (gsp != null && !gsp.tutorial && (gsp.loadGame || gsp.debug))
         {
-            Debug.Log("[TutorialSequenceManager] Skipping auto-start tutorials: career game load in progress (loadGame=true)");
+            Debug.Log($"[TutorialSequenceManager] Skipping auto-start tutorials: loadGame={gsp.loadGame}, debug={gsp.debug}");
             return;
         }
         

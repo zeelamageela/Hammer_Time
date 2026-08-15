@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Announcer
   dialogueLines:
-  - Only one separates {TEAM_NAME} and {OPPONENT_NAME}.
-  - '{TEAM_NAME} {PLAYER_HAS_HAMMER} the hammer.  Tension rising.'
+  - Only 1 separates {TEAM_NAME} and {OPPONENT_NAME} after the {END_PREVIOUS}.
+  - '{HAMMER_TEAM} has the hammer.  Tension is rising!'
   - The exciting conclusion, coming up next!
   pauseGame: 1
   autoAdvanceDelay: 0

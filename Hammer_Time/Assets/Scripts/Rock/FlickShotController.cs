@@ -39,6 +39,16 @@ public class FlickShotController : MonoBehaviour
     
     [Tooltip("Velocity guide indicator - shows player the correct swipe speed")]
     private VelocityGuideIndicator velocityGuide;
+
+    // SHARED across every rock's FlickShotController. Every rock in rockList has this
+    // component, but only one rock is ever actively aiming at a time - these visual
+    // helpers only need to exist once for the whole game. Start() used to create a
+    // fresh set of 4 GameObjects per rock (up to 16), leaving the rest as invisible
+    // orphans sitting in the scene for the whole game.
+    private static LineRenderer sharedSwipeTrailLine;
+    private static LineRenderer sharedPredictedStopLine;
+    private static LineRenderer sharedInputZoneBorder;
+    private static VelocityGuideIndicator sharedVelocityGuide;
     
     [Tooltip("Track cursor positions during swipe")]
     private List<Vector3> swipePoints = new List<Vector3>();
@@ -234,66 +244,80 @@ public class FlickShotController : MonoBehaviour
         }
         rockInfo = GetComponent("Rock_Info");
         
-        // Create swipe trail line renderer (BLACK line that draws as player swipes)
-        GameObject swipeTrailObj = new GameObject("SwipeTrail");
-        swipeTrailLine = swipeTrailObj.AddComponent<LineRenderer>();
-        swipeTrailLine.enabled = false;
-        swipeTrailLine.startWidth = 0.05f; // 75% thinner (was 0.2f)
-        swipeTrailLine.endWidth = 0.05f;
-        swipeTrailLine.positionCount = 0;
-        
-        // 66% more transparent (34% opacity instead of 100%)
-        Color swipeColor = Color.black;
-        swipeColor.a = 0.34f;
-        swipeTrailLine.startColor = swipeColor;
-        swipeTrailLine.endColor = swipeColor;
-        
-        swipeTrailLine.material = new Material(Shader.Find("Sprites/Default"));
-        
-        // Enable smoothing for cleaner line
-        swipeTrailLine.useWorldSpace = true;
-        swipeTrailLine.numCornerVertices = 8;  // Smooth corners
-        swipeTrailLine.numCapVertices = 8;     // Smooth ends
-        
-        Debug.Log("[FlickShot] Swipe trail line created (black, thin, 34% opacity, smoothed)");
-        
-        // Create predicted stop line (CYAN horizontal line)
-        GameObject predictedStopObj = new GameObject("PredictedStopLine");
-        predictedStopLine = predictedStopObj.AddComponent<LineRenderer>();
-        predictedStopLine.enabled = false;
-        predictedStopLine.startWidth = 0.15f;
-        predictedStopLine.endWidth = 0.15f;
-        predictedStopLine.positionCount = 2;
-        Color cyanColor = new Color(0f, 0.8f, 1f, 0.8f);
-        predictedStopLine.startColor = cyanColor;
-        predictedStopLine.endColor = cyanColor;
-        predictedStopLine.material = new Material(Shader.Find("Sprites/Default"));
-        Debug.Log("[FlickShot] Predicted stop line created (cyan horizontal)");
-        
-        // Create input zone border (green rectangle showing valid drag area)
-        GameObject inputZoneObj = new GameObject("InputZoneBorder");
-        inputZoneBorder = inputZoneObj.AddComponent<LineRenderer>();
-        inputZoneBorder.enabled = false;
-        inputZoneBorder.startWidth = 0.05f;
-        inputZoneBorder.endWidth = 0.05f;
-        inputZoneBorder.positionCount = 5; // Rectangle (4 corners + close loop)
-        Color zoneColor = new Color(0f, 1f, 0f, 0.3f); // Green, transparent
-        inputZoneBorder.startColor = zoneColor;
-        inputZoneBorder.endColor = zoneColor;
-        inputZoneBorder.material = new Material(Shader.Find("Sprites/Default"));
-        inputZoneBorder.useWorldSpace = true;
-        Debug.Log("[FlickShot] Input zone border created (green rectangle)");
-        
-        // Create velocity guide indicator
-        GameObject velocityGuideObj = new GameObject("VelocityGuide");
-        velocityGuide = velocityGuideObj.AddComponent<VelocityGuideIndicator>();
+        if (sharedSwipeTrailLine == null)
+        {
+            // Create swipe trail line renderer (BLACK line that draws as player swipes)
+            GameObject swipeTrailObj = new GameObject("SwipeTrail");
+            sharedSwipeTrailLine = swipeTrailObj.AddComponent<LineRenderer>();
+            sharedSwipeTrailLine.enabled = false;
+            sharedSwipeTrailLine.startWidth = 0.05f; // 75% thinner (was 0.2f)
+            sharedSwipeTrailLine.endWidth = 0.05f;
+            sharedSwipeTrailLine.positionCount = 0;
+
+            // 66% more transparent (34% opacity instead of 100%)
+            Color swipeColor = Color.black;
+            swipeColor.a = 0.34f;
+            sharedSwipeTrailLine.startColor = swipeColor;
+            sharedSwipeTrailLine.endColor = swipeColor;
+
+            sharedSwipeTrailLine.material = new Material(Shader.Find("Sprites/Default"));
+
+            // Enable smoothing for cleaner line
+            sharedSwipeTrailLine.useWorldSpace = true;
+            sharedSwipeTrailLine.numCornerVertices = 8;  // Smooth corners
+            sharedSwipeTrailLine.numCapVertices = 8;     // Smooth ends
+
+            Debug.Log("[FlickShot] Swipe trail line created (black, thin, 34% opacity, smoothed)");
+
+            // Create predicted stop line (CYAN horizontal line)
+            GameObject predictedStopObj = new GameObject("PredictedStopLine");
+            sharedPredictedStopLine = predictedStopObj.AddComponent<LineRenderer>();
+            sharedPredictedStopLine.enabled = false;
+            sharedPredictedStopLine.startWidth = 0.15f;
+            sharedPredictedStopLine.endWidth = 0.15f;
+            sharedPredictedStopLine.positionCount = 2;
+            Color cyanColor = new Color(0f, 0.8f, 1f, 0.8f);
+            sharedPredictedStopLine.startColor = cyanColor;
+            sharedPredictedStopLine.endColor = cyanColor;
+            sharedPredictedStopLine.material = new Material(Shader.Find("Sprites/Default"));
+            Debug.Log("[FlickShot] Predicted stop line created (cyan horizontal)");
+
+            // Create input zone border (green rectangle showing valid drag area)
+            GameObject inputZoneObj = new GameObject("InputZoneBorder");
+            sharedInputZoneBorder = inputZoneObj.AddComponent<LineRenderer>();
+            sharedInputZoneBorder.enabled = false;
+            sharedInputZoneBorder.startWidth = 0.05f;
+            sharedInputZoneBorder.endWidth = 0.05f;
+            sharedInputZoneBorder.positionCount = 5; // Rectangle (4 corners + close loop)
+            Color zoneColor = new Color(0f, 1f, 0f, 0.3f); // Green, transparent
+            sharedInputZoneBorder.startColor = zoneColor;
+            sharedInputZoneBorder.endColor = zoneColor;
+            sharedInputZoneBorder.material = new Material(Shader.Find("Sprites/Default"));
+            sharedInputZoneBorder.useWorldSpace = true;
+            Debug.Log("[FlickShot] Input zone border created (green rectangle)");
+
+            // Create velocity guide indicator
+            GameObject velocityGuideObj = new GameObject("VelocityGuide");
+            sharedVelocityGuide = velocityGuideObj.AddComponent<VelocityGuideIndicator>();
+            Debug.Log("[FlickShot] Velocity guide created");
+        }
+
+        // Reuse the single shared set of visual helpers - every rock's FlickShotController
+        // controls the same objects rather than creating its own (see field comments above).
+        swipeTrailLine = sharedSwipeTrailLine;
+        predictedStopLine = sharedPredictedStopLine;
+        inputZoneBorder = sharedInputZoneBorder;
+        velocityGuide = sharedVelocityGuide;
+
+        // These depend on this instance's own settings (inputZoneMaxX etc.), so refresh
+        // them for whichever rock is Start()-ing now, even when reusing the shared guide.
         velocityGuide.startY = powerDragStartY;  // Launcher position (-25f)
-        velocityGuide.endY = powerDragTargetY;   // ? NEW: Exactly at hog line (-16f, not -16.5f)
+        velocityGuide.endY = powerDragTargetY;   // Exactly at hog line (-16f, not -16.5f)
         velocityGuide.pauseDuration = 1.5f; // Pause at hogline (1.5s total)
         velocityGuide.fadeOutDuration = 0.5f; // Fade out over last 0.5s
         // Match guide width to the green input zone box (inputZoneMaxX * 2)
         velocityGuide.SetWidth(inputZoneMaxX * 2f);
-        Debug.Log($"[FlickShot] Velocity guide created: {velocityGuide.startY:F1} to {velocityGuide.endY:F1}, width={velocityGuide.lineWidth:F2} (matches green box)");
+        Debug.Log($"[FlickShot] Velocity guide configured: {velocityGuide.startY:F1} to {velocityGuide.endY:F1}, width={velocityGuide.lineWidth:F2} (matches green box)");
         
         // Subscribe to flick shot mode changes using reflection
         System.Type settingsType = System.Type.GetType("GameVisualizationSettings");
