@@ -51292,6 +51292,8 @@ MonoBehaviour:
   sweeperYellowL: {fileID: 0}
   sweeperYellowR: {fileID: 0}
   sweeperYellowTee: {fileID: 0}
+  broomLeftPrefab: {fileID: 0}
+  broomRightPrefab: {fileID: 0}
   swprLStats: {fileID: 0}
   swprRStats: {fileID: 0}
   swprRTStats: {fileID: 0}
