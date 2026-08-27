@@ -34,6 +34,11 @@ public class Sweep : MonoBehaviour
     [Tooltip("If true, each sweep tap extends the duration instead of resetting it. Allows continuous sweeping.")]
     public bool cumulativeSweeping = true; // NEW: Allow taps to stack duration!
 
+    // Flat effectiveness boost applied on top of skill-based sweepStrength scaling below -
+    // makes sweeping (human and AI alike, both funnel through this class) a bit more
+    // rewarding across the board without changing how it scales with sweeper stats.
+    private const float GLOBAL_EFFECTIVENESS_BOOST = 1.1f;
+
     float statCalc;
     float statEndur;
     
@@ -57,9 +62,13 @@ public class Sweep : MonoBehaviour
             Debug.LogWarning($"[Sweep] sweepAmt was {sweepAmt}, resetting to default 0.5");
             sweepAmt = 0.5f;
         }
-        
+
+        // Apply the flat effectiveness boost once here, since every sweep formula below
+        // multiplies through sweepAmt - boosting it at the source boosts all of them.
+        sweepAmt *= GLOBAL_EFFECTIVENESS_BOOST;
+
         // DIAGNOSTIC: Log the actual value being used
-        Debug.Log($"[Sweep] sweepAmt initialized to {sweepAmt}");
+        Debug.Log($"[Sweep] sweepAmt initialized to {sweepAmt} (includes {GLOBAL_EFFECTIVENESS_BOOST}x global boost)");
         
         //fltText.Direction = sm.sweepSel.moveDirection;
     }

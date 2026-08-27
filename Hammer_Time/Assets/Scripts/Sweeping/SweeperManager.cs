@@ -21,7 +21,13 @@ public class SweeperManager : MonoBehaviour
     public SweeperParent sweeperYellowL;
     public SweeperParent sweeperYellowR;
     public SweeperParent sweeperYellowTee;
-    
+
+    [Header("Broom overlay (standalone prefabs, reused for both teams - color/AOC set at runtime via SetBroom)")]
+    public SweeperParent broomLeftPrefab;
+    public SweeperParent broomRightPrefab;
+    private SweeperParent broomLeft;
+    private SweeperParent broomRight;
+
     private SweeperParent activeTeeSweeper;  // Current active T-line sweeper
 
     public CharacterStats swprLStats;
@@ -99,8 +105,8 @@ public class SweeperManager : MonoBehaviour
                 rockSounds[0].enabled = false;
                 rockSounds[1].enabled = false;
                 HapticController.Stop();
-                sweeperL.Whoa();
-                sweeperR.Whoa();
+                SweepL_Whoa();
+                SweepR_Whoa();
                 sweep.OnWhoa();
                 whoaButton.SetActive(false);
                 isSweeping = false;
@@ -116,6 +122,7 @@ public class SweeperManager : MonoBehaviour
         //sweeperYellowR.gameObject.SetActive(false);
         GameManager gm = FindFirstObjectByType<GameManager>();
         CareerManager cm = FindFirstObjectByType<CareerManager>();
+        EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
         if (redTurn)
         {
             if (sweeperRedL != null)
@@ -137,10 +144,17 @@ public class SweeperManager : MonoBehaviour
                 sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
             else
                 Debug.LogError("[SweeperManager] sweeperYellowTee prefab is missing.");
-            //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
-            //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamRedColour);
-
             bool redIsPlayerTeam = cm != null ? (gsp.redTeamName == cm.teamName) : !gm.aiTeamRed;
+
+            // Broom overlay: standalone prefab, instantiated fresh each turn alongside
+            // sweeperL/sweeperR (same parent, same pattern), not a field on the character
+            // rig itself. Player's own team shows their actually-equipped handle tier; the
+            // opponent (no tracked equipment) defaults to tier 0 (Wooden/white). Color is
+            // whichever SIDE (red/yellow) is sweeping, matching the existing
+            // TeamManager.SetSweepers() convention for shooter/roster tinting.
+            int redHandleTier = redIsPlayerTeam && em != null ? em.GetActiveHandleTierIndex() : 0;
+            SetupBroomOverlay(redHandleTier, tm.teamRedColour);
+
             if (redIsPlayerTeam)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperYellowTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
@@ -171,10 +185,12 @@ public class SweeperManager : MonoBehaviour
                 sweeperYellowTee = Instantiate(sweeperYellowTee, sweepSel.tSweepParent.transform);
             else
                 Debug.LogError("[SweeperManager] sweeperYellowTee prefab is missing.");
-            //sweeperL.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
-            //sweeperR.GetComponent<CharColourChanger>().TeamColour(FindObjectOfType<TeamManager>().teamYellowColour);
-
             bool yellowIsPlayerTeam = cm != null ? (gsp.redTeamName != cm.teamName) : !gm.aiTeamYellow;
+
+            // See matching comment in the redTurn branch above.
+            int yellowHandleTier = yellowIsPlayerTeam && em != null ? em.GetActiveHandleTierIndex() : 0;
+            SetupBroomOverlay(yellowHandleTier, tm.teamYellowColour);
+
             if (yellowIsPlayerTeam)
             {
                 tm.SetSweepers(sweeperL.GetComponent<CharacterStats>(), sweeperR.GetComponent<CharacterStats>(), sweeperRedTee.GetComponent<CharacterStats>(), gm.rockCurrent, false);
@@ -273,6 +289,35 @@ public class SweeperManager : MonoBehaviour
         sweeperR.whoa = true;
     }
 
+    // Instantiates the broom overlay prefabs fresh each turn (same pattern as
+    // sweeperL/sweeperR above) and applies the correct AOC/color for this turn's side.
+    private void SetupBroomOverlay(int handleTier, Color sideColor)
+    {
+        if (broomLeftPrefab != null)
+        {
+            broomLeft = Instantiate(broomLeftPrefab, sweepSel.gameObject.transform);
+            broomLeft.SetBroom(handleTier, sideColor);
+        }
+        if (broomRightPrefab != null)
+        {
+            broomRight = Instantiate(broomRightPrefab, sweepSel.gameObject.transform);
+            broomRight.SetBroom(handleTier, sideColor);
+        }
+    }
+
+    // These wrap sweeperL/sweeperR's Sweep()/Hard()/Whoa() so the broom overlay (a
+    // separate SweeperParent instance, not a layer on the character rig - see
+    // SetupBroomOverlay) always animates in sync with the character sweeper it sits
+    // over. Every call site below was updated to go through these instead of calling
+    // sweeperL/sweeperR directly, so the broom doesn't need touching at every one of
+    // them individually.
+    private void SweepL_Sweep() { sweeperL.Sweep(); broomLeft?.Sweep(); }
+    private void SweepL_Hard() { sweeperL.Hard(); broomLeft?.Hard(); }
+    private void SweepL_Whoa() { sweeperL.Whoa(); broomLeft?.Whoa(); }
+    private void SweepR_Sweep() { sweeperR.Sweep(); broomRight?.Sweep(); }
+    private void SweepR_Hard() { sweeperR.Hard(); broomRight?.Hard(); }
+    private void SweepR_Whoa() { sweeperR.Whoa(); broomRight?.Whoa(); }
+
     public void ResetSweepers()
     {
 
@@ -285,6 +330,8 @@ public class SweeperManager : MonoBehaviour
         Destroy(sweeperR.gameObject);
         Destroy(sweeperRedTee.gameObject);
         Destroy(sweeperYellowTee.gameObject);
+        if (broomLeft != null) Destroy(broomLeft.gameObject);
+        if (broomRight != null) Destroy(broomRight.gameObject);
 
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = false;
@@ -385,8 +432,8 @@ public class SweeperManager : MonoBehaviour
             HapticController.Loop(true);
             HapticController.Play();
             //HapticController.clipFrequencyShift = 1f;
-            sweeperL.Sweep();
-            sweeperR.Sweep();
+            SweepL_Sweep();
+            SweepR_Sweep();
             sweep.OnSweep();
         }
 
@@ -425,10 +472,10 @@ public class SweeperManager : MonoBehaviour
             //HapticController.clipFrequencyShift = 1f;
             sweep.OnLeft();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
-            sweeperL.Sweep();
+            SweepL_Sweep();
 
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
-            sweeperR.Whoa();
+            SweepR_Whoa();
 
             sweeperL.yOffset = 0.39f;
             //sweeperL.yOffset = 0.6f;
@@ -471,10 +518,10 @@ public class SweeperManager : MonoBehaviour
 
             sweep.OnRight();
             //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
-            sweeperL.Whoa();
+            SweepL_Whoa();
 
             //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
-            sweeperR.Sweep();
+            SweepR_Sweep();
 
             sweeperL.yOffset = 0.69f;
             sweeperR.yOffset = 0.39f;
@@ -498,8 +545,8 @@ public class SweeperManager : MonoBehaviour
             Debug.Log("Whoa called in Tap Timer");
             rockSounds[0].enabled = false;
             rockSounds[1].enabled = false;
-            sweeperL.Whoa();
-            sweeperR.Whoa();
+            SweepL_Whoa();
+            SweepR_Whoa();
             sweep.OnWhoa();
             whoaButton.SetActive(false);
         }
@@ -513,8 +560,8 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].enabled = true;
         rockSounds[0].pitch = 1f;
         rockSounds[1].pitch = 1f;
-        sweeperL.Sweep();
-        sweeperR.Sweep();
+        SweepL_Sweep();
+        SweepR_Sweep();
         sweep.OnSweep();
 
         if (!aiTurn)
@@ -533,8 +580,8 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].enabled = true;
         rockSounds[0].pitch = 1.4f;
         rockSounds[1].pitch = 1.4f;
-        sweeperL.Hard();
-        sweeperR.Hard();
+        SweepL_Hard();
+        SweepR_Hard();
         sweep.OnHard();
 
         if (!aiTurn)
@@ -553,9 +600,9 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].pitch = 1f;
 
         if (sweeperL != null)
-            sweeperL.Whoa();
+            SweepL_Whoa();
         if (sweeperR != null)
-            sweeperR.Whoa();
+            SweepR_Whoa();
         sweep.OnWhoa();
 
         if (!aiTurn)
@@ -576,8 +623,8 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].pitch = 1f;
 
         CallOut("Whoa");
-        sweeperL.Whoa();
-        sweeperR.Whoa();
+        SweepL_Whoa();
+        SweepR_Whoa();
         sweep.OnWhoa();
 
         if (!aiTurn)
@@ -597,10 +644,10 @@ public class SweeperManager : MonoBehaviour
         rockSounds[1].pitch = 1f;
         sweep.OnLeft();
         //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
-        sweeperL.Sweep();
+        SweepL_Sweep();
 
         //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
-        sweeperR.Whoa();
+        SweepR_Whoa();
 
         sweeperL.yOffset = Mathf.Lerp(1.2f, 0.6f, (1 - Time.deltaTime));
         sweeperL.yOffset = 0.6f;
@@ -623,10 +670,10 @@ public class SweeperManager : MonoBehaviour
 
         sweep.OnRight();
         //sweeperL.gameObject.transform.localPosition = new Vector3(0f, 0.9f, 0f);
-        sweeperL.Whoa();
+        SweepL_Whoa();
 
         //sweeperR.gameObject.transform.localPosition = new Vector3(0f, 0.6f, 0f);
-        sweeperR.Sweep();
+        SweepR_Sweep();
 
         sweeperL.yOffset = 1.2f;
         sweeperR.yOffset = 0.6f;

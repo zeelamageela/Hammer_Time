@@ -260,12 +260,90 @@ Unity 6000.4.5f1 + Xcode 26 requires three fixes to the generated project. These
 - **AI strategy is FGZ-aware** — see dedicated section above.
 - **FlickShotController duplicate visual elements fixed** — see dedicated section above.
 
+## AI sweeper intelligence — IMPLEMENTED (Aug 19 2026)
+
+Investigated `AI_Sweeper.cs` in depth before changing anything — it's far more sophisticated than it looks at a glance. `MonitorAndSweepCoroutine` (the active system; the old checkpoint-based `TargetShot()` is fully disabled) already:
+- Runs a real physics-based trajectory simulation every frame (`TrajectorySimulator`), factoring in every other rock in play, with genuine collision-avoidance logic (steers around an off-line obstacle, hard-sweeps to get past an on-line one, or accepts an unavoidable one without deliberately seeking a bank shot — bank shots are illegal, confirmed this isn't happening)
+- Already scales sweep effectiveness by sweeper `CharacterStats` (`GetSweeperSkill()`) for AI, and `Sweep.cs` (the same physics code both human and AI sweeping funnel through) already scales every effect by `sweepStrength` for both sides
+
+So of the three asks, only one was a genuinely new feature:
+1. **Path awareness (avoid other rocks)** — already existed, no code changed. Asked the user to report back if they actually observe it failing in practice, since that'd be a bug hunt, not new work.
+2. **Strategic restraint on guard shots** — NEW. In `MonitorAndSweepCoroutine`, added `bool guardRestraintApplies = isGuardShot && predictedFinalY > 0f` (guard-type shots identified via `shotType.Contains("Guard")`, matching the existing convention in `AI_Shooter.cs`). This suppresses the two distance-based sweep branches (Critical/Weight) when a guard shot is predicted to land short but still in a sane position (past the hog line) — "any guard usually works" per user's call, not a stricter exposure-comparison check. Lateral line correction still applies independently regardless, since it's the same `if/else-if` chain, just gated with `&& !guardRestraintApplies` on the two distance branches specifically (inserting this as its own chain link would have silently detached the takeout/collision branches above it from the distance/lateral branches below — worth remembering if touching this chain again).
+3. **10% global effectiveness boost** — NEW. `Sweep.cs`: added `GLOBAL_EFFECTIVENESS_BOOST = 1.1f`, applied once to `sweepAmt` in `Start()`. Since every sweep formula multiplies through `sweepAmt`, this boosts human and AI sweeping equally without changing how it scales with stats.
+
+**Not yet tested in Play mode or on device.**
+
+## Broom/handle animations by equipment tier — IN PROGRESS (Aug 25 2026)
+
+Sweeper animations should visually reflect the equipped handle, always with team-color accents. User finished the spritesheets; confirmed the animation state graph (Idle/Sweep/etc.) is identical across all broom tiers, so an `AnimatorOverrideController` per tier is the right approach (not separate layers per broom - would mean way more active sprite renderers/GameObjects for no benefit, since only the art differs, not the state machine).
+
+**Actual architecture (corrected after seeing the user's real prefab setup - my first pass assumed the broom would be a field added onto each character's own `SweeperParent`, which was wrong):**
+- The broom is a **standalone prefab** (`Broom_Left 1` built so far, `Broom_Right` presumably to follow) with its own `SweeperParent` component - not embedded in the character rig. One prefab per side, reused for both teams; color/AOC are set at runtime, not baked in per-team copies.
+- `SweeperManager` instantiates it fresh each turn alongside `sweeperL`/`sweeperR` (same parent, `sweepSel.gameObject.transform`), via new `broomLeftPrefab`/`broomRightPrefab` fields (assign in the Inspector) and private `broomLeft`/`broomRight` instance refs. Destroyed in `ResetSweepers()` alongside the character sweepers.
+- Handle tier → broom art mapping is a straight 1:1 index match: the user's `BroomController_Wood, _Comp_01, _Comp_02, _Carbon_01, _Carbon_02` AOC list (in that order) maps directly to `EquipmentManager`'s cost-bracket order (Wooden, Fibreglass, Composite, Carbon Fibre, Exotic Carbon Fibre) - the AOC asset names don't match the tier names but the order does, confirmed with user.
+
+**Existing architecture this builds on (unchanged, just clarifying what was already there):**
+- `SweeperParent.sweeperLayers[]` — array of `Sweeper` (each with its own `Animator`), all triggered together by `Sweep()`/`Hard()`/`Whoa()`. This is what "layers" already meant in this codebase.
+- `CharColourChanger` — generic, pre-existing: holds `SpriteRenderer[] colour1GO`, `TeamColour(Color)` tints all of them. Already used for shooter/roster tinting in `TeamManager.SetSweepers()` via `teamRedColour`/`teamYellowColour` (`GameSettingsPersist.redTeamColour`/`yellowTeamColour`) — **not** `CareerManager.teamColour` (that's the equipment shop's player-personal color; the sweeper broom uses whichever SIDE, red or yellow, is currently sweeping, matching the existing roster-tinting convention, and this is what colors AI opponents' brooms too since there's no tracked equipment for them - they default to tier 0/Wooden/white).
+- `EquipmentManager.activeEquip[0]` = the player's currently equipped handle.
+
+**What's implemented:**
+- `EquipmentManager.GetHandleTierIndex(Equipment)` / `GetActiveHandleTierIndex()` — tier 0-4 from cost, same brackets as shop generation.
+- `SweeperParent.cs`: `broomLayer` (which `Sweeper` is the swappable one - must ALSO be added to `sweeperLayers[]` itself for Sweep/Hard/Whoa sync), `broomOverrides[]` (5 AOCs, index = tier), `broomColour` (`CharColourChanger` targeting the broom's SpriteRenderer(s)), `SetBroom(tierIndex, sideColor)`. Tier 0 (Wooden) always renders white.
+- `SweeperManager.cs`: new `broomLeftPrefab`/`broomRightPrefab` fields + `SetupBroomOverlay()` (instantiates + calls `SetBroom()`). Six new tiny wrapper methods (`SweepL_Sweep/Hard/Whoa`, `SweepR_Sweep/Hard/Whoa`) each call the character sweeper's method **and** the corresponding broom overlay's, so the broom animates in sync — all 11 existing call sites across the file (`SweepTap`, `SweepTapLeft/Right`, `SweepWeight`, `SweepHard`, `SweepHit`, `SweepWhoa`, `SweepLeft/Right`, the tap-timer coroutine) were switched to go through these instead of calling `sweeperL`/`sweeperR` directly.
+
+**Current exact state (Aug 27 2026) — `Broom_Left 1` prefab:**
+- `Sweeper Parent` component: `Sweeper Layers` = `[NC_Head, NC_Shirt, NC_Legs]` (3) — the character body was folded directly into this same prefab (see "characters on/off" below) rather than kept as a separate rig.
+- `Broom Layer` = `NC_Broom` ✓ correctly assigned (was `None` earlier, now fixed).
+- `Broom Overrides` (5) = `BroomController_Wood, _Comp_01, _Comp_02, _Carbon_01, _Carbon_02`, in that order — confirmed 1:1 with the shop tier order (Wooden/Fibreglass/Composite/Carbon Fibre/Exotic Carbon Fibre). Asset names don't match tier names, order does.
+- `Broom Colour` = the `Char Colour Changer` on this same GameObject, `Colour 1GO` size 2.
+- The 5 `BroomController_*.overrideController` assets + their source spritesheets exist under `Assets/Art/Characters/BroomOnly/` (Wood, Composite_01, Composite_02, Carbon_01, Carbon_02 folders).
+- `Broom_Right.prefab` also exists now (mirrors `Broom_Left 1`, not yet cross-checked field-by-field).
+
+**Immediate next action — one bug found, not yet fixed:** `NC_Broom` is **not** in `Sweeper Layers` (only Head/Shirt/Legs are). This means `Sweep()`/`Hard()`/`Whoa()` never reaches the broom's `Animator` — it'll sit frozen on its default state even though the character animates fine. **Fix: add `NC_Broom` as a 4th element in `Sweeper Layers` on `Broom_Left 1` (and presumably `Broom_Right`)** — it belongs in both `Sweeper Layers` (for the trigger fan-out) and `Broom Layer` (for the AOC/color targeting) simultaneously, that's expected/correct, not a duplicate mistake.
+
+**Worth double-checking (not yet confirmed either way):** does `Char Colour Changer.Colour 1GO` (size 2) reference *only* the broom's own SpriteRenderer(s)? If it accidentally also references Head/Shirt/Legs, a Wooden Handle would incorrectly tint the whole character white instead of just the broom.
+
+**Still needed in the Unity Editor, in order:**
+1. Add `NC_Broom` to `Sweeper Layers` on `Broom_Left 1` (see above - this is the very next step).
+2. Verify `Broom_Right` matches `Broom_Left 1`'s setup (Sweeper Layers including its own broom entry once added, Broom Layer, Broom Overrides x5, Broom Colour).
+3. Assign `broomLeftPrefab`/`broomRightPrefab` on the `SweeperManager` component in the scene (not yet done as of Aug 27).
+4. First Play mode test — with just this one character's setup. Watch for: does the broom actually animate (Sweep/Hard/Whoa) once step 1 is done; does the color tint apply only to the broom and not the character.
+5. Repeat/adapt for other characters (Pierre, Cal, Sandy, Tracey, etc.) if each needs its own broom art position — unclear yet whether one broom prefab per side works for all characters or needs per-character variants. Resolve once the first one is validated.
+
+**Open design question, deliberately deferred until the above is validated:** user wants to revisit "turning sweeper characters on/off" — i.e. whether there should be a way to show just the broom without the character body, or vice versa. Folding Head/Shirt/Legs directly into the same prefab as the broom (current approach) was a reasonable resolution to an earlier "this looks too busy with both visible" concern, but the user explicitly wants to come back to this as its own topic - don't assume it's fully settled.
+
+**Not yet tested** — Editor setup is mid-progress, nothing validated in Play mode yet.
+
+## Equipment shop weekly regeneration bug — FIXED (Aug 19 2026)
+
+**Symptom:** after completing week 1 in career mode, the equipment shop list "reverts" to a weird-looking list (duplicate-looking rows like "Fibreglass Handle $500" / "Fibreglass Handle $1,000"), and colors on owned equipment don't persist.
+
+**Root cause:** `EquipmentManager.GenerateItems()`/`LoadItems()` build each of the 30 handle slots (20 for footwear/apparel) with a **freshly randomized cost every time they run**, then pick tier name + color purely from which price bracket that random cost lands in. Ownership is tracked only by a bare numeric ID (`cm.inventoryID`, plain `int[]` — no name/tier/color persisted with it beyond the separate full-array save path). Since id→tier mapping was random-per-call, id #5 could be "Fibreglass" one week and "Composite" the next after a fresh regeneration — the ownership record still pointed at id #5, but id #5 had become a different item. 30 random costs bucketed into only 5 tier names also produces visually-duplicate-looking rows even within one generation.
+
+**Fix, applied identically to handles/heads/footwear/apparel in both `GenerateItems` and `LoadItems`:**
+- New `EquipmentManager.IsExistingSlotOwned(equipList, ownedIds, i)` — true if slot `i`'s existing item's `id` is in `cm.inventoryID` (the authoritative save data, not the `.owned` flag which isn't guaranteed fresh at generation time), or if `i == 0` (the free starter item, always kept once it exists — same guarantee the old code had via a blanket `temp[0] = equipList[0]` hack, now generalized and made per-type-safe).
+- Owned slots are copied through unchanged (cost/id/stats never re-rolled). Non-owned slots get a fresh random roll — this is what gives "new shop stock every week" while never touching what's already bought.
+- `SetInventory()` now passes `cm.inventoryID` into both methods so this check has the data it needs; this makes the fix robust even if the `cm.loadedFromSave` branch (Generate vs Load) doesn't reliably reflect timing across the week transition, since either path now preserves ownership correctly.
+- New `EquipmentManager.GetTeamColor()` (`CareerManager.teamColour`, falls back to `Color.white`) replaces the old per-tier `Random.ColorHSV(...)` / hardcoded `new Color(0f,1f,1f,1f)` calls — equipment color is now always the player's team color, live, rather than randomly rolled and never actually saved. This also trivially fixes the color-persistence symptom since there's no longer any color data to lose.
+
+**Per-tier color rules (Aug 19 2026 refinement)** — not every tier gets the team color, per explicit user rules:
+- **Handles:** Wooden Handle → `Color.white`; Fibreglass/Composite/Carbon Fibre/Exotic Carbon Fibre → `GetTeamColor()`
+- **Heads:** all tiers → `Color.white` (no color augmentation for heads at all)
+- **Footwear:** Half Slider/Full Slider/Premium Slider → `Color.white`; Premium Shoes/Exotic Shoes → `GetTeamColor()`
+- **Apparel:** all tiers → `GetTeamColor()` (no exception given)
+
+**Not yet tested** — needs a real multi-week career playthrough to confirm the shop looks right, owned items/colors survive the week transition, and the per-tier white/team-color split displays correctly.
+
 ---
 
 ## Pending / not started
 
-- **Comprehensive FGZ testing** — chain reactions, end-of-end boundary, flick shot mode specifically
-- **Device testing on Mac** — moving there next; none of this session's fixes have been verified on-device yet, only in the Unity Editor
+- **Device testing on Mac** — DONE, confirmed working (Aug 2026). FGZ rule, camera fixes, MainDisplay, FlickShotController dedup all validated on-device.
+- **Comprehensive FGZ testing** — chain reactions, end-of-end boundary, flick shot mode specifically still not deliberately exercised
+- **AI sweeper changes need testing** — strategic restraint + 10% boost implemented but unverified, see dedicated section above
+- **Equipment shop fix needs testing** — owned-item preservation + team color, see dedicated section above, needs a multi-week career playthrough
+- **Broom/handle animations** — see dedicated section above, blocked on art + tier count reconciliation
 - **Tutorial branching** — infrastructure exists, no steps wired yet. **Paused**, not currently being worked on.
 - **Menu tutorials** — needs design discussion before any code
 - **Distinct AI "tap" shot type** — current FGZ redirect reuses the existing draw (ScorePoints) logic rather than a true gentle-tap execution path; only worth building if the draw redirect feels wrong in practice

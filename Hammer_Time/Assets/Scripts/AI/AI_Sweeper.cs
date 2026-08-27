@@ -1191,6 +1191,13 @@ public class AI_Sweeper : MonoBehaviour
         bool isDrawShot = (shotType == "Draw To Target" || shotType == "Guard To Target");
         bool isRaiseShot = (shotType == "Raise" || shotType == "Tap Back");
 
+        // STRATEGIC RESTRAINT: for guard shots, coming up short of the exact target is
+        // often still tactically fine (any rock sitting in a sane guard position works),
+        // so don't fight to force it all the way to the precise target - see PRIORITY 2
+        // below. Matches the "shotType.Contains(Guard)" convention already used in
+        // AI_Shooter.cs to classify guard shots.
+        bool isGuardShot = shotType.Contains("Guard");
+
         // ========================================
         // GENERATE TWO TRAJECTORIES:
         // 1. IDEAL trajectory (from perfect physics calculation - what we WANT)
@@ -1487,7 +1494,13 @@ public class AI_Sweeper : MonoBehaviour
                 Debug.LogWarning($"[AI_Sweeper] INSANE shortfall detected: {predictedShortfall:F2}m - resetting to 0 (trajectory data invalid)");
                 predictedShortfall = 0f; // Don't sweep based on bad data
             }
-            
+
+            // STRATEGIC RESTRAINT: for guard shots, don't fight a shortfall if the rock is
+            // still going to land somewhere in a sane guard position (past the hog line) -
+            // any guard usually works, no need to force the exact original target. Used
+            // below in the PRIORITY 2/3 branches of the sweep decision chain.
+            bool guardRestraintApplies = isGuardShot && predictedFinalY > 0f;
+
             if (lookaheadCollision.hasCollision)
             {
                 collisionDistance = Vector2.Distance(currentPos, lookaheadCollision.collisionPoint);
@@ -1725,13 +1738,16 @@ public class AI_Sweeper : MonoBehaviour
                 }
             }
             // PRIORITY 2: NON-TAKEOUT SHOTS - Full logic (weight + line)
-            else if (predictedShortfall > 1.0f)
+            // guardRestraintApplies (computed above, before this if/else-if chain) only
+            // suppresses these two distance branches - lateral correction below still
+            // applies independently either way, since it's checked last in the same chain.
+            else if (predictedShortfall > 1.0f && !guardRestraintApplies)
             {
                 // CRITICAL DISTANCE (rock won't reach target!)
                 desiredState = "Critical";
                 Debug.Log($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
             }
-            else if (predictedShortfall > distanceThreshold)
+            else if (predictedShortfall > distanceThreshold && !guardRestraintApplies)
             {
                 // PRIORITY 3: SIGNIFICANT SHORTFALL
                 desiredState = "Weight";
@@ -1766,7 +1782,7 @@ public class AI_Sweeper : MonoBehaviour
                 ApplySweepState(desiredState, isInTurn);
                 currentSweepState = desiredState;
 
-                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}");
+                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}, GuardRestraint={guardRestraintApplies}");
                 
                 // Show callout on rock to visualize AI sweeping decisions
                 ShowAISweepingCallout(rock, desiredState, lateralError, predictedShortfall, hasCollided, isTakeoutShot);

@@ -1,0 +1,792 @@
+fileFormatVersion: 2
+guid: 98535e6ae03c27140904c80c7cb3eb9a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8450878706687923398
+    second: Carbon_Normal_02_#[540,540]_0
+  - first:
+      213: -6397908312198479112
+    second: Carbon_Normal_02_#[540,540]_1
+  - first:
+      213: 3151650500533929312
+    second: Carbon_Normal_02_#[540,540]_2
+  - first:
+      213: 1411849487550276845
+    second: Carbon_Normal_02_#[540,540]_3
+  - first:
+      213: 3031623508731618714
+    second: Carbon_Normal_02_#[540,540]_4
+  - first:
+      213: -1135307649188456795
+    second: Carbon_Normal_02_#[540,540]_5
+  - first:
+      213: 6840868904927081786
+    second: Carbon_Normal_02_#[540,540]_6
+  - first:
+      213: 5417897534552735968
+    second: Carbon_Normal_02_#[540,540]_7
+  - first:
+      213: 3843914676900037118
+    second: Carbon_Normal_02_#[540,540]_8
+  - first:
+      213: -1020301357876145211
+    second: Carbon_Normal_02_#[540,540]_9
+  - first:
+      213: -9188816089418079201
+    second: Carbon_Normal_02_#[540,540]_10
+  - first:
+      213: -3037953726174511565
+    second: Carbon_Normal_02_#[540,540]_11
+  - first:
+      213: 4998583498766832847
+    second: Carbon_Normal_02_#[540,540]_12
+  - first:
+      213: 3059654824359506894
+    second: Carbon_Normal_02_#[540,540]_13
+  - first:
+      213: 321256719226720200
+    second: Carbon_Normal_02_#[540,540]_14
+  - first:
+      213: -6992177812329622971
+    second: Carbon_Normal_02_#[540,540]_15
+  - first:
+      213: 5459743164772435325
+    second: Carbon_Normal_02_#[540,540]_16
+  - first:
+      213: 4157461285224530591
+    second: Carbon_Normal_02_#[540,540]_17
+  - first:
+      213: -6241552995687528321
+    second: Carbon_Normal_02_#[540,540]_18
+  - first:
+      213: -2016939716751132410
+    second: Carbon_Normal_02_#[540,540]_19
+  - first:
+      213: 7104849022531386840
+    second: Carbon_Normal_02_#[540,540]_20
+  - first:
+      213: -5529835685803483527
+    second: Carbon_Normal_02_#[540,540]_21
+  - first:
+      213: 5290834269358763524
+    second: Carbon_Normal_02_#[540,540]_22
+  - first:
+      213: 8903667448596077007
+    second: Carbon_Normal_02_#[540,540]_23
+  - first:
+      213: 5019398147013244196
+    second: Carbon_Normal_02_#[540,540]_24
+  - first:
+      213: 859488311299803979
+    second: Carbon_Normal_02_#[540,540]_25
+  - first:
+      213: 3463342813871890729
+    second: Carbon_Normal_02_#[540,540]_26
+  - first:
+      213: -190030903810195694
+    second: Carbon_Normal_02_#[540,540]_27
+  - first:
+      213: 5612295012070671537
+    second: Carbon_Normal_02_#[540,540]_28
+  - first:
+      213: -5539029333260485444
+    second: Carbon_Normal_02_#[540,540]_29
+  - first:
+      213: -4113413066913474970
+    second: Carbon_Normal_02_#[540,540]_30
+  - first:
+      213: -665026656645105447
+    second: Carbon_Normal_02_#[540,540]_31
+  - first:
+      213: -1359987963853178698
+    second: Carbon_Normal_02_#[540,540]_32
+  - first:
+      213: 4306364808332674395
+    second: Carbon_Normal_02_#[540,540]_33
+  - first:
+      213: 1172217717478869845
+    second: Carbon_Normal_02_#[540,540]_34
+  - first:
+      213: -9222919556228645467
+    second: Carbon_Normal_02_#[540,540]_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2700
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3b24f7479278ba80800000000000000
+      internalID: -8450878706687923398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_1
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2700
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f204e1a9401637a0800000000000000
+      internalID: -6397908312198479112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_2
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2700
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065c18c9e69ecbb20800000000000000
+      internalID: 3151650500533929312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_3
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 2700
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de460cde0a5e79310800000000000000
+      internalID: 1411849487550276845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2160
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a95ebaad48d721a20800000000000000
+      internalID: 3031623508731618714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_5
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 2160
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a6965b45b39e30f0800000000000000
+      internalID: -1135307649188456795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_6
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 2160
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a35b1394606afee50800000000000000
+      internalID: 6840868904927081786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_7
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 2160
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e00b783a1d303b40800000000000000
+      internalID: 5417897534552735968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1620
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef1898f5804585530800000000000000
+      internalID: 3843914676900037118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_9
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1620
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c391ff125927d1f0800000000000000
+      internalID: -1020301357876145211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_10
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1620
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1467db7374ca7080800000000000000
+      internalID: -9188816089418079201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_11
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1620
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33e3b4b8e2507d5d0800000000000000
+      internalID: -3037953726174511565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1080
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc4502065398e5540800000000000000
+      internalID: 4998583498766832847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_13
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 1080
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec3324d1ad3167a20800000000000000
+      internalID: 3059654824359506894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_14
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1080
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cf4737b845557400800000000000000
+      internalID: 321256719226720200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_15
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 1080
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54299b9635bc6fe90800000000000000
+      internalID: -6992177812329622971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 540
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d75c02d3b77e4cb40800000000000000
+      internalID: 5459743164772435325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_17
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 540
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f924f31030542b930800000000000000
+      internalID: 4157461285224530591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_18
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 540
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f78054d9e9c8169a0800000000000000
+      internalID: -6241552995687528321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_19
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 540
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 609fba983046204e0800000000000000
+      internalID: -2016939716751132410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_20
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ddb3cafa8e799260800000000000000
+      internalID: 7104849022531386840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_21
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97e9769fdb31243b0800000000000000
+      internalID: -5529835685803483527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_22
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 0
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40ea7966cb1dc6940800000000000000
+      internalID: 5290834269358763524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Carbon_Normal_02_#[540,540]_23
+      rect:
+        serializedVersion: 2
+        x: 1620
+        y: 0
+        width: 540
+        height: 540
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc917cfee5e209b70800000000000000
+      internalID: 8903667448596077007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a52dcd322d74a1c41b3b849c1ce46b5b
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":540.0,"y":540.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Carbon_Normal_02_#[540,540]_0: -8450878706687923398
+      Carbon_Normal_02_#[540,540]_1: -6397908312198479112
+      Carbon_Normal_02_#[540,540]_10: -9188816089418079201
+      Carbon_Normal_02_#[540,540]_11: -3037953726174511565
+      Carbon_Normal_02_#[540,540]_12: 4998583498766832847
+      Carbon_Normal_02_#[540,540]_13: 3059654824359506894
+      Carbon_Normal_02_#[540,540]_14: 321256719226720200
+      Carbon_Normal_02_#[540,540]_15: -6992177812329622971
+      Carbon_Normal_02_#[540,540]_16: 5459743164772435325
+      Carbon_Normal_02_#[540,540]_17: 4157461285224530591
+      Carbon_Normal_02_#[540,540]_18: -6241552995687528321
+      Carbon_Normal_02_#[540,540]_19: -2016939716751132410
+      Carbon_Normal_02_#[540,540]_2: 3151650500533929312
+      Carbon_Normal_02_#[540,540]_20: 7104849022531386840
+      Carbon_Normal_02_#[540,540]_21: -5529835685803483527
+      Carbon_Normal_02_#[540,540]_22: 5290834269358763524
+      Carbon_Normal_02_#[540,540]_23: 8903667448596077007
+      Carbon_Normal_02_#[540,540]_3: 1411849487550276845
+      Carbon_Normal_02_#[540,540]_4: 3031623508731618714
+      Carbon_Normal_02_#[540,540]_5: -1135307649188456795
+      Carbon_Normal_02_#[540,540]_6: 6840868904927081786
+      Carbon_Normal_02_#[540,540]_7: 5417897534552735968
+      Carbon_Normal_02_#[540,540]_8: 3843914676900037118
+      Carbon_Normal_02_#[540,540]_9: -1020301357876145211
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

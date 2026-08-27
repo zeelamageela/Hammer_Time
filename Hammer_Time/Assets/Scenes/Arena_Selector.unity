@@ -25441,7 +25441,7 @@ GameObject:
   - component: {fileID: 676691835}
   - component: {fileID: 676691833}
   m_Layer: 5
-  m_Name: PlayerButton
+  m_Name: EquipButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31015,7 +31015,7 @@ MonoBehaviour:
     head: 0
     handle: 1
     id: 1
-    img: {fileID: 21300000, guid: f48d7fffbe3f14c2fad84be217948e31, type: 3}
+    img: {fileID: 21300000, guid: 807f2b832441e4ab7afbc5ac10edf0bf, type: 3}
     cost: 500
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31030,7 +31030,7 @@ MonoBehaviour:
     head: 0
     handle: 1
     id: 2
-    img: {fileID: 21300000, guid: f48d7fffbe3f14c2fad84be217948e31, type: 3}
+    img: {fileID: 21300000, guid: 523591bf379564bcb9f11753132c6cdd, type: 3}
     cost: 1000
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31045,7 +31045,7 @@ MonoBehaviour:
     head: 0
     handle: 1
     id: 3
-    img: {fileID: 21300000, guid: 7fac2ba8905e446759028e006c8ee8f7, type: 3}
+    img: {fileID: 21300000, guid: 523591bf379564bcb9f11753132c6cdd, type: 3}
     cost: 2000
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31075,7 +31075,7 @@ MonoBehaviour:
     head: 0
     handle: 1
     id: 5
-    img: {fileID: 21300000, guid: 9ee58ce7b14e2405dba3f9a6d0b28207, type: 3}
+    img: {fileID: 21300000, guid: 49234aaee2d414ebbb403d568eba17ea, type: 3}
     cost: 4000
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31090,7 +31090,7 @@ MonoBehaviour:
     head: 0
     handle: 1
     id: 6
-    img: {fileID: 21300000, guid: 678d52b7260e146b387ea8e987b5f14e, type: 3}
+    img: {fileID: 21300000, guid: 78e0bfd5ed4894080aa957e684869881, type: 3}
     cost: 5000
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31227,7 +31227,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 63
-    img: {fileID: 21300000, guid: b7edecfb60b7c423cbfb120577e0a4ee, type: 3}
+    img: {fileID: 21300000, guid: 2841789127ee84765b0b6e39957d6965, type: 3}
     cost: 2500
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31242,7 +31242,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 64
-    img: {fileID: 21300000, guid: e2806cd01dbab4197ba75959b6dc5c14, type: 3}
+    img: {fileID: 21300000, guid: 2146f5c4a29594a4c8fac471d676a638, type: 3}
     cost: 5000
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31273,7 +31273,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 81
-    img: {fileID: 21300000, guid: 378c1c671674646748ef3a250db587c3, type: 3}
+    img: {fileID: 21300000, guid: d145169ec366e47c39067a9777cbfa1e, type: 3}
     cost: 100
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31288,7 +31288,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 82
-    img: {fileID: 21300000, guid: 94ae25ddcf08741e9afe79fd16361a8a, type: 3}
+    img: {fileID: 21300000, guid: 9f9593d7fe0f14a07980c8aa4004ba6a, type: 3}
     cost: 125
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31303,7 +31303,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 83
-    img: {fileID: 21300000, guid: 30ceb04862c244491ba655d4cd707c4b, type: 3}
+    img: {fileID: 21300000, guid: d145169ec366e47c39067a9777cbfa1e, type: 3}
     cost: 200
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -31318,7 +31318,7 @@ MonoBehaviour:
     head: 0
     handle: 0
     id: 84
-    img: {fileID: 21300000, guid: 8e5d9f2b7230c475baa7f9095cd0dd23, type: 3}
+    img: {fileID: 21300000, guid: f45139fb405c041cea4694904c591c98, type: 3}
     cost: 275
     text: 
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -34413,7 +34413,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.78125, y: -2558.0442}
+  m_AnchoredPosition: {x: 562.8199, y: -569}
   m_SizeDelta: {x: 1125, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &883814904 stripped

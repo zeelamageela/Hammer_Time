@@ -74,20 +74,23 @@ public class EquipmentManager : MonoBehaviour
 
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         Debug.Log("Before SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
-        // 1. Generate or load all equipment arrays
+        // 1. Generate or load all equipment arrays. Either way, owned items (per
+        // cm.inventoryID) are preserved exactly - only non-owned slots get fresh
+        // random stock. This is what actually keeps owned equipment consistent
+        // across weekly regeneration, regardless of which path runs.
         if (cm.loadedFromSave)
         {
-            handles = LoadItems(handles, "handle");
-            heads = LoadItems(heads, "head");
-            footwear = LoadItems(footwear, "footwear");
-            apparel = LoadItems(apparel, "apparel");
+            handles = LoadItems(handles, "handle", cm.inventoryID);
+            heads = LoadItems(heads, "head", cm.inventoryID);
+            footwear = LoadItems(footwear, "footwear", cm.inventoryID);
+            apparel = LoadItems(apparel, "apparel", cm.inventoryID);
         }
         else
         {
-            handles = GenerateItems(handles, "handle");
-            heads = GenerateItems(heads, "head");
-            footwear = GenerateItems(footwear, "footwear");
-            apparel = GenerateItems(apparel, "apparel");
+            handles = GenerateItems(handles, "handle", cm.inventoryID);
+            heads = GenerateItems(heads, "head", cm.inventoryID);
+            footwear = GenerateItems(footwear, "footwear", cm.inventoryID);
+            apparel = GenerateItems(apparel, "apparel", cm.inventoryID);
         }
 
         // 2. Mark owned equipment from inventoryID
@@ -677,7 +680,51 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
-    public Equipment[] GenerateItems(Equipment[]equipList, string type)
+    // Equipment cosmetic color always matches the player's team color now - previously
+    // randomized per item on every regeneration and never actually preserved (see
+    // GenerateItems/LoadItems history: this was the root cause of colors "not saving").
+    private Color GetTeamColor()
+    {
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        return cm != null ? cm.teamColour : Color.white;
+    }
+
+    // Handle tier index (0-4) from cost, matching the exact brackets used to name/generate
+    // handles above: 0=Wooden, 1=Fibreglass, 2=Composite, 3=Carbon Fibre, 4=Exotic Carbon
+    // Fibre. Used by SweeperManager to pick which broom AnimatorOverrideController to show.
+    public int GetHandleTierIndex(Equipment handle)
+    {
+        if (handle == null)
+            return 0;
+        if (handle.cost < 500) return 0;
+        if (handle.cost < 1500) return 1;
+        if (handle.cost < 3500) return 2;
+        if (handle.cost < 7500) return 3;
+        return 4;
+    }
+
+    // Convenience wrapper for the player's currently equipped handle (activeEquip[0]).
+    public int GetActiveHandleTierIndex()
+    {
+        return GetHandleTierIndex(activeEquip != null && activeEquip.Length > 0 ? activeEquip[0] : null);
+    }
+
+    // True if slot i's existing item (from the previous week's array) is one the player
+    // already owns, per the authoritative save data (ownedIds = cm.inventoryID) - not the
+    // .owned flag, which isn't guaranteed fresh at generation time. Index 0 is always kept:
+    // it's the free starter item every player has, regardless of inventory bookkeeping.
+    private bool IsExistingSlotOwned(Equipment[] equipList, int[] ownedIds, int i)
+    {
+        if (equipList == null || i >= equipList.Length || equipList[i] == null)
+            return false; // nothing to preserve - generate fresh
+
+        if (i == 0)
+            return true; // free starter item - always kept once it exists
+
+        return ownedIds != null && System.Array.IndexOf(ownedIds, equipList[i].id) >= 0;
+    }
+
+    public Equipment[] GenerateItems(Equipment[] equipList, string type, int[] ownedIds)
     {
         Equipment[] temp = new Equipment[30];
 
@@ -688,46 +735,59 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[30];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = new Equipment();
-                        temp[i].cost = Random.Range(0, 10000);
-                        temp[i].id = i;
-                        int[] cats = DistributePoints(temp[i].cost, 3);
+                        if (IsExistingSlotOwned(equipList, ownedIds, i))
+                        {
+                            // OWNED: keep exactly as-is (cost/id/stats never change once bought)
+                            temp[i] = equipList[i];
+                        }
+                        else
+                        {
+                            // NOT OWNED: fresh random shop stock for this week
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(0, 10000);
+                            temp[i].id = i;
+                            int[] cats = DistributePoints(temp[i].cost, 3);
 
-                        temp[i].stats[3] = cats[0];
-                        temp[i].stats[4] = cats[1];
-                        temp[i].stats[5] = cats[2];
+                            temp[i].stats[3] = cats[0];
+                            temp[i].stats[4] = cats[1];
+                            temp[i].stats[5] = cats[2];
+                        }
 
                         temp[i].handle = true;
 
+                        // Name/img/color always (re)derived from cost - cheap and
+                        // deterministic, so it's safe to redo even for an owned/preserved
+                        // item (its cost doesn't change, so the result is identical).
+                        // Wooden Handle stays white; every other tier takes the team color.
                         if (temp[i].cost < 500)
                         {
                             temp[i].name = "Wooden Handle";
                             temp[i].img = gsImgs[0];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
+                            temp[i].color = Color.white;
                         }
                         else if (temp[i].cost < 1500)
                         {
                             temp[i].name = "Fibreglass Handle";
                             temp[i].img = gsImgs[1];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                         else if (temp[i].cost < 3500)
                         {
                             temp[i].name = "Composite Handle";
                             temp[i].img = gsImgs[2];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                         else if (temp[i].cost < 7500)
                         {
                             temp[i].name = "Carbon Fibre Handle";
                             temp[i].img = gsImgs[3];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                         else
                         {
                             temp[i].name = "Exotic Carbon Fibre Handle";
                             temp[i].img = gsImgs[4];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                     }
                     break;
@@ -737,14 +797,21 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[30];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = new Equipment();
-                        temp[i].cost = Random.Range(0f, 10000f);
-                        temp[i].id = i + 30;
-                        int[] cats = DistributePoints(temp[i].cost, 3);
+                        if (IsExistingSlotOwned(equipList, ownedIds, i))
+                        {
+                            temp[i] = equipList[i];
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(0f, 10000f);
+                            temp[i].id = i + 30;
+                            int[] cats = DistributePoints(temp[i].cost, 3);
 
-                        temp[i].stats[3] = cats[0];
-                        temp[i].stats[4] = cats[1];
-                        temp[i].stats[5] = cats[2];
+                            temp[i].stats[3] = cats[0];
+                            temp[i].stats[4] = cats[1];
+                            temp[i].stats[5] = cats[2];
+                        }
 
                         temp[i].head = true;
 
@@ -752,32 +819,28 @@ public class EquipmentManager : MonoBehaviour
                         {
                             temp[i].name = "Basic Bristled Head";
                             temp[i].img = gsImgs[5];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
                         }
                         else if (temp[i].cost < 1500)
                         {
                             temp[i].name = "Fabric Head";
                             temp[i].img = gsImgs[6];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else if (temp[i].cost < 3500)
                         {
                             temp[i].name = "Advanced Fabric Head";
                             temp[i].img = gsImgs[7];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else if (temp[i].cost < 7500)
                         {
                             temp[i].name = "Premium Fabric Head";
                             temp[i].img = gsImgs[7];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else
                         {
                             temp[i].name = "Exotic Fabric Head";
                             temp[i].img = gsImgs[8];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
+                        temp[i].color = Color.white; // no color augmentation for heads
                     }
                     break;
                 }
@@ -786,49 +849,54 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[20];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = new Equipment();
-                        temp[i].cost = Random.Range(0, 10000);
-                        temp[i].id = i + 60;
-                        int[] cats = DistributePoints(temp[i].cost, 3);
+                        if (IsExistingSlotOwned(equipList, ownedIds, i))
+                        {
+                            temp[i] = equipList[i];
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(0, 10000);
+                            temp[i].id = i + 60;
+                            int[] cats = DistributePoints(temp[i].cost, 3);
 
-                        temp[i].stats[0] = cats[0];
-                        temp[i].stats[1] = cats[1];
-                        temp[i].stats[2] = cats[2];
+                            temp[i].stats[0] = cats[0];
+                            temp[i].stats[1] = cats[1];
+                            temp[i].stats[2] = cats[2];
+                        }
 
                         temp[i].footwear = true;
 
-                        if (i == 0)
-                            temp[i] = equipList[i];
-
+                        // Sliders stay white; only the Shoes tiers take the team color.
                         if (temp[i].cost < 500)
                         {
                             temp[i].name = "Half Slider";
                             temp[i].img = gsImgs[9];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
+                            temp[i].color = Color.white;
                         }
                         else if (temp[i].cost < 1500)
                         {
                             temp[i].name = "Full Slider";
                             temp[i].img = gsImgs[10];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
+                            temp[i].color = Color.white;
                         }
                         else if (temp[i].cost < 3500)
                         {
                             temp[i].name = "Premium Slider";
                             temp[i].img = gsImgs[11];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
+                            temp[i].color = Color.white;
                         }
                         else if (temp[i].cost < 7500)
                         {
                             temp[i].name = "Premium Shoes";
                             temp[i].img = gsImgs[12];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                         else
                         {
                             temp[i].name = "Exotic Shoes";
                             temp[i].img = gsImgs[13];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                            temp[i].color = GetTeamColor();
                         }
                     }
                     break;
@@ -838,20 +906,27 @@ public class EquipmentManager : MonoBehaviour
                     temp = new Equipment[20];
                     for (int i = 0; i < temp.Length; i++)
                     {
-                        temp[i] = new Equipment();
-                        temp[i].cost = Random.Range(0, 10000);
-                        temp[i].id = i + 80;
-                        int[] cats = DistributePoints(temp[i].cost / 2f, 3);
+                        if (IsExistingSlotOwned(equipList, ownedIds, i))
+                        {
+                            temp[i] = equipList[i];
+                        }
+                        else
+                        {
+                            temp[i] = new Equipment();
+                            temp[i].cost = Random.Range(0, 10000);
+                            temp[i].id = i + 80;
+                            int[] cats = DistributePoints(temp[i].cost / 2f, 3);
 
-                        temp[i].stats[3] = cats[0];
-                        temp[i].stats[4] = cats[1];
-                        temp[i].stats[5] = cats[2];
+                            temp[i].stats[3] = cats[0];
+                            temp[i].stats[4] = cats[1];
+                            temp[i].stats[5] = cats[2];
 
-                        cats = DistributePoints(temp[i].cost / 2f, 3);
+                            cats = DistributePoints(temp[i].cost / 2f, 3);
 
-                        temp[i].stats[0] = cats[0];
-                        temp[i].stats[1] = cats[1];
-                        temp[i].stats[2] = cats[2];
+                            temp[i].stats[0] = cats[0];
+                            temp[i].stats[1] = cats[1];
+                            temp[i].stats[2] = cats[2];
+                        }
 
                         temp[i].apparel = true;
 
@@ -859,44 +934,38 @@ public class EquipmentManager : MonoBehaviour
                         {
                             temp[i].name = "Basic Nylon Jersey";
                             temp[i].img = gsImgs[14];
-                            temp[i].color = new Color(0f, 1f, 1f, 1f);
                         }
                         else if (temp[i].cost < 1500)
                         {
                             temp[i].name = "Cotton Jersey";
                             temp[i].img = gsImgs[15];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else if (temp[i].cost < 3500)
                         {
                             temp[i].name = "Poly-lycra Blended Uniform";
                             temp[i].img = gsImgs[16];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else if (temp[i].cost < 7500)
                         {
                             temp[i].name = "Textured Fleece Uniform";
                             temp[i].img = gsImgs[17];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
                         else
                         {
                             temp[i].name = "Dri-fit Jersey";
                             temp[i].img = gsImgs[18];
-                            temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                         }
+                        temp[i].color = GetTeamColor();
                     }
 
                     break;
                 }
         }
 
-        temp[0] = equipList[0];
-
         return temp;
     }
 
-    public Equipment[] LoadItems(Equipment[] equipList, string type)
+    public Equipment[] LoadItems(Equipment[] equipList, string type, int[] ownedIds)
     {
         Equipment[] temp;
         int arraySize;
@@ -930,18 +999,18 @@ public class EquipmentManager : MonoBehaviour
 
         for (int i = 0; i < arraySize; i++)
         {
-            if (equipList != null && i < equipList.Length && equipList[i] != null)
+            if (IsExistingSlotOwned(equipList, ownedIds, i))
             {
-                // Use existing equipment from save file
+                // OWNED: keep exactly as-is (cost/id/stats never change once bought)
                 temp[i] = equipList[i];
             }
             else
             {
-                // Create new equipment with proper ID
+                // NOT OWNED: fresh random shop stock for this week
                 temp[i] = new Equipment();
                 temp[i].id = i + idOffset;
                 temp[i].cost = Random.Range(500f, 15000f);
-                
+
                 // Initialize stats arrays
                 if (temp[i].stats == null || temp[i].stats.Length != 6)
                     temp[i].stats = new int[6];
@@ -972,138 +1041,135 @@ public class EquipmentManager : MonoBehaviour
                     break;
             }
 
-            // Set name and image based on cost
+            // Set name/img/color based on cost - always (re)derived, cheap and
+            // deterministic, so it's safe to redo even for an owned/preserved item.
             if (type == "handle")
             {
+                // Wooden Handle stays white; every other tier takes the team color.
                 if (temp[i].cost < 500)
                 {
                     temp[i].name = "Wooden Handle";
                     temp[i].img = gsImgs[0];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
+                    temp[i].color = Color.white;
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Fibreglass Handle";
                     temp[i].img = gsImgs[1];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Composite Handle";
                     temp[i].img = gsImgs[2];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Carbon Fibre Handle";
                     temp[i].img = gsImgs[3];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
                 else
                 {
                     temp[i].name = "Exotic Carbon Fibre Handle";
                     temp[i].img = gsImgs[4];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
             }
             else if (type == "head")
             {
+                // No color augmentation for heads.
                 if (temp[i].cost < 500)
                 {
                     temp[i].name = "Basic Bristled Head";
                     temp[i].img = gsImgs[5];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Fabric Head";
                     temp[i].img = gsImgs[6];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Advanced Fabric Head";
                     temp[i].img = gsImgs[7];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Premium Fabric Head";
                     temp[i].img = gsImgs[7];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else
                 {
                     temp[i].name = "Exotic Fabric Head";
                     temp[i].img = gsImgs[8];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
+                temp[i].color = Color.white;
             }
             else if (type == "footwear")
             {
+                // Sliders stay white; only the Shoes tiers take the team color.
                 if (temp[i].cost < 500)
                 {
                     temp[i].name = "Half Slider";
                     temp[i].img = gsImgs[9];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
+                    temp[i].color = Color.white;
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Full Slider";
                     temp[i].img = gsImgs[10];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
+                    temp[i].color = Color.white;
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Premium Slider";
                     temp[i].img = gsImgs[11];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
+                    temp[i].color = Color.white;
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Premium Shoes";
                     temp[i].img = gsImgs[12];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
                 else
                 {
                     temp[i].name = "Exotic Shoes";
                     temp[i].img = gsImgs[13];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                    temp[i].color = GetTeamColor();
                 }
             }
             else if (type == "apparel")
             {
+                // All uniform tiers take the team color.
                 if (temp[i].cost < 500)
                 {
                     temp[i].name = "Basic Nylon Jersey";
                     temp[i].img = gsImgs[14];
-                    temp[i].color = new Color(0f, 1f, 1f, 1f);
                 }
                 else if (temp[i].cost < 1500)
                 {
                     temp[i].name = "Cotton Jersey";
                     temp[i].img = gsImgs[15];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 3500)
                 {
                     temp[i].name = "Poly-lycra Blended Uniform";
                     temp[i].img = gsImgs[16];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else if (temp[i].cost < 7500)
                 {
                     temp[i].name = "Textured Fleece Uniform";
                     temp[i].img = gsImgs[17];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
                 else
                 {
                     temp[i].name = "Dri-fit Jersey";
                     temp[i].img = gsImgs[18];
-                    temp[i].color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 }
+                temp[i].color = GetTeamColor();
             }
         }
 

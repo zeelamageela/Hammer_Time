@@ -6,6 +6,33 @@ public class SweeperParent : MonoBehaviour
 {
     public Sweeper[] sweeperLayers;
 
+    [Header("Broom (this Sweeper should also be included in sweeperLayers above, so it gets the same Sweep/Hard/Whoa triggers as the other layers)")]
+    [Tooltip("The layer whose sprite/animation is the broom itself - the one that swaps per equipped handle tier.")]
+    public Sweeper broomLayer;
+
+    [Tooltip("Index-matched to handle tier: 0=Wooden, 1=Fibreglass, 2=Composite, 3=Carbon Fibre, 4=Exotic Carbon Fibre.")]
+    public AnimatorOverrideController[] broomOverrides;
+
+    [Tooltip("Tints broomLayer's sprite renderer(s) - assign broomLayer's SpriteRenderer(s) to its colour1GO list.")]
+    public CharColourChanger broomColour;
+
+    // Called from SweeperManager.SetupSweepers() once per turn. Wooden Handle (tier 0)
+    // stays white to match EquipmentManager's color rule for the shop; every other tier
+    // takes whichever side (red/yellow) is currently sweeping.
+    public void SetBroom(int handleTierIndex, Color sideColor)
+    {
+        if (broomLayer != null && broomLayer.anim != null && broomOverrides != null
+            && handleTierIndex >= 0 && handleTierIndex < broomOverrides.Length && broomOverrides[handleTierIndex] != null)
+        {
+            broomLayer.anim.runtimeAnimatorController = broomOverrides[handleTierIndex];
+        }
+
+        if (broomColour != null)
+        {
+            broomColour.TeamColour(handleTierIndex == 0 ? Color.white : sideColor);
+        }
+    }
+
     public bool sweep;
     public bool hard;
     public bool whoa;
