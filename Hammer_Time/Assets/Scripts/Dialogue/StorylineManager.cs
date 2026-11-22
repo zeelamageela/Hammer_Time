@@ -325,10 +325,11 @@ public class StorylineManager: MonoBehaviour
         StartCoroutine(FirstFiveWeeks());
     }
 
+    // The game-over dialogue now plays on the main menu (GameOverDialogue), so this only records which ending it was.
     public void EndOfGame(int endScenario)
     {
         blockIndex = 5;
-        FindDialogueObjects();
-        TriggerDialogue(skip, skipTrg, storyBlocks[blockIndex].triggers, endScenario);
+        if (cm == null) cm = FindAnyObjectByType<CareerManager>();
+        if (cm != null) cm.endScenario = endScenario;
     }
 }

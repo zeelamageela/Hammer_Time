@@ -59,6 +59,14 @@ public class DialogueController : MonoBehaviour
     public event Action<DialogueData> OnDialogueEnd;
     public event Action<int> OnLineAdvanced;
     
+    private void OnDestroy()
+    {
+        // A scene change while a blocking dialogue is up never reaches EndDialogue, which left the next scene frozen.
+        if (Instance != this) return;
+        if (currentDialogue != null && currentDialogue.pauseGame && !nonBlockingMode)
+            Time.timeScale = 1f;
+    }
+
     private void Awake()
     {
         // Singleton pattern

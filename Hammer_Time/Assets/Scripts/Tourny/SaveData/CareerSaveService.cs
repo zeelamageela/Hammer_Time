@@ -10,9 +10,15 @@ public static class CareerSaveService
 {
     private const string SAVE_FILE_NAME = "career_save.json";
     private const string BACKUP_FILE_NAME = "career_save_backup.json";
-    
-    private static string SavePath => Path.Combine(Application.persistentDataPath, SAVE_FILE_NAME);
-    private static string BackupPath => Path.Combine(Application.persistentDataPath, BACKUP_FILE_NAME);
+    private const string FAILED_LOAD_FILE_NAME = "career_save_failed_load.json";
+    private const string REPLACED_FILE_NAME = "career_save_replaced.json";
+
+    /// <summary>Test seam: when set, saves go here instead of persistentDataPath.</summary>
+    public static string DirectoryOverride;
+
+    private static string SaveDir => string.IsNullOrEmpty(DirectoryOverride) ? Application.persistentDataPath : DirectoryOverride;
+    private static string SavePath => Path.Combine(SaveDir, SAVE_FILE_NAME);
+    private static string BackupPath => Path.Combine(SaveDir, BACKUP_FILE_NAME);
     
     // CRITICAL: Prevent concurrent saves from causing corruption
     private static bool _isSaving = false;
@@ -29,6 +35,14 @@ public static class CareerSaveService
                 return false;
             }
             
+            // Never write a save our own loader would reject (e.g. a pause/quit save fired
+            // before a career exists) - it would also get rotated over the good backup.
+            if (!ValidateSaveData(data))
+            {
+                Debug.LogError("[CareerSaveService] Refusing to save invalid career data");
+                return false;
+            }
+
             // CRITICAL: Prevent concurrent saves
             lock (_saveLock)
             {
@@ -61,23 +75,31 @@ public static class CareerSaveService
                     return false;
                 }
                 
-                // Write to file
-                File.WriteAllText(SavePath, json);
+                // Write to a temp file first so a crash/kill mid-write (iOS backgrounding)
+                // can never leave a truncated career_save.json
+                string tempPath = SavePath + ".tmp";
+                File.WriteAllText(tempPath, json);
                 
                 // Verify the file was written successfully (iOS specific check)
-                if (!File.Exists(SavePath))
+                if (!File.Exists(tempPath))
                 {
                     Debug.LogError("[CareerSaveService] Save file was not created!");
                     return false;
                 }
                 
                 // Verify file size is reasonable
-                FileInfo fileInfo = new FileInfo(SavePath);
+                FileInfo fileInfo = new FileInfo(tempPath);
                 if (fileInfo.Length == 0)
                 {
                     Debug.LogError("[CareerSaveService] Save file is empty!");
                     return false;
                 }
+
+                // Swap the verified temp file into place
+                if (File.Exists(SavePath))
+                    File.Replace(tempPath, SavePath, null);
+                else
+                    File.Move(tempPath, SavePath);
                 
                 Debug.Log($"[CareerSaveService] Career saved successfully to: {SavePath}");
                 Debug.Log($"[CareerSaveService] Save size: {fileInfo.Length} bytes ({json.Length} characters)");
@@ -107,6 +129,9 @@ public static class CareerSaveService
                 {
                     _isSaving = false;
                 }
+
+                // A failed save must not leave its temp file behind
+                try { if (File.Exists(SavePath + ".tmp")) File.Delete(SavePath + ".tmp"); } catch { }
             }
         }
         
@@ -129,6 +154,7 @@ public static class CareerSaveService
                 if (!ValidateSaveData(data))
                 {
                     Debug.LogError("[CareerSaveService] Save data validation failed");
+                    PreserveFailedLoad();
                     return TryLoadBackup();
                 }
                 
@@ -138,6 +164,7 @@ public static class CareerSaveService
             catch (Exception e)
             {
                 Debug.LogError($"[CareerSaveService] Failed to load career: {e.Message}");
+                PreserveFailedLoad();
                 return TryLoadBackup();
             }
         }
@@ -232,6 +259,13 @@ public static class CareerSaveService
             {
                 try
                 {
+                    // Don't rotate a corrupt/invalid file over the last good backup
+                    if (!IsValidSaveFile(SavePath))
+                    {
+                        Debug.LogWarning("[CareerSaveService] Current save is invalid - keeping existing backup");
+                        return;
+                    }
+
                     File.Copy(SavePath, BackupPath, true);
                     Debug.Log("[CareerSaveService] Backup created");
                 }
@@ -243,6 +277,37 @@ public static class CareerSaveService
         }
         
         /// <summary>
+        /// Copies the current save aside so a failed load can't lose it to the next autosave.
+        /// </summary>
+        public static void PreserveFailedLoad()
+        {
+            try
+            {
+                if (File.Exists(SavePath))
+                {
+                    File.Copy(SavePath, Path.Combine(SaveDir, FAILED_LOAD_FILE_NAME), true);
+                    Debug.LogWarning("[CareerSaveService] Unloadable save preserved as " + FAILED_LOAD_FILE_NAME);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[CareerSaveService] Could not preserve failed save: {e.Message}");
+            }
+        }
+
+        private static bool IsValidSaveFile(string path)
+        {
+            try
+            {
+                return ValidateSaveData(JsonUtility.FromJson<CareerSaveData>(File.ReadAllText(path)));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Checks if a save file exists
         /// </summary>
         public static bool SaveExists()
@@ -250,6 +315,35 @@ public static class CareerSaveService
             return File.Exists(SavePath);
         }
         
+        /// <summary>
+        /// Keeps a copy of the current career as career_save_replaced.json before a new career overwrites it
+        /// (one previous career is kept). Prefers the main save, falls back to the backup if the main one is unusable.
+        /// Returns true if a copy was kept; false if there was nothing valid to keep.
+        /// </summary>
+        public static bool ArchiveSave()
+        {
+            try
+            {
+                string source = null;
+                if (File.Exists(SavePath) && IsValidSaveFile(SavePath))
+                    source = SavePath;
+                else if (File.Exists(BackupPath) && IsValidSaveFile(BackupPath))
+                    source = BackupPath;
+
+                if (source == null)
+                    return false;
+
+                File.Copy(source, Path.Combine(SaveDir, REPLACED_FILE_NAME), true);
+                Debug.Log($"[CareerSaveService] Previous career kept as {REPLACED_FILE_NAME}");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[CareerSaveService] Failed to archive previous career: {e.Message}");
+                return false;
+            }
+        }
+
         /// <summary>
         /// Deletes the save file and backup
         /// </summary>
@@ -329,7 +423,7 @@ public static class CareerSaveService
             {
                 // On iOS, we can't directly check free space, but we can try to detect issues
                 // by checking if the save directory is writable
-                string testFile = Path.Combine(Application.persistentDataPath, ".storage_test");
+                string testFile = Path.Combine(SaveDir, ".storage_test");
                 
                 try
                 {

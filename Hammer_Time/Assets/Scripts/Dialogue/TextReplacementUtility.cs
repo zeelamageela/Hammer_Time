@@ -345,7 +345,7 @@ public static class TextReplacementUtility
         return "$" + amount.ToString("n0");
     }
 
-    private static string FormatRank(int rank)
+    public static string FormatRank(int rank)
     {
         if (rank <= 0) return rank.ToString();
 

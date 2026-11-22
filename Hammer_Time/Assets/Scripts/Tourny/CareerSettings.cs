@@ -91,7 +91,9 @@ public class CareerSettings : MonoBehaviour
         // Continue button will call LoadToCM() to route to correct scene
         Debug.Log("[CareerSettings] Career loaded - showing UI with Continue option");
         
-        Player(!cm.gameOver);
+        // No save (first launch) behaves like a finished career: straight to the new-career screen, not a Continue
+        // card filled from CareerManager's default fields.
+        Player(CareerSaveService.SaveExists() && !cm.gameOver);
     }
     // Update is called once per frame
     void Update()
@@ -283,23 +285,12 @@ public class CareerSettings : MonoBehaviour
         }
 
         cm.gameOver = false;
+        cm.endScenario = -1;
         nextButton.transform.parent.gameObject.SetActive(true);
 
         // CRITICAL FIX: Clear ALL game/tournament state flags when starting new career
-        gsp.careerLoad = false;
-        gsp.loadGame = false;
-        gsp.gameInProgress = false;
-        gsp.tournyInProgress = false;
-        gsp.draw = 0;
-        gsp.playoffRound = 0;
-        gsp.rockCurrent = 0;
-        gsp.endCurrent = 0;
-        gsp.redScore = 0;
-        gsp.yellowScore = 0;
-        gsp.rockPos = null;
-        gsp.rockInPlay = null;
-        gsp.score = null;
-        
+        NewCareerState.ResetGameFlow(gsp);
+
         Debug.Log("[CareerSettings] New career - cleared all game state flags");
         
         // Reset tutorial completion for new career
@@ -420,6 +411,34 @@ public class CareerSettings : MonoBehaviour
     public void MainMenu()
     {
         SceneManager.LoadScene("SplashMenu");
+    }
+
+    [Header("New career confirmation")]
+    [Tooltip("Shown when New is pressed while a save exists. Its Yes button calls ConfirmNewCareer, its No button CancelNewCareer.")]
+    public GameObject confirmNewPanel;
+
+    // The New button used to wipe the save immediately (ClearPlayer > hide itself > New). It now asks first.
+    public void AskNewCareer()
+    {
+        if (confirmNewPanel == null || !CareerSaveService.SaveExists())
+        {
+            ConfirmNewCareer();   // nothing to lose, or no dialog set up: behave as before
+            return;
+        }
+        confirmNewPanel.SetActive(true);
+    }
+
+    public void CancelNewCareer()
+    {
+        if (confirmNewPanel != null) confirmNewPanel.SetActive(false);
+    }
+
+    public void ConfirmNewCareer()
+    {
+        if (confirmNewPanel != null) confirmNewPanel.SetActive(false);
+        ClearPlayer();
+        if (newButton != null) newButton.SetActive(false);
+        New();
     }
 
     public void ClearPlayer()

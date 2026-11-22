@@ -82,7 +82,13 @@ public class TournySettings : MonoBehaviour
         //if (!gsp.inProgress)
         //    earnings -= entryFee;
 
-        cm.cash -= entryFee;
+        // Entry fee was already charged when the event was picked (TournySelector.PlayTourny).
+        // The pick's save was held back until now: this is the one point where the game really starts.
+        if (cm != null)
+        {
+            cm.saveDeferred = false;
+            cm.SaveCareer();
+        }
 
         //for (int i = 0; i < gsp.teams.Length; i++)
         //{
@@ -290,50 +296,14 @@ public class TournySettings : MonoBehaviour
     }
     public void Back()
     {
-        cm.cash += cm.costPerWeek;
-        for (int i = 0; i < cm.activeTournies.Length; i++)
-        {
-            cm.activeTournies[i].complete = false;
+        cm.cash += TournyFees.Total(cm.currentTourny, cm.costPerWeek);   // refund entry fee + weekly cost taken by PlayTourny
+        tSel.UndoPendingCompletion();
 
-            if (cm.activeTournies[i].tour)
-            {
-                for (int j = 0; j < cm.tour.Length; j++)
-                {
-                    if (cm.activeTournies[i].id == cm.tour[j].id)
-                        cm.tour[j].complete = false;
-                }
-            }
-            else if (cm.activeTournies[i].qualifier)
-            {
-                for (int j = 0; j < cm.prov.Length; j++)
-                {
-                    if (cm.activeTournies[i].id == cm.prov[j].id)
-                        cm.prov[j].complete = false;
-                }
-            }
-            else if (cm.activeTournies[i].championship)
-            {
-                for (int j = 0; j < cm.champ.Length; j++)
-                {
-                    if (cm.activeTournies[i].id == cm.champ[j].id)
-                        cm.champ[j].complete = false;
-                }
-            }
-            else
-            {
-                for (int j = 0; j < cm.tournies.Length; j++)
-                {
-                    if (cm.activeTournies[i].id == cm.tournies[j].id)
-                        cm.tournies[j].complete = false;
-                }
-            }
-        }
-
-        cm.currentTourny.complete = false;
-        
+        cm.saveDeferred = false;
         cm.SaveCareer();
         tournyGO.SetActive(false);
 
+        tSel.ReturnFromConfirm();
         tSel.SetActiveTournies();
         //SceneManager.LoadScene("Arena_Selector");
     }

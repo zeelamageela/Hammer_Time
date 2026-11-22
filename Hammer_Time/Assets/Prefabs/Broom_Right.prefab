@@ -214,7 +214,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1733793317
   m_SortingLayer: 1
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_MaskInteraction: 0
   m_Sprite: {fileID: 6026744928803642410, guid: 04b4419bfbb2b5447b5efe3d6699e942, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -505,9 +505,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sweeperLayers:
+  - {fileID: 514319349620576801}
   - {fileID: 500270953819620262}
-  - {fileID: 500270953819620262}
-  broomLayer: {fileID: 6790483232774857173, guid: 54ee92dcca7c7594293e5aa3fada43c6, type: 3}
+  broomLayer: {fileID: 500270953819620262}
   broomOverrides:
   - {fileID: 22100000, guid: 9af264d1c8327c345a26827cacd52d24, type: 2}
   - {fileID: 22100000, guid: 814095f4d84a801428abcc5466500827, type: 2}
@@ -626,8 +626,7 @@ MonoBehaviour:
   colour1: {r: 0, g: 0, b: 0, a: 0}
   colour2: {r: 0, g: 0, b: 0, a: 0}
   colour1GO:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8214751956462878117}
   colour2GO: []
 --- !u!1 &8803759398894524995
 GameObject:

@@ -142,6 +142,7 @@ public class XPManager : MonoBehaviour
             skillPoints+=5;
             xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.2f); // Increase XP needed per level
         }
+        SyncToCareerManager();
     }
     public void AwardMilestone(string milestoneId, int points)
     {
@@ -149,6 +150,7 @@ public class XPManager : MonoBehaviour
         {
             skillPoints += points;
             milestonesAchieved.Add(milestoneId);
+            SyncToCareerManager();
             // Optionally: Show UI feedback here
         }
     }
@@ -202,34 +204,43 @@ public class XPManager : MonoBehaviour
         }
     }
 
-    public void ButtonAdd(int skill)
+    Slider SliderFor(int skill)
     {
         switch (skill)
         {
-            case 0: aimSlider.value += 1; break;
-            case 1: weighttSlider.value += 1; break;
-            case 2: finesseSlider.value += 1; break;
-            case 3: strengthSlider.value += 1; break;
-            case 4: endurSlider.value += 1; break;
-            case 5: healthSlider.value += 1; break;
+            case 0: return aimSlider;
+            case 1: return weighttSlider;
+            case 2: return finesseSlider;
+            case 3: return strengthSlider;
+            case 4: return endurSlider;
+            case 5: return healthSlider;
+            default: return null;
         }
-        skillPoints--;
+    }
+
+    public void ButtonAdd(int skill)
+    {
+        Slider slider = SliderFor(skill);
+        if (slider == null) return;
+        skillPoints = SkillSpend.Add(slider, skillPoints);
         ApplySlidersToPlayer();
+        SyncToCareerManager();
     }
 
     public void ButtonSubtract(int skill)
     {
-        switch (skill)
-        {
-            case 0: aimSlider.value -= 1; break;
-            case 1: weighttSlider.value -= 1; break;
-            case 2: finesseSlider.value -= 1; break;
-            case 3: strengthSlider.value -= 1; break;
-            case 4: endurSlider.value -= 1; break;
-            case 5: healthSlider.value -= 1; break;
-        }
-        skillPoints++;
+        Slider slider = SliderFor(skill);
+        if (slider == null) return;
+        skillPoints = SkillSpend.Subtract(slider, skillPoints);
         ApplySlidersToPlayer();
+        SyncToCareerManager();
+    }
+
+    // Stats are written to CareerManager as soon as they change, so the points must be too: otherwise a pause-time
+    // save (before OnDisable runs) stores the new stats with the old points.
+    void SyncToCareerManager()
+    {
+        if (cm != null) SaveToCareerManager(cm);
     }
 
     public void SetPlayer()

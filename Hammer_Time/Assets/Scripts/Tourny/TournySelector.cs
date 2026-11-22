@@ -98,6 +98,7 @@ public class TournySelector : MonoBehaviour
 
     private bool isFirstRun = true; // Add this field to track the first run 
     private int lastExpandedIndex = -1;
+    List<Tourny> pendingMarked;    // events consumed by the last PlayTourny, so Back can undo exactly those
 
     private void Start()
     {
@@ -688,9 +689,7 @@ public class TournySelector : MonoBehaviour
 
                     if (tourChampionship.complete & provChampionship.complete)
                     {
-                        slm.EndOfGame(4);
-                        cm.gameOver = true;
-                        StartCoroutine(EndOfSeason());
+                        BeginEnding(SeasonEnding(EndingPicker.BothChamps));
                     }
                     else if (tourniesComplete && tourComplete)
                     {
@@ -733,18 +732,7 @@ public class TournySelector : MonoBehaviour
 
                         if (tourChampionship.complete & provChampionship.complete)
                         {
-                            if (!cm.tourQual && !champQual && !cm.provQual)
-                                slm.EndOfGame(0);
-                            else if (!cm.tourQual && !champQual)
-                                slm.EndOfGame(1);
-                            else if (cm.tourQual && !champQual)
-                                slm.EndOfGame(2);
-                            else if (!cm.tourQual && champQual)
-                                slm.EndOfGame(3);
-                            else if (cm.tourQual && champQual)
-                                slm.EndOfGame(4);
-                            cm.gameOver = true;
-                            StartCoroutine(EndOfSeason());
+                            BeginEnding(SeasonEnding(EndingPicker.Qualification(cm.provQual, cm.tourQual, champQual)));
                         }
 
                         if (!tourChampionship.complete)
@@ -802,13 +790,12 @@ public class TournySelector : MonoBehaviour
                         activeTournies[2] = locals[localSelect];
                 }
 
-                // Only check for bankruptcy if the game has progressed (not a fresh start)
-                if (cm.week > 1 && cm.cash < cm.costPerWeek)
+                // Only check for bankruptcy if the game has progressed (not a fresh start).
+                // Game over when nothing on offer is affordable (fee + weekly cost); anything affordable keeps the run alive.
+                if (cm.week > 1 && !TournyFees.AnyAffordable(activeTournies, emptyTourny, cm.costPerWeek, cm.cash))
                 {
-                    slm.EndOfGame(5);
-                    cm.gameOver = true;
+                    BeginEnding(5);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -829,10 +816,8 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    slm.EndOfGame(6);
-                    cm.gameOver = true;
+                    BeginEnding(6);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -854,10 +839,8 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    slm.EndOfGame(7);
-                    cm.gameOver = true;
+                    BeginEnding(7);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -884,10 +867,8 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    slm.EndOfGame(8);
-                    cm.gameOver = true;
+                    BeginEnding(8);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -909,10 +890,8 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    slm.EndOfGame(9);
-                    cm.gameOver = true;
+                    BeginEnding(9);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -985,9 +964,7 @@ public class TournySelector : MonoBehaviour
 
                     if (tourChampionship.complete & provChampionship.complete)
                     {
-                        slm.EndOfGame(4);
-                        cm.gameOver = true;
-                        StartCoroutine(EndOfSeason());
+                        BeginEnding(SeasonEnding(EndingPicker.BothChamps));
                     }
                     else if (tourniesComplete && tourComplete)
                     {
@@ -1030,18 +1007,7 @@ public class TournySelector : MonoBehaviour
 
                         if (tourChampionship.complete & provChampionship.complete)
                         {
-                            if (!cm.tourQual && !champQual && !cm.provQual)
-                                slm.EndOfGame(0);
-                            else if (!cm.tourQual && !champQual)
-                                slm.EndOfGame(1);
-                            else if (cm.tourQual && !champQual)
-                                slm.EndOfGame(2);
-                            else if (!cm.tourQual && champQual)
-                                slm.EndOfGame(3);
-                            else if (cm.tourQual && champQual)
-                                slm.EndOfGame(4);
-                            cm.gameOver = true;
-                            StartCoroutine(EndOfSeason());
+                            BeginEnding(SeasonEnding(EndingPicker.Qualification(cm.provQual, cm.tourQual, champQual)));
                         }
 
                         if (!tourChampionship.complete)
@@ -1099,13 +1065,12 @@ public class TournySelector : MonoBehaviour
                         activeTournies[2] = locals[localSelect];
                 }
 
-                // Only check for bankruptcy if the game has progressed (not a fresh start)
-                if (cm.week > 1 && cm.cash < cm.costPerWeek)
+                // Only check for bankruptcy if the game has progressed (not a fresh start).
+                // Game over when nothing on offer is affordable (fee + weekly cost); anything affordable keeps the run alive.
+                if (cm.week > 1 && !TournyFees.AnyAffordable(activeTournies, emptyTourny, cm.costPerWeek, cm.cash))
                 {
-                    slm.EndOfGame(5);
-                    cm.gameOver = true;
+                    BeginEnding(5);
 
-                    StartCoroutine(EndOfSeason());
                 }
                 #endregion
                 break;
@@ -1136,7 +1101,7 @@ public class TournySelector : MonoBehaviour
             }
             else
             {
-                if (activeTournies[i].entryFee > cm.cash)
+                if (!TournyFees.CanAfford(activeTournies[i], cm.costPerWeek, cm.cash))
                 {
                     panelGOs[i].GetComponent<Image>().color = dimmed[0];
                     panels[i].location.transform.parent.GetComponent<Image>().color = dimmed[0];
@@ -1171,13 +1136,62 @@ public class TournySelector : MonoBehaviour
         cm.EndCareer();
     }
 
+    // SetActiveTournies runs on every refresh (Start, Tourny button, Back, Next Week), and more than one game-over
+    // check can be true in a single call. Only the first ending counts: later calls would restart EndOfSeason
+    // (loading SplashMenu twice) or overwrite the ending number with a different one.
+    bool endingStarted;
+
+    void BeginEnding(int ending)
+    {
+        if (endingStarted) return;
+        endingStarted = true;
+
+        StorylineManager slm = FindFirstObjectByType<StorylineManager>();
+        if (slm != null) slm.EndOfGame(ending);
+        cm.gameOver = true;
+        StartCoroutine(EndOfSeason());
+    }
+
+    // Gathers the facts EndingPicker needs. The leaderboard already holds snapshots of this very career (every
+    // UpdateHighScore adds a row), so rows with this career's names and earnings at or below ours are skipped: they
+    // can never beat us, and counting them would make "best on the board" always us.
+    int SeasonEnding(int qualification)
+    {
+        float rival = 0f;
+        if (cm.teams != null)
+        {
+            foreach (Team t in cm.teams)
+            {
+                if (t != null && !t.player && t.earnings > rival)
+                    rival = t.earnings;
+            }
+        }
+
+        float record = 0f;
+        foreach (HighScoreEntry e in HighScoreService.LoadHighScores().entries)
+        {
+            if (e.playerName == cm.playerName && e.teamName == cm.teamName && e.earnings <= cm.earnings)
+                continue;
+            if (e.earnings > record)
+                record = e.earnings;
+        }
+
+        return EndingPicker.Pick(new EndingPicker.Facts
+        {
+            qualification = qualification,
+            wonTourTitle = tourChampionship != null && tourChampionship.trophyWon,
+            wonProvTitle = provChampionship != null && provChampionship.trophyWon,
+            earnings = cm.earnings,
+            bestLeagueRival = rival,
+            bestRecord = record,
+        });
+    }
+
     IEnumerator EndOfSeason()
     {
-        StorylineManager slm = FindFirstObjectByType<StorylineManager>();
-        Debug.Log("End of Game dialogue is " + slm.dialogueGO.activeSelf);
-        yield return new WaitUntil(() => !slm.dialogueGO.activeSelf);
+        // Don't wait on any dialogue here: the game-over dialogue plays on the main menu (GameOverDialogue).
+        yield return null;
 
-        Debug.Log("End of Game movin along");
         cm.EndCareer();
         SceneManager.LoadScene("SplashMenu");
     }
@@ -1189,57 +1203,11 @@ public class TournySelector : MonoBehaviour
 
     public void PlayTourny()
     {
-        // CRITICAL FIX: Mark tournament as complete in TournySelector arrays
-        // This ensures completion status is captured when SaveCareer() is called
-        Debug.Log($"[TournySelector] PlayTourny - Marking {currentTourny.name} as complete");
-        
-        for (int i = 0; i < tournies.Length; i++)
-        {
-            for (int j = 0; j < activeTournies.Length; j++)
-            {
-                if (activeTournies[j].id == tournies[i].id)
-                {
-                    tournies[i].complete = true;
-                    Debug.Log($"[TournySelector] Marked tournies[{i}] ({tournies[i].name}) as complete");
-                }
-            }
-        }
-
-        for (int i = 0; i < tour.Length; i++)
-        {
-            for (int j = 0; j < activeTournies.Length; j++)
-            {
-                if (activeTournies[j].id == tour[i].id)
-                {
-                    tour[i].complete = true;
-                    Debug.Log($"[TournySelector] Marked tour[{i}] ({tour[i].name}) as complete");
-                }
-            }
-        }
-
-        for (int i = 0; i < provQual.Length; i++)
-        {
-            for (int j = 0; j < activeTournies.Length; j++)
-            {
-                if (activeTournies[j].id == provQual[i].id)
-                {
-                    provQual[i].complete = true;
-                    Debug.Log($"[TournySelector] Marked provQual[{i}] ({provQual[i].name}) as complete");
-                }
-            }
-        }
-
-        for (int i = 0; i < singleKOs.Length; i++)
-        {
-            for (int j = 0; j < activeTournies.Length; j++)
-            {
-                if (activeTournies[j].id == singleKOs[i].id)
-                {
-                    singleKOs[i].complete = true;
-                    Debug.Log($"[TournySelector] Marked singleKOs[{i}] ({singleKOs[i].name}) as complete");
-                }
-            }
-        }
+        // Once the player commits to an event, the other real events offered this week are consumed too
+        // (by design). Marked by object identity: ids collide across arrays (empty/tournies[0], locals/provQual).
+        pendingMarked = TournyCompletion.MarkOffered(activeTournies, emptyTourny, locals);
+        foreach (var t in pendingMarked)
+            Debug.Log($"[TournySelector] Marked '{t.name}' (ID {t.id}) as complete");
 
         if (currentTourny.championship)
         {
@@ -1275,18 +1243,33 @@ public class TournySelector : MonoBehaviour
         
         Debug.Log($"[TournySelector] Synced CM arrays - tournies: {cm.tournies?.Length ?? 0}, tour: {cm.tour?.Length ?? 0}, prov: {cm.prov?.Length ?? 0}");
         
-        // Save activeTournies IDs for later restoration
-        cm.SaveCareer();
-        
-        cm.cash -= cm.currentTourny.entryFee;
-        cm.cash -= cm.costPerWeek;
-        tm.CashDeltaText(-(cm.costPerWeek + cm.currentTourny.entryFee));
+        // Entry fee + weekly cost are charged once, here. Start (TournySettings.LoadToGSP) must not charge again;
+        // Back refunds the same total.
+        float cost = TournyFees.Total(cm.currentTourny, cm.costPerWeek);
+        cm.cash -= cost;
+        tm.CashDeltaText(-cost);
         //xpm.SaveToCareerManager(cm);
-        cm.SaveCareer();
+
+        // Nothing is written until Start (TournySettings.LoadToGSP): killing the app on the Confirm screen must not
+        // leave a save with the event marked complete and the money spent but no game to resume. Back undoes it.
+        cm.saveDeferred = true;
 
         //SceneManager.LoadScene("Tourny_Menu_1");
         TournyMenuLoad(FindFirstObjectByType<TournySettings>());
         //StartCoroutine(TournyMenuLoad());
+    }
+
+    /// <summary>Undoes what PlayTourny marked complete (used by the Confirm screen's Back button).</summary>
+    public void UndoPendingCompletion()
+    {
+        if (pendingMarked != null)
+        {
+            TournyCompletion.Undo(pendingMarked);
+        }
+        else if (currentTourny != null && !TournyCompletion.IsPlaceholderOrLocal(currentTourny, emptyTourny, locals))
+        {
+            currentTourny.complete = false;
+        }
     }
 
     private void TournyMenuLoad(TournySettings ts)
@@ -1299,6 +1282,18 @@ public class TournySelector : MonoBehaviour
         tournyScrollGO.SetActive(false);
         skillbars.SetActive(true);
         ts.Settings();
+    }
+
+    // Undoes TournyMenuLoad (which hides every menu button and the tournament list and retitles the screen "Confirm"),
+    // so Back from the Confirm screen lands on the tournament list again instead of an empty "Confirm" screen.
+    public void ReturnFromConfirm()
+    {
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            // The button that opened the tournament list stays hidden, exactly as it is while the list is showing.
+            menuButtons[i].gameObject.SetActive(i != menuBut_Select);
+        }
+        TournyWindow(true);
     }
 
     public void SelectTourny(int button)
@@ -1360,23 +1355,8 @@ public class TournySelector : MonoBehaviour
         else
             on = true;
 
-        if (cm.provRankList.Count > 0)
-        {
-            for (int i = 0; i < cm.teams.Length; i++)
-            {
-                if (cm.playerTeamIndex == cm.provRankList[i].team.id)
-                {
-                    if (cm.teams[i].rank == 1 | cm.teams[i].rank == 21)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "st";
-                    else if (cm.teams[i].rank == 2 | cm.teams[i].rank == 22)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "nd";
-                    else if (cm.teams[i].rank == 3 | cm.teams[i].rank == 23)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "rd";
-                    else if (cm.teams[i].rank > 3)
-                        profPanel.provRank.text = cm.teams[i].rank.ToString() + "th";
-                }
-            }
-        }
+        // (An early pre-pass here looped over cm.teams.Length but indexed provRankList, which throws whenever the
+        // standings list is shorter than the team list. The `on` branch below sets the same text from the sorted list.)
 
         if (on)
         {
@@ -1406,39 +1386,26 @@ public class TournySelector : MonoBehaviour
             else
                 profPanel.provQual.text = "No";
 
-            if (cm.provRankList.Count > 0)
+            if (cm.provRankList != null && cm.provRankList.Count > 0)
             {
                 cm.provRankList.Sort();
                 for (int i = 0; i < cm.provRankList.Count; i++)
                 {
                     if (cm.playerTeamIndex == cm.provRankList[i].team.id)
-                    {
-                        if (i == 0 | i == 20)
-                            profPanel.provRank.text = (i + 1).ToString() + "st";
-                        else if (i == 1 | i == 21)
-                            profPanel.provRank.text = (i + 1).ToString() + "nd";
-                        else if (i == 2 | i == 22)
-                            profPanel.provRank.text = (i + 1).ToString() + "rd";
-                        else if (i > 2)
-                            profPanel.provRank.text = (i + 1).ToString() + "th";
-                    }
+                        profPanel.provRank.text = TextReplacementUtility.FormatRank(i + 1);
                 }
-                cm.tourRankList.Sort();
 
-                for (int i = 0; i < cm.tourRankList.Count; i++)
+                if (cm.tourRankList != null)
                 {
-                    if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
-                    {
-                        if (i == 0)
-                            profPanel.tourRank.text = (i + 1).ToString() + "st";
-                        else if (i == 1)
-                            profPanel.tourRank.text = (i + 1).ToString() + "nd";
-                        else if (i == 2)
-                            profPanel.tourRank.text = (i + 1).ToString() + "rd";
-                        else if (i > 2)
-                            profPanel.tourRank.text = (i + 1).ToString() + "th";
+                    cm.tourRankList.Sort();
 
-                        profPanel.tourPoints.text = cm.tourRankList[i].team.tourPoints.ToString() + " points";
+                    for (int i = 0; i < cm.tourRankList.Count; i++)
+                    {
+                        if (cm.playerTeamIndex == cm.tourRankList[i].team.id)
+                        {
+                            profPanel.tourRank.text = TextReplacementUtility.FormatRank(i + 1);
+                            profPanel.tourPoints.text = cm.tourRankList[i].team.tourPoints.ToString() + " points";
+                        }
                     }
                 }
             }
@@ -1472,6 +1439,12 @@ public class TournySelector : MonoBehaviour
 
     public void Options(bool on)
     {
+        if (options == null)
+        {
+            // No options panel exists in Arena_Selector (the volume/high-score options live in SplashMenu).
+            Debug.LogWarning("[TournySelector] Options requested but no options panel is assigned");
+            return;
+        }
         options.SetActive(true);
     }
 
@@ -1723,17 +1696,24 @@ public class TournySelector : MonoBehaviour
             }
         }
         int previousExpanded = lastExpandedIndex;
-        menuBut_Select = Array.IndexOf(menuButtons, expandButton);
+        int selected = Array.IndexOf(menuButtons, expandButton);
+        if (selected < 0) return; // not one of the hub's menu buttons
+        menuBut_Select = selected;
         lastExpandedIndex = menuBut_Select;
 
-        // Start the expand/shrink process  
-        StartCoroutine(HandleExpandShrink(0.01f, menuBut_Select, expandButton, previousExpanded));
+        // A second tap while the first expand is still running used to start a second coroutine that could open its
+        // panel over the first one's.
+        if (expandRoutine != null) StopCoroutine(expandRoutine);
+        expandRoutine = StartCoroutine(HandleExpandShrink(0.01f, menuBut_Select, expandButton, previousExpanded));
     }
+
+    Coroutine expandRoutine;
+    const float ExpandTimeoutSeconds = 1.5f;
 
     IEnumerator HandleExpandShrink(float waitTime, int menuSelector, Button expandButton, int previousExpanded)
     {
         AudioManager am = FindFirstObjectByType<AudioManager>();
-        am.PlayBG(menuSelector);
+        if (am != null) am.PlayBG(menuSelector);
 
         yield return new WaitForSeconds(waitTime);
 
@@ -1795,7 +1775,15 @@ public class TournySelector : MonoBehaviour
         }
 
         // Wait for the expand animation to complete  
-        yield return new WaitUntil(() => menuButtons[menuSelector].GetComponent<RectTransform>().sizeDelta.y >= 799f);
+        // Bounded: on a screen where the animation never reaches exactly 799, or if time is frozen, the panel used to
+        // never open and nothing told the player. Unscaled time so a leaked time scale can't stall it either.
+        RectTransform expandRect = menuButtons[menuSelector].GetComponent<RectTransform>();
+        float waited = 0f;
+        while (expandRect.sizeDelta.y < 799f && waited < ExpandTimeoutSeconds)
+        {
+            waited += Time.unscaledDeltaTime;
+            yield return null;
+        }
 
         // Turn off the expanded button and activate the corresponding panel  
         menuButtons[menuSelector].gameObject.SetActive(false);

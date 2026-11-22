@@ -19,6 +19,8 @@ public class PauseMenu : MonoBehaviour
     // Update is called once per frame
     private void Start()
     {
+        // Static, so it survives scene loads: leaving via Pause > Main Menu used to leave it true in the next scene.
+        GameIsPaused = false;
         am = FindObjectOfType<AudioManager>();
         am.PlayBG(3);
 
@@ -36,12 +38,11 @@ public class PauseMenu : MonoBehaviour
     }
     void Update()
     {
-        if (GameIsPaused)
+        if (GameIsPaused && am != null)
         {
-            AudioManager am = FindObjectOfType<AudioManager>();
             volume = volumeSlider.value;
             am.Volume(volume);
-            
+
             am.maxVol = volume;
 
         }
@@ -83,6 +84,7 @@ public class PauseMenu : MonoBehaviour
     public void MainMenu()
     {
         Time.timeScale = 1f;
+        GameIsPaused = false;
         AudioManager am = FindObjectOfType<AudioManager>();
         am.Stop("Ambience");
         SceneManager.LoadScene("SplashMenu");

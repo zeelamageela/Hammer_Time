@@ -12,7 +12,9 @@ public class DialogueManager : MonoBehaviour
     public int tourRank;
     public float tourPoints;
 
-    private Queue<string> sentences;
+    // Created up front rather than in Start: StartDialogue can run on the same frame the canvas is first enabled,
+    // before Start has run, which left this null (NRE at sentences.Clear()).
+    private Queue<string> sentences = new Queue<string>();
     public Text dialogueText;
     public Text nameText;
 
@@ -29,8 +31,6 @@ public class DialogueManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sentences = new Queue<string>();
-        
     }
 
     private void Update()

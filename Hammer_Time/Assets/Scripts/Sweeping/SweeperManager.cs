@@ -152,7 +152,7 @@ public class SweeperManager : MonoBehaviour
             // opponent (no tracked equipment) defaults to tier 0 (Wooden/white). Color is
             // whichever SIDE (red/yellow) is sweeping, matching the existing
             // TeamManager.SetSweepers() convention for shooter/roster tinting.
-            int redHandleTier = redIsPlayerTeam && em != null ? em.GetActiveHandleTierIndex() : 0;
+            int redHandleTier = redIsPlayerTeam ? PlayerHandleTier(em, cm) : 0;
             SetupBroomOverlay(redHandleTier, tm.teamRedColour);
 
             if (redIsPlayerTeam)
@@ -188,7 +188,7 @@ public class SweeperManager : MonoBehaviour
             bool yellowIsPlayerTeam = cm != null ? (gsp.redTeamName != cm.teamName) : !gm.aiTeamYellow;
 
             // See matching comment in the redTurn branch above.
-            int yellowHandleTier = yellowIsPlayerTeam && em != null ? em.GetActiveHandleTierIndex() : 0;
+            int yellowHandleTier = yellowIsPlayerTeam ? PlayerHandleTier(em, cm) : 0;
             SetupBroomOverlay(yellowHandleTier, tm.teamYellowColour);
 
             if (yellowIsPlayerTeam)
@@ -289,6 +289,15 @@ public class SweeperManager : MonoBehaviour
         sweeperR.whoa = true;
     }
 
+    // EquipmentManager only exists in the Arena_Selector scene, so during a match `em` is null and the tier has to
+    // come from CareerManager (published by EquipmentManager and saved). Reading only `em` made every match show
+    // the wooden handle no matter what had been bought.
+    private static int PlayerHandleTier(EquipmentManager em, CareerManager cm)
+    {
+        if (em != null) return em.GetActiveHandleTierIndex();
+        return cm != null ? cm.activeHandleTier : 0;
+    }
+
     // Instantiates the broom overlay prefabs fresh each turn (same pattern as
     // sweeperL/sweeperR above) and applies the correct AOC/color for this turn's side.
     private void SetupBroomOverlay(int handleTier, Color sideColor)
@@ -303,6 +312,12 @@ public class SweeperManager : MonoBehaviour
             broomRight = Instantiate(broomRightPrefab, sweepSel.gameObject.transform);
             broomRight.SetBroom(handleTier, sideColor);
         }
+
+        // Broom-only setup: when the sweeper prefabs are themselves the brooms (no separate overlay assigned),
+        // swap the handle art and tint on the sweepers actually in play. SetBroom does nothing for a sweeper
+        // prefab that has no broomLayer, so character sweepers are unaffected.
+        if (broomLeftPrefab == null && sweeperL != null) sweeperL.SetBroom(handleTier, sideColor);
+        if (broomRightPrefab == null && sweeperR != null) sweeperR.SetBroom(handleTier, sideColor);
     }
 
     // These wrap sweeperL/sweeperR's Sweep()/Hard()/Whoa() so the broom overlay (a

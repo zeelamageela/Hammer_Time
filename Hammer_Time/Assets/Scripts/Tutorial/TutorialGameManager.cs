@@ -39,6 +39,14 @@ public class TutorialGameManager : MonoBehaviour
     }
     private GspSnapshot _gspSnapshot;
     
+    // Leaving the tutorial through Pause > Main Menu never reaches GameManager's restore calls, so do it here too.
+    // RestoreCareerGspState is a no-op once it has run (or if nothing was snapshotted).
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+        RestoreCareerGspState();
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

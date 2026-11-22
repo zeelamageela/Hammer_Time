@@ -52,6 +52,7 @@ public class CareerSaveData
         // Equipment
         public List<int> activeEquipIDs;
         public List<int> inventoryIDs;
+        public int activeHandleTier; // 0 if absent (saves from before this field existed)
         public EquipmentCollectionData allEquipment;
         
         // Cards/Sponsors
@@ -67,6 +68,9 @@ public class CareerSaveData
         public List<int> trophyWonIDs;
         public bool tourChampionshipComplete;
         public bool provChampionshipComplete;
+        // Trophy (win) flags for the two championships; the id lists above only cover tournies/tour/qualifiers.
+        public bool tourChampionshipTrophy;
+        public bool provChampionshipTrophy;
         
         // Active Tournaments (offered this week)
         public List<int> activeTournamentIDs;

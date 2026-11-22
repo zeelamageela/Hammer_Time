@@ -188,6 +188,7 @@ public class EquipmentManager : MonoBehaviour
         // 5. Update CareerManager's inventoryID and activeEquipID
         cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
         cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+        cm.activeHandleTier = GetActiveHandleTierIndex();
 
         // 6. Apply equipment stats
         foreach (var eq in activeEquip)
@@ -279,6 +280,7 @@ public class EquipmentManager : MonoBehaviour
         // 5. Update CareerManager's inventoryID and activeEquipID to match
         cm.inventoryID = inventory.Select(inv => inv.equipment.id).ToArray();
         cm.activeEquipID = activeEquip.Select(eq => eq != null ? eq.id : -1).ToArray();
+        cm.activeHandleTier = GetActiveHandleTierIndex();
 
         // 6. Apply equipment stats
         foreach (var eq in activeEquip)
@@ -617,6 +619,8 @@ public class EquipmentManager : MonoBehaviour
             {
                 cm.activeEquipID[i] = activeEquip[i].id;
             }
+            // The match scene has no EquipmentManager, so the sweepers read the handle tier from here.
+            cm.activeHandleTier = GetActiveHandleTierIndex();
 
             for (int i = 0; i < forSale.Length; i++)
             {
@@ -643,6 +647,10 @@ public class EquipmentManager : MonoBehaviour
 
             if (newEquip != null)
                 Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+
+            // The purchase (cash, inventory, equipped ids) is only in memory until now: save it so a kill right
+            // after buying can't lose the item or keep it without paying.
+            cm.SaveCareer();
         }
         else
         {

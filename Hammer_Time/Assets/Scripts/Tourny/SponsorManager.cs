@@ -107,11 +107,15 @@ public class SponsorManager : MonoBehaviour
         //contButton.SetActive(true);
         //infoPanel.SetActive(false);
 
+        // Sized from the number of local sponsors in SetUp, but a career runs for cm.seasonLength weeks, so make room
+        // rather than throwing IndexOutOfRange on a late week.
+        if (cm.week >= idPUList.Length)
+            System.Array.Resize(ref idPUList, cm.week + 1);
         idPUList[cm.week] = availPUCards[card].id;
         Debug.Log("id of played card is " + idPUList[cm.week]);
         Debug.Log("availPUCards length is " + availPUCards.Count);
         //int idPUListLength = 0;
-        //cm.SaveCareer();
+        cm.SaveCareer(); // the chosen card is part of the save; without this it was only written by the next autosave
         //for (int i = 0; i < numberOfCards; i++)
         //{
         //    if (availPUCards[i].active)

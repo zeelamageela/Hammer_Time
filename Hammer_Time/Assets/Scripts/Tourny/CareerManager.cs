@@ -103,6 +103,10 @@ public class CareerManager : MonoBehaviour
     public int[] activeEquipID;
     public int[] inventoryID;
 
+    // Tier (0-4) of the equipped handle, kept up to date by EquipmentManager. The match scene has no
+    // EquipmentManager, so SweeperManager reads it from here to pick the broom art.
+    public int activeHandleTier;
+
     public bool inProgress;
     public int season;
     public bool loadedFromSave;
@@ -152,13 +156,39 @@ public class CareerManager : MonoBehaviour
     public List<bool> currentTrophyList;
 
     public bool gameOver = false;
-    
+
+    // Which ending (index into GameOverDialogue.endings) the main menu should play. Not saved: gameOver isn't either,
+    // so after a relaunch the ending is simply re-detected when the career is continued.
+    [System.NonSerialized] public int endScenario = -1;
+
     // CRITICAL: Preserve completion IDs between load and TournySelector creation
     // These are populated on load and consumed by TournySelector.SetUp()
     private List<int> pendingCompletedTournamentIDs = new List<int>();
     private List<int> pendingTrophyWonIDs = new List<int>();
     private bool pendingTourChampionshipComplete = false;
     private bool pendingProvChampionshipComplete = false;
+    private bool pendingTourChampionshipTrophy = false;
+    private bool pendingProvChampionshipTrophy = false;
+
+    // While true, SaveCareer does nothing. Set when an event is picked (fee paid, event marked complete) and cleared
+    // when the game actually starts or the player backs out, so a pause/autosave on the Confirm screen can't persist
+    // that half-finished state. Also cleared on every scene load so it can never stay stuck.
+    [System.NonSerialized] public bool saveDeferred;
+
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += ClearSaveDeferred;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= ClearSaveDeferred;
+    }
+
+    private void ClearSaveDeferred(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        saveDeferred = false;
+    }
 
     private void Awake()
     {
@@ -343,6 +373,7 @@ public class CareerManager : MonoBehaviour
             if (saveData.version != 1)
             {
                 Debug.LogError($"[CareerManager] Unsupported save version {saveData.version}. Expected version 1.");
+                CareerSaveService.PreserveFailedLoad();
                 Debug.LogWarning("[CareerManager] Save file may be corrupted or from incompatible version");
                 return;
             }
@@ -450,6 +481,7 @@ public class CareerManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogError($"[CareerManager] Failed to load career from JSON: {ex.Message}");
+            CareerSaveService.PreserveFailedLoad();
             Debug.LogError($"[CareerManager] Stack trace: {ex.StackTrace}");
             Debug.LogWarning("[CareerManager] Career load failed - starting fresh or check save file integrity");
         }
@@ -559,11 +591,13 @@ public class CareerManager : MonoBehaviour
         if (tSel.tourChampionship != null)
         {
             tSel.tourChampionship.complete = saveData.tourChampionshipComplete;
+            tSel.tourChampionship.trophyWon = saveData.tourChampionshipTrophy;
             Debug.Log($"[CareerManager] Tour Championship: complete={saveData.tourChampionshipComplete}");
         }
         if (tSel.provChampionship != null)
         {
             tSel.provChampionship.complete = saveData.provChampionshipComplete;
+            tSel.provChampionship.trophyWon = saveData.provChampionshipTrophy;
             Debug.Log($"[CareerManager] Prov Championship: complete={saveData.provChampionshipComplete}");
         }
         
@@ -589,6 +623,8 @@ public class CareerManager : MonoBehaviour
         pendingTrophyWonIDs = new List<int>(saveData.trophyWonIDs ?? new List<int>());
         pendingTourChampionshipComplete = saveData.tourChampionshipComplete;
         pendingProvChampionshipComplete = saveData.provChampionshipComplete;
+        pendingTourChampionshipTrophy = saveData.tourChampionshipTrophy;
+        pendingProvChampionshipTrophy = saveData.provChampionshipTrophy;
         
         Debug.Log($"  Stored {pendingCompletedTournamentIDs.Count} completed IDs: [{string.Join(", ", pendingCompletedTournamentIDs)}]");
         Debug.Log($"  Stored {pendingTrophyWonIDs.Count} trophy IDs: [{string.Join(", ", pendingTrophyWonIDs)}]");
@@ -715,6 +751,7 @@ public class CareerManager : MonoBehaviour
         if (tSel.tourChampionship != null)
         {
             tSel.tourChampionship.complete = pendingTourChampionshipComplete;
+            tSel.tourChampionship.trophyWon = pendingTourChampionshipTrophy;
             if (pendingTourChampionshipComplete)
             {
                 restoredCount++;
@@ -725,6 +762,7 @@ public class CareerManager : MonoBehaviour
         if (tSel.provChampionship != null)
         {
             tSel.provChampionship.complete = pendingProvChampionshipComplete;
+            tSel.provChampionship.trophyWon = pendingProvChampionshipTrophy;
             if (pendingProvChampionshipComplete)
             {
                 restoredCount++;
@@ -739,6 +777,8 @@ public class CareerManager : MonoBehaviour
         pendingTrophyWonIDs.Clear();
         pendingTourChampionshipComplete = false;
         pendingProvChampionshipComplete = false;
+        pendingTourChampionshipTrophy = false;
+        pendingProvChampionshipTrophy = false;
     }
 
 
@@ -880,6 +920,12 @@ public class CareerManager : MonoBehaviour
     SponsorManager sm = null
 )
     {
+        if (saveDeferred)
+        {
+            Debug.Log("[CareerManager] SaveCareer skipped: an event is awaiting confirmation (saveDeferred)");
+            return;
+        }
+
         // Never write career save data during the tutorial — it would overwrite valid career state
         // with tutorial-specific game state (wrong team names, rock counts, etc.)
         TutorialGameManager tutGM = TutorialGameManager.Instance;
@@ -941,6 +987,7 @@ public class CareerManager : MonoBehaviour
     /// </summary>
     public void DeleteCareerSave()
     {
+        CareerSaveService.ArchiveSave();   // keep the previous career recoverable (career_save_replaced.json)
         CareerSaveService.DeleteSave();
         Debug.Log("[CareerManager] Career save deleted");
     }
@@ -1730,6 +1777,7 @@ public class CareerManager : MonoBehaviour
         
         loadedFromSave = false;
         gameOver = false;
+        endScenario = -1;
         record = new Vector2(0f, 0f);
         tourRecord = new Vector2(0f, 0f);
         
@@ -1743,6 +1791,8 @@ public class CareerManager : MonoBehaviour
         pendingTrophyWonIDs = new List<int>();
         pendingTourChampionshipComplete = false;
         pendingProvChampionshipComplete = false;
+        pendingTourChampionshipTrophy = false;
+        pendingProvChampionshipTrophy = false;
         Debug.Log("[CareerManager] Cleared pending completion data for new career");
 
         // Reset player character stats to starting values
@@ -1781,7 +1831,8 @@ public class CareerManager : MonoBehaviour
         // Clear equipment
         activeEquipID = null;
         inventoryID = null;
-        
+        activeHandleTier = 0;
+
         // Clear all sponsor/card data
         activeCardIDList = null;
         cardPUIDList = null;
@@ -2329,6 +2380,7 @@ public class CareerManager : MonoBehaviour
         // Equipment
         if (activeEquipID != null) data.activeEquipIDs.AddRange(activeEquipID);
         if (inventoryID != null) data.inventoryIDs.AddRange(inventoryID);
+        data.activeHandleTier = activeHandleTier;
         
         // Serialize all equipment if EquipmentManager exists
         EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
@@ -2469,6 +2521,8 @@ public class CareerManager : MonoBehaviour
             {
                 data.provChampionshipComplete = true;
             }
+            data.tourChampionshipTrophy = tSel.tourChampionship != null && tSel.tourChampionship.trophyWon;
+            data.provChampionshipTrophy = tSel.provChampionship != null && tSel.provChampionship.trophyWon;
             
             Debug.Log($"[CareerManager] ? Saved from TournySelector: {data.completedTournamentIDs.Count} completed IDs, {data.trophyWonIDs.Count} trophy IDs");
             Debug.Log($"[SAVE DEBUG] Completed IDs saved: [{string.Join(", ", data.completedTournamentIDs)}]");
@@ -2496,7 +2550,9 @@ public class CareerManager : MonoBehaviour
                 data.trophyWonIDs.AddRange(pendingTrophyWonIDs);
                 data.tourChampionshipComplete = pendingTourChampionshipComplete;
                 data.provChampionshipComplete = pendingProvChampionshipComplete;
-                
+                data.tourChampionshipTrophy = pendingTourChampionshipTrophy;
+                data.provChampionshipTrophy = pendingProvChampionshipTrophy;
+
                 usedPendingData = true;
                 
                 Debug.Log($"[CareerManager] ? Preserved pending data: {data.completedTournamentIDs.Count} completed, {data.trophyWonIDs.Count} trophies");
@@ -2573,6 +2629,15 @@ public class CareerManager : MonoBehaviour
                 if (champ[1] != null && champ[1].complete)
                 {
                     data.provChampionshipComplete = true;
+                }
+                // Merge, don't overwrite: a trophy restored from pending data must not be cleared by an unset copy.
+                if (champ[0] != null && champ[0].trophyWon)
+                {
+                    data.tourChampionshipTrophy = true;
+                }
+                if (champ[1] != null && champ[1].trophyWon)
+                {
+                    data.provChampionshipTrophy = true;
                 }
             }
             
@@ -2713,6 +2778,7 @@ public class CareerManager : MonoBehaviour
         // Equipment
         activeEquipID = data.activeEquipIDs.ToArray();
         inventoryID = data.inventoryIDs.ToArray();
+        activeHandleTier = data.activeHandleTier;
         
         // Restore equipment collections if available
         if (data.allEquipment != null)

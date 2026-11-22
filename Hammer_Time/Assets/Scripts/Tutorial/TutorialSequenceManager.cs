@@ -56,6 +56,13 @@ public class TutorialSequenceManager : MonoBehaviour
     public event Action<TutorialStep, int> OnStepStart;
     public event Action<TutorialStep, int> OnStepComplete;
     
+    private void OnDestroy()
+    {
+        // Leaving the scene mid-step (e.g. Pause > Main Menu) must not carry a tutorial freeze into the next scene.
+        if (Instance != this) return;
+        Time.timeScale = 1f;
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

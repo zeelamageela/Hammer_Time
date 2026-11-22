@@ -23,6 +23,9 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
+        // Belt and braces: whatever froze or paused the previous scene, the menu always runs at normal speed.
+        Time.timeScale = 1f;
+
         // Check if save exists and enable/disable Continue button
         // Access save service directly (CareerManager doesn't exist in splash scene)
         // if (CareerSaveService.SaveExists())
