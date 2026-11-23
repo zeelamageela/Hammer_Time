@@ -54,11 +54,11 @@ public class TrajectoryLine : MonoBehaviour
     public bool usePhysicsSimulation = true;
     
     [Header("Physics Tuning")]
-    [Tooltip("EFFECTIVE ice friction for trajectory prediction - Higher = shorter distance. Rock has 0.38 but ACTUAL effective damping is ~0.62 due to angular drag + other factors. Tune this to match reality!")]
+    [Tooltip("UNUSED. The preview and the AI now run the same physics as the rock (RockPhysics / RockPhysicsProfile) - tune friction there. This field no longer does anything.")]
     [Range(0.3f, 1.0f)]
     public float iceFriction = 0.62f;  // TUNED: Increased from 0.38 to match ACTUAL rock behavior (travels ~60% of predicted distance)
     
-    [Tooltip("Curl strength - base lateral force multiplier")]
+    [Tooltip("UNUSED. Curl now comes from RockPhysicsProfile (shared with the live rock).")]
     public float curlStrength = 0.25f;  // TUNED: Reduced from 0.3 for less curl
     
     [Tooltip("How much curl increases at the end (0.0 = no late breaking, 3.0 = very dramatic)")]
