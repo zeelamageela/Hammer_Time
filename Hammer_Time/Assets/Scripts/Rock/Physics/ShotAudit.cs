@@ -98,10 +98,34 @@ public static class ShotAudit
         flightY[flightCount] = y; flightSpeed[flightCount] = speed; flightCount++; lastSampleY = y;
     }
 
+    static float lastFlightSpeed;
+
+    /// <summary>
+    /// RockSlide calls this each step of free flight. If the speed falls, it logs the step, the Box2D damping, and everything the rock
+    /// is touching or overlapping, to identify what slows a rock that no physics code should be slowing.
+    /// </summary>
+    public static void WatchSpeed(GameObject rock, Rigidbody2D body)
+    {
+        if (!armed || rock != launchedRock) return;
+        float speed = body.linearVelocity.magnitude;
+        if (lastFlightSpeed > 0f && speed < lastFlightSpeed * 0.999f)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var c in Physics2D.OverlapCircleAll(body.position, 0.6f))
+                if (c != null && c.gameObject != rock)
+                    sb.Append($"{c.gameObject.name}[{(c.isTrigger ? "trigger" : "SOLID")}] ");
+            var contacts = new ContactPoint2D[8];
+            int n = body.GetContacts(contacts);
+            Debug.Log($"[ShotAudit] SPEED DROP in free flight at y={body.position.y:F2}: {lastFlightSpeed:F4} -> {speed:F4} (x{speed / lastFlightSpeed:F4}); box2d damping lin={body.linearDamping:F3}; " +
+                      $"touching {n} collider(s); nearby: {sb}; frame={Time.frameCount} fixedTime={Time.fixedTime:F2}");
+        }
+        lastFlightSpeed = speed;
+    }
+
     /// <summary>Rock_Flick calls this right after the velocity is set: the body and joint settings that could slow a rock down.</summary>
     public static void LogBody(Rigidbody2D body, SpringJoint2D spring)
     {
-        flightCount = 0; lastSampleY = -999f;
+        flightCount = 0; lastSampleY = -999f; lastFlightSpeed = 0f;
         Debug.Log($"[ShotAudit] BODY at launch: bodyType={body.bodyType} gravityScale={body.gravityScale} gravity={Physics2D.gravity} constraints={body.constraints} simulated={body.simulated} " +
                   $"damping lin={body.linearDamping:F3} ang={body.angularDamping:F3} spring={(spring != null ? (spring.enabled ? "ENABLED" : "disabled") : "none")} sleepMode={body.sleepMode} " +
                   $"profile={RockPhysicsSettings.Current.law} power={RockPhysicsSettings.Current.stopPower:F2} stretch={RockPhysicsSettings.Current.timeStretch:F2}");
