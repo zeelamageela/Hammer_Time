@@ -568,7 +568,8 @@ public class Rock_Flick : MonoBehaviour
         ShotAudit.LogLaunch(gameObject, rb.position, velocity, GetComponent<Rock_Force>().flipAxis);
         // `velocity` is a weight velocity (what the aim line and the AI speak); the rock gets the speed the current physics profile needs to travel that far.
         rb.linearVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
-        
+        ShotAudit.LogBody(rb, GetComponent<SpringJoint2D>());
+
         Debug.Log($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");
         
         launcher.GetComponent<Collider2D>().enabled = true;

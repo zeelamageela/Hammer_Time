@@ -76,7 +76,34 @@ public static class ShotAudit
     public static void LogRelease(GameObject rock, Vector2 position, Vector2 velocity, float spin, Rigidbody2D body)
     {
         if (!armed || rock != launchedRock) return;
-        Debug.Log($"[ShotAudit] HOG LINE at {position}: v={velocity} |v|={velocity.magnitude:F3} (launched at |v|={launchVelocity.magnitude:F3}); box2d damping lin={body.linearDamping:F3} ang={body.angularDamping:F3}; " +
+        Debug.Log($"[ShotAudit] HOG LINE at {position}: v={velocity} |v|={velocity.magnitude:F3} (launched at weight |v|={launchVelocity.magnitude:F3}, expected launch speed {RockPhysicsSettings.Current.LaunchSpeedFromWeight(launchVelocity.magnitude):F3}); box2d damping lin={body.linearDamping:F3} ang={body.angularDamping:F3}; " +
                   $"fixedDt={Time.fixedDeltaTime:F4} timeScale={Time.timeScale:F2} interp={body.interpolation} collision={body.collisionDetectionMode} mass={body.mass:F1} t+{Time.unscaledTime - launchedAt:F2}s");
+        var sb = new System.Text.StringBuilder("[ShotAudit] FLIGHT speed by y (hack to hog): ");
+        for (int i = 0; i < flightCount; i++) sb.Append($"{flightY[i]:F1}:{flightSpeed[i]:F3}  ");
+        Debug.Log(sb.ToString());
+    }
+
+    // ---- speed samples during free flight (every ~1 unit of y) so a speed loss before the hog line can be located ----
+    const int MaxFlight = 40;
+    static readonly float[] flightY = new float[MaxFlight];
+    static readonly float[] flightSpeed = new float[MaxFlight];
+    static int flightCount;
+    static float lastSampleY = -999f;
+
+    /// <summary>RockSlide calls this every physics step while a rock is in free flight.</summary>
+    public static void Sample(GameObject rock, float y, float speed)
+    {
+        if (!armed || rock != launchedRock) return;
+        if (y < lastSampleY + 1f || flightCount >= MaxFlight) return;
+        flightY[flightCount] = y; flightSpeed[flightCount] = speed; flightCount++; lastSampleY = y;
+    }
+
+    /// <summary>Rock_Flick calls this right after the velocity is set: the body and joint settings that could slow a rock down.</summary>
+    public static void LogBody(Rigidbody2D body, SpringJoint2D spring)
+    {
+        flightCount = 0; lastSampleY = -999f;
+        Debug.Log($"[ShotAudit] BODY at launch: bodyType={body.bodyType} gravityScale={body.gravityScale} gravity={Physics2D.gravity} constraints={body.constraints} simulated={body.simulated} " +
+                  $"damping lin={body.linearDamping:F3} ang={body.angularDamping:F3} spring={(spring != null ? (spring.enabled ? "ENABLED" : "disabled") : "none")} sleepMode={body.sleepMode} " +
+                  $"profile={RockPhysicsSettings.Current.law} power={RockPhysicsSettings.Current.stopPower:F2} stretch={RockPhysicsSettings.Current.timeStretch:F2}");
     }
 }

@@ -196,6 +196,7 @@ public class RockSlide : MonoBehaviour
         state.position = body.position;
         state.velocity = body.linearVelocity;
         state.spin = body.angularVelocity;
+        if (state.freeFlight) ShotAudit.Sample(gameObject, body.position.y, body.linearVelocity.magnitude);
 
         var p = RockPhysicsSettings.Current;
         RockPhysics.Step(ref state, p, Time.fixedDeltaTime, integratePosition: false);
