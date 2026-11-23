@@ -105,6 +105,7 @@ public class Rock_Force : MonoBehaviour
 
         // In-turn (flipAxis) spins clockwise and curls right; out-turn the opposite. Spin is applied on the next step.
         slide.Release(flipAxis, minVelocity, maxVelocity);
+        ShotAudit.LogRelease(gameObject, body.position, body.linearVelocity, slide.SpinNow, body);
         curl = slide.Curl;
         released = true;
 
@@ -131,7 +132,7 @@ public class Rock_Force : MonoBehaviour
 
         if (Mathf.Abs(vel.y) < 0.01f && Mathf.Abs(vel.x) < 0.01f)
         {
-            if (released) ShotAudit.LogRest(body.position);
+            if (released) ShotAudit.LogRest(gameObject, body.position, slide.PredictedRest);
             GetComponent<Rock_Info>().stopped = true;
             GetComponent<Rock_Info>().rest = true;
             HapticController.Stop();

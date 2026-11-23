@@ -28,6 +28,9 @@ public class RockSlide : MonoBehaviour
     public float CurlMultiplier { get { Init(); return state.curlMultiplier; } set { Init(); state.curlMultiplier = value; } }
     public bool AtRest { get { Init(); return state.atRest; } }
     public Vector2 Curl { get { Init(); return new Vector2(state.curlX, 0f); } }
+    /// <summary>Where the model says this rock will stop, worked out from the state it actually had at the hog line (for ShotAudit).</summary>
+    public Vector2 PredictedRest { get; private set; }
+    public float SpinNow { get { Init(); return state.spin; } }
 
     void Awake() { Init(); }
 
@@ -61,7 +64,12 @@ public class RockSlide : MonoBehaviour
         p.minLaunchSpeed = minLaunchSpeed;
         p.maxLaunchSpeed = maxLaunchSpeed;
         state.velocity = body.linearVelocity;
+        state.position = body.position;
         RockPhysics.Release(ref state, p, inTurn);
+
+        RockState ahead = state;
+        for (int i = 0; i < 3000 && !ahead.asleep; i++) RockPhysics.Step(ref ahead, p, Time.fixedDeltaTime);
+        PredictedRest = ahead.position;
     }
 
     void FixedUpdate()

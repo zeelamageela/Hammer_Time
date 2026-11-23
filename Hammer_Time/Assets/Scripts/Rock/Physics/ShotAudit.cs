@@ -14,6 +14,7 @@ public static class ShotAudit
     static float predictedAt = -999f;
 
     static bool armed;
+    static GameObject launchedRock;
     static Vector2 launchPosition;
     static Vector2 launchVelocity;
     static bool launchedInTurn;
@@ -30,8 +31,9 @@ public static class ShotAudit
     }
 
     /// <summary>Rock_Flick calls this when the shot is fired (velocity as set on the rigidbody).</summary>
-    public static void LogLaunch(Vector2 position, Vector2 velocity, bool inTurn)
+    public static void LogLaunch(GameObject rock, Vector2 position, Vector2 velocity, bool inTurn)
     {
+        launchedRock = rock;
         launchPosition = position;
         launchVelocity = velocity;
         launchedInTurn = inTurn;
@@ -52,10 +54,12 @@ public static class ShotAudit
     }
 
     /// <summary>Rock_Force calls this once, when the rock first comes to rest.</summary>
-    public static void LogRest(Vector2 position)
+    public static void LogRest(GameObject rock, Vector2 position, Vector2 modelPredictionFromRelease)
     {
-        if (!armed) return;
+        if (!armed || rock != launchedRock) return;
         armed = false;
+        Vector2 modelMiss = position - modelPredictionFromRelease;
+        Debug.Log($"[ShotAudit] MODEL-FROM-ACTUAL-RELEASE predicted rest {modelPredictionFromRelease}; actual {position}; difference ({modelMiss.x:F2}, {modelMiss.y:F2}) - if this is ~0 the difference is BEFORE the hog line, if not it is the friction after it");
 
         bool freshPreview = launchedAt - predictedAt < 3f && launchedAt >= predictedAt;
         if (!freshPreview || predictedCollision)
@@ -66,5 +70,13 @@ public static class ShotAudit
 
         Vector2 miss = position - predictedEnd;
         Debug.Log($"[ShotAudit] REST at {position}: preview said {predictedEnd}, off by ({miss.x:F2}, {miss.y:F2}) = {miss.magnitude:F2} units ({Time.unscaledTime - launchedAt:F1}s after launch)");
+    }
+
+    /// <summary>Rock_Force calls this at the near hog line, when friction starts.</summary>
+    public static void LogRelease(GameObject rock, Vector2 position, Vector2 velocity, float spin, Rigidbody2D body)
+    {
+        if (!armed || rock != launchedRock) return;
+        Debug.Log($"[ShotAudit] HOG LINE at {position}: v={velocity} |v|={velocity.magnitude:F3} (launched at |v|={launchVelocity.magnitude:F3}); box2d damping lin={body.linearDamping:F3} ang={body.angularDamping:F3}; " +
+                  $"fixedDt={Time.fixedDeltaTime:F4} timeScale={Time.timeScale:F2} interp={body.interpolation} collision={body.collisionDetectionMode} mass={body.mass:F1} t+{Time.unscaledTime - launchedAt:F2}s");
     }
 }
