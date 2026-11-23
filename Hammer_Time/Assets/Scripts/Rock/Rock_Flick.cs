@@ -565,6 +565,7 @@ public class Rock_Flick : MonoBehaviour
         Debug.Log($"[Rock_Flick] Spring disabled, damping disabled (will restore at hog line)");
         
         // Set velocity directly - no spring physics!
+        ShotAudit.LogLaunch(rb.position, velocity, GetComponent<Rock_Force>().flipAxis);
         rb.linearVelocity = velocity;
         
         Debug.Log($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");

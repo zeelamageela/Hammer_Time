@@ -590,7 +590,9 @@ public class TrajectoryLine : MonoBehaviour
             // Get collision info and speeds
             TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
             trajectorySpeed = trajectorySimulator.GetTrajectorySpeed();
-            
+            if (simulatedPath.Count > 0)
+                ShotAudit.RecordPreview(initialVelocity, isInTurn, simulatedPath[simulatedPath.Count - 1], collisionInfo.hasCollision);
+
             // Convert to Vector3 for rendering
             foreach (Vector2 point in simulatedPath)
             {

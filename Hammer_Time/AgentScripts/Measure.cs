@@ -48,6 +48,12 @@ public static class Measure
 
     static void Reset(Rock_Force rf, float v0, bool inTurn, float startY)
     {
+        ResetV(rf, new Vector2(0f, v0), inTurn, new Vector2(0f, startY));
+    }
+
+    static void ResetV(Rock_Force rf, Vector2 vel, bool inTurn, Vector2 start)
+    {
+        float startY = start.y;
         var rb = rf.GetComponent<Rigidbody2D>();
         var info = rf.GetComponent<Rock_Info>();
         var rel = rf.GetComponent<Rock_Release>();
@@ -72,11 +78,11 @@ public static class Measure
         rb.angularDamping = 0f;
         rb.angularVelocity = 0f;
         rb.linearVelocity = Vector2.zero;
-        rb.position = new Vector2(0f, startY);
+        rb.position = start;
         rb.rotation = 0f;
-        rf.transform.position = new Vector3(0f, startY, 0f);
+        rf.transform.position = new Vector3(start.x, start.y, 0f);
         Physics2D.SyncTransforms();
-        rb.linearVelocity = new Vector2(0f, v0);
+        rb.linearVelocity = vel;
     }
 
     static Result Fire(Rock_Force rf, float v0, bool inTurn, float startY)
@@ -197,6 +203,41 @@ public static class Measure
                     if (step % 50 == 0 || step == relStep + 1 || step == relStep + 2)
                         sb.AppendLine("  " + (step * Dt).ToString("F2") + ", " + rb.position.x.ToString("F4") + ", " + rb.position.y.ToString("F4") + ", " + rb.linearVelocity.x.ToString("F5") + ", " + rb.linearVelocity.y.ToString("F5") + ", " + rb.angularVelocity.ToString("F3"));
                 }
+            }
+        }
+        finally { Physics2D.simulationMode = mode; }
+        return sb.ToString();
+    }
+
+    // Throw the way the player does: rock pulled back to P, velocity toward the launcher with speed from the pullback formula.
+    public static string Angled()
+    {
+        var rf = Rock();
+        var rb = rf.GetComponent<Rigidbody2D>();
+        var tl = Object.FindFirstObjectByType<TrajectoryLine>();
+        var sb = new StringBuilder();
+        var mode = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        var sim = new TrajectorySimulator(0.62f, 0.25f);
+        Vector2 launcher = new Vector2(0f, -25f);
+        try
+        {
+            sb.AppendLine("trajLine mult=" + tl.velocityMultiplier + " pull " + tl.minPullbackDistance + ".." + tl.maxPullbackDistance + " speed " + tl.minVelocity + ".." + tl.maxVelocity);
+            sb.AppendLine("pull P (x,y)   | turn | speed | live rest (x,y)  | sim end (x,y)    | error");
+            foreach (var P in new[] { new Vector2(0.3f, -27.0f), new Vector2(-0.3f, -27.0f), new Vector2(0.15f, -28.5f), new Vector2(-0.3f, -29.0f), new Vector2(0.3f, -30.0f), new Vector2(-0.2f, -30.4f), new Vector2(0f, -28.0f) })
+            foreach (bool inTurn in new[] { false, true })
+            {
+                Vector2 vel = TrajectorySimulator.CalculateInitialVelocityFromPullback(P, launcher, tl.velocityMultiplier, tl.minPullbackDistance, tl.maxPullbackDistance, tl.minVelocity, tl.maxVelocity);
+                ResetV(rf, vel, inTurn, P);
+                for (int i = 0; i < 2500; i++)
+                {
+                    Tick(rf); Physics2D.Simulate(Dt);
+                    if (rf.GetComponent<RockSlide>().AtRest && rb.linearVelocity.magnitude < 0.005f && rb.position.y > -15f) break;
+                }
+                var path = sim.SimulateTrajectory(launcher, vel, inTurn, 600, null, false);
+                var end = path[path.Count - 1];
+                sb.AppendLine(string.Format("({0,5:F2},{1,6:F2}) | {2,-5} | {3,5:F2} | ({4,6:F2},{5,6:F2})   | ({6,6:F2},{7,6:F2})   | ({8,5:F2},{9,5:F2})",
+                    P.x, P.y, inTurn ? "in" : "out", vel.magnitude, rb.position.x, rb.position.y, end.x, end.y, end.x - rb.position.x, end.y - rb.position.y));
             }
         }
         finally { Physics2D.simulationMode = mode; }

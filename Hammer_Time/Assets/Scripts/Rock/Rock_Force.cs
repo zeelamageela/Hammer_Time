@@ -131,6 +131,7 @@ public class Rock_Force : MonoBehaviour
 
         if (Mathf.Abs(vel.y) < 0.01f && Mathf.Abs(vel.x) < 0.01f)
         {
+            if (released) ShotAudit.LogRest(body.position);
             GetComponent<Rock_Info>().stopped = true;
             GetComponent<Rock_Info>().rest = true;
             HapticController.Stop();
