@@ -487,9 +487,11 @@ public class Rock_Flick : MonoBehaviour
         // CRITICAL: Make sure kinematic is OFF!
         rb.isKinematic = false;
         
-        // CRITICAL: Disable damping COMPLETELY during launch!
-        // Damping will be restored by Rock_Force.Release() when rock crosses hog line
+        // CRITICAL: No friction at all during launch!
+        // Friction and spin start in Rock_Force.Release() when the rock crosses the near hog line.
         rb.linearDamping = 0f;
+        RockSlide slide = GetComponent<RockSlide>();
+        if (slide != null) slide.BeginFlight();
         
         // DETERMINISTIC VELOCITY: Calculate from pullback distance using TrajectoryLine parameters
         // CRITICAL: Pass TrajectoryLine parameters to match AI calculations!

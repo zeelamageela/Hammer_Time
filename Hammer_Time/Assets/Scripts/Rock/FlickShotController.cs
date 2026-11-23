@@ -1957,7 +1957,9 @@ public class FlickShotController : MonoBehaviour
         // CRITICAL: Directly apply the calculated velocity
         // Don't rely on Rock_Flick.Release() to calculate from position
         rb.isKinematic = false;
-        rb.linearDamping = 0f; // Will be restored at hog line
+        rb.linearDamping = 0f; // Friction starts at the hog line (Rock_Force.Release)
+        RockSlide flightSlide = GetComponent<RockSlide>();
+        if (flightSlide != null) flightSlide.BeginFlight();
         rb.linearVelocity = velocity;
         
         // CRITICAL: Enable continuous collision detection for high-speed collisions!

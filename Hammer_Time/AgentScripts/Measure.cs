@@ -24,6 +24,16 @@ public static class Measure
         public float v0, tNear = -1, tFar = -1, tTee = -1, tSlow = -1, tRest = -1, path, vNear, vFar, xFar, xRest, yRest;
     }
 
+    static MethodInfo slideFu, forceFu;
+    // what the engine does each fixed step before physics: RockSlide (order -10) then Rock_Force
+    static void Tick(Rock_Force rf)
+    {
+        if (slideFu == null) slideFu = typeof(RockSlide).GetMethod("FixedUpdate", Any);
+        if (forceFu == null) forceFu = typeof(Rock_Force).GetMethod("FixedUpdate", Any);
+        slideFu.Invoke(rf.GetComponent<RockSlide>(), null);
+        if (rf.enabled) forceFu.Invoke(rf, null);
+    }
+
     static Rock_Force Rock()
     {
         var all = Object.FindObjectsByType<Rock_Force>(FindObjectsInactive.Include);
@@ -51,15 +61,15 @@ public static class Measure
         col.enabled = true;
         rel.enabled = true;
         rf.enabled = true;
-        rf.GetType().GetField("turnStart", Any).SetValue(rf, false);
-        rf.GetType().GetField("forceStart", Any).SetValue(rf, false);
         rf.flipAxis = inTurn;
         rf.curl = Vector2.zero;
         rel.released = false;
         info.released = false; info.rest = false; info.stopped = false;
         rb.bodyType = RigidbodyType2D.Dynamic;
+        var slide = rf.GetComponent<RockSlide>(); if (slide == null) slide = rf.gameObject.AddComponent<RockSlide>();
+        slide.BeginFlight();
         rb.linearDamping = 0f;
-        rb.angularDamping = 0.32f;
+        rb.angularDamping = 0f;
         rb.angularVelocity = 0f;
         rb.linearVelocity = Vector2.zero;
         rb.position = new Vector2(0f, startY);
@@ -80,7 +90,7 @@ public static class Measure
         int steps = 0;
         while (steps < 9000)
         {
-            fu.Invoke(rf, null);
+            Tick(rf);
             Physics2D.Simulate(Dt);
             steps++; t += Dt;
             Vector2 p = rb.position;
@@ -152,7 +162,7 @@ public static class Measure
                 int released = -1;
                 for (int i = 0; i < 400; i++)
                 {
-                    fu.Invoke(rf, null); Physics2D.Simulate(Dt);
+                    Tick(rf); Physics2D.Simulate(Dt);
                     if (released < 0 && rf.GetComponent<Rock_Release>().released) { released = i; }
                     if (released >= 0 && i == released + 2) break;
                 }
@@ -182,7 +192,7 @@ public static class Measure
                 int relStep = -1;
                 for (int step = 1; step <= 1500; step++)
                 {
-                    fu.Invoke(rf, null); Physics2D.Simulate(Dt);
+                    Tick(rf); Physics2D.Simulate(Dt);
                     if (relStep < 0 && rf.GetComponent<Rock_Release>().released) { relStep = step; sb.AppendLine("  released at step " + step + " t=" + (step * Dt).ToString("F2") + " y=" + rb.position.y.ToString("F4") + " vy=" + rb.linearVelocity.y.ToString("F4")); }
                     if (step % 50 == 0 || step == relStep + 1 || step == relStep + 2)
                         sb.AppendLine("  " + (step * Dt).ToString("F2") + ", " + rb.position.x.ToString("F4") + ", " + rb.position.y.ToString("F4") + ", " + rb.linearVelocity.x.ToString("F5") + ", " + rb.linearVelocity.y.ToString("F5") + ", " + rb.angularVelocity.ToString("F3"));
@@ -245,7 +255,7 @@ public static class Measure
             var fu = rf.GetType().GetMethod("FixedUpdate", Any);
             for (int step = 1; step <= 1000; step++)
             {
-                fu.Invoke(rf, null);
+                Tick(rf);
                 Physics2D.Simulate(Dt);
                 if (step % 50 == 0) sb.AppendLine("t=" + (step * Dt).ToString("F2") + " y=" + rb.position.y.ToString("F3") + " x=" + rb.position.x.ToString("F3") + " speed=" + rb.linearVelocity.magnitude.ToString("F3"));
             }

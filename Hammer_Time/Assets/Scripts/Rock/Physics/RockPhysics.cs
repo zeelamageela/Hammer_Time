@@ -65,8 +65,10 @@ public struct RockState
     /// <summary>Spin, degrees/s (Rigidbody2D.angularVelocity units).</summary>
     public float spin;
 
-    /// <summary>False until the rock crosses the near hog line; before that it flies free.</summary>
-    public bool sliding;
+    /// <summary>True from the throw until the rock crosses the near hog line: no friction, no curl.</summary>
+    public bool freeFlight;
+    /// <summary>True from the near hog line on: spin is on and curling.</summary>
+    public bool curlActive;
     public bool turnPending;
     public int dirMult;
     public float curlX;
@@ -91,15 +93,44 @@ public static class RockPhysics
     /// </summary>
     public const float ReleaseY = -15.875f;
 
-    public static RockState Launch(Vector2 position, Vector2 velocity)
+    /// <summary>A rock sitting on the ice: ordinary friction, no curl. Struck rocks behave like this.</summary>
+    public static RockState NewRock(RockPhysicsProfile p)
     {
-        return new RockState { position = position, velocity = velocity, curlMultiplier = 1f };
+        return new RockState { curlMultiplier = 1f, linearDamping = p.linearDamping, angularDamping = p.angularDamping };
+    }
+
+    /// <summary>The rock leaves the hack: it flies free (no friction, no curl) until Release.</summary>
+    public static void BeginFlight(ref RockState s, RockPhysicsProfile p)
+    {
+        s.freeFlight = true;
+        s.curlActive = false;
+        s.turnPending = false;
+        s.atRest = false;
+        s.asleep = false;
+        s.sleepTimer = 0f;
+        s.curlMultiplier = 1f;
+        s.linearDamping = p.linearDamping;
+        s.angularDamping = p.angularDamping;
+    }
+
+    /// <summary>A thrown rock at the hack with a given velocity (what the simulator and the tests start from).</summary>
+    public static RockState Launch(Vector2 position, Vector2 velocity, RockPhysicsProfile p)
+    {
+        var s = NewRock(p);
+        s.position = position;
+        s.velocity = velocity;
+        BeginFlight(ref s, p);
+        return s;
     }
 
     /// <summary>The rock has just left the near hog trigger: start sliding friction and put the spin on it.</summary>
     public static void Release(ref RockState s, RockPhysicsProfile p, bool inTurn)
     {
-        s.sliding = true;
+        s.freeFlight = false;
+        s.curlActive = true;
+        s.atRest = false;
+        s.asleep = false;
+        s.sleepTimer = 0f;
         s.linearDamping = p.linearDamping;
         s.angularDamping = p.angularDamping;
         s.dirMult = inTurn ? -1 : 1;
@@ -124,7 +155,7 @@ public static class RockPhysics
             s.turnPending = false;
         }
 
-        if (s.sliding)
+        if (!s.freeFlight)
         {
             if (Mathf.Abs(s.velocity.x) < p.restSpeed && Mathf.Abs(s.velocity.y) < p.restSpeed)
             {
@@ -132,8 +163,11 @@ public static class RockPhysics
                 s.linearDamping = p.restLinearDamping;
             }
 
-            float curlForceX = s.curlMultiplier * s.curlX * (spinRead * p.curlScale);
-            s.velocity.x += curlForceX / p.mass * dt;
+            if (s.curlActive)
+            {
+                float curlForceX = s.curlMultiplier * s.curlX * (spinRead * p.curlScale);
+                s.velocity.x += curlForceX / p.mass * dt;
+            }
 
             s.velocity /= 1f + s.linearDamping * dt;
             if (p.constantDecel > 0f)
@@ -147,8 +181,9 @@ public static class RockPhysics
 
         if (integratePosition) s.position += s.velocity * dt;
 
-        // Box2D sleeps a body that stays under both tolerances long enough; it then stops dead.
-        if (s.sliding && s.velocity.magnitude < p.sleepLinearTolerance && Mathf.Abs(s.spin) < p.sleepAngularTolerance)
+        // Box2D sleeps a body that stays under both tolerances long enough; it then stops dead. (When a Rigidbody2D
+        // is moving the rock, Box2D does that itself, so only the standalone use needs it.)
+        if (integratePosition && !s.freeFlight && s.velocity.magnitude < p.sleepLinearTolerance && Mathf.Abs(s.spin) < p.sleepAngularTolerance)
         {
             s.sleepTimer += dt;
             if (s.sleepTimer >= p.sleepSeconds)

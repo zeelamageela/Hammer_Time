@@ -15,13 +15,13 @@ public class RockPhysicsParityTests
 
     static RockState Fly(float v0, bool inTurn, RockPhysicsProfile p, out int releaseStep, float seconds, System.Action<float, RockState> onStep = null)
     {
-        var s = RockPhysics.Launch(new Vector2(0f, -25f), new Vector2(0f, v0));
+        var s = RockPhysics.Launch(new Vector2(0f, -25f), new Vector2(0f, v0), p);
         releaseStep = -1;
         int steps = Mathf.RoundToInt(seconds / Dt);
         for (int i = 1; i <= steps; i++)
         {
             RockPhysics.Step(ref s, p, Dt);
-            if (!s.sliding && s.position.y > RockPhysics.ReleaseY)
+            if (s.freeFlight && s.position.y > RockPhysics.ReleaseY)
             {
                 RockPhysics.Release(ref s, p, inTurn);
                 releaseStep = i;
