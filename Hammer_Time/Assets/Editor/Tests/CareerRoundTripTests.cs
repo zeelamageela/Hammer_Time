@@ -259,6 +259,30 @@ public class CareerRoundTripTests
     }
 
     [Test]
+    public void SaveFromAMatchScene_KeepsTheOwnedEquipmentCollections()
+    {
+        // The arena's EquipmentManager is gone in a match scene; saving there used to write an empty collection.
+        var arena = new GameObject("TestEquipMgr");
+        made.Add(arena);
+        var em = arena.AddComponent<EquipmentManager>();
+        em.handles = new[] { new Equipment { id = 0, cost = 0 }, new Equipment { id = 9, cost = 10830f } };
+        em.heads = new[] { new Equipment { id = 30, cost = 0 } };
+        em.footwear = new[] { new Equipment { id = 60, cost = 0 } };
+        em.apparel = new[] { new Equipment { id = 80, cost = 0 } };
+
+        var cm = NewManager();
+        var inArena = ToData(cm);
+        Assert.AreEqual(2, inArena.allEquipment.handles.Count);
+
+        UnityEngine.Object.DestroyImmediate(arena);   // leave the arena
+        var inMatch = ToData(cm);
+
+        Assert.AreEqual(2, inMatch.allEquipment.handles.Count, "handles wiped by a save with no EquipmentManager");
+        Assert.AreEqual(10830f, inMatch.allEquipment.handles[1].cost, 0.01f);
+        Assert.AreEqual(1, inMatch.allEquipment.apparel.Count);
+    }
+
+    [Test]
     public void Career_SavedTwice_StaysIdentical()
     {
         // Load -> save -> load again must not drift (a field written differently from how it is read would creep).

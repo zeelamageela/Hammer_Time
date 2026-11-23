@@ -110,6 +110,17 @@ public class CareerManager : MonoBehaviour
     public bool inProgress;
     public int season;
     public bool loadedFromSave;
+
+    // The shop/owned equipment collections live on the arena's EquipmentManager, which doesn't exist in match scenes.
+    // The last copy seen is kept here so a save made from a match scene doesn't erase it.
+    [System.NonSerialized] EquipmentCollectionData lastEquipmentSnapshot;
+
+    static EquipmentCollectionData ReadEquipmentFromDisk()
+    {
+        var onDisk = CareerSaveService.LoadCareer();
+        var eq = onDisk != null ? onDisk.allEquipment : null;
+        return eq != null && eq.handles != null && eq.handles.Count > 0 ? eq : null;
+    }
     public List<int> tournyResults;
 
     [SerializeField]
@@ -1831,6 +1842,7 @@ public class CareerManager : MonoBehaviour
         // Clear equipment
         activeEquipID = null;
         inventoryID = null;
+        lastEquipmentSnapshot = null;
         activeHandleTier = 0;
 
         // Clear all sponsor/card data
@@ -2384,10 +2396,18 @@ public class CareerManager : MonoBehaviour
         
         // Serialize all equipment if EquipmentManager exists
         EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
+        if (em == null)
+        {
+            // Match scenes have no EquipmentManager. Writing an empty collection here used to wipe the owned items
+            // from the save, so the arena fell back to its built-in defaults on return.
+            data.allEquipment = lastEquipmentSnapshot ?? ReadEquipmentFromDisk();
+            if (data.allEquipment != null)
+                Debug.Log("[CareerManager] No EquipmentManager in this scene - keeping the last known equipment in the save");
+        }
         if (em != null)
         {
             data.allEquipment = new EquipmentCollectionData();
-            
+
             // Serialize handles
             if (em.handles != null)
             {
@@ -2435,13 +2455,14 @@ public class CareerManager : MonoBehaviour
                     }
                 }
             }
+            lastEquipmentSnapshot = data.allEquipment;
         }
-        else
+        else if (data.allEquipment == null)
         {
-            Debug.LogWarning("[CareerManager] EquipmentManager not found during save - equipment data will not be saved");
-            data.allEquipment = new EquipmentCollectionData(); // Save empty collection
+            Debug.LogWarning("[CareerManager] EquipmentManager not found during save and no earlier equipment to keep - saving empty");
+            data.allEquipment = new EquipmentCollectionData();
         }
-        
+
         // Cards/Sponsors
         if (cardPUIDList != null) data.cardPowerUpIDs.AddRange(cardPUIDList);
         if (cardSponsorIDList != null) data.cardSponsorIDs.AddRange(cardSponsorIDList);
@@ -2781,6 +2802,8 @@ public class CareerManager : MonoBehaviour
         activeHandleTier = data.activeHandleTier;
         
         // Restore equipment collections if available
+        if (data.allEquipment != null && data.allEquipment.handles != null && data.allEquipment.handles.Count > 0)
+            lastEquipmentSnapshot = data.allEquipment;
         if (data.allEquipment != null)
         {
             EquipmentManager em = FindFirstObjectByType<EquipmentManager>();

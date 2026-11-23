@@ -121,37 +121,10 @@ public class EquipmentManager : MonoBehaviour
         if (apparel != null) allEquipment.AddRange(apparel.Where(e => e != null));
         var equipDict = allEquipment.ToDictionary(e => e.id, e => e);
 
-        // Set activeEquip from IDs
-        if (cm.loadedFromSave)
-        {
-            Debug.Log("Set Inventory - Loaded From Save - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
-
-            activeEquip = new Equipment[4];
-            for (int i = 0; i < 4; i++)
-            {
-                int id = (cm.activeEquipID != null && cm.activeEquipID.Length > i) ? cm.activeEquipID[i] : -1;
-                if (equipDict.ContainsKey(id))
-                {
-                    activeEquip[i] = equipDict[id];
-                    activeEquip[i].active = true;
-                }
-                else
-                {
-                    activeEquip[i] = null; // Fallback to null if ID is invalid
-                }
-            }
-        }
-        else
-        {
-            Debug.Log("Set Inventory - NOT Loaded From Save - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
-            // Fallback: pick first owned/default
-            activeEquip[0] = inventory[0].equipment;
-            activeEquip[1] = inventory[1].equipment;
-            activeEquip[2] = inventory[2].equipment;
-            activeEquip[3] = inventory[3].equipment;
-            for (int i = 0; i < 4; i++)
-                activeEquip[i].active = true;
-        }
+        // Set activeEquip from the saved IDs. This must not depend on cm.loadedFromSave: SaveCareer clears that flag,
+        // so after any save (a purchase saves) the arena reloaded with the starter kit / the wrong slots equipped.
+        Debug.Log("Set Inventory - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        activeEquip = ResolveActiveEquip(cm.activeEquipID);
 
             //if (cm.activeEquipID != null && cm.activeEquipID.Length == 4)
             //{
@@ -196,6 +169,38 @@ public class EquipmentManager : MonoBehaviour
                 SetPoints(eq);
 
         Debug.Log("After SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+    }
+
+    /// <summary>
+    /// Picks the equipped item for each slot (handle, head, footwear, apparel) from saved ids. A slot whose id is
+    /// missing, unknown, or not owned falls back to the first owned item of that slot's own category.
+    /// </summary>
+    public Equipment[] ResolveActiveEquip(int[] ids)
+    {
+        var slots = new[] { handles, heads, footwear, apparel };
+        foreach (var arr in slots)
+            if (arr != null)
+                foreach (var eq in arr)
+                    if (eq != null) eq.active = false;
+
+        var result = new Equipment[4];
+        for (int i = 0; i < 4; i++)
+        {
+            int id = (ids != null && ids.Length > i) ? ids[i] : -1;
+            var arr = slots[i];
+            if (arr == null) continue;
+
+            Equipment pick = null;
+            foreach (var eq in arr)
+                if (eq != null && eq.id == id) { pick = eq; break; }
+
+            if (pick == null || !pick.owned)
+                pick = arr.FirstOrDefault(e => e != null && e.owned) ?? arr.FirstOrDefault(e => e != null);
+
+            result[i] = pick;
+            if (pick != null) pick.active = true;
+        }
+        return result;
     }
 
     public void EnsureDefaultActiveEquip()

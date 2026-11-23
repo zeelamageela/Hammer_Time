@@ -281,6 +281,13 @@ Still true that those scene names aren't in Build Settings, but the scene pass s
 **What goes wrong:** a purchase is lost if the app dies before the next 30 s autosave or pause save; the player keeps the item in memory but not on disk, or the reverse if the cash write lands first. Low odds but easy to hit when buying and immediately swiping the app away.
 **Fix:** call `cm.SaveCareer()` at the end of `Confirm(true)` and `AssignPoints`.
 
+### A-18. Equipped items reset to the wrong slots after returning to the arena — FIXED (4 unit tests; not yet run end-to-end on device)
+**Where:** `EquipmentManager.SetInventory` non-"loadedFromSave" branch (`activeEquip[i] = inventory[i]`).
+**What went wrong:** `CareerManager.SaveCareer` clears `loadedFromSave`, and A-9 made every purchase save, so the next `SetInventory` ignored `activeEquipID` and equipped the first four owned items across all categories. Owning two handles put the second handle in the head slot, and the bought handle was not equipped. Found on the phone.
+**Fix:** `SetInventory` always resolves from `activeEquipID` via `ResolveActiveEquip` (per-slot fallback to that category's first owned item). `EquipmentResolveTests`.
+
+**Second cause (the main one, found in the Editor log after a Play test):** match scenes have no `EquipmentManager`, so the save made when a tournament starts wrote an empty `allEquipment`. Back in the arena the shop fell back to the scene's Inspector defaults (handles 0-3 at $0/$500/$1000/$2000) and the bought item was gone. `CareerManager` now keeps `lastEquipmentSnapshot` (falls back to the on-disk copy) and writes that when there is no EquipmentManager; cleared on new career. Test: `SaveFromAMatchScene_KeepsTheOwnedEquipmentCollections`.
+
 ### A-10. Possible out-of-range on week in `SponsorManager.AssignPoints`
 **Status:** Suspected.
 **Where:** `SponsorManager.cs:110-111` (`idPUList[cm.week]`); `idPUList` is allocated from `pUpList.localSponsors.Length` (`:188`).
