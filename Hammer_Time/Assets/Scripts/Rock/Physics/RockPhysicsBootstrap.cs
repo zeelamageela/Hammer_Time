@@ -19,12 +19,19 @@ public static class RockPhysicsBootstrap
     /// <summary>What a player gets when no tester option is available (a release build).</summary>
     public const PhysicsChoice Shipping = PhysicsChoice.Arcade;
 
+    const string StopKey = "StopPower";
+    /// <summary>Stop curves for Arcade: firm, soft (default), mellow, extra mellow.</summary>
+    public static readonly float[] StopPowers = { 0.5f, 0.6f, 0.7f, 0.8f };
+    public static readonly string[] StopNames = { "Firm", "Soft", "Mellow", "Extra mellow" };
+
     public static PhysicsChoice Current { get; private set; }
+    public static float StopPower { get; private set; } = 0.6f;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
         Current = Load();
+        StopPower = LoadStopPower();
         RockPhysicsSettings.Use(Make(Current));
     }
 
@@ -34,6 +41,31 @@ public static class RockPhysicsBootstrap
         try { return (PhysicsChoice)Mathf.Clamp(PlayerPrefs.GetInt(Key, (int)Shipping), 0, 2); }
         catch { return Shipping; }
     }
+
+    static float LoadStopPower()
+    {
+        if (!DevOptions.Enabled) return 0.6f;
+        try { return Mathf.Clamp(PlayerPrefs.GetFloat(StopKey, 0.6f), StopPowers[0], StopPowers[StopPowers.Length - 1]); }
+        catch { return 0.6f; }
+    }
+
+    /// <summary>Cycle Arcade's stop curve (firm, soft, mellow, extra mellow, back to firm). Only changes Arcade.</summary>
+    public static void NextStopCurve()
+    {
+        StopPower = StopPowers[(StopIndex() + 1) % StopPowers.Length];
+        try { PlayerPrefs.SetFloat(StopKey, StopPower); PlayerPrefs.Save(); } catch { }
+        if (Current == PhysicsChoice.Arcade) RockPhysicsSettings.Request(Make(Current));
+    }
+
+    public static int StopIndex()
+    {
+        int best = 0;
+        for (int i = 1; i < StopPowers.Length; i++)
+            if (Mathf.Abs(StopPowers[i] - StopPower) < Mathf.Abs(StopPowers[best] - StopPower)) best = i;
+        return best;
+    }
+
+    public static string StopLabel() { return StopNames[StopIndex()] + " (" + StopPowers[StopIndex()].ToString("0.0") + ")"; }
 
     /// <summary>Choose and remember a profile. Applied straight away when no rock is moving, otherwise at the next throw.</summary>
     public static void Choose(PhysicsChoice choice)
@@ -49,7 +81,7 @@ public static class RockPhysicsBootstrap
         {
             case PhysicsChoice.Classic: return RockPhysicsProfile.Legacy();
             case PhysicsChoice.RealTime: return RockPhysicsProfile.Real();
-            default: return RockPhysicsProfile.Arcade();
+            default: return RockPhysicsProfile.Arcade(StopPower);
         }
     }
 

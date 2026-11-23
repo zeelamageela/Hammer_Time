@@ -254,7 +254,7 @@ public static class Measure
         var sim = new TrajectorySimulator(0, 0);
         try
         {
-            foreach (var pair in new[] { ("Legacy", RockPhysicsProfile.Legacy()), ("Arcade", RockPhysicsProfile.Arcade()), ("Real", RockPhysicsProfile.Real()) })
+            foreach (var pair in new[] { ("Legacy", RockPhysicsProfile.Legacy()), ("Arcade 0.5 firm", RockPhysicsProfile.Arcade(0.5f)), ("Arcade 0.6 soft", RockPhysicsProfile.Arcade()), ("Arcade 0.7 mellow", RockPhysicsProfile.Arcade(0.7f)), ("Arcade 0.8 extra mellow", RockPhysicsProfile.Arcade(0.8f)), ("Real", RockPhysicsProfile.Real()) })
             {
                 RockPhysicsSettings.Use(pair.Item2);
                 sb.AppendLine("== " + pair.Item1 + "  (live rock = Box2D + RockSlide, out-turn, from the hack)");
@@ -267,6 +267,53 @@ public static class Measure
                     float h2h = (r.tFar >= 0 && r.tNear >= 0) ? r.tFar - r.tNear : -1;
                     sb.AppendLine(string.Format("{0,5:F2}  | {1,6:F2}  | {2,6:F2}  | {3,6:F2} | ({4,6:F2},{5,6:F2})   | ({6,6:F2},{7,6:F2})   | ({8,5:F2},{9,5:F2})",
                         w, r.tNear, h2h, r.tRest, r.xRest, r.yRest, end.x, end.y, r.xRest - end.x, r.yRest - end.y));
+                }
+            }
+        }
+        finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); Physics2D.simulationMode = mode; }
+        return sb.ToString();
+    }
+
+    // Two-broom sweeps change only the friction handle: apply them to a live rock a moment after the hog line, see how much farther it goes.
+    public static string Sweeps()
+    {
+        var rf = Rock();
+        var rb = rf.GetComponent<Rigidbody2D>();
+        var sb = new StringBuilder();
+        var mode = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        try
+        {
+            foreach (var pair in new[] { ("Classic", RockPhysicsProfile.Legacy()), ("Arcade", RockPhysicsProfile.Arcade()), ("Real", RockPhysicsProfile.Real()) })
+            {
+                RockPhysicsSettings.Use(pair.Item2);
+                sb.AppendLine("== " + pair.Item1 + " weight 8.5: rest y (x)   [sweep applied 0.6 s of rock-time after the hog]");
+                foreach (var cfg in new[] { ("none", 0f, 0f), ("weight sweep (lin -0.01, ang +0.07)", 0.0095f, 0.068f), ("weight sweep, strong sweepers (lin -0.02, ang +0.14)", 0.019f, 0.136f), ("hard sweep (lin -0.08, ang +0.05)", 0.082f, 0.054f), ("hard sweep, strong sweepers (lin -0.165, ang +0.11)", 0.165f, 0.11f) })
+                {
+                    Reset(rf, 8.5f, false, -25f);
+                    var slide = rf.GetComponent<RockSlide>();
+                    bool applied = false; int n = 0; float before = 0f, after = 0f;
+                    int stepsAfterHog = 0;
+                    for (int i = 0; i < 9000; i++)
+                    {
+                        Tick(rf); Physics2D.Simulate(Dt);
+                        if (rf.GetComponent<Rock_Release>().released)
+                        {
+                            stepsAfterHog++;
+                            if (!applied && stepsAfterHog > Mathf.RoundToInt(0.6f * pair.Item2.timeStretch / Dt))
+                            {
+                                before = slide.LinearDamping;
+                                slide.LinearDamping = RockSlide.NominalLinearDamping;     // exactly what Sweep.SweepWeight/Hard do
+                                slide.AngularDamping = RockSlide.NominalAngularDamping;
+                                slide.LinearDamping -= cfg.Item2;
+                                slide.AngularDamping += cfg.Item3;
+                                after = slide.LinearDamping; applied = true;
+                            }
+                        }
+                        if (stepsAfterHog > 10 && rb.linearVelocity.magnitude < RockPhysicsSettings.Speed(0.01f)) break;
+                        n++;
+                    }
+                    sb.AppendLine(string.Format("  {0,-55} rest y {1,6:F2}  x {2,6:F2}   (lin handle {3:F3} -> {4:F3})", cfg.Item1, rb.position.y, rb.position.x, before, after));
                 }
             }
         }

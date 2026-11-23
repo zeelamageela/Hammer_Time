@@ -263,4 +263,56 @@ public class ConstantDecelTests
             Assert.Less(t, 16f, $"takes too long to stop at weight {w}");
         }
     }
+
+    [Test]
+    public void EveryStopCurve_FollowsTheOldPaths_KeepsThePace_AndLandsSoftly()
+    {
+        var legacy = RockPhysicsProfile.Legacy();
+        foreach (float power in new[] { 0.5f, 0.6f, 0.7f, 0.8f })
+        {
+            var arcade = RockPhysicsProfile.Arcade(power);
+            foreach (float w in Weights)
+            foreach (bool inTurn in new[] { false, true })
+            {
+                var a = Fly(legacy, w, inTurn);
+                var b = Fly(arcade, w, inTurn);
+                float top = Mathf.Min(a.end.y, b.end.y) - 0.1f, worst = 0f;
+                for (float y = RockPhysics.ReleaseY + 0.1f; y < top; y += 0.25f)
+                    worst = Mathf.Max(worst, Mathf.Abs(XAt(a, y) - XAt(b, y)));
+                Assert.Less(worst, 0.07f, $"path differs by {worst:F3}: stop curve {power}, weight {w}");
+                Assert.AreEqual(a.end.y, b.end.y, 0.4f, $"stopping distance: stop curve {power}, weight {w} (within ~1% of the slide)");
+            }
+            var button = Fly(arcade, 8.5f, false);
+            Assert.AreEqual(3.28f, button.farHogTime - button.hogTime, 0.2f, $"hog-to-hog pace, stop curve {power}");
+            Assert.Less(button.stopTime, 20f, $"stop curve {power} takes too long");
+        }
+    }
+
+    [Test]
+    public void ASweepThatLowersFrictionForGood_IsPartOfTheSimulatorsPrediction()
+    {
+        // The AI sweeper re-predicts from the rock's real state. A two-broom sweep changes the friction permanently, so the prediction must
+        // include it, otherwise the AI never sees what its own sweeping achieved.
+        var sim = new TrajectorySimulator(0f, 0f);
+        try
+        {
+            foreach (var profile in new[] { RockPhysicsProfile.Arcade(), RockPhysicsProfile.Legacy() })
+            {
+                RockPhysicsSettings.Use(profile);
+                var s = RockPhysics.Launch(new Vector2(0f, -25f), new Vector2(0f, profile.LaunchSpeedFromWeight(8.5f)), profile);
+                for (int i = 0; i < 100; i++)
+                {
+                    RockPhysics.Step(ref s, profile, Dt);
+                    if (s.freeFlight && s.position.y > RockPhysics.ReleaseY) RockPhysics.Release(ref s, profile, false);
+                }
+                Assert.IsFalse(s.freeFlight);
+                var plain = sim.SimulateTrajectoryFromState(s, false, 400, null);
+                var swept = s;
+                if (profile.IsLegacy) swept.linearDamping = 0.30f; else swept.frictionScale = 0.8f;
+                var sweptPath = sim.SimulateTrajectoryFromState(swept, false, 400, null);
+                Assert.Greater(sweptPath[sweptPath.Count - 1].y, plain[plain.Count - 1].y + 1.5f, "a swept rock must be predicted to go farther");
+            }
+        }
+        finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); }
+    }
 }

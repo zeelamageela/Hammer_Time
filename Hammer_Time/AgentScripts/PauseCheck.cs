@@ -1,30 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text;
 public static class PauseCheck
 {
     public static string Start()
     {
         var pm = Object.FindFirstObjectByType<PauseMenu>();
-        string r = "profile at start: law=" + RockPhysicsSettings.Current.law + " stretch=" + RockPhysicsSettings.Current.timeStretch + " choice=" + RockPhysicsBootstrap.Current + " devOptions=" + DevOptions.Enabled + " flickAvailable=" + GameVisualizationSettings.FlickModeAvailable + "\n";
+        string r = "profile at start: law=" + RockPhysicsSettings.Current.law + " power=" + RockPhysicsSettings.Current.stopPower + " choice=" + RockPhysicsBootstrap.Current + "\n";
         if (pm == null) return r + "no PauseMenu in this scene";
         pm.Pause();
-        var btn = pm.pauseMenuUI.transform.Find("PhysicsPaceButton");
-        r += "button exists=" + (btn != null);
-        if (btn != null) r += " label='" + btn.GetComponentInChildren<Text>().text + "'";
-        ScreenCapture.CaptureScreenshot("AgentScripts/pause_shot.png");
+        foreach (var n in new[] { "PhysicsPaceButton", "StopCurveButton" })
+        {
+            var b = pm.pauseMenuUI.transform.Find(n);
+            r += n + " exists=" + (b != null) + (b != null ? " label='" + b.GetComponentInChildren<Text>().text + "'" : "") + "\n";
+        }
         return r;
     }
-    public static string Tap()
+    public static string TapStop()
     {
         var pm = Object.FindFirstObjectByType<PauseMenu>();
-        pm.pauseMenuUI.transform.Find("PhysicsPaceButton").GetComponent<Button>().onClick.Invoke();
-        var t = pm.pauseMenuUI.transform.Find("PhysicsPaceButton").GetComponentInChildren<Text>().text;
-        return "after tap: '" + t + "' law=" + RockPhysicsSettings.Current.law + " stretch=" + RockPhysicsSettings.Current.timeStretch.ToString("F2") + " anyMoving=" + RockSlide.AnyRockMoving();
+        var b = pm.pauseMenuUI.transform.Find("StopCurveButton");
+        b.GetComponent<Button>().onClick.Invoke();
+        return "after tap: '" + b.GetComponentInChildren<Text>().text + "' law=" + RockPhysicsSettings.Current.law + " power=" + RockPhysicsSettings.Current.stopPower.ToString("F2") + " strength=" + RockPhysicsSettings.Current.stopStrength.ToString("F4");
     }
     public static string End()
     {
         var pm = Object.FindFirstObjectByType<PauseMenu>(); if (pm != null) pm.Resume();
-        PlayerPrefs.DeleteKey("PhysicsProfile");
-        return "resumed";
+        PlayerPrefs.DeleteKey("PhysicsProfile"); PlayerPrefs.DeleteKey("StopPower");
+        return "resumed, prefs cleared";
     }
 }

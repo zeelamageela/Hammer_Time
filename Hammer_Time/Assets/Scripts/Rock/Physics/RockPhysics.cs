@@ -79,11 +79,30 @@ public class RockPhysicsProfile
 
     public static RockPhysicsProfile Legacy() { return new RockPhysicsProfile(); }
 
-    /// <summary>The game's pace, constant-decel friction. Same weights, same paths as the old rock.</summary>
-    public static RockPhysicsProfile Arcade()
+    /// <summary>The game's pace, soft-stop friction (stopPower 0.6). Same weights, same paths as the old rock.</summary>
+    public static RockPhysicsProfile Arcade() { return Arcade(0.6f); }
+
+    // Sideways-pull constants fitted offline to the old rock's paths for each stop curve (all within 2.6 cm at every weight).
+    static readonly float[] FitPower = { 0.5f, 0.6f, 0.7f, 0.8f };
+    static readonly float[] FitFade = { 0.3f, 0.4f, 0.5f, 0.6f };
+    static readonly float[] FitStrength = { 0.6548f, 0.5603f, 0.4685f, 0.3807f };
+    static readonly float[] FitExponent = { -0.646f, -0.55f, -0.44f, -0.311f };
+
+    /// <summary>
+    /// Soft-stop at the game's pace with a chosen stop curve: 0.5 firm (button draw rests ~9 s after the hog), 0.6 soft (~10 s),
+    /// 0.7 mellow (~12 s), 0.8 extra mellow (~15 s). Powers between the fitted values are interpolated.
+    /// </summary>
+    public static RockPhysicsProfile Arcade(float stopPower)
     {
         var p = new RockPhysicsProfile();
         p.law = FrictionLaw.SoftStop;
+        p.stopPower = Mathf.Clamp(stopPower, FitPower[0], FitPower[FitPower.Length - 1]);
+        p.stopStrength = StopStrengthFor(p.stopPower);
+        int i = Mathf.Clamp(Mathf.FloorToInt((p.stopPower - FitPower[0]) / 0.1f + 1e-4f), 0, FitPower.Length - 2);
+        float t = Mathf.InverseLerp(FitPower[i], FitPower[i + 1], p.stopPower);
+        p.lateralFadePower = Mathf.Lerp(FitFade[i], FitFade[i + 1], t);
+        p.curlStrength = Mathf.Lerp(FitStrength[i], FitStrength[i + 1], t);
+        p.curlWeightExponent = Mathf.Lerp(FitExponent[i], FitExponent[i + 1], t);
         return p;
     }
 

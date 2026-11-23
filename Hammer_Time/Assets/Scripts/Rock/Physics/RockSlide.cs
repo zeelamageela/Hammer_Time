@@ -175,22 +175,17 @@ public class RockSlide : MonoBehaviour
     }
 
     /// <summary>
-    /// The rock's current state for the simulator (the AI sweeper re-predicts from it mid-flight). Unswept by default:
-    /// the AI asks "where would it stop if nobody sweeps?".
+    /// The rock's current state for the simulator (the AI sweeper re-predicts from it mid-flight): "where would it stop if nobody
+    /// sweeps any more?". A two-broom sweep changes the rock's friction for good, so that stays in the prediction (otherwise the AI
+    /// never sees what its own sweeping achieved and keeps sweeping). Only the momentary directional-sweep curl boost is dropped.
     /// </summary>
-    public RockState Snapshot(bool unswept = true)
+    public RockState Snapshot()
     {
         Init();
         RockState s = state;
         s.position = body.position;
         s.velocity = body.linearVelocity;
-        if (unswept)
-        {
-            s.frictionScale = 1f;
-            s.curlMultiplier = 1f;
-            s.linearDamping = Law.linearDamping;
-            s.angularDamping = Law.angularDamping;
-        }
+        s.curlMultiplier = Law.IsLegacy ? 1f : angularCurlFactor;
         return s;
     }
 
