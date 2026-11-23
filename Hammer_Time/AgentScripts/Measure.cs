@@ -26,7 +26,11 @@ public static class Measure
 
     static Rock_Force Rock()
     {
-        var rf = Object.FindFirstObjectByType<Rock_Force>();
+        var all = Object.FindObjectsByType<Rock_Force>(FindObjectsInactive.Include);
+        Rock_Force rf = null;
+        foreach (var c in all) if (c.name == "YELLERRR 1") rf = c;
+        if (rf == null) rf = all[0];
+        rf.GetComponent<Rigidbody2D>().simulated = true;
         foreach (var other in Object.FindObjectsByType<Rock_Info>(FindObjectsInactive.Include))
             if (other.gameObject != rf.gameObject) { var orb = other.GetComponent<Rigidbody2D>(); if (orb != null) orb.simulated = false; }
         return rf;
@@ -127,6 +131,63 @@ public static class Measure
             sb.AppendLine("  v0  | hack>NH | NH>FH  | NH>tee | <0.1   | rest   | vNH   | vFH  | xAtFH | path |  rest(x,y)");
             foreach (float v0 in new[] { 8.5f, 9.35f, 12.4f, 13.75f, 15.8f })
                 sb.AppendLine(Row(Fire(rf, v0, false, -25f)));
+        }
+        finally { Physics2D.simulationMode = mode; }
+        return sb.ToString();
+    }
+
+    public static string Spin()
+    {
+        var rf = Rock();
+        var rb = rf.GetComponent<Rigidbody2D>();
+        var sb = new StringBuilder();
+        var mode = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        try
+        {
+            foreach (float v0 in new[] { 6f, 8f, 12f })
+            {
+                Reset(rf, v0, false, -25f);
+                var fu = rf.GetType().GetMethod("FixedUpdate", Any);
+                int released = -1;
+                for (int i = 0; i < 400; i++)
+                {
+                    fu.Invoke(rf, null); Physics2D.Simulate(Dt);
+                    if (released < 0 && rf.GetComponent<Rock_Release>().released) { released = i; }
+                    if (released >= 0 && i == released + 2) break;
+                }
+                sb.AppendLine("v0=" + v0 + " mass=" + rb.mass + " inertia=" + rb.inertia + " angVel(just after release)=" + rb.angularVelocity.ToString("F4")
+                    + " curl=" + rf.curl + " scaleFactor=" + rf.scaleFactor + " angDamp=" + rb.angularDamping + " linDamp=" + rb.linearDamping + " y=" + rb.position.y.ToString("F3") + " vy=" + rb.linearVelocity.y.ToString("F4")
+                    + " useAutoMass=" + rb.useAutoMass + " centerOfMass=" + rb.centerOfMass + " radius=" + ((CircleCollider2D)rf.GetComponent<Collider2D>()).radius + " scale=" + rf.transform.lossyScale);
+            }
+        }
+        finally { Physics2D.simulationMode = mode; }
+        return sb.ToString();
+    }
+
+    public static string Golden()
+    {
+        var rf = Rock();
+        var rb = rf.GetComponent<Rigidbody2D>();
+        var sb = new StringBuilder();
+        var mode = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        try
+        {
+            foreach (var spec in new[] { new Vector2(6f, 0f), new Vector2(8.5f, 0f), new Vector2(12.4f, 0f), new Vector2(8.5f, 1f) })
+            {
+                Reset(rf, spec.x, spec.y > 0.5f, -25f);
+                var fu = rf.GetType().GetMethod("FixedUpdate", Any);
+                sb.AppendLine("v0=" + spec.x + " inTurn=" + (spec.y > 0.5f) + "  [t, x, y, vx, vy, spin]");
+                int relStep = -1;
+                for (int step = 1; step <= 1500; step++)
+                {
+                    fu.Invoke(rf, null); Physics2D.Simulate(Dt);
+                    if (relStep < 0 && rf.GetComponent<Rock_Release>().released) { relStep = step; sb.AppendLine("  released at step " + step + " t=" + (step * Dt).ToString("F2") + " y=" + rb.position.y.ToString("F4") + " vy=" + rb.linearVelocity.y.ToString("F4")); }
+                    if (step % 50 == 0 || step == relStep + 1 || step == relStep + 2)
+                        sb.AppendLine("  " + (step * Dt).ToString("F2") + ", " + rb.position.x.ToString("F4") + ", " + rb.position.y.ToString("F4") + ", " + rb.linearVelocity.x.ToString("F5") + ", " + rb.linearVelocity.y.ToString("F5") + ", " + rb.angularVelocity.ToString("F3"));
+                }
+            }
         }
         finally { Physics2D.simulationMode = mode; }
         return sb.ToString();
