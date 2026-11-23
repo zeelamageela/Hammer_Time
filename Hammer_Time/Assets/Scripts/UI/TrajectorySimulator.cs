@@ -3,51 +3,20 @@ using UnityEngine;
 
 public class TrajectorySimulator
 {
-    // Physics constants (you'll need to tune these to match your actual rock physics)
-    private const float TIME_STEP = 0.05f; // Larger timestep for better performance (was 0.02f)
-    private const float MAX_SIMULATION_TIME = 10f; // Maximum time to simulate (reduced from 15f)
-    private const int TRAJECTORY_SAMPLE_RATE = 3; // Only add every Nth point to trajectory for performance
-    
-    // Ice friction parameters - TUNED TO MATCH ACTUAL ROCK BEHAVIOR
-    // Rock has linearDamping = 0.38 in Rigidbody2D BUT effective damping is HIGHER due to:
-    //   - Angular damping (0.32) creating additional drag
-    //   - Other physics interactions (collider drag, etc.)
-    // Empirical data: Rock travels ~60% of distance that 0.38 damping would predict
-    // Solution: Use HIGHER damping value in simulation to match reality
-    // Unity applies: velocity *= (1 - linearDamping * Time.fixedDeltaTime)
-    private float baseDamping = 0.62f; // Base damping (before global speed scaling)
-    private float linearDamping = 0.62f; // TUNED: Increased from 0.38 to match ACTUAL behavior (rock stops sooner than 0.38 predicts)
-    private float lateralFriction = 0.002f;  // Reduced accordingly
-    
-    // Curl parameters - SIMPLIFIED (removed late breaking)
-    private float curlAmount = 0.3f; // Legacy - now using angularVelocityCurl instead
-    
-    // Angular velocity curl model (matches Rock_Force.cs EXACTLY - READ FROM ROCK GAMEOBJECT!)
-    public Vector2 curlVector = new Vector2(-0.6f, 0f); // FIXED: Was +0.323, rock uses -0.323!
-    public float scaleFactor = 0.1f;
-    public float initialAngularVelocity = 60f; // This is the REAL value that works!
-    public float angularDamping = 0.32f; // FIXED: Was 0.05, Rigidbody2D uses 0.32!
-    public float curlForceScale = 1.0f; // TUNED: MUST MATCH Rock_Force.curlForceMultiplier (1.0)!
-    
+    // The rock's sliding physics (friction, spin, curl, stopping) lives in RockPhysics and is shared with the live
+    // rock (RockSlide), so a predicted path and a thrown path run the same code. Only the stepping and collisions are here.
+    private const float FIXED_DT = 0.02f;                 // same step as Unity's FixedUpdate, so the prediction matches the rock
+    private const float MAX_SIMULATION_TIME = 30f;        // seconds: a rock is asleep by ~20 s even at the heaviest weights
+    private const int STEPS_PER_POINT = 8;                // one trajectory point every 0.16 s (the line renderer and AI don't need more)
+
     // Rock properties
-    private float rockMass = 145f; // FIXED: Matches actual rock Rigidbody2D mass (was 19.96 - wrong!)
-    private float rockRadius = 0.14f; // Rock radius in your world units
-    
-    // CRITICAL: Curl force compensation for mass
-    // Unity's AddForce(ForceMode2D.Force) divides by mass internally
-    // We already divide by rockMass explicitly, so we need to compensate
-    // Use the "effective mass" for curl calculations to match the visual curl amount
-    private float curlEffectiveMass = 19.96f; // The original mass that gave correct curl behavior
-    
-    // EMPIRICAL CALIBRATION: Trajectory consistently overshoots by ~2.9 units
-    // This calibration factor scales the trajectory length to match actual rock behavior
-    // Theory: Simulation uses TIME_STEP=0.05s (2.5x FixedUpdate), may accumulate position errors
-    //private const float TRAJECTORY_LENGTH_CALIBRATION = 0.85f; // Reduce by 15% to match reality
-    
-    // Collision parameters
+    private float rockMass = 145f; // Matches the rock Rigidbody2D mass (collision response only; sliding uses the profile)
+    private float rockRadius = 0.14f; // Rock radius in world units
+
+    // Collision parameters (rock-to-rock; Phase 3 of the physics work will revisit these)
     private const float RESTITUTION = 0.85f; // Bounciness (0-1, curling rocks are fairly elastic)
     private const float COLLISION_DAMPING = 0.7f; // Energy loss on collision
-    
+
     // Result data
     public struct CollisionInfo
     {
@@ -64,87 +33,43 @@ public class TrajectorySimulator
     
     public CollisionInfo lastCollisionInfo { get; private set; }
     
+    private TrajectoryLine trajLine; // cached: used only for the launch-speed range that picks the curl strength
+    
     // Track speed at each trajectory point for visualization
     private List<float> trajectorySpeedList = new List<float>();
     
+    /// <param name="friction">UNUSED: friction now comes from RockPhysicsSettings.Current (kept so existing callers still compile).</param>
+    /// <param name="curl">UNUSED: curl now comes from RockPhysicsSettings.Current.</param>
     public TrajectorySimulator(float friction, float curl)
     {
-        baseDamping = friction;
-        linearDamping = friction;
-        curlAmount = curl;
-        
-        // NO SCALING! The tuned ratio (0.62 / 0.38 = 1.63x) already accounts for everything
-        // This ratio was carefully calibrated and should NOT be changed
-        Debug.Log($"[TrajectorySimulator] Initialized with friction: {friction:F3} (Rock's actual linearDamping=0.38, but effective damping is higher)");
     }
-    
+
     /// <summary>
     /// Simulates the rock's path and returns a list of positions, including collision handling
     /// </summary>
     /// <param name="forPlayerPreview">If true, uses INVERTED curl (for visual trajectory line). If false, uses REAL curl (for AI physics calculation)</param>
     public List<Vector2> SimulateTrajectory(
-        Vector2 startPosition, 
-        Vector2 initialVelocity, 
+        Vector2 startPosition,
+        Vector2 initialVelocity,
         bool isInTurn,
         int maxPoints = 200,
         List<GameObject> rocksInPlay = null,
-        bool forPlayerPreview = false)  // NEW: Differentiate AI calc from player preview
+        bool forPlayerPreview = false)  // no longer changes anything: the preview and the AI now use the one real model
     {
         List<Vector2> trajectoryPoints = new List<Vector2>();
         trajectorySpeedList = new List<float>(); // Reset speed tracking
-        
-        Vector2 position = startPosition;
-        Vector2 velocity = initialVelocity;
-        float currentTime = 0f;
-        
-        // === VELOCITY-BASED CURL SCALING ===
-        // In real curling: FAST rocks curl LESS, SLOW rocks curl MORE
-        // Scale curlVector based on initial velocity (matching Rock_Force.cs)
-        float currentVelocity = initialVelocity.magnitude;
-        
-        // Get min/max velocities from TrajectoryLine (if available)
-        TrajectoryLine trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
-        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 5f;   // Default: 5 m/s
-        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 15f;  // Default: 15 m/s
-        
-        // Calculate velocity ratio (0 = slowest, 1 = fastest)
-        float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
 
-        // Scale curl: 0.6 (slow shots) to 0.2 (fast shots)
-        // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
-        float curlMagnitude;
-
-        if (velocityRatio < 0.4f)
+        RockPhysicsProfile profile = RockPhysicsSettings.Current;
+        if (trajLine == null) trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
+        if (trajLine != null)
         {
-            curlMagnitude = Mathf.Lerp(0.6f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
-        }
-        else if (velocityRatio < 0.66f)
-        {
-            curlMagnitude = Mathf.Lerp(0.48f, 0.21f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
-        }
-        else
-        {
-            curlMagnitude = Mathf.Lerp(0.21f, 0.12f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
+            profile.minLaunchSpeed = trajLine.minVelocity;
+            profile.maxLaunchSpeed = trajLine.maxVelocity;
         }
 
-        // Apply to curlVector (will be used throughout simulation)
-        // MUST MATCH Rock_Force.cs convention: curlMagnitude * -dirMult
-        // Negative of dirMult because torque is inverted but curl isn't
-        Vector2 scaledCurlVector = new Vector2(curlMagnitude, 0f);
-        
-        //Debug.Log($"[TrajectorySimulator Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
-        
-        // REAL CURLING PHYSICS: NO spin before hog line!
-        // Hog line trigger is at Y = -16.15 (BoxCollider2D on "Hog_Line" GameObject)
-        const float HOG_LINE_Y = -16.15f;
-        bool pastHogLine = false;
-        float currentDamping = 0f; // Start with ZERO damping
-        
-        // REAL CURLING: Spin applied AT hog line, not at launch!
-        // Angular velocity starts at ZERO
-        float angularVelocity = 0f;
-        
-        // Reset collision info
+        // Thrown from the hack: free flight (no friction, no curl) until the near hog line, then the real sliding model.
+        RockState rock = RockPhysics.Launch(startPosition, initialVelocity, profile);
+
         lastCollisionInfo = new CollisionInfo
         {
             hasCollision = false,
@@ -157,304 +82,129 @@ public class TrajectorySimulator
             thrownRockPostCollisionPath = new List<Vector2>(),
             hitRockPostCollisionPath = new List<Vector2>()
         };
-        
-        // Add starting point
-        trajectoryPoints.Add(position);
-        trajectorySpeedList.Add(velocity.magnitude);
-        
-        // REMOVED: Debug.Log for performance - only log on errors
-        // Debug.Log($"[Simulator] Starting trajectory - initialVel: {initialVelocity} (mag: {initialVelocity.magnitude}), velocity: {velocity}, startPos: {startPosition}, position: {position}, isInTurn: {isInTurn}, rocks: {rocksInPlay?.Count ?? 0}");
-        
-        int iterationCount = 0; // Track actual loop iterations
-        float totalSimDistance = 0f;
-        Vector2 lastSimPosition = position;
-        
-        //Debug.Log($"[Trajectory SIM START] InitVel: {initialVelocity.magnitude:F3} m/s | StartPos: {startPosition}");
-        
+
+        trajectoryPoints.Add(rock.position);
+        trajectorySpeedList.Add(rock.velocity.magnitude);
+
+        float currentTime = 0f;
+        int step = 0;
+
         while (currentTime < MAX_SIMULATION_TIME && trajectoryPoints.Count < maxPoints)
         {
-            // Apply friction (deceleration)
-            float speed = velocity.magnitude;
-            
-            // DIAGNOSTIC: Log every 10 iterations (~0.5 seconds real time)
-            if (iterationCount > 0 && iterationCount % 10 == 0)
+            Vector2 before = rock.position;
+            RockPhysics.Step(ref rock, profile, FIXED_DT);
+            if (rock.freeFlight && rock.position.y > RockPhysics.ReleaseY)
+                RockPhysics.Release(ref rock, profile, isInTurn);
+            currentTime += FIXED_DT;
+            step++;
+
+            // Collision: did the rock's path this step come within two radii of a stationary rock? (swept test, so a
+            // fast rock cannot skip over a rock between steps)
+            if (rocksInPlay != null)
             {
-                float simFrameDist = Vector2.Distance(position, lastSimPosition);
-                totalSimDistance += simFrameDist;
-                
-                //Debug.Log($"[Trajectory Iter {iterationCount}] Pos: ({position.x:F3}, {position.y:F3}) | " +
-                //         $"Vel: {speed:F3} m/s | " +
-                //         $"AngVel: {angularVelocity:F2} | " +
-                //         $"Damping: {currentDamping:F3} | " +
-                //         $"IterDist: {simFrameDist:F4} | TotalDist: {totalSimDistance:F3}");
-                
-                lastSimPosition = position;
-            }
-            
-            if (speed < 0.01f)
-            {
-                //Debug.Log($"[Trajectory SIM STOPPED] Final Position: ({position.x:F3}, {position.y:F3}) | Total Distance: {totalSimDistance:F3} | Iterations: {iterationCount}");
-                // Rock has essentially stopped
-                break;
-            }
-            
-            // Check for collisions with other rocks
-            if (rocksInPlay != null && !lastCollisionInfo.hasCollision)
-            {
-                foreach (GameObject rock in rocksInPlay)
+                GameObject hitRock = null;
+                float earliest = 2f;
+                foreach (GameObject candidate in rocksInPlay)
                 {
-                    if (rock == null || !rock.activeInHierarchy)
+                    if (candidate == null || !candidate.activeInHierarchy)
                         continue;
-                    
-                    Vector2 rockPos = rock.transform.position;
-                    float distance = Vector2.Distance(position, rockPos);
-                    
-                    // IMPROVED: Detect potential collision earlier and increase resolution
-                    bool nearCollision = distance < rockRadius * 4f; // Within 4x rock radius
-                    
-                    if (nearCollision && iterationCount > 0)
+                    float f;
+                    if (SegmentEntersCircle(before, rock.position, candidate.transform.position, rockRadius * 2f, out f) && f < earliest)
                     {
-                        // HIGHER RESOLUTION: Use smaller time steps near collision
-                        float highResTimeStep = TIME_STEP * 0.2f; // 5x more detailed
-                        Vector2 tempPos = position - velocity * TIME_STEP; // Go back one step
-                        Vector2 tempVel = velocity;
-                        
-                        // Re-simulate this section with high resolution
-                        for (int substep = 0; substep < 5; substep++)
-                        {
-                            tempPos += tempVel * highResTimeStep;
-                            
-                            // Apply physics at high resolution (match FixedUpdate rate)
-                            // CRITICAL: Apply damping at Unity's FixedUpdate rate (0.02s)
-                            const float unityFixedDeltaTime = 0.02f;
-                            int highResDampingSteps = Mathf.RoundToInt(highResTimeStep / unityFixedDeltaTime);
-                            float highResDampingFactor = 1.0f;
-                            for (int d = 0; d < highResDampingSteps; d++)
-                            {
-                                highResDampingFactor *= (1.0f - linearDamping * unityFixedDeltaTime);
-                            }
-                            
-                            if (tempVel.magnitude > 0.1f)
-                            {
-                                // Use REAL angular velocity model (same as main loop)
-                                float tempVelX = angularVelocity * scaleFactor;
-                                int dirMult = isInTurn ? -1 : 1;  // MUST MATCH main loop
-                                // MUST USE -dirMult formula (matches main loop and Rock_Force.cs)
-                                Vector2 curlForce = new Vector2(-dirMult * scaledCurlVector.x * tempVelX, 0f);
-                                // CRITICAL: Use curlEffectiveMass for curl calculations
-                                Vector2 velocityChange = curlForce * highResTimeStep / curlEffectiveMass;
-                                tempVel += velocityChange * curlForceScale;
-                            }
-                            
-                            tempVel *= highResDampingFactor; // Apply Unity-style damping
-                            
-                            // Check collision at high resolution
-                            float distCheck = Vector2.Distance(tempPos, rockPos);
-                            if (distCheck < rockRadius * 2f)
-                            {
-                                // COLLISION DETECTED at high resolution!
-                                position = tempPos;
-                                velocity = tempVel;
-                                distance = distCheck;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // Collision detected
-                    if (distance < rockRadius * 2f)
-                    {
-                        // Calculate collision normal (direction FROM thrown rock TO hit rock)
-                        Vector2 collisionNormal = (rockPos - position).normalized;
-                        
-                        // CRITICAL FIX: The collision POINT is where the rocks' SURFACES touch,
-                        // not where the shooter's center is!
-                        // The shooter's center is at 'position', target center is at 'rockPos'
-                        // The actual contact point is rockRadius distance from target center, toward shooter
-                        Vector2 actualContactPoint = rockPos - collisionNormal * rockRadius;
-                        
-                        // Calculate collision response
-                        Vector2 hitRockVelocity = CalculateCollisionResponse(
-                            position, 
-                            velocity, 
-                            rockPos, 
-                            Vector2.zero, // Stationary rock
-                            out Vector2 newVelocity
-                        );
-                        
-                        // Debug collision angles
-                        float incomingAngle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
-                        float exitAngle = Mathf.Atan2(newVelocity.y, newVelocity.x) * Mathf.Rad2Deg;
-                        float hitRockAngle = Mathf.Atan2(hitRockVelocity.y, hitRockVelocity.x) * Mathf.Rad2Deg;
-                        float normalAngle = Mathf.Atan2(collisionNormal.y, collisionNormal.x) * Mathf.Rad2Deg;
-                        
-                        Debug.Log($"[Collision] Incoming: {incomingAngle:F1}°, Exit: {exitAngle:F1}°, HitRock: {hitRockAngle:F1}°, Normal: {normalAngle:F1}° | " +
-                                  $"InVel: {velocity.magnitude:F2}, OutVel: {newVelocity.magnitude:F2}, HitVel: {hitRockVelocity.magnitude:F2}");
-                        
-                        // FIXED: Show ACTUAL post-collision paths, not deflection indicators
-                        // Orange line: Where the thrown rock goes after hitting
-                        // Yellow line: Where the hit rock goes after being hit
-                        List<Vector2> thrownRockPath = SimulatePostCollisionPath(position, newVelocity, false);
-                        
-                        // Simulate hit rock's path (moves along collision normal)
-                        List<Vector2> hitRockPath = SimulatePostCollisionPath(rockPos, hitRockVelocity, false);
-                        
-                        Vector2 thrownRockFinal = thrownRockPath.Count > 0 ? thrownRockPath[thrownRockPath.Count - 1] : position;
-                        Vector2 hitRockFinal = hitRockPath.Count > 0 ? hitRockPath[hitRockPath.Count - 1] : rockPos;
-                        
-                        lastCollisionInfo = new CollisionInfo
-                        {
-                            hasCollision = true,
-                            collisionIndex = trajectoryPoints.Count,
-                            hitRock = rock,
-                            collisionPoint = actualContactPoint, // Surface contact point (for visualization)
-                            shooterCenterAtCollision = position, // Shooter's center at collision (for scoring!)
-                            finalPosition = thrownRockFinal,
-                            hitRockFinalPosition = hitRockFinal,
-                            thrownRockPostCollisionPath = thrownRockPath,
-                            hitRockPostCollisionPath = hitRockPath
-                        };
-                        
-                        // Continue simulation with new velocity for a few more points
-                        velocity = newVelocity;
-                        
-                        // Add collision point
-                        trajectoryPoints.Add(position);
-                        trajectorySpeedList.Add(velocity.magnitude);
-                        
-                        // Stop main trajectory here - post-collision paths are separate
-                        break;
+                        earliest = f;
+                        hitRock = candidate;
                     }
                 }
-                
-                // If collision detected, stop main simulation
-                if (lastCollisionInfo.hasCollision)
+
+                if (hitRock != null)
                 {
-                    break;
+                    Vector2 position = Vector2.Lerp(before, rock.position, earliest);
+                    Vector2 velocity = rock.velocity;
+                    Vector2 rockPos = hitRock.transform.position;
+
+                    // Direction FROM thrown rock TO hit rock; the surfaces touch one radius from the target's centre
+                    Vector2 collisionNormal = (rockPos - position).normalized;
+                    Vector2 actualContactPoint = rockPos - collisionNormal * rockRadius;
+
+                    Vector2 hitRockVelocity = CalculateCollisionResponse(position, velocity, rockPos, Vector2.zero, out Vector2 newVelocity);
+
+                    // Where each rock ends up: the thrown rock keeps its spin (and so its curl); the struck rock was sitting
+                    // still, so it just slides with the at-rest drag.
+                    RockState thrown = rock;
+                    thrown.position = position;
+                    thrown.velocity = newVelocity;
+                    RockState struck = RockPhysics.NewRestingRock(profile);
+                    struck.position = rockPos;
+                    struck.velocity = hitRockVelocity;
+
+                    List<Vector2> thrownRockPath = SimulatePostCollisionPath(thrown, profile);
+                    List<Vector2> hitRockPath = SimulatePostCollisionPath(struck, profile);
+
+                    Vector2 thrownRockFinal = thrownRockPath.Count > 0 ? thrownRockPath[thrownRockPath.Count - 1] : position;
+                    Vector2 hitRockFinal = hitRockPath.Count > 0 ? hitRockPath[hitRockPath.Count - 1] : rockPos;
+
+                    lastCollisionInfo = new CollisionInfo
+                    {
+                        hasCollision = true,
+                        collisionIndex = trajectoryPoints.Count,
+                        hitRock = hitRock,
+                        collisionPoint = actualContactPoint, // Surface contact point (for visualization)
+                        shooterCenterAtCollision = position, // Shooter's center at collision (for scoring!)
+                        finalPosition = thrownRockFinal,
+                        hitRockFinalPosition = hitRockFinal,
+                        thrownRockPostCollisionPath = thrownRockPath,
+                        hitRockPostCollisionPath = hitRockPath
+                    };
+
+                    // Add collision point; the main trajectory stops here - post-collision paths are separate
+                    trajectoryPoints.Add(position);
+                    trajectorySpeedList.Add(newVelocity.magnitude);
+                    return trajectoryPoints;
                 }
             }
-            
-            // Check if we've passed the hog line
-            if (!pastHogLine && position.y > HOG_LINE_Y)
+
+            if (step % STEPS_PER_POINT == 0)
             {
-                pastHogLine = true;
-                currentDamping = linearDamping; // NOW apply damping!
-                
-                // REAL CURLING: Apply spin NOW (at hog line, matching Rock_Force.Release())
-                // CRITICAL FIX: Angular velocity is ALWAYS POSITIVE - dirMult handles the direction!
-                // Don't negate based on isInTurn here, or it will double-negate with dirMult
-                angularVelocity = initialAngularVelocity;  // Always positive!
-                
-                //Debug.Log($"[Trajectory] Passed hog line at Y={position.y:F2}, enabling damping: {currentDamping}, spin: {angularVelocity} (dirMult will apply turn direction)");
+                trajectoryPoints.Add(rock.position);
+                trajectorySpeedList.Add(rock.velocity.magnitude);
             }
-            
-            // CRITICAL: Match Rock_Force behavior - increase damping when rock is nearly stopped!
-            // Rock_Force.cs increases linearDamping to 0.75 when speed < 0.01
-            // This makes the rock "stick" to the ice at the end for a more realistic stop
-            if (speed < 0.01f && currentDamping < 0.90f)
-            {
-                currentDamping = 0.90f; // Match Rock_Force's stopping damping
-            }
-            
-            // Calculate damping (Unity's multiplicative model)
-            // Unity: velocity *= (1 - linearDamping * Time.fixedDeltaTime)
-            // CRITICAL FIX: Unity applies damping at FixedUpdate interval (0.02s)
-            // Our TIME_STEP is 0.05s (2.5x longer), so we need to apply damping 2.5x
-            // Solution: Calculate damping as if applied multiple times at FixedUpdate rate
-            float fixedDeltaTime = 0.02f; // Unity's FixedUpdate interval
-            int dampingSteps = Mathf.RoundToInt(TIME_STEP / fixedDeltaTime); // How many FixedUpdates in our timestep
-            float dampingFactor = 1.0f;
-            for (int i = 0; i < dampingSteps; i++)
-            {
-                dampingFactor *= (1.0f - currentDamping * fixedDeltaTime); // Zero before hog line, linearDamping after
-            }
-            
-            // Apply curl (USING REAL ANGULAR VELOCITY MODEL FROM ROCK_FORCE.CS!)
-            // Rock_Force.cs: velX = angularVelocity; vel = Vector2(velX * scaleFactor, velY); AddForce(curl * vel)
-            if (speed > 0.1f && Mathf.Abs(angularVelocity) > 0.1f)
-            {
-                // EXACT MATCH TO Rock_Force.cs physics!
-                // vel.x = angularVelocity * scaleFactor (used for curl force calculation)
-                float velX = angularVelocity * scaleFactor;
-                float velY = 0f; // Not used in curl calculation in Rock_Force
-                
-                // Curl direction logic - MATCHES Rock_Force.cs
-                // flipAxis=true (in-turn) → dirMult=-1 → curl = -(-1) * mag = +mag (RIGHT)
-                // flipAxis=false (out-turn) → dirMult=+1 → curl = -(+1) * mag = -mag (LEFT)
-                int dirMult = isInTurn ? -1 : 1;
-                
-                // Apply curl force exactly as Rock_Force.cs does
-                // Formula: -dirMult * curlMagnitude
-                Vector2 curlForce = new Vector2(-dirMult * scaledCurlVector.x * velX, 0f);
-                
-                // Rock_Force applies this force every FixedUpdate (0.02s)
-                // We apply it every TIME_STEP (0.05s), so scale by time ratio
-                float timeScaleCorrection = TIME_STEP / 0.02f;  // Usually ~2.5x
-                
-                // AddForce in ForceMode2D.Force divides by mass and multiplies by deltaTime
-                // force_impulse = force * deltaTime / mass
-                // CRITICAL: Use curlEffectiveMass (19.96) instead of rockMass (145) to match visual curl
-                // The real mass is used for collisions, but curl force needs the "effective" mass
-                Vector2 velocityChange = curlForce * TIME_STEP / curlEffectiveMass;
-                velocity += velocityChange * curlForceScale; // Calibration factor
-                
-                // Apply angular damping (spin decays over time)
-                // This is KEY to parabolic curl! Angular velocity decreases SLOWER than linear velocity
-                angularVelocity *= (1.0f - angularDamping * TIME_STEP);
-                
-                // Debug curl at key velocity points
-                if (speed < 1.0f && iterationCount % 10 == 0)
-                {
-                    //Debug.Log($"[Curl @ slow] speed={speed:F2}, angVel={angularVelocity:F2}, velX={velX:F3}, curlForce={curlForce}, velChange={velocityChange}");
-                }
-            }
-            
-            // Apply damping (Unity's multiplicative model)
-            velocity *= dampingFactor;
-            
-            // Update position
-            position += velocity * TIME_STEP;
-            
-            // PERFORMANCE: Sample every Nth iteration to reduce trajectory point count
-            // Only add points when needed for visualization
-            if (iterationCount % TRAJECTORY_SAMPLE_RATE == 0 || speed < 0.5f || iterationCount < 5)
-            {
-                trajectoryPoints.Add(position);
-                trajectorySpeedList.Add(speed); // Track speed at this point
-            }
-            
-            currentTime += TIME_STEP;
-            iterationCount++;
+
+            if (rock.asleep)
+                break;
         }
-        
-        // Debug.Log($"[Simulator] Trajectory complete - {trajectoryPoints.Count} points, final pos: {position}, collision: {lastCollisionInfo.hasCollision}");
-        
-        // Record final position if no collision
-        if (!lastCollisionInfo.hasCollision)
+
+        // Always end on the exact stopping point
+        if (trajectoryPoints[trajectoryPoints.Count - 1] != rock.position)
         {
-            // CALIBRATION: Scale trajectory length to match actual rock behavior
-            // The simulation consistently overshoots by ~15%, likely due to TIME_STEP accumulation
-            Vector2 startPos = trajectoryPoints[0];
-            Vector2 travelVector = position - startPos;
-            //Vector2 calibratedPosition = startPos + (travelVector * TRAJECTORY_LENGTH_CALIBRATION);
-            
-            lastCollisionInfo = new CollisionInfo
-            {
-                hasCollision = false,
-                collisionIndex = -1,
-                hitRock = null,
-                collisionPoint = Vector2.zero,
-                shooterCenterAtCollision = Vector2.zero,
-                //finalPosition = calibratedPosition,  // Use calibrated position!
-                hitRockFinalPosition = Vector2.zero,
-                thrownRockPostCollisionPath = new List<Vector2>(),
-                hitRockPostCollisionPath = new List<Vector2>()
-            };
+            trajectoryPoints.Add(rock.position);
+            trajectorySpeedList.Add(rock.velocity.magnitude);
         }
-        
+
         return trajectoryPoints;
     }
-    
+
+    /// <summary>
+    /// Does the straight path from a to b come within `radius` of `center`? If so, f (0..1) is how far along the path
+    /// the distance first drops to `radius`.
+    /// </summary>
+    private static bool SegmentEntersCircle(Vector2 a, Vector2 b, Vector2 center, float radius, out float f)
+    {
+        f = 0f;
+        Vector2 d = b - a;
+        Vector2 m = a - center;
+        float c = Vector2.Dot(m, m) - radius * radius;
+        if (c <= 0f) return true;               // already inside at the start of the step
+        float aa = Vector2.Dot(d, d);
+        if (aa < 1e-12f) return false;
+        float bb = Vector2.Dot(m, d);
+        float disc = bb * bb - aa * c;
+        if (disc < 0f) return false;
+        float t = (-bb - Mathf.Sqrt(disc)) / aa;
+        if (t < 0f || t > 1f) return false;
+        f = t;
+        return true;
+    }
+
     /// <summary>
     /// Calculate velocity changes for both rocks after collision using realistic elastic collision physics
     /// This properly handles both normal (direct) and tangential (glancing) components
@@ -514,93 +264,31 @@ public class TrajectorySimulator
     }
     
     /// <summary>
-    /// Simulate a rock's path after collision until it stops
+    /// Simulate a rock's FULL PATH after a collision until it stops, returning sample points. Uses the same model as the
+    /// live rock: a thrown rock keeps curling (its spin carries on), a struck rock only slides.
     /// </summary>
-    private Vector2 SimulatePostCollision(Vector2 startPos, Vector2 startVel, bool hasRotation)
-    {
-        Vector2 position = startPos;
-        Vector2 velocity = startVel;
-        float time = 0f;
-        
-        while (time < MAX_SIMULATION_TIME)
-        {
-            float speed = velocity.magnitude;
-            
-            if (speed < 0.01f)
-                break;
-            
-            // Apply friction (Unity's multiplicative damping)
-            float dampingFactor = 1.0f - (linearDamping * TIME_STEP);
-            velocity *= dampingFactor;
-            
-            // Minimal curl effect post-collision (rock is tumbling)
-            if (hasRotation && speed > 0.1f)
-            {
-                Vector2 curlDirection = new Vector2(-velocity.y, velocity.x).normalized;
-                float curlStrength = curlAmount * 0.3f * speed / startVel.magnitude;
-                velocity += curlDirection * curlStrength * TIME_STEP;
-            }
-            
-            position += velocity * TIME_STEP;
-            time += TIME_STEP;
-        }
-        
-        return position;
-    }
-    
-    /// <summary>
-    /// Simulate a rock's FULL PATH after collision until it stops, returning all points
-    /// </summary>
-    private List<Vector2> SimulatePostCollisionPath(Vector2 startPos, Vector2 startVel, bool hasRotation)
+    private List<Vector2> SimulatePostCollisionPath(RockState rock, RockPhysicsProfile profile)
     {
         List<Vector2> path = new List<Vector2>();
-        Vector2 position = startPos;
-        Vector2 velocity = startVel;
+        path.Add(rock.position); // Start at the collision point
+
         float time = 0f;
-        int iterations = 0;
-        
-        path.Add(position); // Start at collision point
-        
-        while (time < MAX_SIMULATION_TIME && iterations < 200)
+        int step = 0;
+        while (time < MAX_SIMULATION_TIME && !rock.asleep)
         {
-            float speed = velocity.magnitude;
-            
-            if (speed < 0.01f)
-                break;
-            
-            // FIXED: Only apply friction after collision - NO CURL
-            // Rock tumbles after collision and loses controlled rotation
-            // Apply damping at Unity's FixedUpdate rate (0.02s)
-            float fixedDeltaTime = 0.02f;
-            int dampingSteps = Mathf.RoundToInt(TIME_STEP / fixedDeltaTime);
-            float dampingFactor = 1.0f;
-            for (int i = 0; i < dampingSteps; i++)
-            {
-                dampingFactor *= (1.0f - linearDamping * fixedDeltaTime);
-            }
-            velocity *= dampingFactor;
-            
-            position += velocity * TIME_STEP;
-            
-            // Sample points for visualization (every few iterations)
-            if (iterations % TRAJECTORY_SAMPLE_RATE == 0)
-            {
-                path.Add(position);
-            }
-            
-            time += TIME_STEP;
-            iterations++;
+            RockPhysics.Step(ref rock, profile, FIXED_DT);
+            time += FIXED_DT;
+            step++;
+            if (step % STEPS_PER_POINT == 0)
+                path.Add(rock.position);
         }
-        
-        // Always add final position
-        if (path.Count == 0 || path[path.Count - 1] != position)
-        {
-            path.Add(position);
-        }
-        
+
+        if (path[path.Count - 1] != rock.position)
+            path.Add(rock.position);
+
         return path;
     }
-    
+
     /// <summary>
     /// Check if trajectory will collide with any rocks (legacy method for compatibility)
     /// </summary>

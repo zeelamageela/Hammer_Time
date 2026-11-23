@@ -99,6 +99,15 @@ public static class RockPhysics
         return new RockState { curlMultiplier = 1f, linearDamping = p.linearDamping, angularDamping = p.angularDamping };
     }
 
+    /// <summary>A rock that has come to rest on the ice (at-rest drag): what a rock is when another rock hits it.</summary>
+    public static RockState NewRestingRock(RockPhysicsProfile p)
+    {
+        var s = NewRock(p);
+        s.atRest = true;
+        s.linearDamping = p.restLinearDamping;
+        return s;
+    }
+
     /// <summary>The rock leaves the hack: it flies free (no friction, no curl) until Release.</summary>
     public static void BeginFlight(ref RockState s, RockPhysicsProfile p)
     {

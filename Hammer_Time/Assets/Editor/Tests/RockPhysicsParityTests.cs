@@ -113,4 +113,49 @@ public class RockPhysicsParityTests
         Assert.Less(b.position.y, a.position.y);
         Assert.IsTrue(b.asleep);
     }
+
+    // Rest points of the live rock (AgentScripts/Measure.cs, out-turn, from the hack). The aim preview and the AI use
+    // TrajectorySimulator, so it has to stop where the real rock stops.
+    static readonly float[][] LiveRest =
+    {
+        new[] { 5.0f, -1.04f, -2.67f }, new[] { 6.0f, -1.01f, 0.01f }, new[] { 8.0f, -0.94f, 5.31f }, new[] { 8.5f, -0.92f, 6.52f },
+        new[] { 9.35f, -0.92f, 8.74f }, new[] { 10.0f, -0.72f, 10.49f }, new[] { 12.4f, -0.40f, 16.78f }, new[] { 15.8f, -0.24f, 25.72f },
+    };
+
+    [Test]
+    public void TrajectorySimulator_StopsWhereTheLiveRockStops()
+    {
+        var sim = new TrajectorySimulator(0.62f, 0.25f);   // constructor arguments are ignored now
+        foreach (var row in LiveRest)
+        {
+            var path = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, row[0]), false, 600, null, false);
+            var end = path[path.Count - 1];
+            Assert.AreEqual(row[1], end.x, 0.03f, "x at v0=" + row[0]);
+            Assert.AreEqual(row[2], end.y, 0.03f, "y at v0=" + row[0]);
+        }
+    }
+
+    [Test]
+    public void TrajectorySimulator_InTurnMirrorsOutTurn()
+    {
+        var sim = new TrajectorySimulator(0.62f, 0.25f);
+        var outTurn = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, 8.5f), false, 600, null, false);
+        var inTurn = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, 8.5f), true, 600, null, false);
+        Assert.AreEqual(-outTurn[outTurn.Count - 1].x, inTurn[inTurn.Count - 1].x, 0.001f);
+        Assert.AreEqual(outTurn[outTurn.Count - 1].y, inTurn[inTurn.Count - 1].y, 0.001f);
+    }
+
+    [Test]
+    public void TrajectorySimulator_FastRockCannotTunnelThroughARock()
+    {
+        var sim = new TrajectorySimulator(0.62f, 0.25f);
+        var target = new GameObject("TunnelTestRock");
+        try
+        {
+            target.transform.position = new Vector3(0f, 6.5f, 0f);
+            var path = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, 16f), false, 600, new System.Collections.Generic.List<GameObject> { target }, false);
+            Assert.IsTrue(sim.GetCollisionInfo().hasCollision, "a 16 u/s rock moves 0.32 per step (more than a rock is wide) and must still hit");
+        }
+        finally { Object.DestroyImmediate(target); }
+    }
 }
