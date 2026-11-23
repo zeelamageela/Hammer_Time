@@ -82,7 +82,7 @@ public static class Measure
         rb.rotation = 0f;
         rf.transform.position = new Vector3(start.x, start.y, 0f);
         Physics2D.SyncTransforms();
-        rb.linearVelocity = vel;
+        rb.linearVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(vel);
     }
 
     static Result Fire(Rock_Force rf, float v0, bool inTurn, float startY)
@@ -110,7 +110,7 @@ public static class Measure
             if (p.y > NearHog)
             {
                 if (res.tSlow < 0 && sp < 0.1f) res.tSlow = t;
-                if (sp < 0.01f) { res.tRest = t; break; }
+                if (sp < RockPhysicsSettings.Speed(0.01f)) { res.tRest = t; break; }
             }
         }
         res.xRest = rb.position.x; res.yRest = rb.position.y;
@@ -241,6 +241,36 @@ public static class Measure
             }
         }
         finally { Physics2D.simulationMode = mode; }
+        return sb.ToString();
+    }
+
+    public static string Profiles()
+    {
+        var rf = Rock();
+        var rb = rf.GetComponent<Rigidbody2D>();
+        var sb = new StringBuilder();
+        var mode = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
+        var sim = new TrajectorySimulator(0, 0);
+        try
+        {
+            foreach (var pair in new[] { ("Legacy", RockPhysicsProfile.Legacy()), ("Arcade", RockPhysicsProfile.Arcade()), ("Real", RockPhysicsProfile.Real()) })
+            {
+                RockPhysicsSettings.Use(pair.Item2);
+                sb.AppendLine("== " + pair.Item1 + "  (live rock = Box2D + RockSlide, out-turn, from the hack)");
+                sb.AppendLine("weight | hack>NH | NH>FH  | rest   | live rest (x,y)    | sim end (x,y)      | live-sim");
+                foreach (float w in new[] { 6f, 8.5f, 9.35f, 12.4f, 15.8f })
+                {
+                    var r = Fire(rf, w, false, -25f);
+                    var path = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, w), false, 900, null, false);
+                    var end = path[path.Count - 1];
+                    float h2h = (r.tFar >= 0 && r.tNear >= 0) ? r.tFar - r.tNear : -1;
+                    sb.AppendLine(string.Format("{0,5:F2}  | {1,6:F2}  | {2,6:F2}  | {3,6:F2} | ({4,6:F2},{5,6:F2})   | ({6,6:F2},{7,6:F2})   | ({8,5:F2},{9,5:F2})",
+                        w, r.tNear, h2h, r.tRest, r.xRest, r.yRest, end.x, end.y, r.xRest - end.x, r.yRest - end.y));
+                }
+            }
+        }
+        finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); Physics2D.simulationMode = mode; }
         return sb.ToString();
     }
 

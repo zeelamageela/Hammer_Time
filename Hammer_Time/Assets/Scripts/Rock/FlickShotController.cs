@@ -1960,7 +1960,7 @@ public class FlickShotController : MonoBehaviour
         rb.linearDamping = 0f; // Friction starts at the hog line (Rock_Force.Release)
         RockSlide flightSlide = GetComponent<RockSlide>();
         if (flightSlide != null) flightSlide.BeginFlight();
-        rb.linearVelocity = velocity;
+        rb.linearVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
         
         // CRITICAL: Enable continuous collision detection for high-speed collisions!
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;

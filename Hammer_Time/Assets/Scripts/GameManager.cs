@@ -1167,10 +1167,10 @@ public class GameManager : MonoBehaviour
         foreach (Rock_List rock in rockList)
         {
             Rigidbody2D rockRB = rock.rock.GetComponent<Rigidbody2D>();
-            if (Mathf.Abs(rockRB.linearVelocity.y) > 0.01f && Mathf.Abs(rockRB.linearVelocity.x) > 0.01f)
+            if (Mathf.Abs(rockRB.linearVelocity.y) > RockPhysicsSettings.Speed(0.01f) && Mathf.Abs(rockRB.linearVelocity.x) > RockPhysicsSettings.Speed(0.01f))
             {
                 //Debug.Log(rock.rockInfo.teamName + " " + rock.rockInfo.rockNumber + " is still moving :(");
-                yield return new WaitUntil(() => Mathf.Abs(rockRB.linearVelocity.y) < 0.01f && Mathf.Abs(rockRB.linearVelocity.x) < 0.01f);
+                yield return new WaitUntil(() => Mathf.Abs(rockRB.linearVelocity.y) < RockPhysicsSettings.Speed(0.01f) && Mathf.Abs(rockRB.linearVelocity.x) < RockPhysicsSettings.Speed(0.01f));
             }
         }
         yield return new WaitForEndOfFrame();

@@ -215,8 +215,8 @@ void OnEnable()
             Rigidbody2D otherRB = collision.rigidbody;
             Rock_Info otherRockInfo = collision.gameObject.GetComponent<Rock_Info>();
             
-            bool thisWasStationary = thisRB.linearVelocity.magnitude < 0.1f;
-            bool otherWasStationary = otherRB.linearVelocity.magnitude < 0.1f;
+            bool thisWasStationary = thisRB.linearVelocity.magnitude < RockPhysicsSettings.Speed(0.1f);
+            bool otherWasStationary = otherRB.linearVelocity.magnitude < RockPhysicsSettings.Speed(0.1f);
             
             // FROZEN ROCK DETECTION: Check if there's ANOTHER rock touching the one we just hit
             // This indicates a "frozen pair" - two rocks sitting together

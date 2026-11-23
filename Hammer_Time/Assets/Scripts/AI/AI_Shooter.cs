@@ -165,7 +165,7 @@ public class AI_Shooter : MonoBehaviour
         if (gm != null && rm != null && aiSweep.sm != null)
         {
             // Get ACTUAL velocity (includes accuracy errors from pullback offset)
-            Vector2 actualVelocity = rockRB.linearVelocity;
+            Vector2 actualVelocity = RockPhysicsSettings.Current.WeightVelocityFromLaunchVelocity(rockRB.linearVelocity); // weight units, like perfectVelocity
             
             // Get PERFECT velocity (before accuracy errors) from AI_Target
             Vector2 perfectVelocity = aiTarg.lastPerfectVelocity;

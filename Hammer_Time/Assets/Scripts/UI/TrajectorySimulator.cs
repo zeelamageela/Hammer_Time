@@ -49,16 +49,36 @@ public class TrajectorySimulator
     /// </summary>
     /// <param name="forPlayerPreview">If true, uses INVERTED curl (for visual trajectory line). If false, uses REAL curl (for AI physics calculation)</param>
     public List<Vector2> SimulateTrajectory(
-        Vector2 startPosition,
-        Vector2 initialVelocity,
+        Vector2 startPosition, 
+        Vector2 initialVelocity, 
         bool isInTurn,
         int maxPoints = 200,
         List<GameObject> rocksInPlay = null,
         bool forPlayerPreview = false)  // no longer changes anything: the preview and the AI now use the one real model
     {
-        List<Vector2> trajectoryPoints = new List<Vector2>();
-        trajectorySpeedList = new List<float>(); // Reset speed tracking
+        RockPhysicsProfile profile = PrepareProfile();
 
+        // initialVelocity is a WEIGHT velocity (what the aim, the AI and the tutorial speak); the rock gets the launch speed this
+        // profile needs to travel that far. Thrown from the hack: free flight until the near hog line, then the real sliding model.
+        RockState rock = RockPhysics.Launch(startPosition, profile.LaunchVelocityFromWeightVelocity(initialVelocity), profile);
+        return Simulate(rock, profile, isInTurn, maxPoints, rocksInPlay);
+    }
+
+    /// <summary>
+    /// Simulate from a rock's real state (position, real velocity, curl as it was set at release): what the AI sweeper uses to
+    /// ask "where will this rock stop from here?". Take the state from RockSlide.Snapshot().
+    /// </summary>
+    public List<Vector2> SimulateTrajectoryFromState(
+        RockState rock,
+        bool isInTurn,
+        int maxPoints = 200,
+        List<GameObject> rocksInPlay = null)
+    {
+        return Simulate(rock, PrepareProfile(), isInTurn, maxPoints, rocksInPlay);
+    }
+
+    private RockPhysicsProfile PrepareProfile()
+    {
         RockPhysicsProfile profile = RockPhysicsSettings.Current;
         if (trajLine == null) trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
         if (trajLine != null)
@@ -66,9 +86,13 @@ public class TrajectorySimulator
             profile.minLaunchSpeed = trajLine.minVelocity;
             profile.maxLaunchSpeed = trajLine.maxVelocity;
         }
+        return profile;
+    }
 
-        // Thrown from the hack: free flight (no friction, no curl) until the near hog line, then the real sliding model.
-        RockState rock = RockPhysics.Launch(startPosition, initialVelocity, profile);
+    private List<Vector2> Simulate(RockState rock, RockPhysicsProfile profile, bool isInTurn, int maxPoints, List<GameObject> rocksInPlay)
+    {
+        List<Vector2> trajectoryPoints = new List<Vector2>();
+        trajectorySpeedList = new List<float>(); // Reset speed tracking
 
         lastCollisionInfo = new CollisionInfo
         {
@@ -84,12 +108,16 @@ public class TrajectorySimulator
         };
 
         trajectoryPoints.Add(rock.position);
-        trajectorySpeedList.Add(rock.velocity.magnitude);
+        trajectorySpeedList.Add(profile.WeightFromLaunchSpeed(rock.velocity.magnitude)); // in weight units so the dot sizes look the same at any pace
 
         float currentTime = 0f;
         int step = 0;
+        // A slower profile takes proportionally longer to stop: stretch the time cap and the point spacing with it, so a path has the
+        // same number of points and is never cut short.
+        float maxTime = MAX_SIMULATION_TIME * profile.timeStretch;
+        int stepsPerPoint = Mathf.Max(1, Mathf.RoundToInt(STEPS_PER_POINT * profile.timeStretch));
 
-        while (currentTime < MAX_SIMULATION_TIME && trajectoryPoints.Count < maxPoints)
+        while (currentTime < maxTime && trajectoryPoints.Count < maxPoints)
         {
             Vector2 before = rock.position;
             RockPhysics.Step(ref rock, profile, FIXED_DT);
@@ -158,15 +186,15 @@ public class TrajectorySimulator
 
                     // Add collision point; the main trajectory stops here - post-collision paths are separate
                     trajectoryPoints.Add(position);
-                    trajectorySpeedList.Add(newVelocity.magnitude);
+                    trajectorySpeedList.Add(profile.WeightFromLaunchSpeed(newVelocity.magnitude));
                     return trajectoryPoints;
                 }
             }
 
-            if (step % STEPS_PER_POINT == 0)
+            if (step % stepsPerPoint == 0)
             {
                 trajectoryPoints.Add(rock.position);
-                trajectorySpeedList.Add(rock.velocity.magnitude);
+                trajectorySpeedList.Add(profile.WeightFromLaunchSpeed(rock.velocity.magnitude)); // in weight units so the dot sizes look the same at any pace
             }
 
             if (rock.asleep)
@@ -177,7 +205,7 @@ public class TrajectorySimulator
         if (trajectoryPoints[trajectoryPoints.Count - 1] != rock.position)
         {
             trajectoryPoints.Add(rock.position);
-            trajectorySpeedList.Add(rock.velocity.magnitude);
+            trajectorySpeedList.Add(profile.WeightFromLaunchSpeed(rock.velocity.magnitude)); // in weight units so the dot sizes look the same at any pace
         }
 
         return trajectoryPoints;
@@ -274,12 +302,14 @@ public class TrajectorySimulator
 
         float time = 0f;
         int step = 0;
-        while (time < MAX_SIMULATION_TIME && !rock.asleep)
+        float maxTime = MAX_SIMULATION_TIME * profile.timeStretch;
+        int stepsPerPoint = Mathf.Max(1, Mathf.RoundToInt(STEPS_PER_POINT * profile.timeStretch));
+        while (time < maxTime && !rock.asleep)
         {
             RockPhysics.Step(ref rock, profile, FIXED_DT);
             time += FIXED_DT;
             step++;
-            if (step % STEPS_PER_POINT == 0)
+            if (step % stepsPerPoint == 0)
                 path.Add(rock.position);
         }
 

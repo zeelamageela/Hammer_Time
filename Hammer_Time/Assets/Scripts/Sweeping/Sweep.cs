@@ -44,8 +44,10 @@ public class Sweep : MonoBehaviour
     float statEndur;
     
     // Track original dampings so we can reset after sweep
-    private float originalLinearDamping { get { return RockPhysicsSettings.Current.linearDamping; } }
-    private float originalAngularDamping { get { return RockPhysicsSettings.Current.angularDamping; } }
+    private float originalLinearDamping { get { return RockSlide.NominalLinearDamping; } }
+    private float originalAngularDamping { get { return RockSlide.NominalAngularDamping; } }
+    // The sweep amounts below were written for the original rock's speeds; a rock that moves at a different pace gets nudges in proportion.
+    private float SweepSpeedScale { get { return slide != null ? slide.SpeedPerWeight : 1f; } }
     private Coroutine activeSweepCoroutine = null;
     
     // CRITICAL: Real-time curl force multiplier (read by Rock_Force every frame!)
@@ -240,7 +242,7 @@ public class Sweep : MonoBehaviour
         
         float lateralVelocityBoost = sweepAmt * sweepStrength * 0.01f * speedMultiplier; // Slightly less straightening than line sweep
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
-        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
         
         Debug.Log($"Weight Sweep: linearDamping={slide.LinearDamping:F3}, angularDamping={slide.AngularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
 
@@ -312,7 +314,7 @@ public class Sweep : MonoBehaviour
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         
         // DIRECTLY add to the rock's velocity
-        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
         
         Debug.Log($"[Line Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
 
@@ -363,7 +365,7 @@ public class Sweep : MonoBehaviour
         float curlDirection = rf.curl.x < 0 ? -1f : 1f; // Direction rock is curling
         
         // DIRECTLY add to the rock's velocity (not force!)
-        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
         
         Debug.Log($"[Curl Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
 

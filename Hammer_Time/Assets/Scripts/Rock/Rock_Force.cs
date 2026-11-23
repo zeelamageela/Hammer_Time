@@ -116,7 +116,7 @@ public class Rock_Force : MonoBehaviour
     {
         Vector2 vel = body.linearVelocity;
 
-        float audVel = am.maxVol * (vel.y / 4f);
+        float audVel = am.maxVol * (vel.y / RockPhysicsSettings.Speed(4f));
         rockSounds[1].volume = audVel;
 
         HapticController.Load(slideHap);
@@ -130,7 +130,7 @@ public class Rock_Force : MonoBehaviour
             : 1.0f;
         slide.CurlMultiplier = curlForceMultiplier * sweepCurlMult;
 
-        if (Mathf.Abs(vel.y) < 0.01f && Mathf.Abs(vel.x) < 0.01f)
+        if (Mathf.Abs(vel.y) < RockPhysicsSettings.Speed(0.01f) && Mathf.Abs(vel.x) < RockPhysicsSettings.Speed(0.01f))
         {
             if (released) ShotAudit.LogRest(gameObject, body.position, slide.PredictedRest);
             GetComponent<Rock_Info>().stopped = true;

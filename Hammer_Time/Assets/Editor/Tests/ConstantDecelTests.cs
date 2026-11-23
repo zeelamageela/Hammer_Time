@@ -153,4 +153,62 @@ public class ConstantDecelTests
         for (int i = 0; i < 4000 && !swept.asleep; i++) RockPhysics.Step(ref swept, p, Dt);
         Assert.Greater(swept.position.y, plain.position.y + 2f);
     }
+
+    [Test]
+    public void TrajectorySimulator_StopsAtTheSamePlace_UnderEveryProfile()
+    {
+        var sim = new TrajectorySimulator(0f, 0f);
+        try
+        {
+            foreach (float w in new[] { 6f, 8.5f, 9.35f, 12.4f, 15.8f })
+            foreach (bool inTurn in new[] { false, true })
+            {
+                RockPhysicsSettings.Use(RockPhysicsProfile.Legacy());
+                var legacy = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, w), inTurn, 400, null, false);
+                RockPhysicsSettings.Use(RockPhysicsProfile.Arcade());
+                var arcade = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, w), inTurn, 400, null, false);
+                int arcadePoints = arcade.Count;
+                RockPhysicsSettings.Use(RockPhysicsProfile.Real());
+                var real = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, w), inTurn, 400, null, false);
+
+                Vector2 a = legacy[legacy.Count - 1], b = arcade[arcade.Count - 1], c = real[real.Count - 1];
+                Assert.AreEqual(a.x, b.x, 0.1f, $"arcade end x, weight {w}");
+                Assert.AreEqual(a.y, b.y, 0.25f, $"arcade end y, weight {w}");
+                Assert.AreEqual(b.x, c.x, 0.03f, $"real end x, weight {w}");
+                Assert.AreEqual(b.y, c.y, 0.1f, $"real end y, weight {w} (the simulator's time cap must stretch with the profile)");
+                Assert.Less(real.Count, 400, "point spacing stretches with the profile");
+                Assert.AreEqual(arcadePoints, real.Count, 25, "same number of points at any pace");
+            }
+        }
+        finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); }
+    }
+
+    [Test]
+    public void SimulatingFromARocksRealState_AgreesWithSimulatingTheWholeThrow()
+    {
+        var sim = new TrajectorySimulator(0f, 0f);
+        try
+        {
+            foreach (var profile in new[] { RockPhysicsProfile.Arcade(), RockPhysicsProfile.Real() })
+            {
+                RockPhysicsSettings.Use(profile);
+                float w = 9.35f;
+                var whole = sim.SimulateTrajectory(new Vector2(0f, -25f), new Vector2(0f, w), true, 400, null, false);
+
+                // fly the same rock by hand for a while, then hand its state over
+                var s = RockPhysics.Launch(new Vector2(0f, -25f), new Vector2(0f, profile.LaunchSpeedFromWeight(w)), profile);
+                for (int i = 0; i < Mathf.RoundToInt(5f * profile.timeStretch / Dt); i++)
+                {
+                    RockPhysics.Step(ref s, profile, Dt);
+                    if (s.freeFlight && s.position.y > RockPhysics.ReleaseY) RockPhysics.Release(ref s, profile, true);
+                }
+                Assert.IsFalse(s.freeFlight, "should be past the hog line");
+                var fromState = sim.SimulateTrajectoryFromState(s, true, 400, null);
+
+                Assert.AreEqual(whole[whole.Count - 1].x, fromState[fromState.Count - 1].x, 0.03f);
+                Assert.AreEqual(whole[whole.Count - 1].y, fromState[fromState.Count - 1].y, 0.1f);
+            }
+        }
+        finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); }
+    }
 }

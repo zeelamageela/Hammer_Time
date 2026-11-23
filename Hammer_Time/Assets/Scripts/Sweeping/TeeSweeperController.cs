@@ -332,7 +332,7 @@ public class TeeSweeperController : MonoBehaviour
         bool inScoringZone = (currentPos.y >= 5.0f && currentPos.y <= 9.0f); // In the house
         
         // Check if rock is moving AWAY from scoring (backward or out sideways)
-        bool movingBackward = velocity.y < 0.1f; // Moving backward or barely forward
+        bool movingBackward = velocity.y < RockPhysicsSettings.Speed(0.1f); // Moving backward or barely forward
         bool movingOutSideways = !inScoringZone && Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y); // Outside house, moving more sideways than forward
         
         bool movingAwayFromScoring = movingBackward || movingOutSideways;
@@ -822,7 +822,7 @@ public class TeeSweeperController : MonoBehaviour
         
         Vector2 velocity = attachedRockRB.linearVelocity;
         
-        if (velocity != Vector2.zero && (Mathf.Abs(velocity.x) > 0.02f || Mathf.Abs(velocity.y) > 0.005f))
+        if (velocity != Vector2.zero && (Mathf.Abs(velocity.x) > RockPhysicsSettings.Speed(0.02f) || Mathf.Abs(velocity.y) > RockPhysicsSettings.Speed(0.005f)))
         {
             float angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
@@ -844,7 +844,7 @@ public class TeeSweeperController : MonoBehaviour
         }
         
         float velocity = attachedRockRB.linearVelocity.magnitude;
-        if (velocity < VELOCITY_THRESHOLD)
+        if (velocity < RockPhysicsSettings.Speed(VELOCITY_THRESHOLD))
         {
             Debug.Log($"[TeeSweeperController] Rock stopped - detaching");
             DetachFromRock();
