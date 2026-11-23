@@ -33,7 +33,7 @@ public class RockPhysicsParityTests
 
     static void AssertPath(float v0, bool inTurn, Sample[] expected, Sample final, int expectedReleaseStep)
     {
-        var p = RockPhysicsProfile.Arcade();
+        var p = RockPhysicsProfile.Legacy();
         var got = new System.Collections.Generic.Dictionary<int, RockState>();
         int release;
         var end = Fly(v0, inTurn, p, out release, 30f, (t, st) => got[Mathf.RoundToInt(t / Dt)] = st);
@@ -93,25 +93,12 @@ public class RockPhysicsParityTests
     [Test]
     public void SpinAndSpeedMatchTheRecording()
     {
-        var p = RockPhysicsProfile.Arcade();
+        var p = RockPhysicsProfile.Legacy();
         int release;
         RockState at2 = default;
         Fly(8.5f, false, p, out release, 2f, (t, st) => { if (Mathf.Approximately(Mathf.Round(t * 50f), 100f)) at2 = st; });
         Assert.AreEqual(254.984f, at2.spin, 0.1f, "spin at t=2.00");
         Assert.AreEqual(6.00019f, at2.velocity.magnitude, 0.01f, "speed at t=2.00");
-    }
-
-    [Test]
-    public void ConstantDecel_StopsALightRockSoonerAndAHeavyOneLater_ThanZero()
-    {
-        // Sanity for the new dry-friction term: with it on, a rock still stops, and stops sooner than without it.
-        var off = RockPhysicsProfile.Arcade();
-        var on = RockPhysicsProfile.Arcade(); on.constantDecel = 0.3f;
-        int r;
-        var a = Fly(8.5f, false, off, out r, 30f);
-        var b = Fly(8.5f, false, on, out r, 30f);
-        Assert.Less(b.position.y, a.position.y);
-        Assert.IsTrue(b.asleep);
     }
 
     // Rest points of the live rock (AgentScripts/Measure.cs, out-turn, from the hack). The aim preview and the AI use

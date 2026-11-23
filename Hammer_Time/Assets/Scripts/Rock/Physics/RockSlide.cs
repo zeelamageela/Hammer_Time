@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>The profile the whole game is using right now. The live rocks and the trajectory simulator both read it.</summary>
 public static class RockPhysicsSettings
 {
-    public static RockPhysicsProfile Current = RockPhysicsProfile.Arcade();
+    public static RockPhysicsProfile Current = RockPhysicsProfile.Legacy();
 }
 
 /// <summary>
