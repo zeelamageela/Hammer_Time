@@ -20,6 +20,28 @@ public static class RockPhysicsSettings
         if (Changed != null) Changed();
     }
 
+    static RockPhysicsProfile pending;
+
+    /// <summary>
+    /// Ask for a profile. If no rock is moving it applies at once; otherwise it waits for the next throw, because a rock that is
+    /// mid-slide would be moved by a different law than it was thrown under.
+    /// </summary>
+    public static void Request(RockPhysicsProfile profile)
+    {
+        if (RockSlide.AnyRockMoving()) { pending = profile; return; }
+        pending = null;
+        Use(profile);
+    }
+
+    /// <summary>Called when a throw begins: a profile requested mid-shot takes effect now.</summary>
+    public static void ApplyPendingIfAny()
+    {
+        if (pending == null || RockSlide.AnyRockMoving()) return;
+        var p = pending;
+        pending = null;
+        Use(p);
+    }
+
     /// <summary>
     /// A speed written in the game's original units (a threshold like "the rock is nearly stopped: 0.1"), converted to this
     /// profile's pace. Arcade is the same pace as the old rock; Real is slower by the time stretch.
@@ -41,6 +63,21 @@ public class RockSlide : MonoBehaviour
     /// <summary>Sweeping talks in the original units: these are the drag values the sweep amounts were written against.</summary>
     public const float NominalLinearDamping = 0.38f;
     public const float NominalAngularDamping = 0.32f;
+
+    static readonly System.Collections.Generic.List<RockSlide> all = new System.Collections.Generic.List<RockSlide>();
+
+    /// <summary>True if any rock on the sheet is still sliding.</summary>
+    public static bool AnyRockMoving()
+    {
+        float limit = RockPhysicsSettings.Speed(0.05f);
+        for (int i = 0; i < all.Count; i++)
+            if (all[i] != null && all[i].body != null && all[i].body.bodyType == RigidbodyType2D.Dynamic && all[i].body.linearVelocity.sqrMagnitude > limit * limit)
+                return true;
+        return false;
+    }
+
+    void OnEnable() { if (!all.Contains(this)) all.Add(this); }
+    void OnDisable() { all.Remove(this); }
 
     Rigidbody2D body;
     RockState state;
@@ -108,6 +145,7 @@ public class RockSlide : MonoBehaviour
     public void BeginFlight()
     {
         Init();
+        RockPhysicsSettings.ApplyPendingIfAny();
         RockPhysics.BeginFlight(ref state, RockPhysicsSettings.Current);
         externalCurlMultiplier = 1f;
         angularCurlFactor = 1f;

@@ -30,18 +30,30 @@ Now there is one model, `Assets/Scripts/Rock/Physics/RockPhysics.cs`:
 - `TrajectoryLine.iceFriction` / `curlStrength` in the Inspector no longer do anything (marked UNUSED). Change friction in `RockPhysicsProfile`.
 - Rock_Force `turnValue` / `scaleFactor` are likewise unused (spin and curl scale are in the profile).
 
+## Update: constant-deceleration physics is in, with three profiles
+
+`RockPhysicsProfile` now has two laws and three ready-made profiles (`RockPhysicsBootstrap.Choose` / pause-menu button):
+
+| Profile | Law | Pace | Button draw |
+|---|---|---|---|
+| Classic | the original exponential rock | game pace | 3.3 s hog to hog, stops after ~19 s |
+| **Arcade** (default) | constant deceleration 0.929 u/s^2 + constant sideways acceleration | game pace | 3.3 s hog to hog, stops after ~8 s |
+| Real-time | Arcade stretched in time by 4.42 | real ice | 14.4 s hog to hog (target 14.5), stops after ~37 s |
+
+- A shot's **weight** is the old launch speed (5 light draw ... 16 hard takeout) and means "travels this far". `LaunchSpeedFromWeight` converts it for the profile in use; the aim line, the AI and the tutorial keep speaking weights. Launches are remapped in `Rock_Flick.Release` / `FlickShotController`, and `TrajectorySimulator` remaps the same way.
+- Sideways acceleration = `1.335 * CurlMagnitude(weight) / weight` (the old curl table, fitted offline against the old rock). Arcade and Real stay within 6 cm of the old rock's path at every weight, in-turn and out-turn.
+- Real-time is Arcade with every rate scaled together (speeds /S, accelerations /S^2, rates /S): the path is identical by construction. No `Time.timeScale` involved, so sweepers, UI and audio are untouched.
+- Measured in Play, live rock vs simulator: identical to 0.00 under all three profiles (`AgentScripts/Measure.cs Profiles`).
+- Sweeping keeps talking in the original drag units (`RockSlide.LinearDamping` 0.38, `AngularDamping` 0.32). Under the new law these scale friction by value/0.38 and curl by 0.32/value (the old curl was exactly proportional to 1/angular damping). Sideways nudges are scaled by `SpeedPerWeight`.
+- The AI sweeper re-predicts from the rock's real state (`RockSlide.Snapshot` -> `SimulateTrajectoryFromState`). Speed thresholds (rest, "moving backward", tee sweeper) go through `RockPhysicsSettings.Speed()`.
+- Tester options (the pause-menu physics button) are controlled by `DevOptions.Enabled` (Editor + Development builds only), so a release build has none. A release build uses `RockPhysicsBootstrap.Shipping` (Arcade).
+- Flick shot mode is off (`GameVisualizationSettings.FlickModeAvailable = false`, toggle hidden); the tutorial follows the setting and uses the pull/release lessons.
+
 ## Not yet done / not verified
 
-1. **Sweeping through the new path was not exercised.** `Sweep.cs` now moves the drag values on `RockSlide` instead of the Rigidbody. Play a shot and sweep it (weight, line, curl).
-2. **Struck rocks.** A stationary rock now has the at-rest drag from `RockSlide`; the old behaviour relied on Box2D damping set by `Rock_Force`. Hit a rock and watch where it stops (the simulator predicts the struck rock with the same rule).
-3. Mid-flight simulations (the AI sweeper re-predicting from a rock already past the hog line) restart the spin from the full release value, as the old simulator did.
-4. `ShooterAnim` / `ShooterAnim_Testing` still set `rb.linearDamping` for the old animated shooter; `RockSlide` turns it back to 0 when the rock is thrown.
-5. Constant-deceleration friction (`constantDecel`) exists in the model and is covered by a sanity test, but is **off**. Turning it on changes the weight -> distance map, so it needs the launch speeds recalibrated (see below).
-6. The "Real-time" profile and the pause-menu checkbox are not built.
-
-## Next (needs a decision)
-
-Real ice slows at a roughly constant rate; ours decays exponentially, which is why every shot creeps for ~10 s and hog-to-hog is 4x too fast.
-Proposed: add dry friction, and keep today's weight -> landing-spot map by remapping launch speed (`v_new` chosen so the rock stops where it does today),
-so AI weights, FGZ rules and the tutorial keep working. The two speeds (Arcade, Real) are then two profiles, every time-dependent constant scaled together
-(drag and spin fade by 1/S, speeds by 1/S, curl by 1/S, sweep amounts by 1/S, thresholds by 1/S), checked by the same parity tests.
+1. **Sweeping, AI play and a rock being struck under Arcade/Real were not exercised in Play** (unit tests and the unswept live harness only). Play a few ends against the AI in each profile and sweep.
+2. Pause-menu button placement was not seen on screen (a test dialogue covered the screenshot). It exists, is labelled, and cycles; check the layout.
+3. Rock-to-rock collisions are unchanged (Phase 3). A struck rock uses `restViscous` 0.9 + `restDryDecel` 0.15; this keeps old hit-rock distances to within ~10%.
+4. The "drift off the aim line" report: unresolved. `ShotAudit` logs launch vs preview and the actual stop for every throw (search the console for `[ShotAudit]`).
+5. Phases still to build: split-time display, aim-line fuzz from skill points.
+6. `ShooterAnim` / `ShooterAnim_Testing` still set `rb.linearDamping` for the old animated shooter; `RockSlide` zeroes it at each throw.
