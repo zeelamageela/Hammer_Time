@@ -34,15 +34,19 @@ Now there is one model, `Assets/Scripts/Rock/Physics/RockPhysics.cs`:
 
 `RockPhysicsProfile` now has two laws and three ready-made profiles (`RockPhysicsBootstrap.Choose` / pause-menu button):
 
-| Profile | Law | Pace | Button draw |
+| Profile | Friction | Pace | Button draw |
 |---|---|---|---|
-| Classic | the original exponential rock | game pace | 3.3 s hog to hog, stops after ~19 s |
-| **Arcade** (default) | constant deceleration 0.929 u/s^2 + constant sideways acceleration | game pace | 3.3 s hog to hog, stops after ~8 s |
-| Real-time | Arcade stretched in time by 4.42 | real ice | 14.4 s hog to hog (target 14.5), stops after ~37 s |
+| Classic | the original exponential rock | game pace | 3.3 s hog to hog, rests after ~19 s (long creep) |
+| **Arcade** (default) | soft stop: deceleration = 0.5174 * speed^0.6, sideways pull fades with speed | game pace | 3.2 s hog to hog, rests ~10 s after the hog, last second slows by only 0.06 |
+| Real-time | constant deceleration (speed^0), stretched in time by 4.42 | real ice | 14.35 s hog to hog (target 14.5), ~31 s hog to rest |
+
+Why two shapes: at game pace a constant deceleration stops abruptly and flicks the rock sideways at the end (it looked wrong), so Arcade uses a soft landing.
+At real pace the same constant deceleration is slow enough that the end is imperceptible, and it matches how real ice behaves, so Real-time uses it.
+Both are fitted to the old rock's paths (within 2 cm for Arcade, 5 cm for Real-time). The stop curve is `stopPower` on the profile (0 = abrupt, 1 = endless creep; 0.7 is mellower than 0.6 at ~12 s, 0.5 firmer at ~9 s).
 
 - A shot's **weight** is the old launch speed (5 light draw ... 16 hard takeout) and means "travels this far". `LaunchSpeedFromWeight` converts it for the profile in use; the aim line, the AI and the tutorial keep speaking weights. Launches are remapped in `Rock_Flick.Release` / `FlickShotController`, and `TrajectorySimulator` remaps the same way.
-- Sideways acceleration = `1.335 * CurlMagnitude(weight) / weight` (the old curl table, fitted offline against the old rock). Arcade and Real stay within 6 cm of the old rock's path at every weight, in-turn and out-turn.
-- Real-time is Arcade with every rate scaled together (speeds /S, accelerations /S^2, rates /S): the path is identical by construction. No `Time.timeScale` involved, so sweepers, UI and audio are untouched.
+- Sideways acceleration = `0.5603 * CurlMagnitude(weight) * weight^-0.55 * (speed/releaseSpeed)^0.4` for Arcade (`1.335 * CurlMagnitude / weight`, constant, for the Real-time base), fitted offline against the old rock.
+- Real-time is its base law with every rate scaled together (speeds /S, accelerations /S^2, rates /S; `WithTimeStretch`): the path is unchanged by construction (tested for each law). No `Time.timeScale` involved, so sweepers, UI and audio are untouched.
 - Measured in Play, live rock vs simulator: identical to 0.00 under all three profiles (`AgentScripts/Measure.cs Profiles`).
 - Sweeping keeps talking in the original drag units (`RockSlide.LinearDamping` 0.38, `AngularDamping` 0.32). Under the new law these scale friction by value/0.38 and curl by 0.32/value (the old curl was exactly proportional to 1/angular damping). Sideways nudges are scaled by `SpeedPerWeight`.
 - The AI sweeper re-predicts from the rock's real state (`RockSlide.Snapshot` -> `SimulateTrajectoryFromState`). Speed thresholds (rest, "moving backward", tee sweeper) go through `RockPhysicsSettings.Speed()`.

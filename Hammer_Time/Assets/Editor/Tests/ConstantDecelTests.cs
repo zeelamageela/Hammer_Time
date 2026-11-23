@@ -79,27 +79,43 @@ public class ConstantDecelTests
         float newHH = b.farHogTime - b.hogTime;
         Assert.AreEqual(3.28f, oldHH, 0.1f, "legacy button draw hog-to-hog (Phase 0 measurement)");
         Assert.AreEqual(oldHH, newHH, 0.25f, "Arcade should keep the game's pace between the hog lines");
-        Assert.Less(b.stopTime, a.stopTime * 0.6f, "dry friction ends the slide instead of creeping");
+        Assert.Less(b.stopTime, a.stopTime * 0.75f, "the soft stop ends the slide instead of creeping for ~19 s");
     }
 
     [Test]
-    public void Real_IsArcadeSlowedDown_ExactlySamePath()
+    public void Real_FollowsTheOldPaths_AtRealPace()
     {
-        var arcade = RockPhysicsProfile.Arcade();
+        var legacy = RockPhysicsProfile.Legacy();
         var real = RockPhysicsProfile.Real();
-        foreach (float w in new[] { 6f, 8.5f, 9.35f, 12.4f, 15.8f })
+        foreach (float w in Weights)
         foreach (bool inTurn in new[] { false, true })
         {
-            var a = Fly(arcade, w, inTurn);
+            var a = Fly(legacy, w, inTurn);
             var b = Fly(real, w, inTurn);
-            Assert.AreEqual(a.end.x, b.end.x, 0.02f, $"end x at weight {w}");
-            Assert.AreEqual(a.end.y, b.end.y, 0.1f, $"end y at weight {w}");
-            float top = a.end.y - 0.1f;
+            float top = Mathf.Min(a.end.y, b.end.y) - 0.1f;
             float worst = 0f;
             for (float y = RockPhysics.ReleaseY + 0.1f; y < top; y += 0.25f)
                 worst = Mathf.Max(worst, Mathf.Abs(XAt(a, y) - XAt(b, y)));
+            Assert.Less(worst, 0.07f, $"sideways path differs by {worst:F3} at weight {w} ({(inTurn ? "in" : "out")}-turn)");
+            Assert.AreEqual(a.end.y, b.end.y, 0.3f, $"stopping distance at weight {w}");
+        }
+    }
+
+    [Test]
+    public void TimeStretch_KeepsThePath_ForEveryLaw()
+    {
+        foreach (var law in new[] { RockPhysicsProfile.Arcade(), RockPhysicsProfile.RealPaceBase() })
+        foreach (float w in new[] { 6f, 8.5f, 12.4f, 15.8f })
+        foreach (bool inTurn in new[] { false, true })
+        {
+            var a = Fly(law, w, inTurn);
+            var b = Fly(law.WithTimeStretch(3f), w, inTurn);
+            Assert.AreEqual(a.end.x, b.end.x, 0.02f, $"end x at weight {w}");
+            Assert.AreEqual(a.end.y, b.end.y, 0.1f, $"end y at weight {w}");
+            float top = a.end.y - 0.1f, worst = 0f;
+            for (float y = RockPhysics.ReleaseY + 0.1f; y < top; y += 0.25f)
+                worst = Mathf.Max(worst, Mathf.Abs(XAt(a, y) - XAt(b, y)));
             Assert.Less(worst, 0.02f, $"path differs by {worst:F3} at weight {w}");
-            Assert.AreEqual(RockPhysicsProfile.RealTimeStretch, b.stopTime / a.stopTime, 0.3f, $"slow-down factor at weight {w} (a fixed 0.5 s sleep timer is not stretched)");
         }
     }
 
@@ -174,8 +190,8 @@ public class ConstantDecelTests
                 Vector2 a = legacy[legacy.Count - 1], b = arcade[arcade.Count - 1], c = real[real.Count - 1];
                 Assert.AreEqual(a.x, b.x, 0.1f, $"arcade end x, weight {w}");
                 Assert.AreEqual(a.y, b.y, 0.25f, $"arcade end y, weight {w}");
-                Assert.AreEqual(b.x, c.x, 0.03f, $"real end x, weight {w}");
-                Assert.AreEqual(b.y, c.y, 0.1f, $"real end y, weight {w} (the simulator's time cap must stretch with the profile)");
+                Assert.AreEqual(a.x, c.x, 0.1f, $"real end x, weight {w}");
+                Assert.AreEqual(a.y, c.y, 0.3f, $"real end y, weight {w} (the simulator's time cap must stretch with the profile)");
                 Assert.Less(real.Count, 400, "point spacing stretches with the profile");
                 Assert.AreEqual(arcadePoints, real.Count, 25, "same number of points at any pace");
             }
@@ -210,5 +226,41 @@ public class ConstantDecelTests
             }
         }
         finally { RockPhysicsSettings.Use(RockPhysicsProfile.Legacy()); }
+    }
+
+    [Test]
+    public void Arcade_Motion_IsSmooth_NeverSpeedsUp_AndLandsSoftly()
+    {
+        var p = RockPhysicsProfile.Arcade();
+        foreach (float w in Weights)
+        foreach (bool inTurn in new[] { false, true })
+        {
+            var s = RockPhysics.Launch(new Vector2(0f, -25f), new Vector2(0f, p.LaunchSpeedFromWeight(w)), p);
+            var speeds = new List<float>(); var headings = new List<float>(); var times = new List<float>();
+            float t = 0f;
+            for (int i = 0; i < 20000 && !s.asleep; i++)
+            {
+                RockPhysics.Step(ref s, p, Dt); t += Dt;
+                if (s.freeFlight && s.position.y > RockPhysics.ReleaseY) RockPhysics.Release(ref s, p, inTurn);
+                if (!s.freeFlight && s.velocity.sqrMagnitude > 0f)
+                {
+                    speeds.Add(s.velocity.magnitude); times.Add(t);
+                    headings.Add(Mathf.Atan2(s.velocity.x, s.velocity.y) * Mathf.Rad2Deg);
+                }
+            }
+            // 1. never speeds up
+            for (int i = 1; i < speeds.Count; i++)
+                Assert.LessOrEqual(speeds[i], speeds[i - 1] + 1e-4f, $"speed rose at t={times[i]:F2} (weight {w})");
+            // 2. a gentle landing: in the last second of motion the rock slows by well under what constant friction would (0.93/s)
+            float end = times[times.Count - 1];
+            int j = times.FindIndex(x => x >= end - 1f);
+            Assert.Less(speeds[j] - speeds[speeds.Count - 1], 0.25f, $"stop is too abrupt at weight {w}");
+            // 3. no sideways flick at the end: the heading turns gently (the late curl of a crawling rock), 13 degrees at most in the last half second
+            //    (the first constant-friction version swung 25+ degrees in that time)
+            int k = times.FindIndex(x => x >= end - 0.5f);
+            Assert.Less(Mathf.Abs(headings[headings.Count - 1] - headings[k]), 15f, $"heading swings at the end (weight {w})");
+            // 4. finishes in a sane time
+            Assert.Less(t, 16f, $"takes too long to stop at weight {w}");
+        }
     }
 }

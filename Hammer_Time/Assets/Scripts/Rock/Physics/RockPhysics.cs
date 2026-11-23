@@ -6,9 +6,10 @@ public enum FrictionLaw
     /// <summary>The original rock: Box2D-style exponential drag (speed falls in proportion to speed) and spin that fades with time.
     /// Kept so the parity tests can prove the new law reproduces the old paths.</summary>
     LegacyExponential,
-    /// <summary>Real-ice style: a constant deceleration, and a constant sideways (curl) acceleration set by the shot's weight.
-    /// A rock under constant forces follows a parabola, so where it stops can be worked out exactly.</summary>
-    ConstantDecel,
+    /// <summary>A soft landing: deceleration = strength * speed^power (power below 1), so the rock slows quickly at first, eases
+    /// off as it slows and comes to rest smoothly in finite time (no abrupt stop, no endless creep). The sideways curl fades with
+    /// speed too. Distances, stopping points and the whole path have closed forms, so the aim line is exact.</summary>
+    SoftStop,
 }
 
 /// <summary>
@@ -20,9 +21,9 @@ public enum FrictionLaw
 /// A weight means "travels this far", so LaunchSpeedFromWeight converts it to the speed this profile needs; the game's
 /// aiming, the AI's shot choices and the tutorial all keep speaking weights.
 ///
-/// Profiles: Legacy() = the rock as it played before; Arcade() = constant-decel at the game's pace (same paths, same
-/// weights, hog-to-hog time of the old rock, but it stops in ~7 s instead of creeping for 19); Real() = Arcade stretched
-/// in time so a button draw takes ~14.5 s hog to hog like real ice. Every rate in a profile scales together under
+/// Profiles: Legacy() = the rock as it played before; Arcade() = soft-stop friction at the game's pace (same paths, same
+/// weights, hog-to-hog time of the old rock, but it stops cleanly in ~10 s instead of creeping for 19); Real() = the constant-deceleration
+/// shape stretched in time so a button draw takes ~14.5 s hog to hog like real ice. Every rate in a profile scales together under
 /// WithTimeStretch, so the path (not the timing) is identical.
 /// </summary>
 [System.Serializable]
@@ -43,11 +44,16 @@ public class RockPhysicsProfile
     public float curlScale = 0.1f;
     public float restLinearDamping = 0.90f;
 
-    [Header("Constant-decel law (sliding rock)")]
-    [Tooltip("Constant slowing, units/s^2.")]
-    public float dryDecel = 0.929f;
-    [Tooltip("Sideways acceleration (units/s^2) = curlStrength * CurlMagnitude(weight) / weight.")]
-    public float curlStrength = 1.335f;
+    [Header("Soft-stop law (sliding rock)")]
+    [Tooltip("Deceleration = stopStrength * speed^stopPower. 0 = constant (abrupt stop), 1 = exponential (endless creep); 0.6 lands softly.")]
+    public float stopPower = 0.6f;
+    [Tooltip("Set so the button draw takes the old rock's 3.28 s hog to hog (StopStrengthFor(stopPower)).")]
+    public float stopStrength = 0.5174f;
+    [Tooltip("The sideways pull fades as speed^lateralFadePower (the spin of a slowing rock).")]
+    public float lateralFadePower = 0.4f;
+    [Tooltip("Sideways acceleration (units/s^2) = curlStrength * CurlMagnitude(weight) * weight^curlWeightExponent, fitted to the old rock's paths.")]
+    public float curlStrength = 0.5603f;
+    public float curlWeightExponent = -0.55f;
     [Tooltip("Weight <-> stopping distance from the near hog: distance = slope * weight + offset (matches the old rock, whose distance was weight / 0.38).")]
     public float stopDistanceSlope = 2.6430f;
     public float stopDistanceOffset = -0.117f;
@@ -77,14 +83,30 @@ public class RockPhysicsProfile
     public static RockPhysicsProfile Arcade()
     {
         var p = new RockPhysicsProfile();
-        p.law = FrictionLaw.ConstantDecel;
+        p.law = FrictionLaw.SoftStop;
         return p;
     }
 
-    /// <summary>Real-ice pace: a button draw takes about 14.5 s hog to hog. Paths are identical to Arcade().</summary>
-    public static RockPhysicsProfile Real() { return Arcade().WithTimeStretch(RealTimeStretch); }
+    /// <summary>
+    /// Real-ice pace: a button draw takes about 14.5 s hog to hog. Real ice slows at a roughly constant rate (stopPower 0) and at this
+    /// pace the end of the slide is far too slow to look abrupt, so Real is the constant-deceleration shape stretched in time. It follows
+    /// the same paths as Arcade (both are fitted to the old rock) but its timing is real: hog to rest takes ~30 s for a button draw.
+    /// </summary>
+    public static RockPhysicsProfile Real() { return RealPaceBase().WithTimeStretch(RealTimeStretch); }
 
-    /// <summary>How many times slower Real() is than Arcade(): 14.5 s real hog-to-hog / 3.28 s for the Arcade button draw.</summary>
+    /// <summary>The constant-deceleration shape at game pace (before the time stretch): fitted to the old rock's paths like Arcade.</summary>
+    public static RockPhysicsProfile RealPaceBase()
+    {
+        var p = Arcade();
+        p.stopPower = 0f;
+        p.stopStrength = 0.929f;
+        p.lateralFadePower = 0f;
+        p.curlStrength = 1.335f;
+        p.curlWeightExponent = -1f;
+        return p;
+    }
+
+    /// <summary>How many times slower Real() is than its game-pace base: 14.5 s real hog-to-hog / 3.28 s for the game-pace button draw.</summary>
     public const float RealTimeStretch = 4.42f;
 
     /// <summary>
@@ -100,7 +122,8 @@ public class RockPhysicsProfile
         p.spinOnRelease = spinOnRelease / s;
         p.curlScale = curlScale / s;
         p.restLinearDamping = restLinearDamping / s;
-        p.dryDecel = dryDecel / (s * s);
+        // dv/dt = -k v^p scales as k' = k * S^(p-2); the sideways acceleration scales as 1/S^2
+        p.stopStrength = stopStrength * Mathf.Pow(s, stopPower - 2f);
         p.curlStrength = curlStrength / (s * s);
         p.restDryDecel = restDryDecel / (s * s);
         p.restViscous = restViscous / s;
@@ -112,6 +135,18 @@ public class RockPhysicsProfile
 
     public bool IsLegacy { get { return law == FrictionLaw.LegacyExponential; } }
 
+    /// <summary>
+    /// The stopStrength that makes the button draw (weight 8.5, 22.37 from the near hog) cross the 16.15 between the hog lines in the
+    /// old rock's 3.28 s, for a given power (closed form of dv/dt = -k v^p).
+    /// </summary>
+    public static float StopStrengthFor(float power)
+    {
+        const float D = 22.37f, H = 16.15f, T = 3.28f;
+        float m = (1f - power) / (2f - power);
+        float num = Mathf.Pow(2f - power, m) * (Mathf.Pow(D, m) - Mathf.Pow(D - H, m));
+        return Mathf.Pow(num / ((1f - power) * T), 2f - power);
+    }
+
     // ---- weights <-> speeds ----------------------------------------------------------------------------------------
 
     /// <summary>Speed (this profile's units) a rock released at the near hog needs to travel as far as a shot of this weight.</summary>
@@ -119,14 +154,14 @@ public class RockPhysicsProfile
     {
         if (IsLegacy) return weight;
         float distance = Mathf.Max(0.01f, stopDistanceSlope * weight + stopDistanceOffset);
-        return Mathf.Sqrt(2f * dryDecel * distance);
+        return Mathf.Pow(stopStrength * (2f - stopPower) * distance, 1f / (2f - stopPower));
     }
 
     /// <summary>The weight a rock released at this speed has (inverse of LaunchSpeedFromWeight).</summary>
     public float WeightFromLaunchSpeed(float speed)
     {
         if (IsLegacy) return speed;
-        float distance = speed * speed / (2f * dryDecel);
+        float distance = StopDistance(speed);
         return (distance - stopDistanceOffset) / stopDistanceSlope;
     }
 
@@ -147,7 +182,7 @@ public class RockPhysicsProfile
     /// <summary>Distance a free-sliding rock travels after the near hog at this speed (constant-decel law).</summary>
     public float StopDistance(float launchSpeed)
     {
-        return IsLegacy ? launchSpeed / linearDamping : launchSpeed * launchSpeed / (2f * dryDecel);
+        return IsLegacy ? launchSpeed / linearDamping : Mathf.Pow(Mathf.Max(0f, launchSpeed), 2f - stopPower) / (stopStrength * (2f - stopPower));
     }
 
     // ---- curl ------------------------------------------------------------------------------------------------------
@@ -164,10 +199,10 @@ public class RockPhysicsProfile
         return Mathf.Lerp(0.21f, 0.12f, (ratio - 0.66f) / 0.34f);
     }
 
-    /// <summary>Constant sideways acceleration (units/s^2) for a shot of this weight under the constant-decel law.</summary>
+    /// <summary>Sideways acceleration (units/s^2) at release for a shot of this weight under the soft-stop law; it then fades with speed.</summary>
     public float CurlAcceleration(float weight)
     {
-        return curlStrength * CurlMagnitude(weight) / Mathf.Max(weight, 1f);
+        return curlStrength * CurlMagnitude(weight) * Mathf.Pow(Mathf.Max(weight, 1f), curlWeightExponent);
     }
 }
 
@@ -176,7 +211,7 @@ public struct RockState
 {
     public Vector2 position;
     public Vector2 velocity;
-    /// <summary>Spin, degrees/s (Rigidbody2D.angularVelocity units). Legacy law: drives curl. Constant-decel law: cosmetic only.</summary>
+    /// <summary>Spin, degrees/s (Rigidbody2D.angularVelocity units). Legacy law: drives curl. Soft-stop law: cosmetic only.</summary>
     public float spin;
 
     /// <summary>True from the throw until the rock crosses the near hog line: no friction, no curl.</summary>
@@ -187,15 +222,17 @@ public struct RockState
     public int dirMult;
     /// <summary>Legacy law: curl coefficient (negative = left for dirMult +1).</summary>
     public float curlX;
-    /// <summary>Constant-decel law: sideways acceleration, units/s^2 (set at release from the weight and turn).</summary>
+    /// <summary>Soft-stop law: sideways acceleration at release, units/s^2 (set from the weight and turn; fades with speed).</summary>
     public float curlAccel;
+    /// <summary>Soft-stop law: the speed at the near hog line; the sideways pull fades as (speed / releaseSpeed)^lateralFadePower.</summary>
+    public float releaseSpeed;
     /// <summary>Scales curl (sweeping changes it). 1 = normal.</summary>
     public float curlMultiplier;
 
     /// <summary>Legacy law drag values. Sweeping moves these; they start from the profile at release.</summary>
     public float linearDamping;
     public float angularDamping;
-    /// <summary>Constant-decel law: scales the friction (sweeping lowers it). 1 = normal.</summary>
+    /// <summary>Soft-stop law: scales the friction (sweeping lowers it). 1 = normal.</summary>
     public float frictionScale;
 
     public bool atRest;
@@ -270,6 +307,7 @@ public static class RockPhysics
         float weight = p.WeightFromLaunchSpeed(s.velocity.magnitude);
         s.curlX = -p.CurlMagnitude(weight);
         s.curlAccel = -s.dirMult * p.CurlAcceleration(weight);
+        s.releaseSpeed = Mathf.Max(0.0001f, s.velocity.magnitude);
         s.turnPending = true;
         if (s.curlMultiplier == 0f) s.curlMultiplier = 1f;
     }
@@ -284,7 +322,7 @@ public static class RockPhysics
         if (s.asleep) return;
 
         if (p.IsLegacy) StepLegacy(ref s, p, dt);
-        else StepConstantDecel(ref s, p, dt);
+        else StepSoftStop(ref s, p, dt);
 
         if (integratePosition) s.position += s.velocity * dt;
 
@@ -333,7 +371,7 @@ public static class RockPhysics
         s.spin /= 1f + s.angularDamping * dt;
     }
 
-    static void StepConstantDecel(ref RockState s, RockPhysicsProfile p, float dt)
+    static void StepSoftStop(ref RockState s, RockPhysicsProfile p, float dt)
     {
         s.turnPending = false;
         if (s.freeFlight) return;
@@ -341,9 +379,12 @@ public static class RockPhysics
         float speed = s.velocity.magnitude;
         if (speed < p.restSpeed) s.atRest = true;
 
-        // curl: a constant sideways acceleration chosen at release (a rock that was only hit has none)
-        if (s.curlActive)
-            s.velocity.x += s.curlMultiplier * s.curlAccel * dt;
+        // curl: a sideways pull chosen at release that fades with the rock's speed (a rock that was only hit has none)
+        if (s.curlActive && s.releaseSpeed > 0f)
+        {
+            float fade = Mathf.Pow(Mathf.Clamp(speed / s.releaseSpeed, 0f, 1.5f), p.lateralFadePower);
+            s.velocity.x += s.curlMultiplier * s.curlAccel * fade * dt;
+        }
 
         speed = s.velocity.magnitude;
         if (speed <= 0f) return;
@@ -356,15 +397,15 @@ public static class RockPhysics
         }
         else
         {
-            slowed = speed - p.dryDecel * s.frictionScale * dt;
+            slowed = speed - p.stopStrength * s.frictionScale * Mathf.Pow(speed, p.stopPower) * dt;
         }
 
-        if (slowed <= 0f)
+        if (slowed < 0.5f * p.restSpeed)
         {
             s.velocity = Vector2.zero;
             s.spin = 0f;
             s.atRest = true;
-            if (!s.freeFlight) s.curlActive = false;
+            s.curlActive = false;
         }
         else
         {

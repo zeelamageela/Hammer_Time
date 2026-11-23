@@ -29,7 +29,7 @@ public class QuickTestGame : MonoBehaviour
     public KeyCode runbackPracticeKey = KeyCode.E;
     
     [Tooltip("Number of rocks per team")]
-    public int rocksPerTeam = 2;
+    public int rocksPerTeam = 4;
     
     [Tooltip("Number of ends to play")]
     public int endsToPlay = 1;
