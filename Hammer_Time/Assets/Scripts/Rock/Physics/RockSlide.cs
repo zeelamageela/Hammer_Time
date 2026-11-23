@@ -49,6 +49,16 @@ public static class RockPhysicsSettings
     public static float Speed(float originalUnits) { return originalUnits / Current.timeStretch; }
 }
 
+/// <summary>Audit helper: reports the rock's speed after every other script's FixedUpdate has run (see ShotAudit.Phase).</summary>
+[DefaultExecutionOrder(10000)]
+public class RockSlideLateAudit : MonoBehaviour
+{
+    Rigidbody2D body;
+    RockSlide slide;
+    void Awake() { body = GetComponent<Rigidbody2D>(); slide = GetComponent<RockSlide>(); }
+    void FixedUpdate() { if (body != null && slide != null && !body.isKinematic) ShotAudit.Phase(gameObject, "FixedUpdate-late", body.linearVelocity.magnitude); }
+}
+
 /// <summary>
 /// Applies RockPhysics to a rock's Rigidbody2D every physics step: friction, curl, spin fade. It replaces the
 /// Rigidbody's own damping (which is turned off) so the live rock and the trajectory simulator run the identical model.
@@ -131,6 +141,7 @@ public class RockSlide : MonoBehaviour
     {
         if (ready) return;
         body = GetComponent<Rigidbody2D>();
+        if (GetComponent<RockSlideLateAudit>() == null) gameObject.AddComponent<RockSlideLateAudit>();
         state = RockPhysics.NewRock(RockPhysicsSettings.Current);
         SpeedPerWeight = 1f;
         if (body != null)
@@ -189,8 +200,13 @@ public class RockSlide : MonoBehaviour
         return s;
     }
 
+    // speed checkpoints for ShotAudit (cheap no-ops unless a throw is being audited)
+    void Update() { if (ready && body != null && state.freeFlight) ShotAudit.Phase(gameObject, "Update", body.linearVelocity.magnitude); }
+    void LateUpdate() { if (ready && body != null && state.freeFlight) ShotAudit.Phase(gameObject, "LateUpdate", body.linearVelocity.magnitude); }
+
     void FixedUpdate()
     {
+        if (ready && body != null && state.freeFlight) ShotAudit.Phase(gameObject, "FixedUpdate-start", body.linearVelocity.magnitude);
         if (!ready || body == null || body.bodyType != RigidbodyType2D.Dynamic) return;
 
         state.position = body.position;

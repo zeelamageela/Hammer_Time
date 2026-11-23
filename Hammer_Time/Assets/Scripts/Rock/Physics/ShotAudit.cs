@@ -99,6 +99,25 @@ public static class ShotAudit
     }
 
     static float lastFlightSpeed;
+    static float lastPhaseSpeed;
+    static string lastPhase = "";
+
+    /// <summary>
+    /// RockSlide reports the rock's speed at fixed points of each frame (FixedUpdate start, Update, LateUpdate). A drop between two of them
+    /// says where it happened: inside the physics step (FixedUpdate start -> Update of the same tick) or in script code between frames.
+    /// </summary>
+    public static void Phase(GameObject rock, string phase, float speed)
+    {
+        if (!armed || rock != launchedRock) return;
+        if (lastPhaseSpeed > 0f && speed < lastPhaseSpeed * 0.999f)
+            Debug.Log($"[ShotAudit] PHASE of speed drop: between '{lastPhase}' and '{phase}': {lastPhaseSpeed:F4} -> {speed:F4} (x{speed / lastPhaseSpeed:F4}) frame={Time.frameCount}");
+        lastPhaseSpeed = speed; lastPhase = phase;
+    }
+
+    /// <summary>For tools: how many speed drops WatchSpeed has seen, and the latest one's ratio and y.</summary>
+    public static int DropCount;
+    public static float LastDropRatio;
+    public static float LastDropY;
 
     /// <summary>
     /// RockSlide calls this each step of free flight. If the speed falls, it logs the step, the Box2D damping, and everything the rock
@@ -110,6 +129,7 @@ public static class ShotAudit
         float speed = body.linearVelocity.magnitude;
         if (lastFlightSpeed > 0f && speed < lastFlightSpeed * 0.999f)
         {
+            DropCount++; LastDropRatio = speed / lastFlightSpeed; LastDropY = body.position.y;
             var sb = new System.Text.StringBuilder();
             foreach (var c in Physics2D.OverlapCircleAll(body.position, 0.6f))
                 if (c != null && c.gameObject != rock)
