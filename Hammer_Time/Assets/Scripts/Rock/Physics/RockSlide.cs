@@ -229,7 +229,8 @@ public class RockSlide : MonoBehaviour
         else if (state.curlActive)
         {
             // Spin is only for looks under the constant-decel law: it fades as the rock slows, and stops with it.
-            body.angularVelocity = -state.dirMult * 342f * Mathf.Clamp01(state.velocity.magnitude / releaseSpeed) / p.timeStretch;
+            // Same sign as the legacy spin (+dirMult), which turns the way the rock curls (curl pulls toward -dirMult).
+            body.angularVelocity = state.dirMult * 342f * Mathf.Clamp01(state.velocity.magnitude / releaseSpeed) / p.timeStretch;
         }
     }
 }
