@@ -107,6 +107,9 @@ public class CareerManager : MonoBehaviour
     // EquipmentManager, so SweeperManager reads it from here to pick the broom art.
     public int activeHandleTier;
 
+    // Levels bought in the Training menu, one entry per TrainingTrack (0-4 each). See TrainingCatalog.
+    public int[] trainingLevels;
+
     public bool inProgress;
     public int season;
     public bool loadedFromSave;
@@ -1844,6 +1847,7 @@ public class CareerManager : MonoBehaviour
         inventoryID = null;
         lastEquipmentSnapshot = null;
         activeHandleTier = 0;
+        trainingLevels = null;
 
         // Clear all sponsor/card data
         activeCardIDList = null;
@@ -2393,7 +2397,8 @@ public class CareerManager : MonoBehaviour
         if (activeEquipID != null) data.activeEquipIDs.AddRange(activeEquipID);
         if (inventoryID != null) data.inventoryIDs.AddRange(inventoryID);
         data.activeHandleTier = activeHandleTier;
-        
+        if (trainingLevels != null) data.trainingLevels.AddRange(trainingLevels);
+
         // Serialize all equipment if EquipmentManager exists
         EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
         if (em == null)
@@ -2800,7 +2805,8 @@ public class CareerManager : MonoBehaviour
         activeEquipID = data.activeEquipIDs.ToArray();
         inventoryID = data.inventoryIDs.ToArray();
         activeHandleTier = data.activeHandleTier;
-        
+        trainingLevels = data.trainingLevels != null ? data.trainingLevels.ToArray() : null; // absent in saves from before training existed
+
         // Restore equipment collections if available
         if (data.allEquipment != null && data.allEquipment.handles != null && data.allEquipment.handles.Count > 0)
             lastEquipmentSnapshot = data.allEquipment;

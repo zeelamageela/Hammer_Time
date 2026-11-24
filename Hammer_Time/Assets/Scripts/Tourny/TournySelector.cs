@@ -87,6 +87,7 @@ public class TournySelector : MonoBehaviour
     public GameObject options;
 
     public ProvStandings provStandings;
+    public TrainingManager trainingManager;   // the Training screen (replaces the Standings screen on the hub menu)
     public TourStandings tourStandings;
     int week;
 
@@ -1308,6 +1309,7 @@ public class TournySelector : MonoBehaviour
 
     public void TournyWindow(bool on)
     {
+        HideTraining();
         if (on)
         {
             teamNameText.text = "Available Tournies";
@@ -1453,8 +1455,29 @@ public class TournySelector : MonoBehaviour
         SceneManager.LoadScene("SplashMenu");
     }
 
+    public void TrainingWindow(bool on)
+    {
+        Standings(false);   // every other panel off
+        if (trainingManager == null) return;
+        if (on)
+        {
+            teamNameText.text = "Training";
+            trainingManager.Show();
+        }
+        else
+        {
+            trainingManager.Hide();
+        }
+    }
+
+    void HideTraining()
+    {
+        if (trainingManager != null) trainingManager.Hide();
+    }
+
     public void Standings(bool on)
     {
+        HideTraining();
 
         if (on)
         {
@@ -1485,6 +1508,7 @@ public class TournySelector : MonoBehaviour
 
     public void TourStandings(bool on)
     {
+        HideTraining();
         if (on)
         {
             teamNameText.text = "Tour Standings";
@@ -1514,6 +1538,7 @@ public class TournySelector : MonoBehaviour
 
     public void Sponsors(bool on)
     {
+        HideTraining();
         if (on)
         {
             teamNameText.text = "Sponsors";
@@ -1554,6 +1579,7 @@ public class TournySelector : MonoBehaviour
 
     public void PlayerEquip(bool on)
     {
+        HideTraining();
         em.MainMenu();
         if (on)
         {
@@ -1596,6 +1622,7 @@ public class TournySelector : MonoBehaviour
 
     public void XP(bool on)
     {
+        HideTraining();
         if (on)
         {
             teamNameText.text = "SkillPoints";
@@ -1635,6 +1662,7 @@ public class TournySelector : MonoBehaviour
 
     public void TeamWindow(bool on)
     {
+        HideTraining();
         if (on)
         {
             teamNameText.text = "Team";
@@ -1683,7 +1711,7 @@ public class TournySelector : MonoBehaviour
         PlayerEquip(false);
         TeamWindow(false);
         Sponsors(false);
-        Standings(false);
+        TrainingWindow(false);
 
         // Identify the selected button  
         for (int i = 0; i < menuButtons.Length; i++)
@@ -1802,7 +1830,7 @@ public class TournySelector : MonoBehaviour
                 Sponsors(true);
                 break;
             case 4:
-                Standings(true);
+                TrainingWindow(true);   // slot 4 used to be Standings
                 break;
             case 5:
                 break;

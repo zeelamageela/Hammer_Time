@@ -53,6 +53,7 @@ public class CareerSaveData
         public List<int> activeEquipIDs;
         public List<int> inventoryIDs;
         public int activeHandleTier; // 0 if absent (saves from before this field existed)
+        public List<int> trainingLevels; // one level (0-4) per TrainingTrack; null in saves from before training existed
         public EquipmentCollectionData allEquipment;
         
         // Cards/Sponsors
@@ -99,6 +100,7 @@ public class CareerSaveData
             activePlayers = new List<PlayerData>();
             activeEquipIDs = new List<int>();
             inventoryIDs = new List<int>();
+            trainingLevels = new List<int>();
             cardPowerUpIDs = new List<int>();
             cardSponsorIDs = new List<int>();
             activeCardIDs = new List<int>();
