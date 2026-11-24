@@ -139,6 +139,43 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
+    // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
+    readonly System.Random fuzzRng = new System.Random();
+    Vector2 fuzzError;
+    int fuzzRockIndex = -1;
+    bool fuzzActive;
+    Vector2 fuzzLauncher;
+    Vector2 fuzzEnd;
+
+    Vector2 FuzzWarp(Vector2 p)
+    {
+        return fuzzActive ? AimFuzz.Warp(p, fuzzLauncher, fuzzEnd, fuzzError) : p;
+    }
+
+    /// <summary>Starts a draw: decides whether this aim gets fuzzed, rolls the error once per rock, and finds the line's true end.</summary>
+    void BeginFuzz(Vector2 launcherPos, Vector2 initialVelocity, bool isInTurn)
+    {
+        fuzzActive = false;
+        if (!AimFuzz.Enabled || aiTurn) return;
+        if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame) return;
+
+        if (fuzzRockIndex != gm.rockCurrent)
+        {
+            float aim = GetShooterAimAccuracy();
+            float weight = GetShooterWeightAccuracy();
+            fuzzError = AimFuzz.Roll(aim, weight, fuzzRng);
+            fuzzRockIndex = gm.rockCurrent;
+            Debug.Log($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
+        }
+        if (fuzzError == Vector2.zero) return;
+
+        List<Vector2> ideal = trajectorySimulator.SimulateTrajectory(launcherPos, initialVelocity, isInTurn, 250, new List<GameObject>(), forPlayerPreview: true);
+        if (ideal.Count == 0) return;
+        fuzzLauncher = launcherPos;
+        fuzzEnd = ideal[ideal.Count - 1];
+        fuzzActive = true;
+    }
+
     void Start()
     {
         lr = GetComponent<LineRenderer>();
@@ -464,6 +501,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // Clear previous trajectory before drawing new one
         ClearTrajectory();
+        fuzzActive = false;
 
         springDistance = trajTransform.springDistance;
         
@@ -576,6 +614,8 @@ public class TrajectoryLine : MonoBehaviour
                 }
             }
             
+            BeginFuzz(launcherPos, initialVelocity, isInTurn);
+
             // Simulate the trajectory with collision detection
             // CRITICAL: Pass forPlayerPreview = true so curl matches visual expectation
             List<Vector2> simulatedPath = trajectorySimulator.SimulateTrajectory(
@@ -596,7 +636,8 @@ public class TrajectoryLine : MonoBehaviour
             // Convert to Vector3 for rendering
             foreach (Vector2 point in simulatedPath)
             {
-                pos.Add(new Vector3(point.x, point.y, 0f));
+                Vector2 shown = FuzzWarp(point);
+                pos.Add(new Vector3(shown.x, shown.y, 0f));
             }
             
             // Set line renderer
@@ -618,8 +659,8 @@ public class TrajectoryLine : MonoBehaviour
                 if (collisionMarker != null)
                 {
                     currentCollisionMarker = Instantiate(
-                        collisionMarker, 
-                        collisionInfo.collisionPoint, 
+                        collisionMarker,
+                        (Vector3)FuzzWarp(collisionInfo.collisionPoint),
                         Quaternion.identity
                     );
                     currentCollisionMarker.transform.parent = transform;
@@ -648,8 +689,8 @@ public class TrajectoryLine : MonoBehaviour
                 // Use the VELOCITY at collision point, not the path points
                 if (collisionInfo.collisionIndex > 0 && collisionInfo.thrownRockPostCollisionPath.Count >= 2)
                 {
-                    Vector2 collisionPoint = collisionInfo.collisionPoint;
-                    
+                    Vector2 collisionPoint = FuzzWarp(collisionInfo.collisionPoint);
+
                     // Calculate velocity from first 2 points of simulated path
                     // These points are TIME_STEP apart (0.05s), so velocity = delta / time
                     Vector2 firstPoint = collisionInfo.thrownRockPostCollisionPath[0]; // Collision point
@@ -677,7 +718,7 @@ public class TrajectoryLine : MonoBehaviour
                 if (collisionInfo.collisionIndex > 0 && collisionInfo.hitRockPostCollisionPath.Count >= 2)
                 {
                     // Hit rock starts at its original position (target rock position)
-                    Vector2 hitRockStart = collisionInfo.hitRockPostCollisionPath[0];
+                    Vector2 hitRockStart = FuzzWarp(collisionInfo.hitRockPostCollisionPath[0]);
                     Vector2 hitRockSecond = collisionInfo.hitRockPostCollisionPath[1];
                     
                     // Direction is the exit velocity of the hit rock
@@ -876,11 +917,11 @@ public class TrajectoryLine : MonoBehaviour
 
             if (idealInfo.finalPosition != Vector2.zero)
             {
-                aimCircle.transform.position = idealInfo.finalPosition;
+                aimCircle.transform.position = FuzzWarp(idealInfo.finalPosition);
             }
             else if (idealPath.Count > 0)
             {
-                aimCircle.transform.position = idealPath[idealPath.Count - 1];
+                aimCircle.transform.position = FuzzWarp(idealPath[idealPath.Count - 1]);
             }
         }
         else if (pos.Count > 0)
@@ -904,6 +945,7 @@ public class TrajectoryLine : MonoBehaviour
     public void Release()
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+        fuzzRockIndex = -1; // the next rock gets its own roll
         //lr.enabled = true;
         lr.startWidth = 0.075f;
         lr.endWidth = 0.075f;
@@ -1138,7 +1180,9 @@ public class TrajectoryLine : MonoBehaviour
         {
             verticalLineX = pullbackPos.x;
         }
-        
+        // the straight-aim line is bent by the skill error too, so the curl line still shows the true curl
+        if (fuzzActive) verticalLineX += fuzzError.x;
+
         // ZONE-BASED LOGIC for vertical line endpoints
         // CRITICAL: Use ACTUAL final trajectory point Y position for vertical line endpoints!
         // This makes the vertical line end exactly at the trajectory dot's Y position
@@ -1416,7 +1460,7 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // Draw small vertical line at collision point
-        Vector2 collisionPoint = collisionInfo.collisionPoint;
+        Vector2 collisionPoint = FuzzWarp(collisionInfo.collisionPoint);
         float indicatorHeight = 0.5f; // 0.5 units tall (subtle)
         
         // Center the indicator around collision point
