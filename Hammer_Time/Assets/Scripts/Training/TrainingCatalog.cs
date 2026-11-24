@@ -16,6 +16,8 @@ public class TrainingLevel
     public string name;
     public string effect;
     public float cost;
+    /// <summary>The player (XP) level needed before this can be bought; 1 = no gate.</summary>
+    public int requiredLevel = 1;
     /// <summary>Stat bonus this level adds, in the same units and order as equipment (see CareerStats).</summary>
     public int weight, finesse, aim, sweepStrength, sweepEndurance, sweepCohesion;
 }
@@ -81,7 +83,7 @@ public static class TrainingCatalog
         {
             L("Carving Basics",     "Unlocks carving: tap one sweeper",                      1),
             L("Edge Control",       "Carving pushes harder",                                2),
-            L("Quick Hands",        "Carving pushes harder again and reacts faster",        3),
+            L("Quick Hands",        "Carving pushes harder again",                          3),
             L("Master Sweeper",     "Full-strength carving",                                4),
         },
         // TACTIC STUDIES: the collision indicator, sharper each level (CollisionIndicatorError)
@@ -89,8 +91,8 @@ public static class TrainingCatalog
         {
             L("Film Room",          "Collision direction indicator (rough)",                1),
             L("Shot Charts",        "Collision indicator within about 12 degrees",          2),
-            L("Angle Study",        "Collision indicator within about 6 degrees",           3),
-            L("Hit Analytics",      "Exact collision indicator and struck-rock path",       4),
+            L("Angle Study",        "Collision indicator within about 6 degrees, plus the red warning line", 3),
+            L("Hit Analytics",      "Exact collision indicator",                            4),
         },
         // ON-ICE TRAINING: the aim circle, tighter each level (AimCircleDiameter)
         new[]
@@ -109,6 +111,31 @@ public static class TrainingCatalog
             L("Pickleball",         "+4 aim, +4 finesse",                                   4, aim: 4, finesse: 4),
         },
     };
+
+    /// <summary>
+    /// Player level needed for each level of the tracks that unlock things (carving, the collision indicator, the aim circle):
+    /// you learn them as you progress. The stat tracks are cash only.
+    /// </summary>
+    public static readonly int[] UnlockLevelGate = { 2, 4, 6, 8 };
+
+    public static bool IsGated(TrainingTrack t)
+    {
+        return t == TrainingTrack.Directional || t == TrainingTrack.Tactics || t == TrainingTrack.OnIce;
+    }
+
+    static TrainingCatalog()
+    {
+        for (int t = 0; t < Tracks; t++)
+            for (int l = 0; l < MaxLevel; l++)
+                Levels[t][l].requiredLevel = IsGated((TrainingTrack)t) ? UnlockLevelGate[l] : 1;
+    }
+
+    /// <summary>True if a player of this level may buy the next level of the track (cash is checked separately).</summary>
+    public static bool LevelAllows(int[] owned, TrainingTrack t, int playerLevel)
+    {
+        var next = Next(owned, t);
+        return next != null && playerLevel >= next.requiredLevel;
+    }
 
     /// <summary>Level 1..MaxLevel of a track (levelNumber is 1-based). Null if out of range.</summary>
     public static TrainingLevel Level(TrainingTrack t, int levelNumber)

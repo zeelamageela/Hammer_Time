@@ -152,6 +152,48 @@ public class TrajectoryLine : MonoBehaviour
         return fuzzActive ? AimFuzz.Warp(p, fuzzLauncher, fuzzEnd, fuzzError) : p;
     }
 
+    // ---- training (see TrainingAids): which aids the player has earned, and how sharp they are ----
+
+    /// <summary>The aim circle is on in the settings AND earned (On-Ice Training).</summary>
+    bool AimCircleShown { get { return aimCircleVisible && TrainingAids.AimCircleUnlocked; } }
+
+    float aimCircleBaseDiameter;   // world width of the aim circle at scale 1, measured once
+
+    /// <summary>On-Ice Training narrows the aim circle level by level.</summary>
+    void SizeAimCircle()
+    {
+        float wanted = TrainingAids.AimCircleDiameter;
+        if (wanted <= 0f || aimCircle == null) return;
+        var sr = aimCircle.GetComponent<SpriteRenderer>();
+        if (aimCircleBaseDiameter <= 0f)
+        {
+            float scale = Mathf.Max(0.0001f, aimCircle.transform.localScale.x);
+            aimCircleBaseDiameter = sr.sprite != null ? sr.sprite.bounds.size.x : sr.bounds.size.x / scale;
+        }
+        if (aimCircleBaseDiameter <= 0f) return;
+        float s = wanted / aimCircleBaseDiameter;
+        aimCircle.transform.localScale = new Vector3(s, s, aimCircle.transform.localScale.z);
+    }
+
+    // Tactic Studies: the collision arrows are off by up to a few degrees, rolled once per rock (like the aim fuzz) so they don't jitter.
+    int collisionErrorRockIndex = -1;
+    float collisionErrorSign;
+
+    Vector2 CollisionArrowError(Vector2 direction)
+    {
+        float max = TrainingAids.CollisionErrorDegrees;
+        if (max <= 0f) return direction;
+        int rock = gm != null ? gm.rockCurrent : 0;
+        if (collisionErrorRockIndex != rock)
+        {
+            collisionErrorRockIndex = rock;
+            collisionErrorSign = (float)(fuzzRng.NextDouble() * 2.0 - 1.0);   // -1..1 of the allowed error
+        }
+        float a = collisionErrorSign * max * Mathf.Deg2Rad;
+        float c = Mathf.Cos(a), sn = Mathf.Sin(a);
+        return new Vector2(direction.x * c - direction.y * sn, direction.x * sn + direction.y * c);
+    }
+
     /// <summary>Starts a draw: decides whether this aim gets fuzzed, rolls the error once per rock, and finds the line's true end.</summary>
     void BeginFuzz(Vector2 launcherPos, Vector2 initialVelocity, bool isInTurn)
     {
@@ -204,6 +246,7 @@ public class TrajectoryLine : MonoBehaviour
         
         Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
+        TrainingAids.Refresh();
         lr.enabled = false;
         CareerManager cm = FindObjectOfType<CareerManager>();
         if (cm != null && cm.cStats != null)
@@ -650,7 +693,7 @@ public class TrajectoryLine : MonoBehaviour
             // Debug.Log($"Physics simulation complete - {pos.Count} points, collision: {collisionInfo.hasCollision}");
             
             // Visualize collision if detected (only if visibility enabled)
-            if (collisionInfo.hasCollision && showCollisionPrediction && collisionLinesVisible)
+            if (collisionInfo.hasCollision && showCollisionPrediction && collisionLinesVisible && TrainingAids.CollisionIndicatorUnlocked)
             {
                 Debug.Log($"[TrajectoryLine] COLLISION DETECTED! Point: {collisionInfo.collisionPoint}, Index: {collisionInfo.collisionIndex}");
                 Debug.Log($"[TrajectoryLine] Thrown rock path count: {collisionInfo.thrownRockPostCollisionPath.Count}, Hit rock path count: {collisionInfo.hitRockPostCollisionPath.Count}");
@@ -697,7 +740,7 @@ public class TrajectoryLine : MonoBehaviour
                     Vector2 secondPoint = collisionInfo.thrownRockPostCollisionPath[1]; // Next point
                     
                     // Direction is from first point to second point (actual deflection)
-                    Vector2 deflectionDirection = (secondPoint - firstPoint).normalized;
+                    Vector2 deflectionDirection = CollisionArrowError((secondPoint - firstPoint).normalized);
                     Vector2 arrowEnd = collisionPoint + deflectionDirection * arrowLength;
                     
                     postCollisionLine.enabled = true;
@@ -722,7 +765,7 @@ public class TrajectoryLine : MonoBehaviour
                     Vector2 hitRockSecond = collisionInfo.hitRockPostCollisionPath[1];
                     
                     // Direction is the exit velocity of the hit rock
-                    Vector2 exitDirection = (hitRockSecond - hitRockStart).normalized;
+                    Vector2 exitDirection = CollisionArrowError((hitRockSecond - hitRockStart).normalized);
                     Vector2 hitArrowEnd = hitRockStart + exitDirection * arrowLength;
                     
                     hitRockPostCollisionLine.enabled = true;
@@ -864,9 +907,10 @@ public class TrajectoryLine : MonoBehaviour
         }
 
         // Position aim circle at ideal endpoint (as if no rocks were there)
-        if (aimCircle != null && aimCircleVisible)
+        if (aimCircle != null && AimCircleShown)
         {
             aimCircle.GetComponent<SpriteRenderer>().enabled = true;
+            SizeAimCircle();
             
             // Hide alternative aim lines when aim circle is ON
             if (aimVerticalLine != null) aimVerticalLine.enabled = false;
@@ -1390,7 +1434,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use WEIGHT accuracy (distance control skill)
-            return cm.cStats.weightAccuracy;
+            return Mathf.Min(100f, cm.cStats.weightAccuracy + cm.TrainingBonus.weightAccuracy);   // + training
         }
         else if (teamManager != null)
         {
@@ -1431,14 +1475,14 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // Only show if toggle is ON
-        if (!collisionWarningVisible)
+        if (!collisionWarningVisible || !TrainingAids.CollisionWarningUnlocked)
         {
             collisionWarningLine.enabled = false;
             return;
         }
         
         // Only show when aim circle is OFF (guide lines mode)
-        if (aimCircleVisible)
+        if (AimCircleShown)
         {
             collisionWarningLine.enabled = false;
             return;
@@ -1487,7 +1531,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use AIM accuracy (lateral positioning skill)
-            return cm.cStats.aimAccuracy;
+            return Mathf.Min(100f, cm.cStats.aimAccuracy + cm.TrainingBonus.aimAccuracy);   // + training
         }
         else if (teamManager != null)
         {

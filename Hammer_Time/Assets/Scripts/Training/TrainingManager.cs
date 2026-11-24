@@ -56,6 +56,7 @@ public class TrainingManager : MonoBehaviour
         var c = Career;
         int[] owned = c != null ? c.trainingLevels : null;
         float cash = c != null ? c.cash : 0f;
+        int playerLevel = c != null ? c.level : 1;
 
         for (int i = 0; rows != null && i < rows.Length && i < TrainingCatalog.Tracks; i++)
         {
@@ -66,10 +67,15 @@ public class TrainingManager : MonoBehaviour
 
             if (row.name != null) row.name.text = TrainingCatalog.TrackName(track) + "  " + have + "/" + TrainingCatalog.MaxLevel;
             if (row.cost != null) row.cost.text = next != null ? "$" + next.cost.ToString("n0") : "MAXED";
+            bool levelOk = TrainingCatalog.LevelAllows(owned, track, playerLevel);
             if (row.text != null)
-                row.text.text = next != null ? next.name + ": " + next.effect : TrainingCatalog.Level(track, TrainingCatalog.MaxLevel).name + " - fully trained";
+            {
+                if (next == null) row.text.text = TrainingCatalog.Level(track, TrainingCatalog.MaxLevel).name + " - fully trained";
+                else if (!levelOk) row.text.text = next.name + ": reach player level " + next.requiredLevel;
+                else row.text.text = next.name + ": " + next.effect;
+            }
 
-            bool canBuy = next != null && cash >= next.cost;
+            bool canBuy = next != null && levelOk && cash >= next.cost;
             if (row.button != null)
             {
                 row.button.interactable = canBuy;
@@ -84,7 +90,7 @@ public class TrainingManager : MonoBehaviour
     {
         var c = Career;
         var next = c != null ? TrainingCatalog.Next(c.trainingLevels, (TrainingTrack)track) : null;
-        if (next == null) return;
+        if (next == null || c.level < next.requiredLevel) return;
         pendingTrack = track;
         if (confirmText != null)
             confirmText.text = "Train " + next.name + " (" + TrainingCatalog.TrackName((TrainingTrack)track) + ") for $" + next.cost.ToString("n0") + "?";
@@ -102,7 +108,7 @@ public class TrainingManager : MonoBehaviour
         var c = Career;
         if (c == null) return;
         var next = TrainingCatalog.Next(c.trainingLevels, (TrainingTrack)track);
-        if (next == null || c.cash < next.cost) { Refresh(); return; }
+        if (next == null || c.level < next.requiredLevel || c.cash < next.cost) { Refresh(); return; }
 
         c.cash -= next.cost;
         c.trainingLevels = TrainingCatalog.WithLevelBought(c.trainingLevels, (TrainingTrack)track);

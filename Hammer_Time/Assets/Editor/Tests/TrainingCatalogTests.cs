@@ -77,4 +77,21 @@ public class TrainingCatalogTests
         Assert.AreEqual(0f, TrainingCatalog.DirectionalStrength(null), "no training, no carving");
         Assert.AreEqual(0.75f, TrainingCatalog.AimCircleDiameter(new[] { 0, 0, 0, 3, 0 }), "half of the 1.5 start, at level 3 (roughly)");
     }
+
+    [Test]
+    public void UnlockTracksNeedAPlayerLevelAndStatTracksDoNot()
+    {
+        Assert.AreEqual(1, TrainingCatalog.Level(TrainingTrack.Sweep, 4).requiredLevel);
+        Assert.AreEqual(1, TrainingCatalog.Level(TrainingTrack.Cross, 4).requiredLevel);
+        for (int l = 1; l <= 4; l++)
+            foreach (var t in new[] { TrainingTrack.Directional, TrainingTrack.Tactics, TrainingTrack.OnIce })
+                Assert.AreEqual(TrainingCatalog.UnlockLevelGate[l - 1], TrainingCatalog.Level(t, l).requiredLevel);
+
+        var none = new int[5];
+        Assert.IsFalse(TrainingCatalog.LevelAllows(none, TrainingTrack.OnIce, 1), "level 1 of an unlock track needs player level 2");
+        Assert.IsTrue(TrainingCatalog.LevelAllows(none, TrainingTrack.OnIce, 2));
+        Assert.IsFalse(TrainingCatalog.LevelAllows(new[] { 0, 0, 0, 1, 0 }, TrainingTrack.OnIce, 3), "the second level needs 4");
+        Assert.IsTrue(TrainingCatalog.LevelAllows(none, TrainingTrack.Sweep, 1));
+        Assert.IsFalse(TrainingCatalog.LevelAllows(new[] { 4, 0, 0, 0, 0 }, TrainingTrack.Sweep, 99), "nothing left to buy");
+    }
 }

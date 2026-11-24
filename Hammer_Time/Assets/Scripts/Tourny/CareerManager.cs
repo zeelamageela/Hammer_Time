@@ -110,6 +110,9 @@ public class CareerManager : MonoBehaviour
     // Levels bought in the Training menu, one entry per TrainingTrack (0-4 each). See TrainingCatalog.
     public int[] trainingLevels;
 
+    /// <summary>What the bought training gives on top of the base stats (see TrainingCatalog). Matches add this to the player team's skills.</summary>
+    public CareerStats TrainingBonus { get { return TrainingCatalog.StatBonus(trainingLevels); } }
+
     public bool inProgress;
     public int season;
     public bool loadedFromSave;

@@ -305,7 +305,19 @@ public class TeamManager : MonoBehaviour
                 sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
                 Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
+
+            // Training (Sweep, Cross) lifts every sweeper on the player's team
+            AddTraining(sweeperL, cm.TrainingBonus);
+            AddTraining(sweeperR, cm.TrainingBonus);
+            AddTraining(sweeperT, cm.TrainingBonus);
         }
+    }
+
+    static void AddTraining(CharacterStats sweeper, CareerStats bonus)
+    {
+        sweeper.sweepStrength.SetBaseValue(sweeper.sweepStrength.GetValue() + bonus.sweepStrength);
+        sweeper.sweepEndurance.SetBaseValue(sweeper.sweepEndurance.GetValue() + bonus.sweepEndurance);
+        sweeper.sweepCohesion.SetBaseValue(sweeper.sweepCohesion.GetValue() + bonus.sweepCohesion);
     }
 
     private void EnsureTeamData()

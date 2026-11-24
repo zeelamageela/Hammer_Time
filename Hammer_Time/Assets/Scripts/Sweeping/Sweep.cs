@@ -95,6 +95,9 @@ public class Sweep : MonoBehaviour
         sm.ResetSweepers();
     }
 
+    /// <summary>How hard a one-sweeper carve pushes the rock sideways (1 = full; lower for players who have not finished Directional Sweeping).</summary>
+    public float CarveScale = 1f;
+
     public void OnSweep()
     {
         //// ? QUICK TEST MODE: Disable sweeping for perfect determinism
@@ -314,7 +317,7 @@ public class Sweep : MonoBehaviour
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         
         // DIRECTLY add to the rock's velocity
-        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
         Debug.Log($"[Line Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
 
@@ -365,7 +368,7 @@ public class Sweep : MonoBehaviour
         float curlDirection = rf.curl.x < 0 ? -1f : 1f; // Direction rock is curling
         
         // DIRECTLY add to the rock's velocity (not force!)
-        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
         Debug.Log($"[Curl Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
 
