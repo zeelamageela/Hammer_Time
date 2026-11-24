@@ -71,7 +71,7 @@ public class PauseMenu : MonoBehaviour
 
     void RefreshTesterLabel()
     {
-        if (testerLabel != null) testerLabel.text = "Tester options  " + (testerOpen ? "(hide)" : "(show)");
+        if (testerLabel != null) testerLabel.text = "TESTER OPTIONS " + (testerOpen ? "-" : "+");
     }
 
     void ApplyTesterVisibility()
@@ -170,7 +170,7 @@ public class PauseMenu : MonoBehaviour
     void RefreshStopCurveLabel()
     {
         if (stopCurveLabel != null)
-            stopCurveLabel.text = "Arcade stop: " + RockPhysicsBootstrap.StopLabel() + "  (tap to change)";
+            stopCurveLabel.text = "ARCADE STOP: " + RockPhysicsBootstrap.StopLabel();
     }
 
     // A tester-only button in the pause menu's list (hidden in release builds via DevOptions).
@@ -182,7 +182,9 @@ public class PauseMenu : MonoBehaviour
         var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
         go.transform.SetParent(parent, false);
         var le = go.GetComponent<LayoutElement>();
-        le.minHeight = le.preferredHeight = 80f;
+        // the menu's layout group does not stretch its children, so without a width these collapse to a sliver
+        le.minHeight = le.preferredHeight = 100f;
+        le.minWidth = le.preferredWidth = 760f;
         go.GetComponent<Image>().color = new Color(0.12f, 0.14f, 0.2f, 0.92f);
 
         var labelGO = new GameObject("Label", typeof(RectTransform), typeof(Text));
@@ -190,8 +192,13 @@ public class PauseMenu : MonoBehaviour
         var lrt = (RectTransform)labelGO.transform;
         lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one; lrt.offsetMin = lrt.offsetMax = Vector2.zero;
         var label = labelGO.GetComponent<Text>();
-        label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        label.fontSize = 30;
+        // look like the rest of the menu: borrow the toggle labels' font
+        var sample = parent.Find("Debug Toggle") != null ? parent.Find("Debug Toggle").GetComponentInChildren<Text>(true) : null;
+        label.font = sample != null && sample.font != null ? sample.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        label.fontSize = 48;
+        label.resizeTextForBestFit = true;
+        label.resizeTextMinSize = 20;
+        label.resizeTextMaxSize = 48;
         label.alignment = TextAnchor.MiddleCenter;
         label.color = Color.white;
         label.raycastTarget = false;
@@ -209,7 +216,7 @@ public class PauseMenu : MonoBehaviour
     void RefreshPhysicsLabel()
     {
         if (physicsLabel != null)
-            physicsLabel.text = "Physics: " + RockPhysicsBootstrap.Label(RockPhysicsBootstrap.Current) + "  (tap to change)";
+            physicsLabel.text = "PHYSICS: " + RockPhysicsBootstrap.Label(RockPhysicsBootstrap.Current);
     }
 
     public void OnDebugToggleChanged(bool on)
