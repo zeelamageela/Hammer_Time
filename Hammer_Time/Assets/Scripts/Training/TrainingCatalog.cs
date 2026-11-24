@@ -79,7 +79,7 @@ public static class TrainingCatalog
         // DIRECTIONAL SWEEPING: unlocks carving with one sweeper; the level is how hard it pushes (DirectionalStrength)
         new[]
         {
-            L("Carving Basics",     "Unlocks carving: tap left or right to push the rock",  1),
+            L("Carving Basics",     "Unlocks carving: tap one sweeper",                      1),
             L("Edge Control",       "Carving pushes harder",                                2),
             L("Quick Hands",        "Carving pushes harder again and reacts faster",        3),
             L("Master Sweeper",     "Full-strength carving",                                4),
