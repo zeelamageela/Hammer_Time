@@ -30,10 +30,150 @@ public class PauseMenu : MonoBehaviour
             debugToggle.onValueChanged.AddListener(OnDebugToggleChanged);
         }
 
-        BuildTesterToggle();
-        BuildPhysicsButton();
-        BuildStopCurveButton();
+        FindMenus();
+        if (Modern)
+        {
+            WireAdvanced();
+        }
+        else
+        {
+            // older pause menus (no PlayerOptions / AdvancedOptions panels): generate the tester buttons
+            BuildTesterToggle();
+            BuildPhysicsButton();
+            BuildStopCurveButton();
+        }
         TidyMenu();
+    }
+
+    // ---- the two-panel pause menu: PlayerOptions (what a player sees) and AdvancedOptions (testers only, behind the Advanced button) ----
+
+    Transform playerOptions, advancedOptions;
+    Button advancedButton;
+    Slider physicsSlider, stopSlider;
+
+    bool Modern { get { return playerOptions != null && advancedOptions != null; } }
+
+    void FindMenus()
+    {
+        if (pauseMenuUI == null) return;
+        playerOptions = pauseMenuUI.transform.Find("PlayerOptions");
+        advancedOptions = pauseMenuUI.transform.Find("AdvancedOptions");
+    }
+
+    /// <summary>
+    /// Makes a button's click do only what is added in code: the scene's saved clicks (a duplicated Resume button still carries
+    /// "Resume") are switched off, which is possible at runtime even though they cannot be removed.
+    /// </summary>
+    static void ReplaceClick(Button b, UnityEngine.Events.UnityAction action)
+    {
+        if (b == null) return;
+        for (int i = 0; i < b.onClick.GetPersistentEventCount(); i++)
+            b.onClick.SetPersistentListenerState(i, UnityEngine.Events.UnityEventCallState.Off);
+        b.onClick.RemoveAllListeners();
+        b.onClick.AddListener(action);
+    }
+
+    static Button ButtonIn(Transform root, string name)
+    {
+        var t = root != null ? root.Find(name) : null;
+        return t != null ? t.GetComponent<Button>() : null;
+    }
+
+    /// <summary>A duplicated Resume button keeps the word "Resume" until someone renames it.</summary>
+    static void FixLabels(Button b, string wanted)
+    {
+        if (b == null) return;
+        foreach (var t in b.GetComponentsInChildren<Text>(true))
+            if (t.text.Trim().ToLowerInvariant() == "resume") t.text = wanted;
+    }
+
+    void WireAdvanced()
+    {
+        advancedButton = ButtonIn(playerOptions, "AdvancedSettings");
+        var back = ButtonIn(advancedOptions, "BackButton");
+        ReplaceClick(advancedButton, () => ShowAdvanced(true));
+        ReplaceClick(back, () => ShowAdvanced(false));
+        FixLabels(advancedButton, "Advanced");
+        FixLabels(back, "Back");
+
+        // the physics pace has three settings and the Arcade stop curve four: whole-number sliders
+        physicsSlider = SliderIn("Physics Slider");
+        stopSlider = SliderIn("Stop Slider");
+        SetupSlider(physicsSlider, 2, OnPhysicsSlider);
+        SetupSlider(stopSlider, RockPhysicsBootstrap.StopPowers.Length - 1, OnStopSlider);
+
+        if (debugToggle == null)
+        {
+            var t = advancedOptions.Find("Debug Toggle");
+            if (t != null)
+            {
+                debugToggle = t.GetComponent<Toggle>();
+                debugToggle.isOn = GameSettingsPersist.instance != null && GameSettingsPersist.instance.debug;
+                debugToggle.onValueChanged.AddListener(OnDebugToggleChanged);
+            }
+        }
+
+        RefreshAdvanced();
+        ShowAdvanced(false);
+    }
+
+    Slider SliderIn(string name)
+    {
+        var t = advancedOptions.Find(name);
+        return t != null ? t.GetComponent<Slider>() : null;
+    }
+
+    static void SetupSlider(Slider s, int max, UnityEngine.Events.UnityAction<float> onChange)
+    {
+        if (s == null) return;
+        s.minValue = 0;
+        s.maxValue = max;
+        s.wholeNumbers = true;
+        s.onValueChanged.RemoveAllListeners();
+        s.onValueChanged.AddListener(onChange);
+    }
+
+    void OnPhysicsSlider(float v)
+    {
+        RockPhysicsBootstrap.Choose((PhysicsChoice)Mathf.RoundToInt(v));
+        RefreshAdvanced();
+    }
+
+    void OnStopSlider(float v)
+    {
+        RockPhysicsBootstrap.SetStopIndex(Mathf.RoundToInt(v));
+        RefreshAdvanced();
+    }
+
+    /// <summary>Puts the sliders and their labels on the settings in force.</summary>
+    void RefreshAdvanced()
+    {
+        if (physicsSlider != null)
+        {
+            physicsSlider.SetValueWithoutNotify((int)RockPhysicsBootstrap.Current);
+            SetSliderLabel(physicsSlider, RockPhysicsBootstrap.Label(RockPhysicsBootstrap.Current));
+        }
+        if (stopSlider != null)
+        {
+            int i = RockPhysicsBootstrap.StopIndex();
+            stopSlider.SetValueWithoutNotify(i);
+            SetSliderLabel(stopSlider, RockPhysicsBootstrap.StopNames[i] + " - " + RockPhysicsBootstrap.StopPowers[i].ToString("0.0"));
+        }
+    }
+
+    static void SetSliderLabel(Slider s, string text)
+    {
+        var label = s.GetComponentInChildren<Text>(true);
+        if (label != null) label.text = text;
+    }
+
+    public void ShowAdvanced(bool on)
+    {
+        if (!Modern) return;
+        on = on && DevOptions.Enabled;
+        playerOptions.gameObject.SetActive(!on);
+        advancedOptions.gameObject.SetActive(on);
+        if (on) RefreshAdvanced();
     }
 
     // ---- menu layout: player aids that training has earned, and one collapsed "Tester options" group (dev builds only) -------------
@@ -44,6 +184,7 @@ public class PauseMenu : MonoBehaviour
         get
         {
             if (pauseMenuUI == null) return null;
+            if (Modern) return playerOptions;
             var panel = pauseMenuUI.transform.Find("Panel");
             return panel != null ? panel : pauseMenuUI.transform;
         }
@@ -94,13 +235,21 @@ public class PauseMenu : MonoBehaviour
         SetShown(root, "Curl Toggle", true);
         SetShown(root, "Guidelines Toggle", true);
         bool flick = GameVisualizationSettings.FlickModeAvailable;
-        SetShown(root, "Shot Type", flick);
-        SetShown(root, "Flick Shooting Toggle", flick);
+        var flickRoot = Modern ? advancedOptions : root;
+        SetShown(flickRoot, "Shot Type", flick);
+        SetShown(flickRoot, "Flick Shooting Toggle", flick);
 
-        Relabel(root, "Trajectory", "Aim Aids");
-        RelabelToggle(root, "Collision Toggle", "Hit Arrows");
-        RelabelToggle(root, "Collision Line Toggle", "Collision Warning");
-        RelabelToggle(root, "Curl Toggle", "Curl Line");
+        // new names, but only where the scene still has the old default text (so anything renamed by hand is left alone)
+        Relabel(root, "Trajectory", "Trajectory", "Aim Aids");
+        RelabelToggle(root, "Collision Toggle", "Collision Trajectory", "Hit Arrows");
+        RelabelToggle(root, "Collision Line Toggle", "Collision Line", "Collision Warning");
+        RelabelToggle(root, "Curl Toggle", "Curl Fade", "Curl Line");
+
+        if (Modern)
+        {
+            if (advancedButton != null) advancedButton.gameObject.SetActive(DevOptions.Enabled);   // release builds: no way in
+            return;
+        }
 
         if (testerItems.Count == 0)
         {
@@ -131,18 +280,18 @@ public class PauseMenu : MonoBehaviour
         if (t != null && t.gameObject.activeSelf != shown) t.gameObject.SetActive(shown);
     }
 
-    static void Relabel(Transform root, string name, string text)
+    static void Relabel(Transform root, string name, string oldText, string text)
     {
         var t = root.Find(name);
         var label = t != null ? t.GetComponent<Text>() : null;
-        if (label != null) label.text = text;
+        if (label != null && label.text.Trim().ToLowerInvariant() == oldText.ToLowerInvariant()) label.text = text;
     }
 
-    static void RelabelToggle(Transform root, string name, string text)
+    static void RelabelToggle(Transform root, string name, string oldText, string text)
     {
         var t = root.Find(name);
         var label = t != null ? t.GetComponentInChildren<Text>(true) : null;
-        if (label != null) label.text = text;
+        if (label != null && label.text.Trim().ToLowerInvariant() == oldText.ToLowerInvariant()) label.text = text;
     }
 
     // ---- tester option: rock physics pace (hidden in release builds via DevOptions) -------------------------------------------
@@ -263,6 +412,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         HapticController.Stop();
         pauseMenuUI.SetActive(true);
+        ShowAdvanced(false);
         TidyMenu();
         GameIsPaused = true;
         gHUD.scoreCheck = true;

@@ -52,7 +52,13 @@ public static class RockPhysicsBootstrap
     /// <summary>Cycle Arcade's stop curve (firm, soft, mellow, extra mellow, back to firm). Only changes Arcade.</summary>
     public static void NextStopCurve()
     {
-        StopPower = StopPowers[(StopIndex() + 1) % StopPowers.Length];
+        SetStopIndex((StopIndex() + 1) % StopPowers.Length);
+    }
+
+    /// <summary>Choose Arcade's stop curve by position in StopPowers (firm, soft, mellow, extra mellow). Only changes Arcade.</summary>
+    public static void SetStopIndex(int index)
+    {
+        StopPower = StopPowers[Mathf.Clamp(index, 0, StopPowers.Length - 1)];
         try { PlayerPrefs.SetFloat(StopKey, StopPower); PlayerPrefs.Save(); } catch { }
         if (Current == PhysicsChoice.Arcade) RockPhysicsSettings.Request(Make(Current));
     }
