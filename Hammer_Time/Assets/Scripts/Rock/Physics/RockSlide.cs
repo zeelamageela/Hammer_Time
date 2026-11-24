@@ -160,9 +160,25 @@ public class RockSlide : MonoBehaviour
         RockPhysics.BeginFlight(ref state, RockPhysicsSettings.Current);
         externalCurlMultiplier = 1f;
         angularCurlFactor = 1f;
+        handoffPending = false;
         body.linearDamping = 0f;
         body.angularDamping = 0f;
         SplitTimer.Arm(gameObject);
+    }
+
+    bool handoffPending;
+    Vector2 handoffVelocity;
+    float handoffY;
+
+    /// <summary>
+    /// The rock was launched faster than its real speed so the shooter's kick plays at the usual pace (Real-time pace only): once it reaches
+    /// atY it is given `realVelocity`.
+    /// </summary>
+    public void ScheduleLaunchHandoff(Vector2 realVelocity, float atY)
+    {
+        handoffPending = true;
+        handoffVelocity = realVelocity;
+        handoffY = atY;
     }
 
     /// <summary>The rock left the near hog line: friction and curl start.</summary>
@@ -209,6 +225,13 @@ public class RockSlide : MonoBehaviour
     {
         if (ready && body != null && state.freeFlight) ShotAudit.Phase(gameObject, "FixedUpdate-start", body.linearVelocity.magnitude);
         if (!ready || body == null || body.bodyType != RigidbodyType2D.Dynamic) return;
+
+        if (handoffPending && body.position.y >= handoffY)
+        {
+            handoffPending = false;
+            body.linearVelocity = handoffVelocity;
+            ShotAudit.ExpectSpeedChange();
+        }
 
         state.position = body.position;
         state.velocity = body.linearVelocity;

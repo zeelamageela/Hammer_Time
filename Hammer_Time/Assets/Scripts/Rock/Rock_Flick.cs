@@ -567,7 +567,21 @@ public class Rock_Flick : MonoBehaviour
         // Set velocity directly - no spring physics!
         ShotAudit.LogLaunch(gameObject, rb.position, velocity, GetComponent<Rock_Force>().flipAxis);
         // `velocity` is a weight velocity (what the aim line and the AI speak); the rock gets the speed the current physics profile needs to travel that far.
-        rb.linearVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
+        Vector2 launchVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
+        // Real-time: the shooter's kick (pull-back point up to the release point) is tied to the rock's position, so a rock that leaves at its
+        // real, slow speed makes the shooter crawl through his own kick. Run that short stretch at the weight speed (the pace Arcade and Classic
+        // play at) and give the rock its real speed at the release point. Free flight has no forces, so only the timing of those ~2 m changes.
+        var slideForHandoff = GetComponent<RockSlide>();
+        if (slideForHandoff != null && RockPhysicsBootstrap.Current == PhysicsChoice.RealTime
+            && launchVelocity.magnitude < velocity.magnitude && rb.position.y < ShooterAnim.DefaultReleasePointY)
+        {
+            rb.linearVelocity = velocity;
+            slideForHandoff.ScheduleLaunchHandoff(launchVelocity, ShooterAnim.DefaultReleasePointY);
+        }
+        else
+        {
+            rb.linearVelocity = launchVelocity;
+        }
         ShotAudit.LogBody(rb, GetComponent<SpringJoint2D>());
 
         Debug.Log($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");

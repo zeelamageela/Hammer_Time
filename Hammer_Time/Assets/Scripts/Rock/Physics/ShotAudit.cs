@@ -123,6 +123,9 @@ public static class ShotAudit
     /// RockSlide calls this each step of free flight. If the speed falls, it logs the step, the Box2D damping, and everything the rock
     /// is touching or overlapping, to identify what slows a rock that no physics code should be slowing.
     /// </summary>
+    /// <summary>A deliberate speed change (the Real-time launch handoff) is coming: don't report it as a drop.</summary>
+    public static void ExpectSpeedChange() { lastFlightSpeed = 0f; }
+
     public static void WatchSpeed(GameObject rock, Rigidbody2D body)
     {
         if (!armed || rock != launchedRock) return;

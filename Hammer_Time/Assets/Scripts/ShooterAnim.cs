@@ -63,6 +63,9 @@ public class ShooterAnim : MonoBehaviour
 
     const float ShooterBodyMass = 0.01f;
 
+    /// <summary>Hal_Shooter prefabs' releasePoint: where the kick ends and the shooter starts sliding with the rock.</summary>
+    public const float DefaultReleasePointY = -24.077f;
+
 
     void Update()
     {
