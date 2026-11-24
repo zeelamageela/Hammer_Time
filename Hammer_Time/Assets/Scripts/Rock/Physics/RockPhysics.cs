@@ -283,6 +283,27 @@ public static class RockPhysics
         return s;
     }
 
+    /// <summary>
+    /// Soft-stop law: the spin a thrown rock is drawn with (degrees/s, same direction as its curl). It carries no force, but it does
+    /// enter the contact friction when the rock hits another, so the live rock and the simulator both read it from here.
+    /// </summary>
+    public static float CosmeticSpin(RockState s, RockPhysicsProfile p)
+    {
+        if (!s.curlActive || s.releaseSpeed <= 0f) return 0f;
+        return s.dirMult * p.spinOnRelease * Mathf.Clamp01(s.velocity.magnitude / s.releaseSpeed);
+    }
+
+    /// <summary>
+    /// Soft-stop law: spin of a rock nobody is turning any more (one that was hit): it fades with the rock's speed, so it stops when the rock does
+    /// (Box2D has no angular drag here, and a spinning rock would otherwise never go to sleep).
+    /// </summary>
+    public static float FadedSpin(float spin, float speedBefore, float speedAfter)
+    {
+        if (speedAfter <= 0f) return 0f;
+        if (speedBefore <= 0f) return spin;
+        return spin * Mathf.Min(1f, speedAfter / speedBefore);
+    }
+
     /// <summary>The rock leaves the hack: it flies free (no friction, no curl) until Release.</summary>
     public static void BeginFlight(ref RockState s, RockPhysicsProfile p)
     {

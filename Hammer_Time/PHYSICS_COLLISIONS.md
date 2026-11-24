@@ -48,3 +48,22 @@ already resolved the hit, so the "target was stationary" test fails; not confirm
 - Whether a struck rock's spin ever decays under Arcade/Real (RockSlide only drives spin for thrown rocks).
 - Chains: a struck rock that goes on to hit a third rock.
 - Classic and Real-time collision numbers (the hit itself is the same Box2D; the slide after it differs).
+
+## After the fix (Phase 3, steps 2 and 3)
+
+Restitution kept at the live value, 0.99 (decided: keep the feel, fix the simulator).
+
+- `RockCollision` (new): the same contact as Box2D for equal rocks: restitution 0.99, friction 0.25 (with spin), no bounce under the 1 m/s
+  bounce threshold, all touching rocks solved together with 8 sweeps. Constants are tested equal to `Rock Material.physicsMaterial2D`.
+- `TrajectorySimulator` plays a hit out with it: the struck rock, a rock frozen behind it, or a chain all slide and collide until they stop.
+  `CollisionInfo.otherRocksMoved` lists the other rocks the hit sets moving.
+- A pair counts as touching if it overlaps (Box2D has no contact otherwise): a rock a hair away is hit afterwards, one pair at a time.
+- Removed the frozen-rock override in `Rock_Colliders` (never fired). With a touching pair Box2D itself sends the shooter back at about
+  0.32 x its speed and the middle and back rock on together at about 0.64 x; the simulator reproduces it.
+- Struck rocks' spin now fades with their speed under Arcade/Real (it used to be left alone), so it stops with the rock.
+
+Simulator vs the real game after the fix (rest positions, same harness): head-on single hit, struck rock within 0.02 - 0.10 m (was 0.7 - 2.7 m);
+hits up to 0.2 m off centre, 0.02 - 0.3 m; frozen pair, head on and 0.1 m off, 0.00 - 0.32 m. Shooters that glance into the side boards are not
+comparable: the real rock bounces off the boards (and is out of play), the simulator has no boards.
+
+Not done: AI-vs-AI games were not replayed with the corrected simulator (the AI plans takeouts from its predictions, so its choices can change).

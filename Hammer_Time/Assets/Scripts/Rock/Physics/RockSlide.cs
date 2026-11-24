@@ -220,6 +220,7 @@ public class RockSlide : MonoBehaviour
         }
 
         var p = RockPhysicsSettings.Current;
+        float speedBefore = state.velocity.magnitude;
         RockPhysics.Step(ref state, p, Time.fixedDeltaTime, integratePosition: false);
 
         body.linearVelocity = state.velocity;
@@ -229,9 +230,15 @@ public class RockSlide : MonoBehaviour
         }
         else if (state.curlActive)
         {
-            // Spin is only for looks under the constant-decel law: it fades as the rock slows, and stops with it.
+            // Spin is only for looks under the soft-stop law: it fades as the rock slows, and stops with it.
             // Same sign as the legacy spin (+dirMult), which turns the way the rock curls (curl pulls toward -dirMult).
-            body.angularVelocity = state.dirMult * 342f * Mathf.Clamp01(state.velocity.magnitude / releaseSpeed) / p.timeStretch;
+            // (The simulator reads the same number for the contact friction of a hit.)
+            body.angularVelocity = RockPhysics.CosmeticSpin(state, p);
+        }
+        else
+        {
+            // a rock that was hit: whatever spin the hit gave it dies away with its speed instead of turning for ever
+            body.angularVelocity = RockPhysics.FadedSpin(state.spin, speedBefore, state.velocity.magnitude);
         }
     }
 }

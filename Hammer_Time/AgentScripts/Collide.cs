@@ -90,7 +90,12 @@ public static class Collide
         if (rf == null) rf = all[0];
         var shooter = rf.gameObject;
         var srb = shooter.GetComponent<Rigidbody2D>();
-        var tgt = Named("YELLERRR 2"); var par = Named("YELLERRR 3");
+        GameObject tgt = null, par = null;
+        foreach (var info in Object.FindObjectsByType<Rock_Info>(FindObjectsInactive.Include))
+        {
+            if (info.gameObject == shooter || info.GetComponent<Rigidbody2D>() == null) continue;
+            if (tgt == null) tgt = info.gameObject; else if (par == null) par = info.gameObject;
+        }
         foreach (var other in Object.FindObjectsByType<Rock_Info>(FindObjectsInactive.Include))
             if (other.gameObject != shooter && other.gameObject != tgt && other.gameObject != par) { var orb = other.GetComponent<Rigidbody2D>(); if (orb != null) orb.simulated = false; }
         try
@@ -110,7 +115,7 @@ public static class Collide
             {
                 frozenLog.Clear();
                 Vector2 T = new Vector2(0f, 4.0f);
-                Vector2 P = T + new Vector2(0f, 0.2805f);   // frozen partner touching, straight behind
+                Vector2 P = T + new Vector2(0f, 0.276f);   // frozen partner touching, straight behind (4 mm overlap, like two rocks that came to rest against each other)
                 // aim so the shooter's centre passes `off` to the side of the target's centre
                 Vector2 vel = AimVel(sim, hack, weight, T.x - off, T.y - 0.0f);
                 // ---- prediction (before anything moves)
@@ -162,6 +167,7 @@ public static class Collide
                     }
                     if (contactStep >= 0 && step > contactStep + 30 && srb.linearVelocity.magnitude < 0.01f && trb.linearVelocity.magnitude < 0.01f && (prb == null || prb.linearVelocity.magnitude < 0.01f)) break;
                 }
+                float tSpinEnd = trb.angularVelocity; bool tAsleep = !trb.IsAwake();
                 float pre = preV.magnitude;
                 Vector2 sr = srb.position, tr = trb.position;
                 Vector2 se = ci.hasCollision ? ci.finalPosition : path[path.Count - 1];
@@ -173,9 +179,12 @@ public static class Collide
                     pre > 0 ? vS.magnitude / pre : 0, pre > 0 ? vT.magnitude / pre : 0,
                     vS.sqrMagnitude > 1e-4f ? Ang(impactDir, vS) : 0f, vT.sqrMagnitude > 1e-4f ? Ang(impactDir, vT) : 0f,
                     spin, sr.x, sr.y, tr.x, tr.y, se.x, se.y, te.x, te.y, Vector2.Distance(sr, se), Vector2.Distance(tr, te)));
+                sb.AppendLine("   struck rock at rest: spin " + tSpinEnd.ToString("F1") + " deg/s, asleep=" + tAsleep);
                 if (frozen)
                 {
-                    sb.AppendLine(string.Format("   partner: speed just after hit {0:F2}, rest ({1:F2},{2:F2}); sim assumes it does not move.  frozen-rule hits: {3}", vP.magnitude, prb.position.x, prb.position.y, frozenLog.Count));
+                    string simPartner = "did not move";
+                    foreach (var kv in ci.otherRocksMoved) if (kv.Key == par) simPartner = "(" + kv.Value.x.ToString("F2") + "," + kv.Value.y.ToString("F2") + ")";
+                    sb.AppendLine(string.Format("   partner: speed just after hit {0:F2}, live rest ({1:F2},{2:F2}); sim: {3}; sim first hit = {4}", vP.magnitude, prb.position.x, prb.position.y, simPartner, ci.hitRock == tgt ? "target" : (ci.hitRock == par ? "PARTNER" : "none")));
                     foreach (var l in frozenLog) sb.AppendLine("     " + l.Replace("\n", " ").Substring(0, Mathf.Min(140, l.Length)));
                 }
             }
