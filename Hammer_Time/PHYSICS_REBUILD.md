@@ -53,11 +53,20 @@ Both are fitted to the old rock's paths (within 2 cm for Arcade, 5 cm for Real-t
 - Tester options (the pause-menu physics button) are controlled by `DevOptions.Enabled` (Editor + Development builds only), so a release build has none. A release build uses `RockPhysicsBootstrap.Shipping` (Arcade).
 - Flick shot mode is off (`GameVisualizationSettings.FlickModeAvailable = false`, toggle hidden); the tutorial follows the setting and uses the pull/release lessons.
 
+## Update: what else landed (Nov 2026)
+
+- **Launch speed loss fixed.** The three shooter bodies (body, torso, head) were Dynamic, mass 1 each, joined to the 145-mass rock by `RelativeJoint2D`; when `ShooterAnim` switched the joints on (~y -23.8) they took 2% of the rock's momentum, so every throw (all profiles) left the hack ~2% slow and draws finished ~0.7 short. `ShooterAnim.Start` now sets them to 0.01. Live check: hog-line speed 9.564 vs 9.566 expected. This was the "aim line is off" bug.
+- **Spin direction.** The cosmetic spin under Arcade/Real had the wrong sign; it now turns the way the rock curls (`RockPhysics.CosmeticSpin`, shared with the simulator).
+- **Aim-line fuzz** (`AimFuzz`, `TrajectoryLine.BeginFuzz`): the rock always goes where the physics says; the *drawn* line gets one error per rock (sideways + long/short, rolled once so re-aiming cannot re-roll), bent from nothing at the hack to the full error at the end, applied to the line, dots, aim circle, guide lines and collision marker. Sizes are the AI draw spreads read as metres at the end of the line: sigma 0.15 m sideways / 0.9 m weight at skill 0, falling with (1 - skill)^2, clamped at 2 sigma. Career starts at skill 45 (about 4.5 cm / 27 cm sigma, deliberately subtle); skill 85 is almost exact. Exact in the tutorial. `AimFuzz.Enabled` switches it off. Tune the two base spreads in `AimFuzz` if it should be more visible.
+- **Split clocks** (`SplitTimer`, armed from `RockSlide.BeginFlight`; no scene edits): `00:00` above the rock counting from the hack (y -25) to the near hog (-16.15); then it bumps up, flashes 3 times and fades while a hog-to-hog clock runs to the far hog (y 0), which flashes 3 times and fades. Game time, line crossings interpolated inside the physics step, player and AI alike, follows the pace profile. `SplitTimer.Enabled` switches it off. Size, flash and fade constants are at the top of the file. (The old `RockTimerDisplay` is unused and has a wrong far hog.)
+- **Rock-to-rock collisions** (Phase 3): see `PHYSICS_COLLISIONS.md`. `RockCollision` is Box2D's contact written out (restitution 0.99, friction 0.25 with spin, 1 m/s bounce threshold, all touching rocks solved together); the simulator plays a hit out with it, so the struck rock, a frozen partner and chains match the live game to 0.02 - 0.3 m (it used to send the struck rock about half as far). The dead frozen-rock override in `Rock_Colliders` is removed. Struck rocks' spin now fades with their speed under Arcade/Real.
+
 ## Not yet done / not verified
 
-1. **Sweeping, AI play and a rock being struck under Arcade/Real were not exercised in Play** (unit tests and the unswept live harness only). Play a few ends against the AI in each profile and sweep.
-2. Pause-menu button placement was not seen on screen (a test dialogue covered the screenshot). It exists, is labelled, and cycles; check the layout.
-3. Rock-to-rock collisions are unchanged (Phase 3). A struck rock uses `restViscous` 0.9 + `restDryDecel` 0.15; this keeps old hit-rock distances to within ~10%.
-4. The "drift off the aim line" report: unresolved. `ShotAudit` logs launch vs preview and the actual stop for every throw (search the console for `[ShotAudit]`).
-5. Phases still to build: split-time display, aim-line fuzz from skill points.
-6. `ShooterAnim` / `ShooterAnim_Testing` still set `rb.linearDamping` for the old animated shooter; `RockSlide` zeroes it at each throw.
+1. **Sweeping, AI play and a rock being struck under Arcade/Real were not exercised in Play** (unit tests and harnesses only). Play a few ends against the AI in each profile and sweep. **The AI plans takeouts from the simulator, whose struck-rock distance just roughly doubled (now correct): watch AI takeouts and frozen pairs.**
+2. Pause-menu button placement was not seen on screen. It exists, is labelled, and cycles; check the layout.
+3. Aim fuzz and the split clocks have unit tests only; their look (size, position, readability at zoom, flash timing) has not been seen on a device.
+4. Collisions were measured for Arcade only; hits into the side boards are not simulated (the real rock bounces, then is out of play).
+5. One Real-time throw stopped 2.5 m short of its own model prediction (possibly a profile switch mid-slide or an early sleep): not investigated.
+6. `ShooterAnim_Testing` (unused test shooter) still has the old body masses.
+7. `com.unity.pipeline` (agent tooling) is in the working copy's `Packages/manifest.json` but is not committed.

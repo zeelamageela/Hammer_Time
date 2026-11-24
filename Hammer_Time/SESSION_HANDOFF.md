@@ -337,6 +337,17 @@ Sweeper animations should visually reflect the equipped handle, always with team
 
 ---
 
+## Physics rebuild (Nov 2026) — branch `physics-timing`, NOT merged
+
+One physics model now drives both the live rock and the aim-line simulator (`RockPhysics`, `RockPhysicsProfile`, `RockSlide`, `RockCollision`, `TrajectorySimulator`). Profiles: Classic (original), **Arcade** (shipping default, same pace, soft stop), Real-time (real-world seconds, no `Time.timeScale`). Pause-menu tester buttons (profile + Arcade stop curve) exist only when `DevOptions.Enabled` (Editor/dev builds). Flick mode is hidden. Also in: the 2% launch-speed bug fix (shooter bodies' mass), aim-line fuzz from skill, hack-to-hog / hog-to-hog split clocks, Box2D-matched rock collisions with chains and frozen pairs.
+
+- Design, numbers and the not-verified list: `PHYSICS_REBUILD.md`. Collision measurements: `PHYSICS_COLLISIONS.md`. Baselines: `PHYSICS_PHASE0.md`.
+- Harnesses live in `AgentScripts/` (run with `unity command run_script`): `Measure.cs`, `Collide.cs`, `Probe.cs`.
+- 110 EditMode tests; run them before and after any physics change.
+- Needs a human on a device: sweeping, AI takeouts, aim-fuzz and split-clock look, pause-menu layout.
+
+---
+
 ## Pending / not started
 
 - **Device testing on Mac** — DONE, confirmed working (Aug 2026). FGZ rule, camera fixes, MainDisplay, FlickShotController dedup all validated on-device.
