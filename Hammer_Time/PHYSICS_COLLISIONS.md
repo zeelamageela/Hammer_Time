@@ -19,8 +19,10 @@ Speeds are fractions of the shooter's speed just before impact, read two physics
 Nearly elastic (a head-on hit leaves the shooter stuck and passes ~96% to the target). Angles and speeds sit a little off the frictionless
 answer (shooter slower, target angle smaller) and the struck rock picks up spin: that is the 0.25 contact friction.
 
-Frozen pair (partner touching, straight behind the target), head-on: target keeps 0.02 - 0.08, **partner leaves at 0.95** of the shooter's speed
-(a Newton's cradle), shooter sticks. Box2D already does this on its own.
+Frozen pair, head-on, first measurement: partner placed 0.5 mm behind the target. That is NOT touching for Box2D (no contact until rocks
+overlap), so the hit played out as a newton's cradle (shooter sticks, partner leaves at 0.95). **That was a harness artefact.** With the partner
+overlapping 4 mm, like two rocks that really came to rest together, the three rocks are solved together: the shooter bounces back at ~0.32 x its
+speed and the target and partner leave together at ~0.64 x. (The removed override's -0.20 / 0.15 / 0.65 ratios were a hand-tuned version of this.)
 
 ## What the aim-line simulator does
 
@@ -41,13 +43,12 @@ Result against the real game (rest positions, metres):
 
 `OnCollisionEnter2D` has a rule (struck 0.15 / partner 0.65 / shooter -0.20 of impact speed). It **never fired**: 0 of 7 staged frozen hits here,
 and 0 times (0 pairs detected) in the whole editor log, which holds 56 rock hits. The likely reason is that the callback runs after Box2D has
-already resolved the hit, so the "target was stationary" test fails; not confirmed. Either way Box2D alone already gives the right answer.
+already resolved the hit, so the "target was stationary" test fails; not confirmed. The rule was dead code either way.
 
 ## Not yet checked
 
-- Whether a struck rock's spin ever decays under Arcade/Real (RockSlide only drives spin for thrown rocks).
-- Chains: a struck rock that goes on to hit a third rock.
 - Classic and Real-time collision numbers (the hit itself is the same Box2D; the slide after it differs).
+- Hits against the side boards (the simulator has none).
 
 ## After the fix (Phase 3, steps 2 and 3)
 

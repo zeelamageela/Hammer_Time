@@ -211,7 +211,7 @@ void OnEnable()
         {
             // Rock-on-rock contact is Box2D's (restitution 0.99, friction 0.25 from Rock Material); RockCollision and the aim-line
             // simulator reproduce it. There used to be a "frozen rock" override here with fixed ratios; it never fired in play (0 of 56 logged
-            // hits) and Box2D alone already gives a frozen pair its Newton's-cradle result, so it was removed (see PHYSICS_COLLISIONS.md).
+            // hits) and Box2D plus the shared RockCollision model already decide a frozen pair, so it was removed (see PHYSICS_COLLISIONS.md).
 
             //sm.SweepHit(false);
             collision.gameObject.GetComponent<Rock_Info>().moving = true;
