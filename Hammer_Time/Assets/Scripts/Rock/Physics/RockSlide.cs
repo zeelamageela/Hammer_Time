@@ -162,6 +162,7 @@ public class RockSlide : MonoBehaviour
         angularCurlFactor = 1f;
         body.linearDamping = 0f;
         body.angularDamping = 0f;
+        SplitTimer.Arm(gameObject);
     }
 
     /// <summary>The rock left the near hog line: friction and curl start.</summary>
