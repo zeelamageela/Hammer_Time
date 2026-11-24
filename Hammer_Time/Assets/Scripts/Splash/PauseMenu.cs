@@ -30,8 +30,119 @@ public class PauseMenu : MonoBehaviour
             debugToggle.onValueChanged.AddListener(OnDebugToggleChanged);
         }
 
+        BuildTesterToggle();
         BuildPhysicsButton();
         BuildStopCurveButton();
+        TidyMenu();
+    }
+
+    // ---- menu layout: player aids that training has earned, and one collapsed "Tester options" group (dev builds only) -------------
+
+    /// <summary>The vertical list the toggles live in (older pause menus without one use the menu root).</summary>
+    Transform ListRoot
+    {
+        get
+        {
+            if (pauseMenuUI == null) return null;
+            var panel = pauseMenuUI.transform.Find("Panel");
+            return panel != null ? panel : pauseMenuUI.transform;
+        }
+    }
+
+    // Everything a player should never see: AI tuning, debug switches and the physics pace buttons. Names are the scene's own.
+    static readonly string[] TesterItemNames = { "AI Settings", "EV Optimization Toggle", "EV Influence Slider", "Show EV Logs", "Debug Toggle" };
+
+    bool testerOpen;
+    Text testerLabel;
+    readonly List<GameObject> testerItems = new List<GameObject>();
+
+    void BuildTesterToggle()
+    {
+        testerLabel = BuildDevButton("TesterToggleButton", 0f, ToggleTester);
+        RefreshTesterLabel();
+    }
+
+    public void ToggleTester()
+    {
+        testerOpen = !testerOpen;
+        RefreshTesterLabel();
+        ApplyTesterVisibility();
+    }
+
+    void RefreshTesterLabel()
+    {
+        if (testerLabel != null) testerLabel.text = "Tester options  " + (testerOpen ? "(hide)" : "(show)");
+    }
+
+    void ApplyTesterVisibility()
+    {
+        bool show = DevOptions.Enabled && testerOpen;
+        foreach (var go in testerItems)
+            if (go != null) go.SetActive(show);
+    }
+
+    /// <summary>Shows only the aim aids the player has earned (see TrainingAids) and files the tester items under the Tester button.</summary>
+    void TidyMenu()
+    {
+        var root = ListRoot;
+        if (root == null) return;
+
+        SetShown(root, "Traj Toggle", true);
+        SetShown(root, "Collision Toggle", TrainingAids.CollisionIndicatorUnlocked);
+        SetShown(root, "Collision Line Toggle", TrainingAids.CollisionWarningUnlocked);
+        SetShown(root, "Aim Circle Toggle", TrainingAids.AimCircleUnlocked);
+        SetShown(root, "Curl Toggle", true);
+        SetShown(root, "Guidelines Toggle", true);
+        bool flick = GameVisualizationSettings.FlickModeAvailable;
+        SetShown(root, "Shot Type", flick);
+        SetShown(root, "Flick Shooting Toggle", flick);
+
+        Relabel(root, "Trajectory", "Aim Aids");
+        RelabelToggle(root, "Collision Toggle", "Hit Arrows");
+        RelabelToggle(root, "Collision Line Toggle", "Collision Warning");
+        RelabelToggle(root, "Curl Toggle", "Curl Line");
+
+        if (testerItems.Count == 0)
+        {
+            var button = root.Find("TesterToggleButton");
+            if (button != null) button.SetAsLastSibling();
+            foreach (var n in TesterItemNames)
+            {
+                var t = root.Find(n);
+                if (t == null) continue;
+                t.SetAsLastSibling();
+                testerItems.Add(t.gameObject);
+            }
+            foreach (var n in new[] { "PhysicsPaceButton", "StopCurveButton" })
+            {
+                var t = root.Find(n);
+                if (t == null) continue;
+                t.SetAsLastSibling();
+                testerItems.Add(t.gameObject);
+            }
+        }
+        ApplyTesterVisibility();
+        if (testerLabel == null) { /* release build: no button, items stay hidden */ }
+    }
+
+    static void SetShown(Transform root, string name, bool shown)
+    {
+        var t = root.Find(name);
+        if (t != null && t.gameObject.activeSelf != shown) t.gameObject.SetActive(shown);
+    }
+
+    static void Relabel(Transform root, string name, string text)
+    {
+        var t = root.Find(name);
+        var label = t != null ? t.GetComponent<Text>() : null;
+        if (label != null) label.text = text;
+    }
+
+    static void RelabelToggle(Transform root, string name, string text)
+    {
+        var t = root.Find(name);
+        var label = t != null ? t.GetComponentInChildren<Text>(true) : null;
+        if (label != null) label.text = text;
     }
 
     // ---- tester option: rock physics pace (hidden in release builds via DevOptions) -------------------------------------------
@@ -62,18 +173,16 @@ public class PauseMenu : MonoBehaviour
             stopCurveLabel.text = "Arcade stop: " + RockPhysicsBootstrap.StopLabel() + "  (tap to change)";
     }
 
-    // A tester-only button along the bottom of the pause menu (hidden in release builds via DevOptions).
-    Text BuildDevButton(string name, float fromBottom, UnityEngine.Events.UnityAction onClick)
+    // A tester-only button in the pause menu's list (hidden in release builds via DevOptions).
+    Text BuildDevButton(string name, float unused, UnityEngine.Events.UnityAction onClick)
     {
         if (!DevOptions.Enabled || pauseMenuUI == null) return null;
 
-        var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
-        go.transform.SetParent(pauseMenuUI.transform, false);
-        var rt = (RectTransform)go.transform;
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);
-        rt.pivot = new Vector2(0.5f, 0f);
-        rt.anchoredPosition = new Vector2(0f, fromBottom);
-        rt.sizeDelta = new Vector2(520f, 80f);
+        var parent = ListRoot;
+        var go = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+        go.transform.SetParent(parent, false);
+        var le = go.GetComponent<LayoutElement>();
+        le.minHeight = le.preferredHeight = 80f;
         go.GetComponent<Image>().color = new Color(0.12f, 0.14f, 0.2f, 0.92f);
 
         var labelGO = new GameObject("Label", typeof(RectTransform), typeof(Text));
@@ -147,6 +256,7 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 0f;
         HapticController.Stop();
         pauseMenuUI.SetActive(true);
+        TidyMenu();
         GameIsPaused = true;
         gHUD.scoreCheck = true;
         volumeSlider.value = am.maxVol;

@@ -1,7 +1,6 @@
 # Training: design outline (Nov 2026)
 
-Status: the Training screen exists on the Arena_Selector hub (it took the Standings slot) and you can buy levels. **The levels do not change
-gameplay yet** - see "What is wired" at the bottom. Everything below is a first pass for you to edit; numbers live in one table,
+Status: the Training screen exists on the Arena_Selector hub (it took the Standings slot), you can buy levels, and **the levels now change gameplay** - see "What is wired" at the bottom. Everything below is a first pass for you to edit; numbers live in one table,
 [Assets/Scripts/Training/TrainingCatalog.cs](Assets/Scripts/Training/TrainingCatalog.cs).
 
 ## How it works
@@ -29,7 +28,7 @@ track is how you earn the single-sweeper tap. Level = how hard the tap pushes: 0
 |---|---|---|
 | 1 | Carving Basics | Unlocks carving, half strength |
 | 2 | Edge Control | Carving pushes harder (0.75) |
-| 3 | Quick Hands | Harder again (1.0), reacts faster |
+| 3 | Quick Hands | Harder again (1.0) |
 | 4 | Master Sweeper | Full carving (1.25) |
 
 ### Tactic Studies - collision UI
@@ -39,8 +38,8 @@ The collision direction indicator (the arrow showing where the struck rock goes)
 |---|---|---|
 | 1 | Film Room | rough, up to 20 degrees off |
 | 2 | Shot Charts | within 12 degrees |
-| 3 | Angle Study | within 6 degrees |
-| 4 | Hit Analytics | exact, plus the struck rock's whole path |
+| 3 | Angle Study | within 6 degrees, and the red collision warning line unlocks |
+| 4 | Hit Analytics | exact |
 
 ### On-Ice Training - aim UI
 The aim circle, tighter each level (diameter in world units; a rock is 0.28 wide). Level 3 is half of level 1, as you asked.
@@ -72,6 +71,12 @@ Your handle / head / slider / uniform descriptions already match how the stats a
 uniform: both halves). Not done yet: "decreases fatigue for each player" (there is no fatigue stat; the closest is sweep endurance) and the slider
 "especially length" (that is the weight stat - the generator should favour it for sliders).
 
+## Level gate (built)
+
+The three tracks that unlock things (Directional, Tactic, On-Ice) also need a player (XP) level: **2 / 4 / 6 / 8** for their levels 1-4. The stat tracks
+(Sweep, Cross) are cash only. A gated row shows "reach player level N" and cannot be tapped until you are there. The numbers are `UnlockLevelGate`
+in the catalog.
+
 ## XP overhaul: my thoughts
 
 Today: play -> XP -> level -> 5 skill points per level -> sliders on each player's stats. Cash buys gear. Training adds a second cash sink.
@@ -96,7 +101,13 @@ still reads well. Say the word and I will do (a) first, behind a switch so you c
 
 ## What is wired
 
-- Done: the data, the saving (old saves load fine), the Training screen on the hub, buying with cash, tests.
-- Not yet: any effect. Stat bonuses need to reach the match (they should be added where `modStats` is used); the aim circle, collision
-  indicator and carving still come from the pause-menu toggles, not from training; the "locked" look for aids; art for the track icons
-  (an empty slot is at `Track_n/Panel/Image` in the scene).
+- Saved with the career (old saves load fine), the Training screen on the hub, buying with cash and the level gate.
+- **Stats:** the bonuses are added to the three player-team sweepers (TeamManager) and to the shooter's aim and weight skill (the aim fuzz).
+- **Aim circle:** hidden until On-Ice Training 1 (the guide lines show instead, as when the toggle is off), then 1.5 / 1.1 / 0.75 / 0.5 wide.
+- **Collision arrows:** hidden until Tactic Studies 1; then each rock's arrows are off by a random amount up to 20 / 12 / 6 / 0 degrees (rolled once per rock). The red warning line comes at level 3.
+- **Carving:** until Directional Sweeping 1, tapping one sweeper does the ordinary both-sweepers sweep; after that the sideways push is 0.5 / 0.75 / 1.0 / 1.25.
+- No career (tutorial, a game started straight from a scene) means nothing is gated; QuickTest owns every level.
+- **Pause menu:** only the aids you have earned show (Trajectory, Guidelines and Curl Line are always there); AI tuning, debug switches and the physics buttons are under one collapsed "Tester options" button, dev builds only.
+- **Finding:** equipment and sponsor bonuses (`modStats`) are only shown on the Team screen; no match reads them. Training goes through the match code, so it works, but gear does not yet.
+
+Not done: icons for the tracks (empty slot at `Track_n/Panel/Image`), a "locked" hint in the pause menu, the equipment-bonus finding above, and a look at all of this on a device.
