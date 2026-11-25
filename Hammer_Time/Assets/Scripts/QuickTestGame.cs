@@ -40,11 +40,11 @@ public class QuickTestGame : MonoBehaviour
     
     [Tooltip("Your shooter's aim skill (0-100). Low shows a wide fuzz cone and bands; 85 is nearly exact. Gear and training add to this.")]
     [Range(0, 100)]
-    public int playerAimSkill = 15;
+    public int playerAimSkill = 50;
 
     [Tooltip("Your shooter's weight skill (0-100). Low shows a tall fuzz band on the distance line.")]
     [Range(0, 100)]
-    public int playerWeightSkill = 15;
+    public int playerWeightSkill = 50;
 
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
@@ -264,7 +264,7 @@ public class QuickTestGame : MonoBehaviour
         if (cm != null)
         {
             // ? CRITICAL: Set player stats to 85 for ZERO randomness!
-            cm.cStats.weightAccuracy = playerWeightSkill;   // low by default so the fuzz is easy to see
+            cm.cStats.weightAccuracy = playerWeightSkill;   // a middling shooter by default; drag the sliders down to see a wide fuzz
             cm.cStats.finesseAccuracy = 85;
             cm.cStats.aimAccuracy = playerAimSkill;
             cm.equipmentBonus = new CareerStats();   // no gear carried over from a career, so the skill is exactly what is set here
