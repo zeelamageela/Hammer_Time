@@ -139,7 +139,7 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
-    const float GuideLineAlpha = 0.03f;   // the thin guide lines are barely there; the fuzz bands around them carry the weight
+    const float GuideLineAlpha = AimFuzzBands.AimAidAlpha;   // the thin guide lines match the aim circle, cone and fuzz patch
     AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
 
     // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
@@ -678,12 +678,6 @@ public class TrajectoryLine : MonoBehaviour
                 lr.SetPosition(i, pos[i]);
             }
 
-            // The cone of doubt along the line: always there for the player, wider and shimmerier the less skilled the shooter
-            if (bands != null && !aiTurn)
-            {
-                float aimSkillNow = GetShooterAimAccuracy();
-                bands.ShowCone(pos, AimFuzzBands.AimHalfWidth(aimSkillNow), aimSkillNow);
-            }
             
             // Debug.Log($"Physics simulation complete - {pos.Count} points, collision: {collisionInfo.hasCollision}");
             
@@ -902,23 +896,12 @@ public class TrajectoryLine : MonoBehaviour
         }
 
         // Position aim circle at ideal endpoint (as if no rocks were there)
-        if (aimCircle != null && AimCircleShown)
-        {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = true;
+        // The old aim circle sprite stays off: the aim circle is now drawn by AimFuzzBands (a true circle with a thick solid edge) and the
+        // guide lines, fuzz patch and cone are drawn alongside it. The object is still moved to the aim point because the lines read its position.
+        if (aimCircle != null) aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+        UpdateAlternativeAimVisualization();
 
-            // Hide alternative aim lines when aim circle is ON
-            if (aimVerticalLine != null) aimVerticalLine.enabled = false;
-            if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
-            if (bands != null) bands.HidePatch();
-        }
-        else
-        {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = false;
-            
-            // Show alternative aim lines when aim circle is OFF
-            UpdateAlternativeAimVisualization();
-        }
-
+        List<Vector2> coneSource = null;   // the line the cone follows: the ideal path, which ends at the aim point
         if (usePhysicsSimulation && trajectorySimulator != null)
         {
             // FIXED: Simulate trajectory WITHOUT rocks to get ideal target position
@@ -953,6 +936,7 @@ public class TrajectoryLine : MonoBehaviour
             );
 
             TrajectorySimulator.CollisionInfo idealInfo = trajectorySimulator.GetCollisionInfo();
+            coneSource = idealPath;
 
             if (idealInfo.finalPosition != Vector2.zero)
             {
@@ -968,12 +952,39 @@ public class TrajectoryLine : MonoBehaviour
             // Fallback to last trajectory point (Bezier mode)
             aimCircle.transform.position = pos[pos.Count - 1];
         }
+        DrawFuzzAids(coneSource, pos);
         aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
         CameraManager camManager = FindObjectOfType<CameraManager>();
         camManager.Trajectory();
     }
     
+    /// <summary>
+    /// The fuzz aids, all at the AIM POINT (the aim circle object, where the rock is expected to finish after its curl, not where the straight
+    /// guide lines cross): the aim circle, the soft landing patch around it, and the cone that runs from the hack and joins the circle.
+    /// </summary>
+    void DrawFuzzAids(List<Vector2> ideal, List<Vector3> shownPath)
+    {
+        if (bands == null || aiTurn || aimCircle == null) return;
+        float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
+        Vector2 aimPoint = aimCircle.transform.position;
+
+        if (guidelinesVisible || AimCircleShown)
+            bands.ShowPatch(aimPoint, AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
+        else
+            bands.HidePatch();
+
+        if (AimCircleShown) bands.ShowRing(aimPoint, new Color(0.23f, 0.23f, 0.23f));
+        else bands.HideRing();
+
+        var path = new List<Vector3>();
+        if (ideal != null)
+            foreach (var p in ideal) { Vector2 shown = FuzzWarp(p); path.Add(new Vector3(shown.x, shown.y, 0f)); }
+        else if (shownPath != null)
+            path.AddRange(shownPath);
+        bands.ShowCone(path, aimPoint, aimNow);
+    }
+
     // Helper method to recreate the simulator when settings change
     private void UpdateSimulator()
     {
@@ -1131,7 +1142,7 @@ public class TrajectoryLine : MonoBehaviour
         // Toggle between aim circle and alternative visualization
         if (aimCircle != null)
         {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = visible;
+            aimCircle.GetComponent<SpriteRenderer>().enabled = false;   // AimFuzzBands draws the circle now (see DrawTrajectory)
         }
         
         // Update visualization if currently aiming
@@ -1142,18 +1153,7 @@ public class TrajectoryLine : MonoBehaviour
             
             if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
             {
-                if (visible)
-                {
-                    // Show aim circle, hide alternative lines
-                    if (aimVerticalLine != null) aimVerticalLine.enabled = false;
-                    if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
-                    if (aimCurlLine != null) aimCurlLine.enabled = false;
-                }
-                else
-                {
-                    // Hide aim circle, show alternative lines
-                    UpdateAlternativeAimVisualization();
-                }
+                UpdateAlternativeAimVisualization();
             }
         }
     }
@@ -1304,13 +1304,6 @@ public class TrajectoryLine : MonoBehaviour
             aimHorizontalLine.endColor = lineColor;
         }
         
-        if (bands != null && guidelinesVisible && !aiTurn)
-        {
-            float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
-            bands.ShowPatch(new Vector2(verticalLineX, horizontalLineY),
-                            AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
-        }
-
         // CURL LINE: Shows turn and curl from vertical line to aim circle
         // ENHANCED with accuracy visualization (width, offset, gradient)
         if (aimCurlLine != null && aimCircle != null && curlLineVisible)
@@ -1458,13 +1451,6 @@ public class TrajectoryLine : MonoBehaviour
         
         // Only show if toggle is ON
         if (!collisionWarningVisible || !TrainingAids.CollisionWarningUnlocked)
-        {
-            collisionWarningLine.enabled = false;
-            return;
-        }
-        
-        // Only show when aim circle is OFF (guide lines mode)
-        if (AimCircleShown)
         {
             collisionWarningLine.enabled = false;
             return;

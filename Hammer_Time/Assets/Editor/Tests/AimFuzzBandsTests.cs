@@ -48,6 +48,15 @@ public class AimFuzzBandsTests
     }
 
     [Test]
+    public void AimCircleHasASolidThickEdgeAndAFaintFill()
+    {
+        Assert.AreEqual(0.2f, AimFuzzBands.RingProfile(0f), 1e-5f, "faint fill");
+        Assert.AreEqual(0.2f, AimFuzzBands.RingProfile(0.5f), 1e-5f);
+        Assert.AreEqual(1f, AimFuzzBands.RingProfile(0.94f), 1e-5f, "the thick edge is solid");
+        Assert.AreEqual(0f, AimFuzzBands.RingProfile(1.05f), 1e-5f, "nothing outside the circle");
+    }
+
+    [Test]
     public void NoFuzzNoBands()
     {
         AimFuzz.Enabled = false;

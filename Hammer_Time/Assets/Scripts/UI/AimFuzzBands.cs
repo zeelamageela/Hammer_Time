@@ -14,25 +14,30 @@ public class AimFuzzBands : MonoBehaviour
 {
     static readonly Color fuzzGrey = new Color(0.23f, 0.23f, 0.23f);
 
-    /// <summary>Opacity of the patch at its centre.</summary>
-    const float PatchAlpha = 0.20f;
-    /// <summary>Opacity of the cone at its strongest, in the middle.</summary>
-    const float ConeAlpha = 0.04f;
-    /// <summary>The cone is never thinner than one rock (0.28 m) beyond the error it shows, so it always reads as the rock's path.</summary>
-    const float ConeExtraWidth = 0.28f;
+    /// <summary>One opacity for the aim aids that sit on the ice (guide lines, the aim circle's fill, the cone, the fuzz patch), so they read as one set.</summary>
+    public const float AimAidAlpha = 0.12f;
+    /// <summary>The aim circle's thick edge is solid.</summary>
+    const float RingStrokeAlpha = 0.6f;
+    /// <summary>Diameter of the aim circle in metres. It is a true circle: always scaled the same both ways.</summary>
+    public const float RingDiameter = 0.8f;
+    /// <summary>The edge's thickness as a share of the radius (0.12 of 0.4 m is about 5 cm).</summary>
+    const float RingThickness = 0.12f;
+    const float PatchAlpha = AimAidAlpha;
+    const float ConeAlpha = AimAidAlpha;
     /// <summary>The patch is never smaller than one rock.</summary>
     const float PatchMinSize = 0.28f;
     /// <summary>The dense middle of the patch, as a share of its radius; the rest is the soft edge.</summary>
     const float PatchSolid = 0.25f;
 
-    SpriteRenderer patch;
+    SpriteRenderer patch, ring;
     LineRenderer cone;
-    static Texture2D patchTexture, coneTexture;
-    static Sprite patchSprite;
+    static Texture2D patchTexture, coneTexture, ringTexture;
+    static Sprite patchSprite, ringSprite;
 
     // what was last drawn, so the shimmer can keep moving it
     Vector2 patchSize;
-    float coneFull, shimmerStrength;
+    float coneFade, shimmerStrength;   // coneFade: how far along the cone (0-1) it starts to fade out inside the aim circle
+    readonly Gradient coneGradient = new Gradient();
     bool anyShown;
 
     /// <summary>The widest sideways error (half-width, metres) the line can have at this aim skill.</summary>
@@ -47,6 +52,19 @@ public class AimFuzzBands : MonoBehaviour
     public static float PatchProfile(float radius)
     {
         return 1f - Smooth(PatchSolid, 1f, Mathf.Clamp01(radius));
+    }
+
+    /// <summary>
+    /// The aim circle across its radius (0 centre, 1 edge): a thick solid edge (1) and a faint fill (0.2), with a slightly soft rim so it is not jagged.
+    /// Returns 0 outside. The thickness is relative, so the circle looks the same at any size.
+    /// </summary>
+    public static float RingProfile(float radius)
+    {
+        float inner = 1f - RingThickness;
+        float rim = 0.03f;
+        float stroke = Smooth(inner - rim, inner, radius) * (1f - Smooth(1f - rim, 1f, radius));
+        float fill = radius < inner ? 0.2f : 0f;
+        return Mathf.Max(stroke, fill);
     }
 
     /// <summary>Opacity (0-1) of the cone across it (0 centre, 1 edge): darkest in the middle, blurring out to nothing. Same all along its length.</summary>
@@ -84,6 +102,11 @@ public class AimFuzzBands : MonoBehaviour
             patchTexture = MakeTexture(64, 64, (x, y) => PatchProfile(Mathf.Sqrt(x * x + y * y)));
             patchSprite = Sprite.Create(patchTexture, new Rect(0, 0, 64, 64), new Vector2(0.5f, 0.5f), 64f);   // one unit wide, so scale = size in metres
         }
+        if (ringTexture == null)
+        {
+            ringTexture = MakeTexture(128, 128, (x, y) => RingProfile(Mathf.Sqrt(x * x + y * y)));
+            ringSprite = Sprite.Create(ringTexture, new Rect(0, 0, 128, 128), new Vector2(0.5f, 0.5f), 128f);
+        }
         if (coneTexture == null) coneTexture = MakeTexture(2, 64, (x, y) => ConeProfile(y, 0f));
 
         var go = new GameObject("FuzzPatch");
@@ -92,6 +115,14 @@ public class AimFuzzBands : MonoBehaviour
         patch.sprite = patchSprite;
         patch.sortingOrder = 0;
         patch.enabled = false;
+
+        var ringGo = new GameObject("AimCircle");
+        ringGo.transform.SetParent(transform, false);
+        ring = ringGo.AddComponent<SpriteRenderer>();
+        ring.sprite = ringSprite;
+        ring.sortingOrder = 1;
+        ring.transform.localScale = new Vector3(RingDiameter, RingDiameter, 1f);   // the same both ways: never stretched
+        ring.enabled = false;
 
         var coneGo = new GameObject("FuzzCone");
         coneGo.transform.SetParent(transform, false);
@@ -112,7 +143,22 @@ public class AimFuzzBands : MonoBehaviour
     {
         anyShown = false;
         if (patch == null) return;
-        patch.enabled = cone.enabled = false;
+        patch.enabled = cone.enabled = ring.enabled = false;
+    }
+
+    /// <summary>The aim circle: a true circle with a thick solid edge, at the aim point.</summary>
+    public void ShowRing(Vector2 centre, Color colour)
+    {
+        Build();
+        ring.enabled = true;
+        ring.transform.position = new Vector3(centre.x, centre.y, 0f);
+        // the sprite carries the solid edge (1) and the faint fill (0.2); the colour's alpha scales both
+        ring.color = new Color(colour.r, colour.g, colour.b, RingStrokeAlpha);
+    }
+
+    public void HideRing()
+    {
+        if (ring != null) ring.enabled = false;
     }
 
     /// <summary>Hides the landing patch but leaves the cone (the aim circle took over).</summary>
@@ -133,16 +179,29 @@ public class AimFuzzBands : MonoBehaviour
         Apply(0f);
     }
 
-    /// <summary>The cone along the drawn trajectory. Called every time the aim is redrawn, so it follows the aim.</summary>
-    public void ShowCone(IList<Vector3> path, float aimHalf, float aimSkill)
+    /// <summary>
+    /// The cone along the line, widening from nothing at the hack to exactly the aim circle's width at the aim point, so it runs into the circle
+    /// like an ice-cream cone. It ends at the circle's centre and fades out over the last half-diameter (inside the circle) so the two do not
+    /// double up. Called every time the aim is redrawn, so it follows the aim.
+    /// </summary>
+    public void ShowCone(IList<Vector3> path, Vector2 end, float aimSkill)
     {
         Build();
-        if (path == null || path.Count < 2) { cone.enabled = false; return; }
-        coneFull = aimHalf * 2f + ConeExtraWidth;
-        shimmerStrength = Mathf.Max(shimmerStrength, Shimmer(aimSkill));
+        if (path == null || path.Count < 1) { cone.enabled = false; return; }
+
+        var points = new List<Vector3>(path);
+        if (((Vector2)points[points.Count - 1] - end).sqrMagnitude > 0.0001f) points.Add(new Vector3(end.x, end.y, 0f));
+        if (points.Count < 2) { cone.enabled = false; return; }
+
+        float length = 0f;
+        for (int i = 1; i < points.Count; i++) length += Vector3.Distance(points[i - 1], points[i]);
+        coneFade = length > 0.01f ? Mathf.Clamp(1f - (RingDiameter * 0.5f) / length, 0f, 0.98f) : 0f;
+
+        shimmerStrength = Shimmer(aimSkill);
         cone.enabled = true;
-        cone.positionCount = path.Count;
-        for (int i = 0; i < path.Count; i++) cone.SetPosition(i, path[i]);
+        cone.positionCount = points.Count;
+        for (int i = 0; i < points.Count; i++) cone.SetPosition(i, points[i]);
+        cone.widthMultiplier = RingDiameter;   // the curve runs 0 to 1, so the far end is exactly as wide as the circle
         anyShown = true;
         Apply(0f);
     }
@@ -170,8 +229,11 @@ public class AimFuzzBands : MonoBehaviour
         }
         if (cone != null && cone.enabled)
         {
-            cone.widthMultiplier = coneFull * wobbleX;
-            cone.startColor = cone.endColor = With(fuzzGrey, ConeAlpha * conePulse);
+            float a = Mathf.Clamp01(ConeAlpha * conePulse);
+            coneGradient.SetKeys(
+                new[] { new GradientColorKey(fuzzGrey, 0f), new GradientColorKey(fuzzGrey, 1f) },
+                new[] { new GradientAlphaKey(a, 0f), new GradientAlphaKey(a, coneFade), new GradientAlphaKey(0f, 1f) });
+            cone.colorGradient = coneGradient;
         }
     }
 
