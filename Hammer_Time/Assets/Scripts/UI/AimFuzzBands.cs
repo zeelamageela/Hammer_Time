@@ -7,7 +7,7 @@ using UnityEngine;
 ///  - a vertical band around the aim guide line: as wide as the biggest sideways error the throw could have, soft left and right only,
 ///  - a horizontal band around the distance line: as tall as the biggest long/short error, soft up and down only,
 ///  - a cone along the trajectory that widens from nothing at the hack to the full sideways error at the end, with blurred edges, and
-///    hollowed out in the middle toward the end so it is the inverse of the vertical band it runs into.
+///    darkest down the middle, and never thinner than one rock more than the error it shows.
 /// The rock always goes where the physics says, and the drawn end is never further than the maximum error from the truth, so the truth
 /// is inside the solid part of the band. The softness comes from a small generated texture on each line (its V axis runs across the line),
 /// so the edges are smooth and the ends of a band are square: nothing fades along the band's length.
@@ -18,8 +18,10 @@ public class AimFuzzBands : MonoBehaviour
 
     /// <summary>Opacity of the solid middle of a guide band.</summary>
     const float BandAlpha = 0.30f;
-    /// <summary>Opacity of the cone at its strongest (half what it was).</summary>
-    const float ConeAlpha = 0.08f;
+    /// <summary>Opacity of the cone at its strongest, in the middle.</summary>
+    const float ConeAlpha = 0.04f;
+    /// <summary>The cone is never thinner than one rock (0.28 m) beyond the error it shows, so it always reads as the rock's path.</summary>
+    const float ConeExtraWidth = 0.28f;
     /// <summary>The solid part of a band, as a share of its half-width; the rest is the soft edge.</summary>
     const float BandSolid = 0.55f;
 
@@ -45,14 +47,10 @@ public class AimFuzzBands : MonoBehaviour
         return 1f - Smooth(BandSolid, 1f, Mathf.Abs(across));
     }
 
-    /// <summary>Opacity (0-1) of the cone at a place across it (0 centre, 1 edge) and along it (0 hack end, 1 far end).</summary>
+    /// <summary>Opacity (0-1) of the cone across it (0 centre, 1 edge): darkest in the middle, blurring out to nothing. Same all along its length.</summary>
     public static float ConeProfile(float across, float along)
     {
-        across = Mathf.Abs(across);
-        float soft = 1f - Smooth(0.45f, 1f, across);                 // blurred outer edge
-        float middle = 1f - Smooth(0.05f, 0.55f, across);            // where the vertical band is solid
-        float masked = Smooth(0.25f, 1f, along);                     // the mask grows toward the far end
-        return soft * (1f - 0.92f * masked * middle);
+        return 1f - Smooth(0.1f, 1f, Mathf.Abs(across));
     }
 
     static float Smooth(float a, float b, float x)
@@ -148,8 +146,8 @@ public class AimFuzzBands : MonoBehaviour
     public void ShowCone(IList<Vector3> path, float aimHalf, float aimSkill)
     {
         Build();
-        if (path == null || path.Count < 2 || aimHalf <= 0.001f) { cone.enabled = false; return; }
-        coneFull = aimHalf * 2f;
+        if (path == null || path.Count < 2) { cone.enabled = false; return; }
+        coneFull = aimHalf * 2f + ConeExtraWidth;
         shimmerStrength = Mathf.Max(shimmerStrength, Shimmer(aimSkill));
         cone.enabled = true;
         cone.positionCount = path.Count;
@@ -159,7 +157,7 @@ public class AimFuzzBands : MonoBehaviour
     }
 
     /// <summary>0..1: how much the shapes shimmer. Even the best shooter gets a hint of it so they always look alive.</summary>
-    static float Shimmer(float skill) { return Mathf.Lerp(1f, 0.15f, Mathf.Clamp01(skill / 100f)); }
+    static float Shimmer(float skill) { return Mathf.Lerp(1f, 0.3f, Mathf.Clamp01(skill / 100f)); }
 
     void Update()
     {
@@ -169,10 +167,10 @@ public class AimFuzzBands : MonoBehaviour
     void Apply(float t)
     {
         // the shimmer moves the width a little and the strength more, out of step between the shapes
-        float wobbleV = 1f + 0.10f * shimmerStrength * (Mathf.PerlinNoise(t * 1.3f, 0.2f) * 2f - 1f);
-        float wobbleH = 1f + 0.10f * shimmerStrength * (Mathf.PerlinNoise(t * 1.1f, 7.1f) * 2f - 1f);
-        float pulseV = 1f + 0.35f * shimmerStrength * (Mathf.PerlinNoise(t * 2.1f, 3.3f) * 2f - 1f);
-        float pulseH = 1f + 0.35f * shimmerStrength * (Mathf.PerlinNoise(t * 1.9f, 9.7f) * 2f - 1f);
+        float wobbleV = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.8f, 0.2f) * 2f - 1f);
+        float wobbleH = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.5f, 7.1f) * 2f - 1f);
+        float pulseV = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.8f, 3.3f) * 2f - 1f);
+        float pulseH = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.5f, 9.7f) * 2f - 1f);
 
         Style(vertical, verticalFull * wobbleV, With(guideGrey, BandAlpha * pulseV));
         Style(horizontal, horizontalFull * wobbleH, With(horizontalColor, BandAlpha * pulseH));

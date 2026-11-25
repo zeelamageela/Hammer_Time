@@ -40,12 +40,12 @@ public class AimFuzzBandsTests
     }
 
     [Test]
-    public void ConeIsFullAtTheHackAndHollowAtTheFarEndWhereTheAimBandIsSolid()
+    public void ConeIsDarkestInTheMiddleAndBlursOutToNothing()
     {
-        Assert.Greater(AimFuzzBands.ConeProfile(0f, 0f), 0.95f, "starting out, the middle is filled");
-        Assert.Less(AimFuzzBands.ConeProfile(0f, 1f), 0.15f, "at the far end the middle is masked out");
-        Assert.Greater(AimFuzzBands.ConeProfile(0.7f, 1f), 0.5f, "while the sides stay");
-        Assert.AreEqual(0f, AimFuzzBands.ConeProfile(1f, 1f), 1e-5f, "blurred to nothing at the edge");
+        Assert.AreEqual(1f, AimFuzzBands.ConeProfile(0f, 0.5f));
+        Assert.Greater(AimFuzzBands.ConeProfile(0.3f, 0.5f), AimFuzzBands.ConeProfile(0.7f, 0.5f));
+        Assert.AreEqual(0f, AimFuzzBands.ConeProfile(1f, 0.5f), 1e-5f);
+        Assert.AreEqual(AimFuzzBands.ConeProfile(0.5f, 0f), AimFuzzBands.ConeProfile(0.5f, 1f), "the same all along its length");
     }
 
     [Test]

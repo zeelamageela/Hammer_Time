@@ -139,7 +139,7 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
-    const float GuideLineAlpha = 0.5f;   // the thin guide lines are half see-through; the fuzz bands around them carry the weight
+    const float GuideLineAlpha = 0.03f;   // the thin guide lines are barely there; the fuzz bands around them carry the weight
     AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
 
     // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
