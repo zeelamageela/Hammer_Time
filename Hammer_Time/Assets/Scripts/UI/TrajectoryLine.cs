@@ -69,6 +69,9 @@ public class TrajectoryLine : MonoBehaviour
         dotTotal = dotArcs.Length > 0 ? dotArcs[dotArcs.Length - 1] : 0f;
         dotSpacing = dots.Count > 0 ? dotTotal / dots.Count : 0f;
         dotsMarching = dotTotal > 0.5f && dots.Count > 1;
+        // The trajectory is redrawn (dots destroyed and made again) whenever the aim changes, so put the new dots straight at their place in
+        // the cycle instead of their starting spots; otherwise every redraw would snap them back and they would never seem to move.
+        AnimateDots();
     }
     List<Vector2> points;
     
