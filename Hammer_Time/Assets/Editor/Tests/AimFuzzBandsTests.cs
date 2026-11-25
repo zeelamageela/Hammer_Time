@@ -27,11 +27,14 @@ public class AimFuzzBandsTests
     public void OvalIsTheFullErrorRangeButNeverSmallerThanARock()
     {
         var big = AimFuzzBands.OvalSizeFor(0.3f, 1.0f);
-        Assert.AreEqual(0.6f, big.x, 1e-5f);
+        Assert.AreEqual(AimFuzzBands.OvalMinSize + 0.6f, big.x, 1e-5f, "one rock plus the full sideways range");
         Assert.AreEqual(2.0f, big.y, 1e-5f);
         var none = AimFuzzBands.OvalSizeFor(0f, 0f);
-        Assert.AreEqual(AimFuzzBands.OvalMinSize, none.x);
+        Assert.AreEqual(AimFuzzBands.OvalMinSize, none.x, "a perfect shooter: one rock wide");
         Assert.AreEqual(AimFuzzBands.OvalMinSize, none.y);
+        // a beginner is at least two more rock widths wide than a perfect shooter
+        float beginner = AimFuzzBands.OvalSizeFor(AimFuzzBands.AimHalfWidth(0f), 0f).x;
+        Assert.GreaterOrEqual(beginner, AimFuzzBands.OvalMinSize * 3f);
     }
 
     [Test]

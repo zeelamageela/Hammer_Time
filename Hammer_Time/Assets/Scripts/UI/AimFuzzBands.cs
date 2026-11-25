@@ -17,10 +17,10 @@ public class AimFuzzBands : MonoBehaviour
     public const float AimAidAlpha = 0.12f;
 
     /// <summary>How bright the cone is at its middle.</summary>
-    const float ConeStrength = 0.50f;
+    const float ConeStrength = 0.1f;
     /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
-    const float OvalFill = 0.30f;
-    const float OvalOutline = 0.80f;
+    const float OvalFill = 0.1f;
+    const float OvalOutline = 0.1f;
     const float OvalStrength = 1.0f;
     /// <summary>Half the thickness of the oval's outline glow, in metres.</summary>
     const float OutlineHalfThickness = 0.05f;
@@ -48,10 +48,11 @@ public class AimFuzzBands : MonoBehaviour
     /// <summary>The largest long/short error (half-height, metres) at this weight skill.</summary>
     public static float WeightHalfHeight(float weightSkill) { return AimFuzz.Enabled ? AimFuzz.WeightSigma(weightSkill) * AimFuzz.MaxSigmas : 0f; }
 
-    /// <summary>The oval's width and height in metres: the full range of the two errors, but never smaller than a rock.</summary>
+    /// <summary>The oval's width and height in metres. Wide: one rock plus the full sideways error range (so a perfect shooter gets one rock wide, and
+    /// a beginner several rocks). Tall: the full long/short range, never less than a rock.</summary>
     public static Vector2 OvalSizeFor(float aimHalf, float weightHalf)
     {
-        return new Vector2(Mathf.Max(OvalMinSize, aimHalf * 2f), Mathf.Max(OvalMinSize, weightHalf * 2f));
+        return new Vector2(OvalMinSize + aimHalf * 2f, Mathf.Max(OvalMinSize, weightHalf * 2f));
     }
 
     // ---- the soft edge of the cone ----------------------------------------------------------------------------------------

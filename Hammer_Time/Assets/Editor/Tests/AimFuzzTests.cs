@@ -19,7 +19,7 @@ public class AimFuzzTests
     [Test]
     public void ZeroSkillUsesTheAiSpreads()
     {
-        Assert.AreEqual(0.35f, AimFuzz.AimSigma(0f), 1e-6f);
+        Assert.AreEqual(0.5f, AimFuzz.AimSigma(0f), 1e-6f);
         Assert.AreEqual(0.9f, AimFuzz.WeightSigma(0f), 1e-6f);
         Assert.Less(AimFuzz.AimSigma(60f), AimFuzz.AimSigma(40f));
         Assert.Less(AimFuzz.WeightSigma(60f), AimFuzz.WeightSigma(40f));

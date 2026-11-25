@@ -139,6 +139,7 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
+    const bool ShowHorizontalGuide = false;   // the sideways guide across the ice is gone: the oval at the aim point shows the distance
     const float GuideLineAlpha = AimFuzzBands.AimAidAlpha;   // the thin guide lines match the aim circle, cone and fuzz patch
     AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
 
@@ -1278,7 +1279,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // HORIZONTAL LINE: Fixed width across ice at trajectory endpoint Y
         // Shows weight (distance shot will travel) - TEAM COLOR
-        if (aimHorizontalLine != null && guidelinesVisible)
+        if (aimHorizontalLine != null && guidelinesVisible && ShowHorizontalGuide)
         {
             // Fixed X positions spanning ice width
             float iceLeftEdge = -2.23f;  // Tunable - left edge of ice
