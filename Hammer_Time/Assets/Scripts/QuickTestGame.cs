@@ -38,6 +38,14 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int opponentStatValue = 85;
     
+    [Tooltip("Your shooter's aim skill (0-100). Low shows a wide fuzz cone and bands; 85 is nearly exact. Gear and training add to this.")]
+    [Range(0, 100)]
+    public int playerAimSkill = 15;
+
+    [Tooltip("Your shooter's weight skill (0-100). Low shows a tall fuzz band on the distance line.")]
+    [Range(0, 100)]
+    public int playerWeightSkill = 15;
+
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
     
@@ -256,9 +264,10 @@ public class QuickTestGame : MonoBehaviour
         if (cm != null)
         {
             // ? CRITICAL: Set player stats to 85 for ZERO randomness!
-            cm.cStats.weightAccuracy = 85;
+            cm.cStats.weightAccuracy = playerWeightSkill;   // low by default so the fuzz is easy to see
             cm.cStats.finesseAccuracy = 85;
-            cm.cStats.aimAccuracy = 85;
+            cm.cStats.aimAccuracy = playerAimSkill;
+            cm.equipmentBonus = new CareerStats();   // no gear carried over from a career, so the skill is exactly what is set here
             cm.cStats.sweepStrength = 85;
             cm.cStats.sweepEndurance = 85;
             cm.cStats.sweepCohesion = 85;
@@ -287,7 +296,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 85/100"); //(NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill} and weight {playerWeightSkill} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
