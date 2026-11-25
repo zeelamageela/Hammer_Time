@@ -147,6 +147,7 @@ public class TrajectoryLine : MonoBehaviour
     readonly System.Random fuzzRng = new System.Random();
     Vector2 fuzzError;
     int fuzzRockIndex = -1;
+    float fuzzRolledAim = -1f, fuzzRolledWeight = -1f;   // the skills the current roll was made at
     bool fuzzActive;
     Vector2 fuzzLauncher;
     Vector2 fuzzEnd;
@@ -187,11 +188,14 @@ public class TrajectoryLine : MonoBehaviour
         if (!AimFuzz.Enabled || aiTurn) return;
         if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame) return;
 
-        if (fuzzRockIndex != gm.rockCurrent)
+        // one roll per rock, but a change of skill (a quick-test slider, new gear) rolls again so the new skill shows up straight away
+        float aim = GetShooterAimAccuracy();
+        float weight = GetShooterWeightAccuracy();
+        if (fuzzRockIndex != gm.rockCurrent || !Mathf.Approximately(aim, fuzzRolledAim) || !Mathf.Approximately(weight, fuzzRolledWeight))
         {
-            float aim = GetShooterAimAccuracy();
-            float weight = GetShooterWeightAccuracy();
             fuzzError = AimFuzz.Roll(aim, weight, fuzzRng);
+            fuzzRolledAim = aim;
+            fuzzRolledWeight = weight;
             fuzzRockIndex = gm.rockCurrent;
             Debug.Log($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
         }

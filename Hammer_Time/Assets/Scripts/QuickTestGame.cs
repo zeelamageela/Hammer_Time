@@ -46,6 +46,16 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int playerWeightSkill = 50;
 
+    [Header("Fuzz look (applies live while a quick test is running)")]
+    [Tooltip("Brightness of the cone along the shot.")]
+    [Range(0f, 1f)] public float coneStrength = 0.4f;
+    [Tooltip("The faint fill inside the aim oval.")]
+    [Range(0f, 1f)] public float ovalFill = 0.2f;
+    [Tooltip("The glowing outline of the aim oval.")]
+    [Range(0f, 1f)] public float ovalOutline = 0.4f;
+    [Tooltip("The crosshair arms.")]
+    [Range(0f, 1f)] public float crossStrength = 0.9f;
+
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
     
@@ -78,6 +88,8 @@ public class QuickTestGame : MonoBehaviour
     
     private void Update()
     {
+        if (PlayerPrefs.GetInt("QuickTestMode", 0) == 1) ApplyLiveSettings();
+
         // Check for quick test hotkey
         if (Input.GetKeyDown(testGameKey))
         {
@@ -113,6 +125,25 @@ public class QuickTestGame : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// While a quick test is running, the skill and look sliders above take effect as soon as they are moved (every frame), so you can aim,
+    /// let go without shooting, change a number, and aim again to compare. The aim fuzz re-rolls when the skill changes (see TrajectoryLine.BeginFuzz).
+    /// Gear and training still add to the skill.
+    /// </summary>
+    void ApplyLiveSettings()
+    {
+        var cm = GetComponent<CareerManager>();
+        if (cm != null && cm.cStats != null)
+        {
+            cm.cStats.aimAccuracy = playerAimSkill;
+            cm.cStats.weightAccuracy = playerWeightSkill;
+        }
+        AimFuzzBands.ConeStrength = coneStrength;
+        AimFuzzBands.OvalFill = ovalFill;
+        AimFuzzBands.OvalOutline = ovalOutline;
+        AimFuzzBands.CrossStrength = crossStrength;
+    }
+
     /// <summary>
     /// Immediately starts a test game with preset settings
     /// </summary>
