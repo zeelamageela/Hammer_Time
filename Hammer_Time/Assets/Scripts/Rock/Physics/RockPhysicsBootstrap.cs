@@ -9,6 +9,8 @@ public enum PhysicsChoice
     Arcade = 1,
     /// <summary>Arcade slowed to real-ice timing: a button draw takes ~14.5 s hog to hog.</summary>
     RealTime = 2,
+    /// <summary>Arcade at half speed: a button draw takes ~6.5 s hog to hog, between Arcade (3.3 s) and Real-time.</summary>
+    Pro = 3,
 }
 
 /// <summary>Picks the profile at startup and offers the choice to the UI.</summary>
@@ -24,6 +26,16 @@ public static class RockPhysicsBootstrap
     public static readonly float[] StopPowers = { 0.5f, 0.6f, 0.7f, 0.8f };
     public static readonly string[] StopNames = { "Firm", "Soft", "Mellow", "Extra mellow" };
 
+    /// <summary>The choices from fastest to slowest (the saved numbers stay as they were; this is only the order they are offered in).</summary>
+    public static readonly PhysicsChoice[] Order = { PhysicsChoice.Classic, PhysicsChoice.Arcade, PhysicsChoice.Pro, PhysicsChoice.RealTime };
+
+    public static int IndexOf(PhysicsChoice choice) { return System.Array.IndexOf(Order, choice); }
+
+    public static PhysicsChoice FromIndex(int index) { return Order[Mathf.Clamp(index, 0, Order.Length - 1)]; }
+
+    /// <summary>Arcade and Pro both follow the stop-curve setting.</summary>
+    static bool UsesStopCurve(PhysicsChoice c) { return c == PhysicsChoice.Arcade || c == PhysicsChoice.Pro; }
+
     public static PhysicsChoice Current { get; private set; }
     public static float StopPower { get; private set; } = 0.6f;
 
@@ -38,7 +50,7 @@ public static class RockPhysicsBootstrap
     public static PhysicsChoice Load()
     {
         if (!DevOptions.Enabled) return Shipping;
-        try { return (PhysicsChoice)Mathf.Clamp(PlayerPrefs.GetInt(Key, (int)Shipping), 0, 2); }
+        try { return (PhysicsChoice)Mathf.Clamp(PlayerPrefs.GetInt(Key, (int)Shipping), 0, 3); }
         catch { return Shipping; }
     }
 
@@ -60,7 +72,7 @@ public static class RockPhysicsBootstrap
     {
         StopPower = StopPowers[Mathf.Clamp(index, 0, StopPowers.Length - 1)];
         try { PlayerPrefs.SetFloat(StopKey, StopPower); PlayerPrefs.Save(); } catch { }
-        if (Current == PhysicsChoice.Arcade) RockPhysicsSettings.Request(Make(Current));
+        if (UsesStopCurve(Current)) RockPhysicsSettings.Request(Make(Current));
     }
 
     public static int StopIndex()
@@ -87,6 +99,7 @@ public static class RockPhysicsBootstrap
         {
             case PhysicsChoice.Classic: return RockPhysicsProfile.Legacy();
             case PhysicsChoice.RealTime: return RockPhysicsProfile.Real();
+            case PhysicsChoice.Pro: return RockPhysicsProfile.Pro(StopPower);
             default: return RockPhysicsProfile.Arcade(StopPower);
         }
     }
@@ -97,12 +110,13 @@ public static class RockPhysicsBootstrap
         {
             case PhysicsChoice.Classic: return "Classic";
             case PhysicsChoice.RealTime: return "Real-time";
+            case PhysicsChoice.Pro: return "Pro";
             default: return "Arcade";
         }
     }
 
     public static PhysicsChoice Next(PhysicsChoice choice)
     {
-        return (PhysicsChoice)(((int)choice + 1) % 3);
+        return Order[(IndexOf(choice) + 1) % Order.Length];
     }
 }

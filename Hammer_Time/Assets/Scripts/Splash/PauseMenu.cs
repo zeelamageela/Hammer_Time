@@ -99,7 +99,7 @@ public class PauseMenu : MonoBehaviour
         // the physics pace has three settings and the Arcade stop curve four: whole-number sliders
         physicsSlider = SliderIn("Physics Slider");
         stopSlider = SliderIn("Stop Slider");
-        SetupSlider(physicsSlider, 2, OnPhysicsSlider);
+        SetupSlider(physicsSlider, RockPhysicsBootstrap.Order.Length - 1, OnPhysicsSlider);
         SetupSlider(stopSlider, RockPhysicsBootstrap.StopPowers.Length - 1, OnStopSlider);
 
         if (debugToggle == null)
@@ -135,7 +135,7 @@ public class PauseMenu : MonoBehaviour
 
     void OnPhysicsSlider(float v)
     {
-        RockPhysicsBootstrap.Choose((PhysicsChoice)Mathf.RoundToInt(v));
+        RockPhysicsBootstrap.Choose(RockPhysicsBootstrap.FromIndex(Mathf.RoundToInt(v)));
         RefreshAdvanced();
     }
 
@@ -150,7 +150,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (physicsSlider != null)
         {
-            physicsSlider.SetValueWithoutNotify((int)RockPhysicsBootstrap.Current);
+            physicsSlider.SetValueWithoutNotify(RockPhysicsBootstrap.IndexOf(RockPhysicsBootstrap.Current));
             SetSliderLabel(physicsSlider, RockPhysicsBootstrap.Label(RockPhysicsBootstrap.Current));
         }
         if (stopSlider != null)

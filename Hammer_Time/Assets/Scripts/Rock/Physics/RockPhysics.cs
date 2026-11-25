@@ -128,6 +128,13 @@ public class RockPhysicsProfile
     /// <summary>How many times slower Real() is than its game-pace base: 14.5 s real hog-to-hog / 3.28 s for the game-pace button draw.</summary>
     public const float RealTimeStretch = 4.42f;
 
+    /// <summary>Pro pace: the Arcade rock (same soft stop, same paths) twice as slow in time, so a button draw takes about 6.5 s hog to hog.</summary>
+    public const float ProTimeStretch = 2f;
+
+    public static RockPhysicsProfile Pro() { return Pro(0.6f); }
+
+    public static RockPhysicsProfile Pro(float stopPower) { return Arcade(stopPower).WithTimeStretch(ProTimeStretch); }
+
     /// <summary>
     /// The same rock, S times slower. Dimensional analysis: x(t) -> X(t/S), so speeds /S, accelerations /S^2, rates /S.
     /// Distances, weights and paths are unchanged.

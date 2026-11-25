@@ -127,6 +127,18 @@ public class ConstantDecelTests
     }
 
     [Test]
+    public void Pro_ButtonDraw_TakesAboutSixAndAHalfSecondsHogToHog_OnTheArcadePaths()
+    {
+        var arcade = Fly(RockPhysicsProfile.Arcade(), 8.5f, false);
+        var pro = Fly(RockPhysicsProfile.Pro(), 8.5f, false);
+        Assert.AreEqual(6.5f, pro.farHogTime - pro.hogTime, 0.4f);
+        Assert.AreEqual(arcade.end.x, pro.end.x, 0.02f, "same path as Arcade");
+        Assert.AreEqual(arcade.end.y, pro.end.y, 0.1f, "same stopping distance as Arcade");
+        Assert.Greater(RockPhysicsProfile.Real().timeStretch, RockPhysicsProfile.Pro().timeStretch, "Real-time is still the slowest");
+        Assert.Greater(RockPhysicsProfile.Pro().timeStretch, RockPhysicsProfile.Arcade().timeStretch, "Pro is slower than Arcade");
+    }
+
+    [Test]
     public void WeightAndSpeedConvertBothWays_AndSpeedPredictsTheStoppingDistance()
     {
         foreach (var p in new[] { RockPhysicsProfile.Arcade(), RockPhysicsProfile.Real() })

@@ -572,7 +572,7 @@ public class Rock_Flick : MonoBehaviour
         // real, slow speed makes the shooter crawl through his own kick. Run that short stretch at the weight speed (the pace Arcade and Classic
         // play at) and give the rock its real speed at the release point. Free flight has no forces, so only the timing of those ~2 m changes.
         var slideForHandoff = GetComponent<RockSlide>();
-        if (slideForHandoff != null && RockPhysicsBootstrap.Current == PhysicsChoice.RealTime
+        if (slideForHandoff != null && RockPhysicsSettings.Current.timeStretch > 1.01f
             && launchVelocity.magnitude < velocity.magnitude && rb.position.y < ShooterAnim.DefaultReleasePointY)
         {
             rb.linearVelocity = velocity;
