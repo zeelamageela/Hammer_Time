@@ -2,35 +2,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// How the skill fuzz is SHOWN (see AimFuzz for how it is rolled). Three soft, shimmering shapes, all faint when the shooter is skilled and
-/// wide and vague when not:
-///  - a vertical band around the aim guide line: as wide as the biggest sideways error the throw could have, soft left and right only,
-///  - a horizontal band around the distance line: as tall as the biggest long/short error, soft up and down only,
-///  - a cone along the trajectory that widens from nothing at the hack to the full sideways error at the end, with blurred edges, and
-///    darkest down the middle, and never thinner than one rock more than the error it shows.
+/// How the skill fuzz is SHOWN (see AimFuzz for how it is rolled). Two soft, shimmering shapes, both small and faint when the shooter is
+/// skilled and wide and vague when not:
+///  - a landing patch at the end of the aim line: as wide as the biggest sideways error the throw could have and as tall as the biggest
+///    long/short error, densest in the middle (where the rock most likely finishes) and fading to nothing at the edge,
+///  - a cone along the trajectory that widens from nothing at the hack to the patch, darkest down the middle, never thinner than a rock.
 /// The rock always goes where the physics says, and the drawn end is never further than the maximum error from the truth, so the truth
-/// is inside the solid part of the band. The softness comes from a small generated texture on each line (its V axis runs across the line),
-/// so the edges are smooth and the ends of a band are square: nothing fades along the band's length.
+/// is always inside the patch. The softness comes from small generated textures, so the edges are smooth.
 /// </summary>
 public class AimFuzzBands : MonoBehaviour
 {
-    static readonly Color guideGrey = new Color(0.23f, 0.23f, 0.23f);
+    static readonly Color fuzzGrey = new Color(0.23f, 0.23f, 0.23f);
 
-    /// <summary>Opacity of the solid middle of a guide band.</summary>
-    const float BandAlpha = 0.30f;
+    /// <summary>Opacity of the patch at its centre.</summary>
+    const float PatchAlpha = 0.20f;
     /// <summary>Opacity of the cone at its strongest, in the middle.</summary>
     const float ConeAlpha = 0.04f;
     /// <summary>The cone is never thinner than one rock (0.28 m) beyond the error it shows, so it always reads as the rock's path.</summary>
     const float ConeExtraWidth = 0.28f;
-    /// <summary>The solid part of a band, as a share of its half-width; the rest is the soft edge.</summary>
-    const float BandSolid = 0.55f;
+    /// <summary>The patch is never smaller than one rock.</summary>
+    const float PatchMinSize = 0.28f;
+    /// <summary>The dense middle of the patch, as a share of its radius; the rest is the soft edge.</summary>
+    const float PatchSolid = 0.25f;
 
-    LineRenderer vertical, horizontal, cone;
-    static Texture2D bandTexture, coneTexture;
+    SpriteRenderer patch;
+    LineRenderer cone;
+    static Texture2D patchTexture, coneTexture;
+    static Sprite patchSprite;
 
     // what was last drawn, so the shimmer can keep moving it
-    float verticalFull, horizontalFull, coneFull, shimmerStrength;
-    Color horizontalColor = Color.white;
+    Vector2 patchSize;
+    float coneFull, shimmerStrength;
     bool anyShown;
 
     /// <summary>The widest sideways error (half-width, metres) the line can have at this aim skill.</summary>
@@ -41,10 +43,10 @@ public class AimFuzzBands : MonoBehaviour
 
     // ---- the soft edges -------------------------------------------------------------------------------------------------
 
-    /// <summary>Opacity (0-1) across a band: solid in the middle, then a smooth fall to nothing. across = 0 at the centre, 1 at the edge.</summary>
-    public static float BandProfile(float across)
+    /// <summary>Opacity (0-1) of the landing patch at a distance from its centre (0 centre, 1 edge, in the patch's own stretched units).</summary>
+    public static float PatchProfile(float radius)
     {
-        return 1f - Smooth(BandSolid, 1f, Mathf.Abs(across));
+        return 1f - Smooth(PatchSolid, 1f, Mathf.Clamp01(radius));
     }
 
     /// <summary>Opacity (0-1) of the cone across it (0 centre, 1 edge): darkest in the middle, blurring out to nothing. Same all along its length.</summary>
@@ -66,7 +68,7 @@ public class AimFuzzBands : MonoBehaviour
         for (int y = 0; y < v; y++)
             for (int x = 0; x < u; x++)
             {
-                float a = alpha(x / (float)(u - 1), (y / (float)(v - 1)) * 2f - 1f);
+                float a = alpha((x / (float)(u - 1)) * 2f - 1f, (y / (float)(v - 1)) * 2f - 1f);
                 pixels[y * u + x] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(Mathf.Clamp01(a) * 255f));
             }
         tex.SetPixels32(pixels);
@@ -74,30 +76,33 @@ public class AimFuzzBands : MonoBehaviour
         return tex;
     }
 
-    LineRenderer Make(string name, Texture2D tex)
-    {
-        var go = new GameObject(name);
-        go.transform.SetParent(transform, false);
-        var l = go.AddComponent<LineRenderer>();
-        l.material = new Material(Shader.Find("Sprites/Default")) { mainTexture = tex };
-        l.textureMode = LineTextureMode.Stretch;
-        l.sortingOrder = 0;
-        l.useWorldSpace = true;
-        l.numCapVertices = 0;   // square ends: the band only softens across, never along
-        l.numCornerVertices = 0;
-        l.enabled = false;
-        return l;
-    }
-
     void Build()
     {
-        if (vertical != null) return;
-        if (bandTexture == null) bandTexture = MakeTexture(2, 128, (along, across) => BandProfile(across));
-        if (coneTexture == null) coneTexture = MakeTexture(64, 128, (along, across) => ConeProfile(across, along));
-        vertical = Make("FuzzBandVertical", bandTexture);
-        horizontal = Make("FuzzBandHorizontal", bandTexture);
-        cone = Make("FuzzCone", coneTexture);
+        if (patch != null) return;
+        if (patchTexture == null)
+        {
+            patchTexture = MakeTexture(64, 64, (x, y) => PatchProfile(Mathf.Sqrt(x * x + y * y)));
+            patchSprite = Sprite.Create(patchTexture, new Rect(0, 0, 64, 64), new Vector2(0.5f, 0.5f), 64f);   // one unit wide, so scale = size in metres
+        }
+        if (coneTexture == null) coneTexture = MakeTexture(2, 64, (x, y) => ConeProfile(y, 0f));
+
+        var go = new GameObject("FuzzPatch");
+        go.transform.SetParent(transform, false);
+        patch = go.AddComponent<SpriteRenderer>();
+        patch.sprite = patchSprite;
+        patch.sortingOrder = 0;
+        patch.enabled = false;
+
+        var coneGo = new GameObject("FuzzCone");
+        coneGo.transform.SetParent(transform, false);
+        cone = coneGo.AddComponent<LineRenderer>();
+        cone.material = new Material(Shader.Find("Sprites/Default")) { mainTexture = coneTexture };
+        cone.textureMode = LineTextureMode.Stretch;
+        cone.sortingOrder = 0;
+        cone.useWorldSpace = true;
+        cone.numCapVertices = 0;
         cone.widthCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 1f));
+        cone.enabled = false;
     }
 
     // ---- showing ---------------------------------------------------------------------------------------------------------
@@ -106,38 +111,24 @@ public class AimFuzzBands : MonoBehaviour
     public void Hide()
     {
         anyShown = false;
-        if (vertical == null) return;
-        vertical.enabled = horizontal.enabled = cone.enabled = false;
+        if (patch == null) return;
+        patch.enabled = cone.enabled = false;
     }
 
-    /// <summary>Hides the two guide bands but leaves the cone (the aim circle took over the guide lines).</summary>
-    public void HideGuides()
+    /// <summary>Hides the landing patch but leaves the cone (the aim circle took over).</summary>
+    public void HidePatch()
     {
-        if (vertical == null) return;
-        vertical.enabled = horizontal.enabled = false;
+        if (patch != null) patch.enabled = false;
     }
 
-    /// <summary>The soft band around the vertical aim guide and the horizontal distance line.</summary>
-    public void ShowGuides(float verticalX, float topY, float bottomY, float distanceY, float iceLeft, float iceRight,
-                           float aimHalf, float weightHalf, float aimSkill, float weightSkill, Color teamColor)
+    /// <summary>The landing patch: centred where the line ends, as wide and tall as the biggest errors the throw could have.</summary>
+    public void ShowPatch(Vector2 centre, float aimHalf, float weightHalf, float aimSkill, float weightSkill)
     {
         Build();
-        // the solid part of each band spans the largest possible error; the soft edge reaches out beyond it
-        verticalFull = aimHalf * 2f / BandSolid;
-        horizontalFull = weightHalf * 2f / BandSolid;
-        horizontalColor = teamColor;
+        patchSize = new Vector2(Mathf.Max(PatchMinSize, aimHalf * 2f), Mathf.Max(PatchMinSize, weightHalf * 2f));
         shimmerStrength = Shimmer(Mathf.Min(aimSkill, weightSkill));
-
-        vertical.enabled = verticalFull > 0.001f;
-        vertical.positionCount = 2;
-        vertical.SetPosition(0, new Vector3(verticalX, topY, 0f));
-        vertical.SetPosition(1, new Vector3(verticalX, bottomY, 0f));
-
-        horizontal.enabled = horizontalFull > 0.001f;
-        horizontal.positionCount = 2;
-        horizontal.SetPosition(0, new Vector3(iceLeft, distanceY, 0f));
-        horizontal.SetPosition(1, new Vector3(iceRight, distanceY, 0f));
-
+        patch.enabled = true;
+        patch.transform.position = new Vector3(centre.x, centre.y, 0f);
         anyShown = true;
         Apply(0f);
     }
@@ -166,26 +157,22 @@ public class AimFuzzBands : MonoBehaviour
 
     void Apply(float t)
     {
-        // the shimmer moves the width a little and the strength more, out of step between the shapes
-        float wobbleV = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.8f, 0.2f) * 2f - 1f);
-        float wobbleH = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.5f, 7.1f) * 2f - 1f);
-        float pulseV = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.8f, 3.3f) * 2f - 1f);
-        float pulseH = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.5f, 9.7f) * 2f - 1f);
+        // the shimmer breathes the size a little and the strength more, out of step between the shapes
+        float wobbleX = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.8f, 0.2f) * 2f - 1f);
+        float wobbleY = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.5f, 7.1f) * 2f - 1f);
+        float pulse = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.8f, 3.3f) * 2f - 1f);
+        float conePulse = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.5f, 9.7f) * 2f - 1f);
 
-        Style(vertical, verticalFull * wobbleV, With(guideGrey, BandAlpha * pulseV));
-        Style(horizontal, horizontalFull * wobbleH, With(horizontalColor, BandAlpha * pulseH));
+        if (patch != null && patch.enabled)
+        {
+            patch.transform.localScale = new Vector3(patchSize.x * wobbleX, patchSize.y * wobbleY, 1f);
+            patch.color = With(fuzzGrey, PatchAlpha * pulse);
+        }
         if (cone != null && cone.enabled)
         {
-            cone.widthMultiplier = coneFull * wobbleV;
-            cone.startColor = cone.endColor = With(guideGrey, ConeAlpha * pulseV);
+            cone.widthMultiplier = coneFull * wobbleX;
+            cone.startColor = cone.endColor = With(fuzzGrey, ConeAlpha * conePulse);
         }
-    }
-
-    static void Style(LineRenderer l, float width, Color c)
-    {
-        if (l == null) return;
-        l.widthMultiplier = Mathf.Max(0f, width);
-        l.startColor = l.endColor = c;
     }
 
     static Color With(Color c, float a) { return new Color(c.r, c.g, c.b, Mathf.Clamp01(a)); }

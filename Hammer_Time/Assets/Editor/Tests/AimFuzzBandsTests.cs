@@ -24,16 +24,15 @@ public class AimFuzzBandsTests
     }
 
     [Test]
-    public void BandIsSolidInTheMiddleAndSoftAtTheEdge()
+    public void PatchIsDenseInTheMiddleAndSoftAtTheEdge()
     {
-        Assert.AreEqual(1f, AimFuzzBands.BandProfile(0f));
-        Assert.AreEqual(1f, AimFuzzBands.BandProfile(0.5f), "the solid part is wide");
-        Assert.AreEqual(0f, AimFuzzBands.BandProfile(1f), 1e-5f);
-        Assert.AreEqual(AimFuzzBands.BandProfile(-0.8f), AimFuzzBands.BandProfile(0.8f), "same both sides");
+        Assert.AreEqual(1f, AimFuzzBands.PatchProfile(0f));
+        Assert.AreEqual(0f, AimFuzzBands.PatchProfile(1f), 1e-5f);
+        Assert.AreEqual(0f, AimFuzzBands.PatchProfile(1.5f), "nothing outside the edge");
         float last = 1f;
-        for (float a = 0.5f; a <= 1f; a += 0.05f)
+        for (float r = 0.1f; r <= 1f; r += 0.05f)
         {
-            float v = AimFuzzBands.BandProfile(a);
+            float v = AimFuzzBands.PatchProfile(r);
             Assert.LessOrEqual(v, last + 1e-5f, "only ever fades outward");
             last = v;
         }

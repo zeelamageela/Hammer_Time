@@ -909,7 +909,7 @@ public class TrajectoryLine : MonoBehaviour
             // Hide alternative aim lines when aim circle is ON
             if (aimVerticalLine != null) aimVerticalLine.enabled = false;
             if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
-            if (bands != null) bands.HideGuides();
+            if (bands != null) bands.HidePatch();
         }
         else
         {
@@ -1307,9 +1307,8 @@ public class TrajectoryLine : MonoBehaviour
         if (bands != null && guidelinesVisible && !aiTurn)
         {
             float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
-            bands.ShowGuides(verticalLineX, verticalLineTopY, verticalLineBottomY, horizontalLineY, -2.23f, 2.25f,
-                             AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow,
-                             shootKnob.GetComponent<SpriteRenderer>().color);
+            bands.ShowPatch(new Vector2(verticalLineX, horizontalLineY),
+                            AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
         }
 
         // CURL LINE: Shows turn and curl from vertical line to aim circle
