@@ -23,7 +23,8 @@ public class AimFuzzBands : MonoBehaviour
     /// <summary>The edge's thickness as a share of the radius (0.12 of 0.4 m is about 5 cm).</summary>
     const float RingThickness = 0.12f;
     const float PatchAlpha = AimAidAlpha;
-    const float ConeAlpha = AimAidAlpha;
+    /// <summary>The cone is stronger than the other aids: its soft edges and its thin start would make it vanish at the shared opacity.</summary>
+    const float ConeAlpha = 0.30f;
     /// <summary>The patch is never smaller than one rock.</summary>
     const float PatchMinSize = 0.28f;
     /// <summary>The dense middle of the patch, as a share of its radius; the rest is the soft edge.</summary>
