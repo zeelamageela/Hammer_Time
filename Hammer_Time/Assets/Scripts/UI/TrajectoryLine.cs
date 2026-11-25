@@ -36,6 +36,40 @@ public class TrajectoryLine : MonoBehaviour
     public int lookAheadCount;
     int lkAhd;
     List<GameObject> dots;
+
+    // the dots march down the line (DotMarch): where the path they ride is, and how they are spaced along it
+    List<Vector3> dotPath;
+    float[] dotArcs;
+    float dotSpacing, dotTotal;
+    bool dotsMarching;
+
+    /// <summary>Slides the dots along the line (On-Ice Training 1) until the rock is thrown.</summary>
+    void AnimateDots()
+    {
+        if (!dotsMarching || dots == null || dots.Count == 0 || dotPath == null || dotPath.Count < 2) return;
+        float phase = DotMarch.Phase(Time.unscaledTime);
+        for (int k = 0; k < dots.Count; k++)
+        {
+            var d = dots[k];
+            if (d == null) continue;
+            float arc = DotMarch.Arc(k, phase, dotSpacing, dotTotal);
+            int idx;
+            d.transform.position = DotMarch.PointAt(dotPath, dotArcs, arc, out idx);
+            float speed = trajectorySpeed != null && idx < trajectorySpeed.Count ? trajectorySpeed[idx] : 5f;
+            d.transform.localScale = Vector3.one * Mathf.Lerp(0.35f * 0.25f, 0.35f, Mathf.Clamp01(speed / 15f));
+            var sr = d.GetComponent<SpriteRenderer>();
+            if (sr != null) { var c = knobColour; c.a = DotMarch.Fade(arc, dotTotal); sr.color = c; }
+        }
+    }
+
+    void BeginDotMarch(List<Vector3> pos, int count)
+    {
+        dotPath = pos.GetRange(0, Mathf.Min(count, pos.Count));
+        dotArcs = DotMarch.Arcs(dotPath);
+        dotTotal = dotArcs.Length > 0 ? dotArcs[dotArcs.Length - 1] : 0f;
+        dotSpacing = dots.Count > 0 ? dotTotal / dots.Count : 0f;
+        dotsMarching = dotTotal > 0.5f && dots.Count > 1;
+    }
     List<Vector2> points;
     
     // Line renderer for actual rock path
@@ -359,6 +393,8 @@ public class TrajectoryLine : MonoBehaviour
 
     private void Update()
     {
+        AnimateDots();
+
         // CRITICAL FIX: Add comprehensive null checks
         if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
             return;
@@ -442,6 +478,7 @@ public class TrajectoryLine : MonoBehaviour
     // Public method to clear trajectory visualization (called when any turn starts)
     public void ClearTrajectory()
     {
+        dotsMarching = false;
         // Clear dots
         if (dots.Count != 0)
         {
@@ -677,8 +714,10 @@ public class TrajectoryLine : MonoBehaviour
             }
             
             // Set line renderer
-            lr.positionCount = pos.Count;
-            for (int i = 0; i < pos.Count; i++)
+            // The line only reaches as far as On-Ice Training allows (to the near hog line with none; see TrainingCatalog.LineReachY)
+            int lineCount = TrainingAids.CountWithinReach(pos, TrainingAids.LineReachY);
+            lr.positionCount = lineCount;
+            for (int i = 0; i < lineCount; i++)
             {
                 lr.SetPosition(i, pos[i]);
             }
@@ -828,19 +867,21 @@ public class TrajectoryLine : MonoBehaviour
         // Draw dots along trajectory (only if visibility enabled)
         Debug.Log($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}, visible={trajectoryDotsVisible}");
         
-        if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible)
+        if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible && TrainingAids.DotsUnlocked)
         {
             // Draw dots all the way through trajectory (including to collision point)
-            int maxDotIndex = pos.Count;
+            // ...but only as far as the trajectory line reaches, with the same density of dots
+            int maxDotIndex = TrainingAids.CountWithinReach(pos, TrainingAids.LineReachY);
+            int targetDots = Mathf.Max(3, Mathf.RoundToInt(dotCount * (maxDotIndex / (float)pos.Count)));
             
-            int counter = Mathf.Max(1, maxDotIndex / dotCount);
+            int counter = Mathf.Max(1, maxDotIndex / targetDots);
             
             Debug.Log($"Drawing {dotCount} dots from {maxDotIndex} trajectory points (every {counter} points)");
             
             // Ensure we weight dots all the way to the end
             for (int i = 1; i < maxDotIndex; i += counter)
             {
-                if (dots.Count >= dotCount) break; // Limit to dotCount
+                if (dots.Count >= targetDots) break; // Limit to the dots this reach gets
                 
                 int pointIndex = i;
                 Vector2 dotPos = pos[pointIndex];
@@ -886,6 +927,7 @@ public class TrajectoryLine : MonoBehaviour
                 dots.Add(lastDot);
             }
             
+            BeginDotMarch(pos, maxDotIndex);
             Debug.Log($"Actually created {dots.Count} dot GameObjects");
         }
         else
@@ -998,6 +1040,7 @@ public class TrajectoryLine : MonoBehaviour
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         fuzzRockIndex = -1; // the next rock gets its own roll
+        dotsMarching = false;   // the dots stay where they are while the rock runs
         if (bands != null) bands.Hide();
         //lr.enabled = true;
         lr.startWidth = 0.075f;

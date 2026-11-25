@@ -961,6 +961,13 @@ public class CareerManager : MonoBehaviour
             return;
         }
 
+        // A quick test (Q) borrows the career's stats and training: never write those into the save
+        if (QuickTestGame.SessionActive)
+        {
+            Debug.Log("[CareerManager] SaveCareer skipped: quick test session active");
+            return;
+        }
+
         // Auto-find if not provided
         if (gsp == null) gsp = FindFirstObjectByType<GameSettingsPersist>();
         if (teamSel == null) teamSel = FindFirstObjectByType<TeamMenu>();

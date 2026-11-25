@@ -41,6 +41,15 @@ public static class TrainingAids
 
     public static bool TimingUnlocked { get { return levels == null || TrainingCatalog.TimingUnlocked(levels); } }
 
+    /// <summary>How many points of a path (which runs up the sheet) lie at or below y = reachY; at least 2 if the path has them (a line needs two).</summary>
+    public static int CountWithinReach(System.Collections.Generic.IList<Vector3> path, float reachY)
+    {
+        if (path == null) return 0;
+        int n = 0;
+        while (n < path.Count && path[n].y <= reachY) n++;
+        return Mathf.Min(path.Count, Mathf.Max(2, n));
+    }
+
     /// <summary>The y the trajectory line may be drawn up to (infinity = all of it).</summary>
     public static float LineReachY { get { return levels == null ? float.PositiveInfinity : TrainingCatalog.LineReachY(levels); } }
 }

@@ -21,6 +21,17 @@ public class TrainingAidsTests
     }
 
     [Test]
+    public void ReachCountsThePointsUpToTheCap()
+    {
+        var path = new System.Collections.Generic.List<UnityEngine.Vector3>();
+        for (int i = 0; i <= 20; i++) path.Add(new UnityEngine.Vector3(0f, -20f + i * 2f, 0f));   // y = -20 .. 20
+        Assert.AreEqual(21, TrainingAids.CountWithinReach(path, float.PositiveInfinity));
+        Assert.AreEqual(11, TrainingAids.CountWithinReach(path, 0f), "points with y <= 0");
+        Assert.AreEqual(2, TrainingAids.CountWithinReach(path, -100f), "a line always keeps at least two points");
+        Assert.AreEqual(0, TrainingAids.CountWithinReach(null, 0f));
+    }
+
+    [Test]
     public void UntrainedPlayerHasNoAids()
     {
         TrainingAids.Use(new int[TrainingCatalog.Tracks]);

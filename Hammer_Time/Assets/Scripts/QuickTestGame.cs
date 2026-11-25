@@ -46,6 +46,14 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int playerWeightSkill = 50;
 
+    [Header("Training levels (apply live while a quick test is running)")]
+    [Tooltip("Sweep Training: 1 carving, 2 endurance, 3 strength, 4 cohesion")]
+    [Range(0, 4)] public int sweepLevel = 4;
+    [Tooltip("Tactic Studies: 1 crosshairs, 2 collision warning, 3 hit arrows, 4 exact arrows")]
+    [Range(0, 4)] public int tacticsLevel = 4;
+    [Tooltip("On-Ice Training: 1 dots + line to the far hog, 2 timing, 3 line halfway to the house, 4 full line")]
+    [Range(0, 4)] public int onIceLevel = 4;
+
     [Header("Fuzz look (applies live while a quick test is running)")]
     [Tooltip("Brightness of the cone along the shot.")]
     [Range(0f, 1f)] public float coneStrength = 0.4f;
@@ -83,12 +91,74 @@ public class QuickTestGame : MonoBehaviour
     private void OnDestroy()
     {
         // CRITICAL: Clear flags when this component is destroyed (returning to menu)
+        EndSession();
         ClearQuickTestMode();
+    }
+
+    // ---- a quick test borrows the career's stats; this puts them back and keeps the career from being saved with them ----
+
+    /// <summary>True from pressing Q until the quick test is over (the player leaves the game scene, or the app stops). SaveCareer does nothing meanwhile.</summary>
+    public static bool SessionActive { get; private set; }
+
+    bool sawGameScene;
+    bool haveSnapshot;
+    CareerStats snapStats, snapOpp, snapEquip;
+    int[] snapTraining;
+
+    static CareerStats Copy(CareerStats c)
+    {
+        if (c == null) return null;
+        return new CareerStats
+        {
+            weightAccuracy = c.weightAccuracy, finesseAccuracy = c.finesseAccuracy, aimAccuracy = c.aimAccuracy,
+            sweepStrength = c.sweepStrength, sweepEndurance = c.sweepEndurance, sweepCohesion = c.sweepCohesion,
+        };
+    }
+
+    static void CopyInto(CareerStats to, CareerStats from)
+    {
+        if (to == null || from == null) return;
+        to.weightAccuracy = from.weightAccuracy; to.finesseAccuracy = from.finesseAccuracy; to.aimAccuracy = from.aimAccuracy;
+        to.sweepStrength = from.sweepStrength; to.sweepEndurance = from.sweepEndurance; to.sweepCohesion = from.sweepCohesion;
+    }
+
+    void TakeSnapshot(CareerManager cm)
+    {
+        if (haveSnapshot || cm == null) return;
+        snapStats = Copy(cm.cStats);
+        snapOpp = Copy(cm.oppStats);
+        snapEquip = Copy(cm.equipmentBonus);
+        snapTraining = cm.trainingLevels != null ? (int[])cm.trainingLevels.Clone() : null;
+        haveSnapshot = true;
+    }
+
+    void EndSession()
+    {
+        if (haveSnapshot)
+        {
+            var cm = GetComponent<CareerManager>();
+            if (cm != null)
+            {
+                CopyInto(cm.cStats, snapStats);
+                CopyInto(cm.oppStats, snapOpp);
+                cm.equipmentBonus = snapEquip != null ? snapEquip : new CareerStats();
+                cm.trainingLevels = snapTraining;
+                Debug.Log("[QuickTestGame] Session over: the career's own stats and training are back");
+            }
+            haveSnapshot = false;
+        }
+        SessionActive = false;
+        sawGameScene = false;
     }
     
     private void Update()
     {
-        if (PlayerPrefs.GetInt("QuickTestMode", 0) == 1) ApplyLiveSettings();
+        if (SessionActive)
+        {
+            bool inGame = SceneManager.GetActiveScene().name == "TournyGame";
+            if (inGame) { sawGameScene = true; ApplyLiveSettings(); }
+            else if (sawGameScene) { EndSession(); ClearQuickTestMode(); }   // back out to a menu: the test is over
+        }
 
         // Check for quick test hotkey
         if (Input.GetKeyDown(testGameKey))
@@ -138,6 +208,12 @@ public class QuickTestGame : MonoBehaviour
             cm.cStats.aimAccuracy = playerAimSkill;
             cm.cStats.weightAccuracy = playerWeightSkill;
         }
+        var levels = new[] { sweepLevel, tacticsLevel, onIceLevel };
+        if (cm != null && (cm.trainingLevels == null || !System.Linq.Enumerable.SequenceEqual(cm.trainingLevels, levels)))
+        {
+            cm.trainingLevels = levels;
+            TrainingAids.Refresh();   // the aids read the levels once when a match starts; do it again now
+        }
         AimFuzzBands.ConeStrength = coneStrength;
         AimFuzzBands.OvalFill = ovalFill;
         AimFuzzBands.OvalOutline = ovalOutline;
@@ -150,6 +226,7 @@ public class QuickTestGame : MonoBehaviour
     public void StartQuickTestGame()
     {
         Debug.Log("[QuickTestGame] Starting instant test game - Press Q to restart anytime!");
+        SessionActive = true;   // from now on the career is not saved (see CareerManager.SaveCareer) and its stats are restored at the end
         
         // Find or create GameSettingsPersist
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
@@ -294,6 +371,7 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
+            TakeSnapshot(cm);
             // ? CRITICAL: Set player stats to 85 for ZERO randomness!
             cm.cStats.weightAccuracy = playerWeightSkill;   // a middling shooter by default; drag the sliders down to see a wide fuzz
             cm.cStats.finesseAccuracy = 85;
@@ -302,7 +380,7 @@ public class QuickTestGame : MonoBehaviour
             cm.cStats.sweepStrength = 85;
             cm.cStats.sweepEndurance = 85;
             cm.cStats.sweepCohesion = 85;
-            cm.trainingLevels = new[] { 4, 4, 4 };   // every aid and bonus earned, so quick tests can try them all
+            cm.trainingLevels = new[] { sweepLevel, tacticsLevel, onIceLevel };   // set with the sliders; all 4 by default so every aid can be tried
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;
