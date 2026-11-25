@@ -3,9 +3,17 @@ using UnityEngine;
 
 public static class OvalLook
 {
-    // renders the oval + cone at a few skills, side by side, on an ice-grey background: skill 10, 40, 80
-    public static string Run(string outPath)
+    // renders the oval + cone at one skill in several tints, side by side, on an ice-grey background (isolated from the open scene)
+    public static string Run(string outPath, float skill)
     {
+        var tints = new[]
+        {
+            Color.white,
+            new Color(1.00f, 0.80f, 0.20f),               // gold
+            new Color(1.00f, 0.80f, 0.20f),               // gold, stronger
+            new Color(0.20f, 0.60f, 1.00f),               // blue, stronger
+        };
+        var gain = new[] { 3f, 2f, 4f, 4f };
         var root = new GameObject("OvalLookTemp");
         try
         {
@@ -13,32 +21,34 @@ public static class OvalLook
             camGo.transform.SetParent(root.transform);
             var cam = camGo.AddComponent<Camera>();
             cam.orthographic = true;
-            cam.orthographicSize = 4.5f;
+            cam.orthographicSize = 3.2f;
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0.70f, 0.74f, 0.77f);
-            cam.transform.position = new Vector3(0f, -1.5f, -10f);
+            cam.cullingMask = 1 << 31;
+            cam.transform.position = new Vector3(0f, -1.0f, -10f);
             cam.nearClipPlane = 0.1f; cam.farClipPlane = 50f;
 
-            float[] skills = { 10f, 40f, 80f };
-            for (int s = 0; s < skills.Length; s++)
+            for (int s = 0; s < tints.Length; s++)
             {
-                float cx = (s - 1) * 3.0f;
+                float cx = (s - 1.5f) * 2.6f;
                 var holder = new GameObject("bands" + s);
                 holder.transform.SetParent(root.transform);
                 var b = holder.AddComponent<AimFuzzBands>();
-                b.tint = Color.Lerp(new Color(0.2f, 0.7f, 0.3f), Color.white, 0.6f);
-                var end = new Vector2(cx + 0.25f, 0.5f);
-                b.ShowPatch(end, AimFuzzBands.AimHalfWidth(skills[s]), AimFuzzBands.WeightHalfHeight(skills[s]), skills[s], skills[s]);
+                AimFuzzBands.ConeStrength = 0.2f * gain[s]; AimFuzzBands.OvalFill = 0.1f * gain[s]; AimFuzzBands.OvalOutline = 0.2f * gain[s];
+                b.tint = tints[s];
+                var end = new Vector2(cx + 0.15f, 0.5f);
+                b.ShowPatch(end, AimFuzzBands.AimHalfWidth(skill), AimFuzzBands.WeightHalfHeight(skill), skill, skill);
                 var path = new List<Vector3>();
                 for (int i = 0; i <= 40; i++)
                 {
                     float t = i / 40f;
-                    path.Add(new Vector3(cx + 0.25f * t * t, Mathf.Lerp(-5.5f, 0.5f, t), 0f));
+                    path.Add(new Vector3(cx + 0.15f * t * t, Mathf.Lerp(-4.5f, 0.5f, t), 0f));
                 }
-                b.ShowCone(path, end, skills[s]);
+                b.ShowCone(path, end, skill);
+                foreach (var tr in holder.GetComponentsInChildren<Transform>(true)) tr.gameObject.layer = 31;
             }
 
-            int w = 720, h = 720;
+            int w = 1040, h = 520;
             var rt = new RenderTexture(w, h, 24);
             cam.targetTexture = rt;
             cam.aspect = w / (float)h;
@@ -54,6 +64,6 @@ public static class OvalLook
             Object.DestroyImmediate(tex);
             return "wrote " + outPath;
         }
-        finally { Object.DestroyImmediate(root); }
+        finally { AimFuzzBands.ConeStrength = 0.2f; AimFuzzBands.OvalFill = 0.1f; AimFuzzBands.OvalOutline = 0.2f; Object.DestroyImmediate(root); }
     }
 }

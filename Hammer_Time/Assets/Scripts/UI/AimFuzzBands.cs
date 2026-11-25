@@ -17,10 +17,10 @@ public class AimFuzzBands : MonoBehaviour
     public const float AimAidAlpha = 0.12f;
 
     /// <summary>How bright the cone is at its middle.</summary>
-    const float ConeStrength = 0.1f;
+    public static float ConeStrength = 0.2f;   // public so a tool can compare looks; the game uses these values
     /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
-    const float OvalFill = 0.1f;
-    const float OvalOutline = 0.1f;
+    public static float OvalFill = 0.1f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalOutline = 0.2f;   // public so a tool can compare looks; the game uses these values
     const float OvalStrength = 1.0f;
     /// <summary>Half the thickness of the oval's outline glow, in metres.</summary>
     const float OutlineHalfThickness = 0.05f;
