@@ -154,6 +154,4 @@ Gear and training are added together (`CareerManager.SkillBonus`); gear is recom
 | Sweep cohesion | the sweepers' stats | **nothing yet** - no match code reads it |
 | Finesse | the AI's shot choices only | **nothing for the player yet** |
 
-So Rowing's cohesion, Synchro Sweeping, and Pickleball's finesse do not change play until cohesion and finesse are given a job. The sweepers also get the
-shooter-side stats added to a player of base 45: a $10k item is up to 60 points, so four good items can add far more than a training track; the
-numbers want a balance pass once you have tuned the tiers.
+So Rowing's cohesion, Synchro Sweeping, and Pickleball's finesse do not change play until cohesion and finesse are given a job. Balance note: a $10k item is up to 60 stat points (about 20 on each of its three stats), and a player starts around 45, so four good items now add far more than a whole training track. That is a balance pass for once you have tuned the tiers.
