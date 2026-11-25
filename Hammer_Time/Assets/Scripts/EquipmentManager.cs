@@ -168,7 +168,33 @@ public class EquipmentManager : MonoBehaviour
             if (eq != null)
                 SetPoints(eq);
 
+        RefreshEquipmentBonus();
         Debug.Log("After SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+    }
+
+    /// <summary>The six stat bonuses of a set of equipped items added together (stats order: weight, finesse, aim, endurance, strength, cohesion).</summary>
+    public static CareerStats SumBonus(Equipment[] equipped)
+    {
+        var sum = new CareerStats();
+        if (equipped == null) return sum;
+        foreach (var eq in equipped)
+        {
+            if (eq == null || eq.stats == null || eq.stats.Length < 6) continue;
+            sum.weightAccuracy += eq.stats[0];
+            sum.finesseAccuracy += eq.stats[1];
+            sum.aimAccuracy += eq.stats[2];
+            sum.sweepEndurance += eq.stats[3];
+            sum.sweepStrength += eq.stats[4];
+            sum.sweepCohesion += eq.stats[5];
+        }
+        return sum;
+    }
+
+    /// <summary>Tells the career what the equipped gear is worth, for matches to use. Call whenever the equipped items change.</summary>
+    public void RefreshEquipmentBonus()
+    {
+        var cm = FindFirstObjectByType<CareerManager>();
+        if (cm != null) cm.equipmentBonus = SumBonus(activeEquip);
     }
 
     /// <summary>
@@ -292,6 +318,7 @@ public class EquipmentManager : MonoBehaviour
             if (eq != null)
                 SetPoints(eq);
 
+        RefreshEquipmentBonus();
         Debug.Log("After SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
     }
 
@@ -422,6 +449,7 @@ public class EquipmentManager : MonoBehaviour
             inventoryHeader.image.color = newEquip.color;
 
             invDisplay[n] = origEquip;
+            RefreshEquipmentBonus();
 
             for (int i = 0; i < inventoryUIs.Length; i++)
             {
@@ -626,6 +654,7 @@ public class EquipmentManager : MonoBehaviour
             }
             // The match scene has no EquipmentManager, so the sweepers read the handle tier from here.
             cm.activeHandleTier = GetActiveHandleTierIndex();
+            RefreshEquipmentBonus();
 
             for (int i = 0; i < forSale.Length; i++)
             {

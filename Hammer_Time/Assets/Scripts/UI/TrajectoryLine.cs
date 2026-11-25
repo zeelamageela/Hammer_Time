@@ -1434,7 +1434,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use WEIGHT accuracy (distance control skill)
-            return Mathf.Min(100f, cm.cStats.weightAccuracy + cm.TrainingBonus.weightAccuracy);   // + training
+            return Mathf.Min(100f, cm.cStats.weightAccuracy + cm.SkillBonus.weightAccuracy);   // + gear and training
         }
         else if (teamManager != null)
         {
@@ -1531,7 +1531,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use AIM accuracy (lateral positioning skill)
-            return Mathf.Min(100f, cm.cStats.aimAccuracy + cm.TrainingBonus.aimAccuracy);   // + training
+            return Mathf.Min(100f, cm.cStats.aimAccuracy + cm.SkillBonus.aimAccuracy);   // + gear and training
         }
         else if (teamManager != null)
         {

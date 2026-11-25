@@ -306,10 +306,10 @@ public class TeamManager : MonoBehaviour
                 Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
 
-            // Training (Sweep, Cross) lifts every sweeper on the player's team
-            AddTraining(sweeperL, cm.TrainingBonus);
-            AddTraining(sweeperR, cm.TrainingBonus);
-            AddTraining(sweeperT, cm.TrainingBonus);
+            // Gear and training (Sweep, Cross) lift every sweeper on the player's team
+            AddTraining(sweeperL, cm.SkillBonus);
+            AddTraining(sweeperR, cm.SkillBonus);
+            AddTraining(sweeperT, cm.SkillBonus);
         }
     }
 

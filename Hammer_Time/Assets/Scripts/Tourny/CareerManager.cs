@@ -110,8 +110,17 @@ public class CareerManager : MonoBehaviour
     // Levels bought in the Training menu, one entry per TrainingTrack (0-4 each). See TrainingCatalog.
     public int[] trainingLevels;
 
-    /// <summary>What the bought training gives on top of the base stats (see TrainingCatalog). Matches add this to the player team's skills.</summary>
+    /// <summary>What the bought training gives on top of the base stats (see TrainingCatalog).</summary>
     public CareerStats TrainingBonus { get { return TrainingCatalog.StatBonus(trainingLevels); } }
+
+    /// <summary>
+    /// What the equipped gear gives, worked out fresh from the four equipped items whenever they change (EquipmentManager.RefreshEquipmentBonus).
+    /// Not saved: it is rebuilt when a career loads. (modStats is a running total that is only for the Team screen; do not use it for play.)
+    /// </summary>
+    [System.NonSerialized] public CareerStats equipmentBonus = new CareerStats();
+
+    /// <summary>Gear plus training: what a match adds to the player team's skills (the sweepers, and the shooter's aim and weight).</summary>
+    public CareerStats SkillBonus { get { return SkillBonuses.Combine(equipmentBonus, TrainingBonus); } }
 
     public bool inProgress;
     public int season;
