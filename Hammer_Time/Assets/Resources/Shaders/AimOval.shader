@@ -11,6 +11,8 @@ Shader "Hammer/AimOval"
         _Quad ("Quad (w, h)", Vector) = (1.4, 1.4, 0, 0)
         _Fill ("Fill", Float) = 0.35
         _Outline ("Outline", Float) = 0.7
+        _Cross ("Crosshairs (gap x, gap y, half thickness, strength)", Vector) = (0.28, 0.28, 0.012, 0)
+        _Pulse ("Pulse phase 0-1", Float) = 0
     }
     SubShader
     {
@@ -34,6 +36,8 @@ Shader "Hammer/AimOval"
             float4 _Quad;
             float _Fill;
             float _Outline;
+            float4 _Cross;
+            float _Pulse;
 
             v2f vert(appdata v)
             {
@@ -58,6 +62,19 @@ Shader "Hammer/AimOval"
                 float outside = 1.0 - smoothstep(rim * 1.5, rim * 3.0, sd);   // lets the glow die away before the quad's edge
 
                 float a = saturate(fill * _Fill + glow * _Outline) * outside * _Ellipse.w;
+
+                // crosshairs: four arms from a gap around the centre out to the edge of the oval, with a wave of light running outward along them
+                float ax = abs(p.x), ay = abs(p.y);
+                float th = _Cross.z;
+                float2 gap = _Cross.xy;
+                float hArm = (1.0 - smoothstep(th * 0.4, th, ay)) * smoothstep(gap.x - 0.01, gap.x, ax) * (1.0 - smoothstep(ab.x - 0.03, ab.x, ax));
+                float vArm = (1.0 - smoothstep(th * 0.4, th, ax)) * smoothstep(gap.y - 0.01, gap.y, ay) * (1.0 - smoothstep(ab.y - 0.03, ab.y, ay));
+                float sh = saturate((ax - gap.x) / max(ab.x - gap.x, 0.001));
+                float sv = saturate((ay - gap.y) / max(ab.y - gap.y, 0.001));
+                float wh = pow(0.5 + 0.5 * cos(6.2832 * (sh - _Pulse)), 2.0);
+                float wv = pow(0.5 + 0.5 * cos(6.2832 * (sv - _Pulse)), 2.0);
+                float cross = max(hArm * (0.45 + 0.55 * wh), vArm * (0.45 + 0.55 * wv)) * _Cross.w;
+                a = saturate(a + cross);
                 return fixed4(_Color.rgb * a, a);
             }
             ENDCG

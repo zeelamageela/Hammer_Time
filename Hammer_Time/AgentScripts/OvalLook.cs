@@ -3,17 +3,10 @@ using UnityEngine;
 
 public static class OvalLook
 {
-    // renders the oval + cone at one skill in several tints, side by side, on an ice-grey background (isolated from the open scene)
-    public static string Run(string outPath, float skill)
+    // renders the cone + oval (with crosshairs) at a few skills side by side, on an ice-grey background (isolated from the open scene)
+    public static string Run(string outPath, bool crosshairs)
     {
-        var tints = new[]
-        {
-            Color.white,
-            new Color(1.00f, 0.80f, 0.20f),               // gold
-            new Color(1.00f, 0.80f, 0.20f),               // gold, stronger
-            new Color(0.20f, 0.60f, 1.00f),               // blue, stronger
-        };
-        var gain = new[] { 3f, 2f, 4f, 4f };
+        var skills = new[] { 5f, 30f, 60f, 90f };
         var root = new GameObject("OvalLookTemp");
         try
         {
@@ -28,14 +21,14 @@ public static class OvalLook
             cam.transform.position = new Vector3(0f, -1.0f, -10f);
             cam.nearClipPlane = 0.1f; cam.farClipPlane = 50f;
 
-            for (int s = 0; s < tints.Length; s++)
+            for (int s = 0; s < skills.Length; s++)
             {
+                float skill = skills[s];
                 float cx = (s - 1.5f) * 2.6f;
                 var holder = new GameObject("bands" + s);
                 holder.transform.SetParent(root.transform);
                 var b = holder.AddComponent<AimFuzzBands>();
-                AimFuzzBands.ConeStrength = 0.2f * gain[s]; AimFuzzBands.OvalFill = 0.1f * gain[s]; AimFuzzBands.OvalOutline = 0.2f * gain[s];
-                b.tint = tints[s];
+                b.crosshairs = crosshairs;
                 var end = new Vector2(cx + 0.15f, 0.5f);
                 b.ShowPatch(end, AimFuzzBands.AimHalfWidth(skill), AimFuzzBands.WeightHalfHeight(skill), skill, skill);
                 var path = new List<Vector3>();
@@ -64,6 +57,6 @@ public static class OvalLook
             Object.DestroyImmediate(tex);
             return "wrote " + outPath;
         }
-        finally { AimFuzzBands.ConeStrength = 0.2f; AimFuzzBands.OvalFill = 0.1f; AimFuzzBands.OvalOutline = 0.2f; Object.DestroyImmediate(root); }
+        finally { Object.DestroyImmediate(root); }
     }
 }

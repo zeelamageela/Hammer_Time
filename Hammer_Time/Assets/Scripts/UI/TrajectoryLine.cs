@@ -969,6 +969,7 @@ public class TrajectoryLine : MonoBehaviour
         if (bands == null || aiTurn || aimCircle == null) return;
         float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
         Vector2 aimPoint = aimCircle.transform.position;
+        bands.crosshairs = TrainingAids.CrosshairsUnlocked;   // Tactic Studies 1
         bands.tint = AimFuzzBands.ColdBlue;   // added over the ice as light; the same cold blue for every team
 
         // the oval first (the cone is sized to it), then the cone that runs into it

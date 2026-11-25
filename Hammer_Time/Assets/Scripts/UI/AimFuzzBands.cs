@@ -20,8 +20,13 @@ public class AimFuzzBands : MonoBehaviour
     public static float ConeStrength = 0.4f;   // public so a tool can compare looks; the game uses these values
     /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
     public static float OvalFill = 0.2f;   // public so a tool can compare looks; the game uses these values
-    public static float OvalOutline = 0.4f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalOutline = 0.08f;   // public so a tool can compare looks; the game uses these values
     const float OvalStrength = 1.0f;
+    /// <summary>How bright the crosshair arms are, and how thick (half-thickness in metres).</summary>
+    public static float CrossStrength = 0.9f;
+    const float CrossHalfThickness = 0.012f;
+    /// <summary>The arms start this far (one rock) from the centre; in a smaller oval they start 60% of the way out so there is always something to see.</summary>
+    const float CrossGap = OvalMinSize;
     /// <summary>Half the thickness of the oval's outline glow, in metres.</summary>
     const float OutlineHalfThickness = 0.05f;
     /// <summary>The oval is never smaller than one rock (0.28 m) either way.</summary>
@@ -32,6 +37,9 @@ public class AimFuzzBands : MonoBehaviour
 
     /// <summary>The light's colour. Cold blue by default.</summary>
     public Color tint = ColdBlue;
+
+    /// <summary>Show the pulsing crosshairs in the oval (a Tactic Studies reward).</summary>
+    public bool crosshairs;
 
     MeshRenderer oval;
     Material ovalMaterial;
@@ -204,6 +212,9 @@ public class AimFuzzBands : MonoBehaviour
             ovalMaterial.SetVector("_Quad", new Vector4(width + 2f * margin, height + 2f * margin, 0f, 0f));
             ovalMaterial.SetFloat("_Fill", OvalFill);
             ovalMaterial.SetFloat("_Outline", OvalOutline);
+            float gapX = Mathf.Min(CrossGap, 0.6f * width * 0.5f), gapY = Mathf.Min(CrossGap, 0.6f * height * 0.5f);
+            ovalMaterial.SetVector("_Cross", new Vector4(gapX, gapY, CrossHalfThickness, crosshairs ? CrossStrength : 0f));
+            ovalMaterial.SetFloat("_Pulse", Mathf.Repeat(t * 0.8f, 1f));
         }
         if (cone != null && cone.enabled)
         {
