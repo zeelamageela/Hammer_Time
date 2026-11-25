@@ -17,18 +17,21 @@ public class AimFuzzBands : MonoBehaviour
     public const float AimAidAlpha = 0.12f;
 
     /// <summary>How bright the cone is at its middle.</summary>
-    public static float ConeStrength = 0.2f;   // public so a tool can compare looks; the game uses these values
+    public static float ConeStrength = 0.4f;   // public so a tool can compare looks; the game uses these values
     /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
-    public static float OvalFill = 0.1f;   // public so a tool can compare looks; the game uses these values
-    public static float OvalOutline = 0.2f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalFill = 0.2f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalOutline = 0.4f;   // public so a tool can compare looks; the game uses these values
     const float OvalStrength = 1.0f;
     /// <summary>Half the thickness of the oval's outline glow, in metres.</summary>
     const float OutlineHalfThickness = 0.05f;
     /// <summary>The oval is never smaller than one rock (0.28 m) either way.</summary>
     public const float OvalMinSize = 0.28f;
 
-    /// <summary>The light's colour (the team colour mixed toward white); set by the caller.</summary>
-    public Color tint = Color.white;
+    /// <summary>A cold, icy blue: the opposite of warm, so it stands out against the blue-grey ice, the same for every team.</summary>
+    public static readonly Color ColdBlue = new Color(0.20f, 0.60f, 1.00f);
+
+    /// <summary>The light's colour. Cold blue by default.</summary>
+    public Color tint = ColdBlue;
 
     MeshRenderer oval;
     Material ovalMaterial;

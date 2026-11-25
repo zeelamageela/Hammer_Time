@@ -969,7 +969,7 @@ public class TrajectoryLine : MonoBehaviour
         if (bands == null || aiTurn || aimCircle == null) return;
         float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
         Vector2 aimPoint = aimCircle.transform.position;
-        bands.tint = Color.Lerp(knobColour, Color.white, 0.6f);   // the team colour, mostly white: it is added over the ice as light
+        bands.tint = AimFuzzBands.ColdBlue;   // added over the ice as light; the same cold blue for every team
 
         // the oval first (the cone is sized to it), then the cone that runs into it
         bands.ShowPatch(aimPoint, AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
