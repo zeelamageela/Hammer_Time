@@ -14,6 +14,7 @@ public class Sweep : MonoBehaviour
     RockManager rm;
     GameObject rock;
     Rigidbody2D rb;
+    RockSlide slide;   // the rock's friction state (RockPhysics); sweeping moves its drag values
 
     public GameObject sweeperGO;
     public Sweeper sweeper;
@@ -43,8 +44,10 @@ public class Sweep : MonoBehaviour
     float statEndur;
     
     // Track original dampings so we can reset after sweep
-    private float originalLinearDamping = 0.38f;
-    private float originalAngularDamping = 0.32f;
+    private float originalLinearDamping { get { return RockSlide.NominalLinearDamping; } }
+    private float originalAngularDamping { get { return RockSlide.NominalAngularDamping; } }
+    // The sweep amounts below were written for the original rock's speeds; a rock that moves at a different pace gets nudges in proportion.
+    private float SweepSpeedScale { get { return slide != null ? slide.SpeedPerWeight : 1f; } }
     private Coroutine activeSweepCoroutine = null;
     
     // CRITICAL: Real-time curl force multiplier (read by Rock_Force every frame!)
@@ -91,6 +94,9 @@ public class Sweep : MonoBehaviour
         OnWhoa();
         sm.ResetSweepers();
     }
+
+    /// <summary>How hard a one-sweeper carve pushes the rock sideways (1 = full; lower for players who have not finished Directional Sweeping).</summary>
+    public float CarveScale = 1f;
 
     public void OnSweep()
     {
@@ -206,6 +212,7 @@ public class Sweep : MonoBehaviour
         Debug.Log("Rock being swept - " + gm.rockList[gm.rockCurrent].rock.name);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        slide = rock.GetComponent<RockSlide>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         sweepTime = Mathf.Clamp(sweepTime - (int)(statEndur / 200f), 0, sweepTime);
 
@@ -213,8 +220,8 @@ public class Sweep : MonoBehaviour
         
         // WEIGHT SWEEP: NON-CUMULATIVE!
         // Reset dampings to original first, then apply changes (prevents stacking)
-        rb.linearDamping = originalLinearDamping;
-        rb.angularDamping = originalAngularDamping;
+        slide.LinearDamping = originalLinearDamping;
+        slide.AngularDamping = originalAngularDamping;
 
         //If stats are 0, use a default value (prevents divide by zero and ensures some effect for testing)
         if (statCalc <= 0.1f)
@@ -226,10 +233,10 @@ public class Sweep : MonoBehaviour
         
         // Apply changes (will be reset on next sweep) - VERY GENTLE!
         float linearReduction = sweepAmt * sweepStrength * 0.035f;  // Rock goes farther (was 0.05, now 30% weaker)
-        rb.linearDamping -= linearReduction;
+        slide.LinearDamping -= linearReduction;
         
         float angularIncrease = sweepAmt * sweepStrength * 0.25f;  // Rock goes straighter (was 0.5, now 30% weaker)
-        rb.angularDamping += angularIncrease;
+        slide.AngularDamping += angularIncrease;
         
         // ALSO add lateral straightening (like line sweep, but gentler)
         Vector2 currentVel = rb.linearVelocity;
@@ -238,9 +245,9 @@ public class Sweep : MonoBehaviour
         
         float lateralVelocityBoost = sweepAmt * sweepStrength * 0.01f * speedMultiplier; // Slightly less straightening than line sweep
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
-        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"Weight Sweep: linearDamping={rb.linearDamping:F3}, angularDamping={rb.angularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
+        Debug.Log($"Weight Sweep: linearDamping={slide.LinearDamping:F3}, angularDamping={slide.AngularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTime);
     }
@@ -249,6 +256,7 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        slide = rock.GetComponent<RockSlide>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         
         // HARD SWEEP: Maximum push!
@@ -258,12 +266,12 @@ public class Sweep : MonoBehaviour
         
         // Apply PERMANENT changes IMMEDIATELY
         float linearReduction = sweepAmt * sweepStrength * 0.3f;  // MAX distance boost
-        rb.linearDamping -= linearReduction;
+        slide.LinearDamping -= linearReduction;
         
         float angularIncrease = sweepAmt * sweepStrength * 0.2f;  // Strong straightening
-        rb.angularDamping += angularIncrease;
+        slide.AngularDamping += angularIncrease;
 
-        Debug.Log($"Hard Sweep: linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3})");
+        Debug.Log($"Hard Sweep: linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3})");
 
         yield return new WaitForSeconds(sweepTime);
     }
@@ -272,6 +280,7 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        slide = rock.GetComponent<RockSlide>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         sm.CallOut("Line");
         
@@ -291,13 +300,13 @@ public class Sweep : MonoBehaviour
         
         // Add damping effects (straightening focus - GENTLE angular, slight linear)
         float linearReduction = sweepAmt * sweepStrength * 0.015f;  // Slight distance (was 0.05, reduced 40%)
-        rb.linearDamping -= linearReduction;
+        slide.LinearDamping -= linearReduction;
         
         float angularIncrease = sweepAmt * sweepStrength * 0.10f;  // Gentle spin kill (was 1.4, now 75% weaker!)
-        rb.angularDamping += angularIncrease;
+        slide.AngularDamping += angularIncrease;
         
         // Safety clamp: Never let angular damping get too high (rock must keep some spin!)
-        rb.angularDamping = Mathf.Min(rb.angularDamping, 1.0f); // Cap at 1.0
+        slide.AngularDamping = Mathf.Min(slide.AngularDamping, 1.0f); // Cap at 1.0
         
         // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
         float forwardSpeed = Mathf.Abs(currentVel.y);
@@ -308,9 +317,9 @@ public class Sweep : MonoBehaviour
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         
         // DIRECTLY add to the rock's velocity
-        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"[Line Sweep] linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
+        Debug.Log($"[Line Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTapDuration);
         
@@ -322,6 +331,7 @@ public class Sweep : MonoBehaviour
         sm.CallOut("Curl");
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        slide = rock.GetComponent<RockSlide>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         
         // CRITICAL FIX: If stats are 0, use a default value
@@ -340,13 +350,13 @@ public class Sweep : MonoBehaviour
         
         // Add damping effects (curl focus - VERY GENTLE angular reduction, slight linear)
         float linearReduction = sweepAmt * sweepStrength * 0.015f;  // Slight distance (was 0.04, reduced 40%)
-        rb.linearDamping -= linearReduction;
+        slide.LinearDamping -= linearReduction;
         
         float angularReduction = sweepAmt * sweepStrength * 0.10f;  // Gentle spin preservation (was 0.7, now 60% weaker!)
-        rb.angularDamping -= angularReduction;  // LESS angular damping = spin lasts longer = MORE CURL!
+        slide.AngularDamping -= angularReduction;  // LESS angular damping = spin lasts longer = MORE CURL!
         
         // Safety clamp: NEVER let angular damping go below 0.1 (rock must have some damping!)
-        rb.angularDamping = Mathf.Max(rb.angularDamping, 0.1f); // Minimum 0.1
+        slide.AngularDamping = Mathf.Max(slide.AngularDamping, 0.1f); // Minimum 0.1
         
         // Scale the sweep effect by the rock's FORWARD velocity (Y-axis)
         // When rock is fast (3 m/s), full effect. When slow (0.5 m/s), much weaker effect.
@@ -358,9 +368,9 @@ public class Sweep : MonoBehaviour
         float curlDirection = rf.curl.x < 0 ? -1f : 1f; // Direction rock is curling
         
         // DIRECTLY add to the rock's velocity (not force!)
-        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost), currentVel.y);
+        rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"[Curl Sweep] linearDamping={rb.linearDamping:F3} (-{linearReduction:F3}), angularDamping={rb.angularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
+        Debug.Log($"[Curl Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTapDuration);
         
@@ -371,6 +381,7 @@ public class Sweep : MonoBehaviour
     {
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
+        slide = rock.GetComponent<RockSlide>();
 
         yield return new WaitForSeconds(sweepTime);
         

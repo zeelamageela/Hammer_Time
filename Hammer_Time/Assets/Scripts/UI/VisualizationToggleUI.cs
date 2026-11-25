@@ -102,6 +102,9 @@ public class VisualizationToggleUI : MonoBehaviour
         {
             flickShotModeToggle.isOn = visualSettings.FlickShotMode;
             flickShotModeToggle.onValueChanged.AddListener(OnFlickShotModeToggleChanged);
+            // Flick shot mode is switched off for now (GameVisualizationSettings.FlickModeAvailable); the code is all still here.
+            if (!GameVisualizationSettings.FlickModeAvailable)
+                flickShotModeToggle.gameObject.SetActive(false);
         }
         else
         {

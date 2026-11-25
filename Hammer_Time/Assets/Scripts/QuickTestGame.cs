@@ -29,7 +29,7 @@ public class QuickTestGame : MonoBehaviour
     public KeyCode runbackPracticeKey = KeyCode.E;
     
     [Tooltip("Number of rocks per team")]
-    public int rocksPerTeam = 2;
+    public int rocksPerTeam = 4;
     
     [Tooltip("Number of ends to play")]
     public int endsToPlay = 1;
@@ -262,6 +262,7 @@ public class QuickTestGame : MonoBehaviour
             cm.cStats.sweepStrength = 85;
             cm.cStats.sweepEndurance = 85;
             cm.cStats.sweepCohesion = 85;
+            cm.trainingLevels = new[] { 4, 4, 4, 4, 4 };   // every aid and bonus earned, so quick tests can try them all
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;

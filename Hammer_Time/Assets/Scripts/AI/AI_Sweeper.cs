@@ -1429,7 +1429,7 @@ public class AI_Sweeper : MonoBehaviour
         string currentSweepState = "None";
 
         // Monitor rock until it stops
-        while (rockInfo != null && !rockInfo.stopped && rockRB.linearVelocity.magnitude > 0.01f)
+        while (rockInfo != null && !rockInfo.stopped && rockRB.linearVelocity.magnitude > RockPhysicsSettings.Speed(0.01f))
         {
             Vector2 currentPos = rock.transform.position;
 
@@ -1461,14 +1461,10 @@ public class AI_Sweeper : MonoBehaviour
             
             // Re-simulate from current position to check for imminent collisions
             // AND to predict where rock will actually stop
-            List<Vector2> lookaheadPath = trajectorySimulator.SimulateTrajectory(
-                currentPos,
-                rockRB.linearVelocity,
-                isInTurn,
-                100,
-                rocksInPlay,
-                forPlayerPreview: false
-            );
+            RockSlide rockSlide = rock.GetComponent<RockSlide>();
+            List<Vector2> lookaheadPath = rockSlide != null
+                ? trajectorySimulator.SimulateTrajectoryFromState(rockSlide.Snapshot(), isInTurn, 100, rocksInPlay)   // the rock's real state: position, speed, and the curl it was given at release
+                : trajectorySimulator.SimulateTrajectory(currentPos, rockRB.linearVelocity, isInTurn, 100, rocksInPlay, forPlayerPreview: false);
             
             TrajectorySimulator.CollisionInfo lookaheadCollision = trajectorySimulator.GetCollisionInfo();
             
@@ -1563,7 +1559,7 @@ public class AI_Sweeper : MonoBehaviour
                 
                 // ✅ CRITICAL CHECK: Is rock moving AWAY from house/scoring position?
                 // Rock moving backward (negative Y velocity) OR moving out sideways = WHOA!
-                bool movingBackward = velocity.y < 0.1f; // Moving backward or barely forward
+                bool movingBackward = velocity.y < RockPhysicsSettings.Speed(0.1f); // Moving backward or barely forward
                 bool movingOutSideways = !inScoringZone && Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y); // Outside house, moving more sideways than forward
                 
                 if (movingBackward)

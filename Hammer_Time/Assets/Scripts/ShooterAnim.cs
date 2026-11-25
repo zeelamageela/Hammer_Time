@@ -54,7 +54,17 @@ public class ShooterAnim : MonoBehaviour
 
         rj.connectedBody = rock.GetComponent<Rigidbody2D>();
         rj.enabled = false;
+
+        // The shooter slides along with the rock through this joint. Each shooter body used to weigh 1 (three of them: body, torso, head)
+        // against a 145 rock, so the moment the joint engaged they took 3/148 = 2.03% of the rock's momentum: every throw left the hack
+        // about 2% slower than the aim line assumed (a draw finished ~0.7 short). Nearly weightless shooters follow the rock for free.
+        if (rb != null) rb.mass = ShooterBodyMass;
     }
+
+    const float ShooterBodyMass = 0.01f;
+
+    /// <summary>Hal_Shooter prefabs' releasePoint: where the kick ends and the shooter starts sliding with the rock.</summary>
+    public const float DefaultReleasePointY = -24.077f;
 
 
     void Update()

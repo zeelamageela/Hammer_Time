@@ -7,8 +7,11 @@ public class Rock_Force : MonoBehaviour
 {
     private Rigidbody2D body;
 
+    [Tooltip("UNUSED since the shared physics model: spin at the hog line is RockPhysicsProfile.spinOnRelease.")]
     public float turnValue = 60f;
+    [Tooltip("Read-only mirror of the curl the model is using (set at release).")]
     public Vector2 curl;
+    [Tooltip("UNUSED since the shared physics model: see RockPhysicsProfile.curlScale.")]
     public float scaleFactor;
     
     [Header("Physics Tuning")]
@@ -21,14 +24,14 @@ public class Rock_Force : MonoBehaviour
     // Sweeping control (modified in real-time by Sweep.cs)
     private Sweep sweepController;
 
-    float velX = 0f;
-    float velY = 0f;
-    bool turnStart;
-    bool forceStart;
     //bool debugVertex;
     public bool flipAxis = false;
     //public bool moving;
-    int dirMult = 1;
+
+    // Friction, spin and curl are applied by RockSlide (the shared RockPhysics model), which also drives the
+    // trajectory simulator. This component decides when a rock is released and keeps the audio/haptics/rest flags.
+    RockSlide slide;
+    bool released;
 
     GameObject trajLineGO;
     TrajectoryLine trajLine;
@@ -40,6 +43,8 @@ public class Rock_Force : MonoBehaviour
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        slide = GetComponent<RockSlide>();
+        if (slide == null) slide = gameObject.AddComponent<RockSlide>();
         
         // Find sweep controller to read real-time curl multiplier
         sweepController = FindFirstObjectByType<Sweep>();
@@ -80,93 +85,38 @@ public class Rock_Force : MonoBehaviour
 
     public void Release()
     {
-        if (flipAxis)
-            dirMult = -1;  // In-turn: use -1
-        else
-            dirMult = 1;   // Out-turn: use +1
-
         GetComponent<SpriteRenderer>().enabled = true;
-        
-        // DETERMINISTIC: Restore damping NOW (was disabled during launch)
-        // This is when the rock "officially" starts experiencing ice friction
-        body.linearDamping = 0.38f;
-        body.angularDamping = 0.32f;
-        
+
+        // Drag and spin now start (they were off during the launch). RockSlide applies them from here on.
         Debug.Log($"[Rock_Force Release] Velocity: {body.linearVelocity.magnitude:F2} m/s, flipAxis: {flipAxis}");
-        
+
         // Apply spring tension multiplier if configured (for variance tuning later)
         if (springTensionMultiplier != 1.0f)
         {
             body.linearVelocity *= springTensionMultiplier;
             Debug.Log($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
         }
-        
-        // === VELOCITY-BASED CURL SCALING ===
-        // In real curling: FAST rocks curl LESS, SLOW rocks curl MORE
-        // Scale curl force based on actual velocity at release
-        float currentVelocity = body.linearVelocity.magnitude;
-        
-        // Get min/max velocities from TrajectoryLine (same as trajectory preview)
-        TrajectoryLine trajLine = FindFirstObjectByType<TrajectoryLine>();
-        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 1f;   // Default: 1 m/s
-        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 8f;  // Default: 8 m/s
-        
-        // Calculate velocity ratio (0 = slowest, 1 = fastest)
-        float velocityRatio = Mathf.Clamp01((currentVelocity - minVelocity) / (maxVelocity - minVelocity));
-        
-        // Scale curl: 0.6 (slow shots) to 0.05 (fast shots)
-        // At 8 m/s (mid-speed): curl ≈ 0.45 (more realistic for draw shots)
-        float curlMagnitude;
 
-        if (velocityRatio < 0.4f)
-        {
-            curlMagnitude = Mathf.Lerp(0.55f, 0.48f, velocityRatio / 0.33f); // 0 to 0.33 → 0.6 to 0.48
-        }
-        else if (velocityRatio < 0.66f)
-        {
-            curlMagnitude = Mathf.Lerp(0.48f, 0.21f, (velocityRatio - 0.33f) / 0.33f); // 0.33 to 0.66 → 0.48 to 0.15
-        }
-        else
-        {
-            curlMagnitude = Mathf.Lerp(0.21f, 0.12f, (velocityRatio - 0.66f) / 0.34f); // 0.66 to 1.0 → 0.2 to 0.05
-        }
-        // Apply to curl vector
-        // KEY INSIGHT: vel.x = angularVelocity encodes rotation direction:
-        //   - In-turn: angularVelocity is NEGATIVE (clockwise)
-        //   - Out-turn: angularVelocity is POSITIVE (counter-clockwise)
-        // Final force = curl.x * vel.x (in FixedUpdate)
-        // Unity coordinates: POSITIVE force = RIGHT, NEGATIVE force = LEFT
-        //
-        // We want:
-        //   - In-turn: force RIGHT (+) → curl.x (neg) * vel.x (neg) = POSITIVE ✓
-        //   - Out-turn: force LEFT (-) → curl.x (neg) * vel.x (pos) = NEGATIVE ✓
-        //
-        // Therefore: curl.x must ALWAYS be NEGATIVE!
-        curl = new Vector2(-curlMagnitude, 0);
-        
-        Debug.Log($"[Rock_Force CURL CALC] flipAxis={flipAxis}, dirMult={dirMult}, curlMagnitude={curlMagnitude:F3}, FINAL curl.x={curl.x:F3}");
-        Debug.Log($"[Rock_Force CURL CALC] Formula: curl.x = -curlMagnitude = -{curlMagnitude:F3} = {curl.x:F3}");
-        
-        Debug.Log($"[Rock_Force Curl Scaling] Velocity: {currentVelocity:F2} m/s, Ratio: {velocityRatio:F2}, Curl: {curlMagnitude:F3} (slow=0.6, fast=0.2)");
-        
-        // REAL CURLING: Apply spin NOW (at hog line, not at launch!)
-        // This is when the player "releases" the rock, giving it rotation
-        turnStart = true;
-        forceStart = true;
+        // In real curling FAST rocks curl LESS and SLOW rocks curl MORE: the strength is picked from the launch speed
+        // inside the shared model (RockPhysicsProfile.CurlMagnitude), using the same speed range as the trajectory preview.
+        TrajectoryLine trajLine = FindFirstObjectByType<TrajectoryLine>();
+        float minVelocity = (trajLine != null) ? trajLine.minVelocity : 1f;
+        float maxVelocity = (trajLine != null) ? trajLine.maxVelocity : 8f;
+
+        // In-turn (flipAxis) spins clockwise and curls right; out-turn the opposite. Spin is applied on the next step.
+        slide.Release(flipAxis, minVelocity, maxVelocity);
+        ShotAudit.LogRelease(gameObject, body.position, body.linearVelocity, slide.SpinNow, body);
+        curl = slide.Curl;
+        released = true;
+
+        Debug.Log($"[Rock_Force Curl] flipAxis={flipAxis}, launch speed {body.linearVelocity.magnitude:F2}, curl.x={curl.x:F3}");
     }
 
-    // Frame counter for detailed logging
-    private int frameCounter = 0;
-    private float totalDistance = 0f;
-    private Vector2 lastPosition;
-    
     void FixedUpdate()
     {
-        velX = body.angularVelocity;
+        Vector2 vel = body.linearVelocity;
 
-        Vector2 vel = new Vector2(velX * scaleFactor, velY);
-
-        float audVel = am.maxVol * (body.linearVelocity.y / 4f) ;
+        float audVel = am.maxVol * (vel.y / RockPhysicsSettings.Speed(4f));
         rockSounds[1].volume = audVel;
 
         HapticController.Load(slideHap);
@@ -174,100 +124,19 @@ public class Rock_Force : MonoBehaviour
         HapticController.Play();
         HapticController.clipLevel = audVel * 4f;
 
-        if (turnStart == true)
+        // Sweeping can strengthen or weaken curl in real time; RockSlide applies the result.
+        float sweepCurlMult = (sweepController != null && sweepController.isSweeping)
+            ? sweepController.activeCurlMultiplier
+            : 1.0f;
+        slide.CurlMultiplier = curlForceMultiplier * sweepCurlMult;
+
+        if (Mathf.Abs(vel.y) < RockPhysicsSettings.Speed(0.01f) && Mathf.Abs(vel.x) < RockPhysicsSettings.Speed(0.01f))
         {
-            // Apply torque for visual spin direction
-            // Unity 2D: positive torque = counter-clockwise, negative = clockwise
-            // In-turn (dirMult=-1) should spin CLOCKWISE → torque = -1 * 60 = -60
-            // Out-turn (dirMult=+1) should spin COUNTER-CLOCKWISE → torque = +1 * 60 = +60
-            body.AddTorque(dirMult * turnValue * Mathf.Deg2Rad, ForceMode2D.Impulse);
-            turnStart = false;
-
-            // DIAGNOSTIC: Start frame-by-frame logging after hog line
-            frameCounter = 0;
-            lastPosition = body.position;
-            totalDistance = 0f;
-            //Debug.Log($"[Rock FixedUpdate] === FRAME-BY-FRAME LOGGING STARTED ===");
-
-            //Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
-        }
-
-        if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
-        {
-            //Debug.Log($"[Rock STOPPED] Final Position: ({body.position.x:F3}, {body.position.y:F3}) | Total Distance: {totalDistance:F3}");
-            //Debug.Log("Velocity below 0.01");
-            //am.Stop("RockScrape");
+            if (released) ShotAudit.LogRest(gameObject, body.position, slide.PredictedRest);
             GetComponent<Rock_Info>().stopped = true;
             GetComponent<Rock_Info>().rest = true;
-            body.linearDamping = 0.90f;
             HapticController.Stop();
         }
-
-        if (forceStart == true)
-        {
-            // DIAGNOSTIC: Log every 5 frames (0.1 seconds)
-            if (frameCounter % 5 == 0)
-            {
-                float frameDist = Vector2.Distance(body.position, lastPosition);
-                totalDistance += frameDist;
-                
-                //Debug.Log($"[Rock Frame {frameCounter}] Pos: ({body.position.x:F3}, {body.position.y:F3}) | " +
-                //         $"Vel: {body.linearVelocity.magnitude:F3} m/s | " +
-                //         $"AngVel: {body.angularVelocity:F2} | " +
-                //         $"Damping: {body.linearDamping:F3} | " +
-                //         $"FrameDist: {frameDist:F4} | TotalDist: {totalDistance:F3}");
-                
-                lastPosition = body.position;
-            }
-            frameCounter++;
-            
-            // Keep constant friction - no progressive stickiness
-            // The linearDamping was set at hog line and stays constant
-            
-            //Debug.Log("Curl Force");
-            // Apply curl force WITH SWEEPING MULTIPLIER!
-            // If sweeping, the curl force is amplified (curl) or reduced (line) in REAL-TIME!
-            float sweepCurlMult = (sweepController != null && sweepController.isSweeping) 
-                ? sweepController.activeCurlMultiplier 
-                : 1.0f;
-            
-            // DIAGNOSTIC: Log when sweeping is active
-            if (sweepController != null && sweepController.isSweeping && frameCounter % 30 == 0)
-            {
-                Debug.Log($"[Rock_Force SWEEPING] Frame {frameCounter}: sweepMult={sweepCurlMult:F2}, curl.x={curl.x:F3}, angularVel={body.angularVelocity:F2}");
-            }
-            
-            Vector2 scaledCurl = curlForceMultiplier * sweepCurlMult * curl; // ? SWEEPING MODIFIES CURL FORCE HERE!
-            body.AddForce(scaledCurl * vel, ForceMode2D.Force);
-            
-            if (frameCounter % 30 == 0)
-            {
-                //Debug.Log($"[Rock_Force APPLY] Frame {frameCounter}: curl.x={curl.x:F3}, vel.x={vel.x:F3}, scaledCurl.x={scaledCurl.x:F3}, FORCE.x={(scaledCurl * vel).x:F3}");
-            }
-            
-            //Debug.Log("curl is " + curl.x);
-            if (Mathf.Abs(body.linearVelocity.y) < 0.01f && Mathf.Abs(body.linearVelocity.x) < 0.01f)
-            {
-                //Debug.Log($"[Rock STOPPED] Final Position: ({body.position.x:F3}, {body.position.y:F3}) | Total Distance: {totalDistance:F3}");
-                //Debug.Log("Velocity below 0.01");
-                //am.Stop("RockScrape");
-                GetComponent<Rock_Info>().stopped = true;
-                GetComponent<Rock_Info>().rest = true;
-                body.linearDamping = 0.90f;
-                HapticController.Stop();
-            }
-
-            //if (debugVertex)
-            //{
-            //    if (body.velocity.x <= 0.01f)
-            //    {
-            //        Debug.Log("vertex 1 is " + body.position.x + ", " + body.position.y + Time.deltaTime);
-            //        debugVertex = false;
-            //    }
-            //}
-            
-        }
-
     }
 
 }

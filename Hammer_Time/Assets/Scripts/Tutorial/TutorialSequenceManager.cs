@@ -974,7 +974,7 @@ public class TutorialSequenceManager : MonoBehaviour
             if (rock != null)
             {
                 Rigidbody2D rb = rock.GetComponent<Rigidbody2D>();
-                lastCapturedSpeed = rb != null ? rb.linearVelocity.magnitude : 0f;
+                lastCapturedSpeed = rb != null ? RockPhysicsSettings.Current.WeightFromLaunchSpeed(rb.linearVelocity.magnitude) : 0f; // weight units, like the step thresholds
                 Debug.Log($"[TutorialSequenceManager] Captured release speed={lastCapturedSpeed:F2}, aimPos={lastCapturedAimPos}");
             }
         }

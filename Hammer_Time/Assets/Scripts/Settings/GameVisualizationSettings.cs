@@ -137,9 +137,15 @@ public class GameVisualizationSettings : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Flick shot mode is switched off for now: the game aims by pull and release. All the flick code is still here; set this
+    /// true (and un-hide the toggle) to bring it back. The tutorial follows FlickShotMode, so it uses the pull/release lessons.
+    /// </summary>
+    public static bool FlickModeAvailable = false;
+
     public bool FlickShotMode
     {
-        get => flickShotMode;
+        get => flickShotMode && FlickModeAvailable;
         set
         {
             if (flickShotMode != value)
