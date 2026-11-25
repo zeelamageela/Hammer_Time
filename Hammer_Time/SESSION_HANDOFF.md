@@ -337,13 +337,33 @@ Sweeper animations should visually reflect the equipped handle, always with team
 
 ---
 
-## Physics rebuild (Nov 2026) — branch `physics-timing`, NOT merged
+## Where things stand (Nov 25 2026) — read this first
+
+- **Everything is merged to `main`** (merge 97a4e0b4, pushed). The `physics-timing` branch is redundant. Work from `main`, small commits, run EditMode tests (134 pass), ask before pushing.
+- **Training:** three tracks (Sweep, Tactics, On-Ice), four levels, $1,000/$2,500/$5,000/$10,000. See `TRAINING_DESIGN.md` (tier sheet + fuzz look).
+- **Aim fuzz look:** oval + cone + crosshairs + cycling dots, cold blue, screen-blend shaders. Quick Test (press Q in a game) has live sliders for skill, training levels and look strengths; it never writes the career save.
+- **Shooter kick** slows outside Arcade (Pro 2x, Real 3x; `ShooterAnim.MaxKickSlowdown`).
+- **Sponsors:** audit in `SPONSOR_AUDIT.md`; decision is to scrap the stat bonuses and tune availability.
+- Uncommitted on purpose: Unity churn (prefabs NC_*, slnx, Packages, ProjectSettings, UserSettings, `.claude/`).
+
+### Working list (next up, in order)
+
+1. **Timing readout (On-Ice 2):** split + hog-to-hog time ranges, top-left. Confirm the split definition first.
+2. **Check the collision aids** (Tactics 2 warning line, 3 hit arrows ±12°, 4 exact) with the new oval, using the Quick Test `tacticsLevel` slider.
+3. **Design gaps:** give cohesion (sweep sync) and finesse (end-of-sweep touch) a job or drop them from the tiers; lower prices (try training $500/$1,000/$2,000/$4,000; cap gear at about 20 points per top item; tune against weekly income); scrap sponsor stat bonuses and set availability rules (answer the questions in `SPONSOR_AUDIT.md`).
+4. **Training screen layout** for 3 rows (scene was built for 5; `TrainingManager` hides the extra rows).
+5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (drop the thumb circle, widen the 0.34 cap behind a switch); consider removing the Classic physics mode.
+6. **Playtests:** AI-vs-AI with the corrected collision model; Real-time/Pro kick pace and all new aids on a phone; confirm the line reach past the near hog actually shows.
+
+---
+
+## Physics rebuild (Nov 2026) — merged to `main`
 
 One physics model now drives both the live rock and the aim-line simulator (`RockPhysics`, `RockPhysicsProfile`, `RockSlide`, `RockCollision`, `TrajectorySimulator`). Profiles: Classic (original), **Arcade** (shipping default, same pace, soft stop), Real-time (real-world seconds, no `Time.timeScale`). Pause-menu tester buttons (profile + Arcade stop curve) exist only when `DevOptions.Enabled` (Editor/dev builds). Flick mode is hidden. Also in: the 2% launch-speed bug fix (shooter bodies' mass), aim-line fuzz from skill, hack-to-hog / hog-to-hog split clocks, Box2D-matched rock collisions with chains and frozen pairs.
 
 - Design, numbers and the not-verified list: `PHYSICS_REBUILD.md`. Collision measurements: `PHYSICS_COLLISIONS.md`. Baselines: `PHYSICS_PHASE0.md`.
 - Harnesses live in `AgentScripts/` (run with `unity command run_script`): `Measure.cs`, `Collide.cs`, `Probe.cs`.
-- 110 EditMode tests; run them before and after any physics change.
+- 134 EditMode tests; run them before and after any physics change.
 - Needs a human on a device: sweeping, AI takeouts, aim-fuzz and split-clock look, pause-menu layout.
 
 ---

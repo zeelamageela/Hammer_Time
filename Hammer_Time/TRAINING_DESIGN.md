@@ -1,6 +1,8 @@
 # Training: design outline (Nov 2026)
 
-Status: the Training screen exists on the Arena_Selector hub (it took the Standings slot), you can buy levels, and **the levels now change gameplay** - see "What is wired" at the bottom. Everything below is a first pass for you to edit; numbers live in one table,
+Status (Nov 25): **three tracks, merged to main.** The current design is the "Tier sheet (revised Nov 25)" and "Fuzz look" sections further down. The sections
+from "How it works" to "Pull-back and the circles" are the original five-track first pass and are kept only for history (Directional Sweeping is now Sweep 1,
+Cross Training is gone, the aim circle was replaced by the oval and crosshairs, prices are the fixed $1,000-$10,000 ladder). Numbers live in one table,
 [Assets/Scripts/Training/TrainingCatalog.cs](Assets/Scripts/Training/TrainingCatalog.cs).
 
 ## How it works
@@ -141,8 +143,14 @@ Old five-track saves are converted on load (`MigrateLegacy`).
   untrained player really can't tell.
 - The fuzzy end only shows when the predicted stop is inside the drawn line (On-Ice level sets how far that is); otherwise the line fades at its cap.
 - Cycling dots: On-Ice 1. Crosshairs: Tactics 1, pulsing from the middle, never stretched into an ellipse. Timing ranges: On-Ice 2, top corner.
-- Built so far: the track restructure, the unlock flags (`TrainingAids`) and the save migration. The aim marker still uses the old aim circle (shown at Tactics 1,
-  fixed size) until the crosshairs replace it; the dots, the line reach (`LineReachY`) and the timing readout are defined but not drawn yet.
+- Built (all on main): the track restructure and save migration, `TrainingAids` unlock flags, the glowing oval at the curled aim point (size from aim and
+  weight fuzz), the cone along the path, pulsing crosshairs (Tactics 1), cycling dots (On-Ice 1) and the line reach (`LineReachY`), all tinted cold blue.
+  Shaders: `Assets/Resources/Shaders/AimLight.shader` (cone) and `AimOval.shader` (oval). Look constants (`ConeStrength`, `OvalFill`, `OvalOutline`,
+  `CrossStrength`) are public statics on `AimFuzzBands` and are live-tunable from Quick Test (press Q in a game).
+- **Not built yet: the timing readout (On-Ice 2).** Proposed: split (back line to near hog) and hog-to-hog (near hog to far hog) time ranges in the top-left,
+  width from the weight fuzz, per physics mode. Open: confirm the definition of "split" and the corner.
+- Not verified on a device: dots marching and the line reach past the near hog (possible draw-order issue), the crosshair pulse, collision aids (Tactics 2-4)
+  with the new oval.
 
 ## What each stat actually does in a match today
 
@@ -151,7 +159,7 @@ Gear and training are added together (`CareerManager.SkillBonus`); gear is recom
 | Stat | Reaches | Does |
 |---|---|---|
 | Weight | the shooter (aim fuzz) | the line's length error, sigma 0.9 m x (1 - skill/100)^2 |
-| Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.15 m x (1 - skill/100)^2 |
+| Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.5 m x (1 - skill/100)^2 |
 | Sweep strength | all three player-team sweepers | how much a sweep changes friction and curl |
 | Sweep endurance | all three player-team sweepers | shorter sweep cooldown, slower fatigue |
 | Sweep cohesion | the sweepers' stats | **nothing yet** - no match code reads it |
