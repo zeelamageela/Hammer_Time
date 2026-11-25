@@ -285,10 +285,10 @@ public class QuickTestGame : MonoBehaviour
         // ? CRITICAL: Set flag for 50% deterministic player physics (no multipliers!)
         PlayerPrefs.SetInt("QuickTestMode", 1);
 
-        // Aim aids for fuzz testing: just the guide lines (and the cone), no aim circle, dots, hit arrows or curl line.
+        // Aim aids for fuzz testing: the aim circle, guide lines and cone; no dots, hit arrows or curl line.
         // These are the same saved switches as the pause menu's toggles, so they stay until changed there.
         PlayerPrefs.SetInt("GuidelinesVisible", 1);
-        PlayerPrefs.SetInt("AimCircleVisible", 0);
+        PlayerPrefs.SetInt("AimCircleVisible", 1);
         PlayerPrefs.SetInt("TrajectoryVisible", 0);
         PlayerPrefs.SetInt("CollisionLinesVisible", 0);
         PlayerPrefs.SetInt("CurlLineVisible", 0);

@@ -2,42 +2,43 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// How the skill fuzz is SHOWN (see AimFuzz for how it is rolled). Two soft, shimmering shapes, both small and faint when the shooter is
-/// skilled and wide and vague when not:
-///  - a landing patch at the end of the aim line: as wide as the biggest sideways error the throw could have and as tall as the biggest
-///    long/short error, densest in the middle (where the rock most likely finishes) and fading to nothing at the edge,
-///  - a cone along the trajectory that widens from nothing at the hack to the patch, darkest down the middle, never thinner than a rock.
-/// The rock always goes where the physics says, and the drawn end is never further than the maximum error from the truth, so the truth
-/// is always inside the patch. The softness comes from small generated textures, so the edges are smooth.
+/// How the skill fuzz is SHOWN (see AimFuzz for how it is rolled): a beam of light along the shot that ends in a glowing oval.
+///  - the oval sits at the aim point (where the rock is expected to finish after its curl). It is as wide as the biggest sideways error the
+///    throw could have and as tall as the biggest long/short error, so a skilled shooter gets a small tight oval and a beginner a big vague one.
+///    It has a soft glowing outline of even thickness, and a faint fill.
+///  - the cone runs from the hack and widens until it is exactly as wide as the oval, meeting the oval's sides, then fades out over the oval's
+///    upper half so the two do not double up.
+/// Both are screened on (added as light) rather than laid on as grey, and both shimmer, more for a less skilled shooter.
+/// The rock always goes where the physics says, and the drawn end is never further than the maximum error from the truth, so the truth is inside the oval.
 /// </summary>
 public class AimFuzzBands : MonoBehaviour
 {
-    static readonly Color fuzzGrey = new Color(0.23f, 0.23f, 0.23f);
-
-    /// <summary>One opacity for the aim aids that sit on the ice (guide lines, the aim circle's fill, the cone, the fuzz patch), so they read as one set.</summary>
+    /// <summary>One opacity for the thin guide lines that lie on the ice (they are drawn as ordinary lines, not light).</summary>
     public const float AimAidAlpha = 0.12f;
-    /// <summary>The aim circle's thick edge is solid.</summary>
-    const float RingStrokeAlpha = 0.6f;
-    /// <summary>Diameter of the aim circle in metres. It is a true circle: always scaled the same both ways.</summary>
-    public const float RingDiameter = 0.8f;
-    /// <summary>The edge's thickness as a share of the radius (0.12 of 0.4 m is about 5 cm).</summary>
-    const float RingThickness = 0.12f;
-    const float PatchAlpha = AimAidAlpha;
-    /// <summary>The cone is stronger than the other aids: its soft edges and its thin start would make it vanish at the shared opacity.</summary>
-    const float ConeAlpha = 0.30f;
-    /// <summary>The patch is never smaller than one rock.</summary>
-    const float PatchMinSize = 0.28f;
-    /// <summary>The dense middle of the patch, as a share of its radius; the rest is the soft edge.</summary>
-    const float PatchSolid = 0.25f;
 
-    SpriteRenderer patch, ring;
+    /// <summary>How bright the cone is at its middle.</summary>
+    const float ConeStrength = 0.50f;
+    /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
+    const float OvalFill = 0.30f;
+    const float OvalOutline = 0.80f;
+    const float OvalStrength = 1.0f;
+    /// <summary>Half the thickness of the oval's outline glow, in metres.</summary>
+    const float OutlineHalfThickness = 0.05f;
+    /// <summary>The oval is never smaller than one rock (0.28 m) either way.</summary>
+    public const float OvalMinSize = 0.28f;
+
+    /// <summary>The light's colour (the team colour mixed toward white); set by the caller.</summary>
+    public Color tint = Color.white;
+
+    MeshRenderer oval;
+    Material ovalMaterial;
     LineRenderer cone;
-    static Texture2D patchTexture, coneTexture, ringTexture;
-    static Sprite patchSprite, ringSprite;
+    static Texture2D coneTexture;
+    static Mesh quad;
 
     // what was last drawn, so the shimmer can keep moving it
-    Vector2 patchSize;
-    float coneFade, shimmerStrength;   // coneFade: how far along the cone (0-1) it starts to fade out inside the aim circle
+    Vector2 ovalSize;
+    float coneFade, shimmerStrength;
     readonly Gradient coneGradient = new Gradient();
     bool anyShown;
 
@@ -47,28 +48,15 @@ public class AimFuzzBands : MonoBehaviour
     /// <summary>The largest long/short error (half-height, metres) at this weight skill.</summary>
     public static float WeightHalfHeight(float weightSkill) { return AimFuzz.Enabled ? AimFuzz.WeightSigma(weightSkill) * AimFuzz.MaxSigmas : 0f; }
 
-    // ---- the soft edges -------------------------------------------------------------------------------------------------
-
-    /// <summary>Opacity (0-1) of the landing patch at a distance from its centre (0 centre, 1 edge, in the patch's own stretched units).</summary>
-    public static float PatchProfile(float radius)
+    /// <summary>The oval's width and height in metres: the full range of the two errors, but never smaller than a rock.</summary>
+    public static Vector2 OvalSizeFor(float aimHalf, float weightHalf)
     {
-        return 1f - Smooth(PatchSolid, 1f, Mathf.Clamp01(radius));
+        return new Vector2(Mathf.Max(OvalMinSize, aimHalf * 2f), Mathf.Max(OvalMinSize, weightHalf * 2f));
     }
 
-    /// <summary>
-    /// The aim circle across its radius (0 centre, 1 edge): a thick solid edge (1) and a faint fill (0.2), with a slightly soft rim so it is not jagged.
-    /// Returns 0 outside. The thickness is relative, so the circle looks the same at any size.
-    /// </summary>
-    public static float RingProfile(float radius)
-    {
-        float inner = 1f - RingThickness;
-        float rim = 0.03f;
-        float stroke = Smooth(inner - rim, inner, radius) * (1f - Smooth(1f - rim, 1f, radius));
-        float fill = radius < inner ? 0.2f : 0f;
-        return Mathf.Max(stroke, fill);
-    }
+    // ---- the soft edge of the cone ----------------------------------------------------------------------------------------
 
-    /// <summary>Opacity (0-1) of the cone across it (0 centre, 1 edge): darkest in the middle, blurring out to nothing. Same all along its length.</summary>
+    /// <summary>Opacity (0-1) across the cone (0 centre, 1 edge): brightest down the middle, blurring out to nothing. Same all along its length.</summary>
     public static float ConeProfile(float across, float along)
     {
         return 1f - Smooth(0.1f, 1f, Mathf.Abs(across));
@@ -95,42 +83,38 @@ public class AimFuzzBands : MonoBehaviour
         return tex;
     }
 
+    static Mesh Quad()
+    {
+        if (quad != null) return quad;
+        quad = new Mesh { name = "AimOvalQuad" };
+        quad.vertices = new[] { new Vector3(-0.5f, -0.5f), new Vector3(0.5f, -0.5f), new Vector3(0.5f, 0.5f), new Vector3(-0.5f, 0.5f) };
+        quad.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+        quad.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+        return quad;
+    }
+
     void Build()
     {
-        if (patch != null) return;
-        if (patchTexture == null)
-        {
-            patchTexture = MakeTexture(64, 64, (x, y) => PatchProfile(Mathf.Sqrt(x * x + y * y)));
-            patchSprite = Sprite.Create(patchTexture, new Rect(0, 0, 64, 64), new Vector2(0.5f, 0.5f), 64f);   // one unit wide, so scale = size in metres
-        }
-        if (ringTexture == null)
-        {
-            ringTexture = MakeTexture(128, 128, (x, y) => RingProfile(Mathf.Sqrt(x * x + y * y)));
-            ringSprite = Sprite.Create(ringTexture, new Rect(0, 0, 128, 128), new Vector2(0.5f, 0.5f), 128f);
-        }
+        if (oval != null) return;
         if (coneTexture == null) coneTexture = MakeTexture(2, 64, (x, y) => ConeProfile(y, 0f));
 
-        var go = new GameObject("FuzzPatch");
-        go.transform.SetParent(transform, false);
-        patch = go.AddComponent<SpriteRenderer>();
-        patch.sprite = patchSprite;
-        patch.sortingOrder = 0;
-        patch.enabled = false;
-
-        var ringGo = new GameObject("AimCircle");
-        ringGo.transform.SetParent(transform, false);
-        ring = ringGo.AddComponent<SpriteRenderer>();
-        ring.sprite = ringSprite;
-        ring.sortingOrder = 1;
-        ring.transform.localScale = new Vector3(RingDiameter, RingDiameter, 1f);   // the same both ways: never stretched
-        ring.enabled = false;
+        var ovalGo = new GameObject("AimOval");
+        ovalGo.transform.SetParent(transform, false);
+        ovalGo.AddComponent<MeshFilter>().sharedMesh = Quad();
+        oval = ovalGo.AddComponent<MeshRenderer>();
+        var ovalShader = Shader.Find("Hammer/AimOval");
+        ovalMaterial = new Material(ovalShader != null ? ovalShader : Shader.Find("Sprites/Default"));
+        oval.sharedMaterial = ovalMaterial;
+        oval.sortingOrder = 2;
+        oval.enabled = false;
 
         var coneGo = new GameObject("FuzzCone");
         coneGo.transform.SetParent(transform, false);
         cone = coneGo.AddComponent<LineRenderer>();
-        cone.material = new Material(Shader.Find("Sprites/Default")) { mainTexture = coneTexture };
+        var lightShader = Shader.Find("Hammer/AimLight");
+        cone.material = new Material(lightShader != null ? lightShader : Shader.Find("Sprites/Default")) { mainTexture = coneTexture };
         cone.textureMode = LineTextureMode.Stretch;
-        cone.sortingOrder = 0;
+        cone.sortingOrder = 2;
         cone.useWorldSpace = true;
         cone.numCapVertices = 0;
         cone.widthCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 1f));
@@ -143,47 +127,31 @@ public class AimFuzzBands : MonoBehaviour
     public void Hide()
     {
         anyShown = false;
-        if (patch == null) return;
-        patch.enabled = cone.enabled = ring.enabled = false;
+        if (oval == null) return;
+        oval.enabled = cone.enabled = false;
     }
 
-    /// <summary>The aim circle: a true circle with a thick solid edge, at the aim point.</summary>
-    public void ShowRing(Vector2 centre, Color colour)
-    {
-        Build();
-        ring.enabled = true;
-        ring.transform.position = new Vector3(centre.x, centre.y, 0f);
-        // the sprite carries the solid edge (1) and the faint fill (0.2); the colour's alpha scales both
-        ring.color = new Color(colour.r, colour.g, colour.b, RingStrokeAlpha);
-    }
-
-    public void HideRing()
-    {
-        if (ring != null) ring.enabled = false;
-    }
-
-    /// <summary>Hides the landing patch but leaves the cone (the aim circle took over).</summary>
     public void HidePatch()
     {
-        if (patch != null) patch.enabled = false;
+        if (oval != null) oval.enabled = false;
     }
 
-    /// <summary>The landing patch: centred where the line ends, as wide and tall as the biggest errors the throw could have.</summary>
+    /// <summary>The oval: centred at the aim point, as wide and tall as the biggest errors the throw could have.</summary>
     public void ShowPatch(Vector2 centre, float aimHalf, float weightHalf, float aimSkill, float weightSkill)
     {
         Build();
-        patchSize = new Vector2(Mathf.Max(PatchMinSize, aimHalf * 2f), Mathf.Max(PatchMinSize, weightHalf * 2f));
+        ovalSize = OvalSizeFor(aimHalf, weightHalf);
         shimmerStrength = Shimmer(Mathf.Min(aimSkill, weightSkill));
-        patch.enabled = true;
-        patch.transform.position = new Vector3(centre.x, centre.y, 0f);
+        oval.enabled = true;
+        oval.transform.position = new Vector3(centre.x, centre.y, 0f);
         anyShown = true;
         Apply(0f);
     }
 
     /// <summary>
-    /// The cone along the line, widening from nothing at the hack to exactly the aim circle's width at the aim point, so it runs into the circle
-    /// like an ice-cream cone. It ends at the circle's centre and fades out over the last half-diameter (inside the circle) so the two do not
-    /// double up. Called every time the aim is redrawn, so it follows the aim.
+    /// The cone along the line, widening from nothing at the hack to exactly the oval's width at the aim point, so its sides meet the oval's.
+    /// It ends at the oval's centre and fades out over the last half of the oval's height so the two do not double up. Call ShowPatch first.
+    /// Called every time the aim is redrawn, so it follows the aim.
     /// </summary>
     public void ShowCone(IList<Vector3> path, Vector2 end, float aimSkill)
     {
@@ -196,13 +164,12 @@ public class AimFuzzBands : MonoBehaviour
 
         float length = 0f;
         for (int i = 1; i < points.Count; i++) length += Vector3.Distance(points[i - 1], points[i]);
-        coneFade = length > 0.01f ? Mathf.Clamp(1f - (RingDiameter * 0.5f) / length, 0f, 0.98f) : 0f;
+        coneFade = length > 0.01f ? Mathf.Clamp(1f - (ovalSize.y * 0.5f) / length, 0f, 0.98f) : 0f;
 
-        shimmerStrength = Shimmer(aimSkill);
+        shimmerStrength = Mathf.Max(shimmerStrength, Shimmer(aimSkill));
         cone.enabled = true;
         cone.positionCount = points.Count;
         for (int i = 0; i < points.Count; i++) cone.SetPosition(i, points[i]);
-        cone.widthMultiplier = RingDiameter;   // the curve runs 0 to 1, so the far end is exactly as wide as the circle
         anyShown = true;
         Apply(0f);
     }
@@ -218,25 +185,30 @@ public class AimFuzzBands : MonoBehaviour
     void Apply(float t)
     {
         // the shimmer breathes the size a little and the strength more, out of step between the shapes
-        float wobbleX = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.8f, 0.2f) * 2f - 1f);
-        float wobbleY = 1f + 0.18f * shimmerStrength * (Mathf.PerlinNoise(t * 1.5f, 7.1f) * 2f - 1f);
-        float pulse = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.8f, 3.3f) * 2f - 1f);
-        float conePulse = 1f + 0.55f * shimmerStrength * (Mathf.PerlinNoise(t * 2.5f, 9.7f) * 2f - 1f);
+        float wobbleX = 1f + 0.12f * shimmerStrength * (Mathf.PerlinNoise(t * 1.8f, 0.2f) * 2f - 1f);
+        float wobbleY = 1f + 0.12f * shimmerStrength * (Mathf.PerlinNoise(t * 1.5f, 7.1f) * 2f - 1f);
+        float pulse = 1f + 0.45f * shimmerStrength * (Mathf.PerlinNoise(t * 2.8f, 3.3f) * 2f - 1f);
+        float conePulse = 1f + 0.45f * shimmerStrength * (Mathf.PerlinNoise(t * 2.5f, 9.7f) * 2f - 1f);
 
-        if (patch != null && patch.enabled)
+        float width = ovalSize.x * wobbleX, height = ovalSize.y * wobbleY;
+        if (oval != null && oval.enabled)
         {
-            patch.transform.localScale = new Vector3(patchSize.x * wobbleX, patchSize.y * wobbleY, 1f);
-            patch.color = With(fuzzGrey, PatchAlpha * pulse);
+            float margin = OutlineHalfThickness * 3.5f;   // room around the ellipse for its glow
+            oval.transform.localScale = new Vector3(width + 2f * margin, height + 2f * margin, 1f);
+            ovalMaterial.SetColor("_Color", tint);
+            ovalMaterial.SetVector("_Ellipse", new Vector4(width, height, OutlineHalfThickness, OvalStrength * Mathf.Clamp(pulse, 0.2f, 1.6f)));
+            ovalMaterial.SetVector("_Quad", new Vector4(width + 2f * margin, height + 2f * margin, 0f, 0f));
+            ovalMaterial.SetFloat("_Fill", OvalFill);
+            ovalMaterial.SetFloat("_Outline", OvalOutline);
         }
         if (cone != null && cone.enabled)
         {
-            float a = Mathf.Clamp01(ConeAlpha * conePulse);
+            cone.widthMultiplier = width;   // the curve runs 0 to 1, so the far end is exactly as wide as the oval
+            float a = Mathf.Clamp01(ConeStrength * conePulse);
             coneGradient.SetKeys(
-                new[] { new GradientColorKey(fuzzGrey, 0f), new GradientColorKey(fuzzGrey, 1f) },
+                new[] { new GradientColorKey(tint, 0f), new GradientColorKey(tint, 1f) },
                 new[] { new GradientAlphaKey(a, 0f), new GradientAlphaKey(a, coneFade), new GradientAlphaKey(0f, 1f) });
             cone.colorGradient = coneGradient;
         }
     }
-
-    static Color With(Color c, float a) { return new Color(c.r, c.g, c.b, Mathf.Clamp01(a)); }
 }
