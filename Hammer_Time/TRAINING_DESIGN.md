@@ -111,3 +111,49 @@ still reads well. Say the word and I will do (a) first, behind a switch so you c
 - **Finding:** equipment and sponsor bonuses (`modStats`) are only shown on the Team screen; no match reads them. Training goes through the match code, so it works, but gear does not yet.
 
 Not done: icons for the tracks (empty slot at `Track_n/Panel/Image`), a "locked" hint in the pause menu, the equipment-bonus finding above, and a look at all of this on a device.
+
+## Tier sheet (what is in the game today, to edit)
+
+Everything below lives in the `Levels` table of [TrainingCatalog.cs](Assets/Scripts/Training/TrainingCatalog.cs) (name, effect text, stat bonuses) and
+the small arrays under it (`LevelCost`, `UnlockLevelGate`, carving strength / indicator error / aim-circle size). Prices are the same for every track.
+The player-level gate applies only to the three tracks marked "unlock".
+
+| Track | Lv | Name | Cost | Needs player level | Gives |
+|---|---|---|---|---|---|
+| Sweep Training | 1 | Sweep Drills | $1,000 | - | +4 endurance |
+| | 2 | Weight Training | $2,500 | - | +5 strength |
+| | 3 | Synchro Sweeping | $5,000 | - | +5 cohesion |
+| | 4 | Elite Sweep Camp | $10,000 | - | +4 endurance, strength, cohesion |
+| Directional Sweeping (unlock) | 1 | Carving Basics | $1,000 | 2 | carving on, 0.5x push |
+| | 2 | Edge Control | $2,500 | 4 | 0.75x push |
+| | 3 | Quick Hands | $5,000 | 6 | 1.0x push |
+| | 4 | Master Sweeper | $10,000 | 8 | 1.25x push |
+| Tactic Studies (unlock) | 1 | Film Room | $1,000 | 2 | hit arrows, up to 20 degrees off |
+| | 2 | Shot Charts | $2,500 | 4 | within 12 degrees |
+| | 3 | Angle Study | $5,000 | 6 | within 6 degrees, collision warning line |
+| | 4 | Hit Analytics | $10,000 | 8 | exact |
+| On-Ice Training (unlock) | 1 | Target Practice | $1,000 | 2 | aim circle, 1.5 wide |
+| | 2 | Release Drills | $2,500 | 4 | 1.1 wide |
+| | 3 | Weight Control | $5,000 | 6 | 0.75 wide, +3 weight |
+| | 4 | Pinpoint | $10,000 | 8 | 0.5 wide, +3 weight, +3 aim |
+| Cross Training | 1 | Jogging | $1,000 | - | +4 endurance |
+| | 2 | Yoga | $2,500 | - | +3 strength, +3 endurance |
+| | 3 | Rowing | $5,000 | - | +4 strength, +4 cohesion |
+| | 4 | Pickleball | $10,000 | - | +4 aim, +4 finesse |
+
+## What each stat actually does in a match today
+
+Gear and training are added together (`CareerManager.SkillBonus`); gear is recomputed from the four equipped items every time they change.
+
+| Stat | Reaches | Does |
+|---|---|---|
+| Weight | the shooter (aim fuzz) | the line's length error, sigma 0.9 m x (1 - skill/100)^2 |
+| Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.15 m x (1 - skill/100)^2 |
+| Sweep strength | all three player-team sweepers | how much a sweep changes friction and curl |
+| Sweep endurance | all three player-team sweepers | shorter sweep cooldown, slower fatigue |
+| Sweep cohesion | the sweepers' stats | **nothing yet** - no match code reads it |
+| Finesse | the AI's shot choices only | **nothing for the player yet** |
+
+So Rowing's cohesion, Synchro Sweeping, and Pickleball's finesse do not change play until cohesion and finesse are given a job. The sweepers also get the
+shooter-side stats added to a player of base 45: a $10k item is up to 60 points, so four good items can add far more than a training track; the
+numbers want a balance pass once you have tuned the tiers.
