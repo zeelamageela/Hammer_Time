@@ -154,26 +154,8 @@ public class TrajectoryLine : MonoBehaviour
 
     // ---- training (see TrainingAids): which aids the player has earned, and how sharp they are ----
 
-    /// <summary>The aim circle is on in the settings AND earned (On-Ice Training).</summary>
-    bool AimCircleShown { get { return aimCircleVisible && TrainingAids.AimCircleUnlocked; } }
-
-    float aimCircleBaseDiameter;   // world width of the aim circle at scale 1, measured once
-
-    /// <summary>On-Ice Training narrows the aim circle level by level.</summary>
-    void SizeAimCircle()
-    {
-        float wanted = TrainingAids.AimCircleDiameter;
-        if (wanted <= 0f || aimCircle == null) return;
-        var sr = aimCircle.GetComponent<SpriteRenderer>();
-        if (aimCircleBaseDiameter <= 0f)
-        {
-            float scale = Mathf.Max(0.0001f, aimCircle.transform.localScale.x);
-            aimCircleBaseDiameter = sr.sprite != null ? sr.sprite.bounds.size.x : sr.bounds.size.x / scale;
-        }
-        if (aimCircleBaseDiameter <= 0f) return;
-        float s = wanted / aimCircleBaseDiameter;
-        aimCircle.transform.localScale = new Vector3(s, s, aimCircle.transform.localScale.z);
-    }
+    /// <summary>The aim marker (to become the pulsing crosshairs) is on in the settings AND earned (Tactic Studies level 1).</summary>
+    bool AimCircleShown { get { return aimCircleVisible && TrainingAids.CrosshairsUnlocked; } }
 
     // Tactic Studies: the collision arrows are off by up to a few degrees, rolled once per rock (like the aim fuzz) so they don't jitter.
     int collisionErrorRockIndex = -1;
@@ -910,8 +892,7 @@ public class TrajectoryLine : MonoBehaviour
         if (aimCircle != null && AimCircleShown)
         {
             aimCircle.GetComponent<SpriteRenderer>().enabled = true;
-            SizeAimCircle();
-            
+
             // Hide alternative aim lines when aim circle is ON
             if (aimVerticalLine != null) aimVerticalLine.enabled = false;
             if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;

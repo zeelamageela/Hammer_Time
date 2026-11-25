@@ -10,39 +10,47 @@ public class TrainingAidsTests
     {
         TrainingAids.Use(null);
         Assert.IsFalse(TrainingAids.Gated);
-        Assert.IsTrue(TrainingAids.AimCircleUnlocked);
+        Assert.IsTrue(TrainingAids.CrosshairsUnlocked);
         Assert.IsTrue(TrainingAids.CollisionIndicatorUnlocked);
         Assert.IsTrue(TrainingAids.CollisionWarningUnlocked);
-        Assert.AreEqual(1f, TrainingAids.CarvingStrength);
+        Assert.IsTrue(TrainingAids.CarvingUnlocked);
+        Assert.IsTrue(TrainingAids.DotsUnlocked);
+        Assert.IsTrue(TrainingAids.TimingUnlocked);
+        Assert.IsTrue(float.IsPositiveInfinity(TrainingAids.LineReachY));
         Assert.AreEqual(0f, TrainingAids.CollisionErrorDegrees);
-        Assert.Less(TrainingAids.AimCircleDiameter, 0f, "ungated leaves the circle's size alone");
     }
 
     [Test]
     public void UntrainedPlayerHasNoAids()
     {
-        TrainingAids.Use(new int[5]);
+        TrainingAids.Use(new int[TrainingCatalog.Tracks]);
         Assert.IsTrue(TrainingAids.Gated);
-        Assert.IsFalse(TrainingAids.AimCircleUnlocked);
+        Assert.IsFalse(TrainingAids.CrosshairsUnlocked);
         Assert.IsFalse(TrainingAids.CollisionIndicatorUnlocked);
         Assert.IsFalse(TrainingAids.CollisionWarningUnlocked);
-        Assert.AreEqual(0f, TrainingAids.CarvingStrength);
+        Assert.IsFalse(TrainingAids.CarvingUnlocked);
+        Assert.IsFalse(TrainingAids.DotsUnlocked);
+        Assert.IsFalse(TrainingAids.TimingUnlocked);
+        Assert.Less(TrainingAids.LineReachY, 0f, "just the near end of the line");
     }
 
     [Test]
     public void TrainedPlayerGetsWhatTheyBought()
     {
-        // Directional 2, Tactics 3, On-Ice 3
-        TrainingAids.Use(new[] { 0, 2, 3, 3, 0 });
-        Assert.IsTrue(TrainingAids.AimCircleUnlocked);
-        Assert.AreEqual(0.75f, TrainingAids.AimCircleDiameter);
+        // Sweep 1, Tactics 3, On-Ice 3
+        TrainingAids.Use(new[] { 1, 3, 3 });
+        Assert.IsTrue(TrainingAids.CarvingUnlocked);
+        Assert.IsTrue(TrainingAids.CrosshairsUnlocked);
+        Assert.IsTrue(TrainingAids.CollisionWarningUnlocked);
         Assert.IsTrue(TrainingAids.CollisionIndicatorUnlocked);
-        Assert.IsTrue(TrainingAids.CollisionWarningUnlocked, "warning line comes with Tactic Studies 3");
-        Assert.AreEqual(6f, TrainingAids.CollisionErrorDegrees);
-        Assert.AreEqual(0.75f, TrainingAids.CarvingStrength);
-
-        TrainingAids.Use(new[] { 0, 0, 2, 0, 0 });
-        Assert.IsFalse(TrainingAids.CollisionWarningUnlocked);
         Assert.AreEqual(12f, TrainingAids.CollisionErrorDegrees);
+        Assert.IsTrue(TrainingAids.DotsUnlocked);
+        Assert.IsTrue(TrainingAids.TimingUnlocked);
+        Assert.Greater(TrainingAids.LineReachY, 0f);
+        Assert.IsFalse(float.IsPositiveInfinity(TrainingAids.LineReachY));
+
+        TrainingAids.Use(new[] { 0, 2, 0 });
+        Assert.IsTrue(TrainingAids.CollisionWarningUnlocked);
+        Assert.IsFalse(TrainingAids.CollisionIndicatorUnlocked, "hit arrows are level 3");
     }
 }

@@ -2817,7 +2817,7 @@ public class CareerManager : MonoBehaviour
         activeEquipID = data.activeEquipIDs.ToArray();
         inventoryID = data.inventoryIDs.ToArray();
         activeHandleTier = data.activeHandleTier;
-        trainingLevels = data.trainingLevels != null ? data.trainingLevels.ToArray() : null; // absent in saves from before training existed
+        trainingLevels = data.trainingLevels != null ? TrainingCatalog.MigrateLegacy(data.trainingLevels.ToArray()) : null; // absent in saves from before training existed
 
         // Restore equipment collections if available
         if (data.allEquipment != null && data.allEquipment.handles != null && data.allEquipment.handles.Count > 0)

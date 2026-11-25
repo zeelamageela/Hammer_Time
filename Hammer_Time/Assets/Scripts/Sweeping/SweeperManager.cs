@@ -462,9 +462,9 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepTapLeft()
     {
-        // Carving (tapping one sweeper) is learned in Directional Sweeping; until then a tap on a sweeper is the ordinary both-sweepers sweep
-        if (TrainingAids.CarvingStrength <= 0f) { SweepTap(); return; }
-        sweep.CarveScale = TrainingAids.CarvingStrength;
+        // Carving (tapping one sweeper) is learned in Sweep Training (level 1); until then a tap on a sweeper is the ordinary both-sweepers sweep
+        if (!TrainingAids.CarvingUnlocked) { SweepTap(); return; }
+        sweep.CarveScale = 1f;
         //Tap on the sweep target
 
         float sweepTimer = 0.45f;  // Match sweepTapDuration from Sweep.cs
@@ -509,9 +509,9 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepTapRight()
     {
-        // Carving (tapping one sweeper) is learned in Directional Sweeping; until then a tap on a sweeper is the ordinary both-sweepers sweep
-        if (TrainingAids.CarvingStrength <= 0f) { SweepTap(); return; }
-        sweep.CarveScale = TrainingAids.CarvingStrength;
+        // Carving (tapping one sweeper) is learned in Sweep Training (level 1); until then a tap on a sweeper is the ordinary both-sweepers sweep
+        if (!TrainingAids.CarvingUnlocked) { SweepTap(); return; }
+        sweep.CarveScale = 1f;
         //Tap on the sweep target
         float sweepTimer = 0.25f;  // Match sweepTapDuration from Sweep.cs
 
@@ -658,7 +658,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft(bool aiTurn)
     {
-        sweep.CarveScale = aiTurn ? 1f : TrainingAids.CarvingStrength;
+        sweep.CarveScale = 1f;
 
         rockSounds[0].enabled = true;
         rockSounds[1].enabled = false;
@@ -685,7 +685,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepRight(bool aiTurn)
     {
-        sweep.CarveScale = aiTurn ? 1f : TrainingAids.CarvingStrength;
+        sweep.CarveScale = 1f;
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = true;
         rockSounds[0].pitch = 1f;

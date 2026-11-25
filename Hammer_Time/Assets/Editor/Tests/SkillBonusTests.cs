@@ -30,7 +30,7 @@ public class SkillBonusTests
     public void GearAndTrainingAddUp()
     {
         var gear = new CareerStats { aimAccuracy = 7, sweepStrength = 3 };
-        var training = TrainingCatalog.StatBonus(new[] { 2, 0, 0, 0, 4 });   // sweep 1-2, all of cross
+        var training = TrainingCatalog.StatBonus(new[] { 3, 0, 4 });   // sweep 1-3, all of on-ice
         var both = SkillBonuses.Combine(gear, training);
         Assert.AreEqual(7 + training.aimAccuracy, both.aimAccuracy);
         Assert.AreEqual(3 + training.sweepStrength, both.sweepStrength);

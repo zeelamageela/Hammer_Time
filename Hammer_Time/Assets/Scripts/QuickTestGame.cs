@@ -262,7 +262,7 @@ public class QuickTestGame : MonoBehaviour
             cm.cStats.sweepStrength = 85;
             cm.cStats.sweepEndurance = 85;
             cm.cStats.sweepCohesion = 85;
-            cm.trainingLevels = new[] { 4, 4, 4, 4, 4 };   // every aid and bonus earned, so quick tests can try them all
+            cm.trainingLevels = new[] { 4, 4, 4 };   // every aid and bonus earned, so quick tests can try them all
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;
