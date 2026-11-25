@@ -139,6 +139,7 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
+    const float GuideLineAlpha = 0.5f;   // the thin guide lines are half see-through; the fuzz bands around them carry the weight
     AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
 
     // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
@@ -1273,7 +1274,7 @@ public class TrajectoryLine : MonoBehaviour
             
             // Color: Always greyish-black (no red collision warning)
             // Greyish-black: #3A3A3A (dark grey, 23% brightness)
-            Color lineColor = new Color(0.23f, 0.23f, 0.23f, 1f);
+            Color lineColor = new Color(0.23f, 0.23f, 0.23f, GuideLineAlpha);
             
             aimVerticalLine.startColor = lineColor;
             aimVerticalLine.endColor = lineColor;
@@ -1298,6 +1299,7 @@ public class TrajectoryLine : MonoBehaviour
             
             // TEAM COLOR (shooting knob color)
             Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            lineColor.a = GuideLineAlpha;
             aimHorizontalLine.startColor = lineColor;
             aimHorizontalLine.endColor = lineColor;
         }
