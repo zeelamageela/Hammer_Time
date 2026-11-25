@@ -66,6 +66,13 @@ public class ShooterAnim : MonoBehaviour
     /// <summary>Hal_Shooter prefabs' releasePoint: where the kick ends and the shooter starts sliding with the rock.</summary>
     public const float DefaultReleasePointY = -24.077f;
 
+    /// <summary>
+    /// How much slower than Arcade the shooter's kick plays in the slower physics modes: the profile's time stretch (Pro 2x, Real-time 4.4x),
+    /// but never more than this, so the Real-time kick does not crawl. The kick is driven by the rock's position, so this is the rock's speed
+    /// from the pull-back point to the release point. Tune here.
+    /// </summary>
+    public const float MaxKickSlowdown = 3f;
+
 
     void Update()
     {

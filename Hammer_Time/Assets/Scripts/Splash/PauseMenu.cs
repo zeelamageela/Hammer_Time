@@ -231,7 +231,7 @@ public class PauseMenu : MonoBehaviour
         SetShown(root, "Traj Toggle", true);
         SetShown(root, "Collision Toggle", TrainingAids.CollisionIndicatorUnlocked);
         SetShown(root, "Collision Line Toggle", TrainingAids.CollisionWarningUnlocked);
-        SetShown(root, "Aim Circle Toggle", TrainingAids.AimCircleUnlocked);
+        SetShown(root, "Aim Circle Toggle", TrainingAids.CrosshairsUnlocked);
         SetShown(root, "Curl Toggle", true);
         SetShown(root, "Guidelines Toggle", true);
         bool flick = GameVisualizationSettings.FlickModeAvailable;

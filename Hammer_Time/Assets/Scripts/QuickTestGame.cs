@@ -38,6 +38,32 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int opponentStatValue = 85;
     
+    [Tooltip("Your shooter's aim skill (0-100). Low shows a wide fuzz cone and bands; 85 is nearly exact. Gear and training add to this.")]
+    [Range(0, 100)]
+    public int playerAimSkill = 50;
+
+    [Tooltip("Your shooter's weight skill (0-100). Low shows a tall fuzz band on the distance line.")]
+    [Range(0, 100)]
+    public int playerWeightSkill = 50;
+
+    [Header("Training levels (apply live while a quick test is running)")]
+    [Tooltip("Sweep Training: 1 carving, 2 endurance, 3 strength, 4 cohesion")]
+    [Range(0, 4)] public int sweepLevel = 4;
+    [Tooltip("Tactic Studies: 1 crosshairs, 2 collision warning, 3 hit arrows, 4 exact arrows")]
+    [Range(0, 4)] public int tacticsLevel = 4;
+    [Tooltip("On-Ice Training: 1 dots + line to the far hog, 2 timing, 3 line halfway to the house, 4 full line")]
+    [Range(0, 4)] public int onIceLevel = 4;
+
+    [Header("Fuzz look (applies live while a quick test is running)")]
+    [Tooltip("Brightness of the cone along the shot.")]
+    [Range(0f, 1f)] public float coneStrength = 0.4f;
+    [Tooltip("The faint fill inside the aim oval.")]
+    [Range(0f, 1f)] public float ovalFill = 0.2f;
+    [Tooltip("The glowing outline of the aim oval.")]
+    [Range(0f, 1f)] public float ovalOutline = 0.4f;
+    [Tooltip("The crosshair arms.")]
+    [Range(0f, 1f)] public float crossStrength = 0.9f;
+
     [Tooltip("Set BOTH teams to AI for testing? (Press W during game for AI vs AI)")]
     public bool bothTeamsAI = false;
     
@@ -65,11 +91,75 @@ public class QuickTestGame : MonoBehaviour
     private void OnDestroy()
     {
         // CRITICAL: Clear flags when this component is destroyed (returning to menu)
+        EndSession();
         ClearQuickTestMode();
+    }
+
+    // ---- a quick test borrows the career's stats; this puts them back and keeps the career from being saved with them ----
+
+    /// <summary>True from pressing Q until the quick test is over (the player leaves the game scene, or the app stops). SaveCareer does nothing meanwhile.</summary>
+    public static bool SessionActive { get; private set; }
+
+    bool sawGameScene;
+    bool haveSnapshot;
+    CareerStats snapStats, snapOpp, snapEquip;
+    int[] snapTraining;
+
+    static CareerStats Copy(CareerStats c)
+    {
+        if (c == null) return null;
+        return new CareerStats
+        {
+            weightAccuracy = c.weightAccuracy, finesseAccuracy = c.finesseAccuracy, aimAccuracy = c.aimAccuracy,
+            sweepStrength = c.sweepStrength, sweepEndurance = c.sweepEndurance, sweepCohesion = c.sweepCohesion,
+        };
+    }
+
+    static void CopyInto(CareerStats to, CareerStats from)
+    {
+        if (to == null || from == null) return;
+        to.weightAccuracy = from.weightAccuracy; to.finesseAccuracy = from.finesseAccuracy; to.aimAccuracy = from.aimAccuracy;
+        to.sweepStrength = from.sweepStrength; to.sweepEndurance = from.sweepEndurance; to.sweepCohesion = from.sweepCohesion;
+    }
+
+    void TakeSnapshot(CareerManager cm)
+    {
+        if (haveSnapshot || cm == null) return;
+        snapStats = Copy(cm.cStats);
+        snapOpp = Copy(cm.oppStats);
+        snapEquip = Copy(cm.equipmentBonus);
+        snapTraining = cm.trainingLevels != null ? (int[])cm.trainingLevels.Clone() : null;
+        haveSnapshot = true;
+    }
+
+    void EndSession()
+    {
+        if (haveSnapshot)
+        {
+            var cm = GetComponent<CareerManager>();
+            if (cm != null)
+            {
+                CopyInto(cm.cStats, snapStats);
+                CopyInto(cm.oppStats, snapOpp);
+                cm.equipmentBonus = snapEquip != null ? snapEquip : new CareerStats();
+                cm.trainingLevels = snapTraining;
+                Debug.Log("[QuickTestGame] Session over: the career's own stats and training are back");
+            }
+            haveSnapshot = false;
+        }
+        SessionActive = false;
+        sawGameScene = false;
     }
     
     private void Update()
     {
+        if (SessionActive)
+        {
+            bool inGame = SceneManager.GetActiveScene().name == "TournyGame";
+            if (inGame) { sawGameScene = true; ApplyLiveSettings(); }
+            else if (sawGameScene) { EndSession(); ClearQuickTestMode(); }   // back out to a menu: the test is over
+        }
+
         // Check for quick test hotkey
         if (Input.GetKeyDown(testGameKey))
         {
@@ -106,11 +196,37 @@ public class QuickTestGame : MonoBehaviour
     }
     
     /// <summary>
+    /// While a quick test is running, the skill and look sliders above take effect as soon as they are moved (every frame), so you can aim,
+    /// let go without shooting, change a number, and aim again to compare. The aim fuzz re-rolls when the skill changes (see TrajectoryLine.BeginFuzz).
+    /// Gear and training still add to the skill.
+    /// </summary>
+    void ApplyLiveSettings()
+    {
+        var cm = GetComponent<CareerManager>();
+        if (cm != null && cm.cStats != null)
+        {
+            cm.cStats.aimAccuracy = playerAimSkill;
+            cm.cStats.weightAccuracy = playerWeightSkill;
+        }
+        var levels = new[] { sweepLevel, tacticsLevel, onIceLevel };
+        if (cm != null && (cm.trainingLevels == null || !System.Linq.Enumerable.SequenceEqual(cm.trainingLevels, levels)))
+        {
+            cm.trainingLevels = levels;
+            TrainingAids.Refresh();   // the aids read the levels once when a match starts; do it again now
+        }
+        AimFuzzBands.ConeStrength = coneStrength;
+        AimFuzzBands.OvalFill = ovalFill;
+        AimFuzzBands.OvalOutline = ovalOutline;
+        AimFuzzBands.CrossStrength = crossStrength;
+    }
+
+    /// <summary>
     /// Immediately starts a test game with preset settings
     /// </summary>
     public void StartQuickTestGame()
     {
         Debug.Log("[QuickTestGame] Starting instant test game - Press Q to restart anytime!");
+        SessionActive = true;   // from now on the career is not saved (see CareerManager.SaveCareer) and its stats are restored at the end
         
         // Find or create GameSettingsPersist
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
@@ -255,14 +371,16 @@ public class QuickTestGame : MonoBehaviour
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         if (cm != null)
         {
+            TakeSnapshot(cm);
             // ? CRITICAL: Set player stats to 85 for ZERO randomness!
-            cm.cStats.weightAccuracy = 85;
+            cm.cStats.weightAccuracy = playerWeightSkill;   // a middling shooter by default; drag the sliders down to see a wide fuzz
             cm.cStats.finesseAccuracy = 85;
-            cm.cStats.aimAccuracy = 85;
+            cm.cStats.aimAccuracy = playerAimSkill;
+            cm.equipmentBonus = new CareerStats();   // no gear carried over from a career, so the skill is exactly what is set here
             cm.cStats.sweepStrength = 85;
             cm.cStats.sweepEndurance = 85;
             cm.cStats.sweepCohesion = 85;
-            cm.trainingLevels = new[] { 4, 4, 4, 4, 4 };   // every aid and bonus earned, so quick tests can try them all
+            cm.trainingLevels = new[] { sweepLevel, tacticsLevel, onIceLevel };   // set with the sliders; all 4 by default so every aid can be tried
             
             // Max out opponent stats
             cm.oppStats.weightAccuracy = opponentStatValue;
@@ -275,6 +393,15 @@ public class QuickTestGame : MonoBehaviour
         
         // ? CRITICAL: Set flag for 50% deterministic player physics (no multipliers!)
         PlayerPrefs.SetInt("QuickTestMode", 1);
+
+        // Aim aids for fuzz testing: the aim circle, guide lines and cone; no dots, hit arrows or curl line.
+        // These are the same saved switches as the pause menu's toggles, so they stay until changed there.
+        PlayerPrefs.SetInt("GuidelinesVisible", 1);
+        PlayerPrefs.SetInt("AimCircleVisible", 1);
+        PlayerPrefs.SetInt("TrajectoryVisible", 0);
+        PlayerPrefs.SetInt("CollisionLinesVisible", 0);
+        PlayerPrefs.SetInt("CurlLineVisible", 0);
+        PlayerPrefs.SetInt("CollisionWarningVisible", 0);
         
         // ? CRITICAL: Disable sweeping in test mode for perfect determinism
         // Sweeping introduces timing-based variance (when/how long you sweep)
@@ -287,7 +414,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 85/100"); //(NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill} and weight {playerWeightSkill} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");

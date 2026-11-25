@@ -103,11 +103,58 @@ still reads well. Say the word and I will do (a) first, behind a switch so you c
 
 - Saved with the career (old saves load fine), the Training screen on the hub, buying with cash and the level gate.
 - **Stats:** the bonuses are added to the three player-team sweepers (TeamManager) and to the shooter's aim and weight skill (the aim fuzz).
-- **Aim circle:** hidden until On-Ice Training 1 (the guide lines show instead, as when the toggle is off), then 1.5 / 1.1 / 0.75 / 0.5 wide.
-- **Collision arrows:** hidden until Tactic Studies 1; then each rock's arrows are off by a random amount up to 20 / 12 / 6 / 0 degrees (rolled once per rock). The red warning line comes at level 3.
-- **Carving:** until Directional Sweeping 1, tapping one sweeper does the ordinary both-sweepers sweep; after that the sideways push is 0.5 / 0.75 / 1.0 / 1.25.
+- **Aim marker:** hidden until Tactic Studies 1 (the guide lines show instead, as when the toggle is off). It is still the old circle at its normal size until the crosshairs are built.
+- **Hit arrows:** hidden until Tactic Studies 3; then each rock's arrows are off by a random amount up to 12 degrees (rolled once per rock), exact at level 4. The red warning line comes at level 2.
+- **Carving:** until Sweep Training 1, tapping one sweeper does the ordinary both-sweepers sweep; after that it carves (a flat 1.0x; the strength stat does the scaling).
 - No career (tutorial, a game started straight from a scene) means nothing is gated; QuickTest owns every level.
 - **Pause menu:** only the aids you have earned show (Trajectory, Guidelines and Curl Line are always there); AI tuning, debug switches and the physics buttons are under one collapsed "Tester options" button, dev builds only.
 - **Finding:** equipment and sponsor bonuses (`modStats`) are only shown on the Team screen; no match reads them. Training goes through the match code, so it works, but gear does not yet.
 
 Not done: icons for the tracks (empty slot at `Track_n/Panel/Image`), a "locked" hint in the pause menu, the equipment-bonus finding above, and a look at all of this on a device.
+
+## Tier sheet (revised Nov 25: three tracks)
+
+This replaces the five-track design above (Directional Sweeping became level 1 of Sweep Training, Cross Training was cut). Everything lives in the
+`Levels` table of [TrainingCatalog.cs](Assets/Scripts/Training/TrainingCatalog.cs) (name, effect text, stat bonuses) and the small arrays under it
+(`LevelCost`, `FirstLevelGate`, `CollisionErrors`, `LineReaches`). Prices are the same for every track; only level 1 of a track needs a player (XP) level (2).
+Old five-track saves are converted on load (`MigrateLegacy`).
+
+| Track | Lv | Name | Cost | Gives |
+|---|---|---|---|---|
+| Sweep Training | 1 | Directional Sweeping | $1,000 | carving: tap one sweeper |
+| | 2 | Sweep Drills | $2,500 | +4 endurance |
+| | 3 | Weight Training | $5,000 | +5 strength |
+| | 4 | Synchro Sweeping | $10,000 | +5 cohesion |
+| Tactic Studies | 1 | Film Room | $1,000 | pulsing crosshairs on the aim point (replaces the aim circle) |
+| | 2 | Shot Charts | $2,500 | collision warning line |
+| | 3 | Angle Study | $5,000 | hit arrows, up to 12 degrees off |
+| | 4 | Hit Analytics | $10,000 | exact hit arrows |
+| On-Ice Training | 1 | Target Practice | $1,000 | cycling dots on the line, which reaches the far hog line |
+| | 2 | Release Drills | $2,500 | split and hog-to-hog timing ranges |
+| | 3 | Weight Control | $5,000 | line reaches halfway to the house, +3 weight |
+| | 4 | Pinpoint | $10,000 | the full line, +3 weight, +3 aim |
+
+### Fuzz look (agreed, being built in steps)
+
+- Always on, no training needed: a vertical guide, a faint shimmery cone along the trajectory, and a fuzzy end to the length line. The top and bottom of
+  the fuzzy end are the largest error the throw could have; more skill (stats + gear + training) makes it crisper. The base error is scaled up so an
+  untrained player really can't tell.
+- The fuzzy end only shows when the predicted stop is inside the drawn line (On-Ice level sets how far that is); otherwise the line fades at its cap.
+- Cycling dots: On-Ice 1. Crosshairs: Tactics 1, pulsing from the middle, never stretched into an ellipse. Timing ranges: On-Ice 2, top corner.
+- Built so far: the track restructure, the unlock flags (`TrainingAids`) and the save migration. The aim marker still uses the old aim circle (shown at Tactics 1,
+  fixed size) until the crosshairs replace it; the dots, the line reach (`LineReachY`) and the timing readout are defined but not drawn yet.
+
+## What each stat actually does in a match today
+
+Gear and training are added together (`CareerManager.SkillBonus`); gear is recomputed from the four equipped items every time they change.
+
+| Stat | Reaches | Does |
+|---|---|---|
+| Weight | the shooter (aim fuzz) | the line's length error, sigma 0.9 m x (1 - skill/100)^2 |
+| Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.15 m x (1 - skill/100)^2 |
+| Sweep strength | all three player-team sweepers | how much a sweep changes friction and curl |
+| Sweep endurance | all three player-team sweepers | shorter sweep cooldown, slower fatigue |
+| Sweep cohesion | the sweepers' stats | **nothing yet** - no match code reads it |
+| Finesse | the AI's shot choices only | **nothing for the player yet** |
+
+So Rowing's cohesion, Synchro Sweeping, and Pickleball's finesse do not change play until cohesion and finesse are given a job. Balance note: a $10k item is up to 60 stat points (about 20 on each of its three stats), and a player starts around 45, so four good items now add far more than a whole training track. That is a balance pass for once you have tuned the tiers.

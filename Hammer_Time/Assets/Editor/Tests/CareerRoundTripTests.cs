@@ -128,7 +128,7 @@ public class CareerRoundTripTests
         Set(cm, "activeEquipID", new[] { 5, 31, 62, 93 });
         Set(cm, "inventoryID", new[] { 0, 5, 30, 31, 60, 62, 90, 93 });
         Set(cm, "activeHandleTier", 3);
-        Set(cm, "trainingLevels", new[] { 1, 0, 3, 2, 4 });
+        Set(cm, "trainingLevels", new[] { 1, 3, 2 });
 
         Set(cm, "cardPUIDList", new[] { 1, 2, 3 });
         Set(cm, "cardSponsorIDList", new[] { 4, 5 });

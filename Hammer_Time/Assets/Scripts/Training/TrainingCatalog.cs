@@ -1,13 +1,11 @@
 using System;
 
-/// <summary>The five training tracks, in the order they appear in the Training menu.</summary>
+/// <summary>The three training tracks, in the order they appear in the Training menu.</summary>
 public enum TrainingTrack
 {
     Sweep = 0,
-    Directional = 1,
-    Tactics = 2,
-    OnIce = 3,
-    Cross = 4,
+    Tactics = 1,
+    OnIce = 2,
 }
 
 /// <summary>One purchasable level of a track: what it is called, what it costs and what it gives.</summary>
@@ -23,13 +21,13 @@ public class TrainingLevel
 }
 
 /// <summary>
-/// The Training menu's content: five tracks of four levels each, one fixed price per level (the same for every track).
+/// The Training menu's content: three tracks of four levels each, one fixed price per level (the same for every track).
 /// Pure data and arithmetic so it can be tested; TrainingManager shows it and CareerManager.trainingLevels remembers what the player owns.
 /// Levels are cumulative: owning level 3 means owning 1, 2 and 3.
 /// </summary>
 public static class TrainingCatalog
 {
-    public const int Tracks = 5;
+    public const int Tracks = 3;
     public const int MaxLevel = 4;
 
     /// <summary>What each level costs, for every track. Level 1 is cheap, level 4 is a real investment.</summary>
@@ -40,10 +38,8 @@ public static class TrainingCatalog
         switch (t)
         {
             case TrainingTrack.Sweep: return "Sweep Training";
-            case TrainingTrack.Directional: return "Directional Sweeping";
             case TrainingTrack.Tactics: return "Tactic Studies";
-            case TrainingTrack.OnIce: return "On-Ice Training";
-            default: return "Cross Training";
+            default: return "On-Ice Training";
         }
     }
 
@@ -51,11 +47,9 @@ public static class TrainingCatalog
     {
         switch (t)
         {
-            case TrainingTrack.Sweep: return "Stronger, fitter, more in sync sweepers.";
-            case TrainingTrack.Directional: return "Carve the rock by tapping one sweeper.";
+            case TrainingTrack.Sweep: return "Carve the rock, and stronger, fitter, more in sync sweepers.";
             case TrainingTrack.Tactics: return "Read what a hit will do.";
-            case TrainingTrack.OnIce: return "See where the rock is going to finish.";
-            default: return "Off-ice work that makes the whole team better.";
+            default: return "See where the rock is going to finish, and how long it will take.";
         }
     }
 
@@ -70,64 +64,42 @@ public static class TrainingCatalog
 
     static readonly TrainingLevel[][] Levels =
     {
-        // SWEEP TRAINING: raises the sweep stats, a different one at each step
+        // SWEEP TRAINING: level 1 unlocks carving with one sweeper, then the sweep stats
         new[]
         {
-            L("Sweep Drills",       "+4 sweep endurance",                 1, endurance: 4),
-            L("Weight Training",    "+5 sweep strength",                  2, strength: 5),
-            L("Synchro Sweeping",   "+5 sweep cohesion",                  3, cohesion: 5),
-            L("Elite Sweep Camp",   "+4 endurance, strength and cohesion", 4, strength: 4, endurance: 4, cohesion: 4),
+            L("Directional Sweeping", "Unlocks carving: tap one sweeper",   1),
+            L("Sweep Drills",       "+4 sweep endurance",                   2, endurance: 4),
+            L("Weight Training",    "+5 sweep strength",                    3, strength: 5),
+            L("Synchro Sweeping",   "+5 sweep cohesion",                    4, cohesion: 5),
         },
-        // DIRECTIONAL SWEEPING: unlocks carving with one sweeper; the level is how hard it pushes (DirectionalStrength)
+        // TACTIC STUDIES: what a hit will do. Level 1 = pulsing crosshairs (the old aim circle), 2 = collision warning line,
+        // 3 = hit arrows (within CollisionErrors degrees), 4 = exact hit arrows
         new[]
         {
-            L("Carving Basics",     "Unlocks carving: tap one sweeper",                      1),
-            L("Edge Control",       "Carving pushes harder",                                2),
-            L("Quick Hands",        "Carving pushes harder again",                          3),
-            L("Master Sweeper",     "Full-strength carving",                                4),
+            L("Film Room",          "Pulsing crosshairs on the aim point",              1),
+            L("Shot Charts",        "Collision warning line",                           2),
+            L("Angle Study",        "Hit arrows, within about 12 degrees",              3),
+            L("Hit Analytics",      "Exact hit arrows",                                 4),
         },
-        // TACTIC STUDIES: the collision indicator, sharper each level (CollisionIndicatorError)
+        // ON-ICE TRAINING: how far the trajectory line reaches (LineReachY), the timing ranges, a little throwing skill
         new[]
         {
-            L("Film Room",          "Collision direction indicator (rough)",                1),
-            L("Shot Charts",        "Collision indicator within about 12 degrees",          2),
-            L("Angle Study",        "Collision indicator within about 6 degrees, plus the red warning line", 3),
-            L("Hit Analytics",      "Exact collision indicator",                            4),
-        },
-        // ON-ICE TRAINING: the aim circle, tighter each level (AimCircleDiameter)
-        new[]
-        {
-            L("Target Practice",    "Aim circle, 1.5 wide",                                 1),
-            L("Release Drills",     "Aim circle, 1.1 wide",                                 2),
-            L("Weight Control",     "Aim circle, 0.75 wide",                                3, weight: 3),
-            L("Pinpoint",           "Aim circle, 0.5 wide",                                 4, weight: 3, aim: 3),
-        },
-        // CROSS TRAINING: off-ice activities; each helps a different part of the game
-        new[]
-        {
-            L("Jogging",            "+4 sweep endurance",                                   1, endurance: 4),
-            L("Yoga",               "+3 sweep strength, +3 sweep endurance",                2, strength: 3, endurance: 3),
-            L("Rowing",             "+4 sweep strength, +4 sweep cohesion",                 3, strength: 4, cohesion: 4),
-            L("Pickleball",         "+4 aim, +4 finesse",                                   4, aim: 4, finesse: 4),
+            L("Target Practice",    "Cycling dots; the line reaches the far hog line",  1),
+            L("Release Drills",     "Split and hog-to-hog timing ranges",               2),
+            L("Weight Control",     "The line reaches halfway to the house, +3 weight", 3, weight: 3),
+            L("Pinpoint",           "The full line, +3 weight, +3 aim",                 4, weight: 3, aim: 3),
         },
     };
 
     /// <summary>
-    /// Player level needed for each level of the tracks that unlock things (carving, the collision indicator, the aim circle):
-    /// you learn them as you progress. The stat tracks are cash only.
+    /// Player level needed to buy the FIRST level of each track (you learn the basics as you progress); the rest of a track is cash only.
     /// </summary>
-    public static readonly int[] UnlockLevelGate = { 2, 4, 6, 8 };
-
-    public static bool IsGated(TrainingTrack t)
-    {
-        return t == TrainingTrack.Directional || t == TrainingTrack.Tactics || t == TrainingTrack.OnIce;
-    }
+    public const int FirstLevelGate = 2;
 
     static TrainingCatalog()
     {
         for (int t = 0; t < Tracks; t++)
-            for (int l = 0; l < MaxLevel; l++)
-                Levels[t][l].requiredLevel = IsGated((TrainingTrack)t) ? UnlockLevelGate[l] : 1;
+            Levels[t][0].requiredLevel = FirstLevelGate;
     }
 
     /// <summary>True if a player of this level may buy the next level of the track (cash is checked separately).</summary>
@@ -190,18 +162,41 @@ public static class TrainingCatalog
         return sum;
     }
 
-    // ---- what the UI-unlocking tracks give (0 = not unlocked) ------------------------------------------------------------
+    // ---- what the tracks unlock (levels are 1-4; 0 = nothing yet) ----------------------------------------------------------
 
-    static readonly float[] DirectionalStrengths = { 0f, 0.5f, 0.75f, 1f, 1.25f };
-    static readonly float[] CollisionErrors = { -1f, 20f, 12f, 6f, 0f };
-    static readonly float[] AimCircles = { 0f, 1.5f, 1.1f, 0.75f, 0.5f };
+    static readonly float[] CollisionErrors = { -1f, -1f, -1f, 12f, 0f };
+    /// <summary>Where the trajectory line stops, as a y on the sheet (hack -25, far hog 0, tee 6.5), by On-Ice level 0-4. Level 0 is the near hog.</summary>
+    static readonly float[] LineReaches = { -16.15f, 0f, 0f, 3.25f, float.PositiveInfinity };
 
-    /// <summary>Scale of the sideways push a one-sweeper tap gives (0 = carving locked).</summary>
-    public static float DirectionalStrength(int[] owned) { return DirectionalStrengths[Owned(owned, TrainingTrack.Directional)]; }
+    /// <summary>Carving with one sweeper is unlocked by Sweep Training level 1; its strength follows the sweep strength stat.</summary>
+    public static bool CarvingUnlocked(int[] owned) { return Owned(owned, TrainingTrack.Sweep) >= 1; }
 
-    /// <summary>How far, in degrees, the shown collision direction may be off (negative = no indicator yet, 0 = exact).</summary>
+    /// <summary>The pulsing aim crosshairs come with Tactic Studies level 1.</summary>
+    public static bool CrosshairsUnlocked(int[] owned) { return Owned(owned, TrainingTrack.Tactics) >= 1; }
+
+    /// <summary>The red collision warning line comes with Tactic Studies level 2.</summary>
+    public static bool CollisionWarningUnlocked(int[] owned) { return Owned(owned, TrainingTrack.Tactics) >= 2; }
+
+    /// <summary>How far, in degrees, the shown hit arrows may be off (negative = no arrows yet, 0 = exact).</summary>
     public static float CollisionIndicatorError(int[] owned) { return CollisionErrors[Owned(owned, TrainingTrack.Tactics)]; }
 
-    /// <summary>Diameter of the aim circle in world units (0 = no aim circle yet).</summary>
-    public static float AimCircleDiameter(int[] owned) { return AimCircles[Owned(owned, TrainingTrack.OnIce)]; }
+    /// <summary>The cycling dots on the trajectory line come with On-Ice Training level 1.</summary>
+    public static bool DotsUnlocked(int[] owned) { return Owned(owned, TrainingTrack.OnIce) >= 1; }
+
+    /// <summary>The split and hog-to-hog timing ranges come with On-Ice Training level 2.</summary>
+    public static bool TimingUnlocked(int[] owned) { return Owned(owned, TrainingTrack.OnIce) >= 2; }
+
+    /// <summary>The y the trajectory line is drawn up to (infinity = the full line).</summary>
+    public static float LineReachY(int[] owned) { return LineReaches[Owned(owned, TrainingTrack.OnIce)]; }
+
+    /// <summary>
+    /// Turns a saved array from the five-track version (sweep, directional, tactics, on-ice, cross) into the current three.
+    /// Directional carving became level 1 of Sweep Training, so the old sweep levels sit one higher; the tactic and on-ice levels carry over.
+    /// </summary>
+    public static int[] MigrateLegacy(int[] saved)
+    {
+        if (saved == null || saved.Length != 5) return saved;
+        int sweep = saved[1] > 0 ? Math.Min(MaxLevel, 1 + Math.Max(0, saved[0])) : 0;
+        return new[] { sweep, Math.Max(0, saved[2]), Math.Max(0, saved[3]) };
+    }
 }

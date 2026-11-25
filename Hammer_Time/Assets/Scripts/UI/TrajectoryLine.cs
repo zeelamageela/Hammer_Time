@@ -36,6 +36,43 @@ public class TrajectoryLine : MonoBehaviour
     public int lookAheadCount;
     int lkAhd;
     List<GameObject> dots;
+
+    // the dots march down the line (DotMarch): where the path they ride is, and how they are spaced along it
+    List<Vector3> dotPath;
+    float[] dotArcs;
+    float dotSpacing, dotTotal;
+    bool dotsMarching;
+
+    /// <summary>Slides the dots along the line (On-Ice Training 1) until the rock is thrown.</summary>
+    void AnimateDots()
+    {
+        if (!dotsMarching || dots == null || dots.Count == 0 || dotPath == null || dotPath.Count < 2) return;
+        float phase = DotMarch.Phase(Time.unscaledTime);
+        for (int k = 0; k < dots.Count; k++)
+        {
+            var d = dots[k];
+            if (d == null) continue;
+            float arc = DotMarch.Arc(k, phase, dotSpacing, dotTotal);
+            int idx;
+            d.transform.position = DotMarch.PointAt(dotPath, dotArcs, arc, out idx);
+            float speed = trajectorySpeed != null && idx < trajectorySpeed.Count ? trajectorySpeed[idx] : 5f;
+            d.transform.localScale = Vector3.one * Mathf.Lerp(0.35f * 0.25f, 0.35f, Mathf.Clamp01(speed / 15f));
+            var sr = d.GetComponent<SpriteRenderer>();
+            if (sr != null) { var c = knobColour; c.a = DotMarch.Fade(arc, dotTotal); sr.color = c; }
+        }
+    }
+
+    void BeginDotMarch(List<Vector3> pos, int count)
+    {
+        dotPath = pos.GetRange(0, Mathf.Min(count, pos.Count));
+        dotArcs = DotMarch.Arcs(dotPath);
+        dotTotal = dotArcs.Length > 0 ? dotArcs[dotArcs.Length - 1] : 0f;
+        dotSpacing = dots.Count > 0 ? dotTotal / dots.Count : 0f;
+        dotsMarching = dotTotal > 0.5f && dots.Count > 1;
+        // The trajectory is redrawn (dots destroyed and made again) whenever the aim changes, so put the new dots straight at their place in
+        // the cycle instead of their starting spots; otherwise every redraw would snap them back and they would never seem to move.
+        AnimateDots();
+    }
     List<Vector2> points;
     
     // Line renderer for actual rock path
@@ -139,10 +176,15 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
+    const bool ShowHorizontalGuide = false;   // the sideways guide across the ice is gone: the oval at the aim point shows the distance
+    const float GuideLineAlpha = AimFuzzBands.AimAidAlpha;   // the thin guide lines match the aim circle, cone and fuzz patch
+    AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
+
     // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
     readonly System.Random fuzzRng = new System.Random();
     Vector2 fuzzError;
     int fuzzRockIndex = -1;
+    float fuzzRolledAim = -1f, fuzzRolledWeight = -1f;   // the skills the current roll was made at
     bool fuzzActive;
     Vector2 fuzzLauncher;
     Vector2 fuzzEnd;
@@ -154,26 +196,8 @@ public class TrajectoryLine : MonoBehaviour
 
     // ---- training (see TrainingAids): which aids the player has earned, and how sharp they are ----
 
-    /// <summary>The aim circle is on in the settings AND earned (On-Ice Training).</summary>
-    bool AimCircleShown { get { return aimCircleVisible && TrainingAids.AimCircleUnlocked; } }
-
-    float aimCircleBaseDiameter;   // world width of the aim circle at scale 1, measured once
-
-    /// <summary>On-Ice Training narrows the aim circle level by level.</summary>
-    void SizeAimCircle()
-    {
-        float wanted = TrainingAids.AimCircleDiameter;
-        if (wanted <= 0f || aimCircle == null) return;
-        var sr = aimCircle.GetComponent<SpriteRenderer>();
-        if (aimCircleBaseDiameter <= 0f)
-        {
-            float scale = Mathf.Max(0.0001f, aimCircle.transform.localScale.x);
-            aimCircleBaseDiameter = sr.sprite != null ? sr.sprite.bounds.size.x : sr.bounds.size.x / scale;
-        }
-        if (aimCircleBaseDiameter <= 0f) return;
-        float s = wanted / aimCircleBaseDiameter;
-        aimCircle.transform.localScale = new Vector3(s, s, aimCircle.transform.localScale.z);
-    }
+    /// <summary>The aim marker (to become the pulsing crosshairs) is on in the settings AND earned (Tactic Studies level 1).</summary>
+    bool AimCircleShown { get { return aimCircleVisible && TrainingAids.CrosshairsUnlocked; } }
 
     // Tactic Studies: the collision arrows are off by up to a few degrees, rolled once per rock (like the aim fuzz) so they don't jitter.
     int collisionErrorRockIndex = -1;
@@ -201,11 +225,14 @@ public class TrajectoryLine : MonoBehaviour
         if (!AimFuzz.Enabled || aiTurn) return;
         if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame) return;
 
-        if (fuzzRockIndex != gm.rockCurrent)
+        // one roll per rock, but a change of skill (a quick-test slider, new gear) rolls again so the new skill shows up straight away
+        float aim = GetShooterAimAccuracy();
+        float weight = GetShooterWeightAccuracy();
+        if (fuzzRockIndex != gm.rockCurrent || !Mathf.Approximately(aim, fuzzRolledAim) || !Mathf.Approximately(weight, fuzzRolledWeight))
         {
-            float aim = GetShooterAimAccuracy();
-            float weight = GetShooterWeightAccuracy();
             fuzzError = AimFuzz.Roll(aim, weight, fuzzRng);
+            fuzzRolledAim = aim;
+            fuzzRolledWeight = weight;
             fuzzRockIndex = gm.rockCurrent;
             Debug.Log($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
         }
@@ -247,6 +274,7 @@ public class TrajectoryLine : MonoBehaviour
         Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
         TrainingAids.Refresh();
+        bands = gameObject.AddComponent<AimFuzzBands>();
         lr.enabled = false;
         CareerManager cm = FindObjectOfType<CareerManager>();
         if (cm != null && cm.cStats != null)
@@ -368,6 +396,8 @@ public class TrajectoryLine : MonoBehaviour
 
     private void Update()
     {
+        AnimateDots();
+
         // CRITICAL FIX: Add comprehensive null checks
         if (gm == null || gm.rockList == null || gm.rockList.Count == 0)
             return;
@@ -451,6 +481,7 @@ public class TrajectoryLine : MonoBehaviour
     // Public method to clear trajectory visualization (called when any turn starts)
     public void ClearTrajectory()
     {
+        dotsMarching = false;
         // Clear dots
         if (dots.Count != 0)
         {
@@ -514,6 +545,8 @@ public class TrajectoryLine : MonoBehaviour
             collisionWarningLine.enabled = false;
         }
         
+        if (bands != null) bands.Hide();
+
         // CRITICAL FIX: Also hide the main trajectory line renderer
         lr.enabled = false;
     }
@@ -684,11 +717,14 @@ public class TrajectoryLine : MonoBehaviour
             }
             
             // Set line renderer
-            lr.positionCount = pos.Count;
-            for (int i = 0; i < pos.Count; i++)
+            // The line only reaches as far as On-Ice Training allows (to the near hog line with none; see TrainingCatalog.LineReachY)
+            int lineCount = TrainingAids.CountWithinReach(pos, TrainingAids.LineReachY);
+            lr.positionCount = lineCount;
+            for (int i = 0; i < lineCount; i++)
             {
                 lr.SetPosition(i, pos[i]);
             }
+
             
             // Debug.Log($"Physics simulation complete - {pos.Count} points, collision: {collisionInfo.hasCollision}");
             
@@ -834,19 +870,21 @@ public class TrajectoryLine : MonoBehaviour
         // Draw dots along trajectory (only if visibility enabled)
         Debug.Log($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}, visible={trajectoryDotsVisible}");
         
-        if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible)
+        if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible && TrainingAids.DotsUnlocked)
         {
             // Draw dots all the way through trajectory (including to collision point)
-            int maxDotIndex = pos.Count;
+            // ...but only as far as the trajectory line reaches, with the same density of dots
+            int maxDotIndex = TrainingAids.CountWithinReach(pos, TrainingAids.LineReachY);
+            int targetDots = Mathf.Max(3, Mathf.RoundToInt(dotCount * (maxDotIndex / (float)pos.Count)));
             
-            int counter = Mathf.Max(1, maxDotIndex / dotCount);
+            int counter = Mathf.Max(1, maxDotIndex / targetDots);
             
             Debug.Log($"Drawing {dotCount} dots from {maxDotIndex} trajectory points (every {counter} points)");
             
             // Ensure we weight dots all the way to the end
             for (int i = 1; i < maxDotIndex; i += counter)
             {
-                if (dots.Count >= dotCount) break; // Limit to dotCount
+                if (dots.Count >= targetDots) break; // Limit to the dots this reach gets
                 
                 int pointIndex = i;
                 Vector2 dotPos = pos[pointIndex];
@@ -892,6 +930,7 @@ public class TrajectoryLine : MonoBehaviour
                 dots.Add(lastDot);
             }
             
+            BeginDotMarch(pos, maxDotIndex);
             Debug.Log($"Actually created {dots.Count} dot GameObjects");
         }
         else
@@ -907,23 +946,12 @@ public class TrajectoryLine : MonoBehaviour
         }
 
         // Position aim circle at ideal endpoint (as if no rocks were there)
-        if (aimCircle != null && AimCircleShown)
-        {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = true;
-            SizeAimCircle();
-            
-            // Hide alternative aim lines when aim circle is ON
-            if (aimVerticalLine != null) aimVerticalLine.enabled = false;
-            if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
-        }
-        else
-        {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = false;
-            
-            // Show alternative aim lines when aim circle is OFF
-            UpdateAlternativeAimVisualization();
-        }
+        // The old aim circle sprite stays off: the aim circle is now drawn by AimFuzzBands (a true circle with a thick solid edge) and the
+        // guide lines, fuzz patch and cone are drawn alongside it. The object is still moved to the aim point because the lines read its position.
+        if (aimCircle != null) aimCircle.GetComponent<SpriteRenderer>().enabled = false;
+        UpdateAlternativeAimVisualization();
 
+        List<Vector2> coneSource = null;   // the line the cone follows: the ideal path, which ends at the aim point
         if (usePhysicsSimulation && trajectorySimulator != null)
         {
             // FIXED: Simulate trajectory WITHOUT rocks to get ideal target position
@@ -958,6 +986,7 @@ public class TrajectoryLine : MonoBehaviour
             );
 
             TrajectorySimulator.CollisionInfo idealInfo = trajectorySimulator.GetCollisionInfo();
+            coneSource = idealPath;
 
             if (idealInfo.finalPosition != Vector2.zero)
             {
@@ -973,12 +1002,36 @@ public class TrajectoryLine : MonoBehaviour
             // Fallback to last trajectory point (Bezier mode)
             aimCircle.transform.position = pos[pos.Count - 1];
         }
+        DrawFuzzAids(coneSource, pos);
         aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
         CameraManager camManager = FindObjectOfType<CameraManager>();
         camManager.Trajectory();
     }
     
+    /// <summary>
+    /// The fuzz aids, at the AIM POINT (the aim circle object, where the rock is expected to finish after its curl, not where the straight
+    /// guide lines cross): the glowing oval and the cone of light that runs from the hack and meets its sides.
+    /// </summary>
+    void DrawFuzzAids(List<Vector2> ideal, List<Vector3> shownPath)
+    {
+        if (bands == null || aiTurn || aimCircle == null) return;
+        float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
+        Vector2 aimPoint = aimCircle.transform.position;
+        bands.crosshairs = TrainingAids.CrosshairsUnlocked;   // Tactic Studies 1
+        bands.tint = AimFuzzBands.ColdBlue;   // added over the ice as light; the same cold blue for every team
+
+        // the oval first (the cone is sized to it), then the cone that runs into it
+        bands.ShowPatch(aimPoint, AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
+
+        var path = new List<Vector3>();
+        if (ideal != null)
+            foreach (var p in ideal) { Vector2 shown = FuzzWarp(p); path.Add(new Vector3(shown.x, shown.y, 0f)); }
+        else if (shownPath != null)
+            path.AddRange(shownPath);
+        bands.ShowCone(path, aimPoint, aimNow);
+    }
+
     // Helper method to recreate the simulator when settings change
     private void UpdateSimulator()
     {
@@ -990,6 +1043,8 @@ public class TrajectoryLine : MonoBehaviour
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         fuzzRockIndex = -1; // the next rock gets its own roll
+        dotsMarching = false;   // the dots stay where they are while the rock runs
+        if (bands != null) bands.Hide();
         //lr.enabled = true;
         lr.startWidth = 0.075f;
         lr.endWidth = 0.075f;
@@ -1135,7 +1190,7 @@ public class TrajectoryLine : MonoBehaviour
         // Toggle between aim circle and alternative visualization
         if (aimCircle != null)
         {
-            aimCircle.GetComponent<SpriteRenderer>().enabled = visible;
+            aimCircle.GetComponent<SpriteRenderer>().enabled = false;   // AimFuzzBands draws the circle now (see DrawTrajectory)
         }
         
         // Update visualization if currently aiming
@@ -1146,18 +1201,7 @@ public class TrajectoryLine : MonoBehaviour
             
             if (currentRock != null && currentRockInfo != null && !currentRockInfo.released)
             {
-                if (visible)
-                {
-                    // Show aim circle, hide alternative lines
-                    if (aimVerticalLine != null) aimVerticalLine.enabled = false;
-                    if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
-                    if (aimCurlLine != null) aimCurlLine.enabled = false;
-                }
-                else
-                {
-                    // Hide aim circle, show alternative lines
-                    UpdateAlternativeAimVisualization();
-                }
+                UpdateAlternativeAimVisualization();
             }
         }
     }
@@ -1258,31 +1302,9 @@ public class TrajectoryLine : MonoBehaviour
             verticalLineBottomY = horizontalLineY + 0.4f;
 
 
-        // SKILL-BASED LINE WIDTH
-        // Get shooter's AIM accuracy (X-axis) from CareerManager (for player) or CharacterStats (for AI)
-        // Aim skill controls lateral positioning = line width represents X-axis precision
-        float aimSkill = 50f; // Default mid-skill
-        
-        // Check if this is the player's rock or AI rock
-        CareerManager cm = FindFirstObjectByType<CareerManager>();
-        TeamManager teamManager = FindFirstObjectByType<TeamManager>();
-        
-        if (cm != null && cm.cStats != null)
-        {
-            // Player rock - use AIM accuracy (lateral positioning skill)
-            aimSkill = cm.cStats.aimAccuracy;
-        }
-        else if (teamManager != null)
-        {
-            // AI rock - try to get current team's average skill
-            // Fall back to default 50 if not available
-            aimSkill = 50f;
-        }
-        
-        // Map AIM skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
-        // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
-        float lineWidth = Mathf.Lerp(0.10f, 0.04f, aimSkill / 100f);
-        
+        // The lines themselves are thin and crisp; how far to trust them is shown by the soft bands drawn around them (AimFuzzBands)
+        float lineWidth = 0.05f;
+
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // Always shows ideal aim position (no collision warnings)
         if (aimVerticalLine != null && guidelinesVisible)
@@ -1300,7 +1322,7 @@ public class TrajectoryLine : MonoBehaviour
             
             // Color: Always greyish-black (no red collision warning)
             // Greyish-black: #3A3A3A (dark grey, 23% brightness)
-            Color lineColor = new Color(0.23f, 0.23f, 0.23f, 1f);
+            Color lineColor = new Color(0.23f, 0.23f, 0.23f, GuideLineAlpha);
             
             aimVerticalLine.startColor = lineColor;
             aimVerticalLine.endColor = lineColor;
@@ -1308,7 +1330,7 @@ public class TrajectoryLine : MonoBehaviour
         
         // HORIZONTAL LINE: Fixed width across ice at trajectory endpoint Y
         // Shows weight (distance shot will travel) - TEAM COLOR
-        if (aimHorizontalLine != null && guidelinesVisible)
+        if (aimHorizontalLine != null && guidelinesVisible && ShowHorizontalGuide)
         {
             // Fixed X positions spanning ice width
             float iceLeftEdge = -2.23f;  // Tunable - left edge of ice
@@ -1325,6 +1347,7 @@ public class TrajectoryLine : MonoBehaviour
             
             // TEAM COLOR (shooting knob color)
             Color lineColor = shootKnob.GetComponent<SpriteRenderer>().color;
+            lineColor.a = GuideLineAlpha;
             aimHorizontalLine.startColor = lineColor;
             aimHorizontalLine.endColor = lineColor;
         }
@@ -1434,7 +1457,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use WEIGHT accuracy (distance control skill)
-            return Mathf.Min(100f, cm.cStats.weightAccuracy + cm.TrainingBonus.weightAccuracy);   // + training
+            return Mathf.Min(100f, cm.cStats.weightAccuracy + cm.SkillBonus.weightAccuracy);   // + gear and training
         }
         else if (teamManager != null)
         {
@@ -1476,13 +1499,6 @@ public class TrajectoryLine : MonoBehaviour
         
         // Only show if toggle is ON
         if (!collisionWarningVisible || !TrainingAids.CollisionWarningUnlocked)
-        {
-            collisionWarningLine.enabled = false;
-            return;
-        }
-        
-        // Only show when aim circle is OFF (guide lines mode)
-        if (AimCircleShown)
         {
             collisionWarningLine.enabled = false;
             return;
@@ -1531,7 +1547,7 @@ public class TrajectoryLine : MonoBehaviour
         if (cm != null && cm.cStats != null)
         {
             // Player rock - use AIM accuracy (lateral positioning skill)
-            return Mathf.Min(100f, cm.cStats.aimAccuracy + cm.TrainingBonus.aimAccuracy);   // + training
+            return Mathf.Min(100f, cm.cStats.aimAccuracy + cm.SkillBonus.aimAccuracy);   // + gear and training
         }
         else if (teamManager != null)
         {

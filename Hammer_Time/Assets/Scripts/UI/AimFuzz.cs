@@ -6,15 +6,15 @@ using UnityEngine;
 /// re-aiming cannot re-roll it: the line's end is off by (sideways, long/short) metres, and the whole line bends to match -
 /// nothing at the hack, the full error at the end. A shooter with skill 100 gets an exact line.
 ///
-/// The error sizes are the AI's draw-shot spreads (AI_Target: 15 cm sideways and 90 cm in weight at skill 0, shrinking with the
-/// square of the missing skill), read as metres at the end of the line, so a skill point means the same thing for both sides.
+/// The error sizes started as the AI draw-shot spreads (AI_Target: 15 cm sideways, 90 cm in weight); sideways is now 50 cm at skill 0 (so the oval is wide enough to read). Both shrink with the
+/// square of the missing skill, read as metres at the end of the line, so a skill point means the same thing for both sides.
 /// </summary>
 public static class AimFuzz
 {
     /// <summary>Master switch (tester option; the tutorial is always exact).</summary>
     public static bool Enabled = true;
 
-    public const float AimSigmaAtZeroSkill = 0.15f;
+    public const float AimSigmaAtZeroSkill = 0.5f;
     public const float WeightSigmaAtZeroSkill = 0.9f;
     /// <summary>The roll is cut off at this many sigmas so a freak roll cannot send the line somewhere silly.</summary>
     public const float MaxSigmas = 2f;

@@ -58,6 +58,9 @@ public class TrainingManager : MonoBehaviour
         float cash = c != null ? c.cash : 0f;
         int playerLevel = c != null ? c.level : 1;
 
+        for (int i = TrainingCatalog.Tracks; rows != null && i < rows.Length; i++)
+            if (rows[i].button != null) rows[i].button.gameObject.SetActive(false);   // the screen was laid out with more rows once
+
         for (int i = 0; rows != null && i < rows.Length && i < TrainingCatalog.Tracks; i++)
         {
             var track = (TrainingTrack)i;
