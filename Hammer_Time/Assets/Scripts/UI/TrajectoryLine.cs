@@ -139,6 +139,8 @@ public class TrajectoryLine : MonoBehaviour
     private LineRenderer collisionWarningLine;
     private GameObject collisionWarningLineObj;
 
+    AimFuzzBands bands;   // how the fuzz is shown: the guide bands and the cone (see AimFuzzBands)
+
     // Skill fuzz (see AimFuzz): one error per thrown rock, applied to everything drawn for the player's aim
     readonly System.Random fuzzRng = new System.Random();
     Vector2 fuzzError;
@@ -229,6 +231,7 @@ public class TrajectoryLine : MonoBehaviour
         Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
         TrainingAids.Refresh();
+        bands = gameObject.AddComponent<AimFuzzBands>();
         lr.enabled = false;
         CareerManager cm = FindObjectOfType<CareerManager>();
         if (cm != null && cm.cStats != null)
@@ -496,6 +499,8 @@ public class TrajectoryLine : MonoBehaviour
             collisionWarningLine.enabled = false;
         }
         
+        if (bands != null) bands.Hide();
+
         // CRITICAL FIX: Also hide the main trajectory line renderer
         lr.enabled = false;
     }
@@ -670,6 +675,13 @@ public class TrajectoryLine : MonoBehaviour
             for (int i = 0; i < pos.Count; i++)
             {
                 lr.SetPosition(i, pos[i]);
+            }
+
+            // The cone of doubt along the line: always there for the player, wider and shimmerier the less skilled the shooter
+            if (bands != null && !aiTurn)
+            {
+                float aimSkillNow = GetShooterAimAccuracy();
+                bands.ShowCone(pos, AimFuzzBands.AimHalfWidth(aimSkillNow), aimSkillNow);
             }
             
             // Debug.Log($"Physics simulation complete - {pos.Count} points, collision: {collisionInfo.hasCollision}");
@@ -896,6 +908,7 @@ public class TrajectoryLine : MonoBehaviour
             // Hide alternative aim lines when aim circle is ON
             if (aimVerticalLine != null) aimVerticalLine.enabled = false;
             if (aimHorizontalLine != null) aimHorizontalLine.enabled = false;
+            if (bands != null) bands.HideGuides();
         }
         else
         {
@@ -971,6 +984,7 @@ public class TrajectoryLine : MonoBehaviour
     {
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         fuzzRockIndex = -1; // the next rock gets its own roll
+        if (bands != null) bands.Hide();
         //lr.enabled = true;
         lr.startWidth = 0.075f;
         lr.endWidth = 0.075f;
@@ -1239,31 +1253,9 @@ public class TrajectoryLine : MonoBehaviour
             verticalLineBottomY = horizontalLineY + 0.4f;
 
 
-        // SKILL-BASED LINE WIDTH
-        // Get shooter's AIM accuracy (X-axis) from CareerManager (for player) or CharacterStats (for AI)
-        // Aim skill controls lateral positioning = line width represents X-axis precision
-        float aimSkill = 50f; // Default mid-skill
-        
-        // Check if this is the player's rock or AI rock
-        CareerManager cm = FindFirstObjectByType<CareerManager>();
-        TeamManager teamManager = FindFirstObjectByType<TeamManager>();
-        
-        if (cm != null && cm.cStats != null)
-        {
-            // Player rock - use AIM accuracy (lateral positioning skill)
-            aimSkill = cm.cStats.aimAccuracy;
-        }
-        else if (teamManager != null)
-        {
-            // AI rock - try to get current team's average skill
-            // Fall back to default 50 if not available
-            aimSkill = 50f;
-        }
-        
-        // Map AIM skill (0-100) to line width (0.15 thick for beginners, 0.04 thin for pros)
-        // Skill 0 = 0.15 (thick), Skill 100 = 0.04 (thin)
-        float lineWidth = Mathf.Lerp(0.10f, 0.04f, aimSkill / 100f);
-        
+        // The lines themselves are thin and crisp; how far to trust them is shown by the soft bands drawn around them (AimFuzzBands)
+        float lineWidth = 0.05f;
+
         // VERTICAL LINE: Shows where rock would go WITHOUT CURL (straight-line aim)
         // Always shows ideal aim position (no collision warnings)
         if (aimVerticalLine != null && guidelinesVisible)
@@ -1310,6 +1302,14 @@ public class TrajectoryLine : MonoBehaviour
             aimHorizontalLine.endColor = lineColor;
         }
         
+        if (bands != null && guidelinesVisible && !aiTurn)
+        {
+            float aimNow = GetShooterAimAccuracy(), weightNow = GetShooterWeightAccuracy();
+            bands.ShowGuides(verticalLineX, verticalLineTopY, verticalLineBottomY, horizontalLineY, -2.23f, 2.25f,
+                             AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow,
+                             shootKnob.GetComponent<SpriteRenderer>().color);
+        }
+
         // CURL LINE: Shows turn and curl from vertical line to aim circle
         // ENHANCED with accuracy visualization (width, offset, gradient)
         if (aimCurlLine != null && aimCircle != null && curlLineVisible)
