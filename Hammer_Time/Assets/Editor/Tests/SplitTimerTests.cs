@@ -30,24 +30,24 @@ public class SplitTimerTests
     [Test]
     public void SplitsAddUpToTheWholeTrip()
     {
-        // a rock at 9 m/s crossing the hack, near hog and far hog: the two clocks must be the two gaps between the crossings
+        // a rock at 9 m/s crossing the back line, near hog and far hog: the two clocks must be the two gaps between the crossings
         float v = 9f;
-        float tHack = 0.0137f;
-        float tHog = tHack + (SplitTimer.NearHogY - SplitTimer.HackY) / v;
+        float tBack = 0.0137f;
+        float tHog = tBack + (SplitTimer.NearHogY - SplitTimer.BackLineY) / v;
         float tFar = tHog + (SplitTimer.FarHogY - SplitTimer.NearHogY) / v;
         // sample at 0.02 s like physics does
         float Cross(float line)
         {
-            float prevY = SplitTimer.HackY - 3f, prevT = tHack - 3f / v;
+            float prevY = SplitTimer.BackLineY - 3f, prevT = tBack - 3f / v;
             for (float t = prevT + 0.02f; t < 10f; t += 0.02f)
             {
-                float y = SplitTimer.HackY + (t - tHack) * v;
+                float y = SplitTimer.BackLineY + (t - tBack) * v;
                 if (prevY < line && y >= line) return SplitTimer.CrossingTime(prevY, prevT, y, t, line);
                 prevY = y; prevT = t;
             }
             return -1f;
         }
-        Assert.AreEqual(tHog - tHack, Cross(SplitTimer.NearHogY) - Cross(SplitTimer.HackY), 1e-4f);
+        Assert.AreEqual(tHog - tBack, Cross(SplitTimer.NearHogY) - Cross(SplitTimer.BackLineY), 1e-4f);
         Assert.AreEqual(tFar - tHog, Cross(SplitTimer.FarHogY) - Cross(SplitTimer.NearHogY), 1e-4f);
     }
 }

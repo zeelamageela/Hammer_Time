@@ -348,8 +348,9 @@ Sweeper animations should visually reflect the equipped handle, always with team
 
 ### Working list (next up, in order)
 
-1. **Timing readout (On-Ice 2):** split + hog-to-hog time ranges, top-left. Confirm the split definition first.
-2. **Check the collision aids** (Tactics 2 warning line, 3 hit arrows ±12°, 4 exact) with the new oval, using the Quick Test `tacticsLevel` slider.
+1. **Timing readout and weight call:** done and played (top-left panel, prefab `Resources/TimingPanel`, names in `WeightNames.cs`). Still to confirm:
+   unswept throws land inside the ranges, and the full EditMode run in the editor.
+2. **Collision aids:** fixed and played (the fuzzed aim is a real throw, so line, contact, warning line and arrows agree). Tune arrows in `HitArrow.cs`.
 3. **Design gaps:** give cohesion (sweep sync) and finesse (end-of-sweep touch) a job or drop them from the tiers; lower prices (try training $500/$1,000/$2,000/$4,000; cap gear at about 20 points per top item; tune against weekly income); scrap sponsor stat bonuses and set availability rules (answer the questions in `SPONSOR_AUDIT.md`).
 4. **Training screen layout** for 3 rows (scene was built for 5; `TrainingManager` hides the extra rows).
 5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (drop the thumb circle, widen the 0.34 cap behind a switch); consider removing the Classic physics mode.

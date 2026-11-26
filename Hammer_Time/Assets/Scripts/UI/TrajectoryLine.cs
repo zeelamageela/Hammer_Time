@@ -186,13 +186,7 @@ public class TrajectoryLine : MonoBehaviour
     int fuzzRockIndex = -1;
     float fuzzRolledAim = -1f, fuzzRolledWeight = -1f;   // the skills the current roll was made at
     bool fuzzActive;
-    Vector2 fuzzLauncher;
-    Vector2 fuzzEnd;
-
-    Vector2 FuzzWarp(Vector2 p)
-    {
-        return fuzzActive ? AimFuzz.Warp(p, fuzzLauncher, fuzzEnd, fuzzError) : p;
-    }
+    TrajectorySimulator.CollisionInfo shotCollision;   // the hit (if any) of the aim as drawn: arrows and warning line agree with it
 
     // ---- training (see TrainingAids): which aids the player has earned, and how sharp they are ----
 
@@ -218,12 +212,15 @@ public class TrajectoryLine : MonoBehaviour
         return new Vector2(direction.x * c - direction.y * sn, direction.x * sn + direction.y * c);
     }
 
-    /// <summary>Starts a draw: decides whether this aim gets fuzzed, rolls the error once per rock, and finds the line's true end.</summary>
-    void BeginFuzz(Vector2 launcherPos, Vector2 initialVelocity, bool isInTurn)
+    /// <summary>
+    /// The throw to DRAW for this aim (weight velocity). With skill fuzz on, one error is rolled per rock and the drawn throw is the one
+    /// that ends that far from the true one (AimFuzz.BendThrow); otherwise it is the true throw.
+    /// </summary>
+    Vector2 FuzzedVelocity(Vector2 launcherPos, Vector2 initialVelocity, bool isInTurn)
     {
         fuzzActive = false;
-        if (!AimFuzz.Enabled || aiTurn) return;
-        if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame) return;
+        if (!AimFuzz.Enabled || aiTurn) return initialVelocity;
+        if (TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame) return initialVelocity;
 
         // one roll per rock, but a change of skill (a quick-test slider, new gear) rolls again so the new skill shows up straight away
         float aim = GetShooterAimAccuracy();
@@ -236,13 +233,12 @@ public class TrajectoryLine : MonoBehaviour
             fuzzRockIndex = gm.rockCurrent;
             Debug.Log($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
         }
-        if (fuzzError == Vector2.zero) return;
+        if (fuzzError == Vector2.zero) return initialVelocity;
 
-        List<Vector2> ideal = trajectorySimulator.SimulateTrajectory(launcherPos, initialVelocity, isInTurn, 250, new List<GameObject>(), forPlayerPreview: true);
-        if (ideal.Count == 0) return;
-        fuzzLauncher = launcherPos;
-        fuzzEnd = ideal[ideal.Count - 1];
         fuzzActive = true;
+        RockPhysicsProfile p = RockPhysicsSettings.Current;
+        Vector2 bent = AimFuzz.BendThrow(launcherPos, p.LaunchVelocityFromWeightVelocity(initialVelocity), isInTurn, fuzzError, p);
+        return p.WeightVelocityFromLaunchVelocity(bent);
     }
 
     void Start()
@@ -482,6 +478,7 @@ public class TrajectoryLine : MonoBehaviour
     public void ClearTrajectory()
     {
         dotsMarching = false;
+        shotCollision = default;
         // Clear dots
         if (dots.Count != 0)
         {
@@ -607,6 +604,7 @@ public class TrajectoryLine : MonoBehaviour
             lr.SetPosition(0, launcher.transform.position);
             lr.SetPosition(1, launcher.transform.position);
             Debug.Log("Spring distance too small, not drawing trajectory");
+            TimingPanel.ClearAim();
             return;
         }
 
@@ -690,13 +688,13 @@ public class TrajectoryLine : MonoBehaviour
                 }
             }
             
-            BeginFuzz(launcherPos, initialVelocity, isInTurn);
+            Vector2 shownVelocity = FuzzedVelocity(launcherPos, initialVelocity, isInTurn);
 
             // Simulate the trajectory with collision detection
             // CRITICAL: Pass forPlayerPreview = true so curl matches visual expectation
             List<Vector2> simulatedPath = trajectorySimulator.SimulateTrajectory(
                 launcherPos,
-                initialVelocity,
+                shownVelocity,
                 isInTurn,
                 250,
                 rocksInPlay,
@@ -706,14 +704,14 @@ public class TrajectoryLine : MonoBehaviour
             // Get collision info and speeds
             TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
             trajectorySpeed = trajectorySimulator.GetTrajectorySpeed();
-            if (simulatedPath.Count > 0)
+            shotCollision = collisionInfo;
+            if (simulatedPath.Count > 0 && !fuzzActive)   // the audit compares a TRUE preview with where the rock really goes
                 ShotAudit.RecordPreview(initialVelocity, isInTurn, simulatedPath[simulatedPath.Count - 1], collisionInfo.hasCollision);
 
             // Convert to Vector3 for rendering
             foreach (Vector2 point in simulatedPath)
             {
-                Vector2 shown = FuzzWarp(point);
-                pos.Add(new Vector3(shown.x, shown.y, 0f));
+                pos.Add(new Vector3(point.x, point.y, 0f));
             }
             
             // Set line renderer
@@ -739,7 +737,7 @@ public class TrajectoryLine : MonoBehaviour
                 {
                     currentCollisionMarker = Instantiate(
                         collisionMarker,
-                        (Vector3)FuzzWarp(collisionInfo.collisionPoint),
+                        (Vector3)collisionInfo.collisionPoint,
                         Quaternion.identity
                     );
                     currentCollisionMarker.transform.parent = transform;
@@ -758,64 +756,11 @@ public class TrajectoryLine : MonoBehaviour
                     Debug.LogWarning("[TrajectoryLine] collisionMarker prefab is NULL! Assign it in Inspector");
                 }
                 
-                // DIRECTIONAL ARROWS: Show ACTUAL deflection directions from collision
-                // Orange arrow: Thrown rock's DEFLECTION direction (post-collision velocity)
-                // Yellow arrow: Hit rock's EXIT direction (post-collision velocity)
-                
-                float arrowLength = 0.8f; // REDUCED: Smaller arrows for less clutter (was 1.5f)
-                
-                // Draw thrown rock's DEFLECTION direction (ORANGE ARROW)
-                // Use the VELOCITY at collision point, not the path points
-                if (collisionInfo.collisionIndex > 0 && collisionInfo.thrownRockPostCollisionPath.Count >= 2)
-                {
-                    Vector2 collisionPoint = FuzzWarp(collisionInfo.collisionPoint);
-
-                    // Calculate velocity from first 2 points of simulated path
-                    // These points are TIME_STEP apart (0.05s), so velocity = delta / time
-                    Vector2 firstPoint = collisionInfo.thrownRockPostCollisionPath[0]; // Collision point
-                    Vector2 secondPoint = collisionInfo.thrownRockPostCollisionPath[1]; // Next point
-                    
-                    // Direction is from first point to second point (actual deflection)
-                    Vector2 deflectionDirection = CollisionArrowError((secondPoint - firstPoint).normalized);
-                    Vector2 arrowEnd = collisionPoint + deflectionDirection * arrowLength;
-                    
-                    postCollisionLine.enabled = true;
-                    postCollisionLine.positionCount = 2;
-                    postCollisionLine.SetPosition(0, new Vector3(collisionPoint.x, collisionPoint.y, 0f));
-                    postCollisionLine.SetPosition(1, new Vector3(arrowEnd.x, arrowEnd.y, 0f));
-                    
-                    Debug.Log($"[Collision Viz] Shooter DEFLECTION arrow (ORANGE): {collisionPoint} ? {arrowEnd} (angle: {Mathf.Atan2(deflectionDirection.y, deflectionDirection.x) * Mathf.Rad2Deg:F1}°)");
-                    Debug.Log($"[Collision Viz] Orange line enabled: {postCollisionLine.enabled}, material: {postCollisionLine.material != null}, color: {postCollisionLine.startColor}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[Collision Viz] Cannot weight ORANGE arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.thrownRockPostCollisionPath.Count}");
-                }
-                
-                // Draw hit rock's EXIT direction (YELLOW ARROW)
-                // Use the VELOCITY at impact, not continuation
-                if (collisionInfo.collisionIndex > 0 && collisionInfo.hitRockPostCollisionPath.Count >= 2)
-                {
-                    // Hit rock starts at its original position (target rock position)
-                    Vector2 hitRockStart = FuzzWarp(collisionInfo.hitRockPostCollisionPath[0]);
-                    Vector2 hitRockSecond = collisionInfo.hitRockPostCollisionPath[1];
-                    
-                    // Direction is the exit velocity of the hit rock
-                    Vector2 exitDirection = CollisionArrowError((hitRockSecond - hitRockStart).normalized);
-                    Vector2 hitArrowEnd = hitRockStart + exitDirection * arrowLength;
-                    
-                    hitRockPostCollisionLine.enabled = true;
-                    hitRockPostCollisionLine.positionCount = 2;
-                    hitRockPostCollisionLine.SetPosition(0, new Vector3(hitRockStart.x, hitRockStart.y, 0f));
-                    hitRockPostCollisionLine.SetPosition(1, new Vector3(hitArrowEnd.x, hitArrowEnd.y, 0f));
-                    
-                    Debug.Log($"[Collision Viz] Hit rock EXIT arrow (YELLOW): {hitRockStart} ? {hitArrowEnd} (angle: {Mathf.Atan2(exitDirection.y, exitDirection.x) * Mathf.Rad2Deg:F1}°)");
-                    Debug.Log($"[Collision Viz] Yellow line enabled: {hitRockPostCollisionLine.enabled}, material: {hitRockPostCollisionLine.material != null}, color: {hitRockPostCollisionLine.startColor}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[Collision Viz] Cannot weight YELLOW arrow - collisionIndex: {collisionInfo.collisionIndex}, path count: {collisionInfo.hitRockPostCollisionPath.Count}");
-                }
+                // Hit arrows: each starts on its rock (the shooter where it makes contact, the struck rock where it sits), points the
+                // way that rock leaves the hit, and is as long as it will travel. A rock that hardly moves gets none.
+                RockPhysicsProfile law = RockPhysicsSettings.Current;
+                DrawHitArrow(postCollisionLine, collisionInfo.shooterCenterAtCollision, collisionInfo.shooterVelocityAfter, law);
+                DrawHitArrow(hitRockPostCollisionLine, collisionInfo.hitRockCenter, collisionInfo.hitRockVelocityAfter, law);
             }
             else
             {
@@ -979,10 +924,12 @@ public class TrajectoryLine : MonoBehaviour
                 maxVelocity
             );
 
+            Vector2 shownIdeal = FuzzedVelocity(launcherPos, initialVelocity, isInTurn);
+
             // Simulate WITHOUT any rocks (empty list) to get ideal position
             // CRITICAL: Pass forPlayerPreview = true for consistent visual curl
             List<Vector2> idealPath = trajectorySimulator.SimulateTrajectory(
-                launcherPos, initialVelocity, isInTurn, 250, new List<GameObject>(), forPlayerPreview: true
+                launcherPos, shownIdeal, isInTurn, 250, new List<GameObject>(), forPlayerPreview: true
             );
 
             TrajectorySimulator.CollisionInfo idealInfo = trajectorySimulator.GetCollisionInfo();
@@ -990,11 +937,11 @@ public class TrajectoryLine : MonoBehaviour
 
             if (idealInfo.finalPosition != Vector2.zero)
             {
-                aimCircle.transform.position = FuzzWarp(idealInfo.finalPosition);
+                aimCircle.transform.position = idealInfo.finalPosition;
             }
             else if (idealPath.Count > 0)
             {
-                aimCircle.transform.position = FuzzWarp(idealPath[idealPath.Count - 1]);
+                aimCircle.transform.position = idealPath[idealPath.Count - 1];
             }
         }
         else if (pos.Count > 0)
@@ -1003,6 +950,7 @@ public class TrajectoryLine : MonoBehaviour
             aimCircle.transform.position = pos[pos.Count - 1];
         }
         DrawFuzzAids(coneSource, pos);
+        DrawShotReadout();
         aimCircle.GetComponent<SpriteRenderer>().color = knobColour;
 
         CameraManager camManager = FindObjectOfType<CameraManager>();
@@ -1026,10 +974,50 @@ public class TrajectoryLine : MonoBehaviour
 
         var path = new List<Vector3>();
         if (ideal != null)
-            foreach (var p in ideal) { Vector2 shown = FuzzWarp(p); path.Add(new Vector3(shown.x, shown.y, 0f)); }
+            foreach (var p in ideal) path.Add(new Vector3(p.x, p.y, 0f));
         else if (shownPath != null)
             path.AddRange(shownPath);
         bands.ShowCone(path, aimPoint, aimNow);
+    }
+
+    /// <summary>One rock's hit arrow (see HitArrow), off by the training's allowed error.</summary>
+    void DrawHitArrow(LineRenderer line, Vector2 from, Vector2 velocityAfter, RockPhysicsProfile law)
+    {
+        if (line == null) return;
+        float length = HitArrow.Length(velocityAfter, law);
+        line.enabled = length > 0f;
+        if (length <= 0f) return;
+        Vector2 end = from + CollisionArrowError(velocityAfter.normalized) * length;
+        line.positionCount = 2;
+        line.SetPosition(0, new Vector3(from.x, from.y, 0f));
+        line.SetPosition(1, new Vector3(end.x, end.y, 0f));
+    }
+
+    /// <summary>
+    /// The top-left panel for this aim (not in the tutorial): the weight call, named from where the DRAWN line ends so it tells no more
+    /// than the oval does, and with On-Ice Training 2 the expected split and hog-to-hog times.
+    /// </summary>
+    void DrawShotReadout()
+    {
+        bool tutorial = TutorialGameManager.Instance != null && TutorialGameManager.Instance.isTutorialGame;
+        if (aiTurn || tutorial || !usePhysicsSimulation || aimCircle == null) { TimingPanel.ClearAim(); return; }
+        var panel = TimingPanel.Instance;
+        if (panel == null) return;
+        string call = WeightNames.For(aimCircle.transform.position.y);
+        if (!TrainingAids.TimingUnlocked) { panel.ShowAim(call, null, null); return; }
+
+        GameObject thrown = gm.rockList[gm.rockCurrent].rock;
+        Rock_Force force = thrown.GetComponent<Rock_Force>();
+        bool isInTurn = force != null ? force.flipAxis : FindFirstObjectByType<RockManager>().inturn;
+        Vector2 weightVelocity = TrajectorySimulator.CalculateInitialVelocityFromPullback(
+            thrown.transform.position, launcher.transform.position,
+            velocityMultiplier, minPullbackDistance, maxPullbackDistance, minVelocity, maxVelocity);
+
+        RockPhysicsProfile profile = RockPhysicsSettings.Current;
+        TimingPredictor.Predict(profile.LaunchVelocityFromWeightVelocity(weightVelocity), isInTurn,
+            fuzzActive ? fuzzError.y : 0f, fuzzActive ? AimFuzzBands.WeightHalfHeight(GetShooterWeightAccuracy()) : 0f,
+            profile, out TimingPredictor.Range split, out TimingPredictor.Range hogToHog);
+        panel.ShowAim(call, TimingPredictor.Format(split), TimingPredictor.Format(hogToHog));
     }
 
     // Helper method to recreate the simulator when settings change
@@ -1041,6 +1029,7 @@ public class TrajectoryLine : MonoBehaviour
 
     public void Release()
     {
+        if (aiTurn) TimingPanel.ClearAim();
         aimCircle.GetComponent<SpriteRenderer>().enabled = false;
         fuzzRockIndex = -1; // the next rock gets its own roll
         dotsMarching = false;   // the dots stay where they are while the rock runs
@@ -1505,13 +1494,7 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // Check if trajectory simulator detected a collision
-        if (trajectorySimulator == null)
-        {
-            collisionWarningLine.enabled = false;
-            return;
-        }
-        
-        TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
+        TrajectorySimulator.CollisionInfo collisionInfo = shotCollision;
         
         if (!collisionInfo.hasCollision)
         {
@@ -1520,7 +1503,7 @@ public class TrajectoryLine : MonoBehaviour
         }
         
         // Draw small vertical line at collision point
-        Vector2 collisionPoint = FuzzWarp(collisionInfo.collisionPoint);
+        Vector2 collisionPoint = collisionInfo.collisionPoint;
         float indicatorHeight = 0.5f; // 0.5 units tall (subtle)
         
         // Center the indicator around collision point

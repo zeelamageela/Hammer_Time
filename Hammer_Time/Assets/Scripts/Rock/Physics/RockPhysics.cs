@@ -211,6 +211,13 @@ public class RockPhysicsProfile
         return IsLegacy ? launchSpeed / linearDamping : Mathf.Pow(Mathf.Max(0f, launchSpeed), 2f - stopPower) / (stopStrength * (2f - stopPower));
     }
 
+    /// <summary>The release speed that makes a free-sliding rock travel this far after the near hog (inverse of StopDistance).</summary>
+    public float SpeedForStopDistance(float distance)
+    {
+        float d = Mathf.Max(0.01f, distance);
+        return IsLegacy ? d * linearDamping : Mathf.Pow(stopStrength * (2f - stopPower) * d, 1f / (2f - stopPower));
+    }
+
     // ---- curl ------------------------------------------------------------------------------------------------------
 
     /// <summary>

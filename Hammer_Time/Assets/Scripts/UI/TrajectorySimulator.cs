@@ -21,6 +21,9 @@ public class TrajectorySimulator
         public GameObject hitRock;
         public Vector2 collisionPoint; // SURFACE contact point (for visualization)
         public Vector2 shooterCenterAtCollision; // NEW: Shooter's center position at moment of collision (for scoring)
+        public Vector2 hitRockCenter; // Where the struck rock sat when it was hit
+        public Vector2 shooterVelocityAfter; // Both rocks' velocity just after the contact (profile units): what the hit arrows show
+        public Vector2 hitRockVelocityAfter;
         public Vector2 finalPosition; // Where the thrown rock ends up
         public Vector2 hitRockFinalPosition; // Where the hit rock ends up
         public List<Vector2> thrownRockPostCollisionPath; // Full path of thrown rock after collision
@@ -164,6 +167,9 @@ public class TrajectorySimulator
                         hitRock = hitRock,
                         collisionPoint = actualContactPoint, // Surface contact point (for visualization)
                         shooterCenterAtCollision = position, // Shooter's center at collision (for scoring!)
+                        hitRockCenter = rockPos,
+                        shooterVelocityAfter = result.thrownVelocityAfterHit,
+                        hitRockVelocityAfter = result.hitVelocityAfterHit,
                         finalPosition = result.thrownFinal,
                         hitRockFinalPosition = result.hitFinal,
                         thrownRockPostCollisionPath = result.thrownPath,
@@ -226,6 +232,7 @@ public class TrajectorySimulator
         public List<Vector2> thrownPath, hitPath;
         public List<KeyValuePair<GameObject, Vector2>> others;
         public float thrownSpeedAfterHit;
+        public Vector2 thrownVelocityAfterHit, hitVelocityAfterHit;
     }
 
     private class SimBody
@@ -268,6 +275,8 @@ public class TrajectorySimulator
             if (ApplyContact(bodies, 0, bodies.IndexOf(hit), thrown.s.position, hit.s.position, profile))
                 speedAfterHit = thrown.s.velocity.magnitude;
         }
+        Vector2 thrownVelocityAfterHit = thrown.s.velocity;
+        Vector2 hitVelocityAfterHit = hit != null ? hit.s.velocity : Vector2.zero;
         foreach (var b in bodies) b.path.Add(b.s.position);
 
         float maxTime = MAX_SIMULATION_TIME * profile.timeStretch;
@@ -341,7 +350,9 @@ public class TrajectorySimulator
             hitPath = hit != null ? hit.path : new List<Vector2>(),
             hitFinal = hit != null ? hit.s.position : Vector2.zero,
             others = new List<KeyValuePair<GameObject, Vector2>>(),
-            thrownSpeedAfterHit = speedAfterHit
+            thrownSpeedAfterHit = speedAfterHit,
+            thrownVelocityAfterHit = thrownVelocityAfterHit,
+            hitVelocityAfterHit = hitVelocityAfterHit
         };
         foreach (var b in bodies)
             if (!b.thrown && b != hit && Vector2.Distance(b.s.position, b.start) > 0.01f)

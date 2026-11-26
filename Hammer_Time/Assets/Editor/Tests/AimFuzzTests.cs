@@ -1,11 +1,10 @@
 using NUnit.Framework;
 using UnityEngine;
 
-/// <summary>The skill fuzz on the player's aim line: exact at full skill, bounded by skill, and bends the line from nothing at the hack to the full error at the end.</summary>
+/// <summary>The skill fuzz on the player's aim line: exact at full skill, bounded by skill, and draws a real throw that ends the full error away.</summary>
 public class AimFuzzTests
 {
     static readonly Vector2 Launcher = new Vector2(0f, -25f);
-    static readonly Vector2 End = new Vector2(0.4f, 6.5f);
 
     [Test]
     public void FullSkillIsExact()
@@ -47,40 +46,44 @@ public class AimFuzzTests
         Assert.AreEqual(weightSigma * 0.96, System.Math.Sqrt(sqY / n), weightSigma * 0.05);
     }
 
-    [Test]
-    public void WarpMovesTheEndByTheFullErrorAndLeavesTheHackAlone()
+    static RockPhysicsProfile[] Profiles()
     {
-        Vector2 error = new Vector2(-0.12f, 0.6f);
-        Vector2 atHack = AimFuzz.Warp(Launcher, Launcher, End, error);
-        Assert.AreEqual(Launcher.x, atHack.x, 1e-5f);
-        Assert.AreEqual(Launcher.y, atHack.y, 1e-5f);
-
-        Vector2 atEnd = AimFuzz.Warp(End, Launcher, End, error);
-        Assert.AreEqual(End.x + error.x, atEnd.x, 1e-4f);
-        Assert.AreEqual(End.y + error.y, atEnd.y, 1e-4f);
+        return new[] { RockPhysicsProfile.Legacy(), RockPhysicsProfile.Arcade(), RockPhysicsProfile.Pro(), RockPhysicsProfile.Real() };
     }
 
     [Test]
-    public void WarpIsSmoothAndKeepsTheLineInOrder()
+    public void TheBentThrowEndsTheFullErrorAway()
     {
-        Vector2 error = new Vector2(0.15f, -0.9f);
-        float lastY = float.MinValue, lastX = float.MinValue;
-        for (int i = 0; i <= 100; i++)
-        {
-            Vector2 p = Vector2.Lerp(Launcher, End, i / 100f);
-            Vector2 w = AimFuzz.Warp(p, Launcher, End, error);
-            Assert.Greater(w.y, lastY, "the line must keep going forward");
-            Assert.GreaterOrEqual(w.x, lastX - 1e-5f, "sideways error grows steadily along the line");
-            lastY = w.y; lastX = w.x;
-        }
+        foreach (var p in Profiles())
+            foreach (bool inTurn in new[] { true, false })
+                foreach (var error in new[] { new Vector2(-0.5f, 1.8f), new Vector2(0.4f, -1.2f), new Vector2(0.1f, 0f) })
+                {
+                    Vector2 v = p.LaunchVelocityFromWeightVelocity(new Vector2(0.05f, 8.5f));
+                    Vector2 truth = AimFuzz.StopPoint(Launcher, v, inTurn, p);
+                    Vector2 bent = AimFuzz.BendThrow(Launcher, v, inTurn, error, p);
+                    Vector2 shown = AimFuzz.StopPoint(Launcher, bent, inTurn, p);
+                    Assert.AreEqual(truth.x + error.x, shown.x, 0.03f);
+                    Assert.AreEqual(truth.y + error.y, shown.y, 0.03f);
+                }
     }
 
     [Test]
-    public void NoErrorIsTheIdentity()
+    public void NoErrorDrawsTheTrueThrow()
     {
-        Vector2 p = new Vector2(0.2f, -3f);
-        Vector2 w = AimFuzz.Warp(p, Launcher, End, Vector2.zero);
-        Assert.AreEqual(p.x, w.x, 1e-5f);
-        Assert.AreEqual(p.y, w.y, 1e-5f);
+        var p = RockPhysicsProfile.Arcade();
+        Vector2 v = p.LaunchVelocityFromWeightVelocity(new Vector2(0f, 8.5f));
+        Assert.AreEqual(v, AimFuzz.BendThrow(Launcher, v, true, Vector2.zero, p));
+    }
+
+    [Test]
+    public void HitArrowsGrowWithTravelAndSkipARockThatStaysPut()
+    {
+        var p = RockPhysicsProfile.Arcade();
+        float Arrow(float travel) { return HitArrow.Length(new Vector2(0f, p.SpeedForStopDistance(travel)), p); }
+        Assert.AreEqual(0f, HitArrow.Length(Vector2.zero, p));
+        Assert.AreEqual(0f, Arrow(0.2f));
+        Assert.Greater(Arrow(1f), 0f);
+        Assert.Greater(Arrow(3f), Arrow(1f));
+        Assert.AreEqual(HitArrow.MaxLength, Arrow(20f), 1e-4f);
     }
 }

@@ -142,13 +142,16 @@ Old five-track saves are converted on load (`MigrateLegacy`).
   the fuzzy end are the largest error the throw could have; more skill (stats + gear + training) makes it crisper. The base error is scaled up so an
   untrained player really can't tell.
 - The fuzzy end only shows when the predicted stop is inside the drawn line (On-Ice level sets how far that is); otherwise the line fades at its cap.
+- The fuzzed aim is a real, slightly different throw (`AimFuzz.BendThrow`), so the line, contact, warning line and hit arrows agree with each other.
+  Hit arrows start on each rock, show the velocity just after contact, scale with travel and are skipped for a rock that barely moves.
 - Cycling dots: On-Ice 1. Crosshairs: Tactics 1, pulsing from the middle, never stretched into an ellipse. Timing ranges: On-Ice 2, top corner.
 - Built (all on main): the track restructure and save migration, `TrainingAids` unlock flags, the glowing oval at the curled aim point (size from aim and
   weight fuzz), the cone along the path, pulsing crosshairs (Tactics 1), cycling dots (On-Ice 1) and the line reach (`LineReachY`), all tinted cold blue.
   Shaders: `Assets/Resources/Shaders/AimLight.shader` (cone) and `AimOval.shader` (oval). Look constants (`ConeStrength`, `OvalFill`, `OvalOutline`,
   `CrossStrength`) are public statics on `AimFuzzBands` and are live-tunable from Quick Test (press Q in a game).
-- **Not built yet: the timing readout (On-Ice 2).** Proposed: split (back line to near hog) and hog-to-hog (near hog to far hog) time ranges in the top-left,
-  width from the weight fuzz, per physics mode. Open: confirm the definition of "split" and the corner.
+- **Timing readout (built, not yet seen in play):** split (back line to near hog) and hog-to-hog in a top-left panel. Ranges (On-Ice 2) are centred on the
+  drawn line's end, width from the weight fuzz, and assume no sweeping; the live clocks (everyone, AI throws too) sit beside them. They replace the clocks
+  above the rock. A weight call ("7 - Button", free for everyone; table in `WeightNames.cs`) is named from the drawn line's end. Look: `Assets/Resources/TimingPanel.prefab` (made by `TimingPanelBuilder` when missing, never overwritten).
 - Not verified on a device: dots marching and the line reach past the near hog (possible draw-order issue), the crosshair pulse, collision aids (Tactics 2-4)
   with the new oval.
 
