@@ -353,7 +353,7 @@ Sweeper animations should visually reflect the equipped handle, always with team
 2. **Collision aids:** fixed and played (the fuzzed aim is a real throw, so line, contact, warning line and arrows agree). Tune arrows in `HitArrow.cs`.
 3. **Design gaps:** built, needs a career play test (cohesion in `SweepStats.cs`, finesse is now consistency in `AimFuzz.cs`, training $500-$4,000, gear 20 points max,
    sponsors money-only in `SponsorRules.cs`). Open: tune prices against weekly income.
-4. **Training screen layout** for 3 rows (scene was built for 5; `TrainingManager` hides the extra rows).
+4. **Training screen layout:** done (three rows; `Editor/TrainingScreenLayout`). Open: final icons for Tactics and On-Ice (placeholders now).
 5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (drop the thumb circle, widen the 0.34 cap behind a switch); consider removing the Classic physics mode.
 6. **Playtests:** AI-vs-AI with the corrected collision model; Real-time/Pro kick pace and all new aids on a phone; confirm the line reach past the near hog actually shows.
 
