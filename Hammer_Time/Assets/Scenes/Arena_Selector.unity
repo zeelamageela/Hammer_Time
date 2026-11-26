@@ -31481,7 +31481,7 @@ MonoBehaviour:
     bonus: 0
     bonusStart: 
   - name: Aurelia
-    id: 200
+    id: 201
     description: Luxury Watchmaker
     image: {fileID: 21300000, guid: 34063463a94ad47228de8bceccc9c352, type: 3}
     cost: 2000
@@ -37224,7 +37224,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Finesse
+  m_Text: Consistency
 --- !u!222 &921888605
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -66655,7 +66655,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Finesse
+  m_Text: Consistency
 --- !u!222 &1671963235
 CanvasRenderer:
   m_ObjectHideFlags: 0

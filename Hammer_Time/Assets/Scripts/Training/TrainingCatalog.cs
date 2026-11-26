@@ -31,7 +31,7 @@ public static class TrainingCatalog
     public const int MaxLevel = 4;
 
     /// <summary>What each level costs, for every track. Level 1 is cheap, level 4 is a real investment.</summary>
-    public static readonly float[] LevelCost = { 1000f, 2500f, 5000f, 10000f };
+    public static readonly float[] LevelCost = { 500f, 1000f, 2000f, 4000f };
 
     public static string TrackName(TrainingTrack t)
     {

@@ -17,8 +17,19 @@ public static class AimFuzz
 
     public const float AimSigmaAtZeroSkill = 0.5f;
     public const float WeightSigmaAtZeroSkill = 0.9f;
-    /// <summary>The roll is cut off at this many sigmas so a freak roll cannot send the line somewhere silly.</summary>
+    /// <summary>The roll is cut off at this many sigmas (at consistency 50) so a freak roll cannot send the line somewhere silly.</summary>
     public const float MaxSigmas = 2f;
+    /// <summary>How much consistency moves the cut-off: this share smaller at 100, this share bigger at 0.</summary>
+    public const float ConsistencySwing = 0.25f;
+
+    /// <summary>
+    /// The worst miss, in sigmas, for a shooter of this consistency (the stat saved as finesse). It sets both the largest error a
+    /// throw can have and the size of the aim oval; weight and aim set how big a typical miss is.
+    /// </summary>
+    public static float MaxSigmasFor(float consistency)
+    {
+        return MaxSigmas * (1f - ConsistencySwing * (Mathf.Clamp(consistency, 0f, 100f) - 50f) / 50f);
+    }
 
     public static float AimSigma(float aimSkill)
     {
@@ -33,18 +44,19 @@ public static class AimFuzz
     }
 
     /// <summary>One throw's error: x = sideways, y = long (+) / short (-), in metres at the end of the line.</summary>
-    public static Vector2 Roll(float aimSkill, float weightSkill, System.Random rng)
+    public static Vector2 Roll(float aimSkill, float weightSkill, System.Random rng, float consistency = 50f)
     {
-        return new Vector2(Gaussian(rng, AimSigma(aimSkill)), Gaussian(rng, WeightSigma(weightSkill)));
+        float cut = MaxSigmasFor(consistency);
+        return new Vector2(Gaussian(rng, AimSigma(aimSkill), cut), Gaussian(rng, WeightSigma(weightSkill), cut));
     }
 
-    static float Gaussian(System.Random rng, float sigma)
+    static float Gaussian(System.Random rng, float sigma, float cut)
     {
         if (sigma <= 0f) return 0f;
         double u1 = 1.0 - rng.NextDouble();
         double u2 = rng.NextDouble();
         float z = (float)(System.Math.Sqrt(-2.0 * System.Math.Log(u1)) * System.Math.Cos(2.0 * System.Math.PI * u2));
-        return Mathf.Clamp(z, -MaxSigmas, MaxSigmas) * sigma;
+        return Mathf.Clamp(z, -cut, cut) * sigma;
     }
 
     /// <summary>

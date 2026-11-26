@@ -1,5 +1,9 @@
 # Sponsor system audit (first pass, Nov 25 2026)
 
+**Acted on (Nov 25):** sponsors are money only (stat bonuses, opponent modifiers and their sliders no longer used), one availability rule per tier,
+result bonuses wired, contracts count down when a tournament is played. The current rules are in `Assets/Scripts/Tourny/SponsorRules.cs`; what follows
+describes the code before that change.
+
 Read-only look at the code. Nothing here was run, so anything marked "check" is a question for the game, not a finding. Decision so far: **scrap the
 sponsor stat bonuses**; keep the system under review for when and where sponsors appear.
 

@@ -17,10 +17,10 @@ public class AimFuzzBands : MonoBehaviour
     public const float AimAidAlpha = 0.12f;
 
     /// <summary>How bright the cone is at its middle.</summary>
-    public static float ConeStrength = 0.4f;   // public so a tool can compare looks; the game uses these values
+    public static float ConeStrength = 0.275f;   // public so a tool can compare looks; the game uses these values
     /// <summary>The oval's faint fill, its glowing outline and its overall strength.</summary>
-    public static float OvalFill = 0.2f;   // public so a tool can compare looks; the game uses these values
-    public static float OvalOutline = 0.08f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalFill = 0.16f;   // public so a tool can compare looks; the game uses these values
+    public static float OvalOutline = 0.275f;   // public so a tool can compare looks; the game uses these values
     const float OvalStrength = 1.0f;
     /// <summary>How bright the crosshair arms are, and how thick (half-thickness in metres).</summary>
     public static float CrossStrength = 0.9f;
@@ -54,10 +54,10 @@ public class AimFuzzBands : MonoBehaviour
     bool anyShown;
 
     /// <summary>The widest sideways error (half-width, metres) the line can have at this aim skill.</summary>
-    public static float AimHalfWidth(float aimSkill) { return AimFuzz.Enabled ? AimFuzz.AimSigma(aimSkill) * AimFuzz.MaxSigmas : 0f; }
+    public static float AimHalfWidth(float aimSkill, float consistency = 50f) { return AimFuzz.Enabled ? AimFuzz.AimSigma(aimSkill) * AimFuzz.MaxSigmasFor(consistency) : 0f; }
 
     /// <summary>The largest long/short error (half-height, metres) at this weight skill.</summary>
-    public static float WeightHalfHeight(float weightSkill) { return AimFuzz.Enabled ? AimFuzz.WeightSigma(weightSkill) * AimFuzz.MaxSigmas : 0f; }
+    public static float WeightHalfHeight(float weightSkill, float consistency = 50f) { return AimFuzz.Enabled ? AimFuzz.WeightSigma(weightSkill) * AimFuzz.MaxSigmasFor(consistency) : 0f; }
 
     /// <summary>The oval's width and height in metres. Wide: one rock plus the full sideways error range (so a perfect shooter gets one rock wide, and
     /// a beginner several rocks). Tall: the full long/short range, never less than a rock.</summary>

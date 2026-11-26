@@ -23,6 +23,7 @@ public class CareerSaveData
         public int week;
         public int season;
         public float cash;
+        public float sponsorIncome;
         public float earnings;
         public float xp;
         public int level;

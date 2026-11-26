@@ -340,9 +340,9 @@ Sweeper animations should visually reflect the equipped handle, always with team
 ## Where things stand (Nov 25 2026) — read this first
 
 - **Everything is merged to `main`** (merge 97a4e0b4, pushed). The `physics-timing` branch is redundant. Work from `main`, small commits, run EditMode tests (134 pass), ask before pushing.
-- **Training:** three tracks (Sweep, Tactics, On-Ice), four levels, $1,000/$2,500/$5,000/$10,000. See `TRAINING_DESIGN.md` (tier sheet + fuzz look).
+- **Training:** three tracks (Sweep, Tactics, On-Ice), four levels, $500/$1,000/$2,000/$4,000. See `TRAINING_DESIGN.md` (tier sheet + fuzz look).
 - **Aim fuzz look:** oval + cone + crosshairs + cycling dots, cold blue, screen-blend shaders. Quick Test (press Q in a game) has live sliders for skill, training levels and look strengths; it never writes the career save.
-- **Shooter kick** slows outside Arcade (Pro 2x, Real 3x; `ShooterAnim.MaxKickSlowdown`).
+- **Shooter kick** runs at the rock's real speed in Arcade and Pro (no handoff); Real-time uses weight speed / 3 (`ShooterAnim.KickSlowdown`).
 - **Sponsors:** audit in `SPONSOR_AUDIT.md`; decision is to scrap the stat bonuses and tune availability.
 - Uncommitted on purpose: Unity churn (prefabs NC_*, slnx, Packages, ProjectSettings, UserSettings, `.claude/`).
 
@@ -351,7 +351,8 @@ Sweeper animations should visually reflect the equipped handle, always with team
 1. **Timing readout and weight call:** done and played (top-left panel, prefab `Resources/TimingPanel`, names in `WeightNames.cs`). Still to confirm:
    unswept throws land inside the ranges, and the full EditMode run in the editor.
 2. **Collision aids:** fixed and played (the fuzzed aim is a real throw, so line, contact, warning line and arrows agree). Tune arrows in `HitArrow.cs`.
-3. **Design gaps:** give cohesion (sweep sync) and finesse (end-of-sweep touch) a job or drop them from the tiers; lower prices (try training $500/$1,000/$2,000/$4,000; cap gear at about 20 points per top item; tune against weekly income); scrap sponsor stat bonuses and set availability rules (answer the questions in `SPONSOR_AUDIT.md`).
+3. **Design gaps:** built, needs a career play test (cohesion in `SweepStats.cs`, finesse is now consistency in `AimFuzz.cs`, training $500-$4,000, gear 20 points max,
+   sponsors money-only in `SponsorRules.cs`). Open: tune prices against weekly income.
 4. **Training screen layout** for 3 rows (scene was built for 5; `TrainingManager` hides the extra rows).
 5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (drop the thumb circle, widen the 0.34 cap behind a switch); consider removing the Classic physics mode.
 6. **Playtests:** AI-vs-AI with the corrected collision model; Real-time/Pro kick pace and all new aids on a phone; confirm the line reach past the near hog actually shows.

@@ -46,6 +46,10 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int playerWeightSkill = 50;
 
+    [Tooltip("Your shooter's consistency (0-100): the worst possible miss. High shrinks the oval, low widens it. Gear and training add to this.")]
+    [Range(0, 100)]
+    public int playerConsistency = 50;
+
     [Header("Training levels (apply live while a quick test is running)")]
     [Tooltip("Sweep Training: 1 carving, 2 endurance, 3 strength, 4 cohesion")]
     [Range(0, 4)] public int sweepLevel = 4;
@@ -56,11 +60,11 @@ public class QuickTestGame : MonoBehaviour
 
     [Header("Fuzz look (applies live while a quick test is running)")]
     [Tooltip("Brightness of the cone along the shot.")]
-    [Range(0f, 1f)] public float coneStrength = 0.4f;
+    [Range(0f, 1f)] public float coneStrength = 0.275f;
     [Tooltip("The faint fill inside the aim oval.")]
-    [Range(0f, 1f)] public float ovalFill = 0.2f;
+    [Range(0f, 1f)] public float ovalFill = 0.16f;
     [Tooltip("The glowing outline of the aim oval.")]
-    [Range(0f, 1f)] public float ovalOutline = 0.4f;
+    [Range(0f, 1f)] public float ovalOutline = 0.275f;
     [Tooltip("The crosshair arms.")]
     [Range(0f, 1f)] public float crossStrength = 0.9f;
 
@@ -207,6 +211,7 @@ public class QuickTestGame : MonoBehaviour
         {
             cm.cStats.aimAccuracy = playerAimSkill;
             cm.cStats.weightAccuracy = playerWeightSkill;
+            cm.cStats.finesseAccuracy = playerConsistency;
         }
         var levels = new[] { sweepLevel, tacticsLevel, onIceLevel };
         if (cm != null && (cm.trainingLevels == null || !System.Linq.Enumerable.SequenceEqual(cm.trainingLevels, levels)))
@@ -374,7 +379,7 @@ public class QuickTestGame : MonoBehaviour
             TakeSnapshot(cm);
             // ? CRITICAL: Set player stats to 85 for ZERO randomness!
             cm.cStats.weightAccuracy = playerWeightSkill;   // a middling shooter by default; drag the sliders down to see a wide fuzz
-            cm.cStats.finesseAccuracy = 85;
+            cm.cStats.finesseAccuracy = playerConsistency;
             cm.cStats.aimAccuracy = playerAimSkill;
             cm.equipmentBonus = new CareerStats();   // no gear carried over from a career, so the skill is exactly what is set here
             cm.cStats.sweepStrength = 85;
@@ -414,7 +419,7 @@ public class QuickTestGame : MonoBehaviour
         SceneManager.LoadScene("TournyGame");
         
         Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill} and weight {playerWeightSkill} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
+        Debug.Log($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill}, weight {playerWeightSkill} and consistency {playerConsistency} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
         Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
         Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
         Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");

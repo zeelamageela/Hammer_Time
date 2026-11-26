@@ -568,14 +568,13 @@ public class Rock_Flick : MonoBehaviour
         ShotAudit.LogLaunch(gameObject, rb.position, velocity, GetComponent<Rock_Force>().flipAxis);
         // `velocity` is a weight velocity (what the aim line and the AI speak); the rock gets the speed the current physics profile needs to travel that far.
         Vector2 launchVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
-        // Slower modes (Pro, Real-time): the shooter's kick (pull-back point up to the release point) is tied to the rock's position, so a rock
-        // that leaves at its real, slow speed makes the shooter crawl through his own kick. Run that short stretch at the weight speed slowed
-        // by the profile's stretch (capped, see ShooterAnim.MaxKickSlowdown: Pro twice as slow as Arcade, Real-time three times) and give the
-        // rock its real speed at the release point. Free flight has no forces, so only the timing of those ~2 m changes.
-        Vector2 kickVelocity = velocity / Mathf.Min(RockPhysicsSettings.Current.timeStretch, ShooterAnim.MaxKickSlowdown);
+        // Real-time only: the shooter's kick (pull-back point up to the release point) is tied to the rock's position, so its pace is set
+        // here (ShooterAnim.KickSlowdown) and the rock gets its real speed at the release point. Free flight has no forces, so only the
+        // timing of those ~2 m changes.
+        float kickSlowdown = ShooterAnim.KickSlowdown(RockPhysicsSettings.Current.timeStretch);
+        Vector2 kickVelocity = kickSlowdown > 0f ? velocity / kickSlowdown : launchVelocity;
         var slideForHandoff = GetComponent<RockSlide>();
-        if (slideForHandoff != null && RockPhysicsSettings.Current.timeStretch > 1.01f
-            && launchVelocity.magnitude < kickVelocity.magnitude - 0.001f && rb.position.y < ShooterAnim.DefaultReleasePointY)
+        if (slideForHandoff != null && kickSlowdown > 0f && rb.position.y < ShooterAnim.DefaultReleasePointY)
         {
             rb.linearVelocity = kickVelocity;
             slideForHandoff.ScheduleLaunchHandoff(launchVelocity, ShooterAnim.DefaultReleasePointY);

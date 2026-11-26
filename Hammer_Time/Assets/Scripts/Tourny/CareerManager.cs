@@ -99,6 +99,7 @@ public class CareerManager : MonoBehaviour
     public int[] activeCardIDList;
     public int[] playedCardIDList;
     public int[] activeCardLengthList;
+    public float sponsorIncome;   // what the signed sponsors pay each week (SponsorManager keeps it; result bonuses are multiples of it)
 
     public int[] activeEquipID;
     public int[] inventoryID;
@@ -1696,7 +1697,19 @@ public class CareerManager : MonoBehaviour
         Debug.Log("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
         provRankList.Sort();
+        if (!gsp.cashGame)
+        {
+            float bonus = SponsorRules.ResultBonus(sponsorIncome, GetPlayerRank());
+            if (bonus > 0f)
+            {
+                cash += bonus;
+                earnings += bonus;
+                cashDelta += bonus;   // shown with the winnings on the hub
+                Debug.Log($"[CareerManager] Sponsor bonus ${bonus:N0} for finishing {GetPlayerRank()}");
+            }
+        }
         week++;
+        CountDownSponsors();
         RebalanceTeamStrength();
         Debug.Log("CM Tourny Results week is " + week);
         
@@ -1737,30 +1750,25 @@ public class CareerManager : MonoBehaviour
         SaveCareer();
     }
 
+    /// <summary>A week has passed: signed sponsors have one less to run (50+ weeks means permanent).</summary>
+    void CountDownSponsors()
+    {
+        if (activeCardLengthList == null) return;
+        for (int i = 0; i < activeCardLengthList.Length; i++)
+        {
+            if (activeCardLengthList[i] > 0 && activeCardLengthList[i] < 50)
+            {
+                activeCardLengthList[i]--;
+                Debug.Log($"[CareerManager] Sponsor {i} has {activeCardLengthList[i]} weeks left");
+            }
+        }
+    }
+
     public void NextWeek()
     {
         week++;
         
-        // Decrement active sponsor card durations
-        if (activeCardLengthList != null && activeCardLengthList.Length > 0)
-        {
-            for (int i = 0; i < activeCardLengthList.Length; i++)
-            {
-                // Only decrement if duration is less than 50 (50+ means permanent sponsor)
-                if (activeCardLengthList[i] > 0 && activeCardLengthList[i] < 50)
-                {
-                    activeCardLengthList[i]--;
-                    Debug.Log($"[CareerManager] Decremented sponsor {i} duration to {activeCardLengthList[i]}");
-                    
-                    // If duration reaches 0, mark card as expired
-                    if (activeCardLengthList[i] == 0)
-                    {
-                        Debug.Log($"[CareerManager] Sponsor {i} (ID: {activeCardIDList[i]}) has expired");
-                        // Card will be handled by SponsorManager.SetUp() which checks duration
-                    }
-                }
-            }
-        }
+        CountDownSponsors();
         
         // Update high score after progressing to next week
         // This ensures continuous leaderboard updates
@@ -1874,6 +1882,7 @@ public class CareerManager : MonoBehaviour
         cardSponsorIDList = null;
         playedCardIDList = null;
         activeCardLengthList = null;
+        sponsorIncome = 0f;
 
         Shuffle(teamPool);
         if (em != null)
@@ -2493,6 +2502,7 @@ public class CareerManager : MonoBehaviour
         if (activeCardIDList != null) data.activeCardIDs.AddRange(activeCardIDList);
         if (playedCardIDList != null) data.playedCardIDs.AddRange(playedCardIDList);
         if (activeCardLengthList != null) data.activeCardLengths.AddRange(activeCardLengthList);
+        data.sponsorIncome = sponsorIncome;
         
         // Tournament completion - Save as simple ID lists!
         // Try TournySelector first, fall back to CM arrays if in tournament scene
@@ -2882,6 +2892,7 @@ public class CareerManager : MonoBehaviour
         activeCardIDList = data.activeCardIDs.ToArray();
         playedCardIDList = data.playedCardIDs.ToArray();
         activeCardLengthList = data.activeCardLengths.ToArray();
+        sponsorIncome = data.sponsorIncome;
         
         // Tournament Results
         tournyResults = new List<int>(data.tournamentResults);

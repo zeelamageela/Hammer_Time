@@ -48,20 +48,6 @@ public class SponsorManager : MonoBehaviour
 
     public int numberOfCards;
 
-    public Slider drawSlider;
-    public Slider guardSlider;
-    public Slider takeOutSlider;
-    public Slider strengthSlider;
-    public Slider enduranceSlider;
-    public Slider healthSlider;
-
-    public Slider oppDrawSlider;
-    public Slider oppGuardSlider;
-    public Slider oppTakeOutSlider;
-    public Slider oppStrengthSlider;
-    public Slider oppEnduranceSlider;
-    public Slider oppHealthSlider;
-
     public float costPerWeek;
 
     int selectedPlayerCard;
@@ -80,7 +66,6 @@ public class SponsorManager : MonoBehaviour
         cm = FindObjectOfType<CareerManager>();
         tSel = FindObjectOfType<TournySelector>();
         tm = FindObjectOfType<TeamMenu>();
-
     }
 
     private void Update()
@@ -123,43 +108,6 @@ public class SponsorManager : MonoBehaviour
         //}
     }
 
-    public void PreviewPoints(int card)
-    {
-        cm = FindObjectOfType<CareerManager>();
-
-        cm.modStats.weightAccuracy += activeCards[card].draw;
-        cm.modStats.finesseAccuracy += activeCards[card].guard;
-        cm.modStats.aimAccuracy += activeCards[card].takeOut;
-        cm.modStats.sweepEndurance += activeCards[card].sweepEnduro;
-        cm.modStats.sweepStrength += activeCards[card].sweepStrength;
-        cm.modStats.sweepCohesion += activeCards[card].sweepCohesion;
-        cm.oppStats.weightAccuracy += activeCards[card].oppDraw;
-        cm.oppStats.finesseAccuracy += activeCards[card].oppGuard;
-        cm.oppStats.aimAccuracy += activeCards[card].oppTakeOut;
-        cm.oppStats.sweepEndurance += activeCards[card].oppEnduro;
-        cm.oppStats.sweepStrength += activeCards[card].oppStrength;
-        cm.oppStats.sweepCohesion += activeCards[card].oppCohesion;
-
-    }
-
-    public void UnPreviewPoints(int card)
-    {
-        cm = FindObjectOfType<CareerManager>();
-        //DisplayCards(numberOfCards);
-        cm.modStats.weightAccuracy -= activeCards[card].draw;
-        cm.modStats.finesseAccuracy -= activeCards[card].guard;
-        cm.modStats.aimAccuracy -= activeCards[card].takeOut;
-        cm.modStats.sweepEndurance -= activeCards[card].sweepEnduro;
-        cm.modStats.sweepStrength -= activeCards[card].sweepStrength;
-        cm.modStats.sweepCohesion -= activeCards[card].sweepCohesion;
-        cm.oppStats.weightAccuracy -= activeCards[card].oppDraw;
-        cm.oppStats.finesseAccuracy -= activeCards[card].oppGuard;
-        cm.oppStats.aimAccuracy -= activeCards[card].oppTakeOut;
-        cm.oppStats.sweepEndurance -= activeCards[card].oppEnduro;
-        cm.oppStats.sweepStrength -= activeCards[card].oppStrength;
-        cm.oppStats.sweepCohesion -= activeCards[card].oppCohesion;
-    }
-
     void Shuffle(Card[] a)
     {
         // Loops through array
@@ -177,6 +125,20 @@ public class SponsorManager : MonoBehaviour
         }
     }
 
+    /// <summary>Sponsors give no stats, so the stat bars on the cards stay hidden.</summary>
+    void HideStatSliders()
+    {
+        foreach (var display in cardDisplays)
+        {
+            if (display == null || display.effectSliders == null) continue;
+            foreach (var slider in display.effectSliders)
+                if (slider != null) slider.gameObject.SetActive(false);
+            // the first bar's parent is the bar panel the old screen showed and hid
+            if (display.effectSliders.Length > 0 && display.effectSliders[0] != null)
+                display.effectSliders[0].transform.parent.gameObject.SetActive(false);
+        }
+    }
+
     void ColorChanger(int bgColor, int textColor, int card)
     {
         cardDisplays[card].name.color = textColors[textColor];
@@ -184,8 +146,16 @@ public class SponsorManager : MonoBehaviour
         cardGOs[card].GetComponent<Image>().color = bgColors[bgColor];
     }
 
+    SponsorRules.Tier TierOf(Card card)
+    {
+        if (System.Array.IndexOf(pUpList.internationalSponsors, card) >= 0) return SponsorRules.Tier.International;
+        if (System.Array.IndexOf(pUpList.nationalSponsors, card) >= 0) return SponsorRules.Tier.National;
+        return SponsorRules.Tier.Local;
+    }
+
     public void SetUp()
     {
+        HideStatSliders();
         cardsSponsor = new Card[pUpList.localSponsors.Length + pUpList.nationalSponsors.Length + pUpList.internationalSponsors.Length];
         availPUCards = new List<Card>();
         availSponsorCards = new List<Card>();
@@ -203,7 +173,6 @@ public class SponsorManager : MonoBehaviour
             Shuffle(pUpList.localSponsors);
             Shuffle(pUpList.nationalSponsors);
             Shuffle(pUpList.internationalSponsors);
-
 
             for (int i = 0; i < idSponsorList.Length; i++)
             {
@@ -339,36 +308,13 @@ public class SponsorManager : MonoBehaviour
             }
         }
 
-        //The rest are available
+        //The rest are available, by the one rule of their tier (SponsorRules)
         for (int i = 0; i < cardsSponsor.Length; i++)
         {
             if (!cardsSponsor[i].active | !cardsSponsor[i].played)
             {
-                //identify signing conditions of the sponsorship, then add the card to available
-                if (cardsSponsor[i].signCondition == "wins")
-                {
-                    if (cardsSponsor[i].signConditionValue < cm.record.x)
-                        availSponsorCards.Add(cardsSponsor[i]);
-                }
-                if (cardsSponsor[i].signCondition == "earnings")
-                {
-                    if (cardsSponsor[i].signConditionValue < cm.earnings)
-                        availSponsorCards.Add(cardsSponsor[i]);
-                }
-                if (cardsSponsor[i].signCondition == "provQual")
-                {
-                    if (cm.provQual)
-                        availSponsorCards.Add(cardsSponsor[i]);
-                }
-                if (cardsSponsor[i].signCondition == "week")
-                {
-                    if (cardsSponsor[i].signConditionValue < cm.week)
-                        availSponsorCards.Add(cardsSponsor[i]);
-                }
-                if (cardsSponsor[i].signCondition == "None")
-                {
+                if (SponsorRules.Available(TierOf(cardsSponsor[i]), cm.week, cm.provQual, (int)cm.record.x))
                     availSponsorCards.Add(cardsSponsor[i]);
-                }
             }
         }
 
@@ -406,20 +352,6 @@ public class SponsorManager : MonoBehaviour
             cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
             cardDisplays[i].image.sprite = activeCards[i].image;
 
-            cardDisplays[i].effectSliders[0].value = activeCards[i].draw;
-            cardDisplays[i].effectSliders[1].value = activeCards[i].guard;
-            cardDisplays[i].effectSliders[2].value = activeCards[i].takeOut;
-            cardDisplays[i].effectSliders[3].value = activeCards[i].sweepStrength;
-            cardDisplays[i].effectSliders[4].value = activeCards[i].sweepEnduro;
-            cardDisplays[i].effectSliders[5].value = activeCards[i].sweepCohesion;
-
-            cardDisplays[i].effectSliders[6].value = activeCards[i].oppDraw;
-            cardDisplays[i].effectSliders[7].value = activeCards[i].oppGuard;
-            cardDisplays[i].effectSliders[8].value = activeCards[i].oppTakeOut;
-            cardDisplays[i].effectSliders[9].value = activeCards[i].oppStrength;
-            cardDisplays[i].effectSliders[10].value = activeCards[i].oppEnduro;
-            cardDisplays[i].effectSliders[11].value = activeCards[i].oppCohesion;
-
             if (activeCards[i].id == 99)
             {
                 cardDisplays[i].image.gameObject.SetActive(false);
@@ -431,11 +363,13 @@ public class SponsorManager : MonoBehaviour
                 cardDisplays[i].costPanel.SetActive(false);
         }
 
+        costPerWeek = 0;
         for (int i = 0; i < activeCards.Length; i++)
         {
             costPerWeek -= activeCards[i].cost;
             //tm.IncomeDeltaText(activeCards[i].cost);
         }
+        cm.sponsorIncome = -costPerWeek;
 
         //Debug.Log("costPerWeek is " + costPerWeek);
 
@@ -449,31 +383,6 @@ public class SponsorManager : MonoBehaviour
             {
                 ColorChanger(7, 0, i);
             }
-
-            // DON'T call tm.PreviewPoints() - it overwrites modStats with team stats!
-            // modStats should only contain equipment/sponsor bonuses
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                if (cardDisplays[i].effectSliders[j].value < 0)
-                {
-                    cardDisplays[i].effectSliders[j].value *= -1f;
-                    cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
-                }
-                else
-                {
-                    if (j < 6)
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
-                    else
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
-                }
-            }
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                cardDisplays[i].effectSliders[j].minValue = 0f;
-            }
-
         }
 
         //see if cards is not active and played
@@ -520,7 +429,6 @@ public class SponsorManager : MonoBehaviour
                 BuyCard(availSponsorCards[card - 1].id, card);
                 Debug.Log("availPUCards[card].id is " + availSponsorCards[card - 1].id);
             }
-
         }
         //CardBuy(card);
     }
@@ -529,16 +437,6 @@ public class SponsorManager : MonoBehaviour
     {
         viewPanel.SetActive(false);
         replacePanel.SetActive(true);
-
-        for (int i = 0; i < activeCards.Length; i++)
-        {
-            // DON'T call tm.UnPreviewPoints() - it manipulates modStats incorrectly
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                cardDisplays[i + 4].effectSliders[j].minValue = -25f;
-            }
-        }
 
         if (activeCards[card].duration > 50)
             cardDisplays[4].name.text = activeCards[card].name + " - " + " ongoing";
@@ -554,27 +452,11 @@ public class SponsorManager : MonoBehaviour
         cardDisplays[4].cost.text = "$" + activeCards[card].cost.ToString("n0");
         cardDisplays[4].image.sprite = activeCards[card].image;
 
-        cardDisplays[4].effectSliders[0].value = activeCards[card].draw;
-        cardDisplays[4].effectSliders[1].value = activeCards[card].guard;
-        cardDisplays[4].effectSliders[2].value = activeCards[card].takeOut;
-        cardDisplays[4].effectSliders[3].value = activeCards[card].sweepStrength;
-        cardDisplays[4].effectSliders[4].value = activeCards[card].sweepEnduro;
-        cardDisplays[4].effectSliders[5].value = activeCards[card].sweepCohesion;
-
-        cardDisplays[4].effectSliders[6].value = activeCards[card].oppDraw;
-        cardDisplays[4].effectSliders[7].value = activeCards[card].oppGuard;
-        cardDisplays[4].effectSliders[8].value = activeCards[card].oppTakeOut;
-        cardDisplays[4].effectSliders[9].value = activeCards[card].oppStrength;
-        cardDisplays[4].effectSliders[10].value = activeCards[card].oppEnduro;
-        cardDisplays[4].effectSliders[11].value = activeCards[card].oppCohesion;
-
-
         if (activeCards[card].id == 99)
         {
             cardDisplays[4].image.gameObject.SetActive(false);
             cardDisplays[4].description.gameObject.SetActive(true);
             cardDisplays[4].cost.gameObject.SetActive(false);
-            cardDisplays[4].effectSliders[0].transform.parent.gameObject.SetActive(false);
             cardDisplays[4].costPanel.SetActive(false);
             ColorChanger(6, 1, 4);
             replaceHeading.text = "Add Sponsor";
@@ -584,12 +466,10 @@ public class SponsorManager : MonoBehaviour
             cardDisplays[4].image.gameObject.SetActive(true);
             cardDisplays[4].description.gameObject.SetActive(true);
             cardDisplays[4].cost.gameObject.SetActive(false);
-            cardDisplays[4].effectSliders[0].transform.parent.gameObject.SetActive(true);
             cardDisplays[4].costPanel.SetActive(false);
             ColorChanger(7, 0, 4);
             replaceHeading.text = "Replace Sponsor";
         }
-
 
         for (int i = 5; i < cardGOs.Length; i++)
         {
@@ -613,14 +493,12 @@ public class SponsorManager : MonoBehaviour
                 {
                     cardDisplays[i].description.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(false);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].costPanel.SetActive(false);
                     ColorChanger(6, 1, i);
                 }
                 else
                 {
                     cardDisplays[i].description.gameObject.SetActive(false);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(true);
                     cardDisplays[i].costPanel.SetActive(true);
                     ColorChanger(7, 0, i);
@@ -633,37 +511,8 @@ public class SponsorManager : MonoBehaviour
 
                 cardDisplays[i].description.gameObject.SetActive(false);
                 cardDisplays[i].cost.gameObject.SetActive(false);
-                cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                 cardDisplays[i].costPanel.SetActive(false);
                 ColorChanger(6, 1, i);
-            }
-
-        }
-
-        //Update the master skillbars and set the skillbars on the card
-        for (int i = 0; i < activeCards.Length; i++)
-        {
-            // DON'T call tm.PreviewPoints() - it overwrites modStats!
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                if (cardDisplays[i + 4].effectSliders[j].value < 0)
-                {
-                    cardDisplays[i + 4].effectSliders[j].value *= -1f;
-                    cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
-                }
-                else
-                {
-                    if (j < 6)
-                        cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
-                    else
-                        cardDisplays[i + 4].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
-                }
-            }
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                cardDisplays[i + 4].effectSliders[j].minValue = 0f;
             }
         }
 
@@ -673,16 +522,6 @@ public class SponsorManager : MonoBehaviour
     {
         viewPanel.SetActive(true);
         replacePanel.SetActive(false);
-
-        for (int i = 0; i < activeCards.Length; i++)
-        {
-            // DON'T call tm.UnPreviewPoints() - it manipulates modStats incorrectly
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                cardDisplays[i].effectSliders[j].minValue = -25f;
-            }
-        }
 
         if (card == 0)
         {
@@ -696,7 +535,6 @@ public class SponsorManager : MonoBehaviour
                     cardDisplays[i].name.text = activeCards[i].name + " - " + activeCards[i].duration.ToString() + " weeks";
                 else
                     cardDisplays[i].name.text = activeCards[i].name;
-
 
                 if (activeCards[i].duration == 1)
                     cardDisplays[i].description.text = "$"
@@ -714,33 +552,17 @@ public class SponsorManager : MonoBehaviour
                 cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
                 cardDisplays[i].image.sprite = activeCards[i].image;
 
-                cardDisplays[i].effectSliders[0].value = activeCards[i].draw;
-                cardDisplays[i].effectSliders[1].value = activeCards[i].guard;
-                cardDisplays[i].effectSliders[2].value = activeCards[i].takeOut;
-                cardDisplays[i].effectSliders[3].value = activeCards[i].sweepStrength;
-                cardDisplays[i].effectSliders[4].value = activeCards[i].sweepEnduro;
-                cardDisplays[i].effectSliders[5].value = activeCards[i].sweepCohesion;
-
-                cardDisplays[i].effectSliders[6].value = activeCards[i].oppDraw;
-                cardDisplays[i].effectSliders[7].value = activeCards[i].oppGuard;
-                cardDisplays[i].effectSliders[8].value = activeCards[i].oppTakeOut;
-                cardDisplays[i].effectSliders[9].value = activeCards[i].oppStrength;
-                cardDisplays[i].effectSliders[10].value = activeCards[i].oppEnduro;
-                cardDisplays[i].effectSliders[11].value = activeCards[i].oppCohesion;
-
                 if (activeCards[i].id == 99 | activeCards[i].cost == 0)
                 {
                     cardDisplays[i].image.gameObject.SetActive(false);
                     cardDisplays[i].description.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(false);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].costPanel.SetActive(false);
                 }
                 else
                 {
                     cardDisplays[i].image.gameObject.SetActive(true);
                     cardDisplays[i].description.gameObject.SetActive(true);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(false);
                     cardDisplays[i].costPanel.SetActive(false);
                 }
@@ -750,7 +572,6 @@ public class SponsorManager : MonoBehaviour
                 else
                     ColorChanger(7, 0, i);
             }
-
         }
         else
         {
@@ -769,6 +590,7 @@ public class SponsorManager : MonoBehaviour
                         {
                             tm.IncomeDeltaText(availSponsorCards[j].cost - activeCards[i].cost);
 
+                            availSponsorCards[j].duration = SponsorRules.Term(availSponsorCards[j].duration);
                             activeCards[i] = availSponsorCards[j];
                             availSponsorCards[j].active = true;
                             availSponsorCards[j].played = true;
@@ -794,25 +616,13 @@ public class SponsorManager : MonoBehaviour
                 cardDisplays[i].cost.text = "$" + activeCards[i].cost.ToString("n0");
                 cardDisplays[i].image.sprite = activeCards[i].image;
 
-                cardDisplays[i].effectSliders[0].value = activeCards[i].draw;
-                cardDisplays[i].effectSliders[1].value = activeCards[i].guard;
-                cardDisplays[i].effectSliders[2].value = activeCards[i].takeOut;
-                cardDisplays[i].effectSliders[3].value = activeCards[i].sweepStrength;
-                cardDisplays[i].effectSliders[4].value = activeCards[i].sweepEnduro;
-                cardDisplays[i].effectSliders[5].value = activeCards[i].sweepCohesion;
-
-                cardDisplays[i].effectSliders[6].value = activeCards[i].oppDraw;
-                cardDisplays[i].effectSliders[7].value = activeCards[i].oppGuard;
-                cardDisplays[i].effectSliders[8].value = activeCards[i].oppTakeOut;
-                cardDisplays[i].effectSliders[9].value = activeCards[i].oppStrength;
-                cardDisplays[i].effectSliders[10].value = activeCards[i].oppEnduro;
-                cardDisplays[i].effectSliders[11].value = activeCards[i].oppCohesion;
-
                 activeIdList[i] = activeCards[i].id;
                 activeLengthList[i] = activeCards[i].duration;
                 costPerWeek -= activeCards[i].cost;
             }
         
+            cm.sponsorIncome = -costPerWeek;
+
             // Sync local arrays back to CareerManager after buying
             cm.activeCardIDList = activeIdList;
             cm.activeCardLengthList = activeLengthList;
@@ -826,7 +636,6 @@ public class SponsorManager : MonoBehaviour
                     cardDisplays[i].image.gameObject.SetActive(false);
                     cardDisplays[i].description.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(false);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].costPanel.SetActive(false);
                 }
                 else
@@ -834,7 +643,6 @@ public class SponsorManager : MonoBehaviour
                     ColorChanger(7, 0, i);
                     cardDisplays[i].image.gameObject.SetActive(true);
                     cardDisplays[i].description.gameObject.SetActive(true);
-                    cardDisplays[i].effectSliders[0].transform.parent.gameObject.SetActive(false);
                     cardDisplays[i].cost.gameObject.SetActive(false);
                     cardDisplays[i].costPanel.SetActive(false);
                 }
@@ -843,32 +651,6 @@ public class SponsorManager : MonoBehaviour
                 {
                     ColorChanger(6, 1, i);
                 }
-        }
-
-        for (int i = 0; i < activeCards.Length; i++)
-        {
-            // DON'T call tm.PreviewPoints() - it overwrites modStats!
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                if (cardDisplays[i].effectSliders[j].value < 0)
-                {
-                    cardDisplays[i].effectSliders[j].value *= -1f;
-                    cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = Color.red;
-                }
-                else
-                {
-                    if (j < 6)
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[1];
-                    else
-                        cardDisplays[i].effectSliders[j].gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<Image>().color = bgColors[3];
-                }
-            }
-
-            for (int j = 0; j < cardDisplays[i].effectSliders.Length; j++)
-            {
-                cardDisplays[i].effectSliders[j].minValue = 0f;
-            }
         }
     }
 }

@@ -184,7 +184,7 @@ public class TrajectoryLine : MonoBehaviour
     readonly System.Random fuzzRng = new System.Random();
     Vector2 fuzzError;
     int fuzzRockIndex = -1;
-    float fuzzRolledAim = -1f, fuzzRolledWeight = -1f;   // the skills the current roll was made at
+    float fuzzRolledAim = -1f, fuzzRolledWeight = -1f, fuzzRolledConsistency = -1f;   // the skills the current roll was made at
     bool fuzzActive;
     TrajectorySimulator.CollisionInfo shotCollision;   // the hit (if any) of the aim as drawn: arrows and warning line agree with it
 
@@ -225,9 +225,12 @@ public class TrajectoryLine : MonoBehaviour
         // one roll per rock, but a change of skill (a quick-test slider, new gear) rolls again so the new skill shows up straight away
         float aim = GetShooterAimAccuracy();
         float weight = GetShooterWeightAccuracy();
-        if (fuzzRockIndex != gm.rockCurrent || !Mathf.Approximately(aim, fuzzRolledAim) || !Mathf.Approximately(weight, fuzzRolledWeight))
+        float consistency = GetShooterConsistency();
+        if (fuzzRockIndex != gm.rockCurrent || !Mathf.Approximately(aim, fuzzRolledAim) || !Mathf.Approximately(weight, fuzzRolledWeight)
+            || !Mathf.Approximately(consistency, fuzzRolledConsistency))
         {
-            fuzzError = AimFuzz.Roll(aim, weight, fuzzRng);
+            fuzzError = AimFuzz.Roll(aim, weight, fuzzRng, consistency);
+            fuzzRolledConsistency = consistency;
             fuzzRolledAim = aim;
             fuzzRolledWeight = weight;
             fuzzRockIndex = gm.rockCurrent;
@@ -970,7 +973,8 @@ public class TrajectoryLine : MonoBehaviour
         bands.tint = AimFuzzBands.ColdBlue;   // added over the ice as light; the same cold blue for every team
 
         // the oval first (the cone is sized to it), then the cone that runs into it
-        bands.ShowPatch(aimPoint, AimFuzzBands.AimHalfWidth(aimNow), AimFuzzBands.WeightHalfHeight(weightNow), aimNow, weightNow);
+        float consistency = GetShooterConsistency();
+        bands.ShowPatch(aimPoint, AimFuzzBands.AimHalfWidth(aimNow, consistency), AimFuzzBands.WeightHalfHeight(weightNow, consistency), aimNow, weightNow);
 
         var path = new List<Vector3>();
         if (ideal != null)
@@ -1015,7 +1019,7 @@ public class TrajectoryLine : MonoBehaviour
 
         RockPhysicsProfile profile = RockPhysicsSettings.Current;
         TimingPredictor.Predict(profile.LaunchVelocityFromWeightVelocity(weightVelocity), isInTurn,
-            fuzzActive ? fuzzError.y : 0f, fuzzActive ? AimFuzzBands.WeightHalfHeight(GetShooterWeightAccuracy()) : 0f,
+            fuzzActive ? fuzzError.y : 0f, fuzzActive ? AimFuzzBands.WeightHalfHeight(GetShooterWeightAccuracy(), GetShooterConsistency()) : 0f,
             profile, out TimingPredictor.Range split, out TimingPredictor.Range hogToHog);
         panel.ShowAim(call, TimingPredictor.Format(split), TimingPredictor.Format(hogToHog));
     }
@@ -1518,6 +1522,14 @@ public class TrajectoryLine : MonoBehaviour
         Debug.Log($"[Collision Warning] Indicator drawn at ({collisionPoint.x:F2}, {collisionPoint.y:F2}) - height: {indicatorHeight}");
     }
     
+    /// <summary>The player's consistency (saved as finesse), with gear and training; an average 50 without a career.</summary>
+    private float GetShooterConsistency()
+    {
+        CareerManager cm = FindFirstObjectByType<CareerManager>();
+        if (cm == null || cm.cStats == null) return 50f;
+        return Mathf.Min(100f, cm.cStats.finesseAccuracy + cm.SkillBonus.finesseAccuracy);
+    }
+
     /// <summary>
     /// Get shooter's aim accuracy (X-axis skill) from active character
     /// </summary>

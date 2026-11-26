@@ -788,7 +788,7 @@ public class EquipmentManager : MonoBehaviour
                             temp[i] = new Equipment();
                             temp[i].cost = Random.Range(0, 10000);
                             temp[i].id = i;
-                            int[] cats = DistributePoints(temp[i].cost, 3);
+                            int[] cats = DistributePoints(PointsFor(temp[i].cost), 3);
 
                             temp[i].stats[3] = cats[0];
                             temp[i].stats[4] = cats[1];
@@ -848,7 +848,7 @@ public class EquipmentManager : MonoBehaviour
                             temp[i] = new Equipment();
                             temp[i].cost = Random.Range(0f, 10000f);
                             temp[i].id = i + 30;
-                            int[] cats = DistributePoints(temp[i].cost, 3);
+                            int[] cats = DistributePoints(PointsFor(temp[i].cost), 3);
 
                             temp[i].stats[3] = cats[0];
                             temp[i].stats[4] = cats[1];
@@ -900,7 +900,7 @@ public class EquipmentManager : MonoBehaviour
                             temp[i] = new Equipment();
                             temp[i].cost = Random.Range(0, 10000);
                             temp[i].id = i + 60;
-                            int[] cats = DistributePoints(temp[i].cost, 3);
+                            int[] cats = DistributePoints(PointsFor(temp[i].cost), 3);
 
                             temp[i].stats[0] = cats[0];
                             temp[i].stats[1] = cats[1];
@@ -957,13 +957,13 @@ public class EquipmentManager : MonoBehaviour
                             temp[i] = new Equipment();
                             temp[i].cost = Random.Range(0, 10000);
                             temp[i].id = i + 80;
-                            int[] cats = DistributePoints(temp[i].cost / 2f, 3);
+                            int[] cats = DistributePoints(PointsFor(temp[i].cost, 0.5f), 3);
 
                             temp[i].stats[3] = cats[0];
                             temp[i].stats[4] = cats[1];
                             temp[i].stats[5] = cats[2];
 
-                            cats = DistributePoints(temp[i].cost / 2f, 3);
+                            cats = DistributePoints(PointsFor(temp[i].cost, 0.5f), 3);
 
                             temp[i].stats[0] = cats[0];
                             temp[i].stats[1] = cats[1];
@@ -1218,25 +1218,30 @@ public class EquipmentManager : MonoBehaviour
         return temp;
     }
 
-    public int[] DistributePoints(float cost, int categories = 3)
+    /// <summary>The most stat points one item can carry, reached at FullPointsCost.</summary>
+    public const int MaxItemPoints = 20;
+    public const float FullPointsCost = 10000f;
+
+    /// <summary>Stat points for a share of an item: cost buys 2 points per $1,000, up to the share's part of MaxItemPoints.</summary>
+    public static int PointsFor(float cost, float share = 1f)
     {
-        // EQUIPMENT STATS: $10,000 equipment = 60 stat points distributed
-        // cost / 1000 * 6 = points (e.g. $10k / 1000 * 6 = 60 points)
-        int availPts = Mathf.RoundToInt((cost / 1000f) * 6f);
+        return Mathf.RoundToInt(Mathf.Clamp01(cost / FullPointsCost) * MaxItemPoints * share);
+    }
+
+    /// <summary>Splits a number of points at random over the categories; the parts always add up to the total.</summary>
+    public int[] DistributePoints(int points, int categories = 3)
+    {
         int[] cats = new int[categories];
-
-        for (int i = 0; i < cats.Length; i++)
+        int left = points;
+        for (int i = 0; i < categories - 1; i++)
         {
-            if (i == 0)
-                cats[0] = Random.Range(0, availPts);
-            else if (i == 1)
-                cats[1] = availPts - Random.Range(0, cats[0]);
-            else if (i == 2)
-                cats[2] = availPts - cats[0] - cats[1];
+            // around an even share, so no one stat swallows the item
+            float share = left / (float)(categories - i);
+            cats[i] = Mathf.Clamp(Mathf.RoundToInt(share * Random.Range(0.5f, 1.5f)), 0, left);
+            left -= cats[i];
         }
-
+        cats[categories - 1] = left;
         return cats;
-        
     }
 
     public void SetPoints(Equipment equip)

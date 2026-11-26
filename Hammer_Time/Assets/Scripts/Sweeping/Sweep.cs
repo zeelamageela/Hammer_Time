@@ -81,6 +81,12 @@ public class Sweep : MonoBehaviour
         //fltText.Direction = sm.sweepSel.moveDirection;
     }
 
+    /// <summary>Strength multiplier for the two-broom sweeps: how well the pair sweeps in sync (cohesion).</summary>
+    float PairFactor()
+    {
+        return SweepStats.CohesionFactor(sm.swprLStats.sweepCohesion.GetValue(), sm.swprRStats.sweepCohesion.GetValue());
+    }
+
     public void EnterSweepZone()
     {
         //sweepButton.gameObject.SetActive(true);
@@ -229,7 +235,7 @@ public class Sweep : MonoBehaviour
             statCalc = 99f;
         }
 
-        float sweepStrength = statCalc / 100f; // Normalize to 0-2 range
+        float sweepStrength = statCalc / 100f * PairFactor(); // Normalize to 0-2 range
         
         // Apply changes (will be reset on next sweep) - VERY GENTLE!
         float linearReduction = sweepAmt * sweepStrength * 0.035f;  // Rock goes farther (was 0.05, now 30% weaker)
@@ -262,7 +268,7 @@ public class Sweep : MonoBehaviour
         // HARD SWEEP: Maximum push!
         // Both sweepers working hard = big distance + straightening
         
-        float sweepStrength = statCalc / 100f; // Both sweepers
+        float sweepStrength = statCalc / 100f * PairFactor(); // Both sweepers
         
         // Apply PERMANENT changes IMMEDIATELY
         float linearReduction = sweepAmt * sweepStrength * 0.3f;  // MAX distance boost

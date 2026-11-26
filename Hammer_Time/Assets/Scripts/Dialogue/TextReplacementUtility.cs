@@ -86,7 +86,7 @@ public static class TextReplacementUtility
             var skills = new[]
             {
                 ("Weight",          cm.cStats.weightAccuracy  + cm.activePlayers.Sum(p => p.weight)        + cm.modStats.weightAccuracy),
-                ("Finesse",         cm.cStats.finesseAccuracy + cm.activePlayers.Sum(p => p.finesse)       + cm.modStats.finesseAccuracy),
+                ("Consistency",     cm.cStats.finesseAccuracy + cm.activePlayers.Sum(p => p.finesse)       + cm.modStats.finesseAccuracy),
                 ("Aim",             cm.cStats.aimAccuracy     + cm.activePlayers.Sum(p => p.aim)           + cm.modStats.aimAccuracy),
                 ("Sweep Strength",  cm.cStats.sweepStrength   + cm.activePlayers.Sum(p => p.sweepStrength) + cm.modStats.sweepStrength),
                 ("Sweep Endurance", cm.cStats.sweepEndurance  + cm.activePlayers.Sum(p => p.sweepEnduro)   + cm.modStats.sweepEndurance),
@@ -99,7 +99,7 @@ public static class TextReplacementUtility
             switch (skills[0].Item1)
             {
                 case "Weight":          text = text.Replace("{PLAYER_TOP_SKILL_1}", "excellent ice judgement"); break;
-                case "Finesse":         text = text.Replace("{PLAYER_TOP_SKILL_1}", "confident shotmaking"); break;
+                case "Consistency":     text = text.Replace("{PLAYER_TOP_SKILL_1}", "rock-steady shotmaking"); break;
                 case "Aim":             text = text.Replace("{PLAYER_TOP_SKILL_1}", "deadly precision"); break;
                 case "Sweep Strength":  text = text.Replace("{PLAYER_TOP_SKILL_1}", "muscular sweeping"); break;
                 case "Sweep Endurance": text = text.Replace("{PLAYER_TOP_SKILL_1}", "superior conditioning"); break;
@@ -108,7 +108,7 @@ public static class TextReplacementUtility
             switch (skills[1].Item1)
             {
                 case "Weight":          text = text.Replace("{PLAYER_TOP_SKILL_2}", "accurate weight"); break;
-                case "Finesse":         text = text.Replace("{PLAYER_TOP_SKILL_2}", "a little more finesse"); break;
+                case "Consistency":     text = text.Replace("{PLAYER_TOP_SKILL_2}", "a little more consistency"); break;
                 case "Aim":             text = text.Replace("{PLAYER_TOP_SKILL_2}", "deadly precision"); break;
                 case "Sweep Strength":  text = text.Replace("{PLAYER_TOP_SKILL_2}", "reliable sweeping"); break;
                 case "Sweep Endurance": text = text.Replace("{PLAYER_TOP_SKILL_2}", "great conditioning"); break;
@@ -292,7 +292,7 @@ public static class TextReplacementUtility
                     var oppSkills = new[]
                     {
                         ("Weight",          opponentTeam.players.Sum(p => p.weight)),
-                        ("Finesse",         opponentTeam.players.Sum(p => p.finesse)),
+                        ("Consistency",     opponentTeam.players.Sum(p => p.finesse)),
                         ("Aim",             opponentTeam.players.Sum(p => p.aim)),
                         ("Sweep Strength",  opponentTeam.players.Sum(p => p.sweepStrength)),
                         ("Sweep Endurance", opponentTeam.players.Sum(p => p.sweepEnduro)),
@@ -302,7 +302,7 @@ public static class TextReplacementUtility
                     switch (oppSkills[0].Item1)
                     {
                         case "Weight":          text = text.Replace("{OPPONENT_TOP_SKILL_1}", "superior shotmaking"); break;
-                        case "Finesse":         text = text.Replace("{OPPONENT_TOP_SKILL_1}", "a bit more finesse"); break;
+                        case "Consistency":     text = text.Replace("{OPPONENT_TOP_SKILL_1}", "a bit more consistency"); break;
                         case "Aim":             text = text.Replace("{OPPONENT_TOP_SKILL_1}", "more accurate shooting"); break;
                         case "Sweep Strength":  text = text.Replace("{OPPONENT_TOP_SKILL_1}", "better sweeping"); break;
                         case "Sweep Endurance": text = text.Replace("{OPPONENT_TOP_SKILL_1}", "stronger conditioning"); break;
@@ -311,7 +311,7 @@ public static class TextReplacementUtility
                     switch (oppSkills[1].Item1)
                     {
                         case "Weight":          text = text.Replace("{OPPONENT_TOP_SKILL_2}", "accurate weight"); break;
-                        case "Finesse":         text = text.Replace("{OPPONENT_TOP_SKILL_2}", "a little more finesse"); break;
+                        case "Consistency":     text = text.Replace("{OPPONENT_TOP_SKILL_2}", "a little more consistency"); break;
                         case "Aim":             text = text.Replace("{OPPONENT_TOP_SKILL_2}", "better accuracy"); break;
                         case "Sweep Strength":  text = text.Replace("{OPPONENT_TOP_SKILL_2}", "more reliable sweeping"); break;
                         case "Sweep Endurance": text = text.Replace("{OPPONENT_TOP_SKILL_2}", "better conditioning"); break;

@@ -2,7 +2,7 @@
 
 Status (Nov 25): **three tracks, merged to main.** The current design is the "Tier sheet (revised Nov 25)" and "Fuzz look" sections further down. The sections
 from "How it works" to "Pull-back and the circles" are the original five-track first pass and are kept only for history (Directional Sweeping is now Sweep 1,
-Cross Training is gone, the aim circle was replaced by the oval and crosshairs, prices are the fixed $1,000-$10,000 ladder). Numbers live in one table,
+Cross Training is gone, the aim circle was replaced by the oval and crosshairs, prices are now the fixed $500-$4,000 ladder). Numbers live in one table,
 [Assets/Scripts/Training/TrainingCatalog.cs](Assets/Scripts/Training/TrainingCatalog.cs).
 
 ## How it works
@@ -123,18 +123,18 @@ Old five-track saves are converted on load (`MigrateLegacy`).
 
 | Track | Lv | Name | Cost | Gives |
 |---|---|---|---|---|
-| Sweep Training | 1 | Directional Sweeping | $1,000 | carving: tap one sweeper |
-| | 2 | Sweep Drills | $2,500 | +4 endurance |
-| | 3 | Weight Training | $5,000 | +5 strength |
-| | 4 | Synchro Sweeping | $10,000 | +5 cohesion |
-| Tactic Studies | 1 | Film Room | $1,000 | pulsing crosshairs on the aim point (replaces the aim circle) |
-| | 2 | Shot Charts | $2,500 | collision warning line |
-| | 3 | Angle Study | $5,000 | hit arrows, up to 12 degrees off |
-| | 4 | Hit Analytics | $10,000 | exact hit arrows |
-| On-Ice Training | 1 | Target Practice | $1,000 | cycling dots on the line, which reaches the far hog line |
-| | 2 | Release Drills | $2,500 | split and hog-to-hog timing ranges |
-| | 3 | Weight Control | $5,000 | line reaches halfway to the house, +3 weight |
-| | 4 | Pinpoint | $10,000 | the full line, +3 weight, +3 aim |
+| Sweep Training | 1 | Directional Sweeping | $500 | carving: tap one sweeper |
+| | 2 | Sweep Drills | $1,000 | +4 endurance |
+| | 3 | Weight Training | $2,000 | +5 strength |
+| | 4 | Synchro Sweeping | $4,000 | +5 cohesion |
+| Tactic Studies | 1 | Film Room | $500 | pulsing crosshairs on the aim point (replaces the aim circle) |
+| | 2 | Shot Charts | $1,000 | collision warning line |
+| | 3 | Angle Study | $2,000 | hit arrows, up to 12 degrees off |
+| | 4 | Hit Analytics | $4,000 | exact hit arrows |
+| On-Ice Training | 1 | Target Practice | $500 | cycling dots on the line, which reaches the far hog line |
+| | 2 | Release Drills | $1,000 | split and hog-to-hog timing ranges |
+| | 3 | Weight Control | $2,000 | line reaches halfway to the house, +3 weight |
+| | 4 | Pinpoint | $4,000 | the full line, +3 weight, +3 aim |
 
 ### Fuzz look (agreed, being built in steps)
 
@@ -165,7 +165,8 @@ Gear and training are added together (`CareerManager.SkillBonus`); gear is recom
 | Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.5 m x (1 - skill/100)^2 |
 | Sweep strength | all three player-team sweepers | how much a sweep changes friction and curl |
 | Sweep endurance | all three player-team sweepers | shorter sweep cooldown, slower fatigue |
-| Sweep cohesion | the sweepers' stats | **nothing yet** - no match code reads it |
-| Finesse | the AI's shot choices only | **nothing for the player yet** |
+| Sweep cohesion | the two sweepers | two-broom sweeps x0.85 (cohesion 0) to x1.15 (100), 1.0 at 50 (`SweepStats`) |
+| Consistency (saved as finesse) | the shooter (aim fuzz), and the AI's shot choices | the worst miss and the oval: 2.5 sigmas at 0, 2 at 50, 1.5 at 100 (`AimFuzz.MaxSigmasFor`) |
 
-So Rowing's cohesion, Synchro Sweeping, and Pickleball's finesse do not change play until cohesion and finesse are given a job. Balance note: a $10k item is up to 60 stat points (about 20 on each of its three stats), and a player starts around 45, so four good items now add far more than a whole training track. That is a balance pass for once you have tuned the tiers.
+Gear: 2 points per $1,000, at most 20 per item (`EquipmentManager.PointsFor`). Owned items keep the stats they were bought with.
+Sponsors: money only, weekly income plus a bonus for finishing top 4; rules in `SponsorRules.cs`.

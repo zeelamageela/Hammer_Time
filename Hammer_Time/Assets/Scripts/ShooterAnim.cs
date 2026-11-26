@@ -67,12 +67,17 @@ public class ShooterAnim : MonoBehaviour
     public const float DefaultReleasePointY = -24.077f;
 
     /// <summary>
-    /// How much slower than Arcade the shooter's kick plays in the slower physics modes: the profile's time stretch (Pro 2x, Real-time 4.4x),
-    /// but never more than this, so the Real-time kick does not crawl. The kick is driven by the rock's position, so this is the rock's speed
-    /// from the pull-back point to the release point. Tune here.
+    /// The shooter's kick is driven by the rock's position. In Arcade and Pro the rock simply leaves at its real speed, so the kick runs
+    /// at that pace with no change of speed at release. Real-time is so slow that its kick would crawl, so there the rock runs at its
+    /// weight speed divided by this until the release point, then takes its real speed. Tune here.
     /// </summary>
-    public const float MaxKickSlowdown = 3f;
+    public const float RealKickSlowdown = 3f;
 
+    /// <summary>The kick's slowdown for a profile's time stretch; 0 = leave the rock at its real speed.</summary>
+    public static float KickSlowdown(float timeStretch)
+    {
+        return timeStretch <= RockPhysicsProfile.ProTimeStretch + 0.01f ? 0f : RealKickSlowdown;
+    }
 
     void Update()
     {
