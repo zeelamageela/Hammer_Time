@@ -385,6 +385,21 @@ release (`GameManager` calls it on `Rock_Flick.springReleased`; the virtual came
 
 ---
 
+## Roadmap (user, Nov 27 2026)
+
+The full launch list, with records/standings checks and audits, is `LAUNCH_LIST.md`. Feature notes:
+
+In order. Each step is confirmed with the user before the next.
+
+1. **Club nights replace cash games** — built, needs a career play test. `Tourny/ClubNight.cs`: the selector's `locals`, 4 teams, round robin, no playoffs, winner takes the pot (prize 0 = 4 entry fees); ties: point difference, points scored, then split. No trophy, tour points, ranking earnings or sponsor bonus. **Waiting for the user's list** (name, location, entry fee, background, crowd). Old cash-game code (`CashGames.cs`, `Tourny_Home_2`) is unreachable for new events; delete later.
+2. Optional practice session at the start of each event (about four rocks, ICE button after each).
+3. Puzzle system and one-shot daily puzzles (aim line with hit arrows on by default; each puzzle sets its own requirements).
+4. Career intro: alternate takes the injured skip's two rocks in last year's final; a miss still moves on; skippable. Remove the old tutorial. Main menu: Career, Daily Puzzle, Options.
+5. Skins games on the calendar (hammer needs two, the other team steals, otherwise carry over).
+6. Game Center achievements for the new version.
+
+---
+
 ## Physics rebuild (Nov 2026) — merged to `main`
 
 One physics model now drives both the live rock and the aim-line simulator (`RockPhysics`, `RockPhysicsProfile`, `RockSlide`, `RockCollision`, `TrajectorySimulator`). Profiles: **Arcade** (default, soft stop), Pro (half speed), Real-time (real-world seconds, no `Time.timeScale`); Classic (original) is no longer offered. Players choose with the Game Pace slider; the Arcade stop curve stays a tester option (`DevOptions.Enabled`). Flick mode is hidden. Also in: the 2% launch-speed bug fix (shooter bodies' mass), aim-line fuzz from skill, hack-to-hog / hog-to-hog split clocks, Box2D-matched rock collisions with chains and frozen pairs.
