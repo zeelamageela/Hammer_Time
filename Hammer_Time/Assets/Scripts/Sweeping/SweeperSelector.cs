@@ -124,28 +124,28 @@ public class SweeperSelector : MonoBehaviour
                     //sm.isSweeping = true;
                     sm.SweepTap();
                         
-                    Debug.Log(hit.collider.gameObject.name);
+                    GameLog.Info(hit.collider.gameObject.name);
                 }
 
                 if (hit.collider == sweeperLCol)
                 {
                     sm.SweepTapLeft();
 
-                    Debug.Log(hit.collider.gameObject.name);
+                    GameLog.Info(hit.collider.gameObject.name);
                 }
 
                 if (hit.collider == sweeperRCol)
                 {
                     sm.SweepTapRight();
 
-                    Debug.Log(hit.collider.gameObject.name);
+                    GameLog.Info(hit.collider.gameObject.name);
                 }
 
                 if (hit.collider.gameObject.layer == 3)
                 {
                     ReAttachToRock(hit.collider.gameObject);
-                    Debug.Log(hit.collider.gameObject.name);
-                    Debug.Log(hit.collider.gameObject.layer);
+                    GameLog.Info(hit.collider.gameObject.name);
+                    GameLog.Info(hit.collider.gameObject.layer);
                 }
 
             }
@@ -162,7 +162,7 @@ public class SweeperSelector : MonoBehaviour
         Rock_Info rockInfo = rock.GetComponent<Rock_Info>();
         if (rockInfo == null || !rockInfo.moving)
         {
-            Debug.Log("[SweeperSelector] Rock not moving or no Rock_Info");
+            GameLog.Info("[SweeperSelector] Rock not moving or no Rock_Info");
             return;
         }
         
@@ -177,7 +177,7 @@ public class SweeperSelector : MonoBehaviour
         if (isPlayerRock)
         {
             // Player tapped their own rock - switch regular sweepers to follow it
-            Debug.Log($"[SweeperSelector] Switching regular sweepers to follow {rock.name}");
+            GameLog.Info($"[SweeperSelector] Switching regular sweepers to follow {rock.name}");
             rockRB = rock.GetComponent<Rigidbody2D>();
             
             // Keep sweepers active - don't interrupt current sweeping state
@@ -186,7 +186,7 @@ public class SweeperSelector : MonoBehaviour
         else if (rock.transform.position.y > 6.5f)
         {
             // Opponent rock behind T-line - let TeeSweeperController handle it
-            Debug.Log("[SweeperSelector] Opponent rock behind T-line - TeeSweeperController will handle");
+            GameLog.Info("[SweeperSelector] Opponent rock behind T-line - TeeSweeperController will handle");
         }
     }
 
@@ -282,7 +282,7 @@ public class SweeperSelector : MonoBehaviour
         // If we found a more strategic rock, switch to it
         if (bestRock != null)
         {
-            Debug.Log($"[SweeperSelector] AUTO-FOLLOW: Switching from {currentRock.name} to {bestRock.name} (more strategic)");
+            GameLog.Info($"[SweeperSelector] AUTO-FOLLOW: Switching from {currentRock.name} to {bestRock.name} (more strategic)");
             rockRB = bestRock.GetComponent<Rigidbody2D>();
             
             // Notify player via callout

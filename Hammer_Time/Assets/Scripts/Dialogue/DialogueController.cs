@@ -227,7 +227,7 @@ public class DialogueController : MonoBehaviour
 
         float targetY = normalizedSpotlightPos.y > 0.5f ? dialogueBottomY : dialogueTopY;
         panel.anchoredPosition = new Vector2(panel.anchoredPosition.x, targetY);
-        Debug.Log($"[DialogueController] Panel repositioned to Y={targetY} (spotlight at normalized {normalizedSpotlightPos.y:F2})");
+        GameLog.Info($"[DialogueController] Panel repositioned to Y={targetY} (spotlight at normalized {normalizedSpotlightPos.y:F2})");
     }
 
     /// <summary>

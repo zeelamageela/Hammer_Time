@@ -24,7 +24,7 @@ public class EndManager : MonoBehaviour
     void Start()
     {
         //activeRock = redShooter.GetComponent<Rock_InPlay>().activeRock;
-        Debug.Log("activeRock izz " + activeRock);
+        GameLog.Info("activeRock izz " + activeRock);
         //Instantiate(redRock, new Vector2(0f, -19.49f), Quaternion.identity);
         yellowShooter.SetActive(false);
         redShooter.SetActive(false);
@@ -44,13 +44,13 @@ public class EndManager : MonoBehaviour
             {
                 yellowShooter.SetActive(true);
                 activeRock = true;
-                Debug.Log(rock_count + " rocks left.");
+                GameLog.Info(rock_count + " rocks left.");
             }
             if(rock_count%2 == 1)
             {
                 redShooter.SetActive(true);
                 activeRock = true;
-                Debug.Log(rock_count + " rocks left.");
+                GameLog.Info(rock_count + " rocks left.");
                 redRock = GameObject.Find("Red_Rock");
             }
 
@@ -59,19 +59,19 @@ public class EndManager : MonoBehaviour
         if (yellowReleased)
         {
             yellowRock = GameObject.FindWithTag("Rock");
-            Debug.Log("Yellow is released");
+            GameLog.Info("Yellow is released");
 
             if (yellowRock.transform.hasChanged)
             {
                 yellowShooter.transform.hasChanged = false;
 
-                Debug.Log("Yellow is moving");
+                GameLog.Info("Yellow is moving");
             }
             else
             {
                 activeRock = false;
                 rock_count--;
-                Debug.Log("Yellow is stopped");
+                GameLog.Info("Yellow is stopped");
                 return;
             }
         }
@@ -84,13 +84,13 @@ public class EndManager : MonoBehaviour
             {
                 redRock.transform.hasChanged = false;
 
-                Debug.Log("Red is moving");
+                GameLog.Info("Red is moving");
             }
             else
             {
                 activeRock = false;
                 rock_count--;
-                Debug.Log("Red is stopped");
+                GameLog.Info("Red is stopped");
             }
             
 

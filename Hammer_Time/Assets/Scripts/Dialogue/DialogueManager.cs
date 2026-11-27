@@ -41,7 +41,7 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(Dialogue dialogue)
     {
-        Debug.Log("Conversation with " + dialogue.name);
+        GameLog.Info("Conversation with " + dialogue.name);
         nameText.text = dialogue.name;
         contButton.SetActive(true);
         contButton.GetComponent<Button>().interactable = true;
@@ -65,7 +65,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         string sentence = sentences.Dequeue();
-        Debug.Log(sentence);
+        GameLog.Info(sentence);
 
         sentence = TextReplace(sentence);
 
@@ -134,7 +134,7 @@ public class DialogueManager : MonoBehaviour
         announcerHead.SetActive(false);
         if (Time.timeScale < 1f)
             Time.timeScale = 1f;
-        Debug.Log("End of conversation");
+        GameLog.Info("End of conversation");
     }
 
 }

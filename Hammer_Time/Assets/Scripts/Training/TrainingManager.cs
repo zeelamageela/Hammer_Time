@@ -138,7 +138,7 @@ public class TrainingManager : MonoBehaviour
         c.cash -= next.cost;
         c.trainingLevels = TrainingCatalog.WithLevelBought(c.trainingLevels, (TrainingTrack)track);
         if (teamMenu != null) teamMenu.CashDeltaText(-next.cost);
-        Debug.Log("[Training] bought " + TrainingCatalog.TrackName((TrainingTrack)track) + " level " + TrainingCatalog.Owned(c.trainingLevels, (TrainingTrack)track) + " (" + next.name + ") for $" + next.cost);
+        GameLog.Info("[Training] bought " + TrainingCatalog.TrackName((TrainingTrack)track) + " level " + TrainingCatalog.Owned(c.trainingLevels, (TrainingTrack)track) + " (" + next.name + ") for $" + next.cost);
 
         // Like an equipment purchase: cash and the new level are only in memory until now, so save before anything can lose them.
         c.SaveCareer();

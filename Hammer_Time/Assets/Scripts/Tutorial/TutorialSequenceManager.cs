@@ -104,7 +104,7 @@ public class TutorialSequenceManager : MonoBehaviour
     /// </summary>
     public void PlaySequence(string sequenceId, Action onComplete = null)
     {
-        Debug.Log($"[TutorialSequenceManager] PlaySequence called for: {sequenceId}");
+        GameLog.Info($"[TutorialSequenceManager] PlaySequence called for: {sequenceId}");
         
         if (!enableTutorials)
         {
@@ -113,7 +113,7 @@ public class TutorialSequenceManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Tutorials enabled, looking up sequence...");
+        GameLog.Info($"[TutorialSequenceManager] Tutorials enabled, looking up sequence...");
         TutorialSequence sequence = GetSequenceById(sequenceId);
         if (sequence == null)
         {
@@ -122,7 +122,7 @@ public class TutorialSequenceManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Sequence found: {sequence.name}, calling PlaySequence(sequence)...");
+        GameLog.Info($"[TutorialSequenceManager] Sequence found: {sequence.name}, calling PlaySequence(sequence)...");
         PlaySequence(sequence, onComplete);
     }
     
@@ -131,7 +131,7 @@ public class TutorialSequenceManager : MonoBehaviour
     /// </summary>
     public void PlaySequence(TutorialSequence sequence, Action onComplete = null)
     {
-        Debug.Log($"[TutorialSequenceManager] PlaySequence(sequence) called for: {sequence?.sequenceId ?? "NULL"}");
+        GameLog.Info($"[TutorialSequenceManager] PlaySequence(sequence) called for: {sequence?.sequenceId ?? "NULL"}");
         
         if (!enableTutorials)
         {
@@ -147,7 +147,7 @@ public class TutorialSequenceManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Checking if tutorial already completed...");
+        GameLog.Info($"[TutorialSequenceManager] Checking if tutorial already completed...");
         // Check if already completed
         if (HasCompletedTutorial(sequence.sequenceId))
         {
@@ -156,12 +156,12 @@ public class TutorialSequenceManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[TutorialSequenceManager] ✓ Tutorial not yet completed, starting sequence: {sequence.sequenceId}");
+        GameLog.Info($"[TutorialSequenceManager] ✓ Tutorial not yet completed, starting sequence: {sequence.sequenceId}");
         
         // Stop current tutorial if playing
         if (isPlaying)
         {
-            Debug.Log($"[TutorialSequenceManager] Stopping current tutorial to start new one");
+            GameLog.Info($"[TutorialSequenceManager] Stopping current tutorial to start new one");
             StopTutorial();
         }
         
@@ -187,7 +187,7 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         if (!isPlaying) return;
         _forceAdvanceStep = true;
-        Debug.Log("[TutorialSequenceManager] NotifyTurnComplete — forcing any stuck throw-phase step to advance");
+        GameLog.Info("[TutorialSequenceManager] NotifyTurnComplete — forcing any stuck throw-phase step to advance");
     }
 
     /// <summary>
@@ -200,15 +200,15 @@ public class TutorialSequenceManager : MonoBehaviour
         
         if (!currentSequence.canSkip)
         {
-            Debug.Log("Current tutorial cannot be skipped");
+            GameLog.Info("Current tutorial cannot be skipped");
             return;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Skipping tutorial: {currentSequence.sequenceId}");
+        GameLog.Info($"[TutorialSequenceManager] Skipping tutorial: {currentSequence.sequenceId}");
         
         // Mark tutorial as complete when skipped (so it won't show again)
         MarkTutorialComplete(currentSequence.sequenceId);
-        Debug.Log($"[TutorialSequenceManager] Tutorial marked complete after skip: {currentSequence.sequenceId}");
+        GameLog.Info($"[TutorialSequenceManager] Tutorial marked complete after skip: {currentSequence.sequenceId}");
         
         OnTutorialSkipped?.Invoke(currentSequence);
         
@@ -324,7 +324,7 @@ public class TutorialSequenceManager : MonoBehaviour
                     {
                         // Subtract 1 because the for-loop will increment before the next iteration.
                         currentStepIndex = jumpIdx - 1;
-                        Debug.Log($"[TutorialSequenceManager] Branch {(passed ? "SUCCESS" : "FAILURE")} → jumping to '{jumpTo}' (index {jumpIdx})");
+                        GameLog.Info($"[TutorialSequenceManager] Branch {(passed ? "SUCCESS" : "FAILURE")} → jumping to '{jumpTo}' (index {jumpIdx})");
                     }
                     else
                     {
@@ -342,15 +342,15 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         OnStepStart?.Invoke(step, currentStepIndex);
         
-        Debug.Log($"[TutorialSequenceManager] === Playing Step: {step.stepName} ===");
-        Debug.Log($"[TutorialSequenceManager] Start Condition: {step.startCondition}, End Condition: {step.endCondition}");
+        GameLog.Info($"[TutorialSequenceManager] === Playing Step: {step.stepName} ===");
+        GameLog.Info($"[TutorialSequenceManager] Start Condition: {step.startCondition}, End Condition: {step.endCondition}");
         
         // STEP 1: Wait for START condition (if any)
         if (step.startCondition != TutorialConditionType.None)
         {
-            Debug.Log($"[TutorialSequenceManager] Waiting for START condition: {step.startCondition}");
+            GameLog.Info($"[TutorialSequenceManager] Waiting for START condition: {step.startCondition}");
             yield return StartCoroutine(WaitForCondition(step, step.startCondition));
-            Debug.Log($"[TutorialSequenceManager] START condition met!");
+            GameLog.Info($"[TutorialSequenceManager] START condition met!");
         }
         
         // SPECIAL CASE: For conditions that check dragging state on END condition, check BEFORE showing dialogue
@@ -360,7 +360,7 @@ public class TutorialSequenceManager : MonoBehaviour
         {
             if (ShouldSkipDraggingStep(step.rockIndex))
             {
-                Debug.Log($"[TutorialSequenceManager] Skipping dragging/pullback step - rock not in dragging state");
+                GameLog.Info($"[TutorialSequenceManager] Skipping dragging/pullback step - rock not in dragging state");
                 yield break;
             }
         }
@@ -382,7 +382,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 yield break;
             }
 
-            Debug.Log($"[TutorialSequenceManager] Showing dialogue for step end condition: {step.endCondition}");
+            GameLog.Info($"[TutorialSequenceManager] Showing dialogue for step end condition: {step.endCondition}");
             
             // For action-based conditions the player's physical action ends the step,
             // so dialogue must not intercept input or require a click to dismiss.
@@ -391,7 +391,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 step.endCondition == TutorialConditionType.MouseReleased ||
                 step.endCondition == TutorialConditionType.RockReleased)
             {
-                Debug.Log($"[TutorialSequenceManager] Showing non-blocking dialogue for action-based step");
+                GameLog.Info($"[TutorialSequenceManager] Showing non-blocking dialogue for action-based step");
                 dialogueController.Show(step.dialogue, null, nonBlocking: true);
             }
             else
@@ -404,21 +404,21 @@ public class TutorialSequenceManager : MonoBehaviour
         }
         else if (step.dialogue != null && step.endCondition == TutorialConditionType.RockPullbackThreshold)
         {
-            Debug.Log($"[TutorialSequenceManager] Skipping dialogue at setup for RockPullbackThreshold - will show when threshold is reached");
+            GameLog.Info($"[TutorialSequenceManager] Skipping dialogue at setup for RockPullbackThreshold - will show when threshold is reached");
         }
         
         // STEP 4: Wait for END condition (for RockPullbackThreshold, this will show dialogue when threshold is reached)
         if (step.endCondition != TutorialConditionType.None)
         {
-            Debug.Log($"[TutorialSequenceManager] Waiting for END condition: {step.endCondition}");
+            GameLog.Info($"[TutorialSequenceManager] Waiting for END condition: {step.endCondition}");
             yield return StartCoroutine(WaitForCondition(step, step.endCondition));
-            Debug.Log($"[TutorialSequenceManager] END condition met!");
+            GameLog.Info($"[TutorialSequenceManager] END condition met!");
             
             // Hide dialogue when condition is met (for action-based steps)
             if (DialogueController.Instance != null && DialogueController.Instance.IsShowing)
             {
                 DialogueController.Instance.Hide();
-                Debug.Log($"[TutorialSequenceManager] Hiding dialogue after condition met");
+                GameLog.Info($"[TutorialSequenceManager] Hiding dialogue after condition met");
             }
         }
         
@@ -496,7 +496,7 @@ public class TutorialSequenceManager : MonoBehaviour
                         spotlightCanvas.renderMode = RenderMode.ScreenSpaceCamera;
                         spotlightCanvas.worldCamera = camMgr.ui;
                         spotlightCanvas.planeDistance = 1f;
-                        Debug.Log($"[TutorialSequenceManager] Spotlight canvas set to Screen Space - Camera with '{camMgr.ui.name}'");
+                        GameLog.Info($"[TutorialSequenceManager] Spotlight canvas set to Screen Space - Camera with '{camMgr.ui.name}'");
                     }
                 }
 
@@ -508,7 +508,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 if (spotlightCG == null) spotlightCG = spotlightOverlay.AddComponent<CanvasGroup>();
                 spotlightCG.blocksRaycasts = false;
 
-                Debug.Log($"[TutorialSequenceManager] Spotlight canvas: " +
+                GameLog.Info($"[TutorialSequenceManager] Spotlight canvas: " +
                           $"renderMode={spotlightCanvas.renderMode}, " +
                           $"worldCamera={(spotlightCanvas.worldCamera != null ? spotlightCanvas.worldCamera.name : "NULL")}, " +
                           $"sortingOrder={spotlightCanvas.sortingOrder}, " +
@@ -538,7 +538,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 cutoutMask.position = step.spotlightTarget.position;
                 cutoutMask.sizeDelta = step.spotlightTarget.sizeDelta + Vector2.one * step.spotlightPadding;
                 spotlightScreenPos = step.spotlightTarget.position; // world pos == screen pos on Overlay canvas
-                Debug.Log($"[TutorialSequenceManager] Spotlight UI target: {step.spotlightTarget.name} at {cutoutMask.position}");
+                GameLog.Info($"[TutorialSequenceManager] Spotlight UI target: {step.spotlightTarget.name} at {cutoutMask.position}");
             }
             else if (hasWorldTarget)
             {
@@ -568,7 +568,7 @@ public class TutorialSequenceManager : MonoBehaviour
                         cutoutMask.anchoredPosition = localPoint;
                     }
                     cutoutMask.sizeDelta = step.manualCutoutSize + Vector2.one * step.spotlightPadding;
-                    Debug.Log($"[TutorialSequenceManager] Spotlight world pos {targetWorldPos} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
+                    GameLog.Info($"[TutorialSequenceManager] Spotlight world pos {targetWorldPos} -> screen {screenPos} -> anchoredPos {cutoutMask.anchoredPosition}, size: {cutoutMask.sizeDelta}");
                 }
                 else
                 {
@@ -589,7 +589,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 // Use manual position/size — no screen pos available, dialogue stays at default
                 cutoutMask.anchoredPosition = step.manualCutoutPosition;
                 cutoutMask.sizeDelta = step.manualCutoutSize;
-                Debug.Log($"[TutorialSequenceManager] Spotlight manual position: {step.manualCutoutPosition}, size: {step.manualCutoutSize}");
+                GameLog.Info($"[TutorialSequenceManager] Spotlight manual position: {step.manualCutoutPosition}, size: {step.manualCutoutSize}");
             }
 
             // Reposition dialogue to avoid covering the spotlight
@@ -772,7 +772,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 float dist = Vector3.Distance(aimPos, step.branchTargetPosition);
                 bool near = dist <= step.branchThreshold;
                 bool pass = step.branchCondition == TutorialBranchConditionType.AimPositionNearTarget ? near : !near;
-                Debug.Log($"[TutorialSequenceManager] Branch {step.branchCondition}: aimPos={aimPos}, target={step.branchTargetPosition}, dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                GameLog.Info($"[TutorialSequenceManager] Branch {step.branchCondition}: aimPos={aimPos}, target={step.branchTargetPosition}, dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
                 return pass;
             }
 
@@ -785,21 +785,21 @@ public class TutorialSequenceManager : MonoBehaviour
                 if (rock == null) return false;
                 float dist = Vector3.Distance(rock.transform.position, step.branchTargetPosition);
                 bool pass = dist <= step.branchThreshold;
-                Debug.Log($"[TutorialSequenceManager] Branch RockPositionNearTarget: dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                GameLog.Info($"[TutorialSequenceManager] Branch RockPositionNearTarget: dist={dist:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
                 return pass;
             }
 
             case TutorialBranchConditionType.FlickVelocityAbove:
             {
                 bool pass = lastCapturedSpeed > step.branchThreshold;
-                Debug.Log($"[TutorialSequenceManager] Branch FlickVelocityAbove: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                GameLog.Info($"[TutorialSequenceManager] Branch FlickVelocityAbove: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
                 return pass;
             }
 
             case TutorialBranchConditionType.FlickVelocityBelow:
             {
                 bool pass = lastCapturedSpeed < step.branchThreshold;
-                Debug.Log($"[TutorialSequenceManager] Branch FlickVelocityBelow: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
+                GameLog.Info($"[TutorialSequenceManager] Branch FlickVelocityBelow: speed={lastCapturedSpeed:F2}, threshold={step.branchThreshold:F2}, pass={pass}");
                 return pass;
             }
 
@@ -864,7 +864,7 @@ public class TutorialSequenceManager : MonoBehaviour
             // NotifyTurnComplete() was called — only bail on throw-phase conditions
             if (_forceAdvanceStep && IsThrowPhaseCondition(conditionType))
             {
-                Debug.Log($"[TutorialSequenceManager] Step '{step.stepName}' force-advanced by NotifyTurnComplete (condition: {conditionType})");
+                GameLog.Info($"[TutorialSequenceManager] Step '{step.stepName}' force-advanced by NotifyTurnComplete (condition: {conditionType})");
                 break;
             }
             elapsed += Time.unscaledDeltaTime;
@@ -875,7 +875,7 @@ public class TutorialSequenceManager : MonoBehaviour
         {
             StopCoroutine(running);
             if (elapsed >= timeout && step.stepTimeout > 0f)
-                Debug.Log($"[TutorialSequenceManager] Step '{step.stepName}' timed out after {step.stepTimeout}s — auto-advancing");
+                GameLog.Info($"[TutorialSequenceManager] Step '{step.stepName}' timed out after {step.stepTimeout}s — auto-advancing");
         }
 
         _forceAdvanceStep = false; // consume the flag
@@ -975,7 +975,7 @@ public class TutorialSequenceManager : MonoBehaviour
             {
                 Rigidbody2D rb = rock.GetComponent<Rigidbody2D>();
                 lastCapturedSpeed = rb != null ? RockPhysicsSettings.Current.WeightFromLaunchSpeed(rb.linearVelocity.magnitude) : 0f; // weight units, like the step thresholds
-                Debug.Log($"[TutorialSequenceManager] Captured release speed={lastCapturedSpeed:F2}, aimPos={lastCapturedAimPos}");
+                GameLog.Info($"[TutorialSequenceManager] Captured release speed={lastCapturedSpeed:F2}, aimPos={lastCapturedAimPos}");
             }
         }
     }
@@ -1002,7 +1002,7 @@ public class TutorialSequenceManager : MonoBehaviour
             Rock_Flick flick = rock.GetComponent<Rock_Flick>();
             if (flick != null && flick.enabled && flick.isPressed)
             {
-                Debug.Log($"[TutorialSequenceManager] Rock grabbed! Rock_Flick.isPressed=true");
+                GameLog.Info($"[TutorialSequenceManager] Rock grabbed! Rock_Flick.isPressed=true");
                 return true;
             }
             
@@ -1012,7 +1012,7 @@ public class TutorialSequenceManager : MonoBehaviour
                 Rock_Info ri = gameManager.rockList[index].rockInfo;
                 if (ri != null && ri.shotTaken && !ri.released)
                 {
-                    Debug.Log($"[TutorialSequenceManager] Rock grabbed via shotTaken fallback");
+                    GameLog.Info($"[TutorialSequenceManager] Rock grabbed via shotTaken fallback");
                     return true;
                 }
             }
@@ -1036,7 +1036,7 @@ public class TutorialSequenceManager : MonoBehaviour
         Vector3 lastPos = mainCam.transform.position;
         int stableFrameCount = 0;
         
-        Debug.Log($"[TutorialSequenceManager] Waiting for camera to stop moving... Current pos: {mainCam.transform.position}");
+        GameLog.Info($"[TutorialSequenceManager] Waiting for camera to stop moving... Current pos: {mainCam.transform.position}");
         
         // Wait a minimum of 10 frames to allow camera to start moving if it's going to
         for (int i = 0; i < 10; i++)
@@ -1054,14 +1054,14 @@ public class TutorialSequenceManager : MonoBehaviour
                 stableFrameCount++;
                 if (stableFrameCount % 3 == 0)
                 {
-                    Debug.Log($"[TutorialSequenceManager] Camera stable for {stableFrameCount} frames (movement: {movement:F4})");
+                    GameLog.Info($"[TutorialSequenceManager] Camera stable for {stableFrameCount} frames (movement: {movement:F4})");
                 }
             }
             else
             {
                 if (stableFrameCount > 0)
                 {
-                    Debug.Log($"[TutorialSequenceManager] Camera moved {movement:F4}, resetting stable count from {stableFrameCount}");
+                    GameLog.Info($"[TutorialSequenceManager] Camera moved {movement:F4}, resetting stable count from {stableFrameCount}");
                 }
                 stableFrameCount = 0; // Reset if camera moved
             }
@@ -1070,7 +1070,7 @@ public class TutorialSequenceManager : MonoBehaviour
             yield return null;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Camera stopped moving! Final pos: {mainCam.transform.position}");
+        GameLog.Info($"[TutorialSequenceManager] Camera stopped moving! Final pos: {mainCam.transform.position}");
     }
     
     private IEnumerator WaitForRockBeingDragged(int rockIndex)
@@ -1083,18 +1083,18 @@ public class TutorialSequenceManager : MonoBehaviour
         // Check if rock is valid
         if (gameManager.rockList == null || index >= gameManager.rockList.Count)
         {
-            Debug.Log($"[TutorialSequenceManager] Invalid rock index for 'being dragged' condition");
+            GameLog.Info($"[TutorialSequenceManager] Invalid rock index for 'being dragged' condition");
             yield break;
         }
         
         GameObject rock = gameManager.rockList[index].rock;
         if (rock == null)
         {
-            Debug.Log($"[TutorialSequenceManager] Rock object null for index {index}");
+            GameLog.Info($"[TutorialSequenceManager] Rock object null for index {index}");
             yield break;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Waiting for rock to be grabbed/dragged...");
+        GameLog.Info($"[TutorialSequenceManager] Waiting for rock to be grabbed/dragged...");
         yield return new WaitUntil(() =>
         {
             if (rock == null || !rock.activeInHierarchy)
@@ -1103,21 +1103,21 @@ public class TutorialSequenceManager : MonoBehaviour
             Rock_Flick flick = rock.GetComponent<Rock_Flick>();
             if (flick != null && flick.isPressed)
             {
-                Debug.Log($"[TutorialSequenceManager] Detected rock being dragged via Rock_Flick.isPressed");
+                GameLog.Info($"[TutorialSequenceManager] Detected rock being dragged via Rock_Flick.isPressed");
                 return true;
             }
 
             SpringJoint2D spring = rock.GetComponent<SpringJoint2D>();
             if (spring != null && spring.enabled && spring.connectedBody != null)
             {
-                Debug.Log($"[TutorialSequenceManager] Detected rock being dragged via active spring joint");
+                GameLog.Info($"[TutorialSequenceManager] Detected rock being dragged via active spring joint");
                 return true;
             }
 
             return false;
         });
 
-        Debug.Log($"[TutorialSequenceManager] Rock drag started!");
+        GameLog.Info($"[TutorialSequenceManager] Rock drag started!");
     }
     
     private IEnumerator WaitForRockPullbackThreshold(int rockIndex, float threshold, DialogueData dialogue)
@@ -1130,7 +1130,7 @@ public class TutorialSequenceManager : MonoBehaviour
         // Check if rock is valid
         if (gameManager.rockList == null || index >= gameManager.rockList.Count)
         {
-            Debug.Log($"[TutorialSequenceManager] Invalid rock index for pullback threshold condition");
+            GameLog.Info($"[TutorialSequenceManager] Invalid rock index for pullback threshold condition");
             yield break;
         }
         
@@ -1146,7 +1146,7 @@ public class TutorialSequenceManager : MonoBehaviour
         
         // CRITICAL: Wait for rock to be grabbed (clicked/pressed) FIRST
         // The pullback threshold only matters if the player is actually dragging
-        Debug.Log($"[TutorialSequenceManager] Waiting for rock to be grabbed before checking pullback...");
+        GameLog.Info($"[TutorialSequenceManager] Waiting for rock to be grabbed before checking pullback...");
         yield return new WaitUntil(() => 
         {
             if (rockGO == null || !rockGO.activeInHierarchy)
@@ -1156,7 +1156,7 @@ public class TutorialSequenceManager : MonoBehaviour
             return flick != null && flick.isPressed;
         });
         
-        Debug.Log($"[TutorialSequenceManager] Rock grabbed! Now measuring pullback distance...");
+        GameLog.Info($"[TutorialSequenceManager] Rock grabbed! Now measuring pullback distance...");
         
         // Now rock is being grabbed - measure the pullback distance from launcher
         Vector2 launcherPos = new Vector2(launcherTransform.position.x, launcherTransform.position.y);
@@ -1164,7 +1164,7 @@ public class TutorialSequenceManager : MonoBehaviour
         float baselineDistance = Vector2.Distance(launcherPos, baselineRockPos);
         float maxDistance = baselineDistance; // Track max distance reached
         
-        Debug.Log($"[TutorialSequenceManager] Baseline distance from launcher: {baselineDistance:F3}. Need to pull {threshold:F3} units further to reach threshold.");
+        GameLog.Info($"[TutorialSequenceManager] Baseline distance from launcher: {baselineDistance:F3}. Need to pull {threshold:F3} units further to reach threshold.");
         
         bool thresholdReached = false;
         int frameCount = 0;
@@ -1190,19 +1190,19 @@ public class TutorialSequenceManager : MonoBehaviour
             // Log every 15 frames
             if (frameCount % 15 == 0)
             {
-                Debug.Log($"[TutorialSequenceManager] Pullback: {distancePulledBack:F3} / {threshold:F3} (current distance: {currentDistance:F3}, baseline: {baselineDistance:F3})");
+                GameLog.Info($"[TutorialSequenceManager] Pullback: {distancePulledBack:F3} / {threshold:F3} (current distance: {currentDistance:F3}, baseline: {baselineDistance:F3})");
             }
             
             // Check if pulled back far enough
             if (distancePulledBack >= threshold && !thresholdReached)
             {
                 thresholdReached = true;
-                Debug.Log($"[TutorialSequenceManager] ✓ Pullback threshold reached! Pulled {distancePulledBack:F3} >= {threshold:F3}");
+                GameLog.Info($"[TutorialSequenceManager] ✓ Pullback threshold reached! Pulled {distancePulledBack:F3} >= {threshold:F3}");
                 
                 // Show dialogue when threshold is reached
                 if (dialogue != null && DialogueController.Instance != null)
                 {
-                    Debug.Log($"[TutorialSequenceManager] Showing dialogue: {dialogue.dialogueLines[0]}");
+                    GameLog.Info($"[TutorialSequenceManager] Showing dialogue: {dialogue.dialogueLines[0]}");
                     DialogueController.Instance.Show(dialogue, null);
                 }
             }
@@ -1214,11 +1214,11 @@ public class TutorialSequenceManager : MonoBehaviour
         // Rock was released
         if (!thresholdReached)
         {
-            Debug.Log($"[TutorialSequenceManager] ✗ Released before threshold. Max pullback was: {maxDistance - baselineDistance:F3}, needed: {threshold:F3}");
+            GameLog.Info($"[TutorialSequenceManager] ✗ Released before threshold. Max pullback was: {maxDistance - baselineDistance:F3}, needed: {threshold:F3}");
             yield break;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Rock released after threshold met! Max distance reached: {maxDistance:F3}");
+        GameLog.Info($"[TutorialSequenceManager] Rock released after threshold met! Max distance reached: {maxDistance:F3}");
     }
     
     /// <summary>
@@ -1229,7 +1229,7 @@ public class TutorialSequenceManager : MonoBehaviour
     {
         if (gameManager == null)
         {
-            Debug.Log($"[TutorialSequenceManager] GameManager null, skipping dragging step");
+            GameLog.Info($"[TutorialSequenceManager] GameManager null, skipping dragging step");
             return true;
         }
         
@@ -1238,7 +1238,7 @@ public class TutorialSequenceManager : MonoBehaviour
         // Check if rock is valid
         if (gameManager.rockList == null || index >= gameManager.rockList.Count)
         {
-            Debug.Log($"[TutorialSequenceManager] Invalid rock index {index}, skipping dragging step");
+            GameLog.Info($"[TutorialSequenceManager] Invalid rock index {index}, skipping dragging step");
             return true;
         }
         
@@ -1260,12 +1260,12 @@ public class TutorialSequenceManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"[TutorialSequenceManager] ShouldSkipDraggingStep check: shotTaken={rockInfo.shotTaken}, released={rockInfo.released}, isDragging={isDragging}");
+        GameLog.Info($"[TutorialSequenceManager] ShouldSkipDraggingStep check: shotTaken={rockInfo.shotTaken}, released={rockInfo.released}, isDragging={isDragging}");
         
         // Skip if already released
         if (rockInfo.released)
         {
-            Debug.Log($"[TutorialSequenceManager] Rock already released - SKIP");
+            GameLog.Info($"[TutorialSequenceManager] Rock already released - SKIP");
             return true;
         }
         
@@ -1273,11 +1273,11 @@ public class TutorialSequenceManager : MonoBehaviour
         // Drag steps should wait for the player to start dragging, not abort immediately.
         if (!isDragging)
         {
-            Debug.Log($"[TutorialSequenceManager] Rock is not currently being dragged - will wait for drag instead of skipping");
+            GameLog.Info($"[TutorialSequenceManager] Rock is not currently being dragged - will wait for drag instead of skipping");
             return false;
         }
         
-        Debug.Log($"[TutorialSequenceManager] Rock IS being dragged - DON'T SKIP");
+        GameLog.Info($"[TutorialSequenceManager] Rock IS being dragged - DON'T SKIP");
         return false;
     }
     
@@ -1334,7 +1334,7 @@ public class TutorialSequenceManager : MonoBehaviour
             GameObject found = GameObject.Find(step.spotlightTargetName);
             if (found != null)
             {
-                Debug.Log($"[TutorialSequenceManager] Resolved spotlight by name: '{step.spotlightTargetName}'");
+                GameLog.Info($"[TutorialSequenceManager] Resolved spotlight by name: '{step.spotlightTargetName}'");
                 return found.transform;
             }
             Debug.LogWarning($"[TutorialSequenceManager] spotlightTargetName '{step.spotlightTargetName}' not found in scene");
@@ -1345,7 +1345,7 @@ public class TutorialSequenceManager : MonoBehaviour
             GameObject found = GameObject.FindWithTag(step.spotlightTargetTag);
             if (found != null)
             {
-                Debug.Log($"[TutorialSequenceManager] Resolved spotlight by tag: '{step.spotlightTargetTag}'");
+                GameLog.Info($"[TutorialSequenceManager] Resolved spotlight by tag: '{step.spotlightTargetTag}'");
                 return found.transform;
             }
             Debug.LogWarning($"[TutorialSequenceManager] spotlightTargetTag '{step.spotlightTargetTag}' not found in scene");
@@ -1361,7 +1361,7 @@ public class TutorialSequenceManager : MonoBehaviour
 
         int index = rockIndex >= 0 ? rockIndex : gameManager.rockCurrent;
 
-        Debug.Log($"[TutorialSequenceManager] Waiting for rock {index} to reach Y {(waitUntilAbove ? ">=" : "<=")} {targetY}");
+        GameLog.Info($"[TutorialSequenceManager] Waiting for rock {index} to reach Y {(waitUntilAbove ? ">=" : "<=")} {targetY}");
 
         yield return new WaitUntil(() =>
         {
@@ -1374,7 +1374,7 @@ public class TutorialSequenceManager : MonoBehaviour
             return waitUntilAbove ? y >= targetY : y <= targetY;
         });
 
-        Debug.Log($"[TutorialSequenceManager] Rock {index} reached Y target {targetY}");
+        GameLog.Info($"[TutorialSequenceManager] Rock {index} reached Y target {targetY}");
     }
 
     private IEnumerator WaitForGameState(GameState targetState)
@@ -1408,7 +1408,7 @@ public class TutorialSequenceManager : MonoBehaviour
 
         if (completedSequence != null && !string.IsNullOrEmpty(completedSequence.chainSequenceId))
         {
-            Debug.Log($"[TutorialSequenceManager] Chaining to '{completedSequence.chainSequenceId}' after '{completedSequence.sequenceId}'");
+            GameLog.Info($"[TutorialSequenceManager] Chaining to '{completedSequence.chainSequenceId}' after '{completedSequence.sequenceId}'");
             PlaySequence(completedSequence.chainSequenceId);
         }
     }
@@ -1439,7 +1439,7 @@ public class TutorialSequenceManager : MonoBehaviour
         GameSettingsPersist gsp = UnityEngine.Object.FindAnyObjectByType<GameSettingsPersist>();
         if (gsp != null && !gsp.tutorial && (gsp.loadGame || gsp.debug))
         {
-            Debug.Log($"[TutorialSequenceManager] Skipping auto-start tutorials: loadGame={gsp.loadGame}, debug={gsp.debug}");
+            GameLog.Info($"[TutorialSequenceManager] Skipping auto-start tutorials: loadGame={gsp.loadGame}, debug={gsp.debug}");
             return;
         }
         

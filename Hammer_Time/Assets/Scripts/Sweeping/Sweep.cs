@@ -71,7 +71,7 @@ public class Sweep : MonoBehaviour
         sweepAmt *= GLOBAL_EFFECTIVENESS_BOOST;
 
         // DIAGNOSTIC: Log the actual value being used
-        Debug.Log($"[Sweep] sweepAmt initialized to {sweepAmt} (includes {GLOBAL_EFFECTIVENESS_BOOST}x global boost)");
+        GameLog.Info($"[Sweep] sweepAmt initialized to {sweepAmt} (includes {GLOBAL_EFFECTIVENESS_BOOST}x global boost)");
         
         //fltText.Direction = sm.sweepSel.moveDirection;
     }
@@ -116,7 +116,7 @@ public class Sweep : MonoBehaviour
         statCalc = sm.swprLStats.sweepStrength.GetValue() + sm.swprRStats.sweepStrength.GetValue();
         statEndur = sm.swprLStats.sweepEndurance.GetValue() + sm.swprRStats.sweepEndurance.GetValue();
         //fltText.Direction = sm.sweepSel.moveDirection;
-        Debug.Log("statCalc is " + statCalc);
+        GameLog.Info("statCalc is " + statCalc);
         //Time.timeScale = 0.25f;
         StartCoroutine(SweepWeight());
     }
@@ -215,14 +215,14 @@ public class Sweep : MonoBehaviour
 
     IEnumerator SweepWeight()
     {
-        Debug.Log("Rock being swept - " + gm.rockList[gm.rockCurrent].rock.name);
+        GameLog.Info("Rock being swept - " + gm.rockList[gm.rockCurrent].rock.name);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         slide = rock.GetComponent<RockSlide>();
         Rock_Force rf = rock.GetComponent<Rock_Force>();
         sweepTime = Mathf.Clamp(sweepTime - (int)(statEndur / 200f), 0, sweepTime);
 
-        Debug.Log("Sweep Time is " + sweepTime);
+        GameLog.Info("Sweep Time is " + sweepTime);
         
         // WEIGHT SWEEP: NON-CUMULATIVE!
         // Reset dampings to original first, then apply changes (prevents stacking)
@@ -253,7 +253,7 @@ public class Sweep : MonoBehaviour
         float straightenDirection = rf.curl.x < 0 ? 1f : -1f; // OPPOSITE to curl
         rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"Weight Sweep: linearDamping={slide.LinearDamping:F3}, angularDamping={slide.AngularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
+        GameLog.Info($"Weight Sweep: linearDamping={slide.LinearDamping:F3}, angularDamping={slide.AngularDamping:F3}, lateral boost={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTime);
     }
@@ -277,7 +277,7 @@ public class Sweep : MonoBehaviour
         float angularIncrease = sweepAmt * sweepStrength * 0.2f;  // Strong straightening
         slide.AngularDamping += angularIncrease;
 
-        Debug.Log($"Hard Sweep: linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3})");
+        GameLog.Info($"Hard Sweep: linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3})");
 
         yield return new WaitForSeconds(sweepTime);
     }
@@ -325,7 +325,7 @@ public class Sweep : MonoBehaviour
         // DIRECTLY add to the rock's velocity
         rb.linearVelocity = new Vector2(currentVel.x + (straightenDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"[Line Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
+        GameLog.Info($"[Line Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (+{angularIncrease:F3}), lateral={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTapDuration);
         
@@ -376,7 +376,7 @@ public class Sweep : MonoBehaviour
         // DIRECTLY add to the rock's velocity (not force!)
         rb.linearVelocity = new Vector2(currentVel.x + (curlDirection * lateralVelocityBoost * CarveScale * SweepSpeedScale), currentVel.y);
         
-        Debug.Log($"[Curl Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
+        GameLog.Info($"[Curl Sweep] linearDamping={slide.LinearDamping:F3} (-{linearReduction:F3}), angularDamping={slide.AngularDamping:F3} (-{angularReduction:F3} = spin preserved!), lateral={lateralVelocityBoost:F3}");
 
         yield return new WaitForSeconds(sweepTapDuration);
         
@@ -393,6 +393,6 @@ public class Sweep : MonoBehaviour
         
         // WHOA: Stop sweeping - dampings return to default in Rock_Force physics
         // No manual reset needed - just stop modifying damping
-        Debug.Log($"Whoa: Sweeping stopped - damping will return to default via physics");
+        GameLog.Info($"Whoa: Sweeping stopped - damping will return to default via physics");
     }
 }

@@ -57,7 +57,7 @@ public class HouseClick : MonoBehaviour
 
         if (hit.collider == col)
         {
-            Debug.Log(hit.collider.gameObject.name);
+            GameLog.Info(hit.collider.gameObject.name);
             return true;
         }
         return false;

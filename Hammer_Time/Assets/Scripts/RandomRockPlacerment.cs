@@ -80,7 +80,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // but we still need to place rocks 14-15
         rockPos = new Vector2[16]; // Always 16 rocks (8 per team)
         HapticController.Play();
-        Debug.Log("fldfdbk is " + fltFdbk);
+        GameLog.Info("fldfdbk is " + fltFdbk);
         fltText = fltFdbk.GetFeedbackOfType<MMF_FloatingText>();
         
         // Initialize AI systems
@@ -95,7 +95,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 trajectoryLine.iceFriction,
                 trajectoryLine.curlStrength
             );
-            Debug.Log($"[RandomRockPlacement] Trajectory simulator initialized with friction={trajectoryLine.iceFriction}, curl={trajectoryLine.curlStrength}");
+            GameLog.Info($"[RandomRockPlacement] Trajectory simulator initialized with friction={trajectoryLine.iceFriction}, curl={trajectoryLine.curlStrength}");
         }
         else
         {
@@ -115,7 +115,7 @@ public class RandomRockPlacerment : MonoBehaviour
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         bool aiTurn = rockCurrent < (16 - gsp.rocks * 2);
         
-        Debug.Log($"[OnRockPlace] rockCurrent={rockCurrent}, gsp.rocks={gsp.rocks} (per team), aiTurn={aiTurn}");
+        GameLog.Info($"[OnRockPlace] rockCurrent={rockCurrent}, gsp.rocks={gsp.rocks} (per team), aiTurn={aiTurn}");
         
         return StartCoroutine(StratSelect(redTeam, aiTurn));
     }
@@ -135,7 +135,7 @@ public class RandomRockPlacerment : MonoBehaviour
         //aggressive = aggro;
         playerSelection = selection;
         playerStratGO.SetActive(false);
-        Debug.Log("Player Selection - " + playerSelection);
+        GameLog.Info("Player Selection - " + playerSelection);
     }
 
     IEnumerator RandomRockPlace()
@@ -213,7 +213,7 @@ public class RandomRockPlacerment : MonoBehaviour
                         houseCount++;
                         rockPos[i] = placePos[placeSelector] + (Random.insideUnitCircle * 1.25f);
                     }
-                    Debug.Log("case 0 rockPos is - " + rockPos[i].x + ", " + rockPos[i].y);
+                    GameLog.Info("case 0 rockPos is - " + rockPos[i].x + ", " + rockPos[i].y);
                     break;
                 case 1:
                     placeSelector = 10;
@@ -295,7 +295,7 @@ public class RandomRockPlacerment : MonoBehaviour
             //rm.rb.DeadRock(i);
             //yield return new WaitForEndOfFrame();
             yield return null;
-            Debug.Log("Rock Position " + i + " " + rockPos[i].x + ", " + rockPos[i].y);
+            GameLog.Info("Rock Position " + i + " " + rockPos[i].x + ", " + rockPos[i].y);
             gm.rockList[i].rock.GetComponent<Rigidbody2D>().position = rockPos[i];
 
             gm.rockList[i].rock.GetComponent<CircleCollider2D>().enabled = true;
@@ -321,7 +321,7 @@ public class RandomRockPlacerment : MonoBehaviour
             gm.rockList[i].rockInfo.released = true;
             gm.rockList[i].rockInfo.stopped = true;
             gm.rockList[i].rockInfo.rest = true;
-            Debug.Log("i is equal to " + i);
+            GameLog.Info("i is equal to " + i);
 
             //rm.rb.ShotUpdate(rockCurrent, gm.rockList[i].rockInfo.outOfPlay);
             //yield return new WaitForEndOfFrame();
@@ -360,7 +360,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
         //if (!aiTurn)
         //    yield return new WaitUntil(() => !playerStratGO.activeSelf);
-        Debug.Log("RockCurrent is " + rockCurrent + " and aiTurn is " + aiTurn);
+        GameLog.Info("RockCurrent is " + rockCurrent + " and aiTurn is " + aiTurn);
         //if (rockCurrent == 8 | rockCurrent == 12)
         //    round++;
         
@@ -373,7 +373,7 @@ public class RandomRockPlacerment : MonoBehaviour
             // Player's turn - don't auto-place, let them shoot manually
             // Set placed = true so NextTurn() knows we're ready for player input
             placed = true;
-            Debug.Log($"[StratSelect] Player's turn - ready for manual shot (rockCurrent={rockCurrent})");
+            GameLog.Info($"[StratSelect] Player's turn - ready for manual shot (rockCurrent={rockCurrent})");
         }
         else
             playerStratGO.SetActive(false);
@@ -407,7 +407,7 @@ public class RandomRockPlacerment : MonoBehaviour
     IEnumerator SmartPlacement(bool redTeam)
     {
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
-        Debug.Log("[SmartPlacement] Starting smart placement for rock " + rockCurrent);
+        GameLog.Info("[SmartPlacement] Starting smart placement for rock " + rockCurrent);
         
         gm.houseList.Sort();
         Random.InitState(System.DateTime.Now.Millisecond);
@@ -448,7 +448,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // STEP 1: Use AI_Strategy to decide shot type (SAME logic as live gameplay!)
         string shotType = DetermineSmartShotTypeUsingAIStrategy(rockCurrent);
         
-        Debug.Log($"[SmartPlacement] AI_Strategy chose: {shotType}");
+        GameLog.Info($"[SmartPlacement] AI_Strategy chose: {shotType}");
         
         // STEP 2: Calculate target position based on shot type
         Vector2 targetPosition;
@@ -464,7 +464,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 targetPosition = CalculateGuardTargetPosition(rockCurrent);
                 finalPosition = ApplyAccuracyToGuard(targetPosition, activeCharStats);
                 fltText.Value = "Guard";
-                Debug.Log($"[SmartPlacement] Guard: target={targetPosition}, final={finalPosition}");
+                GameLog.Info($"[SmartPlacement] Guard: target={targetPosition}, final={finalPosition}");
                 break;
                 
             case "Draw":
@@ -474,7 +474,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 targetPosition = CalculateDrawTargetPosition();
                 finalPosition = ApplyAccuracyToDraw(targetPosition, activeCharStats);
                 fltText.Value = "Draw";
-                Debug.Log($"[SmartPlacement] Draw: target={targetPosition}, final={finalPosition}");
+                GameLog.Info($"[SmartPlacement] Draw: target={targetPosition}, final={finalPosition}");
                 break;
                 
             case "Take Out":
@@ -495,7 +495,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             lastTakeoutTarget = gm.rockList[targetRock].rock;
                         }
                         fltText.Value = "Takeout";
-                        Debug.Log($"[SmartPlacement] Takeout: shooter={shooterPos}, target={targetPos}");
+                        GameLog.Info($"[SmartPlacement] Takeout: shooter={shooterPos}, target={targetPos}");
                         break;
                     }
                 }
@@ -514,7 +514,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     Vector2 freezePos = rockPos[freezeTarget];
                     finalPosition = ApplyAccuracyToFreeze(freezePos, activeCharStats);
                     fltText.Value = "Freeze";
-                    Debug.Log($"[SmartPlacement] Freeze: target={freezePos}, final={finalPosition}");
+                    GameLog.Info($"[SmartPlacement] Freeze: target={freezePos}, final={finalPosition}");
                     break;
                 }
                 
@@ -533,7 +533,7 @@ public class RandomRockPlacerment : MonoBehaviour
         
         rockPos[rockCurrent] = finalPosition;
         
-        Debug.Log($"[SmartPlacement] Final position for rock {rockCurrent}: {rockPos[rockCurrent]}");
+        GameLog.Info($"[SmartPlacement] Final position for rock {rockCurrent}: {rockPos[rockCurrent]}");
         
         placed = true;
         yield return StartCoroutine(CompletePlacement());
@@ -671,7 +671,7 @@ public class RandomRockPlacerment : MonoBehaviour
             }
         }
         
-        Debug.Log($"[SmartPlacement] AI_Strategy simulation chose: {chosenShot} for rock {rockCurrent} ({phase} phase, hammer={hasHammer})");
+        GameLog.Info($"[SmartPlacement] AI_Strategy simulation chose: {chosenShot} for rock {rockCurrent} ({phase} phase, hammer={hasHammer})");
         
         return chosenShot;
     }
@@ -962,7 +962,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // Circular error
         Vector2 error = Random.insideUnitCircle * maxError;
         
-        Debug.Log($"[Freeze Accuracy] target={freezeTarget}, finesse={finesseAccuracy}%, weight={weightAccuracy}%, combined={combinedAccuracy}%, error={error}, final={freezeTarget + error}");
+        GameLog.Info($"[Freeze Accuracy] target={freezeTarget}, finesse={finesseAccuracy}%, weight={weightAccuracy}%, combined={combinedAccuracy}%, error={error}, final={freezeTarget + error}");
         
         return freezeTarget + error;
     }
@@ -995,7 +995,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // ========================================
         if (gm.houseList.Count > 0)
         {
-            Debug.Log($"[GuardPlacement] REACTIVE mode - {gm.houseList.Count} rocks in house");
+            GameLog.Info($"[GuardPlacement] REACTIVE mode - {gm.houseList.Count} rocks in house");
             
             // PRIORITY 1: Find unguarded FRIENDLY rocks to protect
             GameObject unguardedFriendly = null;
@@ -1048,7 +1048,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 
                 Vector2 guardTarget = new Vector2(rockPos.x, guardDepth);
                 
-                Debug.Log($"[GuardPlacement] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                GameLog.Info($"[GuardPlacement] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 return guardTarget;
             }
             
@@ -1081,7 +1081,7 @@ public class RandomRockPlacerment : MonoBehaviour
                         Random.Range(3.5f, 4.2f) // Tighter finesse
                     );
                     
-                    Debug.Log($"[GuardPlacement] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    GameLog.Info($"[GuardPlacement] PROTECT shot rock at ({shotRockPos.x:F2}, {shotRockPos.y:F2}) ? finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                     return guardTarget;
                 }
             }
@@ -1092,7 +1092,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // ========================================
         // OPENING STRATEGY: No rocks in house (or no reactive options)
         // ========================================
-        Debug.Log($"[GuardPlacement] OPENING mode - hasHammer={hasHammer}");
+        GameLog.Info($"[GuardPlacement] OPENING mode - hasHammer={hasHammer}");
 
         // Check existing guards to balance left/right
         int leftGuards = 0;
@@ -1119,7 +1119,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 Random.Range(-0.15f, 0.15f), // Centered with variance
                 Random.Range(3.0f, 3.5f)      // Standard depth
             );
-            Debug.Log($"[GuardPlacement] WITHOUT HAMMER ? Center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            GameLog.Info($"[GuardPlacement] WITHOUT HAMMER ? Center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             return guardTarget;
         }
         else
@@ -1128,7 +1128,7 @@ public class RandomRockPlacerment : MonoBehaviour
             
             
             
-            Debug.Log($"[GuardPlacement] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
+            GameLog.Info($"[GuardPlacement] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
             
             // Prefer balancing left/right
             bool placeLeft;
@@ -1173,7 +1173,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 );
             }
             
-            Debug.Log($"[GuardPlacement] WITH HAMMER ? {(placeLeft ? "LEFT" : "RIGHT")} corner finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            GameLog.Info($"[GuardPlacement] WITH HAMMER ? {(placeLeft ? "LEFT" : "RIGHT")} corner finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             return guardTarget;
         }
     }
@@ -1215,7 +1215,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // CIRCULAR ERROR: Unit circle centered on target
         Vector2 error = Random.insideUnitCircle * maxError;
         
-        Debug.Log($"[Guard Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, combined={combinedAccuracy}%, error={error}, final={targetPosition + error}");
+        GameLog.Info($"[Guard Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, combined={combinedAccuracy}%, error={error}, final={targetPosition + error}");
         
         return targetPosition + error;
     }
@@ -1245,7 +1245,7 @@ public class RandomRockPlacerment : MonoBehaviour
         
         Vector2 error = new Vector2(xError, yError);
         
-        Debug.Log($"[Draw Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, error={error}, final={targetPosition + error}");
+        GameLog.Info($"[Draw Accuracy] target={targetPosition}, weight={weightAccuracy}%, aim={aimAccuracy}%, error={error}, final={targetPosition + error}");
         
         return targetPosition + error;
     }
@@ -1255,16 +1255,16 @@ public class RandomRockPlacerment : MonoBehaviour
         // USE SMART PLACEMENT if enabled and AI systems available
         if (useSmartPlacement && aiStrategy != null && trajectorySimulator != null)
         {
-            Debug.Log("[Placement] Using SMART PLACEMENT (AI-driven)");
+            GameLog.Info("[Placement] Using SMART PLACEMENT (AI-driven)");
             yield return StartCoroutine(SmartPlacement(redTeam));
             yield break;
         }
         
         // FALLBACK: Original placement logic
-        Debug.Log("[Placement] Using LEGACY PLACEMENT (random)");
+        GameLog.Info("[Placement] Using LEGACY PLACEMENT (random)");
         
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
-        Debug.Log("RedTeam is " + redTeam);
+        GameLog.Info("RedTeam is " + redTeam);
         gm.houseList.Sort();
         //int houseCount = 0;
         
@@ -1283,9 +1283,9 @@ public class RandomRockPlacerment : MonoBehaviour
         CharacterStats activeCharStats;
         CharacterStats otherCharStats;
 
-        Debug.Log("RockCurrent is " + rockCurrent);
-        Debug.Log("gm.houseList.Count is " + gm.houseList.Count);
-        Debug.Log("guardCounter is " + guardCounter);
+        GameLog.Info("RockCurrent is " + rockCurrent);
+        GameLog.Info("gm.houseList.Count is " + gm.houseList.Count);
+        GameLog.Info("guardCounter is " + guardCounter);
 
         if (rockCurrent % 2 == 0)
         {
@@ -1342,7 +1342,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 scenario = 10;
             else
                 scenario = 11;
-            Debug.Log("Last End");
+            GameLog.Info("Last End");
         }
         else if (gm.endCurrent == gm.endTotal - 2)
         {
@@ -1352,7 +1352,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 scenario = 7;
             else
                 scenario = 8;
-            Debug.Log("Penultimate End");
+            GameLog.Info("Penultimate End");
         }
         else if (gm.endCurrent >= gm.endTotal - 4)
         {
@@ -1362,7 +1362,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 scenario = 4;
             else
                 scenario = 5;
-            Debug.Log("Middle Ends");
+            GameLog.Info("Middle Ends");
         }
         else
         {
@@ -1372,7 +1372,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 scenario = 1;
             else
                 scenario = 2;
-            Debug.Log("Early Ends");
+            GameLog.Info("Early Ends");
         }
         #endregion
 
@@ -1381,37 +1381,37 @@ public class RandomRockPlacerment : MonoBehaviour
         {
             case 0:
                 #region Early Game - Tied
-                Debug.Log("Early Game - Tied");
+                GameLog.Info("Early Game - Tied");
                 #endregion
                 break;
             case 1:
                 #region Early Game - Losing
-                Debug.Log("Early Game - Losing");
+                GameLog.Info("Early Game - Losing");
                 #endregion
                 break;
             case 2:
                 #region Early Game - Winning
-                Debug.Log("Early Game - Winning");
+                GameLog.Info("Early Game - Winning");
                 #endregion
                 break;
             case 3:
                 #region Mid Game - Tied
-                Debug.Log("Mid Game - Tied");
+                GameLog.Info("Mid Game - Tied");
                 #endregion
                 break;
             case 4:
                 #region Mid Game - Losing
-                Debug.Log("Mid Game - Losing");
+                GameLog.Info("Mid Game - Losing");
                 #endregion
                 break;
             case 5:
                 #region Mid Game - Winning
-                Debug.Log("Mid Game - Winning");
+                GameLog.Info("Mid Game - Winning");
                 #endregion
                 break;
             case 6:
                 #region Penultimate End - Tied
-                Debug.Log("Penultimate End - Tied");
+                GameLog.Info("Penultimate End - Tied");
                 //with hammer
                     //blank to keep hammer
                 //without hammer
@@ -1554,7 +1554,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             case 7:
                 #region Penultimate End - Losing
-                Debug.Log("Penultimate End - Losing");
+                GameLog.Info("Penultimate End - Losing");
                 //with hammer
                     //blank to keep hammer or score 2
                 //without hammer
@@ -1825,7 +1825,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             case 8:
                 #region Penultimate End - Winning
-                Debug.Log("Penultimate End - Winning");
+                GameLog.Info("Penultimate End - Winning");
                 //with hammer
                     //prevent scoring (very conservative)
                 //without hammer
@@ -2028,7 +2028,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     //prevent opponent scoring at all costs
                 //without hammer
                     //steal 1 at all costs
-                Debug.Log("Last End - Tied");
+                GameLog.Info("Last End - Tied");
                 if (rockCurrent < 5)
                 {
                     if (gm.houseList.Count > 0)
@@ -2218,7 +2218,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             case 10:
                 #region Last End - Losing
-                Debug.Log("Last End - Losing");
+                GameLog.Info("Last End - Losing");
                 //with hammer
                     //score
                 //without hammer
@@ -2405,7 +2405,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 break;
             case 11:
                 #region Last End - Winning
-                Debug.Log("Last End - Winning");
+                GameLog.Info("Last End - Winning");
                 if (rockCurrent < 5)
                 {
                     if (gm.houseList.Count > 0)
@@ -2626,7 +2626,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 ShotSelector(7, 99);
             }
 
-            Debug.Log("Player Selection - " + playerSelection);
+            GameLog.Info("Player Selection - " + playerSelection);
         }
 
         else
@@ -2697,7 +2697,7 @@ public class RandomRockPlacerment : MonoBehaviour
                             // Move rock to safe distance
                             rockPos[i] = rockPos[j] + (awayDirection * MIN_SAFE_DISTANCE);
                             
-                            Debug.Log($"[Placement] Rock {i} too close to rock {j} (dist={distance:F3}), adjusting: {originalPos} -> {rockPos[i]}");
+                            GameLog.Info($"[Placement] Rock {i} too close to rock {j} (dist={distance:F3}), adjusting: {originalPos} -> {rockPos[i]}");
                             break; // Recheck all rocks after adjustment
                         }
                     }
@@ -2748,19 +2748,19 @@ public class RandomRockPlacerment : MonoBehaviour
             {
                 counter++;
                 gm.houseList.Add(new House_List(rock.rock, rock.rockInfo));
-                Debug.Log("Adding House " + counter + " - " + rock.rockInfo.teamName + rock.rockInfo.rockNumber);
+                GameLog.Info("Adding House " + counter + " - " + rock.rockInfo.teamName + rock.rockInfo.rockNumber);
             }
             if (rock.rockInfo.inPlay && !rock.rockInfo.inHouse && rock.rock.transform.position.y <= 6.5f)
             {
                 gm.gList.Add(new Guard_List(rockCurrent, rock.rockInfo.freeGuard, rock.rock.transform));
-                Debug.Log("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                GameLog.Info("Guard " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
             }
         }
         if (gm.houseList.Count > 0)
         {
-            Debug.Log("houseList shot rock - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
+            GameLog.Info("houseList shot rock - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
             gm.houseList.Sort();
-            Debug.Log("Sorted houseList - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
+            GameLog.Info("Sorted houseList - " + gm.houseList[0].rockInfo.teamName + " " + gm.houseList[0].rockInfo.rockNumber);
         }
 
 
@@ -2802,13 +2802,13 @@ public class RandomRockPlacerment : MonoBehaviour
         Random.InitState((int)System.DateTime.Now.Ticks);
         //placed = false;
         int placeSelector;
-        Debug.Log("Shot Selector - " + shotSelector);
+        GameLog.Info("Shot Selector - " + shotSelector);
         lastShotWasTakeout = false;
         switch (shotSelector)
         {
             case 0:
                 #region Draw Random
-                Debug.Log("Case 0 - House");
+                GameLog.Info("Case 0 - House");
                 HapticController.Play(drawHap);
                 fltText.Value = "Draw";
                 //Debug.Log("Case 0 - " + houseCount + " - i is " + rockCurrent);
@@ -2818,32 +2818,32 @@ public class RandomRockPlacerment : MonoBehaviour
                     * (1.5f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
                 //houseCount++;
                 //gm.houseList.Add(new House_List (gm.rockList[rockCurrent].rock, gm.rockList[rockCurrent].rockInfo));
-                Debug.Log("case 0 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("case 0 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
                 #endregion
             case 1:
                 #region Out
-                Debug.Log("Case 1 - Out");
+                GameLog.Info("Case 1 - Out");
                 fltText.Value = "Out";
                 placeSelector = 10;
                 rockPos[rockCurrent] = placePos[placeSelector];
-                Debug.Log("case 1 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("case 1 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
             #endregion
             case 2:
                 #region Draw Four Foot
-                Debug.Log("Case 2 - Four Foot");
+                GameLog.Info("Case 2 - Four Foot");
                 HapticController.Play(drawHap);
                 fltText.Value = "Four Foot";
                 placeSelector = 9;
                 rockPos[rockCurrent] = placePos[placeSelector] + (Random.insideUnitCircle * 0.5f);
-                Debug.Log("case 2 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("case 2 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
                 #endregion
             case 3:
                 #region AutoGuard
-                Debug.Log("Case 3 - Guard");
-                Debug.Log("case 3 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("Case 3 - Guard");
+                GameLog.Info("case 3 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 HapticController.Play(drawHap);
                 fltText.Value = "Guard";
                 int guardSelect;
@@ -2888,7 +2888,7 @@ public class RandomRockPlacerment : MonoBehaviour
             case 4:
                 #region Takeout
                 //aim check
-                Debug.Log("Takeout Selector - " + takeOutSelector);
+                GameLog.Info("Takeout Selector - " + takeOutSelector);
                 lastShotWasTakeout = true;
                 HapticController.Play(hitHap);
                 fltText.Value = "Takeout";
@@ -2899,14 +2899,14 @@ public class RandomRockPlacerment : MonoBehaviour
                     //placeSelector = 9;
                     rockPos[rockCurrent] = rockPos[takeOutSelector]
                         + (Random.insideUnitCircle * (1.5f - (0.005f * (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))));
-                    Debug.Log("Hit and Roll Check - SUCCESS");
+                    GameLog.Info("Hit and Roll Check - SUCCESS");
                     houseCount++;
                 }
                 else
                 {
                     placeSelector = 10;
                     rockPos[rockCurrent] = placePos[placeSelector];
-                    Debug.Log("Hit and Roll Check - FAIL");
+                    GameLog.Info("Hit and Roll Check - FAIL");
                 }
 
                 Random.InitState((int)System.DateTime.Now.Ticks);
@@ -2914,7 +2914,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) < (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))
                 {
                     rockPos[takeOutSelector] = placePos[10];
-                    Debug.Log("Opponent Rock Out of Play Check - SUCCESS");
+                    GameLog.Info("Opponent Rock Out of Play Check - SUCCESS");
                     houseCount--;
                     if (rockPos[rockCurrent] == placePos[10])
                     {
@@ -2925,7 +2925,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     rockPos[takeOutSelector] += 
                         (Random.insideUnitCircle * (1.5f - (0.01f * (int)((activeCharStats.aimAccuracy.GetValue() * 0.5f) + (activeCharStats.weightAccuracy.GetValue() * 0.5f)))));
-                    Debug.Log("Opponent Rock Out of Play Check - FAIL");
+                    GameLog.Info("Opponent Rock Out of Play Check - FAIL");
                     if (rockPos[rockCurrent] == placePos[10])
                     {
                         fltText.Value = "MISS";
@@ -2935,12 +2935,12 @@ public class RandomRockPlacerment : MonoBehaviour
                 {
                     lastTakeoutTarget = gm.rockList[takeOutSelector].rock;
                 }
-                Debug.Log("Case 4 - Takeout - " + takeOutSelector);
+                GameLog.Info("Case 4 - Takeout - " + takeOutSelector);
                 break;
                 #endregion
             case 5:
                 #region Freeze
-                Debug.Log("Case 5 - Freeze - " + takeOutSelector);
+                GameLog.Info("Case 5 - Freeze - " + takeOutSelector);
                 fltText.Value = "Freeze";
                 //Freeze check
                 if (Random.Range(0f, 100f) < (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))
@@ -2949,7 +2949,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
                             * (0.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
-                    Debug.Log("Close Freeze Check - SUCCESS");
+                    GameLog.Info("Close Freeze Check - SUCCESS");
                     
                 }
                 else
@@ -2958,7 +2958,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     rockPos[rockCurrent].x = rockPos[takeOutSelector].x;
                     rockPos[rockCurrent] = rockPos[rockCurrent] + (Random.insideUnitCircle
                             * (2f - (0.01f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))));
-                    Debug.Log("Close Freeze Check - FAIL");
+                    GameLog.Info("Close Freeze Check - FAIL");
                 }
                 houseCount++;
 
@@ -2967,20 +2967,20 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) < (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)))
                 {
                     rockPos[takeOutSelector].y += 0.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
-                    Debug.Log("Opponent Freeze Check - SUCCESS");
+                    GameLog.Info("Opponent Freeze Check - SUCCESS");
                 }
                 else
                 {
                     rockPos[takeOutSelector].x += Random.Range(0f, 0.1f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
                     rockPos[takeOutSelector].y += 1.5f - (0.005f * (int)((activeCharStats.weightAccuracy.GetValue() * 0.5f) + (activeCharStats.aimAccuracy.GetValue() * 0.5f)));
-                    Debug.Log("Opponent Freeze Check - FAIL");
+                    GameLog.Info("Opponent Freeze Check - FAIL");
                 }
                 break;
                 #endregion
             case 6:
                 #region Manual Guard
-                Debug.Log("Case 6 - Guard");
-                Debug.Log("case 6 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("Case 6 - Guard");
+                GameLog.Info("case 6 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
 
                 switch (playerSelection)
                 {
@@ -3007,7 +3007,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
             case 7:
                 #region Mixed Setup
-                Debug.Log("Case 7 - MixedSetup");
+                GameLog.Info("Case 7 - MixedSetup");
 
                 switch (playerSelection)
                 {
@@ -3028,24 +3028,24 @@ public class RandomRockPlacerment : MonoBehaviour
                         break;
                 }
 
-                Debug.Log("case 7 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("case 7 rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 StartCoroutine(CompletePlacement());
                 break;
                 #endregion
             default:
                 #region Out
-                Debug.Log("Default - Out - " + rockCurrent);
-                Debug.Log("Case " + shotSelector + " - " + rockCurrent);
+                GameLog.Info("Default - Out - " + rockCurrent);
+                GameLog.Info("Case " + shotSelector + " - " + rockCurrent);
                 placeSelector = 10;
                 rockPos[rockCurrent] = placePos[placeSelector];
-                Debug.Log("Default rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
+                GameLog.Info("Default rockPos is - " + rockPos[rockCurrent].x + ", " + rockPos[rockCurrent].y);
                 break;
                 #endregion
         }
 
         //gm.cm.HouseView();
         //playerStratGO.SetActive(false);
-        Debug.Log("Rock " + rockCurrent + " is placed");
+        GameLog.Info("Rock " + rockCurrent + " is placed");
         placed = true;
 
         StartCoroutine(CompletePlacement());
@@ -3080,11 +3080,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         {
                             hit = true;
                             takeOutSelector = rock.rockInfo.rockIndex;
-                            Debug.Log("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
+                            GameLog.Info("Takeout Selector " + rockCurrent + " - " + takeOutSelector);
                         }
                     }
                 }
-                Debug.Log("Takeout Target - House - TakeoutSelector - " + takeOutSelector);
+                GameLog.Info("Takeout Target - House - TakeoutSelector - " + takeOutSelector);
                 break;
 
             case "Guards":
@@ -3112,7 +3112,7 @@ public class RandomRockPlacerment : MonoBehaviour
                     }
                 }
 
-                Debug.Log("Takeout Target - Guards - TakeoutSelector - " + takeOutSelector);
+                GameLog.Info("Takeout Target - Guards - TakeoutSelector - " + takeOutSelector);
                 break;
 
             case "All":
@@ -3125,11 +3125,11 @@ public class RandomRockPlacerment : MonoBehaviour
                         takeOutSelector = rock.rockInfo.rockIndex;
                     }
                 }
-                Debug.Log("Takeout Target - All - TakeoutSelector - " + takeOutSelector);
+                GameLog.Info("Takeout Target - All - TakeoutSelector - " + takeOutSelector);
                 break;
             default:
                 takeOutSelector = 99;
-                Debug.Log("Takeout Target - Default - TakeoutSelector - " + takeOutSelector);
+                GameLog.Info("Takeout Target - Default - TakeoutSelector - " + takeOutSelector);
                 break;
         }
     }
@@ -3144,7 +3144,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 3;
-                    Debug.Log("Guard Check - SUCCESS");
+                    GameLog.Info("Guard Check - SUCCESS");
                     fltText.Value = "Guard Check - SUCCESS";
                 }
                 else
@@ -3153,13 +3153,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (Random.Range(0f, 1f) < 0.5f)
                     {
                         shotSelector = 0;
-                        Debug.Log("Guard Check - long - FAIL");
+                        GameLog.Info("Guard Check - long - FAIL");
                         fltText.Value = "Guard Check - long - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
-                        Debug.Log("Guard Check - short - FAIL");
+                        GameLog.Info("Guard Check - short - FAIL");
                         fltText.Value = "Guard Check - short - FAIL";
                     }
                 }
@@ -3169,7 +3169,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 0;
-                    Debug.Log("Draw Check - SUCCESS");
+                    GameLog.Info("Draw Check - SUCCESS");
                     fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
@@ -3178,13 +3178,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (Random.Range(0f, 1f) < 0.5f)
                     {
                         shotSelector = 3;
-                        Debug.Log("Draw Check - short - FAIL");
+                        GameLog.Info("Draw Check - short - FAIL");
                         fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
-                        Debug.Log("Draw Check - long - FAIL");
+                        GameLog.Info("Draw Check - long - FAIL");
                         fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
@@ -3194,7 +3194,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 2;
-                    Debug.Log("Draw Check - SUCCESS");
+                    GameLog.Info("Draw Check - SUCCESS");
                     fltText.Value = "Draw Check - SUCCESS";
                 }
                 else
@@ -3203,13 +3203,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (Random.Range(0f, 1f) < 0.5f)
                     {
                         shotSelector = 3;
-                        Debug.Log("Draw Check - short - FAIL");
+                        GameLog.Info("Draw Check - short - FAIL");
                         fltText.Value = "Draw Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
-                        Debug.Log("Draw Check - long - FAIL");
+                        GameLog.Info("Draw Check - long - FAIL");
                         fltText.Value = "Draw Check - long - FAIL";
                     }
                 }
@@ -3220,7 +3220,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 4;
-                    Debug.Log("Takeout Check - SUCCESS");
+                    GameLog.Info("Takeout Check - SUCCESS");
                     fltText.Value = "Takeout Check - SUCCESS";
                 }
                 //SKILL check - fail
@@ -3230,14 +3230,14 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (Random.Range(0f, 1f) < 0.25f)
                     {
                         shotSelector = 99;
-                        Debug.Log("Takeout Check - crash - FAIL");
+                        GameLog.Info("Takeout Check - crash - FAIL");
                         fltText.Value = "Takeout Check - crash - FAIL";
                     }
                     //crash check - out
                     else
                     {
                         shotSelector = 1;
-                        Debug.Log("Takeout Check - out - FAIL");
+                        GameLog.Info("Takeout Check - out - FAIL");
                         fltText.Value = "Takeout Check - out - FAIL";
                     }
                 }
@@ -3248,7 +3248,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 if (Random.Range(0f, 100f) <= skill)
                 {
                     shotSelector = 5;
-                    Debug.Log("Freeze Check - SUCCESS");
+                    GameLog.Info("Freeze Check - SUCCESS");
                     fltText.Value = "Freeze Check - SUCCESS";
                 }
                 //SKILL check - fail
@@ -3258,13 +3258,13 @@ public class RandomRockPlacerment : MonoBehaviour
                     if (Random.Range(0f, 1f) < 0.5f)
                     {
                         shotSelector = 3;
-                        Debug.Log("Freeze Check - short - FAIL");
+                        GameLog.Info("Freeze Check - short - FAIL");
                         fltText.Value = "Freeze Check - short - FAIL";
                     }
                     else
                     {
                         shotSelector = 1;
-                        Debug.Log("Freeze Check - long - FAIL");
+                        GameLog.Info("Freeze Check - long - FAIL");
                         fltText.Value = "Freeze Check - long - FAIL";
                     }
                 }
@@ -3272,7 +3272,7 @@ public class RandomRockPlacerment : MonoBehaviour
 
             default:
                 shotSelector = 1;
-                Debug.Log("Skill Check Default - FAIL");
+                GameLog.Info("Skill Check Default - FAIL");
                 fltText.Value = "Skill Check Default - FAIL";
                 break;
         }
@@ -3404,7 +3404,7 @@ public class RandomRockPlacerment : MonoBehaviour
         if (gsp.redScore == 0 && gsp.yellowScore == 0)
         {
             bool playAggressive = Random.value < 0.5f; // 50/50 split
-            Debug.Log($"[SmartPlacement] 0-0 tie: playing {(playAggressive ? "AGGRESSIVE" : "CONSERVATIVE")}");
+            GameLog.Info($"[SmartPlacement] 0-0 tie: playing {(playAggressive ? "AGGRESSIVE" : "CONSERVATIVE")}");
             
             if (playAggressive)
             {
@@ -3563,7 +3563,7 @@ public class RandomRockPlacerment : MonoBehaviour
             DrawTrajectoryForPlacedRock(bestPath, isRedTeam);
         }
         
-        Debug.Log($"[SmartPlacement] Physics weight: target={desiredTarget}, final={bestFinalPos}, score={bestScore:F2}");
+        GameLog.Info($"[SmartPlacement] Physics weight: target={desiredTarget}, final={bestFinalPos}, score={bestScore:F2}");
         
         return bestFinalPos;
     }
@@ -3686,7 +3686,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // SKIP PHYSICS SIMULATION FOR GUARDS - Just use the target position directly!
         // Physics simulation was causing guards to land short/wrong due to velocity scaling
         
-        Debug.Log($"[SmartPlacement] Guard position (direct placement): {targetGuardPos}");
+        GameLog.Info($"[SmartPlacement] Guard position (direct placement): {targetGuardPos}");
         
         return targetGuardPos;
     }
@@ -3860,7 +3860,7 @@ public class RandomRockPlacerment : MonoBehaviour
             
             if (foundGoodShot)
             {
-                Debug.Log($"[SmartPlacement] Physics takeout: shooter={shooterPos}, target={targetPos}, score={bestScore:F2}");
+                GameLog.Info($"[SmartPlacement] Physics takeout: shooter={shooterPos}, target={targetPos}, score={bestScore:F2}");
                 return true;
             }
         }
@@ -3995,7 +3995,7 @@ public class RandomRockPlacerment : MonoBehaviour
                 }
             }
             
-            Debug.Log($"[SmartPlacement] Target eval: rock {rockIndex} @ {rockPos}, guarded={guarded}, score={score:F2}");
+            GameLog.Info($"[SmartPlacement] Target eval: rock {rockIndex} @ {rockPos}, guarded={guarded}, score={score:F2}");
             
             if (score > bestScore)
             {
@@ -4006,7 +4006,7 @@ public class RandomRockPlacerment : MonoBehaviour
         
         if (bestTarget >= 0)
         {
-            Debug.Log($"[SmartPlacement] Best takeout target: rock {bestTarget}, score={bestScore:F2}");
+            GameLog.Info($"[SmartPlacement] Best takeout target: rock {bestTarget}, score={bestScore:F2}");
         }
         
         return bestTarget;
@@ -4055,7 +4055,7 @@ public class RandomRockPlacerment : MonoBehaviour
         // Fade out and destroy after duration
         StartCoroutine(FadeAndDestroyTrajectory(lineObj, lineRenderer));
         
-        Debug.Log($"[TrajectoryViz] Drew trajectory for rock {rockCurrent}: {path.Count} points, team={(isRedTeam ? "Red" : "Yellow")}");
+        GameLog.Info($"[TrajectoryViz] Drew trajectory for rock {rockCurrent}: {path.Count} points, team={(isRedTeam ? "Red" : "Yellow")}");
     }
     
     /// <summary>

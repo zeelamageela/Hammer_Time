@@ -108,7 +108,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
         gsp = FindObjectOfType<GameSettingsPersist>();
         cm = FindObjectOfType<CareerManager>();
         
-        Debug.Log($"[TripleK] START - Round={gsp.playoffRound}, justFinished={gsp.justFinishedGame}, careerLoad={gsp.careerLoad}");
+        GameLog.Info($"[TripleK] START - Round={gsp.playoffRound}, justFinished={gsp.justFinishedGame}, careerLoad={gsp.careerLoad}");
         
         teams = new Team[16];
         gameList = new Vector2[46];
@@ -117,29 +117,29 @@ public class PlayoffManager_TripleK : MonoBehaviour
         if (cm)
         {
             playerTeam = cm.playerTeamIndex;
-            Debug.Log($"[TripleK] Player team index: {playerTeam}");
+            GameLog.Info($"[TripleK] Player team index: {playerTeam}");
         }
         
         // Handle different initialization scenarios
         if (gsp.justFinishedGame)
         {
-            Debug.Log("[TripleK] Returning from player game - advancing tournament");
+            GameLog.Info("[TripleK] Returning from player game - advancing tournament");
             gsp.justFinishedGame = false;
             LoadAndAdvancePlayoffs();
         }
         else if (gsp.careerLoad && gsp.tournyInProgress)
         {
-            Debug.Log("[TripleK] Loading tournament in progress");
+            GameLog.Info("[TripleK] Loading tournament in progress");
             LoadTournamentState();
         }
         else if (playoffRound > 0)
         {
-            Debug.Log("[TripleK] Resuming existing tournament");
+            GameLog.Info("[TripleK] Resuming existing tournament");
             LoadTournamentState();
         }
         else
         {
-            Debug.Log("[TripleK] Starting new tournament");
+            GameLog.Info("[TripleK] Starting new tournament");
             InitializeNewTournament();
         }
     }
@@ -235,7 +235,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
     /// </summary>
     private void LoadAndAdvancePlayoffs()
     {
-        Debug.Log($"[TripleK] LoadAndAdvancePlayoffs - Round {gsp.playoffRound}");
+        GameLog.Info($"[TripleK] LoadAndAdvancePlayoffs - Round {gsp.playoffRound}");
         
         // Load teams and gameList
         for (int i = 0; i < teams.Length; i++)
@@ -270,7 +270,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
             }
         }
         
-        Debug.Log($"[TripleK] Player={playerTeam} vs Opponent={oppTeam} in Round {playoffRound}");
+        GameLog.Info($"[TripleK] Player={playerTeam} vs Opponent={oppTeam} in Round {playoffRound}");
         
         // Process player's game result
         bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
@@ -279,13 +279,13 @@ public class PlayoffManager_TripleK : MonoBehaviour
         {
             teams[playerTeam].wins++;
             teams[oppTeam].loss++;
-            Debug.Log($"[TripleK] Player WON - Record: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L");
+            GameLog.Info($"[TripleK] Player WON - Record: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L");
         }
         else
         {
             teams[oppTeam].wins++;
             teams[playerTeam].loss++;
-            Debug.Log($"[TripleK] Player LOST - Record: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L");
+            GameLog.Info($"[TripleK] Player LOST - Record: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L");
         }
         
         // Update GSP
@@ -311,7 +311,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
     private IEnumerator SimPlayoff()
     {
         playButton.gameObject.SetActive(false);
-        Debug.Log($"[TripleK.SimPlayoff] Round {playoffRound}");
+        GameLog.Info($"[TripleK.SimPlayoff] Round {playoffRound}");
         
         SimulateRoundGames();
         
@@ -372,7 +372,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
             // Skip player's game if already played (cont = player just finished)
             if (ShouldSkipPlayerGame(teamX, teamY, cont))
             {
-                Debug.Log($"[TripleK] Round 1 Game {i}: Skipping player game (already played)");
+                GameLog.Info($"[TripleK] Round 1 Game {i}: Skipping player game (already played)");
                 
                 // Player's result already recorded in LoadAndAdvancePlayoffs
                 bool xWon = DetermineWinnerFromStats(teamX, teamY);
@@ -434,7 +434,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
             // Skip player's game if already played
             if (ShouldSkipPlayerGame(teamX, teamY, cont))
             {
-                Debug.Log($"[TripleK] Round 2 Game {i}: Skipping player game (already played)");
+                GameLog.Info($"[TripleK] Round 2 Game {i}: Skipping player game (already played)");
                 
                 bool xWon = DetermineWinnerFromStats(teamX, teamY);
                 
@@ -1167,7 +1167,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
     private void SimulateRound20(bool cont)
     {
         // This round shouldn't simulate - champion already determined
-        Debug.Log("[TripleK] Round 20 - Tournament complete");
+        GameLog.Info("[TripleK] Round 20 - Tournament complete");
     }
     
     #endregion
@@ -1239,7 +1239,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
         // Check if player's game (already played)
         if (ShouldSkipPlayerGame(teamX, teamY, cont))
         {
-            Debug.Log($"[TripleK] Round {playoffRound}: Skipping player game (already played)");
+            GameLog.Info($"[TripleK] Round {playoffRound}: Skipping player game (already played)");
             xWon = DetermineWinnerFromStats(teamX, teamY);
             return true; // Skip simulation but use xWon for bracket
         }
@@ -1270,7 +1270,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
     /// </summary>
     public void SetPlayoffs()
     {
-        Debug.Log($"[TripleK] SetPlayoffs - Round {playoffRound}");
+        GameLog.Info($"[TripleK] SetPlayoffs - Round {playoffRound}");
         
         bool playerGame = false;
         vsDisplayTitle.text = "Next Game";
@@ -1825,7 +1825,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
     /// </summary>
     private void DisplayRoundResults()
     {
-        Debug.Log($"[TripleK] DisplayRoundResults - Round {playoffRound}");
+        GameLog.Info($"[TripleK] DisplayRoundResults - Round {playoffRound}");
         
         // Update display to show results (winners highlighted)
         // This would be similar to DisplayRoundX but with highlighting
@@ -2033,7 +2033,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
         gsp.playoffRound = 0;
         gsp.tournyInProgress = false;
         
-        Debug.Log($"[TripleK] Tournament complete - Career earnings: ${gsp.tournyEarnings}");
+        GameLog.Info($"[TripleK] Tournament complete - Career earnings: ${gsp.tournyEarnings}");
         
         cm.TournyResults();
         SceneManager.LoadScene("Arena_Selector");
@@ -2080,7 +2080,7 @@ public class PlayoffManager_TripleK : MonoBehaviour
                 vsDisplay[1].rank.gameObject.SetActive(false);
             }
             
-            Debug.Log($"[TripleK] Team {teams[i].name} - Rank {teams[i].rank} - Payout ${prizePayout:n0}");
+            GameLog.Info($"[TripleK] Team {teams[i].name} - Rank {teams[i].rank} - Payout ${prizePayout:n0}");
         }
         
         careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");

@@ -122,7 +122,7 @@ public class RockTimerDisplay : MonoBehaviour
         // and very long duration, we need to force full visibility for persistent display
         StartCoroutine(ForceCalloutVisibility());
         
-        Debug.Log($"[RockTimer] Timer started at {startTime:F3}");
+        GameLog.Info($"[RockTimer] Timer started at {startTime:F3}");
     }
     
     /// <summary>
@@ -148,7 +148,7 @@ public class RockTimerDisplay : MonoBehaviour
                 Color color = timerColor;
                 color.a = 1f;
                 timerTextComp.color = color;
-                Debug.Log($"[RockTimer] Timer callout forced to full opacity: {color}");
+                GameLog.Info($"[RockTimer] Timer callout forced to full opacity: {color}");
             }
             
             // Start persistent follow coroutine to keep it following the rock
@@ -168,7 +168,7 @@ public class RockTimerDisplay : MonoBehaviour
                 Color color = velocityColor;
                 color.a = 1f;
                 velocityTextComp.color = color;
-                Debug.Log($"[RockTimer] Velocity callout forced to full opacity: {color}");
+                GameLog.Info($"[RockTimer] Velocity callout forced to full opacity: {color}");
             }
             
             // Start persistent follow coroutine to keep it following the rock
@@ -215,7 +215,7 @@ public class RockTimerDisplay : MonoBehaviour
         isTimerActive = false;
         hasReachedHogLine = true;
         
-        Debug.Log($"[RockTimer] Timer stopped at {elapsedTime:F3}s");
+        GameLog.Info($"[RockTimer] Timer stopped at {elapsedTime:F3}s");
         
         // Start coroutine to handle linger and fade
         StartCoroutine(LingerAndFade());

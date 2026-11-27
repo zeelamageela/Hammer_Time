@@ -26,7 +26,7 @@ public class DrawFormatList : MonoBehaviour
 
     public void DrawSelector(int numberOfTeams, int gameLength, int games)
     {
-        Debug.Log($"[DrawFormatList] DrawSelector called - numberOfTeams={numberOfTeams}, gameLength={gameLength}, games={games}");
+        GameLog.Info($"[DrawFormatList] DrawSelector called - numberOfTeams={numberOfTeams}, gameLength={gameLength}, games={games}");
         
         // CRITICAL: Verify that the team arrays are populated in the Inspector
         if (numberOfTeams == 8 && (team8 == null || team8.Length == 0))
@@ -94,7 +94,7 @@ public class DrawFormatList : MonoBehaviour
 
                 default:
                     currentFormat = null;
-                    Debug.Log("Need between 5 and 16 teams for a tourny");
+                    GameLog.Info("Need between 5 and 16 teams for a tourny");
                     break;
             }
         }
@@ -102,7 +102,7 @@ public class DrawFormatList : MonoBehaviour
 
         else if (gameLength >= 1)
         {
-            Debug.Log($"[DrawFormatList] gameLength >= 1 branch - about to create shorterFormat with games={games}");
+            GameLog.Info($"[DrawFormatList] gameLength >= 1 branch - about to create shorterFormat with games={games}");
             
             switch (numberOfTeams)
             {
@@ -138,7 +138,7 @@ public class DrawFormatList : MonoBehaviour
 
                 case 8:
                     currentFormat = team8;
-                    Debug.Log($"[DrawFormatList] team8 assigned - team8.Length={team8?.Length ?? 0}");
+                    GameLog.Info($"[DrawFormatList] team8 assigned - team8.Length={team8?.Length ?? 0}");
                     
                     if (games <= 0)
                     {
@@ -149,14 +149,14 @@ public class DrawFormatList : MonoBehaviour
                     }
                     
                     shorterFormat = new DrawFormat[games];
-                    Debug.Log($"[DrawFormatList] Created shorterFormat with length={games}");
+                    GameLog.Info($"[DrawFormatList] Created shorterFormat with length={games}");
                     
                     for (int i = 0; i < shorterFormat.Length; i++)
                     {
                         shorterFormat[i] = currentFormat[i];
                     }
                     currentFormat = shorterFormat;
-                    Debug.Log($"[DrawFormatList] currentFormat set to shorterFormat - length={currentFormat.Length}");
+                    GameLog.Info($"[DrawFormatList] currentFormat set to shorterFormat - length={currentFormat.Length}");
                     break;
 
                 case 9:
@@ -241,12 +241,12 @@ public class DrawFormatList : MonoBehaviour
 
                 default:
                     currentFormat = null;
-                    Debug.Log("Need between 5 and 16 teams for a tourny");
+                    GameLog.Info("Need between 5 and 16 teams for a tourny");
                     break;
             }
         }
 
-        Debug.Log("currentFormat Length is " + (currentFormat?.Length ?? 0));
+        GameLog.Info("currentFormat Length is " + (currentFormat?.Length ?? 0));
         
         if (currentFormat == null || currentFormat.Length == 0)
         {
@@ -263,7 +263,7 @@ public class DrawFormatList : MonoBehaviour
     /// </summary>
     public void DrawSelector_TwoPool(int numberOfTeams, int gameLength, int games)
     {
-        Debug.Log($"[DrawFormatList] DrawSelector_TwoPool called - numberOfTeams={numberOfTeams}, games={games}");
+        GameLog.Info($"[DrawFormatList] DrawSelector_TwoPool called - numberOfTeams={numberOfTeams}, games={games}");
         
         if (numberOfTeams != 16)
         {
@@ -312,7 +312,7 @@ public class DrawFormatList : MonoBehaviour
             currentFormat[draw] = combinedDraw;
         }
         
-        Debug.Log($"[DrawFormatList] Two-pool format generated - {currentFormat.Length} draws with 8 games each");
+        GameLog.Info($"[DrawFormatList] Two-pool format generated - {currentFormat.Length} draws with 8 games each");
     }
 }
 

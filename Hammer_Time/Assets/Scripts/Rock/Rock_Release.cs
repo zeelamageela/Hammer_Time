@@ -37,7 +37,7 @@ public class Rock_Release : MonoBehaviour
             if (timerDisplay != null)
             {
                 timerDisplay.StartTimer();
-                Debug.Log("[Rock_Release] Rock timer started at hog line crossing");
+                GameLog.Info("[Rock_Release] Rock timer started at hog line crossing");
             }
         }
 

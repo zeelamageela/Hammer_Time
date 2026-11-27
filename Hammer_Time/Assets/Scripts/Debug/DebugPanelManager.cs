@@ -126,7 +126,7 @@ public class DebugPanelManager : MonoBehaviour
         
         if (shouldShow)
         {
-            Debug.Log("[DebugPanel] Debug mode ENABLED - panel visible");
+            GameLog.Info("[DebugPanel] Debug mode ENABLED - panel visible");
         }
     }
     
@@ -173,7 +173,7 @@ public class DebugPanelManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[DebugPanel] All text components assigned ✓");
+            GameLog.Info("[DebugPanel] All text components assigned ✓");
         }
     }
     

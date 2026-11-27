@@ -90,7 +90,7 @@ public class Card_Select : MonoBehaviour
         //cardSize.sizeDelta = new Vector2(cardSize.sizeDelta.x * 2f, cardSize.sizeDelta.y * 2f);
 
         buttons.SetActive(true);
-        Debug.Log("Size is " + cardSize.localScale);
+        GameLog.Info("Size is " + cardSize.localScale);
     }
 
     public void ViewCard()

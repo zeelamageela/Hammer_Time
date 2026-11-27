@@ -247,7 +247,7 @@ public class CareerManager : MonoBehaviour
         // CRITICAL FIX: Don't auto-load career here
         // Let TournySelector.SetUp() handle loading when it's ready
         // This prevents trying to load before save is deleted for new careers
-        Debug.Log("[CareerManager] Start() - initialization complete, waiting for TournySelector");
+        GameLog.Info("[CareerManager] Start() - initialization complete, waiting for TournySelector");
     }
 
     private void Update()
@@ -273,7 +273,7 @@ public class CareerManager : MonoBehaviour
         if (pauseStatus)
         {
             // App going to background on iOS - save immediately
-            Debug.Log("[CareerManager] App pausing - forcing save");
+            GameLog.Info("[CareerManager] App pausing - forcing save");
             SaveCareer();
             
             // Disable auto-save while backgrounded to save battery
@@ -282,7 +282,7 @@ public class CareerManager : MonoBehaviour
         else
         {
             // App resumed - re-enable auto-save
-            Debug.Log("[CareerManager] App resumed - enabling auto-save");
+            GameLog.Info("[CareerManager] App resumed - enabling auto-save");
             SetAutoSave(true);
             autoSaveTimer = 0f; // Reset timer
         }
@@ -294,7 +294,7 @@ public class CareerManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         // Final save before app closes
-        Debug.Log("[CareerManager] App quitting - final save");
+        GameLog.Info("[CareerManager] App quitting - final save");
         SaveCareer();
     }
     private void UpdateCharacter()
@@ -344,7 +344,7 @@ public class CareerManager : MonoBehaviour
         // LoadSettings() is called from CareerSettings.LoadToCM() BEFORE entering the arena
         // At this point, TournySelector doesn't exist yet, so ToSaveData() gets zero tournaments
         // The save will happen naturally when entering the arena scene
-        Debug.Log("[CareerManager] LoadSettings complete - NOT saving (to preserve tournament data)");
+        GameLog.Info("[CareerManager] LoadSettings complete - NOT saving (to preserve tournament data)");
     }
 
     public void LoadCareer(
@@ -365,8 +365,8 @@ public class CareerManager : MonoBehaviour
         if (gm == null) gm = FindFirstObjectByType<GameManager>();
         if (em == null) em = FindFirstObjectByType<EquipmentManager>();
 
-        Debug.Log("Loading in CM 2");
-        Debug.Log(Application.persistentDataPath);
+        GameLog.Info("Loading in CM 2");
+        GameLog.Info(Application.persistentDataPath);
 
         ClearRankLists();
         
@@ -405,15 +405,15 @@ public class CareerManager : MonoBehaviour
                 return;
             }
             
-            Debug.Log($"[CareerManager] Loading career save from {saveData.saveDate}");
+            GameLog.Info($"[CareerManager] Loading career save from {saveData.saveDate}");
             
         // CRITICAL FIX: Apply tournament data to TournySelector FIRST
         // This ensures tournament completion status is restored before SetActiveTournies() is called
         if (tSel != null)
         {
-            Debug.Log($"[CareerManager] Applying tournament completion data to TournySelector BEFORE any other loading");
+            GameLog.Info($"[CareerManager] Applying tournament completion data to TournySelector BEFORE any other loading");
             ApplyTournamentData(tSel, saveData);
-            Debug.Log($"[CareerManager] Tournament completion data applied successfully");
+            GameLog.Info($"[CareerManager] Tournament completion data applied successfully");
         }
         else
         {
@@ -436,21 +436,21 @@ public class CareerManager : MonoBehaviour
             // Now sync the equipment UI and stats
             if (em != null)
             {
-                Debug.Log("[CareerManager] Refreshing equipment manager after load");
+                GameLog.Info("[CareerManager] Refreshing equipment manager after load");
                 em.SetInventory(); // This will rebuild inventory and apply equipment stats
             }
             
             // Refresh SponsorManager with loaded card/sponsor data
             if (pUpM != null)
             {
-                Debug.Log("[CareerManager] Refreshing sponsor manager after load");
+                GameLog.Info("[CareerManager] Refreshing sponsor manager after load");
                 pUpM.SetUp(); // This will rebuild active cards and available sponsors from loaded IDs
             }
             
             // Refresh TeamMenu with loaded team data
             if (teamSel != null && activePlayers != null && activePlayers.Length > 0)
             {
-                Debug.Log("[CareerManager] Refreshing team menu after load");
+                GameLog.Info("[CareerManager] Refreshing team menu after load");
                 teamSel.activePlayers = activePlayers; // Sync the active players
                 // TeamMenu will refresh itself when the menu is opened via TeamMenuOpen()
             }
@@ -473,8 +473,8 @@ public class CareerManager : MonoBehaviour
                     gsp.justFinishedGame = saveData.currentGameState.justFinishedGame;
                     gsp.inEndMenu = saveData.currentGameState.inEndMenu;
                     
-                    Debug.Log($"[CareerManager] Restored flags from save - gameInProgress: {gsp.gameInProgress}, tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}, inEndMenu: {gsp.inEndMenu}");
-                    Debug.Log($"[CareerManager] Save data had - gameInProgress: {saveData.currentGameState.gameInProgress}, tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
+                    GameLog.Info($"[CareerManager] Restored flags from save - gameInProgress: {gsp.gameInProgress}, tournyInProgress: {gsp.tournyInProgress}, justFinishedGame: {gsp.justFinishedGame}, inEndMenu: {gsp.inEndMenu}");
+                    GameLog.Info($"[CareerManager] Save data had - gameInProgress: {saveData.currentGameState.gameInProgress}, tournyInProgress: {saveData.currentGameState.tournyInProgress}, justFinishedGame: {saveData.currentGameState.justFinishedGame}");
                     
                     // Always restore saved game state whenever it exists.
                     // This covers tournament games that are set up but not yet actively in progress,
@@ -503,7 +503,7 @@ public class CareerManager : MonoBehaviour
                 }
             }
             
-            Debug.Log("[CareerManager] Career loaded successfully from JSON");
+            GameLog.Info("[CareerManager] Career loaded successfully from JSON");
         }
         catch (Exception ex)
         {
@@ -526,7 +526,7 @@ public class CareerManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[CareerManager] ApplyTournamentData - Restoring from ID lists (completed: {saveData.completedTournamentIDs?.Count ?? 0}, trophies: {saveData.trophyWonIDs?.Count ?? 0})");
+        GameLog.Info($"[CareerManager] ApplyTournamentData - Restoring from ID lists (completed: {saveData.completedTournamentIDs?.Count ?? 0}, trophies: {saveData.trophyWonIDs?.Count ?? 0})");
         
         // Restore completed tournaments
         if (saveData.completedTournamentIDs != null && saveData.completedTournamentIDs.Count > 0)
@@ -539,7 +539,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.completedTournamentIDs.Contains(tourny.id))
                     {
                         tourny.complete = true;
-                        Debug.Log($"  ? Marked tour '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"  ? Marked tour '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -552,7 +552,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.completedTournamentIDs.Contains(tourny.id))
                     {
                         tourny.complete = true;
-                        Debug.Log($"  ? Marked qualifier '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"  ? Marked qualifier '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -565,7 +565,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.completedTournamentIDs.Contains(tourny.id))
                     {
                         tourny.complete = true;
-                        Debug.Log($"  ? Marked tournament '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"  ? Marked tournament '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -582,7 +582,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.trophyWonIDs.Contains(tourny.id))
                     {
                         tourny.trophyWon = true;
-                        Debug.Log($"  ?? Marked tour '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"  ?? Marked tour '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -595,7 +595,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.trophyWonIDs.Contains(tourny.id))
                     {
                         tourny.trophyWon = true;
-                        Debug.Log($"  ?? Marked qualifier '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"  ?? Marked qualifier '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -608,7 +608,7 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && saveData.trophyWonIDs.Contains(tourny.id))
                     {
                         tourny.trophyWon = true;
-                        Debug.Log($"  ?? Marked tournament '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"  ?? Marked tournament '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -619,16 +619,16 @@ public class CareerManager : MonoBehaviour
         {
             tSel.tourChampionship.complete = saveData.tourChampionshipComplete;
             tSel.tourChampionship.trophyWon = saveData.tourChampionshipTrophy;
-            Debug.Log($"[CareerManager] Tour Championship: complete={saveData.tourChampionshipComplete}");
+            GameLog.Info($"[CareerManager] Tour Championship: complete={saveData.tourChampionshipComplete}");
         }
         if (tSel.provChampionship != null)
         {
             tSel.provChampionship.complete = saveData.provChampionshipComplete;
             tSel.provChampionship.trophyWon = saveData.provChampionshipTrophy;
-            Debug.Log($"[CareerManager] Prov Championship: complete={saveData.provChampionshipComplete}");
+            GameLog.Info($"[CareerManager] Prov Championship: complete={saveData.provChampionshipComplete}");
         }
         
-        Debug.Log("[CareerManager] ? Tournament completion restored from ID lists");
+        GameLog.Info("[CareerManager] ? Tournament completion restored from ID lists");
     }
 
     private void ClearRankLists()
@@ -643,7 +643,7 @@ public class CareerManager : MonoBehaviour
     /// </summary>
     private void StorePendingCompletionData(CareerSaveData saveData)
     {
-        Debug.Log($"[CareerManager] StorePendingCompletionData - Preserving completion IDs until TournySelector loads");
+        GameLog.Info($"[CareerManager] StorePendingCompletionData - Preserving completion IDs until TournySelector loads");
         
         // Store completion IDs
         pendingCompletedTournamentIDs = new List<int>(saveData.completedTournamentIDs ?? new List<int>());
@@ -653,10 +653,10 @@ public class CareerManager : MonoBehaviour
         pendingTourChampionshipTrophy = saveData.tourChampionshipTrophy;
         pendingProvChampionshipTrophy = saveData.provChampionshipTrophy;
         
-        Debug.Log($"  Stored {pendingCompletedTournamentIDs.Count} completed IDs: [{string.Join(", ", pendingCompletedTournamentIDs)}]");
-        Debug.Log($"  Stored {pendingTrophyWonIDs.Count} trophy IDs: [{string.Join(", ", pendingTrophyWonIDs)}]");
-        Debug.Log($"  Tour Championship: {pendingTourChampionshipComplete}, Prov Championship: {pendingProvChampionshipComplete}");
-        Debug.Log($"[CareerManager] ? Completion IDs preserved - will be applied when TournySelector loads");
+        GameLog.Info($"  Stored {pendingCompletedTournamentIDs.Count} completed IDs: [{string.Join(", ", pendingCompletedTournamentIDs)}]");
+        GameLog.Info($"  Stored {pendingTrophyWonIDs.Count} trophy IDs: [{string.Join(", ", pendingTrophyWonIDs)}]");
+        GameLog.Info($"  Tour Championship: {pendingTourChampionshipComplete}, Prov Championship: {pendingProvChampionshipComplete}");
+        GameLog.Info($"[CareerManager] ? Completion IDs preserved - will be applied when TournySelector loads");
     }
     
     /// <summary>
@@ -674,13 +674,13 @@ public class CareerManager : MonoBehaviour
         if (pendingCompletedTournamentIDs.Count == 0 && pendingTrophyWonIDs.Count == 0 && 
             !pendingTourChampionshipComplete && !pendingProvChampionshipComplete)
         {
-            Debug.Log("[CareerManager] No pending completion data to apply");
+            GameLog.Info("[CareerManager] No pending completion data to apply");
             return;
         }
         
-        Debug.Log($"[CareerManager] ApplyPendingCompletionData - Applying stored completion IDs to TournySelector");
-        Debug.Log($"  Completed IDs to apply: {pendingCompletedTournamentIDs.Count}");
-        Debug.Log($"  Trophy IDs to apply: {pendingTrophyWonIDs.Count}");
+        GameLog.Info($"[CareerManager] ApplyPendingCompletionData - Applying stored completion IDs to TournySelector");
+        GameLog.Info($"  Completed IDs to apply: {pendingCompletedTournamentIDs.Count}");
+        GameLog.Info($"  Trophy IDs to apply: {pendingTrophyWonIDs.Count}");
         
         int restoredCount = 0;
         int trophyCount = 0;
@@ -697,7 +697,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.complete = true;
                         restoredCount++;
-                        Debug.Log($"    ? Marked tour '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"    ? Marked tour '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -711,7 +711,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.complete = true;
                         restoredCount++;
-                        Debug.Log($"    ? Marked qualifier '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"    ? Marked qualifier '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -725,7 +725,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.complete = true;
                         restoredCount++;
-                        Debug.Log($"    ? Marked tournament '{tourny.name}' (ID {tourny.id}) as complete");
+                        GameLog.Info($"    ? Marked tournament '{tourny.name}' (ID {tourny.id}) as complete");
                     }
                 }
             }
@@ -742,7 +742,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.trophyWon = true;
                         trophyCount++;
-                        Debug.Log($"    ?? Marked tour '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"    ?? Marked tour '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -755,7 +755,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.trophyWon = true;
                         trophyCount++;
-                        Debug.Log($"    ?? Marked qualifier '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"    ?? Marked qualifier '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -768,7 +768,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tourny.trophyWon = true;
                         trophyCount++;
-                        Debug.Log($"    ?? Marked tournament '{tourny.name}' (ID {tourny.id}) trophy won");
+                        GameLog.Info($"    ?? Marked tournament '{tourny.name}' (ID {tourny.id}) trophy won");
                     }
                 }
             }
@@ -782,7 +782,7 @@ public class CareerManager : MonoBehaviour
             if (pendingTourChampionshipComplete)
             {
                 restoredCount++;
-                Debug.Log($"    ? Marked Tour Championship as complete");
+                GameLog.Info($"    ? Marked Tour Championship as complete");
             }
         }
         
@@ -793,11 +793,11 @@ public class CareerManager : MonoBehaviour
             if (pendingProvChampionshipComplete)
             {
                 restoredCount++;
-                Debug.Log($"    ? Marked Prov Championship as complete");
+                GameLog.Info($"    ? Marked Prov Championship as complete");
             }
         }
         
-        Debug.Log($"[CareerManager] ? Pending completion applied: {restoredCount} tournaments, {trophyCount} trophies");
+        GameLog.Info($"[CareerManager] ? Pending completion applied: {restoredCount} tournaments, {trophyCount} trophies");
         
         // Clear pending data after applying
         pendingCompletedTournamentIDs.Clear();
@@ -852,7 +852,7 @@ public class CareerManager : MonoBehaviour
             trophies: currentTrophyList
         );
         
-        Debug.Log($"[CareerManager] High score saved: {fullName} - ${earnings:N0}");
+        GameLog.Info($"[CareerManager] High score saved: {fullName} - ${earnings:N0}");
     }
     
     /// <summary>
@@ -881,7 +881,7 @@ public class CareerManager : MonoBehaviour
             trophies: currentTrophyList
         );
         
-        Debug.Log($"[CareerManager] High score updated: {playerName} {teamName} - ${earnings:N0}, {record.x}-{record.y}");
+        GameLog.Info($"[CareerManager] High score updated: {playerName} {teamName} - ${earnings:N0}, {record.x}-{record.y}");
     }
     
     /// <summary>
@@ -928,13 +928,13 @@ public class CareerManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[CareerManager] Updated trophy list: {currentTrophyList.Count(t => t)}/{currentTrophyList.Count} won");
+        GameLog.Info($"[CareerManager] Updated trophy list: {currentTrophyList.Count(t => t)}/{currentTrophyList.Count} won");
     }
 
     public void SaveTournyState(object tournyStateManager = null, GameSettingsPersist gsp = null)
     {
         // Tournament state is now saved via JSON save system in SaveCareer()
-        Debug.Log("[CareerManager] SaveTournyState called - tournament state saved via SaveCareer()");
+        GameLog.Info("[CareerManager] SaveTournyState called - tournament state saved via SaveCareer()");
         return;
     }
 
@@ -949,7 +949,7 @@ public class CareerManager : MonoBehaviour
     {
         if (saveDeferred)
         {
-            Debug.Log("[CareerManager] SaveCareer skipped: an event is awaiting confirmation (saveDeferred)");
+            GameLog.Info("[CareerManager] SaveCareer skipped: an event is awaiting confirmation (saveDeferred)");
             return;
         }
 
@@ -958,14 +958,14 @@ public class CareerManager : MonoBehaviour
         TutorialGameManager tutGM = TutorialGameManager.Instance;
         if (tutGM != null && tutGM.isTutorialGame)
         {
-            Debug.Log("[CareerManager] SaveCareer skipped: tutorial mode active");
+            GameLog.Info("[CareerManager] SaveCareer skipped: tutorial mode active");
             return;
         }
 
         // A quick test (Q) borrows the career's stats and training: never write those into the save
         if (QuickTestGame.SessionActive)
         {
-            Debug.Log("[CareerManager] SaveCareer skipped: quick test session active");
+            GameLog.Info("[CareerManager] SaveCareer skipped: quick test session active");
             return;
         }
 
@@ -993,7 +993,7 @@ public class CareerManager : MonoBehaviour
             return;
         }
         
-        Debug.Log("[CareerManager] Auto-saving...");
+        GameLog.Info("[CareerManager] Auto-saving...");
         SaveCareer();
     }
     
@@ -1002,7 +1002,7 @@ public class CareerManager : MonoBehaviour
     /// </summary>
     public void ManualSave()
     {
-        Debug.Log("[CareerManager] Manual save triggered");
+        GameLog.Info("[CareerManager] Manual save triggered");
         SaveCareer();
         autoSaveTimer = 0f; // Reset auto-save timer
     }
@@ -1013,7 +1013,7 @@ public class CareerManager : MonoBehaviour
     public void SetAutoSave(bool enabled)
     {
         enableAutoSave = enabled;
-        Debug.Log($"[CareerManager] Auto-save {(enabled ? "enabled" : "disabled")}");
+        GameLog.Info($"[CareerManager] Auto-save {(enabled ? "enabled" : "disabled")}");
     }
     
     /// <summary>
@@ -1023,7 +1023,7 @@ public class CareerManager : MonoBehaviour
     {
         CareerSaveService.ArchiveSave();   // keep the previous career recoverable (career_save_replaced.json)
         CareerSaveService.DeleteSave();
-        Debug.Log("[CareerManager] Career save deleted");
+        GameLog.Info("[CareerManager] Career save deleted");
     }
     
     /// <summary>
@@ -1148,7 +1148,7 @@ public class CareerManager : MonoBehaviour
                     gsp.rocks = 8;
                 }
                 
-                Debug.Log($"[CareerManager] Saving game state - gameInProgress:{gsp.gameInProgress}, tournyInProgress:{gsp.tournyInProgress}, rocks:{gsp.rocks}, score array length:{(gsp.score != null ? gsp.score.Length : 0)}");
+                GameLog.Info($"[CareerManager] Saving game state - gameInProgress:{gsp.gameInProgress}, tournyInProgress:{gsp.tournyInProgress}, rocks:{gsp.rocks}, score array length:{(gsp.score != null ? gsp.score.Length : 0)}");
                 
                 saveData.currentGameState = new GameStateData
                 {
@@ -1188,11 +1188,11 @@ public class CareerManager : MonoBehaviour
                 
                 if (gsp.score != null)
                 {
-                    Debug.Log($"[CareerManager] Saving {gsp.score.Length} end scores to game state");
+                    GameLog.Info($"[CareerManager] Saving {gsp.score.Length} end scores to game state");
                     for (int i = 0; i < gsp.score.Length; i++)
                     {
                         saveData.currentGameState.endScores.Add(new Vector2IntData(gsp.score[i]));
-                        Debug.Log($"[CareerManager]   Saving End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
+                        GameLog.Info($"[CareerManager]   Saving End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
                     }
                 }
                 else
@@ -1212,7 +1212,7 @@ public class CareerManager : MonoBehaviour
             
             if (success)
             {
-                Debug.Log($"[CareerManager] Career saved successfully to JSON (Week {week}, Season {season})");
+                GameLog.Info($"[CareerManager] Career saved successfully to JSON (Week {week}, Season {season})");
             }
             else
             {
@@ -1260,14 +1260,14 @@ public class CareerManager : MonoBehaviour
 
                 if (tourTeams[i].id == playerTeamIndex)
                 {
-                    Debug.Log("PlayerTeam in Tour list");
+                    GameLog.Info("PlayerTeam in Tour list");
                     inList = true;
                 }
             }
 
             if (!inList)
             {
-                Debug.Log("PlayerTeam not in Tour list");
+                GameLog.Info("PlayerTeam not in Tour list");
                 for (int i = 0; i < tourTeams.Length; i++)
                 {
                     if (tourTeams[i].id == playerTeamIndex)
@@ -1275,7 +1275,7 @@ public class CareerManager : MonoBehaviour
                         currentTournyTeams[0] = tourTeams[i];
                         currentTournyTeams[0].name = teamName;
                         currentTournyTeams[0].id = playerTeamIndex;
-                        Debug.Log("Added to List - Player Team is " + playerTeamIndex);
+                        GameLog.Info("Added to List - Player Team is " + playerTeamIndex);
                     }
                 }
             }
@@ -1309,14 +1309,14 @@ public class CareerManager : MonoBehaviour
 
                 if (teams[i].id == playerTeamIndex)
                 {
-                    Debug.Log("PlayerTeam in list");
+                    GameLog.Info("PlayerTeam in list");
                     inList = true;
                 }
             }
 
             if (!inList)
             {
-                Debug.Log("PlayerTeam not in list");
+                GameLog.Info("PlayerTeam not in list");
                 for (int i = 0; i < teams.Length; i++)
                 {
                     if (teams[i].id == playerTeamIndex)
@@ -1324,14 +1324,14 @@ public class CareerManager : MonoBehaviour
                         currentTournyTeams[0] = teams[i];
                         currentTournyTeams[0].name = teamName;
                         currentTournyTeams[0].id = playerTeamIndex;
-                        Debug.Log("Not in List Player Team is " + playerTeamIndex);
+                        GameLog.Info("Not in List Player Team is " + playerTeamIndex);
                     }
                 }
             }
         }
         
         //Shuffle(currentTournyTeams);
-        Debug.Log("Player Team is " + playerTeamIndex);
+        GameLog.Info("Player Team is " + playerTeamIndex);
         gsp.teams = currentTournyTeams;
         SaveCareer();
     }
@@ -1352,7 +1352,7 @@ public class CareerManager : MonoBehaviour
             if (tournies != null && tournies.Length > 0)
             {
                 currentTourny = tournies[0];
-                Debug.Log($"[CareerManager] Selected first tournament for week 1: {currentTourny.name} (ID {currentTourny.id})");
+                GameLog.Info($"[CareerManager] Selected first tournament for week 1: {currentTourny.name} (ID {currentTourny.id})");
             }
             else
             {
@@ -1383,12 +1383,12 @@ public class CareerManager : MonoBehaviour
             gsp.rocks = 8;
 
         SetupTourny(null, gsp);
-        Debug.Log("[CareerManager] Prepared week 1 direct tournament state and synced team list");
+        GameLog.Info("[CareerManager] Prepared week 1 direct tournament state and synced team list");
     }
 
     public void TournyResults()
     {
-        Debug.Log("Tourny Results in CM");
+        GameLog.Info("Tourny Results in CM");
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         TournyManager tm = FindFirstObjectByType<TournyManager>();
         
@@ -1396,7 +1396,7 @@ public class CareerManager : MonoBehaviour
         // This must happen BEFORE any other logic to ensure it's saved
         if (currentTourny != null)
         {
-            Debug.Log($"[CareerManager] TournyResults - Marking tournament '{currentTourny.name}' (ID {currentTourny.id}) as complete in CM arrays");
+            GameLog.Info($"[CareerManager] TournyResults - Marking tournament '{currentTourny.name}' (ID {currentTourny.id}) as complete in CM arrays");
             
             bool marked = false;
             
@@ -1409,7 +1409,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tour[i].complete = true;
                         marked = true;
-                        Debug.Log($"  ? Marked tour[{i}] '{tour[i].name}' as complete");
+                        GameLog.Info($"  ? Marked tour[{i}] '{tour[i].name}' as complete");
                         break;
                     }
                 }
@@ -1422,7 +1422,7 @@ public class CareerManager : MonoBehaviour
                     {
                         prov[i].complete = true;
                         marked = true;
-                        Debug.Log($"  ? Marked prov[{i}] '{prov[i].name}' as complete");
+                        GameLog.Info($"  ? Marked prov[{i}] '{prov[i].name}' as complete");
                         break;
                     }
                 }
@@ -1435,7 +1435,7 @@ public class CareerManager : MonoBehaviour
                     {
                         champ[i].complete = true;
                         marked = true;
-                        Debug.Log($"  ? Marked champ[{i}] '{champ[i].name}' as complete");
+                        GameLog.Info($"  ? Marked champ[{i}] '{champ[i].name}' as complete");
                         break;
                     }
                 }
@@ -1448,7 +1448,7 @@ public class CareerManager : MonoBehaviour
                     {
                         tournies[i].complete = true;
                         marked = true;
-                        Debug.Log($"  ? Marked tournies[{i}] '{tournies[i].name}' as complete");
+                        GameLog.Info($"  ? Marked tournies[{i}] '{tournies[i].name}' as complete");
                         break;
                     }
                 }
@@ -1484,7 +1484,7 @@ public class CareerManager : MonoBehaviour
                     record.x = currentTournyTeams[i].seasonWins;
                     record.y = currentTournyTeams[i].seasonLosses;
                     
-                    Debug.Log($"[CareerManager] Updated cm.record to {record.x}-{record.y} from team {currentTournyTeams[i].name}");
+                    GameLog.Info($"[CareerManager] Updated cm.record to {record.x}-{record.y} from team {currentTournyTeams[i].name}");
                     break;
                 }
             }
@@ -1597,7 +1597,7 @@ public class CareerManager : MonoBehaviour
                 }
             }
 
-            Debug.Log("Team Record - " + teams[0].name + " - " + teamRecords[0]);
+            GameLog.Info("Team Record - " + teams[0].name + " - " + teamRecords[0]);
         }
 
         for (int i = 0; i < teams.Length; i++)
@@ -1694,7 +1694,7 @@ public class CareerManager : MonoBehaviour
         //if (allTimeTrophyList.Count <= 0)
         //    allTimeTrophyList = new List<bool>();
 
-        Debug.Log("allTimeTrophyList2 Count - " + currentTrophyList.Count);
+        GameLog.Info("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
         provRankList.Sort();
         if (!gsp.cashGame)
@@ -1705,13 +1705,13 @@ public class CareerManager : MonoBehaviour
                 cash += bonus;
                 earnings += bonus;
                 cashDelta += bonus;   // shown with the winnings on the hub
-                Debug.Log($"[CareerManager] Sponsor bonus ${bonus:N0} for finishing {GetPlayerRank()}");
+                GameLog.Info($"[CareerManager] Sponsor bonus ${bonus:N0} for finishing {GetPlayerRank()}");
             }
         }
         week++;
         CountDownSponsors();
         RebalanceTeamStrength();
-        Debug.Log("CM Tourny Results week is " + week);
+        GameLog.Info("CM Tourny Results week is " + week);
         
         // CRITICAL: Update high score after tournament completion
         // This ensures players appear on leaderboard even if they don't finish their career
@@ -1723,7 +1723,7 @@ public class CareerManager : MonoBehaviour
     public void PlayTourny()
     {
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
-        Debug.Log("CM Play Tourny");
+        GameLog.Info("CM Play Tourny");
 
         teamRecords = new Vector4[totalTeams];
         tourRecords = new Vector4[totalTourTeams];
@@ -1744,7 +1744,7 @@ public class CareerManager : MonoBehaviour
             teamRecords[i].w = teams[i].id;
         }
 
-        Debug.Log("Tour Record is " + tourRecords + " - Team Record is " + teamRecords);
+        GameLog.Info("Tour Record is " + tourRecords + " - Team Record is " + teamRecords);
 
         //earnings = gsp.earnings;
         SaveCareer();
@@ -1759,7 +1759,7 @@ public class CareerManager : MonoBehaviour
             if (activeCardLengthList[i] > 0 && activeCardLengthList[i] < 50)
             {
                 activeCardLengthList[i]--;
-                Debug.Log($"[CareerManager] Sponsor {i} has {activeCardLengthList[i]} weeks left");
+                GameLog.Info($"[CareerManager] Sponsor {i} has {activeCardLengthList[i]} weeks left");
             }
         }
     }
@@ -1780,7 +1780,7 @@ public class CareerManager : MonoBehaviour
 
     public void ContinueSeason()
     {
-        Debug.Log("CM - Continue Season");
+        GameLog.Info("CM - Continue Season");
 
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         season++;
@@ -1834,7 +1834,7 @@ public class CareerManager : MonoBehaviour
         pendingProvChampionshipComplete = false;
         pendingTourChampionshipTrophy = false;
         pendingProvChampionshipTrophy = false;
-        Debug.Log("[CareerManager] Cleared pending completion data for new career");
+        GameLog.Info("[CareerManager] Cleared pending completion data for new career");
 
         // Reset player character stats to starting values
         cStats.weightAccuracy = STARTING_STAT_VALUE;
@@ -1892,7 +1892,7 @@ public class CareerManager : MonoBehaviour
         
         teams = new Team[totalTeams];
         tourTeams = new Team[totalTourTeams];
-        Debug.Log("provRankList Count is " + provRankList.Count);
+        GameLog.Info("provRankList Count is " + provRankList.Count);
 
         string[] firstNames = { "Alex", "Jamie", "Taylor", "Jordan", "Morgan", "Casey", "Riley", "Drew", "Sam", "Cameron", "Karun", "Avery", "Blake", "Cameron", "Dakota", "Emerson", "Finley", "Gray", "Harper", "Indigo" };
         string[] lastNames = { "Smith", "Johnson", "Lee", "Brown", "Wilson", "Moore", "Clark", "Hall", "Young", "King", "Little", "O'Connor", "Peterson", "Reed", "Harris", "Lewis", "Walker", "Robinson", "Wright", "Scott" };
@@ -1942,7 +1942,7 @@ public class CareerManager : MonoBehaviour
 
             // Now use statTotal for this team's stat assignment
             // Example: assign to all players on the team, or store for later
-            Debug.Log($"Team {teams[i].name} (strength {teams[i].strength}) statTotal: {statTotal}");
+            GameLog.Info($"Team {teams[i].name} (strength {teams[i].strength}) statTotal: {statTotal}");
 
             for (int p = 0; p < playersPerTeam; p++)
             {
@@ -1981,7 +1981,7 @@ public class CareerManager : MonoBehaviour
             }
 
             teams[i].UpdateTeamSkillsFromPlayers();
-            Debug.Log("Team Strength - " + teams[i].name + " - " + teams[i].strength);
+            GameLog.Info("Team Strength - " + teams[i].name + " - " + teams[i].strength);
             provRankList.Add(new Standings_List(teams[i]));
         }
 
@@ -2002,7 +2002,7 @@ public class CareerManager : MonoBehaviour
         
         // Update team skills from player stats
         teams[0].UpdateTeamSkillsFromPlayers();
-        Debug.Log($"[CareerManager] Player team skills: weight={teams[0].weight}, strength={teams[0].strength}");
+        GameLog.Info($"[CareerManager] Player team skills: weight={teams[0].weight}, strength={teams[0].strength}");
         
         teams[0].earnings = earnings;
         cash = STARTING_CASH;
@@ -2017,7 +2017,7 @@ public class CareerManager : MonoBehaviour
             if (teams[i] != null && teams[i].id == playerTeamIndex)
             {
                 playerTeam = teams[i];
-                Debug.Log($"[CareerManager] Found player team after shuffle at index {i}, strength: {playerTeam.strength}");
+                GameLog.Info($"[CareerManager] Found player team after shuffle at index {i}, strength: {playerTeam.strength}");
                 break;
             }
         }
@@ -2044,7 +2044,7 @@ public class CareerManager : MonoBehaviour
 
         if (!inList)
         {
-            Debug.Log("inList is " + inList);
+            GameLog.Info("inList is " + inList);
             for (int i = 0; i < totalTeams; i++)
             {
                 if (teams[i].id == playerTeamIndex)
@@ -2064,7 +2064,7 @@ public class CareerManager : MonoBehaviour
 
     public void EndCareer()
     {
-        Debug.Log("Ending Career");
+        GameLog.Info("Ending Career");
         gameOver = true;
         SaveCareer();
         StartCoroutine(SaveHighScore());
@@ -2100,7 +2100,7 @@ public class CareerManager : MonoBehaviour
         int baseStatTotal = 170 + (week * weeklyIncrease);
         int maxStatTotal = 250 + (week * weeklyIncrease);
         
-        Debug.Log($"[CareerManager] Week {week} opponent stats: {baseStatTotal}-{maxStatTotal} (Championship: {isChampionshipWeek})");
+        GameLog.Info($"[CareerManager] Week {week} opponent stats: {baseStatTotal}-{maxStatTotal} (Championship: {isChampionshipWeek})");
 
         // Find min and max strength in the league for scaling
         int minStrength = teams.Min(t => t.strength);
@@ -2166,7 +2166,7 @@ public class CareerManager : MonoBehaviour
             }
 
             teams[i].UpdateTeamSkillsFromPlayers();
-            Debug.Log("Team Strength - " + teams[i].name + " - " + teams[i].strength);
+            GameLog.Info("Team Strength - " + teams[i].name + " - " + teams[i].strength);
         }
     }
 
@@ -2237,7 +2237,7 @@ public class CareerManager : MonoBehaviour
         // Recalculate team strength from all players
         playerTeamData.UpdateTeamSkillsFromPlayers();
         
-        Debug.Log($"[CareerManager] Updated player team strength: {playerTeamData.strength} (after equipment/upgrades)");
+        GameLog.Info($"[CareerManager] Updated player team strength: {playerTeamData.strength} (after equipment/upgrades)");
     }
     
     /// <summary>
@@ -2301,7 +2301,7 @@ public class CareerManager : MonoBehaviour
         for (int i = 0; i < totalTourTeams; i++)
             tourTeams[i] = teams[i];
 
-        Debug.Log($"[CareerManager] RebuildTeamsFromPool complete: {teams.Length} teams, player={teams[0].name}");
+        GameLog.Info($"[CareerManager] RebuildTeamsFromPool complete: {teams.Length} teams, player={teams[0].name}");
     }
 
     #region JSON SAVE/LOAD CONVERSION METHODS
@@ -2435,7 +2435,7 @@ public class CareerManager : MonoBehaviour
             // from the save, so the arena fell back to its built-in defaults on return.
             data.allEquipment = lastEquipmentSnapshot ?? ReadEquipmentFromDisk();
             if (data.allEquipment != null)
-                Debug.Log("[CareerManager] No EquipmentManager in this scene - keeping the last known equipment in the save");
+                GameLog.Info("[CareerManager] No EquipmentManager in this scene - keeping the last known equipment in the save");
         }
         if (em != null)
         {
@@ -2508,12 +2508,12 @@ public class CareerManager : MonoBehaviour
         // Try TournySelector first, fall back to CM arrays if in tournament scene
         TournySelector tSel = FindFirstObjectByType<TournySelector>();
         
-        Debug.Log($"[SAVE DEBUG] Starting tournament completion save - TournySelector exists: {tSel != null}");
+        GameLog.Info($"[SAVE DEBUG] Starting tournament completion save - TournySelector exists: {tSel != null}");
         
         if (tSel != null)
         {
-            Debug.Log("[CareerManager] TournySelector found - saving tournament completion IDs from TournySelector");
-            Debug.Log($"[SAVE DEBUG] TournySelector arrays - provQual: {tSel.provQual?.Length ?? 0}, tour: {tSel.tour?.Length ?? 0}, tournies: {tSel.tournies?.Length ?? 0}");
+            GameLog.Info("[CareerManager] TournySelector found - saving tournament completion IDs from TournySelector");
+            GameLog.Info($"[SAVE DEBUG] TournySelector arrays - provQual: {tSel.provQual?.Length ?? 0}, tour: {tSel.tour?.Length ?? 0}, tournies: {tSel.tournies?.Length ?? 0}");
             
             // Collect completed tournament IDs from TournySelector
             if (tSel.provQual != null)
@@ -2523,12 +2523,12 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && tourny.complete)
                     {
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon)
                     {
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2540,12 +2540,12 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && tourny.complete)
                     {
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon)
                     {
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2557,12 +2557,12 @@ public class CareerManager : MonoBehaviour
                     if (tourny != null && tourny.complete)
                     {
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? Saved completed: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon)
                     {
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? Saved trophy: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2579,16 +2579,16 @@ public class CareerManager : MonoBehaviour
             data.tourChampionshipTrophy = tSel.tourChampionship != null && tSel.tourChampionship.trophyWon;
             data.provChampionshipTrophy = tSel.provChampionship != null && tSel.provChampionship.trophyWon;
             
-            Debug.Log($"[CareerManager] ? Saved from TournySelector: {data.completedTournamentIDs.Count} completed IDs, {data.trophyWonIDs.Count} trophy IDs");
-            Debug.Log($"[SAVE DEBUG] Completed IDs saved: [{string.Join(", ", data.completedTournamentIDs)}]");
-            Debug.Log($"[SAVE DEBUG] Trophy IDs saved: [{string.Join(", ", data.trophyWonIDs)}]");
+            GameLog.Info($"[CareerManager] ? Saved from TournySelector: {data.completedTournamentIDs.Count} completed IDs, {data.trophyWonIDs.Count} trophy IDs");
+            GameLog.Info($"[SAVE DEBUG] Completed IDs saved: [{string.Join(", ", data.completedTournamentIDs)}]");
+            GameLog.Info($"[SAVE DEBUG] Trophy IDs saved: [{string.Join(", ", data.trophyWonIDs)}]");
         }
         else
         {
             // CRITICAL FIX: TournySelector doesn't exist (we're in tournament scene)
             // PRIORITY 1: Use pending completion data (from previous save) if available
             // PRIORITY 2: Fall back to CM arrays (only valid if just completed tournament)
-            Debug.Log("[CareerManager] TournySelector not found - checking pending data vs CM arrays");
+            GameLog.Info("[CareerManager] TournySelector not found - checking pending data vs CM arrays");
             
             bool usedPendingData = false;
             
@@ -2596,9 +2596,9 @@ public class CareerManager : MonoBehaviour
             if (pendingCompletedTournamentIDs.Count > 0 || pendingTrophyWonIDs.Count > 0 ||
                 pendingTourChampionshipComplete || pendingProvChampionshipComplete)
             {
-                Debug.Log($"[CareerManager] ? Using PENDING data from previous save");
-                Debug.Log($"  Pending completed: {pendingCompletedTournamentIDs.Count} IDs: [{string.Join(", ", pendingCompletedTournamentIDs)}]");
-                Debug.Log($"  Pending trophies: {pendingTrophyWonIDs.Count} IDs: [{string.Join(", ", pendingTrophyWonIDs)}]");
+                GameLog.Info($"[CareerManager] ? Using PENDING data from previous save");
+                GameLog.Info($"  Pending completed: {pendingCompletedTournamentIDs.Count} IDs: [{string.Join(", ", pendingCompletedTournamentIDs)}]");
+                GameLog.Info($"  Pending trophies: {pendingTrophyWonIDs.Count} IDs: [{string.Join(", ", pendingTrophyWonIDs)}]");
                 
                 // Copy pending data to save
                 data.completedTournamentIDs.AddRange(pendingCompletedTournamentIDs);
@@ -2610,7 +2610,7 @@ public class CareerManager : MonoBehaviour
 
                 usedPendingData = true;
                 
-                Debug.Log($"[CareerManager] ? Preserved pending data: {data.completedTournamentIDs.Count} completed, {data.trophyWonIDs.Count} trophies");
+                GameLog.Info($"[CareerManager] ? Preserved pending data: {data.completedTournamentIDs.Count} completed, {data.trophyWonIDs.Count} trophies");
             }
             
             // ALSO check CM arrays and MERGE any NEW completions (from TournyResults)
@@ -2625,13 +2625,13 @@ public class CareerManager : MonoBehaviour
                     {
                         cmCompletedIDs.Add(tourny.id);
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? NEW from CM prov: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? NEW from CM prov: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon && !data.trophyWonIDs.Contains(tourny.id))
                     {
                         cmTrophyIDs.Add(tourny.id);
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? NEW trophy from CM prov: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? NEW trophy from CM prov: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2644,13 +2644,13 @@ public class CareerManager : MonoBehaviour
                     {
                         cmCompletedIDs.Add(tourny.id);
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? NEW from CM tour: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? NEW from CM tour: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon && !data.trophyWonIDs.Contains(tourny.id))
                     {
                         cmTrophyIDs.Add(tourny.id);
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? NEW trophy from CM tour: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? NEW trophy from CM tour: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2663,13 +2663,13 @@ public class CareerManager : MonoBehaviour
                     {
                         cmCompletedIDs.Add(tourny.id);
                         data.completedTournamentIDs.Add(tourny.id);
-                        Debug.Log($"  ? NEW from CM tournies: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ? NEW from CM tournies: '{tourny.name}' (ID {tourny.id})");
                     }
                     if (tourny != null && tourny.trophyWon && !data.trophyWonIDs.Contains(tourny.id))
                     {
                         cmTrophyIDs.Add(tourny.id);
                         data.trophyWonIDs.Add(tourny.id);
-                        Debug.Log($"  ?? NEW trophy from CM tournies: '{tourny.name}' (ID {tourny.id})");
+                        GameLog.Info($"  ?? NEW trophy from CM tournies: '{tourny.name}' (ID {tourny.id})");
                     }
                 }
             }
@@ -2774,7 +2774,7 @@ public class CareerManager : MonoBehaviour
         
         // Career Record
         record = new Vector2(data.careerWins, data.careerLosses);
-        Debug.Log($"[CareerManager] Loaded career record from save: {record.x}-{record.y}");
+        GameLog.Info($"[CareerManager] Loaded career record from save: {record.x}-{record.y}");
         
         // Career Stats
         cStats.weightAccuracy = data.careerStats.weightAccuracy;
@@ -2932,7 +2932,7 @@ public class CareerManager : MonoBehaviour
         
         loadedFromSave = true;
         
-        Debug.Log($"[CareerManager] Loaded save from {data.saveDate}");
+        GameLog.Info($"[CareerManager] Loaded save from {data.saveDate}");
     }
     
     /// <summary>
@@ -3179,7 +3179,7 @@ public class CareerManager : MonoBehaviour
             // This matches the fix for Single-K/Triple-K and ensures playoffTeams can be restored
             if (pm.playoffTeams != null && pm.playoffTeams.Length > 0)
             {
-                Debug.Log($"[CareerManager] Found pm.playoffTeams with {pm.playoffTeams.Length} slots");
+                GameLog.Info($"[CareerManager] Found pm.playoffTeams with {pm.playoffTeams.Length} slots");
                 int nonNullCount = 0;
                 foreach (var team in pm.playoffTeams)
                 {
@@ -3189,7 +3189,7 @@ public class CareerManager : MonoBehaviour
                         nonNullCount++;
                     }
                 }
-                Debug.Log($"[CareerManager] Saved {nonNullCount}/{pm.playoffTeams.Length} playoff bracket teams for Page Playoff");
+                GameLog.Info($"[CareerManager] Saved {nonNullCount}/{pm.playoffTeams.Length} playoff bracket teams for Page Playoff");
             }
             else
             {
@@ -3206,7 +3206,7 @@ public class CareerManager : MonoBehaviour
             // CRITICAL FIX: Save playoff bracket to playoffTeams list (not regular teams list)
             if (pmSingle.playoffTeams != null && pmSingle.playoffTeams.Length > 0)
             {
-                Debug.Log($"[CareerManager] Found pmSingle.playoffTeams with {pmSingle.playoffTeams.Length} slots");
+                GameLog.Info($"[CareerManager] Found pmSingle.playoffTeams with {pmSingle.playoffTeams.Length} slots");
                 int nonNullCount = 0;
                 foreach (var team in pmSingle.playoffTeams)
                 {
@@ -3216,7 +3216,7 @@ public class CareerManager : MonoBehaviour
                         nonNullCount++;
                     }
                 }
-                Debug.Log($"[CareerManager] Saved {nonNullCount}/{pmSingle.playoffTeams.Length} playoff bracket teams for Single-K");
+                GameLog.Info($"[CareerManager] Saved {nonNullCount}/{pmSingle.playoffTeams.Length} playoff bracket teams for Single-K");
             }
             else
             {
@@ -3268,7 +3268,7 @@ public class CareerManager : MonoBehaviour
         {
             if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
             {
-                Debug.Log($"[CareerManager] Saving playoff bracket from gsp.playoffTeams ({gsp.playoffTeams.Length} teams)");
+                GameLog.Info($"[CareerManager] Saving playoff bracket from gsp.playoffTeams ({gsp.playoffTeams.Length} teams)");
                 int nonNullCount = 0;
                 foreach (var team in gsp.playoffTeams)
                 {
@@ -3278,7 +3278,7 @@ public class CareerManager : MonoBehaviour
                         nonNullCount++;
                     }
                 }
-                Debug.Log($"[CareerManager] Saved {nonNullCount}/{gsp.playoffTeams.Length} playoff bracket teams from gsp");
+                GameLog.Info($"[CareerManager] Saved {nonNullCount}/{gsp.playoffTeams.Length} playoff bracket teams from gsp");
             }
             else
             {
@@ -3304,10 +3304,10 @@ public class CareerManager : MonoBehaviour
             tournamentState.KO1 = gsp.KO1;
             tournamentState.KO3 = gsp.KO3;
             
-            Debug.Log($"[CareerManager] No tournament manager found - saved from gsp: games={gsp.games}, ends={gsp.ends}, rocks={gsp.rocks}, KO1={gsp.KO1}, KO3={gsp.KO3}");
+            GameLog.Info($"[CareerManager] No tournament manager found - saved from gsp: games={gsp.games}, ends={gsp.ends}, rocks={gsp.rocks}, KO1={gsp.KO1}, KO3={gsp.KO3}");
         }
         
-        Debug.Log($"[CareerManager] Captured tournament state: {tournamentState.managerType}, {tournamentState.teams.Count} teams");
+        GameLog.Info($"[CareerManager] Captured tournament state: {tournamentState.managerType}, {tournamentState.teams.Count} teams");
         
         return tournamentState;
     }
@@ -3323,7 +3323,7 @@ public class CareerManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[CareerManager] Restoring tournament state: {tournamentState.managerType}");
+        GameLog.Info($"[CareerManager] Restoring tournament state: {tournamentState.managerType}");
         
         // Restore current tournament info
         if (currentTourny == null)
@@ -3359,7 +3359,7 @@ public class CareerManager : MonoBehaviour
             {
                 restoredPlayoffTeams[i] = DataToTeam(tournamentState.playoffTeams[i]);
             }
-            Debug.Log($"[CareerManager] Restored {restoredPlayoffTeams.Length} playoff bracket teams");
+            GameLog.Info($"[CareerManager] Restored {restoredPlayoffTeams.Length} playoff bracket teams");
         }
         
         // Restore GameSettingsPersist values
@@ -3375,10 +3375,10 @@ public class CareerManager : MonoBehaviour
             gsp.teams = currentTournyTeams;
             gsp.playoffTeams = restoredPlayoffTeams;  // CRITICAL: Restore playoff bracket!
             
-            Debug.Log($"[CareerManager] Restored tournament settings - games={gsp.games}, ends={gsp.ends}, rocks={gsp.rocks}, playoffTeams={gsp.playoffTeams?.Length ?? 0}");
+            GameLog.Info($"[CareerManager] Restored tournament settings - games={gsp.games}, ends={gsp.ends}, rocks={gsp.rocks}, playoffTeams={gsp.playoffTeams?.Length ?? 0}");
         }
         
-        Debug.Log($"[CareerManager] Tournament state restored: {currentTournyTeams?.Length ?? 0} teams, playoff round {tournamentState.playoffRound}");
+        GameLog.Info($"[CareerManager] Tournament state restored: {currentTournyTeams?.Length ?? 0} teams, playoff round {tournamentState.playoffRound}");
     }
     
     /// <summary>
@@ -3392,7 +3392,7 @@ public class CareerManager : MonoBehaviour
             return;
         }
         
-        Debug.Log("[CareerManager] Restoring game state...");
+        GameLog.Info("[CareerManager] Restoring game state...");
         
         try
         {
@@ -3406,7 +3406,7 @@ public class CareerManager : MonoBehaviour
             gsp.loadGame = true; // Signal to GameManager to load the saved game
             gsp.tournyIntroShown = gameState.tournyIntroShown;  // Restore intro shown flag
             
-            Debug.Log($"[CareerManager] Preserved workflow flags - gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}");
+            GameLog.Info($"[CareerManager] Preserved workflow flags - gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}");
             
             // CRITICAL: Validate and restore game settings
             gsp.ends = gameState.ends > 0 ? gameState.ends : 8;
@@ -3431,7 +3431,7 @@ public class CareerManager : MonoBehaviour
                 }
             }
             gsp.rocks = restoredRocks;
-            Debug.Log($"[CareerManager] Restored rocks={gsp.rocks} from save (gameState.rocks was {gameState.rocks})");
+            GameLog.Info($"[CareerManager] Restored rocks={gsp.rocks} from save (gameState.rocks was {gameState.rocks})");
             
             // CRITICAL FIX: When starting a new end, recalculate rockCurrent based on gsp.rocks
             // rockCurrent = 16 - (rocks * 2) is the starting rock index for each end
@@ -3443,13 +3443,13 @@ public class CareerManager : MonoBehaviour
             {
                 // Saved value suggests we're at start of end - recalculate for this rock count
                 gsp.rockCurrent = expectedStartRock;
-                Debug.Log($"[CareerManager] Recalculated rockCurrent={gsp.rockCurrent} for {gsp.rocks} rocks/team (saved was {savedRockCurrent})");
+                GameLog.Info($"[CareerManager] Recalculated rockCurrent={gsp.rockCurrent} for {gsp.rocks} rocks/team (saved was {savedRockCurrent})");
             }
             else
             {
                 // Mid-end or valid position - restore as-is
                 gsp.rockCurrent = Mathf.Clamp(savedRockCurrent, -1, 15);
-                Debug.Log($"[CareerManager] Restored rockCurrent={gsp.rockCurrent} from save (mid-end continuation)");
+                GameLog.Info($"[CareerManager] Restored rockCurrent={gsp.rockCurrent} from save (mid-end continuation)");
             }
             
             gsp.redHammer = gameState.redHammer;
@@ -3470,7 +3470,7 @@ public class CareerManager : MonoBehaviour
                 gsp.redTeamName    = saveRedReal    ? gameState.redTeamName    : "Red";
             if (!gspYellowReal)
                 gsp.yellowTeamName = saveYellowReal ? gameState.yellowTeamName : "Yellow";
-            Debug.Log($"[CareerManager.RestoreGameState] Team names — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (save had red='{gameState.redTeamName}' yellow='{gameState.yellowTeamName}')");
+            GameLog.Info($"[CareerManager.RestoreGameState] Team names — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (save had red='{gameState.redTeamName}' yellow='{gameState.yellowTeamName}')");
             gsp.yellowScore = Mathf.Max(0, gameState.yellowScore);
             gsp.redScore = Mathf.Max(0, gameState.redScore);
             
@@ -3514,14 +3514,14 @@ public class CareerManager : MonoBehaviour
             {
                 try
                 {
-                    Debug.Log($"[CareerManager] Restoring {gameState.endScores.Count} end scores to gsp.score");
+                    GameLog.Info($"[CareerManager] Restoring {gameState.endScores.Count} end scores to gsp.score");
                     gsp.score = new Vector2Int[gameState.endScores.Count];
                     for (int i = 0; i < gameState.endScores.Count; i++)
                     {
                         if (gameState.endScores[i] != null)
                         {
                             gsp.score[i] = gameState.endScores[i].ToVector2Int();
-                            Debug.Log($"[CareerManager]   End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
+                            GameLog.Info($"[CareerManager]   End {i+1}: Red={gsp.score[i].x}, Yellow={gsp.score[i].y}");
                         }
                         else
                         {
@@ -3567,7 +3567,7 @@ public class CareerManager : MonoBehaviour
             gsp.loadGame = false;
         }
         
-        Debug.Log($"[CareerManager] Game state restored: End {gameState.currentEnd}/{gameState.ends}, Rock {gameState.currentRock}/{gameState.rocks}");
+        GameLog.Info($"[CareerManager] Game state restored: End {gameState.currentEnd}/{gameState.ends}, Rock {gameState.currentRock}/{gameState.rocks}");
     }
     
     /// <summary>

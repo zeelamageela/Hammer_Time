@@ -25,6 +25,6 @@ public class OptionsMenu : MonoBehaviour
     public void ClearHighScore()
     {
         HighScoreService.DeleteHighScores();
-        Debug.Log("[OptionsMenu] High scores cleared via HighScoreService");
+        GameLog.Info("[OptionsMenu] High scores cleared via HighScoreService");
     }
 }

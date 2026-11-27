@@ -37,7 +37,7 @@ public class HammerMixer : MonoBehaviour
 
         SyncSources();
         
-        Debug.Log("started all layers");
+        GameLog.Info("started all layers");
     }
 
     #region On GUI Bizness

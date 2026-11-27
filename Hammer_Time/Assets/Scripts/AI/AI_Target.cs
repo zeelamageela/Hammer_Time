@@ -83,7 +83,7 @@ public class AI_Target : MonoBehaviour
                 playerTrajectory.curlStrength
             );
             
-            Debug.Log($"[AI_Target] ✓ Using PLAYER trajectory physics: " +
+            GameLog.Info($"[AI_Target] ✓ Using PLAYER trajectory physics: " +
                       $"friction={playerTrajectory.iceFriction:F3}, " +
                       $"curl={playerTrajectory.curlStrength:F3}, " +
                       $"velocityMultiplier={playerTrajectory.velocityMultiplier:F2}, " +
@@ -127,20 +127,20 @@ public class AI_Target : MonoBehaviour
                     
                     if (i == targetRockIndex)
                     {
-                        Debug.Log($"[AI_Target] ✅ TARGET ROCK #{i} ({rockEntry.rock.name}) INCLUDED in simulation at {rockEntry.rock.transform.position}");
+                        GameLog.Info($"[AI_Target] ✅ TARGET ROCK #{i} ({rockEntry.rock.name}) INCLUDED in simulation at {rockEntry.rock.transform.position}");
                     }
                 }
             }
         }
         
-        Debug.Log($"[AI_Target] Total rocks in play for simulation: {rocksInPlay.Count}");
+        GameLog.Info($"[AI_Target] Total rocks in play for simulation: {rocksInPlay.Count}");
         if (targetRockIndex >= 0 && gm.rockList[targetRockIndex].rock != null)
         {
-            Debug.Log($"[AI_Target] Target rock reference: {gm.rockList[targetRockIndex].rock.name} at {gm.rockList[targetRockIndex].rock.transform.position}");
+            GameLog.Info($"[AI_Target] Target rock reference: {gm.rockList[targetRockIndex].rock.name} at {gm.rockList[targetRockIndex].rock.transform.position}");
             
             // CRITICAL: Verify target is in the obstacles list
             bool targetInObstacles = rocksInPlay.Contains(gm.rockList[targetRockIndex].rock);
-            Debug.Log($"[AI_Target] Target rock IS in obstacles list: {targetInObstacles}");
+            GameLog.Info($"[AI_Target] Target rock IS in obstacles list: {targetInObstacles}");
         }
         
         float bestScore = float.MinValue;
@@ -154,9 +154,9 @@ public class AI_Target : MonoBehaviour
         float bestCoarseScore = float.MinValue;  // MOVED OUTSIDE LOOP!
         float bestCoarseOffset = 0f;              // MOVED OUTSIDE LOOP!
         
-        Debug.Log($"[AI_Target] ========== STARTING GEOMETRIC AIM POINT SWEEP ==========");
-        Debug.Log($"[AI_Target] Shot type: {shotType}, Target: {targetRockPosition}");
-        Debug.Log($"[AI_Target] Launcher: {launcherPos}, Obstacles: {rocksInPlay.Count}");
+        GameLog.Info($"[AI_Target] ========== STARTING GEOMETRIC AIM POINT SWEEP ==========");
+        GameLog.Info($"[AI_Target] Shot type: {shotType}, Target: {targetRockPosition}");
+        GameLog.Info($"[AI_Target] Launcher: {launcherPos}, Obstacles: {rocksInPlay.Count}");
         
         // STAGE 1: CALCULATE TARGET IMPACT POINT
         // This is where we want the SHOOTER rock's CENTER to be when it hits the target
@@ -190,7 +190,7 @@ public class AI_Target : MonoBehaviour
                     targetRockPosition.y - impactOffset
                 );
                 
-                Debug.Log($"[AI_Target] RUNBACK: MAXIMUM drive-through (recalibrated!)\n" +
+                GameLog.Info($"[AI_Target] RUNBACK: MAXIMUM drive-through (recalibrated!)\n" +
                           $"  Target (guard): {targetRockPosition}\n" +
                           $"  Pullback: {desiredPullbackDistance:F2} (MAXIMUM - 15% heavier!)\n" +
                           $"  Expected velocity: {desiredPullbackDistance * velocityMultiplier:F2} m/s\n" +
@@ -217,7 +217,7 @@ public class AI_Target : MonoBehaviour
                     targetRockPosition.y - rockRadius * 1.5f // Slightly behind
                 );
                 
-                Debug.Log($"[AI_Target] PEEL: 45° angled hit + heavy weight (recalibrated!)\n" +
+                GameLog.Info($"[AI_Target] PEEL: 45° angled hit + heavy weight (recalibrated!)\n" +
                           $"  Target: {targetRockPosition}\n" +
                           $"  Angle offset: {angleOffset:F3}\n" +
                           $"  Impact point: {targetImpactPoint}\n" +
@@ -237,7 +237,7 @@ public class AI_Target : MonoBehaviour
                     targetRockPosition.y - impactOffset
                 );
                 
-                Debug.Log($"[AI_Target] TAKEOUT: Nose hit + clearing weight (recalibrated!)\n" +
+                GameLog.Info($"[AI_Target] TAKEOUT: Nose hit + clearing weight (recalibrated!)\n" +
                           $"  Target: {targetRockPosition}\n" +
                           $"  Impact offset: {impactOffset:F3}\n" +
                           $"  Impact point: {targetImpactPoint}\n" +
@@ -255,7 +255,7 @@ public class AI_Target : MonoBehaviour
                 launcherPos.y + desiredVelocityMagnitude  // Simple: start + velocity magnitude
             );
             
-            Debug.Log($"[AI_Target] {shotType} velocity calculation:\n" +
+            GameLog.Info($"[AI_Target] {shotType} velocity calculation:\n" +
                       $"  Desired pullback: {desiredPullbackDistance:F3}\n" +
                       $"  Velocity multiplier: {velocityMultiplier:F2}\n" +
                       $"  Desired velocity: {desiredVelocityMagnitude:F2} m/s\n" +
@@ -278,7 +278,7 @@ public class AI_Target : MonoBehaviour
                 launcherPos.y + velocityMagnitude
             );
             
-            Debug.Log($"[AI_Target] TAP/RAISE: Light touch shot\n" +
+            GameLog.Info($"[AI_Target] TAP/RAISE: Light touch shot\n" +
                       $"  Target: {targetRockPosition}\n" +
                       $"  Pullback: {desiredPullbackDistance:F2}\n" +
                       $"  Expected velocity: {velocityMagnitude:F2} m/s\n" +
@@ -298,7 +298,7 @@ public class AI_Target : MonoBehaviour
         {
             bool tryInTurn = (turnDir == 0);
             
-            Debug.Log($"[AI_Target] --- Testing {(tryInTurn ? "IN-TURN" : "OUT-TURN")} ---");
+            GameLog.Info($"[AI_Target] --- Testing {(tryInTurn ? "IN-TURN" : "OUT-TURN")} ---");
             
             // CRITICAL FIX: Lateral offsets must COMPENSATE for curl direction!
             // IN-TURN curls RIGHT (positive X) → aim LEFT (negative offsets) to compensate
@@ -306,7 +306,7 @@ public class AI_Target : MonoBehaviour
             // This is OPPOSITE of the curl direction!
             int offsetMultiplier = tryInTurn ? -1 : 1; // FLIPPED from previous (1 : -1)
             
-            Debug.Log($"[AI_Target] Offset multiplier for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {offsetMultiplier}");
+            GameLog.Info($"[AI_Target] Offset multiplier for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {offsetMultiplier}");
             
             // FOUR-PHASE MICROSCOPIC SEARCH:
             // Phase 1: Coarse sweep to find general region (0 to +1.2 in 0.12 steps) = 11 positions
@@ -335,7 +335,7 @@ public class AI_Target : MonoBehaviour
                 
                 float lateralOffset = lateralOffsetBase * offsetMultiplier;
                 
-                Debug.Log($"[Phase 1] Testing offset {lateralOffsetBase:F2} (multiplied: {lateralOffset:F2})");
+                GameLog.Info($"[Phase 1] Testing offset {lateralOffsetBase:F2} (multiplied: {lateralOffset:F2})");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated shot weights (v2)
                 // Draw: 9.35 m/s | Takeout: 12.4 m/s | Peel: 13.75 m/s | Runback: 15.8 m/s
@@ -377,7 +377,7 @@ public class AI_Target : MonoBehaviour
                     {
                         globalBestFallbackScore = proximityScore;
                         globalBestFallbackOffset = lateralOffsetBase;
-                        Debug.Log($"[Phase 1 FALLBACK] No collision, but close! Dist={distToTarget:F2}, Score={proximityScore:F1}, Offset={lateralOffsetBase:F3}");
+                        GameLog.Info($"[Phase 1 FALLBACK] No collision, but close! Dist={distToTarget:F2}, Score={proximityScore:F1}, Offset={lateralOffsetBase:F3}");
                     }
                     
                     continue;
@@ -396,7 +396,7 @@ public class AI_Target : MonoBehaviour
                     {
                         globalBestFallbackScore = wrongRockScore;
                         globalBestFallbackOffset = lateralOffsetBase;
-                        Debug.Log($"[Phase 1 FALLBACK] Wrong rock, but close! HitDist={distHitToTarget:F2}, Score={wrongRockScore:F1}, Offset={lateralOffsetBase:F3}");
+                        GameLog.Info($"[Phase 1 FALLBACK] Wrong rock, but close! HitDist={distHitToTarget:F2}, Score={wrongRockScore:F1}, Offset={lateralOffsetBase:F3}");
                     }
                     
                     continue;
@@ -416,7 +416,7 @@ public class AI_Target : MonoBehaviour
                     {
                         globalBestFallbackScore = wrongSideScore;
                         globalBestFallbackOffset = lateralOffsetBase;
-                        Debug.Log($"[Phase 1 FALLBACK] Wrong side hit, Score={wrongSideScore:F1}, Offset={lateralOffsetBase:F3}");
+                        GameLog.Info($"[Phase 1 FALLBACK] Wrong side hit, Score={wrongSideScore:F1}, Offset={lateralOffsetBase:F3}");
                     }
                     
                     continue; // Must hit from behind for primary scoring
@@ -443,15 +443,15 @@ public class AI_Target : MonoBehaviour
                 Debug.LogWarning($"[Phase 1 COARSE] NO PERFECT HITS - Using fallback! Score={bestCoarseScore:F2}, Offset={bestCoarseOffset:F3}, Turn={(tryInTurn ? "IN" : "OUT")}");
             }
             
-            Debug.Log($"[Phase 1 COARSE] Tested: {phase1Tested}, PathFailed: {phase1PathFailed}, NoCollision: {phase1NoCollision}, WrongRock: {phase1WrongRock}, WrongSide: {phase1WrongSide}, BestScore: {bestCoarseScore:F2}, BestOffset: {bestCoarseOffset:F3}");
+            GameLog.Info($"[Phase 1 COARSE] Tested: {phase1Tested}, PathFailed: {phase1PathFailed}, NoCollision: {phase1NoCollision}, WrongRock: {phase1WrongRock}, WrongSide: {phase1WrongSide}, BestScore: {bestCoarseScore:F2}, BestOffset: {bestCoarseOffset:F3}");
             
             // DEBUG: Log no-collision trajectories to diagnose why they're missing
             if (noCollisionDebug.Count > 0)
             {
-                Debug.Log($"[Phase 1 NO COLLISION DEBUG] Target at ({targetRockPosition.x:F2}, {targetRockPosition.y:F2}), {noCollisionDebug.Count} trajectories missed:");
+                GameLog.Info($"[Phase 1 NO COLLISION DEBUG] Target at ({targetRockPosition.x:F2}, {targetRockPosition.y:F2}), {noCollisionDebug.Count} trajectories missed:");
                 foreach (var debug in noCollisionDebug)
                 {
-                    Debug.Log($"  {debug}");
+                    GameLog.Info($"  {debug}");
                 }
             }
             
@@ -557,7 +557,7 @@ public class AI_Target : MonoBehaviour
                     // Apply multiplier based on turn direction
                     float lateralOffset = lateralOffsetBase * offsetMultiplier;
                     
-                    Debug.Log($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
+                    GameLog.Info($"[AI_Target] Phase 4: lateralOffsetBase={lateralOffsetBase:F4}, multiplier={offsetMultiplier}, final lateralOffset={lateralOffset:F4}");
                 
                 // DETERMINISTIC VELOCITY: Recalibrated weights (v2)!
                 // Takeout: 4.5 → 12.4 m/s | Peel: 5.0 → 13.75 m/s | Runback: 5.75 → 15.8 m/s
@@ -602,7 +602,7 @@ public class AI_Target : MonoBehaviour
                     string hitRockName = hitRockGameObject.name;
                     string targetRockName = targetRockGameObject.name;
                     
-                    Debug.Log($"[Hit Detection] Hit rock: '{hitRockName}' vs Target rock: '{targetRockName}'");
+                    GameLog.Info($"[Hit Detection] Hit rock: '{hitRockName}' vs Target rock: '{targetRockName}'");
                     
                     if (hitRockName == targetRockName || hitRockGameObject == targetRockGameObject)
                     {
@@ -626,13 +626,13 @@ public class AI_Target : MonoBehaviour
                         
                         if (!isFromBehind && shotType != "Tap Back" && shotType != "Raise")
                         {
-                            Debug.Log($"[AI_Target] ⚠️ REJECTED - Not hitting from behind! Y offset={hitVector.y:F3} (need Y < -0.05)");
+                            GameLog.Info($"[AI_Target] ⚠️ REJECTED - Not hitting from behind! Y offset={hitVector.y:F3} (need Y < -0.05)");
                             continue; // Skip this hit
                         }
                         
                         if (!isFromBehind && (shotType == "Tap Back" || shotType == "Raise"))
                         {
-                            Debug.Log($"[AI_Target] ℹ️ Tap/Raise from angle - Y offset={hitVector.y:F3} (ANY angle OK for light contact)");
+                            GameLog.Info($"[AI_Target] ℹ️ Tap/Raise from angle - Y offset={hitVector.y:F3} (ANY angle OK for light contact)");
                         }
                         
                         // STRATEGIC DEFLECTION SCORING: Analyze post-collision outcomes
@@ -674,14 +674,14 @@ public class AI_Target : MonoBehaviour
                         // COMBINED SCORE: All three factors
                         float hitQuality = (noseAngleQuality * 0.40f) + (impactPointQuality * 0.40f) + (strategicQuality * 0.20f);
                         
-                        Debug.Log($"[AI_Target] Strategic Deflection Scoring:\n" +
+                        GameLog.Info($"[AI_Target] Strategic Deflection Scoring:\n" +
                                   $"  Nose Angle Quality: {noseAngleQuality:F3} (angle dev: {angleDeviation:F1}°)\n" +
                                   $"  Impact Point Quality: {impactPointQuality:F3} (dist: {distanceToTargetImpact:F3})\n" +
                                   $"  Strategic Quality: {strategicQuality:F3} (positioning)\n" +
                                   $"  Combined Hit Quality: {hitQuality:F3}");
                         
                         // 🔍 COMPREHENSIVE DEBUG: ALL INFO IN ONE PLACE
-                        Debug.Log($"🎯 HIT DIAGNOSTIC (HYBRID SCORING)\n" +
+                        GameLog.Info($"🎯 HIT DIAGNOSTIC (HYBRID SCORING)\n" +
                                   $"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                                   $"TURN: {(tryInTurn ? "IN-TURN (curls LEFT ←)" : "OUT-TURN (curls RIGHT →)")}\n" +
                                   $"TARGETING:\n" +
@@ -725,14 +725,14 @@ public class AI_Target : MonoBehaviour
                             bestPullback = testPullback;
                             bestInTurn = tryInTurn;  // Store the turn direction for THIS hit
                             
-                            Debug.Log($"⭐ NEW BEST SHOT! Score: {score:F2}, LateralOffset: {lateralOffset:F2}, " +
+                            GameLog.Info($"⭐ NEW BEST SHOT! Score: {score:F2}, LateralOffset: {lateralOffset:F2}, " +
                                       $"Turn: {(tryInTurn ? "IN-TURN" : "OUT-TURN")}, " +
                                       $"TryInTurn={tryInTurn}, BestInTurn={bestInTurn}");
                         }
                     }
                     else
                     {
-                        Debug.Log($"❌ Hit DIFFERENT ROCK: {hitRockName} (target is {targetRockName}) at lateral offset {lateralOffset:F2}");
+                        GameLog.Info($"❌ Hit DIFFERENT ROCK: {hitRockName} (target is {targetRockName}) at lateral offset {lateralOffset:F2}");
                     }
                 }
                 }  // End of Phase 4 for-loop
@@ -795,19 +795,19 @@ public class AI_Target : MonoBehaviour
                     {
                         // From behind - excellent!
                         angleQuality = 1.0f;
-                        Debug.Log($"[EXTENDED SWEEP] BEHIND HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (excellent!)");
+                        GameLog.Info($"[EXTENDED SWEEP] BEHIND HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (excellent!)");
                     }
                     else if (Mathf.Abs(hitVector.y) < 0.15f)
                     {
                         // Side hit - good for wide angles!
                         angleQuality = 0.7f;
-                        Debug.Log($"[EXTENDED SWEEP] SIDE HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (glancing)");
+                        GameLog.Info($"[EXTENDED SWEEP] SIDE HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (glancing)");
                     }
                     else
                     {
                         // Front hit - desperate but valid
                         angleQuality = 0.4f;
-                        Debug.Log($"[EXTENDED SWEEP] FRONT HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (desperate contact)");
+                        GameLog.Info($"[EXTENDED SWEEP] FRONT HIT at offset {lateralOffsetBase:F2} - angle {hitAngle:F1}° (desperate contact)");
                     }
                     
                     // SUCCESS in extended range!
@@ -821,7 +821,7 @@ public class AI_Target : MonoBehaviour
                         bestScore = score;
                         bestPullback = testPullback;
                         bestInTurn = tryInTurn;
-                        Debug.Log($"[EXTENDED SWEEP] ✅ Found hit! Score={score:F2}, Offset={lateralOffsetBase:F3}, Turn={(tryInTurn ? "IN" : "OUT")}");
+                        GameLog.Info($"[EXTENDED SWEEP] ✅ Found hit! Score={score:F2}, Offset={lateralOffsetBase:F3}, Turn={(tryInTurn ? "IN" : "OUT")}");
                     }
                 }
             }
@@ -832,7 +832,7 @@ public class AI_Target : MonoBehaviour
         {
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
-            Debug.Log($"[AI_Target] {shotType} SUCCESS! Score: {bestScore:F2}, Pullback: {bestPullback}, InTurn: {useInTurn}");
+            GameLog.Info($"[AI_Target] {shotType} SUCCESS! Score: {bestScore:F2}, Pullback: {bestPullback}, InTurn: {useInTurn}");
             return true;
         }
         
@@ -912,7 +912,7 @@ public class AI_Target : MonoBehaviour
         float velocityMagnitude = pullbackDistance * velocityMultiplier;
         Vector2 baseVelocity = velocityDirection * velocityMagnitude;
         
-        Debug.Log($"[CalculateVelocityFromPullback] 🎯 DIRECTION FIX:\n" +
+        GameLog.Info($"[CalculateVelocityFromPullback] 🎯 DIRECTION FIX:\n" +
                   $"  Pullback: {pullbackPos}\n" +
                   $"  Launcher: {launcherPos}\n" +
                   $"  Pullback offset: {pullbackOffset} (BACKWARDS)\n" +
@@ -954,7 +954,7 @@ public class AI_Target : MonoBehaviour
         Vector2 pullbackOffset = pullbackDirection * pullbackDistance;
         Vector2 pullback = launcherPos - pullbackOffset;
         
-        Debug.Log($"[AI Pullback] Velocity: {desiredVelocity} (mag: {velocityMagnitude:F2}) → RAW PullbackDist: {pullbackDistance:F3}\n" +
+        GameLog.Info($"[AI Pullback] Velocity: {desiredVelocity} (mag: {velocityMagnitude:F2}) → RAW PullbackDist: {pullbackDistance:F3}\n" +
                   $"  Direction: {pullbackDirection}\n" +
                   $"  Pullback offset: {pullbackOffset} (direction × distance)\n" +
                   $"  Launcher pos: {launcherPos}\n" +
@@ -1097,25 +1097,25 @@ public class AI_Target : MonoBehaviour
                     if (posY <= 3.5f)
                     {
                         cenGuard = guard.lastTransform;
-                        Debug.Log("Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                        GameLog.Info("Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                     }
                     else
                     {
                         tCenGuard = guard.lastTransform;
-                        Debug.Log("Tight Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                        GameLog.Info("Tight Centre Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                     }
                 }
                 // left corner 
                 else if (posX < -0.4f && posX > -1.25f)
                 {
                     lCornGuard = guard.lastTransform;
-                    Debug.Log("Left Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                    GameLog.Info("Left Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
                 // right corner
                 else if (posX > 0.4f && posX < 1.25f)
                 {
                     rCornGuard = guard.lastTransform;
-                    Debug.Log("Right Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
+                    GameLog.Info("Right Guard - " + guard.lastTransform.position.x + ", " + guard.lastTransform.position.y);
                 }
                 else
                 {
@@ -1123,7 +1123,7 @@ public class AI_Target : MonoBehaviour
                     cenGuard = null;
                     lCornGuard = null;
                     rCornGuard = null;
-                    Debug.Log("No Guards");
+                    GameLog.Info("No Guards");
                 }
             }
 
@@ -1134,7 +1134,7 @@ public class AI_Target : MonoBehaviour
             lCornGuard = null;
             rCornGuard = null;
 
-            Debug.Log("No Guards");
+            GameLog.Info("No Guards");
         }
 
         yield return new WaitForEndOfFrame();
@@ -1168,7 +1168,7 @@ public class AI_Target : MonoBehaviour
         Vector2 launcherPos = new Vector2(0f, -27.5f); // Typical launcher position
         
         // CRITICAL DEBUG: Log EVERYTHING about this takeout attempt
-        Debug.Log($"\n========== TAKEOUT DEBUG START ==========\n" +
+        GameLog.Info($"\n========== TAKEOUT DEBUG START ==========\n" +
                   $"Target Rock: #{rockTarget} at position {targetRockPos}\n" +
                   $"Launcher position: {launcherPos}\n" +
                   $"Distance to target: {Vector2.Distance(launcherPos, targetRockPos):F2} units\n" +
@@ -1187,15 +1187,15 @@ public class AI_Target : MonoBehaviour
             Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedShot!
             lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
             
-            Debug.Log($"[AI_Target] Perfect velocity stored: {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+            GameLog.Info($"[AI_Target] Perfect velocity stored: {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
             
             // CRITICAL: Set rm.inturn from physics calculation ONCE
-            Debug.Log($"[AI_Target] Physics recommends: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
+            GameLog.Info($"[AI_Target] Physics recommends: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                       $"Setting rm.inturn = {useInTurn}");
             
             rm.inturn = useInTurn;
             
-            Debug.Log($"[AI_Target] Confirmed rm.inturn is now: {rm.inturn}");
+            GameLog.Info($"[AI_Target] Confirmed rm.inturn is now: {rm.inturn}");
             
             // Apply accuracy-based error to pullback position
             CharacterStats shooterStats = GetShooterStats(rockCurrent);
@@ -1218,7 +1218,7 @@ public class AI_Target : MonoBehaviour
                 float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
                 float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
                 
-                Debug.Log($"[AI_Target] Takeout skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
+                GameLog.Info($"[AI_Target] Takeout skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
                 
                 float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
                 float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
@@ -1264,7 +1264,7 @@ public class AI_Target : MonoBehaviour
                     string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                     string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                     
-                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Takeout)\n" +
+                    GameLog.Info($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Takeout)\n" +
                               $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
                               $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
                               $"    68% shots within ±{aimSigma:F3}, 95% within ±{aimSigma * 2f:F3}\n" +
@@ -1277,12 +1277,12 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (both skills 100) - NO ERROR! Sigma ≈ 0");
+                    GameLog.Info($"[AI_Target] ⭐ PERFECT TAKEOUT ACCURACY (both skills 100) - NO ERROR! Sigma ≈ 0");
                 }
             }
             else
             {
-                Debug.Log($"[AI_Target] No shooter stats found - using perfect accuracy (no error)");
+                GameLog.Info($"[AI_Target] No shooter stats found - using perfect accuracy (no error)");
             }
             
             takeOutX = pullbackPos.x;
@@ -1292,7 +1292,7 @@ public class AI_Target : MonoBehaviour
             Vector2 shotDirection = (pullbackPos - launcherPos).normalized;
             float shotAngle = Mathf.Atan2(shotDirection.y, shotDirection.x) * Mathf.Rad2Deg;
             
-            Debug.Log($"[AI_Target] Take Out SUCCESS\n" +
+            GameLog.Info($"[AI_Target] Take Out SUCCESS\n" +
                       $"Target: {targetRockPos}\n" +
                       $"Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
                       $"Shot direction: {shotDirection} (angle: {shotAngle:F1}°)\n" +
@@ -1308,7 +1308,7 @@ public class AI_Target : MonoBehaviour
             Debug.LogWarning($"[AI_Target] Take Out physics FAILED - trying comprehensive fallback for target: {targetRockPos}");
             
             // FALLBACK 1: Try PEEL instead (different shot mechanics might work)
-            Debug.Log($"[Fallback 1] Trying PEEL on same target");
+            GameLog.Info($"[Fallback 1] Trying PEEL on same target");
             Vector2 peelPullback;
             bool peelInTurn;
             bool foundPeel = CalculatePhysicsBasedShot(targetRockPos, out peelPullback, out peelInTurn, "Peel", rockTarget);
@@ -1319,15 +1319,15 @@ public class AI_Target : MonoBehaviour
                 takeOutX = peelPullback.x;
                 takeOutY = peelPullback.y;
                 
-                Debug.Log($"[Fallback 1] ✓ PEEL succeeded! Turn: {(peelInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                GameLog.Info($"[Fallback 1] ✓ PEEL succeeded! Turn: {(peelInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                 
                 aiShoot.OnShot("Peel", rockCurrent);
-                Debug.Log($"Fallback Peel - {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
+                GameLog.Info($"Fallback Peel - {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
                 yield break;
             }
             
             // FALLBACK 2: Try ANY other opponent rock in the house
-            Debug.Log($"[Fallback 2] Trying other opponent rocks in house");
+            GameLog.Info($"[Fallback 2] Trying other opponent rocks in house");
             Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
             
             foreach (var houseRock in gm.houseList)
@@ -1342,7 +1342,7 @@ public class AI_Target : MonoBehaviour
                     continue; // Skip original target (already failed)
                 
                 Vector2 altTargetPos = houseRock.rock.transform.position;
-                Debug.Log($"[Fallback 2] Trying alternative rock #{houseRock.rockInfo.rockIndex} at ({altTargetPos.x:F2}, {altTargetPos.y:F2})");
+                GameLog.Info($"[Fallback 2] Trying alternative rock #{houseRock.rockInfo.rockIndex} at ({altTargetPos.x:F2}, {altTargetPos.y:F2})");
                 
                 Vector2 altPullback;
                 bool altInTurn;
@@ -1354,16 +1354,16 @@ public class AI_Target : MonoBehaviour
                     takeOutX = altPullback.x;
                     takeOutY = altPullback.y;
                     
-                    Debug.Log($"[Fallback 2] ✓ Alternative rock succeeded! Turn: {(altInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                    GameLog.Info($"[Fallback 2] ✓ Alternative rock succeeded! Turn: {(altInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                     
                     aiShoot.OnShot("Take Out", rockCurrent);
-                    Debug.Log($"Fallback Alternative - {houseRock.rockInfo.teamName} #{houseRock.rockInfo.rockIndex}");
+                    GameLog.Info($"Fallback Alternative - {houseRock.rockInfo.teamName} #{houseRock.rockInfo.rockIndex}");
                     yield break;
                 }
             }
             
             // FALLBACK 3: Try removing ANY opponent finesse blocking the center
-            Debug.Log($"[Fallback 3] Trying opponent guards");
+            GameLog.Info($"[Fallback 3] Trying opponent guards");
             
             foreach (var guard in gm.gList)
             {
@@ -1375,7 +1375,7 @@ public class AI_Target : MonoBehaviour
                     continue; // Skip our own guards
                 
                 Vector2 guardPos = guard.lastTransform.position;
-                Debug.Log($"[Fallback 3] Trying finesse #{guardInfo.rockIndex} at ({guardPos.x:F2}, {guardPos.y:F2})");
+                GameLog.Info($"[Fallback 3] Trying finesse #{guardInfo.rockIndex} at ({guardPos.x:F2}, {guardPos.y:F2})");
                 
                 Vector2 guardPullback;
                 bool guardInTurn;
@@ -1387,16 +1387,16 @@ public class AI_Target : MonoBehaviour
                     takeOutX = guardPullback.x;
                     takeOutY = guardPullback.y;
                     
-                    Debug.Log($"[Fallback 3] ✓ Guard takeout succeeded! Turn: {(guardInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                    GameLog.Info($"[Fallback 3] ✓ Guard takeout succeeded! Turn: {(guardInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                     
                     aiShoot.OnShot("Take Out", rockCurrent);
-                    Debug.Log($"Fallback Guard - {guardInfo.teamName} #{guardInfo.rockIndex}");
+                    GameLog.Info($"Fallback Guard - {guardInfo.teamName} #{guardInfo.rockIndex}");
                     yield break;
                 }
             }
             
             // FALLBACK 4: Draw to button instead (can't remove anything)
-            Debug.Log($"[Fallback 4] All takeout options exhausted - trying weight to button");
+            GameLog.Info($"[Fallback 4] All takeout options exhausted - trying weight to button");
             
             Vector2 button = new Vector2(0f, 6.5f);
             Vector2 drawPullback;
@@ -1409,10 +1409,10 @@ public class AI_Target : MonoBehaviour
                 takeOutX = drawPullback.x;
                 takeOutY = drawPullback.y;
                 
-                Debug.Log($"[Fallback 4] ✓ Draw succeeded! Turn: {(drawInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
+                GameLog.Info($"[Fallback 4] ✓ Draw succeeded! Turn: {(drawInTurn ? "IN-TURN" : "OUT-TURN")}, Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                 
                 aiShoot.OnShot("Draw To Target", rockCurrent);
-                Debug.Log($"Fallback Draw - Can't remove anything, drawing to button");
+                GameLog.Info($"Fallback Draw - Can't remove anything, drawing to button");
                 yield break;
             }
             
@@ -1429,7 +1429,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Take Out", rockCurrent);
-        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        GameLog.Info(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
     
@@ -1498,7 +1498,7 @@ public class AI_Target : MonoBehaviour
         Vector2 targetRockPos = gm.rockList[rockTarget].rock.transform.position;
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         
-        Debug.Log($"[AI_Target] 🎯 PEEL CHAOS MODE - Scanning angles to maximize secondary damage");
+        GameLog.Info($"[AI_Target] 🎯 PEEL CHAOS MODE - Scanning angles to maximize secondary damage");
         
         // Collect ALL rocks in play (potential secondary targets)
         List<GameObject> rocksInPlay = new List<GameObject>();
@@ -1519,7 +1519,7 @@ public class AI_Target : MonoBehaviour
             }
         }
         
-        Debug.Log($"[Peel Chaos] Primary target: {targetRockPos}, Secondary targets: {secondaryTargets.Count}");
+        GameLog.Info($"[Peel Chaos] Primary target: {targetRockPos}, Secondary targets: {secondaryTargets.Count}");
         
         // ANGLE SWEEP: Try hitting target from different angles (-45° to +45° from direct)
         // More angles = more CPU but better chaos detection
@@ -1571,7 +1571,7 @@ public class AI_Target : MonoBehaviour
                 useInTurn
             );
             
-            Debug.Log($"[Peel Chaos] Angle: {angle:F1}° → Chaos Score: {chaosScore:F1}");
+            GameLog.Info($"[Peel Chaos] Angle: {angle:F1}° → Chaos Score: {chaosScore:F1}");
             
             if (chaosScore > bestChaosScore)
             {
@@ -1589,7 +1589,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = bestPullback.x;
             takeOutY = bestPullback.y;
             
-            Debug.Log($"[AI_Target] 🎯 PEEL CHAOS SUCCESS!\n" +
+            GameLog.Info($"[AI_Target] 🎯 PEEL CHAOS SUCCESS!\n" +
                       $"  Angle: {bestAngle:F1}°\n" +
                       $"  Chaos Score: {bestChaosScore:F1}\n" +
                       $"  Turn: {(bestInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
@@ -1612,7 +1612,7 @@ public class AI_Target : MonoBehaviour
                 }
             }
             
-            Debug.Log($"[Peel Fallback] Found {opponentRocksInHouse.Count} secondary opponent rocks in house");
+            GameLog.Info($"[Peel Fallback] Found {opponentRocksInHouse.Count} secondary opponent rocks in house");
             
             bool foundSecondaryShot = false;
             
@@ -1623,7 +1623,7 @@ public class AI_Target : MonoBehaviour
                     continue;
                 
                 Vector2 secondaryPos = secondaryRock.transform.position;
-                Debug.Log($"[Peel Fallback] Trying secondary target at ({secondaryPos.x:F2}, {secondaryPos.y:F2})");
+                GameLog.Info($"[Peel Fallback] Trying secondary target at ({secondaryPos.x:F2}, {secondaryPos.y:F2})");
                 
                 // Try direct peel on this rock
                 Vector2 pullbackPos;
@@ -1636,7 +1636,7 @@ public class AI_Target : MonoBehaviour
                     takeOutX = pullbackPos.x;
                     takeOutY = pullbackPos.y;
                     
-                    Debug.Log($"[AI_Target] ✓ SECONDARY TARGET SUCCESS!\n" +
+                    GameLog.Info($"[AI_Target] ✓ SECONDARY TARGET SUCCESS!\n" +
                               $"  Secondary rock at ({secondaryPos.x:F2}, {secondaryPos.y:F2})\n" +
                               $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                               $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
@@ -1661,7 +1661,7 @@ public class AI_Target : MonoBehaviour
                     takeOutX = pullbackPos.x;
                     takeOutY = pullbackPos.y;
                     
-                    Debug.Log($"[AI_Target] Peel direct hit - InTurn: {useInTurn}, Pullback: {pullbackPos}");
+                    GameLog.Info($"[AI_Target] Peel direct hit - InTurn: {useInTurn}, Pullback: {pullbackPos}");
                 }
                 else
                 {
@@ -1693,7 +1693,7 @@ public class AI_Target : MonoBehaviour
                             if (lateralAlignment < 0.5f && inFront)
                             {
                                 blocksHouseRock = true;
-                                Debug.Log($"[Fallback Guard] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) blocks house rock at ({houseRockPos.x:F2}, {houseRockPos.y:F2})");
+                                GameLog.Info($"[Fallback Guard] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) blocks house rock at ({houseRockPos.x:F2}, {houseRockPos.y:F2})");
                                 break;
                             }
                         }
@@ -1702,7 +1702,7 @@ public class AI_Target : MonoBehaviour
                         {
                             // Try to take out this blocking finesse
                             int guardIndex = guardInfo.rockIndex;
-                            Debug.Log($"[Fallback Guard] Attempting takeout of blocking finesse #{guardIndex}");
+                            GameLog.Info($"[Fallback Guard] Attempting takeout of blocking finesse #{guardIndex}");
                             
                             bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
                             
@@ -1712,7 +1712,7 @@ public class AI_Target : MonoBehaviour
                                 takeOutX = pullbackPos.x;
                                 takeOutY = pullbackPos.y;
                                 
-                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                GameLog.Info($"[AI_Target] ✓ FALLBACK: Takeout finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
                                           $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                           $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
                                           $"  Strategy: Clear path to house rocks");
@@ -1740,7 +1740,7 @@ public class AI_Target : MonoBehaviour
                             Vector2 guardPos = guard.lastTransform.position;
                             int guardIndex = guardInfo.rockIndex;
                             
-                            Debug.Log($"[Fallback Guard] Attempting takeout of any opponent finesse #{guardIndex}");
+                            GameLog.Info($"[Fallback Guard] Attempting takeout of any opponent finesse #{guardIndex}");
                             
                             bool foundGuardShot = CalculatePhysicsBasedShot(guardPos, out pullbackPos, out useInTurn, "Take Out", guardIndex);
                             
@@ -1750,7 +1750,7 @@ public class AI_Target : MonoBehaviour
                                 takeOutX = pullbackPos.x;
                                 takeOutY = pullbackPos.y;
                                 
-                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout ANY finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
+                                GameLog.Info($"[AI_Target] ✓ FALLBACK: Takeout ANY finesse #{guardIndex} at ({guardPos.x:F2}, {guardPos.y:F2})\n" +
                                           $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                           $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                                 
@@ -1776,7 +1776,7 @@ public class AI_Target : MonoBehaviour
                             Vector2 rockPos = rockEntry.rock.transform.position;
                             int rockIndex = rockEntry.rockInfo.rockIndex;
                             
-                            Debug.Log($"[Fallback Any Rock] Attempting takeout of opponent rock #{rockIndex}");
+                            GameLog.Info($"[Fallback Any Rock] Attempting takeout of opponent rock #{rockIndex}");
                             
                             bool foundAnyShot = CalculatePhysicsBasedShot(rockPos, out pullbackPos, out useInTurn, "Take Out", rockIndex);
                             
@@ -1786,7 +1786,7 @@ public class AI_Target : MonoBehaviour
                                 takeOutX = pullbackPos.x;
                                 takeOutY = pullbackPos.y;
                                 
-                                Debug.Log($"[AI_Target] ✓ FALLBACK: Takeout opponent rock #{rockIndex} at ({rockPos.x:F2}, {rockPos.y:F2})\n" +
+                                GameLog.Info($"[AI_Target] ✓ FALLBACK: Takeout opponent rock #{rockIndex} at ({rockPos.x:F2}, {rockPos.y:F2})\n" +
                                           $"  Turn: {(useInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                           $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                                 
@@ -1811,12 +1811,12 @@ public class AI_Target : MonoBehaviour
                             takeOutX = drawPullback.x;
                             takeOutY = drawPullback.y;
                             
-                            Debug.Log($"[AI_Target] ✓ FINAL FALLBACK: Draw to button\n" +
+                            GameLog.Info($"[AI_Target] ✓ FINAL FALLBACK: Draw to button\n" +
                                       $"  Turn: {(drawInTurn ? "IN-TURN" : "OUT-TURN")}\n" +
                                       $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})");
                             
                             aiShoot.OnShot("Draw To Target", rockCurrent);
-                            Debug.Log("Peel FAILED - Drawing to button instead");
+                            GameLog.Info("Peel FAILED - Drawing to button instead");
                             yield break;
                         }
                         else
@@ -1836,7 +1836,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Peel", rockCurrent);
-        Debug.Log(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        GameLog.Info(gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
     
@@ -1894,7 +1894,7 @@ public class AI_Target : MonoBehaviour
         // 1. Did we hit the PRIMARY target? (REQUIRED - baseline 30 points)
         if (!collision.hasCollision)
         {
-            Debug.Log($"[Peel Chaos] MISS - no collision detected");
+            GameLog.Info($"[Peel Chaos] MISS - no collision detected");
             return 0f; // Complete miss
         }
         
@@ -1902,7 +1902,7 @@ public class AI_Target : MonoBehaviour
         bool hitPrimaryTarget = Vector2.Distance(collision.collisionPoint, primaryTargetPos) < 0.5f;
         if (!hitPrimaryTarget)
         {
-            Debug.Log($"[Peel Chaos] HIT WRONG ROCK - collision at {collision.collisionPoint}, target at {primaryTargetPos}");
+            GameLog.Info($"[Peel Chaos] HIT WRONG ROCK - collision at {collision.collisionPoint}, target at {primaryTargetPos}");
             return 5f; // Small consolation prize for hitting something
         }
         
@@ -1914,17 +1914,17 @@ public class AI_Target : MonoBehaviour
         if (primaryTargetFinalY > 10f || primaryTargetFinalY < -5f)
         {
             chaosScore += 40f; // PRIMARY REMOVED! (best outcome)
-            Debug.Log($"[Peel Chaos] ✓ PRIMARY REMOVED (Y={primaryTargetFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ✓ PRIMARY REMOVED (Y={primaryTargetFinalY:F2})");
         }
         else if (primaryTargetFinalY < 5f)
         {
             chaosScore += 20f; // Pushed out of house (good)
-            Debug.Log($"[Peel Chaos] ✓ PRIMARY PUSHED OUT (Y={primaryTargetFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ✓ PRIMARY PUSHED OUT (Y={primaryTargetFinalY:F2})");
         }
         else
         {
             chaosScore += 5f; // Still in house (not ideal)
-            Debug.Log($"[Peel Chaos] ⚠️ PRIMARY STILL IN HOUSE (Y={primaryTargetFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ⚠️ PRIMARY STILL IN HOUSE (Y={primaryTargetFinalY:F2})");
         }
         
         // 3. Check SECONDARY COLLISIONS along the hit rock's path
@@ -1964,12 +1964,12 @@ public class AI_Target : MonoBehaviour
                     {
                         opponentSecondaryHits++;
                         chaosScore += 15f; // BONUS: Hit opponent's rock!
-                        Debug.Log($"[Peel Chaos] ✓ SECONDARY HIT: {secondaryRock.name} (opponent) at dist {closestDist:F3}");
+                        GameLog.Info($"[Peel Chaos] ✓ SECONDARY HIT: {secondaryRock.name} (opponent) at dist {closestDist:F3}");
                     }
                     else
                     {
                         chaosScore += 5f; // Hit our own rock (still disruption)
-                        Debug.Log($"[Peel Chaos] ⚠️ SECONDARY HIT: {secondaryRock.name} (friendly) at dist {closestDist:F3}");
+                        GameLog.Info($"[Peel Chaos] ⚠️ SECONDARY HIT: {secondaryRock.name} (friendly) at dist {closestDist:F3}");
                     }
                 }
             }
@@ -1978,7 +1978,7 @@ public class AI_Target : MonoBehaviour
             if (secondaryHits >= 2)
             {
                 chaosScore += 20f; // Multi-rock chaos!
-                Debug.Log($"[Peel Chaos] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits");
+                GameLog.Info($"[Peel Chaos] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits");
             }
         }
         
@@ -1988,17 +1988,17 @@ public class AI_Target : MonoBehaviour
         if (shooterFinalY > 10f || shooterFinalY < -5f)
         {
             chaosScore += 10f; // Shooter removed too (clean peel)
-            Debug.Log($"[Peel Chaos] ✓ SHOOTER REMOVED (Y={shooterFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ✓ SHOOTER REMOVED (Y={shooterFinalY:F2})");
         }
         else if (shooterFinalY < 5f)
         {
             chaosScore += 5f; // Shooter out of house (acceptable)
-            Debug.Log($"[Peel Chaos] ✓ SHOOTER OUT OF HOUSE (Y={shooterFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ✓ SHOOTER OUT OF HOUSE (Y={shooterFinalY:F2})");
         }
         else
         {
             chaosScore -= 5f; // Shooter stays in house (not ideal for peel)
-            Debug.Log($"[Peel Chaos] ⚠️ SHOOTER IN HOUSE (Y={shooterFinalY:F2})");
+            GameLog.Info($"[Peel Chaos] ⚠️ SHOOTER IN HOUSE (Y={shooterFinalY:F2})");
         }
         
         return chaosScore;
@@ -2033,7 +2033,7 @@ public class AI_Target : MonoBehaviour
         Vector2 button = new Vector2(0f, 6.5f);
         Vector2 launcherPos = new Vector2(0f, -25f);
         
-        Debug.Log($"[Tap Angle] Calculating optimal tap angle for rock at ({targetRockPos.x:F2}, {targetRockPos.y:F2})");
+        GameLog.Info($"[Tap Angle] Calculating optimal tap angle for rock at ({targetRockPos.x:F2}, {targetRockPos.y:F2})");
         
         // STEP 1: Determine IDEAL FINAL POSITION for target (closer to button)
         Vector2 targetToButton = button - targetRockPos;
@@ -2043,14 +2043,14 @@ public class AI_Target : MonoBehaviour
         float pushRatio = Mathf.Clamp01(0.7f - (distToButton / 3.0f)); // Closer rocks = lighter push
         Vector2 idealFinalPos = targetRockPos + targetToButton * pushRatio;
         
-        Debug.Log($"[Tap Angle] Target dist to button: {distToButton:F2}, Push ratio: {pushRatio:F2}, Ideal final: ({idealFinalPos.x:F2}, {idealFinalPos.y:F2})");
+        GameLog.Info($"[Tap Angle] Target dist to button: {distToButton:F2}, Push ratio: {pushRatio:F2}, Ideal final: ({idealFinalPos.x:F2}, {idealFinalPos.y:F2})");
         
         // STEP 2: Calculate DEFLECTION ANGLE needed
         // This is the direction target should move after being hit
         Vector2 desiredDeflection = (idealFinalPos - targetRockPos).normalized;
         float deflectionAngle = Mathf.Atan2(desiredDeflection.y, desiredDeflection.x) * Mathf.Rad2Deg;
         
-        Debug.Log($"[Tap Angle] Desired deflection direction: {desiredDeflection}, Angle: {deflectionAngle:F1}°");
+        GameLog.Info($"[Tap Angle] Desired deflection direction: {desiredDeflection}, Angle: {deflectionAngle:F1}°");
         
         // STEP 3: Calculate APPROACH ANGLE for shooter
         // Physics: For elastic collision, approach angle determines deflection
@@ -2064,7 +2064,7 @@ public class AI_Target : MonoBehaviour
         float approachRad = requiredApproachAngle * Mathf.Deg2Rad;
         Vector2 approachDirection = new Vector2(Mathf.Cos(approachRad), Mathf.Sin(approachRad));
         
-        Debug.Log($"[Tap Angle] Required approach angle: {requiredApproachAngle:F1}°, Direction: {approachDirection}");
+        GameLog.Info($"[Tap Angle] Required approach angle: {requiredApproachAngle:F1}°, Direction: {approachDirection}");
         
         // STEP 4: Calculate AIM POINT (where shooter needs to hit on target rock's circumference)
         // For glancing tap, aim at edge of rock, not center
@@ -2072,7 +2072,7 @@ public class AI_Target : MonoBehaviour
         Vector2 aimPointOffset = -approachDirection * rockRadius * 0.8f; // Aim at 80% of radius (slight glance)
         Vector2 aimPoint = targetRockPos + aimPointOffset;
         
-        Debug.Log($"[Tap Angle] Aim point: ({aimPoint.x:F2}, {aimPoint.y:F2}) - offset by {aimPointOffset}");
+        GameLog.Info($"[Tap Angle] Aim point: ({aimPoint.x:F2}, {aimPoint.y:F2}) - offset by {aimPointOffset}");
         
         // STEP 5: Calculate VELOCITY (light tap = 2.8 pullback = ~7.7 m/s)
         TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
@@ -2084,7 +2084,7 @@ public class AI_Target : MonoBehaviour
         Vector2 launcherToAim = (aimPoint - launcherPos).normalized;
         Vector2 desiredVelocity = launcherToAim * tapVelocity;
         
-        Debug.Log($"[Tap Angle] Velocity: {tapVelocity:F2} m/s, Direction: {launcherToAim}");
+        GameLog.Info($"[Tap Angle] Velocity: {tapVelocity:F2} m/s, Direction: {launcherToAim}");
         
         // STEP 6: Determine TURN DIRECTION (in-turn vs out-turn)
         // Choose turn that naturally curls TOWARD the aim point
@@ -2095,7 +2095,7 @@ public class AI_Target : MonoBehaviour
         // If aim point is RIGHT of launcher (positive X), use OUT-TURN
         bool useInTurn = (aimPointX < launcherPos.x);
         
-        Debug.Log($"[Tap Angle] Aim point X={aimPointX:F2}, Launcher X={launcherPos.x:F2} → Turn: {(useInTurn ? "IN-TURN (curl left)" : "OUT-TURN (curl right)")}");
+        GameLog.Info($"[Tap Angle] Aim point X={aimPointX:F2}, Launcher X={launcherPos.x:F2} → Turn: {(useInTurn ? "IN-TURN (curl left)" : "OUT-TURN (curl right)")}");
         
         // STEP 7: Try physics simulation with calculated angle
         Vector2 pullbackPos;
@@ -2107,7 +2107,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[Tap Angle] ✓ SUCCESS! Optimal angle tap shot\n" +
+            GameLog.Info($"[Tap Angle] ✓ SUCCESS! Optimal angle tap shot\n" +
                       $"  Approach angle: {requiredApproachAngle:F1}°\n" +
                       $"  Expected deflection: {deflectionAngle:F1}°\n" +
                       $"  Target will move toward: ({idealFinalPos.x:F2}, {idealFinalPos.y:F2})\n" +
@@ -2127,7 +2127,7 @@ public class AI_Target : MonoBehaviour
                 takeOutX = pullbackPos.x;
                 takeOutY = pullbackPos.y;
                 
-                Debug.Log($"[Tap Angle] ✓ Direct tap SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
+                GameLog.Info($"[Tap Angle] ✓ Direct tap SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
             }
             else
             {
@@ -2150,10 +2150,10 @@ public class AI_Target : MonoBehaviour
                     takeOutX = pullbackPos.x;
                     takeOutY = pullbackPos.y;
                     
-                    Debug.Log($"[Tap Angle] ✓ DRAW BESIDE SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
+                    GameLog.Info($"[Tap Angle] ✓ DRAW BESIDE SUCCESS - InTurn: {useInTurn}, Pullback: {pullbackPos}");
                     
                     aiShoot.OnShot("Draw To Target", rockCurrent);
-                    Debug.Log($"TapBack → Draw Beside - Near {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
+                    GameLog.Info($"TapBack → Draw Beside - Near {gm.rockList[rockTarget].rockInfo.teamName} #{gm.rockList[rockTarget].rockInfo.rockNumber}");
                     yield break;
                 }
                 
@@ -2172,7 +2172,7 @@ public class AI_Target : MonoBehaviour
                     takeOutX = drawPullback.x;
                     takeOutY = drawPullback.y;
                     
-                    Debug.Log($"[Tap Angle] Tap → Draw fallback SUCCESS");
+                    GameLog.Info($"[Tap Angle] Tap → Draw fallback SUCCESS");
                 }
                 else
                 {
@@ -2187,7 +2187,7 @@ public class AI_Target : MonoBehaviour
         }
         
         aiShoot.OnShot("Raise", rockCurrent);
-        Debug.Log("TapBack - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        GameLog.Info("TapBack - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
 
@@ -2228,7 +2228,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[AI_Target] Tick SUCCESS - InTurn: {useInTurn}, Target: {targetRockPos}, Pullback: {pullbackPos}");
+            GameLog.Info($"[AI_Target] Tick SUCCESS - InTurn: {useInTurn}, Target: {targetRockPos}, Pullback: {pullbackPos}");
         }
         else
         {
@@ -2245,7 +2245,7 @@ public class AI_Target : MonoBehaviour
                 takeOutX = takeoutPullback.x;
                 takeOutY = takeoutPullback.y;
                 
-                Debug.Log($"[AI_Target] Tick → Takeout fallback SUCCESS - InTurn: {takeoutInTurn}, Pullback: {takeoutPullback}");
+                GameLog.Info($"[AI_Target] Tick → Takeout fallback SUCCESS - InTurn: {takeoutInTurn}, Pullback: {takeoutPullback}");
             }
             else
             {
@@ -2260,7 +2260,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Tick", rockCurrent);
-        Debug.Log("Tick - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
+        GameLog.Info("Tick - " + gm.rockList[rockTarget].rockInfo.teamName + " " + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
     
@@ -2276,7 +2276,7 @@ public class AI_Target : MonoBehaviour
         // to drive through and remove the target rock behind it
         Vector2 guardRockPos = gm.rockList[rockTarget].rock.transform.position;
         
-        Debug.Log($"[AI_Target] RUNBACK SHOT - Hitting finesse at {guardRockPos} to remove target behind it");
+        GameLog.Info($"[AI_Target] RUNBACK SHOT - Hitting finesse at {guardRockPos} to remove target behind it");
         
         Vector2 pullbackPos;
         bool useInTurn;
@@ -2289,7 +2289,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[AI_Target] Runback SUCCESS - InTurn: {useInTurn}, Guard: {guardRockPos}, Pullback: {pullbackPos}, Extra velocity for drive-through!");
+            GameLog.Info($"[AI_Target] Runback SUCCESS - InTurn: {useInTurn}, Guard: {guardRockPos}, Pullback: {pullbackPos}, Extra velocity for drive-through!");
         }
         else
         {
@@ -2306,7 +2306,7 @@ public class AI_Target : MonoBehaviour
                 takeOutX = peelPullback.x;
                 takeOutY = peelPullback.y;
                 
-                Debug.Log($"[AI_Target] Runback → Peel fallback SUCCESS - InTurn: {peelInTurn}, Pullback: {peelPullback}");
+                GameLog.Info($"[AI_Target] Runback → Peel fallback SUCCESS - InTurn: {peelInTurn}, Pullback: {peelPullback}");
             }
             else
             {
@@ -2323,7 +2323,7 @@ public class AI_Target : MonoBehaviour
                     takeOutX = takeoutPullback.x;
                     takeOutY = takeoutPullback.y;
                     
-                    Debug.Log($"[AI_Target] Runback → Takeout fallback SUCCESS");
+                    GameLog.Info($"[AI_Target] Runback → Takeout fallback SUCCESS");
                 }
                 else
                 {
@@ -2338,7 +2338,7 @@ public class AI_Target : MonoBehaviour
         }
 
         aiShoot.OnShot("Peel", rockCurrent); // Use Peel shot type for extra velocity
-        Debug.Log("Runback - Hitting " + gm.rockList[rockTarget].rockInfo.teamName + " finesse #" + gm.rockList[rockTarget].rockInfo.rockNumber);
+        GameLog.Info("Runback - Hitting " + gm.rockList[rockTarget].rockInfo.teamName + " finesse #" + gm.rockList[rockTarget].rockInfo.rockNumber);
         yield break;
     }
 
@@ -2362,7 +2362,7 @@ public class AI_Target : MonoBehaviour
             Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedDrawShot!
             lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
         
-            Debug.Log($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+            GameLog.Info($"[AI_Target] Perfect velocity stored (Draw): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
         
             // Apply accuracy modifier with realistic error distribution
             CharacterStats shooterStats = GetShooterStats(rockCurrent);
@@ -2375,7 +2375,7 @@ public class AI_Target : MonoBehaviour
                 float aimAccuracy = shooterStats.aimAccuracy.GetValue(); // 0-100 (X-axis)
                 float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
             
-                Debug.Log($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
+                GameLog.Info($"[AI_Target] Draw skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%");
             
                 float aimRatio = Mathf.Clamp01(aimAccuracy / 100f);
                 float weightRatio = Mathf.Clamp01(weightAccuracy / 100f);
@@ -2416,7 +2416,7 @@ public class AI_Target : MonoBehaviour
                     string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                     string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                 
-                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Draw)\n" +
+                    GameLog.Info($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Draw)\n" +
                                 $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
                                 $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
                                 $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
@@ -2426,7 +2426,7 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR!");
+                    GameLog.Info($"[AI_Target] ⭐ PERFECT DRAW ACCURACY (both skills 100) - NO ERROR!");
                 }
             }
             
@@ -2434,7 +2434,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[Physics Draw] Target: {targetPosition}, Pullback: {pullbackPos}, InTurn: {useInTurn}");
+            GameLog.Info($"[Physics Draw] Target: {targetPosition}, Pullback: {pullbackPos}, InTurn: {useInTurn}");
         }
         else
         {
@@ -2451,7 +2451,7 @@ public class AI_Target : MonoBehaviour
                 takeOutX = guardPullback.x;
                 takeOutY = guardPullback.y;
                 
-                Debug.Log($"[Physics Draw] Draw → Guard fallback SUCCESS - InTurn: {guardInTurn}, Pullback: {guardPullback}");
+                GameLog.Info($"[Physics Draw] Draw → Guard fallback SUCCESS - InTurn: {guardInTurn}, Pullback: {guardPullback}");
             }
             else
             {
@@ -2476,7 +2476,7 @@ public class AI_Target : MonoBehaviour
                     takeOutX = emergencyPullback.x;
                     takeOutY = emergencyPullback.y;
                     
-                    Debug.Log($"[Physics Draw] Emergency guard placement - InTurn: {emergencyInTurn}");
+                    GameLog.Info($"[Physics Draw] Emergency guard placement - InTurn: {emergencyInTurn}");
                 }
                 else
                 {
@@ -2505,7 +2505,7 @@ public class AI_Target : MonoBehaviour
         Vector2 button = new Vector2(0f, 6.5f);
         Rock_Info currentRockInfo = gm.rockList[gm.rockCurrent].rockInfo;
         
-        Debug.Log($"[Physics Draw] RADIAL SWEEP for protected scoring - Target: ({targetPosition.x:F2}, {targetPosition.y:F2})");
+        GameLog.Info($"[Physics Draw] RADIAL SWEEP for protected scoring - Target: ({targetPosition.x:F2}, {targetPosition.y:F2})");
         
         // Get rocks in play (guards and house rocks)
         List<GameObject> rocksInPlay = new List<GameObject>();
@@ -2540,8 +2540,8 @@ public class AI_Target : MonoBehaviour
             }
         }
         
-        Debug.Log($"[Physics Draw] Obstacles: {rocksInPlay.Count} total, {guards.Count} guards, {opponentRocks.Count} opponent rocks");
-        Debug.Log($"[Physics Draw] Closest opponent dist to button: {closestOpponentDistToButton:F2}");
+        GameLog.Info($"[Physics Draw] Obstacles: {rocksInPlay.Count} total, {guards.Count} guards, {opponentRocks.Count} opponent rocks");
+        GameLog.Info($"[Physics Draw] Closest opponent dist to button: {closestOpponentDistToButton:F2}");
         
         float bestScore = float.MinValue;
         Vector2 bestPullback = Vector2.zero;
@@ -2603,7 +2603,7 @@ public class AI_Target : MonoBehaviour
                 Vector2 openSideTarget = new Vector2(openSideX, targetPosition.y);
                 candidateTargets.Insert(1, openSideTarget); // Insert after direct target (high priority!)
                 
-                Debug.Log($"[Open Side Draw] We have {myRocksInHouse} rock(s) at avg X={myRocksAverageX:F2} " +
+                GameLog.Info($"[Open Side Draw] We have {myRocksInHouse} rock(s) at avg X={myRocksAverageX:F2} " +
                           $"→ Open side is X={openSideX:F2} (clear: {openSideIsClear}) " +
                           $"→ Added strategic spread target: ({openSideTarget.x:F2}, {openSideTarget.y:F2})");
                 
@@ -2615,7 +2615,7 @@ public class AI_Target : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[Open Side Draw] We have {myRocksInHouse} rock(s) but open side X={openSideX:F2} is BLOCKED by opponent - not adding spread targets");
+                GameLog.Info($"[Open Side Draw] We have {myRocksInHouse} rock(s) but open side X={openSideX:F2} is BLOCKED by opponent - not adding spread targets");
             }
         }
         
@@ -2641,7 +2641,7 @@ public class AI_Target : MonoBehaviour
             }
         }
         
-        Debug.Log($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 0.4m of target - TIGHT PRECISION)");
+        GameLog.Info($"[Physics Draw] Generated {candidateTargets.Count} candidate positions (1 direct + {candidateTargets.Count - 1} radial within 0.4m of target - TIGHT PRECISION)");
         
         // Get velocity multiplier for weight weight calculation
         TrajectoryLine playerTrajectory = FindObjectOfType<TrajectoryLine>();
@@ -2652,7 +2652,7 @@ public class AI_Target : MonoBehaviour
         {
             bool tryInTurn = (turnDir == 0);
             
-            Debug.Log($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")} ---");
+            GameLog.Info($"[Physics Draw] --- Testing {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")} ---");
             
             // STEP 1: Measure curl for this turn direction at weight weight
             // Simulate straight shot to target to see how much curl we get
@@ -2677,7 +2677,7 @@ public class AI_Target : MonoBehaviour
                 Vector2 straightFinal = curlTestPath[curlTestPath.Count - 1];
                 curlOffset = straightFinal.x - targetPosition.x; // Measured curl amount
                 
-                Debug.Log($"[Curl Measurement] 🎯 DETAILED CURL ANALYSIS:\n" +
+                GameLog.Info($"[Curl Measurement] 🎯 DETAILED CURL ANALYSIS:\n" +
                           $"  Turn: {(tryInTurn ? "IN-TURN (curls RIGHT →)" : "OUT-TURN (curls LEFT ←)")}\n" +
                           $"  Aim: Straight at target X={targetPosition.x:F3}\n" +
                           $"  Result: Landed at X={straightFinal.x:F3}\n" +
@@ -2686,14 +2686,14 @@ public class AI_Target : MonoBehaviour
                           $"  Logic: If shot curls {curlOffset:F3}, aim OPPOSITE {-curlOffset:F3} to hit target");
             }
             
-            Debug.Log($"[Physics Draw] Curl compensation for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {curlOffset:F3} (will aim {-curlOffset:F3} to compensate)");
+            GameLog.Info($"[Physics Draw] Curl compensation for {(tryInTurn ? "IN-TURN" : "OUT-TURN")}: {curlOffset:F3} (will aim {-curlOffset:F3} to compensate)");
             
             foreach (Vector2 candidateTarget in candidateTargets)
             {
                 // Apply curl compensation to this candidate
                 Vector2 compensatedTarget = new Vector2(candidateTarget.x - curlOffset, candidateTarget.y);
                 
-                Debug.Log($"[Curl Compensation] 🎯 APPLYING TO CANDIDATE:\n" +
+                GameLog.Info($"[Curl Compensation] 🎯 APPLYING TO CANDIDATE:\n" +
                           $"  Original target: ({candidateTarget.x:F3}, {candidateTarget.y:F3})\n" +
                           $"  Curl offset: {curlOffset:F3}\n" +
                           $"  Compensated aim: ({compensatedTarget.x:F3}, {compensatedTarget.y:F3})\n" +
@@ -2728,7 +2728,7 @@ public class AI_Target : MonoBehaviour
                 float expectedError = 0f; // Should be minimal if compensation worked
                 float compensationEffectiveness = 1f - Mathf.Abs(actualError / Mathf.Max(0.01f, Mathf.Abs(curlOffset)));
                 
-                Debug.Log($"[Curl Verification] 🎯 COMPENSATION RESULT:\n" +
+                GameLog.Info($"[Curl Verification] 🎯 COMPENSATION RESULT:\n" +
                           $"  Aimed at: ({compensatedTarget.x:F3}, {compensatedTarget.y:F3})\n" +
                           $"  Landed at: ({finalPos.x:F3}, {finalPos.y:F3})\n" +
                           $"  Target was: ({candidateTarget.x:F3}, {candidateTarget.y:F3})\n" +
@@ -2895,7 +2895,7 @@ public class AI_Target : MonoBehaviour
                         collisionPenalty = -2f; // Small bumps near target are OK!
                     }
                     
-                    Debug.Log($"[Collision Context] Hit {hitRock.name} at ratio {collisionRatio:F2} ({(collisionRatio < 0.6f ? "EARLY" : collisionRatio < 0.8f ? "MID" : "LATE")}), Penalty={collisionPenalty:F1}");
+                    GameLog.Info($"[Collision Context] Hit {hitRock.name} at ratio {collisionRatio:F2} ({(collisionRatio < 0.6f ? "EARLY" : collisionRatio < 0.8f ? "MID" : "LATE")}), Penalty={collisionPenalty:F1}");
                 }
                 else
                 {
@@ -2968,7 +2968,7 @@ public class AI_Target : MonoBehaviour
                             openSideBonus += 5f; // Moderate spread (>0.6 units) = small bonus
                         }
                         
-                        Debug.Log($"[Open Side Bonus] ✓ STRATEGIC SPREAD!\n" +
+                        GameLog.Info($"[Open Side Bonus] ✓ STRATEGIC SPREAD!\n" +
                                   $"  Existing rocks: {myRocksInHouse} at avg X={myRocksAverageX:F2}\n" +
                                   $"  This shot: X={finalPosX:F2}\n" +
                                   $"  Lateral separation: {lateralSeparation:F2}\n" +
@@ -2981,7 +2981,7 @@ public class AI_Target : MonoBehaviour
                 // ========================================
                 // LOG COMPREHENSIVE SCORING BREAKDOWN
                 // ========================================
-                Debug.Log($"[Physics Draw] Candidate: ({candidateTarget.x:F2}, {candidateTarget.y:F2}) → Final: ({finalPos.x:F2}, {finalPos.y:F2}), Turn: {(tryInTurn ? "IN" : "OUT")}\n" +
+                GameLog.Info($"[Physics Draw] Candidate: ({candidateTarget.x:F2}, {candidateTarget.y:F2}) → Final: ({finalPos.x:F2}, {finalPos.y:F2}), Turn: {(tryInTurn ? "IN" : "OUT")}\n" +
                           $"  Proximity to Target: {proximityScore:F1}/70 (dist: {distToTarget:F2}m) ← DOMINANT FACTOR\n" +
                           $"  Guard Protection: {protectionScore * 12f:F1}/12 {(protectingGuard != null ? $"(under {protectingGuard.name})" : "(exposed)")}\n" +
                           $"  Scoring Position: {scoringPositionScore * 25f:F1}/25 (dist to button: {myDistToButton:F2}, opponent closest: {closestOpponentDistToButton:F2})\n" +
@@ -2998,7 +2998,7 @@ public class AI_Target : MonoBehaviour
                     bestInTurn = tryInTurn;
                     bestFinalPos = finalPos;
                     
-                    Debug.Log($"  ⭐ NEW BEST: score {score:F1}, protected={protectingGuard != null}, scoring={(scoringPositionScore > 0)}");
+                    GameLog.Info($"  ⭐ NEW BEST: score {score:F1}, protected={protectingGuard != null}, scoring={(scoringPositionScore > 0)}");
                 }
             }
         }
@@ -3021,7 +3021,7 @@ public class AI_Target : MonoBehaviour
             pullbackPosition = bestPullback;
             useInTurn = bestInTurn;
             
-            Debug.Log($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/162 (threshold: 45)\n" +
+            GameLog.Info($"[Physics Draw] ✓ SUCCESS! Score: {bestScore:F1}/162 (threshold: 45)\n" +
                       $"  Final position: ({bestFinalPos.x:F2}, {bestFinalPos.y:F2})\n" +
                       $"  Distance to target: {Vector2.Distance(bestFinalPos, targetPosition):F3}m\n" +
                       $"  Pullback: ({bestPullback.x:F3}, {bestPullback.y:F3})\n" +
@@ -3046,7 +3046,7 @@ public class AI_Target : MonoBehaviour
             pullbackPosition = CalculatePullbackFromVelocity(directButtonVelocity, launcherPos, false);
             useInTurn = false;
             
-            Debug.Log($"[Physics Draw] ✓ FALLBACK: Direct button shot (OUT-TURN, curls LEFT ←), pullback: {pullbackPosition}");
+            GameLog.Info($"[Physics Draw] ✓ FALLBACK: Direct button shot (OUT-TURN, curls LEFT ←), pullback: {pullbackPosition}");
             return true;
         }
         
@@ -3062,7 +3062,7 @@ public class AI_Target : MonoBehaviour
             pullbackPosition = CalculatePullbackFromVelocity(directButtonVelocity, launcherPos, true);
             useInTurn = true;
             
-            Debug.Log($"[Physics Draw] ✓ FALLBACK: Direct button shot (IN-TURN, curls RIGHT →), pullback: {pullbackPosition}");
+            GameLog.Info($"[Physics Draw] ✓ FALLBACK: Direct button shot (IN-TURN, curls RIGHT →), pullback: {pullbackPosition}");
             return true;
         }
         
@@ -3112,7 +3112,7 @@ public class AI_Target : MonoBehaviour
             // Clamp to finesse zone (Y between 2.0 and 5.0)
             guardTarget.y = Mathf.Clamp(guardTarget.y, 2.5f, 4.5f);
             
-            Debug.Log($"[Physics Guard] PROTECT: Guarding friendly rocks at ({friendlyRockAvgPos.x:F2}, {friendlyRockAvgPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            GameLog.Info($"[Physics Guard] PROTECT: Guarding friendly rocks at ({friendlyRockAvgPos.x:F2}, {friendlyRockAvgPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
         }
         else
         {
@@ -3122,7 +3122,7 @@ public class AI_Target : MonoBehaviour
             float guardX = Random.Range(-0.2f, 0.2f); // Slight variance for realism
             
             guardTarget = new Vector2(guardX, guardY);
-            Debug.Log($"[Physics Guard] CENTER BLOCK: Placing center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+            GameLog.Info($"[Physics Guard] CENTER BLOCK: Placing center finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
         }
         
         // Get rocks in play (other guards are obstacles - we don't want to hit them)
@@ -3151,7 +3151,7 @@ public class AI_Target : MonoBehaviour
                 tryInTurn
             );
             
-            Debug.Log($"[Physics Guard] Calculated velocity: {requiredVelocity.magnitude:F2} m/s to reach {guardTarget}");
+            GameLog.Info($"[Physics Guard] Calculated velocity: {requiredVelocity.magnitude:F2} m/s to reach {guardTarget}");
             
             if (requiredVelocity.magnitude < 3f || requiredVelocity.magnitude > 15f)
                 continue;
@@ -3229,7 +3229,7 @@ public class AI_Target : MonoBehaviour
         Vector2 launchPosition = new Vector2(0f, -25f); // Match CalculatePhysicsBasedGuardShot!
         lastPerfectVelocity = CalculateVelocityFromPullback(pullbackPos, launchPosition, useInTurn);
         
-        Debug.Log($"[AI_Target] Perfect velocity stored (Guard): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
+        GameLog.Info($"[AI_Target] Perfect velocity stored (Guard): {lastPerfectVelocity.magnitude:F2} m/s (before accuracy errors)");
         
         // Apply accuracy modifier with realistic error distribution
         CharacterStats shooterStats = GetShooterStats(rockCurrent);
@@ -3243,7 +3243,7 @@ public class AI_Target : MonoBehaviour
                 float weightAccuracy = shooterStats.weightAccuracy.GetValue(); // 0-100 (Y-axis)
                 float finesseAccuracy = shooterStats.finesseAccuracy.GetValue(); // 0-100 (complexity bonus)
                 
-                Debug.Log($"[AI_Target] Guard skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%, Finesse={finesseAccuracy}%");
+                GameLog.Info($"[AI_Target] Guard skills: Aim={aimAccuracy}%, Weight={weightAccuracy}%, Finesse={finesseAccuracy}%");
                 
                 // FINESSE MULTIPLIER: Reduces sigma by up to 30% at max finesse
                 // Guards are delicate shots requiring finesse to execute precisely
@@ -3287,7 +3287,7 @@ public class AI_Target : MonoBehaviour
                     string xCategory = xSigmaDistance < 1f ? "GOOD (68%)" : xSigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                     string yCategory = ySigmaDistance < 1f ? "GOOD (68%)" : ySigmaDistance < 2f ? "MODERATE (27%)" : "RARE (5%)";
                     
-                    Debug.Log($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Guard)\n" +
+                    GameLog.Info($"[AI_Target] GAUSSIAN ERROR DISTRIBUTION (Guard)\n" +
                               $"  AIM SKILL: {aimAccuracy}% → Sigma={aimSigma:F4} units\n" +
                               $"    X error: {xError:F4} ({xSigmaDistance:F2}σ) - {xCategory}\n" +
                               $"  WEIGHT SKILL: {weightAccuracy}% → Sigma={weightSigma:F4} units\n" +
@@ -3298,7 +3298,7 @@ public class AI_Target : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (all skills 100) - NO ERROR!");
+                    GameLog.Info($"[AI_Target] ⭐ PERFECT GUARD ACCURACY (all skills 100) - NO ERROR!");
                 }
             }
             
@@ -3306,7 +3306,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[Physics Guard] SUCCESS - Pullback: {pullbackPos}, InTurn: {useInTurn}");
+            GameLog.Info($"[Physics Guard] SUCCESS - Pullback: {pullbackPos}, InTurn: {useInTurn}");
         }
         else
         {
@@ -3341,7 +3341,7 @@ public class AI_Target : MonoBehaviour
     /// </summary>
     public void ExecuteIntent(ShotContext context, int rockCurrent)
     {
-        Debug.Log($"[AI_Target] ExecuteIntent: {context.intent} for rock #{rockCurrent}");
+        GameLog.Info($"[AI_Target] ExecuteIntent: {context.intent} for rock #{rockCurrent}");
         
         switch (context.intent)
         {
@@ -3428,9 +3428,9 @@ public class AI_Target : MonoBehaviour
         bool isLastRock = rockCurrent >= 15; // Absolute last rock
         int rocksInHouse = gm.houseList.Count;
         
-        Debug.Log($"[AI_Target] ========== REMOVAL OPTIONS EVALUATION ==========");
-        Debug.Log($"[AI_Target] Target: Rock #{context.targetRockIndex} at {targetRock.transform.position}");
-        Debug.Log($"[AI_Target] Context: Rock {rockCurrent}/16, Late={isLateGame}, Last={isLastRock}, House={rocksInHouse}");
+        GameLog.Info($"[AI_Target] ========== REMOVAL OPTIONS EVALUATION ==========");
+        GameLog.Info($"[AI_Target] Target: Rock #{context.targetRockIndex} at {targetRock.transform.position}");
+        GameLog.Info($"[AI_Target] Context: Rock {rockCurrent}/16, Late={isLateGame}, Last={isLastRock}, House={rocksInHouse}");
         
         // ========================================
         // PRIORITY 0: DOUBLE TAKEOUT (removes 2 rocks! HIGHEST VALUE!)
@@ -3457,7 +3457,7 @@ public class AI_Target : MonoBehaviour
         // Need at least 2 opponent rocks for a double takeout
         if (opponentRocks.Count >= 2)
         {
-            Debug.Log($"[Double Takeout] Evaluating {opponentRocks.Count} opponent rocks for double takeout opportunities");
+            GameLog.Info($"[Double Takeout] Evaluating {opponentRocks.Count} opponent rocks for double takeout opportunities");
             
             // Try all combinations of primary + secondary targets
             for (int i = 0; i < opponentRocks.Count; i++)
@@ -3570,7 +3570,7 @@ public class AI_Target : MonoBehaviour
                     if (primaryOutOfPlay && secondaryOutOfPlay)
                     {
                         score += 50f; // HUGE bonus for double removal!
-                        Debug.Log($"[Double Takeout] 🎯 BOTH ROCKS OUT OF PLAY! Mega bonus +50!");
+                        GameLog.Info($"[Double Takeout] 🎯 BOTH ROCKS OUT OF PLAY! Mega bonus +50!");
                     }
                     
                     // CONTEXT BONUSES
@@ -3584,7 +3584,7 @@ public class AI_Target : MonoBehaviour
                         score += 25f; // Multiple rocks: clearing 2 is huge
                     }
                     
-                    Debug.Log($"[Double Takeout] Primary #{primaryIndex} → Secondary #{secondaryIndex}:\n" +
+                    GameLog.Info($"[Double Takeout] Primary #{primaryIndex} → Secondary #{secondaryIndex}:\n" +
                               $"  Primary hit: {(primaryFromBehind ? "from behind" : "angled")} (quality: {(score >= 50 ? "good" : "ok")})\n" +
                               $"  Deflection angle: {alignment:F2} (quality: {angleQuality:F2})\n" +
                               $"  Secondary proximity: {closestDistToSecondary:F2} (quality: {secondaryProximity:F2})\n" +
@@ -3605,19 +3605,19 @@ public class AI_Target : MonoBehaviour
             
             if (doubleTakeoutScore > 0f)
             {
-                Debug.Log($"[Double Takeout] ✓ BEST: Primary #{doublePrimaryTarget} → Secondary #{doubleSecondaryTarget} with score {doubleTakeoutScore:F1}/250 🎯 DOUBLE REMOVAL!");
+                GameLog.Info($"[Double Takeout] ✓ BEST: Primary #{doublePrimaryTarget} → Secondary #{doubleSecondaryTarget} with score {doubleTakeoutScore:F1}/250 🎯 DOUBLE REMOVAL!");
             }
             else
             {
-                Debug.Log($"[Double Takeout] ✗ NO viable double takeout found");
+                GameLog.Info($"[Double Takeout] ✗ NO viable double takeout found");
             }
         }
         else
         {
-            Debug.Log($"[Double Takeout] SKIPPED - Only {opponentRocks.Count} opponent rock(s) (need 2+)");
+            GameLog.Info($"[Double Takeout] SKIPPED - Only {opponentRocks.Count} opponent rock(s) (need 2+)");
         }
         
-        Debug.Log($"[Removal] Option 0: DOUBLE TAKEOUT - Score: {doubleTakeoutScore:F2} 🎯🎯 REMOVES TWO ROCKS!");
+        GameLog.Info($"[Removal] Option 0: DOUBLE TAKEOUT - Score: {doubleTakeoutScore:F2} 🎯🎯 REMOVES TWO ROCKS!");
         
         // DEFENSIVE BOOST APPLIES TO ALL REMOVAL OPTIONS!
         // Calculate defensive bonus once, apply to ALL removal shots
@@ -3633,22 +3633,22 @@ public class AI_Target : MonoBehaviour
             if (scoreGap >= 3)
             {
                 defensiveBonus = 60f; // Huge lead - MAXIMUM defensive priority for ALL removals!
-                Debug.Log($"[Removal] BIG LEAD (gap={scoreGap}) - MASSIVE removal bonus +60 (ALL REMOVAL OPTIONS!)");
+                GameLog.Info($"[Removal] BIG LEAD (gap={scoreGap}) - MASSIVE removal bonus +60 (ALL REMOVAL OPTIONS!)");
             }
             else if (scoreGap >= 2)
             {
                 defensiveBonus = 45f; // Good lead - very high defensive priority
-                Debug.Log($"[Removal] GOOD LEAD (gap={scoreGap}) - Major removal bonus +45 (ALL REMOVAL OPTIONS!)");
+                GameLog.Info($"[Removal] GOOD LEAD (gap={scoreGap}) - Major removal bonus +45 (ALL REMOVAL OPTIONS!)");
             }
             else if (scoreGap >= 1)
             {
                 defensiveBonus = 30f; // Small lead - high defensive priority
-                Debug.Log($"[Removal] SMALL LEAD (gap={scoreGap}) - Removal bonus +30 (ALL REMOVAL OPTIONS!)");
+                GameLog.Info($"[Removal] SMALL LEAD (gap={scoreGap}) - Removal bonus +30 (ALL REMOVAL OPTIONS!)");
             }
             else // Tied late game
             {
                 defensiveBonus = 20f; // Tied late - moderate defensive priority
-                Debug.Log($"[Removal] TIED LATE GAME - Removal bonus +20 (ALL REMOVAL OPTIONS!)");
+                GameLog.Info($"[Removal] TIED LATE GAME - Removal bonus +20 (ALL REMOVAL OPTIONS!)");
             }
         }
         
@@ -3673,10 +3673,10 @@ public class AI_Target : MonoBehaviour
         if (isLateGame && takeoutScore > 0f)
         {
             takeoutScore += 15f;
-            Debug.Log($"[Removal] LATE GAME BONUS: Takeout +15 → {takeoutScore:F2}");
+            GameLog.Info($"[Removal] LATE GAME BONUS: Takeout +15 → {takeoutScore:F2}");
         }
         
-        Debug.Log($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
+        GameLog.Info($"[Removal] Option 1: DIRECT TAKEOUT - Score: {takeoutScore:F2} ⭐ HIGHEST PRIORITY {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
         
         // ========================================
         // PRIORITY 2: RUNBACK (removes 2 rocks! finesse + target)
@@ -3711,20 +3711,20 @@ public class AI_Target : MonoBehaviour
                 if (isDefensiveSituation && thisRunbackScore > 0f)
                 {
                     thisRunbackScore += defensiveBonus; // SAME bonus as direct takeout!
-                    Debug.Log($"[Removal] DEFENSIVE BOOST: Runback removes 2 rocks - bonus +{defensiveBonus:F1}");
+                    GameLog.Info($"[Removal] DEFENSIVE BOOST: Runback removes 2 rocks - bonus +{defensiveBonus:F1}");
                 }
                 
                 // CONTEXT BONUSES:
                 if (isLateGame && thisRunbackScore > 0f && !isDefensiveSituation)
                 {
                     thisRunbackScore += 20f; // Late game OFFENSIVE: remove multiple rocks
-                    Debug.Log($"[Removal] LATE GAME RUNBACK BONUS: +20 → {thisRunbackScore:F2}");
+                    GameLog.Info($"[Removal] LATE GAME RUNBACK BONUS: +20 → {thisRunbackScore:F2}");
                 }
                 
                 if (rocksInHouse >= 3 && thisRunbackScore > 0f && !isDefensiveSituation)
                 {
                     thisRunbackScore += 15f; // Multiple rocks OFFENSIVE: clearing is urgent
-                    Debug.Log($"[Removal] MULTIPLE ROCKS BONUS: +15 → {thisRunbackScore:F2}");
+                    GameLog.Info($"[Removal] MULTIPLE ROCKS BONUS: +15 → {thisRunbackScore:F2}");
                 }
                 
                 if (thisRunbackScore > runbackScore)
@@ -3732,7 +3732,7 @@ public class AI_Target : MonoBehaviour
                     runbackScore = thisRunbackScore;
                 }
                 
-                Debug.Log($"[Removal] Option 2: RUNBACK through finesse #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
+                GameLog.Info($"[Removal] Option 2: RUNBACK through finesse #{guardToRunback} - Score: {runbackScore:F2} 🎯 DOUBLE REMOVAL {(isDefensiveSituation ? "(DEFENSIVE BOOST!)" : "")}");
             }
         }
         
@@ -3752,7 +3752,7 @@ public class AI_Target : MonoBehaviour
             if (shotRockInfo.rockIndex == context.targetRockIndex)
             {
                 primaryIsShotRock = true;
-                Debug.Log($"[Removal] PRIMARY TARGET IS SHOT ROCK! (rock #{context.targetRockIndex})");
+                GameLog.Info($"[Removal] PRIMARY TARGET IS SHOT ROCK! (rock #{context.targetRockIndex})");
             }
         }
         
@@ -3771,13 +3771,13 @@ public class AI_Target : MonoBehaviour
             if (primaryIsShotRock)
             {
                 allowAlternates = false; // NEVER consider alternates on last rock if primary is shot rock
-                Debug.Log($"[Removal] LAST ROCK + SHOT ROCK PRIMARY → NO ALTERNATES ALLOWED!");
+                GameLog.Info($"[Removal] LAST ROCK + SHOT ROCK PRIMARY → NO ALTERNATES ALLOWED!");
             }
             else
             {
                 // Primary is NOT shot rock (weird strategy call?) - huge penalty for alternates
                 alternatePenalty = -80f;
-                Debug.Log($"[Removal] LAST ROCK but primary ISN'T shot rock (strategy error?) → Huge alternate penalty!");
+                GameLog.Info($"[Removal] LAST ROCK but primary ISN'T shot rock (strategy error?) → Huge alternate penalty!");
             }
         }
         else if (rockCurrent >= 14)
@@ -3786,12 +3786,12 @@ public class AI_Target : MonoBehaviour
             if (primaryIsShotRock)
             {
                 alternatePenalty = -60f; // Huge penalty - almost never choose alternate over shot rock
-                Debug.Log($"[Removal] VERY LATE + SHOT ROCK PRIMARY → -60 alternate penalty");
+                GameLog.Info($"[Removal] VERY LATE + SHOT ROCK PRIMARY → -60 alternate penalty");
             }
             else
             {
                 alternatePenalty = -30f; // Moderate penalty
-                Debug.Log($"[Removal] VERY LATE but primary ISN'T shot rock → -30 alternate penalty");
+                GameLog.Info($"[Removal] VERY LATE but primary ISN'T shot rock → -30 alternate penalty");
             }
         }
         else if (rockCurrent >= 12)
@@ -3800,18 +3800,18 @@ public class AI_Target : MonoBehaviour
             if (primaryIsShotRock)
             {
                 alternatePenalty = -40f; // Significant penalty
-                Debug.Log($"[Removal] LATE + SHOT ROCK PRIMARY → -40 alternate penalty");
+                GameLog.Info($"[Removal] LATE + SHOT ROCK PRIMARY → -40 alternate penalty");
             }
             else
             {
                 alternatePenalty = -15f; // Small penalty
-                Debug.Log($"[Removal] LATE but primary ISN'T shot rock → -15 alternate penalty");
+                GameLog.Info($"[Removal] LATE but primary ISN'T shot rock → -15 alternate penalty");
             }
         }
         else
         {
             // NORMAL: Standard alternate search (no penalty)
-            Debug.Log($"[Removal] NORMAL game phase → No alternate penalty");
+            GameLog.Info($"[Removal] NORMAL game phase → No alternate penalty");
         }
         
         // Only search for alternates if:
@@ -3823,7 +3823,7 @@ public class AI_Target : MonoBehaviour
         
         if (shouldSearchAlternates)
         {
-            Debug.Log($"[Removal] Searching for ALTERNATE TARGETS (primary score={takeoutScore:F2}, penalty={alternatePenalty:F1})");
+            GameLog.Info($"[Removal] Searching for ALTERNATE TARGETS (primary score={takeoutScore:F2}, penalty={alternatePenalty:F1})");
             
             // Search through ALL rocks in house (not just target)
             foreach (var houseRock in gm.houseList)
@@ -3860,7 +3860,7 @@ public class AI_Target : MonoBehaviour
                             if (!primaryIsShotRock)
                             {
                                 altScore += 50f;
-                                Debug.Log($"[Removal] ALTERNATE IS SHOT ROCK (primary wasn't!) → +50 MEGA BONUS!");
+                                GameLog.Info($"[Removal] ALTERNATE IS SHOT ROCK (primary wasn't!) → +50 MEGA BONUS!");
                             }
                         }
                     }
@@ -3874,17 +3874,17 @@ public class AI_Target : MonoBehaviour
                     {
                         float alternateDefensiveBonus = defensiveBonus * 0.5f;
                         altScore += alternateDefensiveBonus;
-                        Debug.Log($"[Removal] DEFENSIVE BOOST (alternate): Still removes a rock - bonus +{alternateDefensiveBonus:F1} (50% of primary)");
+                        GameLog.Info($"[Removal] DEFENSIVE BOOST (alternate): Still removes a rock - bonus +{alternateDefensiveBonus:F1} (50% of primary)");
                     }
                     
                     // CONTEXT BONUS: Late game alternates are valuable (but already penalized if primary is shot rock OR defensive)
                     if (isLateGame && alternatePenalty == 0f && !isDefensiveSituation) // Only if no penalty applied AND not defensive
                     {
                         altScore += 15f;
-                        Debug.Log($"[Removal] LATE GAME ALTERNATE BONUS: +15");
+                        GameLog.Info($"[Removal] LATE GAME ALTERNATE BONUS: +15");
                     }
                     
-                    Debug.Log($"[Removal] Option 3: ALTERNATE #{houseRock.rockInfo.rockIndex} - " +
+                    GameLog.Info($"[Removal] Option 3: ALTERNATE #{houseRock.rockInfo.rockIndex} - " +
                               $"Base: {altScore - proximityBonus - alternatePenalty:F2}, " +
                               $"Proximity: +{proximityBonus:F1}, " +
                               $"Penalty: {alternatePenalty:F1}, " +
@@ -3901,16 +3901,16 @@ public class AI_Target : MonoBehaviour
             
             if (bestAlternateTarget >= 0)
             {
-                Debug.Log($"[Removal] ✓ BEST ALTERNATE: Rock #{bestAlternateTarget} with score {bestAlternateScore:F2}");
+                GameLog.Info($"[Removal] ✓ BEST ALTERNATE: Rock #{bestAlternateTarget} with score {bestAlternateScore:F2}");
             }
             else
             {
-                Debug.Log($"[Removal] ✗ NO viable alternates found");
+                GameLog.Info($"[Removal] ✗ NO viable alternates found");
             }
         }
         else if (!allowAlternates)
         {
-            Debug.Log($"[Removal] ALTERNATES DISABLED - Last rock + shot rock primary = MUST hit shot rock!");
+            GameLog.Info($"[Removal] ALTERNATES DISABLED - Last rock + shot rock primary = MUST hit shot rock!");
         }
         
         // ========================================
@@ -3924,16 +3924,16 @@ public class AI_Target : MonoBehaviour
         {
             float tickDefensiveBonus = defensiveBonus * 0.25f;
             tickScore += tickDefensiveBonus;
-            Debug.Log($"[Removal] DEFENSIVE BOOST (tick): Still removes rock - bonus +{tickDefensiveBonus:F1} (25% of primary)");
+            GameLog.Info($"[Removal] DEFENSIVE BOOST (tick): Still removes rock - bonus +{tickDefensiveBonus:F1} (25% of primary)");
         }
         
         if (tickScore > 0f && isLateGame && !isDefensiveSituation)
         {
             tickScore += 10f; // Small late game bonus (OFFENSIVE only)
-            Debug.Log($"[Removal] LATE GAME TICK BONUS: +10 → {tickScore:F2}");
+            GameLog.Info($"[Removal] LATE GAME TICK BONUS: +10 → {tickScore:F2}");
         }
         
-        Debug.Log($"[Removal] Option 4: TICK SHOT - Score: {tickScore:F2} {(isDefensiveSituation ? "(DEFENSIVE BOOST)" : "")}");
+        GameLog.Info($"[Removal] Option 4: TICK SHOT - Score: {tickScore:F2} {(isDefensiveSituation ? "(DEFENSIVE BOOST)" : "")}");
         
         // ========================================
         // PRIORITY 5: PEEL GUARD (LAST RESORT!)
@@ -3971,41 +3971,41 @@ public class AI_Target : MonoBehaviour
                         // This is almost NEVER correct when protecting a lead
                         float defensivePeelPenalty = -50f; // Huge penalty
                         peelScore += defensivePeelPenalty;
-                        Debug.Log($"[Removal] DEFENSIVE PENALTY: Peel doesn't remove threat - MASSIVE penalty {defensivePeelPenalty}");
+                        GameLog.Info($"[Removal] DEFENSIVE PENALTY: Peel doesn't remove threat - MASSIVE penalty {defensivePeelPenalty}");
                     }
                     
                     if (isLateGame && peelScore > 0f)
                     {
                         peelScore -= 20f; // Late game: peel is WEAK option
-                        Debug.Log($"[Removal] LATE GAME PEEL PENALTY: -20 → {peelScore:F2}");
+                        GameLog.Info($"[Removal] LATE GAME PEEL PENALTY: -20 → {peelScore:F2}");
                     }
                     
                     if (rocksInHouse >= 2 && peelScore > 0f)
                     {
                         peelScore -= 15f; // Multiple rocks: peel doesn't help clear house
-                        Debug.Log($"[Removal] MULTIPLE ROCKS PEEL PENALTY: -15 → {peelScore:F2}");
+                        GameLog.Info($"[Removal] MULTIPLE ROCKS PEEL PENALTY: -15 → {peelScore:F2}");
                     }
                     
-                    Debug.Log($"[Removal] Option 5: PEEL GUARD #{guardToPeel} - Score: {peelScore:F2} ⚠️ LAST RESORT");
+                    GameLog.Info($"[Removal] Option 5: PEEL GUARD #{guardToPeel} - Score: {peelScore:F2} ⚠️ LAST RESORT");
                     break; // Only need one finesse to peel
                 }
             }
         }
         else
         {
-            Debug.Log($"[Removal] Option 5: PEEL GUARD - SKIPPED (last={isLastRock}, late+multiple={isLateGame && rocksInHouse >= 2})");
+            GameLog.Info($"[Removal] Option 5: PEEL GUARD - SKIPPED (last={isLastRock}, late+multiple={isLateGame && rocksInHouse >= 2})");
         }
 
         // ========================================
         // PICK THE BEST OPTION!
         // ========================================
-        Debug.Log($"[Removal] ========== FINAL SCORES ==========");
-        Debug.Log($"[Removal]   Double Takeout: {doubleTakeoutScore:F2} 🎯🎯");
-        Debug.Log($"[Removal]   Direct Takeout: {takeoutScore:F2}");
-        Debug.Log($"[Removal]   Runback: {runbackScore:F2}");
-        Debug.Log($"[Removal]   Alternate Target: {bestAlternateScore:F2}");
-        Debug.Log($"[Removal]   Tick Shot: {tickScore:F2}");
-        Debug.Log($"[Removal]   Peel Guard: {peelScore:F2}");
+        GameLog.Info($"[Removal] ========== FINAL SCORES ==========");
+        GameLog.Info($"[Removal]   Double Takeout: {doubleTakeoutScore:F2} 🎯🎯");
+        GameLog.Info($"[Removal]   Direct Takeout: {takeoutScore:F2}");
+        GameLog.Info($"[Removal]   Runback: {runbackScore:F2}");
+        GameLog.Info($"[Removal]   Alternate Target: {bestAlternateScore:F2}");
+        GameLog.Info($"[Removal]   Tick Shot: {tickScore:F2}");
+        GameLog.Info($"[Removal]   Peel Guard: {peelScore:F2}");
         
         float bestScore = Mathf.Max(doubleTakeoutScore, takeoutScore, runbackScore, bestAlternateScore, tickScore, peelScore);
         
@@ -4039,10 +4039,10 @@ public class AI_Target : MonoBehaviour
         // Execute best option (priority order if tied)
         if (doubleTakeoutScore == bestScore && doubleTakeoutScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: DOUBLE TAKEOUT (score: {doubleTakeoutScore:F2}) 🎯🎯 REMOVE TWO ROCKS!");
-            Debug.Log($"[AI_Target] Primary target: #{doublePrimaryTarget} at {gm.rockList[doublePrimaryTarget].rock.transform.position}");
-            Debug.Log($"[AI_Target] Secondary target: #{doubleSecondaryTarget} at {gm.rockList[doubleSecondaryTarget].rock.transform.position}");
-            Debug.Log($"[AI_Target] Pullback: ({doublePullback.x:F3}, {doublePullback.y:F3}), Turn: {(doubleInTurn ? "IN-TURN" : "OUT-TURN")}");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: DOUBLE TAKEOUT (score: {doubleTakeoutScore:F2}) 🎯🎯 REMOVE TWO ROCKS!");
+            GameLog.Info($"[AI_Target] Primary target: #{doublePrimaryTarget} at {gm.rockList[doublePrimaryTarget].rock.transform.position}");
+            GameLog.Info($"[AI_Target] Secondary target: #{doubleSecondaryTarget} at {gm.rockList[doubleSecondaryTarget].rock.transform.position}");
+            GameLog.Info($"[AI_Target] Pullback: ({doublePullback.x:F3}, {doublePullback.y:F3}), Turn: {(doubleInTurn ? "IN-TURN" : "OUT-TURN")}");
             
             // Set pullback manually (bypass OnTarget which would recalculate)
             rm.inturn = doubleInTurn;
@@ -4051,35 +4051,35 @@ public class AI_Target : MonoBehaviour
             
             // Execute shot
             aiShoot.OnShot("Take Out", rockCurrent);
-            Debug.Log($"Double Takeout - Primary: {gm.rockList[doublePrimaryTarget].rockInfo.teamName} #{doublePrimaryTarget}, Secondary: {gm.rockList[doubleSecondaryTarget].rockInfo.teamName} #{doubleSecondaryTarget}");
+            GameLog.Info($"Double Takeout - Primary: {gm.rockList[doublePrimaryTarget].rockInfo.teamName} #{doublePrimaryTarget}, Secondary: {gm.rockList[doubleSecondaryTarget].rockInfo.teamName} #{doubleSecondaryTarget}");
         }
         else if (runbackScore == bestScore && runbackScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: RUNBACK (score: {runbackScore:F2}) 🎯 REMOVE TWO ROCKS!");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: RUNBACK (score: {runbackScore:F2}) 🎯 REMOVE TWO ROCKS!");
             OnTarget("Runback", rockCurrent, guardToRunback);
         }
         else if (takeoutScore == bestScore && takeoutScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: DIRECT TAKEOUT (score: {takeoutScore:F2}) ⭐");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: DIRECT TAKEOUT (score: {takeoutScore:F2}) ⭐");
             OnTarget("Take Out", rockCurrent, context.targetRockIndex);
         }
         else if (bestAlternateScore == bestScore && bestAlternateScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: ALTERNATE TARGET #{bestAlternateTarget} (score: {bestAlternateScore:F2}) 🔄");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: ALTERNATE TARGET #{bestAlternateTarget} (score: {bestAlternateScore:F2}) 🔄");
             OnTarget("Take Out", rockCurrent, bestAlternateTarget);
         }
         else if (tickScore == bestScore && tickScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: TICK SHOT (score: {tickScore:F2}) 🎯");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: TICK SHOT (score: {tickScore:F2}) 🎯");
             OnTarget("Tick Shot", rockCurrent, context.targetRockIndex);
         }
         else if (peelScore == bestScore && peelScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✅ SELECTED: PEEL GUARD #{guardToPeel} (score: {peelScore:F2}) ⚠️ FALLBACK");
+            GameLog.Info($"[AI_Target] ✅ SELECTED: PEEL GUARD #{guardToPeel} (score: {peelScore:F2}) ⚠️ FALLBACK");
             OnTarget("Peel", rockCurrent, guardToPeel);
         }
         
-        Debug.Log($"[Removal] ==========================================");
+        GameLog.Info($"[Removal] ==========================================");
     }
     
     /// <summary>
@@ -4089,8 +4089,8 @@ public class AI_Target : MonoBehaviour
     /// </summary>
     private void EvaluateLastShotScoringOptions(ShotContext context, int rockCurrent)
     {
-        Debug.Log($"[LastShotScoring] 🎯 Evaluating FINAL SHOT scoring options (rock #{rockCurrent}/16)");
-        Debug.Log($"[LastShotScoring] ✅ NO REMOVAL PENALTIES - Focus ONLY on final position!");
+        GameLog.Info($"[LastShotScoring] 🎯 Evaluating FINAL SHOT scoring options (rock #{rockCurrent}/16)");
+        GameLog.Info($"[LastShotScoring] ✅ NO REMOVAL PENALTIES - Focus ONLY on final position!");
         
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         Vector2 button = new Vector2(0f, 6.5f);
@@ -4112,7 +4112,7 @@ public class AI_Target : MonoBehaviour
         
         // OPTION 1: Direct draw to button (ALWAYS HIGH SCORE - no penalties!)
         float drawScore = 100f; // ✅ HIGH BASE SCORE (no removal penalty!)
-        Debug.Log($"  Option 1: Draw to button - Score: {drawScore:F2} (NO PENALTIES!)");
+        GameLog.Info($"  Option 1: Draw to button - Score: {drawScore:F2} (NO PENALTIES!)");
         
         // OPTION 2: Freeze on opponent's best rock (if available)
         float freezeScore = 0f;
@@ -4121,7 +4121,7 @@ public class AI_Target : MonoBehaviour
         if (rockToFreeze >= 0 && freezeScore > 0f)
         {
             freezeScore += 50f; // ✅ HUGE BONUS for stealing shot rock on last shot!
-            Debug.Log($"  Option 2: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2} (STEAL SHOT ROCK!)");
+            GameLog.Info($"  Option 2: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2} (STEAL SHOT ROCK!)");
         }
         
         // OPTION 3: Protected draw (behind guard)
@@ -4135,32 +4135,32 @@ public class AI_Target : MonoBehaviour
             if (protectedScore > 0f)
             {
                 protectedScore += 30f; // ✅ BONUS for safety
-                Debug.Log($"  Option 3: Protected draw at ({protectedTarget.x:F2}, {protectedTarget.y:F2}) - Score: {protectedScore:F2} (SAFE!)");
+                GameLog.Info($"  Option 3: Protected draw at ({protectedTarget.x:F2}, {protectedTarget.y:F2}) - Score: {protectedScore:F2} (SAFE!)");
             }
         }
         
         // PICK THE BEST SCORING OPTION (all are viable - no penalties!)
         float bestScore = Mathf.Max(drawScore, freezeScore, protectedScore);
         
-        Debug.Log($"[LastShotScoring] ========== FINAL SCORES (NO PENALTIES!) ==========");
-        Debug.Log($"[LastShotScoring]   Draw to button: {drawScore:F2}");
-        Debug.Log($"[LastShotScoring]   Freeze: {freezeScore:F2}");
-        Debug.Log($"[LastShotScoring]   Protected draw: {protectedScore:F2}");
-        Debug.Log($"[LastShotScoring]   BEST: {bestScore:F2}");
+        GameLog.Info($"[LastShotScoring] ========== FINAL SCORES (NO PENALTIES!) ==========");
+        GameLog.Info($"[LastShotScoring]   Draw to button: {drawScore:F2}");
+        GameLog.Info($"[LastShotScoring]   Freeze: {freezeScore:F2}");
+        GameLog.Info($"[LastShotScoring]   Protected draw: {protectedScore:F2}");
+        GameLog.Info($"[LastShotScoring]   BEST: {bestScore:F2}");
         
         if (freezeScore == bestScore && freezeScore > 0f && rockToFreeze >= 0)
         {
-            Debug.Log($"[LastShotScoring] ✅ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
+            GameLog.Info($"[LastShotScoring] ✅ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
             OnTarget("Freeze", rockCurrent, rockToFreeze);
         }
         else if (protectedScore == bestScore && protectedScore > 0f && protectedTarget != Vector2.zero)
         {
-            Debug.Log($"[LastShotScoring] ✅ SELECTED: Protected draw (score: {protectedScore:F2}) - SAFE SCORING!");
+            GameLog.Info($"[LastShotScoring] ✅ SELECTED: Protected draw (score: {protectedScore:F2}) - SAFE SCORING!");
             StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
         }
         else
         {
-            Debug.Log($"[LastShotScoring] ✅ SELECTED: Draw to button (score: {drawScore:F2}) - STRAIGHTFORWARD!");
+            GameLog.Info($"[LastShotScoring] ✅ SELECTED: Draw to button (score: {drawScore:F2}) - STRAIGHTFORWARD!");
             OnTarget("Auto Draw Four Foot", rockCurrent, 0);
         }
     }
@@ -4174,7 +4174,7 @@ public class AI_Target : MonoBehaviour
     /// </summary>
     private void EvaluateScoringOptions(ShotContext context, int rockCurrent)
     {
-        Debug.Log($"[AI_Target] Evaluating scoring options for rock #{rockCurrent}");
+        GameLog.Info($"[AI_Target] Evaluating scoring options for rock #{rockCurrent}");
         
         // CONTEXT CHECK: Why are we scoring?
         bool calledFromRemovalFailure = (context.intent == ShotIntent.RemoveThreat);
@@ -4194,10 +4194,10 @@ public class AI_Target : MonoBehaviour
         if (calledFromRemovalFailure)
         {
             drawScore -= 30f; // Massive penalty - drawing when opponent has rocks is BAD
-            Debug.Log($"[Scoring] REMOVAL FAILURE PENALTY: Draw -30 → {drawScore:F2}");
+            GameLog.Info($"[Scoring] REMOVAL FAILURE PENALTY: Draw -30 → {drawScore:F2}");
         }
         
-        Debug.Log($"  Option 1: Draw to button - Score: {drawScore:F2}");
+        GameLog.Info($"  Option 1: Draw to button - Score: {drawScore:F2}");
         
         // OPTION 2: Freeze on opponent's best rock
         float freezeScore = 0f;
@@ -4212,12 +4212,12 @@ public class AI_Target : MonoBehaviour
             if (calledFromRemovalFailure && freezeScore > 0f)
             {
                 freezeScore -= 15f; // Smaller penalty - freeze at least contests their rock
-                Debug.Log($"[Scoring] REMOVAL FAILURE PENALTY: Freeze -15 → {freezeScore:F2}");
+                GameLog.Info($"[Scoring] REMOVAL FAILURE PENALTY: Freeze -15 → {freezeScore:F2}");
             }
             
             if (rockToFreeze >= 0)
             {
-                Debug.Log($"  Option 2: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2}");
+                GameLog.Info($"  Option 2: Freeze on rock #{rockToFreeze} - Score: {freezeScore:F2}");
             }
         }
         
@@ -4227,7 +4227,7 @@ public class AI_Target : MonoBehaviour
         
         if (rockToRaiseForScore >= 0)
         {
-            Debug.Log($"  Option 3: Raise rock #{rockToRaiseForScore} toward button - Score: {raiseScore:F2}");
+            GameLog.Info($"  Option 3: Raise rock #{rockToRaiseForScore} toward button - Score: {raiseScore:F2}");
         }
         
         // OPTION 4: Draw behind existing finesse for protection
@@ -4240,7 +4240,7 @@ public class AI_Target : MonoBehaviour
             
             if (protectedDrawScore > 0f)
             {
-                Debug.Log($"  Option 6: Protected weight at ({protectedDrawTarget.x:F2}, {protectedDrawTarget.y:F2}) - Score: {protectedDrawScore:F2}");
+                GameLog.Info($"  Option 6: Protected weight at ({protectedDrawTarget.x:F2}, {protectedDrawTarget.y:F2}) - Score: {protectedDrawScore:F2}");
             }
         }
         
@@ -4258,22 +4258,22 @@ public class AI_Target : MonoBehaviour
         // Execute best scoring option
         if (drawScore == bestScore && drawScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Draw to button (score: {drawScore:F2})");
+            GameLog.Info($"[AI_Target] ✓ SELECTED: Draw to button (score: {drawScore:F2})");
             StartCoroutine(DrawTarget(rockCurrent, button));
         }
         else if (freezeScore == bestScore && freezeScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - Steal shot rock!");
+            GameLog.Info($"[AI_Target] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - Steal shot rock!");
             OnTarget("Freeze", rockCurrent, rockToFreeze);
         }
         else if (raiseScore == bestScore && raiseScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - Promote to shot rock!");
+            GameLog.Info($"[AI_Target] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - Promote to shot rock!");
             OnTarget("Tap Back", rockCurrent, rockToRaiseForScore);
         }
         else if (protectedDrawScore == bestScore && protectedDrawScore > 0f)
         {
-            Debug.Log($"[AI_Target] ✓ SELECTED: Protected weight (score: {protectedDrawScore:F2}) - Behind our finesse!");
+            GameLog.Info($"[AI_Target] ✓ SELECTED: Protected weight (score: {protectedDrawScore:F2}) - Behind our finesse!");
             StartCoroutine(DrawTarget(rockCurrent, protectedDrawTarget));
         }
     }
@@ -4284,7 +4284,7 @@ public class AI_Target : MonoBehaviour
     /// </summary>
     private void EvaluateProtectLeadOptions(ShotContext context, int rockCurrent)
     {
-        Debug.Log($"[AI_Target] PROTECT LEAD - Evaluating conservative options for rock #{rockCurrent}");
+        GameLog.Info($"[AI_Target] PROTECT LEAD - Evaluating conservative options for rock #{rockCurrent}");
         
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         
@@ -4304,11 +4304,11 @@ public class AI_Target : MonoBehaviour
         
         if (opponentThreat != null)
         {
-            Debug.Log($"[Protect Lead] PHASE 1: Opponent rock #{opponentThreatIndex} in house - REMOVE IT!");
+            GameLog.Info($"[Protect Lead] PHASE 1: Opponent rock #{opponentThreatIndex} in house - REMOVE IT!");
             
             // OPTION 1: Direct takeout (PREFERRED - most reliable)
             float takeoutScore = SimulateTakeout(opponentThreat, opponentThreatIndex, rockCurrent);
-            Debug.Log($"  Option 1: Direct Takeout - Score: {takeoutScore:F2}");
+            GameLog.Info($"  Option 1: Direct Takeout - Score: {takeoutScore:F2}");
             
             // OPTION 2: Runback through finesse (PREFERRED - removes 2 rocks)
             float runbackScore = 0f;
@@ -4328,7 +4328,7 @@ public class AI_Target : MonoBehaviour
                 {
                     guardToRunback = guardInfo.rockIndex;
                     runbackScore = SimulateRunback(guard.lastTransform.gameObject, opponentThreat, guardToRunback, opponentThreatIndex, rockCurrent);
-                    Debug.Log($"  Option 2: Runback through finesse #{guardToRunback} - Score: {runbackScore:F2}");
+                    GameLog.Info($"  Option 2: Runback through finesse #{guardToRunback} - Score: {runbackScore:F2}");
                 }
             }
 
@@ -4338,7 +4338,7 @@ public class AI_Target : MonoBehaviour
             if (rockToRaise >= 0)
             {
                 raiseScore = SimulateRaise(opponentThreat, rockToRaise, rockCurrent);
-                Debug.Log($"  Option 4: Raise rock #{rockToRaise} - Score: {raiseScore:F2}");
+                GameLog.Info($"  Option 4: Raise rock #{rockToRaise} - Score: {raiseScore:F2}");
             }
             
             // PICK BEST REMOVAL OPTION (prefer takeout/runback)
@@ -4346,17 +4346,17 @@ public class AI_Target : MonoBehaviour
             
             if (takeoutScore == bestScore && takeoutScore > 0f)
             {
-                Debug.Log($"[Protect Lead] ✓ SELECTED: Direct Takeout (score: {takeoutScore:F2}) - Clean removal!");
+                GameLog.Info($"[Protect Lead] ✓ SELECTED: Direct Takeout (score: {takeoutScore:F2}) - Clean removal!");
                 OnTarget("Take Out", rockCurrent, opponentThreatIndex);
             }
             else if (runbackScore == bestScore && runbackScore > 0f)
             {
-                Debug.Log($"[Protect Lead] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Remove finesse + threat!");
+                GameLog.Info($"[Protect Lead] ✓ SELECTED: Runback (score: {runbackScore:F2}) - Remove finesse + threat!");
                 OnTarget("Runback", rockCurrent, guardToRunback);
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
             {
-                Debug.Log($"[Protect Lead] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - Last resort!");
+                GameLog.Info($"[Protect Lead] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - Last resort!");
                 OnTarget("Tap Back", rockCurrent, rockToRaise);
             }
             else
@@ -4403,13 +4403,13 @@ public class AI_Target : MonoBehaviour
         // Only peel guards if they're blocking center significantly (score > 50)
         if (opponentGuardToPeel >= 0 && bestGuardPeelScore > 50f)
         {
-            Debug.Log($"[Protect Lead] PHASE 2: Opponent finesse #{opponentGuardToPeel} blocking center (score: {bestGuardPeelScore:F2}) - PEEL IT!");
+            GameLog.Info($"[Protect Lead] PHASE 2: Opponent finesse #{opponentGuardToPeel} blocking center (score: {bestGuardPeelScore:F2}) - PEEL IT!");
             OnTarget("Peel", rockCurrent, opponentGuardToPeel);
             return;
         }
         
         // PHASE 3: No threats, no blocking guards - CONSERVATIVE DRAW to sides
-        Debug.Log($"[Protect Lead] PHASE 3: No threats - Conservative weight to side");
+        GameLog.Info($"[Protect Lead] PHASE 3: No threats - Conservative weight to side");
         
         Vector2 button = new Vector2(0f, 6.5f);
         
@@ -4458,7 +4458,7 @@ public class AI_Target : MonoBehaviour
         // OPTION 3: Draw to button (LAST RESORT - too aggressive for protect lead)
         float centerScore = 30f; // Lower base score - we prefer sides
         
-        Debug.Log($"  Conservative weight options:\n" +
+        GameLog.Info($"  Conservative weight options:\n" +
                   $"    Left side (X=-1.0): {leftSideScore:F2} (clear: {leftClear})\n" +
                   $"    Right side (X=+1.0): {rightSideScore:F2} (clear: {rightClear})\n" +
                   $"    Center (button): {centerScore:F2}");
@@ -4468,17 +4468,17 @@ public class AI_Target : MonoBehaviour
         
         if (leftSideScore == bestDrawScore)
         {
-            Debug.Log($"[Protect Lead] ✓ SELECTED: Draw to LEFT SIDE (score: {leftSideScore:F2}) - Safe play!");
+            GameLog.Info($"[Protect Lead] ✓ SELECTED: Draw to LEFT SIDE (score: {leftSideScore:F2}) - Safe play!");
             StartCoroutine(DrawTarget(rockCurrent, leftSideTarget));
         }
         else if (rightSideScore == bestDrawScore)
         {
-            Debug.Log($"[Protect Lead] ✓ SELECTED: Draw to RIGHT SIDE (score: {rightSideScore:F2}) - Safe play!");
+            GameLog.Info($"[Protect Lead] ✓ SELECTED: Draw to RIGHT SIDE (score: {rightSideScore:F2}) - Safe play!");
             StartCoroutine(DrawTarget(rockCurrent, rightSideTarget));
         }
         else
         {
-            Debug.Log($"[Protect Lead] ✓ SELECTED: Draw to CENTER (score: {centerScore:F2}) - Fallback!");
+            GameLog.Info($"[Protect Lead] ✓ SELECTED: Draw to CENTER (score: {centerScore:F2}) - Fallback!");
             OnTarget("Auto Draw Four Foot", rockCurrent, 0);
         }
     }
@@ -4496,7 +4496,7 @@ public class AI_Target : MonoBehaviour
         // Calculate desperation level: How many rocks do we need?
         int rocksNeeded = CalculateRocksNeeded(currentRockInfo.teamName);
         
-        Debug.Log($"[AI_Target] DESPERATION MODE - Need {rocksNeeded} rock(s) to tie/win!");
+        GameLog.Info($"[AI_Target] DESPERATION MODE - Need {rocksNeeded} rock(s) to tie/win!");
         
         // PHASE 1: If opponent has rocks, REMOVE THEM FIRST!
         GameObject opponentRock = null;
@@ -4514,14 +4514,14 @@ public class AI_Target : MonoBehaviour
         
         if (opponentRock != null)
         {
-            Debug.Log($"[Desperation] PHASE 1: Opponent rock #{opponentRockIndex} blocking - MUST REMOVE!");
+            GameLog.Info($"[Desperation] PHASE 1: Opponent rock #{opponentRockIndex} blocking - MUST REMOVE!");
             
             // Calculate aggression multiplier based on desperation
             float aggressionBonus = rocksNeeded * 10f; // More desperate = more aggressive
             
             // OPTION 1: Direct takeout (ALWAYS try this first)
             float takeoutScore = SimulateTakeout(opponentRock, opponentRockIndex, rockCurrent) + aggressionBonus;
-            Debug.Log($"  Option 1: Aggressive Takeout - Score: {takeoutScore:F2} (bonus: {aggressionBonus:F2})");
+            GameLog.Info($"  Option 1: Aggressive Takeout - Score: {takeoutScore:F2} (bonus: {aggressionBonus:F2})");
             
             // OPTION 2: Runback (try to remove 2 rocks at once!)
             float runbackScore = 0f;
@@ -4532,26 +4532,26 @@ public class AI_Target : MonoBehaviour
                 guardToRunback = GetRockIndex(cenGuard);
                 runbackScore = SimulateRunback(cenGuard.gameObject, opponentRock, guardToRunback, opponentRockIndex, rockCurrent);
                 runbackScore += aggressionBonus + 20f; // HUGE bonus for removing 2 rocks!
-                Debug.Log($"  Option 2: Runback (center) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
+                GameLog.Info($"  Option 2: Runback (center) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
             }
             else if (IsGuardBlocking(lCornGuard, opponentRock))
             {
                 guardToRunback = GetRockIndex(lCornGuard);
                 runbackScore = SimulateRunback(lCornGuard.gameObject, opponentRock, guardToRunback, opponentRockIndex, rockCurrent);
                 runbackScore += aggressionBonus + 20f;
-                Debug.Log($"  Option 2: Runback (left) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
+                GameLog.Info($"  Option 2: Runback (left) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
             }
             else if (IsGuardBlocking(rCornGuard, opponentRock))
             {
                 guardToRunback = GetRockIndex(rCornGuard);
                 runbackScore = SimulateRunback(rCornGuard.gameObject, opponentRock, guardToRunback, opponentRockIndex, rockCurrent);
                 runbackScore += aggressionBonus + 20f;
-                Debug.Log($"  Option 2: Runback (right) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
+                GameLog.Info($"  Option 2: Runback (right) - Score: {runbackScore:F2} - REMOVE TWO ROCKS!");
             }
             
             // OPTION 3: Angled takeout (45° hit for better rollout - creative desperation!)
             float angledTakeoutScore = SimulateAngledTakeout(opponentRock, opponentRockIndex, rockCurrent) + aggressionBonus * 0.5f;
-            Debug.Log($"  Option 3: Angled Takeout (45° rollout) - Score: {angledTakeoutScore:F2}");
+            GameLog.Info($"  Option 3: Angled Takeout (45° rollout) - Score: {angledTakeoutScore:F2}");
             
 
             // PICK BEST REMOVAL
@@ -4559,26 +4559,26 @@ public class AI_Target : MonoBehaviour
             
             if (runbackScore == bestRemovalScore && runbackScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Runback (score: {runbackScore:F2}) - GO BIG!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Runback (score: {runbackScore:F2}) - GO BIG!");
                 OnTarget("Runback", rockCurrent, guardToRunback);
                 return;
             }
             else if (angledTakeoutScore == bestRemovalScore && angledTakeoutScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Angled Takeout (score: {angledTakeoutScore:F2}) - Desperation rollout!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Angled Takeout (score: {angledTakeoutScore:F2}) - Desperation rollout!");
                 OnTarget("Take Out", rockCurrent, opponentRockIndex); // Uses same mechanics, just angled
                 return;
             }
             else if (takeoutScore == bestRemovalScore && takeoutScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Aggressive Takeout (score: {takeoutScore:F2})");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Aggressive Takeout (score: {takeoutScore:F2})");
                 OnTarget("Take Out", rockCurrent, opponentRockIndex);
                 return;
             }
         }
         
         // PHASE 2: No opponent rocks - SCORE AGGRESSIVELY!
-        Debug.Log($"[Desperation] PHASE 2: Clear house - SCORE MULTIPLE ROCKS!");
+        GameLog.Info($"[Desperation] PHASE 2: Clear house - SCORE MULTIPLE ROCKS!");
         
         // Count how many rocks we already have in house
         int myRocksInHouse = 0;
@@ -4589,14 +4589,14 @@ public class AI_Target : MonoBehaviour
         }
         
         int stillNeed = rocksNeeded - myRocksInHouse;
-        Debug.Log($"  Current rocks: {myRocksInHouse}, Still need: {stillNeed}");
+        GameLog.Info($"  Current rocks: {myRocksInHouse}, Still need: {stillNeed}");
         
         // DESPERATION STRATEGY: Different approach based on rocks needed
         
         if (stillNeed >= 2)
         {
             // NEED MULTIPLE ROCKS: Go for creative plays!
-            Debug.Log($"[Desperation] Need {stillNeed} more rocks - CREATIVE SCORING!");
+            GameLog.Info($"[Desperation] Need {stillNeed} more rocks - CREATIVE SCORING!");
             
             // OPTION 1: Raise a friendly rock closer
             float raiseScore = 0f;
@@ -4621,36 +4621,36 @@ public class AI_Target : MonoBehaviour
             
             if (buryScore == bestScore && buryScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Bury behind guard (score: {buryScore:F2}) - PROTECTED SCORING!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Bury behind guard (score: {buryScore:F2}) - PROTECTED SCORING!");
                 StartCoroutine(DrawTarget(rockCurrent, buryTarget));
             }
             else if (raiseScore == bestScore && raiseScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - PUSH FORWARD!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Raise rock (score: {raiseScore:F2}) - PUSH FORWARD!");
                 OnTarget("Tap Back", rockCurrent, rockToRaise);
             }
             else if (tickScore == bestScore && tickScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Tick (score: {tickScore:F2}) - STEAL THEIR ROCK!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Tick (score: {tickScore:F2}) - STEAL THEIR ROCK!");
                 OnTarget("Tick Shot", rockCurrent, rockToTick);
             }
             else
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Draw to button (score: {drawScore:F2}) - AGGRESSIVE DRAW!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Draw to button (score: {drawScore:F2}) - AGGRESSIVE DRAW!");
                 OnTarget("Auto Draw Four Foot", rockCurrent, 0);
             }
         }
         else if (stillNeed == 1)
         {
             // NEED ONE MORE ROCK: Be aggressive but smart
-            Debug.Log($"[Desperation] Need 1 more rock - SMART AGGRESSION!");
+            GameLog.Info($"[Desperation] Need 1 more rock - SMART AGGRESSION!");
             
             // Should we go for 2 to WIN instead of tie?
             bool goForTwo = ShouldGoForTwo(context, myRocksInHouse);
             
             if (goForTwo)
             {
-                Debug.Log($"[Desperation] GOING FOR TWO - Trying to WIN, not tie!");
+                GameLog.Info($"[Desperation] GOING FOR TWO - Trying to WIN, not tie!");
                 
                 // OPTION 1: Raise friendly rock (promote to shot rock)
                 float raiseScore = 0f;
@@ -4671,30 +4671,30 @@ public class AI_Target : MonoBehaviour
                 
                 if (buryScore == bestScore && buryScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Bury weight (score: {buryScore:F2}) - GO FOR TWO!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Bury weight (score: {buryScore:F2}) - GO FOR TWO!");
                     StartCoroutine(DrawTarget(rockCurrent, buryTarget));
                 }
                 else if (freezeScore == bestScore && freezeScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - STEAL SHOT ROCK!");
                     OnTarget("Freeze", rockCurrent, rockToFreeze);
                 }
                 else if (raiseScore == bestScore && raiseScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Raise (score: {raiseScore:F2}) - GO FOR TWO!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Raise (score: {raiseScore:F2}) - GO FOR TWO!");
                     OnTarget("Tap Back", rockCurrent, rockToRaise);
                 }
                 else
                 {
                     // Fallback: simple weight
-                    Debug.Log($"[Desperation] Fallback: Draw to button");
+                    GameLog.Info($"[Desperation] Fallback: Draw to button");
                     OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                 }
             }
             else
             {
                 // Play it SAFE - just need 1 to tie
-                Debug.Log($"[Desperation] Playing safe - just need 1 to tie!");
+                GameLog.Info($"[Desperation] Playing safe - just need 1 to tie!");
                 
                 // OPTION 1: Draw to button (safest)
                 float drawScore = SimulateDraw(button, rockCurrent) + 30f;
@@ -4713,17 +4713,17 @@ public class AI_Target : MonoBehaviour
                 
                 if (protectedScore == bestScore && protectedScore > 0f)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Protected weight (score: {protectedScore:F2}) - SAFE TIE!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Protected weight (score: {protectedScore:F2}) - SAFE TIE!");
                     StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
                 }
                 else if (drawScore == bestScore)
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Draw to button (score: {drawScore:F2}) - SAFE TIE!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Draw to button (score: {drawScore:F2}) - SAFE TIE!");
                     OnTarget("Auto Draw Four Foot", rockCurrent, 0);
                 }
                 else
                 {
-                    Debug.Log($"[Desperation] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - SAFE TIE!");
+                    GameLog.Info($"[Desperation] ✓ SELECTED: Freeze (score: {freezeScore:F2}) - SAFE TIE!");
                     OnTarget("Freeze", rockCurrent, rockToFreeze);
                 }
             }
@@ -4731,7 +4731,7 @@ public class AI_Target : MonoBehaviour
         else
         {
             // Already have enough rocks! Just need to protect them
-            Debug.Log($"[Desperation] Already have {myRocksInHouse} rocks - PROTECT THEM!");
+            GameLog.Info($"[Desperation] Already have {myRocksInHouse} rocks - PROTECT THEM!");
             
             // Draw conservatively to add insurance
             float drawScore = SimulateDraw(button, rockCurrent);
@@ -4740,12 +4740,12 @@ public class AI_Target : MonoBehaviour
             
             if (protectedScore > drawScore && protectedScore > 0f)
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Protected weight - INSURANCE ROCK!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Protected weight - INSURANCE ROCK!");
                 StartCoroutine(DrawTarget(rockCurrent, protectedTarget));
             }
             else
             {
-                Debug.Log($"[Desperation] ✓ SELECTED: Draw to button - INSURANCE ROCK!");
+                GameLog.Info($"[Desperation] ✓ SELECTED: Draw to button - INSURANCE ROCK!");
                 OnTarget("Auto Draw Four Foot", rockCurrent, 0);
             }
         }
@@ -4772,7 +4772,7 @@ public class AI_Target : MonoBehaviour
         // Or just match them to tie
         int rocksNeeded = Mathf.Max(1, opponentRocksInHouse - myRocksInHouse + 1);
         
-        Debug.Log($"[RocksNeeded] My rocks: {myRocksInHouse}, Opponent rocks: {opponentRocksInHouse}, Need: {rocksNeeded}");
+        GameLog.Info($"[RocksNeeded] My rocks: {myRocksInHouse}, Opponent rocks: {opponentRocksInHouse}, Need: {rocksNeeded}");
         
         return rocksNeeded;
     }
@@ -4789,14 +4789,14 @@ public class AI_Target : MonoBehaviour
         // If we're VERY late (last 2 rocks), go for the win!
         if (rocksRemaining <= 2)
         {
-            Debug.Log($"[GoForTwo] LAST ROCK - GO FOR WIN!");
+            GameLog.Info($"[GoForTwo] LAST ROCK - GO FOR WIN!");
             return true;
         }
         
         // If we already have 1+ rocks, we have a cushion - try for win
         if (currentRocksInHouse >= 1)
         {
-            Debug.Log($"[GoForTwo] Have {currentRocksInHouse} rocks already - TRY FOR WIN!");
+            GameLog.Info($"[GoForTwo] Have {currentRocksInHouse} rocks already - TRY FOR WIN!");
             return true;
         }
         
@@ -4818,19 +4818,19 @@ public class AI_Target : MonoBehaviour
         
         if (opponentGuards >= 2)
         {
-            Debug.Log($"[GoForTwo] Opponent has {opponentGuards} guards - USE THEM FOR WIN!");
+            GameLog.Info($"[GoForTwo] Opponent has {opponentGuards} guards - USE THEM FOR WIN!");
             return true; // Use their guards to our advantage!
         }
         
         // If we have 3+ rocks remaining, we can afford to be aggressive
         if (rocksRemaining >= 4)
         {
-            Debug.Log($"[GoForTwo] {rocksRemaining} rocks left - TRY FOR WIN!");
+            GameLog.Info($"[GoForTwo] {rocksRemaining} rocks left - TRY FOR WIN!");
             return true;
         }
         
         // Default: play safe, just tie
-        Debug.Log($"[GoForTwo] Playing safe - JUST TIE!");
+        GameLog.Info($"[GoForTwo] Playing safe - JUST TIE!");
         return false;
     }
     
@@ -4843,12 +4843,12 @@ public class AI_Target : MonoBehaviour
     {
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         
-        Debug.Log($"[AI_Target] FORCE BLANK - Clear house to retain hammer!");
+        GameLog.Info($"[AI_Target] FORCE BLANK - Clear house to retain hammer!");
         
         // PHASE 1: Are there rocks in the house? REMOVE THEM WITH ROLLOUT!
         if (gm.houseList.Count > 0)
         {
-            Debug.Log($"[Force Blank] PHASE 1: {gm.houseList.Count} rock(s) in house - CLEAR THEM!");
+            GameLog.Info($"[Force Blank] PHASE 1: {gm.houseList.Count} rock(s) in house - CLEAR THEM!");
             
             GameObject targetRock = gm.houseList[0].rock; // Shot rock (closest)
             int targetRockIndex = gm.houseList[0].rockInfo.rockIndex;
@@ -4856,7 +4856,7 @@ public class AI_Target : MonoBehaviour
             // OPTION 1: Angled takeout (45° hit for shooter rollout - PREFERRED!)
             // This is better than nose hit because shooter naturally rolls out
             float angledTakeoutScore = SimulateAngledTakeout(targetRock, targetRockIndex, rockCurrent);
-            Debug.Log($"  Option 1: Angled Takeout (45° hit, rolls out) - Score: {angledTakeoutScore:F2}");
+            GameLog.Info($"  Option 1: Angled Takeout (45° hit, rolls out) - Score: {angledTakeoutScore:F2}");
             
             // OPTION 2: Runback (removes 2 rocks + shooter rolls through - EXCELLENT!)
             float runbackScore = 0f;
@@ -4867,55 +4867,55 @@ public class AI_Target : MonoBehaviour
                 guardToRunback = GetRockIndex(cenGuard);
                 runbackScore = SimulateRunback(cenGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f; // HUGE bonus - removes 2 rocks AND rolls out!
-                Debug.Log($"  Option 2: Runback (center finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                GameLog.Info($"  Option 2: Runback (center finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             else if (IsGuardBlocking(lCornGuard, targetRock))
             {
                 guardToRunback = GetRockIndex(lCornGuard);
                 runbackScore = SimulateRunback(lCornGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f;
-                Debug.Log($"  Option 2: Runback (left finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                GameLog.Info($"  Option 2: Runback (left finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             else if (IsGuardBlocking(rCornGuard, targetRock))
             {
                 guardToRunback = GetRockIndex(rCornGuard);
                 runbackScore = SimulateRunback(rCornGuard.gameObject, targetRock, guardToRunback, targetRockIndex, rockCurrent);
                 runbackScore += 30f;
-                Debug.Log($"  Option 2: Runback (right finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
+                GameLog.Info($"  Option 2: Runback (right finesse) - Score: {runbackScore:F2} - REMOVES TWO + ROLLOUT!");
             }
             
             // OPTION 3: Direct takeout (ONLY if shooter will roll out)
             // Nose hits can stick - not ideal for blanking
             float directTakeoutScore = SimulateTakeout(targetRock, targetRockIndex, rockCurrent);
             directTakeoutScore *= 0.7f; // Penalty - shooter might stick in house
-            Debug.Log($"  Option 3: Direct Takeout (nose hit, might stick) - Score: {directTakeoutScore:F2}");
+            GameLog.Info($"  Option 3: Direct Takeout (nose hit, might stick) - Score: {directTakeoutScore:F2}");
             
             // OPTION 4: Tick it out (sideways hit = natural rollout)
             float tickScore = SimulateTick(targetRock, targetRockIndex, rockCurrent);
             tickScore += 15f; // Bonus - tick shots usually roll out
-            Debug.Log($"  Option 4: Tick Shot (sideways, rolls out) - Score: {tickScore:F2}");
+            GameLog.Info($"  Option 4: Tick Shot (sideways, rolls out) - Score: {tickScore:F2}");
             
             // PICK BEST REMOVAL WITH ROLLOUT!
             float bestScore = Mathf.Max(angledTakeoutScore, runbackScore, directTakeoutScore, tickScore);
             
             if (runbackScore == bestScore && runbackScore > 0f)
             {
-                Debug.Log($"[Force Blank] ✓ SELECTED: Runback (score: {runbackScore:F2}) - PERFECT BLANK!");
+                GameLog.Info($"[Force Blank] ✓ SELECTED: Runback (score: {runbackScore:F2}) - PERFECT BLANK!");
                 OnTarget("Runback", rockCurrent, guardToRunback);
             }
             else if (angledTakeoutScore == bestScore && angledTakeoutScore > 0f)
             {
-                Debug.Log($"[Force Blank] ✓ SELECTED: Angled Takeout (score: {angledTakeoutScore:F2}) - ROLLOUT!");
+                GameLog.Info($"[Force Blank] ✓ SELECTED: Angled Takeout (score: {angledTakeoutScore:F2}) - ROLLOUT!");
                 OnTarget("Take Out", rockCurrent, targetRockIndex); // Same mechanics, just angled aim
             }
             else if (tickScore == bestScore && tickScore > 0f)
             {
-                Debug.Log($"[Force Blank] ✓ SELECTED: Tick Shot (score: {tickScore:F2}) - SIDEWAYS ROLLOUT!");
+                GameLog.Info($"[Force Blank] ✓ SELECTED: Tick Shot (score: {tickScore:F2}) - SIDEWAYS ROLLOUT!");
                 OnTarget("Tick Shot", rockCurrent, targetRockIndex);
             }
             else if (directTakeoutScore == bestScore && directTakeoutScore > 0f)
             {
-                Debug.Log($"[Force Blank] ✓ SELECTED: Direct Takeout (score: {directTakeoutScore:F2}) - HEAVY WEIGHT!");
+                GameLog.Info($"[Force Blank] ✓ SELECTED: Direct Takeout (score: {directTakeoutScore:F2}) - HEAVY WEIGHT!");
                 OnTarget("Take Out", rockCurrent, targetRockIndex);
             }
             else
@@ -4929,7 +4929,7 @@ public class AI_Target : MonoBehaviour
         }
         
         // PHASE 2: House is already clear! THROW IT AWAY!
-        Debug.Log($"[Force Blank] PHASE 2: House clear - THROW AWAY to retain hammer!");
+        GameLog.Info($"[Force Blank] PHASE 2: House clear - THROW AWAY to retain hammer!");
         
         // Throw to out-of-bounds positions to guarantee blank
         Vector2[] throwAwayTargets = new Vector2[]
@@ -4943,7 +4943,7 @@ public class AI_Target : MonoBehaviour
         // Pick a random throw-away target for variety
         Vector2 throwAwayTarget = throwAwayTargets[Random.Range(0, throwAwayTargets.Length)];
         
-        Debug.Log($"[Force Blank] ✓ SELECTED: Throw away to ({throwAwayTarget.x:F2}, {throwAwayTarget.y:F2}) - GUARANTEE BLANK!");
+        GameLog.Info($"[Force Blank] ✓ SELECTED: Throw away to ({throwAwayTarget.x:F2}, {throwAwayTarget.y:F2}) - GUARANTEE BLANK!");
         
         // Try physics-based throw away
         Vector2 pullbackPos;
@@ -4956,7 +4956,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[Force Blank] Throw away physics: Pullback=({takeOutX:F3}, {takeOutY:F3}), InTurn={useInTurn}");
+            GameLog.Info($"[Force Blank] Throw away physics: Pullback=({takeOutX:F3}, {takeOutY:F3}), InTurn={useInTurn}");
         }
         else
         {
@@ -5004,13 +5004,13 @@ public class AI_Target : MonoBehaviour
             // - Shooter continues forward (rolls out back)
             // - Cleaner than nose hits (which can stick)
             
-            Debug.Log($"[Angled Takeout] Target: {targetPos}, Angled aim: {angledTarget} (offset: {lateralOffset:F3})");
-            Debug.Log($"[Angled Takeout] Physics found 45° hit - shooter will roll out!");
+            GameLog.Info($"[Angled Takeout] Target: {targetPos}, Angled aim: {angledTarget} (offset: {lateralOffset:F3})");
+            GameLog.Info($"[Angled Takeout] Physics found 45° hit - shooter will roll out!");
             
             return 70f; // Excellent option for blanking
         }
         
-        Debug.Log($"[Angled Takeout] No physics solution found for angled hit");
+        GameLog.Info($"[Angled Takeout] No physics solution found for angled hit");
         return 0f;
     }
     
@@ -5027,7 +5027,7 @@ public class AI_Target : MonoBehaviour
         float baseScore = 70f; // Drawing is always a solid option
         float universalDrawPenalty = -15f; // UNIVERSAL penalty to reduce draw frequency
         
-        Debug.Log($"[Simulate Draw] UNIVERSAL DRAW PENALTY: {universalDrawPenalty} (reduce draw spam!)");
+        GameLog.Info($"[Simulate Draw] UNIVERSAL DRAW PENALTY: {universalDrawPenalty} (reduce draw spam!)");
         baseScore += universalDrawPenalty;
         
         // CRITICAL: DEFENSIVE PENALTY - Drawing when opponent has rocks is BAD!
@@ -5064,17 +5064,17 @@ public class AI_Target : MonoBehaviour
             if (scoreGap >= 3)
             {
                 defensiveDrawPenalty = rockCountPenalty * 1.5f; // 150% penalty (huge lead)
-                Debug.Log($"[Simulate Draw] DEFENSIVE DISASTER: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - REMOVE THEM! Penalty: -{defensiveDrawPenalty:F1}");
+                GameLog.Info($"[Simulate Draw] DEFENSIVE DISASTER: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - REMOVE THEM! Penalty: -{defensiveDrawPenalty:F1}");
             }
             else if (scoreGap >= 2)
             {
                 defensiveDrawPenalty = rockCountPenalty * 1.25f; // 125% penalty (good lead)
-                Debug.Log($"[Simulate Draw] DEFENSIVE ERROR: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - should takeout! Penalty: -{defensiveDrawPenalty:F1}");
+                GameLog.Info($"[Simulate Draw] DEFENSIVE ERROR: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - should takeout! Penalty: -{defensiveDrawPenalty:F1}");
             }
             else if (scoreGap >= 1)
             {
                 defensiveDrawPenalty = rockCountPenalty; // 100% penalty (small lead)
-                Debug.Log($"[Simulate Draw] DEFENSIVE MISTAKE: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - prefer takeout! Penalty: -{defensiveDrawPenalty:F1}");
+                GameLog.Info($"[Simulate Draw] DEFENSIVE MISTAKE: Leading by {scoreGap}, opponent has {opponentRocksInHouse} rocks - prefer takeout! Penalty: -{defensiveDrawPenalty:F1}");
             }
             
             baseScore -= defensiveDrawPenalty;
@@ -5086,7 +5086,7 @@ public class AI_Target : MonoBehaviour
         {
             float offensiveDrawPenalty = opponentRocksInHouse * 10f; // -10 per rock
             baseScore -= offensiveDrawPenalty;
-            Debug.Log($"[Simulate Draw] OFFENSIVE PENALTY: Opponent has {opponentRocksInHouse} rocks - prefer removal! Penalty: -{offensiveDrawPenalty:F1}");
+            GameLog.Info($"[Simulate Draw] OFFENSIVE PENALTY: Opponent has {opponentRocksInHouse} rocks - prefer removal! Penalty: -{offensiveDrawPenalty:F1}");
         }
         
         // If opponent is close to button, drawing is less valuable (hard to beat them)
@@ -5111,7 +5111,7 @@ public class AI_Target : MonoBehaviour
                     if (Mathf.Abs(targetPosition.x - guardPos.x) < 0.2f)
                     {
                         baseScore += 15f; // Guard is protecting this weight lane
-                        Debug.Log($"[Simulate Draw] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) is protecting the weight lane! Bonus +15");
+                        GameLog.Info($"[Simulate Draw] Guard at ({guardPos.x:F2}, {guardPos.y:F2}) is protecting the weight lane! Bonus +15");
                         break; // Only need one finesse to provide protection
                     }
                 }
@@ -5120,7 +5120,7 @@ public class AI_Target : MonoBehaviour
             baseScore -= 30f;
         }
         
-        Debug.Log($"[Simulate Draw] Final Score: {Mathf.Max(0f, baseScore):F1} (after universal penalty + context penalties)");
+        GameLog.Info($"[Simulate Draw] Final Score: {Mathf.Max(0f, baseScore):F1} (after universal penalty + context penalties)");
         
         return Mathf.Max(0f, baseScore);
     }
@@ -5191,7 +5191,7 @@ public class AI_Target : MonoBehaviour
             
             float score = (proximityScore * 40f) + (alignmentScore * 30f) + (distanceScore * 20f) + scoringBonus + 10f; // Base 10 for using raise
             
-            Debug.Log($"[Raise for Score] GUARD #{i} at ({guardPos.x:F2}, {guardPos.y:F2}):\n" +
+            GameLog.Info($"[Raise for Score] GUARD #{i} at ({guardPos.x:F2}, {guardPos.y:F2}):\n" +
                       $"  Estimated final: ({estimatedFinalPos.x:F2}, {estimatedFinalPos.y:F2})\n" +
                       $"  Dist to button: {finalDistToButton:F2}\n" +
                       $"  Alignment: {alignmentScore:F2} (lateral: {lateralOffset:F2})\n" +
@@ -5208,11 +5208,11 @@ public class AI_Target : MonoBehaviour
         
         if (bestRock >= 0)
         {
-            Debug.Log($"[Raise for Score] ✓ BEST: Guard #{bestRock} with score {bestScore:F1}/100 - Will raise into house!");
+            GameLog.Info($"[Raise for Score] ✓ BEST: Guard #{bestRock} with score {bestScore:F1}/100 - Will raise into house!");
         }
         else
         {
-            Debug.Log($"[Raise for Score] ✗ NO friendly guards available to raise");
+            GameLog.Info($"[Raise for Score] ✗ NO friendly guards available to raise");
         }
         
         return bestRock;
@@ -5273,7 +5273,7 @@ public class AI_Target : MonoBehaviour
             
             float score = (edgeProximityScore * 40f) + (angleScore * 30f) + (positionQualityScore * 30f);
             
-            Debug.Log($"[Tick Into House] Rock #{i} at ({rockPos.x:F2}, {rockPos.y:F2}): " +
+            GameLog.Info($"[Tick Into House] Rock #{i} at ({rockPos.x:F2}, {rockPos.y:F2}): " +
                       $"EdgeDist={distanceFromHouseEdge:F2}, Lateral={lateralPosition:F2}, Score={score:F1}/100");
             
             if (score > bestScore)
@@ -5285,7 +5285,7 @@ public class AI_Target : MonoBehaviour
         
         if (bestRock >= 0)
         {
-            Debug.Log($"[Tick Into House] ✓ BEST: Rock #{bestRock} with score {bestScore:F1}/100");
+            GameLog.Info($"[Tick Into House] ✓ BEST: Rock #{bestRock} with score {bestScore:F1}/100");
         }
         
         return bestRock;
@@ -5352,7 +5352,7 @@ public class AI_Target : MonoBehaviour
             
             float score = (proximityScore * 35f) + (protectionScore * 35f) + (guardPositionScore * 20f) + deepnessBonus + 10f; // +10 base for using opponent finesse
             
-            Debug.Log($"[Bury Draw] Behind OPPONENT finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({buryPos.x:F2}, {buryPos.y:F2}): " +
+            GameLog.Info($"[Bury Draw] Behind OPPONENT finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({buryPos.x:F2}, {buryPos.y:F2}): " +
                       $"DistToButton={distToButton:F2}, Protected={wellProtected}, GuardCenter={guardCenteredness:F2}, " +
                       $"Deepness={buryPos.y:F2}, Score={score:F1}/100");
             
@@ -5365,7 +5365,7 @@ public class AI_Target : MonoBehaviour
         
         if (bestScore > 0f)
         {
-            Debug.Log($"[Bury Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100 - Using OPPONENT finesse as protection!");
+            GameLog.Info($"[Bury Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100 - Using OPPONENT finesse as protection!");
         }
         
         return bestPosition;
@@ -5424,7 +5424,7 @@ public class AI_Target : MonoBehaviour
             
             float score = (proximityScore * 40f) + (protectionScore * 40f) + (guardPositionScore * 20f);
             
-            Debug.Log($"[Protected Draw] Behind finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({protectedPos.x:F2}, {protectedPos.y:F2}): " +
+            GameLog.Info($"[Protected Draw] Behind finesse at ({guardPos.x:F2}, {guardPos.y:F2}) → position ({protectedPos.x:F2}, {protectedPos.y:F2}): " +
                       $"DistToButton={distToButton:F2}, Protected={wellProtected}, Score={score:F1}/100");
             
             if (score > bestScore)
@@ -5436,7 +5436,7 @@ public class AI_Target : MonoBehaviour
         
         if (bestScore > 0f)
         {
-            Debug.Log($"[Protected Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100");
+            GameLog.Info($"[Protected Draw] ✓ BEST: Position ({bestPosition.x:F2}, {bestPosition.y:F2}) with score {bestScore:F1}/100");
         }
         
         return bestPosition;
@@ -5493,7 +5493,7 @@ public class AI_Target : MonoBehaviour
                     otherRocksInPlay.Add(rockEntry.rock);
                 }
                 
-                Debug.Log($"[Multi-Rock Takeout] Checking {otherRocksInPlay.Count} potential secondary targets for hit rock path with {hitRockPath.Count} points");
+                GameLog.Info($"[Multi-Rock Takeout] Checking {otherRocksInPlay.Count} potential secondary targets for hit rock path with {hitRockPath.Count} points");
                 
                 // Check if hit rock's path gets close to any other rocks
                 int secondaryHits = 0;
@@ -5531,12 +5531,12 @@ public class AI_Target : MonoBehaviour
                         {
                             opponentSecondaryHits++;
                             totalChaos += 25f; // BIG BONUS: Hit opponent's rock!
-                            Debug.Log($"[Multi-Rock] ✓ SECONDARY HIT (opponent): {secondaryRock.name} at dist {closestDist:F3} - CHAOS +25!");
+                            GameLog.Info($"[Multi-Rock] ✓ SECONDARY HIT (opponent): {secondaryRock.name} at dist {closestDist:F3} - CHAOS +25!");
                         }
                         else
                         {
                             totalChaos += 10f; // Smaller bonus: Hit our own rock (still disrupts ice)
-                            Debug.Log($"[Multi-Rock] ⚠️ SECONDARY HIT (friendly): {secondaryRock.name} at dist {closestDist:F3} - chaos +10");
+                            GameLog.Info($"[Multi-Rock] ⚠️ SECONDARY HIT (friendly): {secondaryRock.name} at dist {closestDist:F3} - chaos +10");
                         }
                     }
                 }
@@ -5545,12 +5545,12 @@ public class AI_Target : MonoBehaviour
                 if (secondaryHits >= 3)
                 {
                     totalChaos += 30f; // HUGE BONUS: 3+ rocks affected (CHAOS MADNESS!)
-                    Debug.Log($"[Multi-Rock] 🎯 CHAOS MADNESS! {secondaryHits} secondary hits - BONUS +30!");
+                    GameLog.Info($"[Multi-Rock] 🎯 CHAOS MADNESS! {secondaryHits} secondary hits - BONUS +30!");
                 }
                 else if (secondaryHits >= 2)
                 {
                     totalChaos += 20f; // Big bonus: 2+ rocks affected
-                    Debug.Log($"[Multi-Rock] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits - BONUS +20!");
+                    GameLog.Info($"[Multi-Rock] 🎯 MULTI-ROCK CHAOS! {secondaryHits} secondary hits - BONUS +20!");
                 }
                 
                 // Apply chaos bonus to base score
@@ -5558,7 +5558,7 @@ public class AI_Target : MonoBehaviour
                 
                 if (secondaryHits > 0)
                 {
-                    Debug.Log($"[Multi-Rock Takeout] PRIMARY hit + {secondaryHits} SECONDARY hits ({opponentSecondaryHits} opponent) → TOTAL SCORE: {finalScore:F1}/100 (base: {baseScore:F1}, chaos: +{totalChaos:F1})");
+                    GameLog.Info($"[Multi-Rock Takeout] PRIMARY hit + {secondaryHits} SECONDARY hits ({opponentSecondaryHits} opponent) → TOTAL SCORE: {finalScore:F1}/100 (base: {baseScore:F1}, chaos: +{totalChaos:F1})");
                 }
                 
                 return Mathf.Min(100f, finalScore); // Cap at 100
@@ -5663,11 +5663,11 @@ public class AI_Target : MonoBehaviour
         // If they're not well-aligned, runback won't work
         float alignmentQuality = CheckRunbackAlignment(launcherPos, guardPos, targetPos);
         
-        Debug.Log($"[AI_Target] Runback alignment check: launcher={launcherPos}, finesse={guardPos}, target={targetPos}, quality={alignmentQuality:F2}");
+        GameLog.Info($"[AI_Target] Runback alignment check: launcher={launcherPos}, finesse={guardPos}, target={targetPos}, quality={alignmentQuality:F2}");
         
         if (alignmentQuality < 0.6f) // Need good alignment (60%+ quality)
         {
-            Debug.Log($"[AI_Target] Runback rejected - poor alignment ({alignmentQuality:F2} < 0.6)");
+            GameLog.Info($"[AI_Target] Runback rejected - poor alignment ({alignmentQuality:F2} < 0.6)");
             return 0f;
         }
         
@@ -5675,7 +5675,7 @@ public class AI_Target : MonoBehaviour
         float guardToTargetDist = Vector2.Distance(guardPos, targetPos);
         if (guardToTargetDist < 0.5f || guardToTargetDist > 3.0f)
         {
-            Debug.Log($"[AI_Target] Runback rejected - distance ({guardToTargetDist:F2}) outside optimal range (0.5-3.0)");
+            GameLog.Info($"[AI_Target] Runback rejected - distance ({guardToTargetDist:F2}) outside optimal range (0.5-3.0)");
             return 0f; // Too close or too far
         }
         
@@ -5690,11 +5690,11 @@ public class AI_Target : MonoBehaviour
             float distanceScore = 1.0f - Mathf.Clamp01((guardToTargetDist - 0.5f) / 2.5f); // Closer = better
             float totalScore = 55f * alignmentQuality * distanceScore;
             
-            Debug.Log($"[AI_Target] Runback viable! Alignment={alignmentQuality:F2}, Distance={guardToTargetDist:F2}, Score={totalScore:F2}");
+            GameLog.Info($"[AI_Target] Runback viable! Alignment={alignmentQuality:F2}, Distance={guardToTargetDist:F2}, Score={totalScore:F2}");
             return totalScore; // Good option if well-aligned
         }
         
-        Debug.Log($"[AI_Target] Runback physics shot failed");
+        GameLog.Info($"[AI_Target] Runback physics shot failed");
         return 0f;
     }
     
@@ -5721,7 +5721,7 @@ public class AI_Target : MonoBehaviour
         // - 0.4 dot product = 0.0 quality (too angled)
         float quality = Mathf.Clamp01((alignment - 0.4f) / 0.4f);
         
-        Debug.Log($"[AI_Target] Alignment vectors: L→G={launcherToGuard}, G→T={guardToTarget}, dot={alignment:F3}, quality={quality:F2}");
+        GameLog.Info($"[AI_Target] Alignment vectors: L→G={launcherToGuard}, G→T={guardToTarget}, dot={alignment:F3}, quality={quality:F2}");
         
         return quality;
     }
@@ -5819,7 +5819,7 @@ public class AI_Target : MonoBehaviour
             // TOTAL SCORE (0-100)
             float score = behindScore + lateralScore + distScore;
             
-            Debug.Log($"[Freeze Target] Rock at ({rockPos.x:F2}, {rockPos.y:F2}): " +
+            GameLog.Info($"[Freeze Target] Rock at ({rockPos.x:F2}, {rockPos.y:F2}): " +
                       $"Behind={distBehindButton:F2} (score:{behindScore:F1}), " +
                       $"Lateral={lateralDist:F2} (score:{lateralScore:F1}), " +
                       $"TotalDist={totalDist:F2} (score:{distScore:F1}) " +
@@ -5834,11 +5834,11 @@ public class AI_Target : MonoBehaviour
         
         if (bestRock >= 0)
         {
-            Debug.Log($"[Freeze Target] ✓ BEST: Rock #{bestRock} with score {bestScore:F1}/100");
+            GameLog.Info($"[Freeze Target] ✓ BEST: Rock #{bestRock} with score {bestScore:F1}/100");
         }
         else
         {
-            Debug.Log($"[Freeze Target] ✗ NO suitable freeze target found");
+            GameLog.Info($"[Freeze Target] ✗ NO suitable freeze target found");
         }
 
         return bestRock;
@@ -5950,8 +5950,8 @@ public class AI_Target : MonoBehaviour
         
         if (guardLimitReached)
         {
-            Debug.Log($"[Strategic Guard] GUARD LIMIT REACHED! {myGuardsThrown} guards thrown, {myRocksInHouse} rocks in house");
-            Debug.Log($"[Strategic Guard] ➜ FORCING DRAW instead - need to establish house position!");
+            GameLog.Info($"[Strategic Guard] GUARD LIMIT REACHED! {myGuardsThrown} guards thrown, {myRocksInHouse} rocks in house");
+            GameLog.Info($"[Strategic Guard] ➜ FORCING DRAW instead - need to establish house position!");
             
             // FORCE A DRAW SHOT instead of another guard
             // Target: Front of house (Y = 5.5-6.5) to establish position
@@ -5960,7 +5960,7 @@ public class AI_Target : MonoBehaviour
                 Random.Range(5.5f, 6.8f)   // Front to mid house
             );
             
-            Debug.Log($"[Strategic Guard] Drawing to ({drawTarget.x:F2}, {drawTarget.y:F2}) instead of guard");
+            GameLog.Info($"[Strategic Guard] Drawing to ({drawTarget.x:F2}, {drawTarget.y:F2}) instead of guard");
             StartCoroutine(DrawTarget(rockCurrent, drawTarget));
             return; // Exit early - we're drawing instead!
         }
@@ -5974,7 +5974,7 @@ public class AI_Target : MonoBehaviour
         // ========================================
         if (gm.houseList.Count > 0)
         {
-            Debug.Log($"[Strategic Guard] REACTIVE mode - {gm.houseList.Count} rocks in house");
+            GameLog.Info($"[Strategic Guard] REACTIVE mode - {gm.houseList.Count} rocks in house");
             
             // PRIORITY 1: Find unguarded FRIENDLY rocks to protect
             GameObject unguardedFriendly = null;
@@ -6034,7 +6034,7 @@ public class AI_Target : MonoBehaviour
                 );
                 
                 guardType = $"Protective Guard (matching rock at X={rockPos.x:F2})";
-                Debug.Log($"[Strategic Guard] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                GameLog.Info($"[Strategic Guard] PROTECT unguarded friendly at ({rockPos.x:F2}, {rockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
             
             // PRIORITY 2: If no unguarded friendlies, finesse SHOT ROCK (if it's ours)
@@ -6068,7 +6068,7 @@ public class AI_Target : MonoBehaviour
                     );
                     
                     guardType = "Shot Rock Guard";
-                    Debug.Log($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, " + $"{shotRockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    GameLog.Info($"[Strategic Guard] PROTECT shot rock at ({shotRockPos.x:F2}, " + $"{shotRockPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 }
                 else
                 {
@@ -6080,7 +6080,7 @@ public class AI_Target : MonoBehaviour
             // PRIORITY 3: Counter opponent's guards (block their weight lanes)
             else
             {
-                Debug.Log($"[Strategic Guard] No friendly rocks to protect - checking opponent guards");
+                GameLog.Info($"[Strategic Guard] No friendly rocks to protect - checking opponent guards");
                 
                 // Find opponent's most dangerous finesse (closest to house, best X position)
                 Transform bestOpponentGuard = null;
@@ -6119,7 +6119,7 @@ public class AI_Target : MonoBehaviour
                     );
                     
                     guardType = "Counter-Guard (blocking opponent lane)";
-                    Debug.Log($"[Strategic Guard] COUNTER opponent finesse at ({opponentGuardPos.x:F2}, {opponentGuardPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                    GameLog.Info($"[Strategic Guard] COUNTER opponent finesse at ({opponentGuardPos.x:F2}, {opponentGuardPos.y:F2}) → finesse at ({guardTarget.x:F2}, {guardTarget.y:F2})");
                 }
                 else
                 {
@@ -6139,7 +6139,7 @@ public class AI_Target : MonoBehaviour
         // ========================================
         if (useOpeningStrategy)
         {
-            Debug.Log($"[Strategic Guard] OPENING mode - hasHammer={hasHammer}");
+            GameLog.Info($"[Strategic Guard] OPENING mode - hasHammer={hasHammer}");
             
             if (!hasHammer)
             {
@@ -6152,7 +6152,7 @@ public class AI_Target : MonoBehaviour
                 );
                 
                 guardType = "Aggressive Center Guard (clutter center)";
-                Debug.Log($"[Strategic Guard] WITHOUT HAMMER → Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                GameLog.Info($"[Strategic Guard] WITHOUT HAMMER → Center guard at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
             else
             {
@@ -6178,7 +6178,7 @@ public class AI_Target : MonoBehaviour
                         rightGuards++;
                 }
                 
-                Debug.Log($"[Strategic Guard] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
+                GameLog.Info($"[Strategic Guard] Existing guards: Left={leftGuards}, Center={centerGuards}, Right={rightGuards}");
                 
                 // Prefer balancing left/right, avoid center
                 bool placeLeft;
@@ -6233,14 +6233,14 @@ public class AI_Target : MonoBehaviour
                     guardType = "RIGHT " + guardType;
                 }
                 
-                Debug.Log($"[Strategic Guard] WITH HAMMER → {guardType} at ({guardTarget.x:F2}, {guardTarget.y:F2})");
+                GameLog.Info($"[Strategic Guard] WITH HAMMER → {guardType} at ({guardTarget.x:F2}, {guardTarget.y:F2})");
             }
         }
         
         // ========================================
         // EXECUTION: Physics-based weight to target + accuracy adjustments
         // ========================================
-        Debug.Log($"[Strategic Guard] Final target: ({guardTarget.x:F2}, {guardTarget.y:F2}) - {guardType}");
+        GameLog.Info($"[Strategic Guard] Final target: ({guardTarget.x:F2}, {guardTarget.y:F2}) - {guardType}");
         
         Vector2 pullbackPos;
         bool useInTurn;
@@ -6268,7 +6268,7 @@ public class AI_Target : MonoBehaviour
                 // Apply error to TARGET position (not pullback!)
                 Vector2 adjustedTarget = guardTarget + targetError;
                 
-                Debug.Log($"[Guard Accuracy] Original target: {guardTarget}, Finesse: {finesseAccuracy}%, Error: {targetError}, Adjusted target: {adjustedTarget}");
+                GameLog.Info($"[Guard Accuracy] Original target: {guardTarget}, Finesse: {finesseAccuracy}%, Error: {targetError}, Adjusted target: {adjustedTarget}");
                 
                 // STEP 3: Recalculate pullback for adjusted target
                 Vector2 adjustedPullback;
@@ -6279,7 +6279,7 @@ public class AI_Target : MonoBehaviour
                 {
                     pullbackPos = adjustedPullback;
                     useInTurn = adjustedInTurn;
-                    Debug.Log($"[Guard Accuracy] Recalculated for adjusted target: pullback={pullbackPos}, inTurn={useInTurn}");
+                    GameLog.Info($"[Guard Accuracy] Recalculated for adjusted target: pullback={pullbackPos}, inTurn={useInTurn}");
                 }
                 else
                 {
@@ -6290,7 +6290,7 @@ public class AI_Target : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[Guard Accuracy] No shooter stats - using perfect accuracy (no error)");
+                GameLog.Info($"[Guard Accuracy] No shooter stats - using perfect accuracy (no error)");
             }
             
             // STEP 4: Set pullback and execute
@@ -6298,7 +6298,7 @@ public class AI_Target : MonoBehaviour
             takeOutX = pullbackPos.x;
             takeOutY = pullbackPos.y;
             
-            Debug.Log($"[Strategic Guard] ✓ EXECUTING {guardType}\n" +
+            GameLog.Info($"[Strategic Guard] ✓ EXECUTING {guardType}\n" +
                       $"  Target: ({guardTarget.x:F2}, {guardTarget.y:F2})\n" +
                       $"  Pullback: ({takeOutX:F3}, {takeOutY:F3})\n" +
                       $"  Turn: {(useInTurn ? "IN-TURN (curl right)" : "OUT-TURN (curl left)")}\n" +

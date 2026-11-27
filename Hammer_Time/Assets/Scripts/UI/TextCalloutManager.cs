@@ -122,7 +122,7 @@ public class TextCalloutManager : MonoBehaviour
             CreateCalloutObject();
         }
 
-        Debug.Log($"[TextCalloutManager] Initialized pool with {poolSize} callouts");
+        GameLog.Info($"[TextCalloutManager] Initialized pool with {poolSize} callouts");
     }
 
     /// <summary>
@@ -161,7 +161,7 @@ public class TextCalloutManager : MonoBehaviour
         // Pool empty - create new if allowed
         if (autoExpandPool)
         {
-            Debug.Log("[TextCalloutManager] Pool empty, creating new callout");
+            GameLog.Info("[TextCalloutManager] Pool empty, creating new callout");
             TextCallout newCallout = CreateCalloutObject();
             if (newCallout != null)
             {
@@ -243,7 +243,7 @@ public class TextCalloutManager : MonoBehaviour
 
         if (debugStacking && adjustedPosition != targetPosition)
         {
-            Debug.Log($"[TextCalloutManager] Stacked callout '{text}' - offset by {adjustedPosition.y - targetPosition.y:F2}m");
+            GameLog.Info($"[TextCalloutManager] Stacked callout '{text}' - offset by {adjustedPosition.y - targetPosition.y:F2}m");
         }
 
         return callout;
@@ -296,7 +296,7 @@ public class TextCalloutManager : MonoBehaviour
         
         if (debugStacking)
         {
-            Debug.Log($"[TextCalloutManager] Triggered slide-up on {nearbyCallouts.Count} callouts by {stackSpacingWorldUnits} world units (= {stackSpacingWorldUnits * 100f} units in your scale)");
+            GameLog.Info($"[TextCalloutManager] Triggered slide-up on {nearbyCallouts.Count} callouts by {stackSpacingWorldUnits} world units (= {stackSpacingWorldUnits * 100f} units in your scale)");
         }
         
         // New callout starts at original position (existing ones will slide up above it)

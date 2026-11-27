@@ -122,8 +122,8 @@ public class TournySelector : MonoBehaviour
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         SponsorManager pm = FindFirstObjectByType<SponsorManager>();
 
-        Debug.Log("TSel cm.week is " + cm.week);
-        Debug.Log($"[TournySelector] SetUp() - Checking tournament arrays BEFORE any loading:");
+        GameLog.Info("TSel cm.week is " + cm.week);
+        GameLog.Info($"[TournySelector] SetUp() - Checking tournament arrays BEFORE any loading:");
         
         // DEBUG: Check initial state of tournament arrays
         if (tournies != null)
@@ -132,7 +132,7 @@ public class TournySelector : MonoBehaviour
             {
                 if (tournies[i] != null)
                 {
-                    Debug.Log($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
+                    GameLog.Info($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
                 }
             }
         }
@@ -140,18 +140,18 @@ public class TournySelector : MonoBehaviour
         if (cm.week == 0)
         {
             // CRITICAL FIX: Starting new career - clear all tournament completion flags
-            Debug.Log("[TournySelector] New career (week 0) - clearing all completion flags");
+            GameLog.Info("[TournySelector] New career (week 0) - clearing all completion flags");
             ClearAllCompletionFlags();
             
             // Then set up new season
-            Debug.Log("[TournySelector] New career (week 0) - calling NewSeason()");
+            GameLog.Info("[TournySelector] New career (week 0) - calling NewSeason()");
             cm.NewSeason();
         }
         else
         {
             // CRITICAL FIX: Pass 'this' to LoadCareer so it can set tournament completion status
             // BEFORE SetActiveTournies() is called
-            Debug.Log("[TournySelector] Existing career (week > 0) - calling LoadCareer()");
+            GameLog.Info("[TournySelector] Existing career (week > 0) - calling LoadCareer()");
             cm.LoadCareer(tSel: this);
             
             // CRITICAL FIX: Apply any pending completion data that was stored during load
@@ -164,16 +164,16 @@ public class TournySelector : MonoBehaviour
                 cm.RebuildTeamsFromPool();
             }
 
-            Debug.Log("[TournySelector] Calling ApplyPendingCompletionData() to sync any stored completion IDs");
+            GameLog.Info("[TournySelector] Calling ApplyPendingCompletionData() to sync any stored completion IDs");
             cm.ApplyPendingCompletionData(this);
-            Debug.Log("[TournySelector] ApplyPendingCompletionData() returned - verifying CM arrays and pending state");
+            GameLog.Info("[TournySelector] ApplyPendingCompletionData() returned - verifying CM arrays and pending state");
             
             // CRITICAL FIX: After loading, sync completion status from CareerManager arrays
             // This handles the case where we just returned from a tournament
             // and TournySelector was recreated (fresh ScriptableObjects)
             SyncCompletionFromCareerManager();
             
-            Debug.Log($"[TournySelector] SetUp() - Checking tournament arrays AFTER loading/syncing:");
+            GameLog.Info($"[TournySelector] SetUp() - Checking tournament arrays AFTER loading/syncing:");
 
             // DEBUG: Check state after loading
             if (tournies != null)
@@ -182,14 +182,14 @@ public class TournySelector : MonoBehaviour
                 {
                     if (tournies[i] != null)
                     {
-                        Debug.Log($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
+                        GameLog.Info($"  tournies[{i}] '{tournies[i].name}' (ID {tournies[i].id}): complete={tournies[i].complete}, trophyWon={tournies[i].trophyWon}");
                     }
                 }
             }
         }
 
         // Safety: ensure any pending completion data gets applied again before UI builds
-        Debug.Log("[TournySelector] Final sync before opening team menu: invoking ApplyPendingCompletionData() as safety");
+        GameLog.Info("[TournySelector] Final sync before opening team menu: invoking ApplyPendingCompletionData() as safety");
         cm.ApplyPendingCompletionData(this);
         teamMenu.TeamMenuOpen();
         pm.SetUp();
@@ -208,7 +208,7 @@ public class TournySelector : MonoBehaviour
     /// </summary>
     private void SyncCompletionFromCareerManager()
     {
-        Debug.Log("[TournySelector] Syncing completion status from CareerManager arrays...");
+        GameLog.Info("[TournySelector] Syncing completion status from CareerManager arrays...");
         
         // Sync regular tournaments
         if (cm.tournies != null && tournies != null)
@@ -220,7 +220,7 @@ public class TournySelector : MonoBehaviour
                     tournies[i].complete = cm.tournies[i].complete;
                     tournies[i].trophyWon = cm.tournies[i].trophyWon;
                     if (cm.tournies[i].complete)
-                        Debug.Log($"  ? Synced tournies[{i}] '{tournies[i].name}' - complete");
+                        GameLog.Info($"  ? Synced tournies[{i}] '{tournies[i].name}' - complete");
                 }
             }
         }
@@ -235,7 +235,7 @@ public class TournySelector : MonoBehaviour
                     tour[i].complete = cm.tour[i].complete;
                     tour[i].trophyWon = cm.tour[i].trophyWon;
                     if (cm.tour[i].complete)
-                        Debug.Log($"  ? Synced tour[{i}] '{tour[i].name}' - complete");
+                        GameLog.Info($"  ? Synced tour[{i}] '{tour[i].name}' - complete");
                 }
             }
         }
@@ -250,7 +250,7 @@ public class TournySelector : MonoBehaviour
                     provQual[i].complete = cm.prov[i].complete;
                     provQual[i].trophyWon = cm.prov[i].trophyWon;
                     if (cm.prov[i].complete)
-                        Debug.Log($"  ? Synced provQual[{i}] '{provQual[i].name}' - complete");
+                        GameLog.Info($"  ? Synced provQual[{i}] '{provQual[i].name}' - complete");
                 }
             }
         }
@@ -263,18 +263,18 @@ public class TournySelector : MonoBehaviour
                 tourChampionship.complete = cm.champ[0].complete;
                 tourChampionship.trophyWon = cm.champ[0].trophyWon;
                 if (cm.champ[0].complete)
-                    Debug.Log($"  ? Synced tourChampionship - complete");
+                    GameLog.Info($"  ? Synced tourChampionship - complete");
             }
             if (cm.champ[1] != null && provChampionship != null)
             {
                 provChampionship.complete = cm.champ[1].complete;
                 provChampionship.trophyWon = cm.champ[1].trophyWon;
                 if (cm.champ[1].complete)
-                    Debug.Log($"  ? Synced provChampionship - complete");
+                    GameLog.Info($"  ? Synced provChampionship - complete");
             }
         }
         
-        Debug.Log("[TournySelector] ? Completion sync complete");
+        GameLog.Info("[TournySelector] ? Completion sync complete");
     }
     
     /// <summary>
@@ -283,7 +283,7 @@ public class TournySelector : MonoBehaviour
     /// </summary>
     public void ClearAllCompletionFlags()
     {
-        Debug.Log("[TournySelector] Clearing ALL tournament completion flags for new career...");
+        GameLog.Info("[TournySelector] Clearing ALL tournament completion flags for new career...");
         
         int clearedCount = 0;
         
@@ -386,7 +386,7 @@ public class TournySelector : MonoBehaviour
             }
         }
         
-        Debug.Log($"[TournySelector] ? Cleared {clearedCount} tournament completion flags");
+        GameLog.Info($"[TournySelector] ? Cleared {clearedCount} tournament completion flags");
     }
 
     IEnumerator WaitForDialogue()
@@ -684,7 +684,7 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
+                    GameLog.Info("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
                     if (!cm.provQual)
                         tourComplete = true;
 
@@ -959,7 +959,7 @@ public class TournySelector : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
+                    GameLog.Info("tourniesComplete - " + tourniesComplete + " | tourComplete - " + tourComplete + " | provQualComplete - " + provQualComplete);
                     if (!cm.provQual)
                         tourComplete = true;
 
@@ -1208,19 +1208,19 @@ public class TournySelector : MonoBehaviour
         // (by design). Marked by object identity: ids collide across arrays (empty/tournies[0], locals/provQual).
         pendingMarked = TournyCompletion.MarkOffered(activeTournies, emptyTourny, locals);
         foreach (var t in pendingMarked)
-            Debug.Log($"[TournySelector] Marked '{t.name}' (ID {t.id}) as complete");
+            GameLog.Info($"[TournySelector] Marked '{t.name}' (ID {t.id}) as complete");
 
         if (currentTourny.championship)
         {
             if (currentTourny.name == tourChampionship.name)
             {
                 tourChampionship.complete = true;
-                Debug.Log($"[TournySelector] Marked tourChampionship as complete");
+                GameLog.Info($"[TournySelector] Marked tourChampionship as complete");
             }
             if (currentTourny.name == provChampionship.name)
             {
                 provChampionship.complete = true;
-                Debug.Log($"[TournySelector] Marked provChampionship as complete");
+                GameLog.Info($"[TournySelector] Marked provChampionship as complete");
             }
         }
 
@@ -1230,7 +1230,7 @@ public class TournySelector : MonoBehaviour
 
         gsp.LoadFromTournySelector();
 
-        Debug.Log("TSel Current Tourny Name is " + currentTourny.name);
+        GameLog.Info("TSel Current Tourny Name is " + currentTourny.name);
 
         // CRITICAL FIX: Sync CareerManager arrays with TournySelector arrays
         // This ensures completion status is saved even when TournySelector doesn't exist later
@@ -1242,7 +1242,7 @@ public class TournySelector : MonoBehaviour
         cm.champ[1] = provChampionship;
         cm.activeTournies = activeTournies;
         
-        Debug.Log($"[TournySelector] Synced CM arrays - tournies: {cm.tournies?.Length ?? 0}, tour: {cm.tour?.Length ?? 0}, prov: {cm.prov?.Length ?? 0}");
+        GameLog.Info($"[TournySelector] Synced CM arrays - tournies: {cm.tournies?.Length ?? 0}, tour: {cm.tour?.Length ?? 0}, prov: {cm.prov?.Length ?? 0}");
         
         // Entry fee + weekly cost are charged once, here. Start (TournySettings.LoadToGSP) must not charge again;
         // Back refunds the same total.
@@ -1300,7 +1300,7 @@ public class TournySelector : MonoBehaviour
     public void SelectTourny(int button)
     {
         currentTourny = activeTournies[button];
-        Debug.Log("Button is " + button);
+        GameLog.Info("Button is " + button);
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();
         cm.SetupTourny(this, gsp);
         //playButton.SetActive(true);
@@ -1764,7 +1764,7 @@ public class TournySelector : MonoBehaviour
             {
                 if (i != menuSelector && menuButtons[i].GetComponent<Animator>().GetBool("Expand"))
                 {
-                    Debug.Log("shrinking button is " + menuButtons[i].name);
+                    GameLog.Info("shrinking button is " + menuButtons[i].name);
 
                     Animator shrinkAnim = menuButtons[i].GetComponent<Animator>();
 

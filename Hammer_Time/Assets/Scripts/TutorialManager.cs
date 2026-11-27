@@ -67,7 +67,7 @@ public class TutorialManager : MonoBehaviour
     IEnumerator RunTutorial()
     {
         //yield return new WaitForSeconds(0.5f);
-        Debug.Log("Set Hammer Tutorial");
+        GameLog.Info("Set Hammer Tutorial");
         //gm.SetHammerRed();
 
         yield return StartCoroutine(PlaceRocks());
@@ -186,7 +186,7 @@ public class TutorialManager : MonoBehaviour
             gm.rockList[i].rockInfo.released = true;
             gm.rockList[i].rockInfo.stopped = true;
             gm.rockList[i].rockInfo.rest = true;
-            Debug.Log("i is equal to " + i);
+            GameLog.Info("i is equal to " + i);
 
             //rockBar.ShotUpdate(i, gm.rockList[i].rockInfo.outOfPlay);
 

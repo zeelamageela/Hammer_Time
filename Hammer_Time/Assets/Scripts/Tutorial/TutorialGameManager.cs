@@ -65,7 +65,7 @@ public class TutorialGameManager : MonoBehaviour
         // the old "if (!isTutorialGame)" condition was always true on first frame).
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "TutorialGame")
         {
-            Debug.Log("[TutorialGameManager] Not in TutorialGame scene — skipping auto-init");
+            GameLog.Info("[TutorialGameManager] Not in TutorialGame scene — skipping auto-init");
             return;
         }
 
@@ -132,13 +132,13 @@ public class TutorialGameManager : MonoBehaviour
         // Pick flick or pull-release tutorial based on the player's shot style setting
         bool useFlick = GameVisualizationSettings.Instance != null && GameVisualizationSettings.Instance.FlickShotMode;
         activeSetup = (useFlick && flickShotTutorialSetup != null) ? flickShotTutorialSetup : tutorialSetup;
-        Debug.Log($"[TutorialGameManager] Shot style: {(useFlick ? "FlickShot" : "PullRelease")} — using setup: {activeSetup?.name ?? "NULL"}");
+        GameLog.Info($"[TutorialGameManager] Shot style: {(useFlick ? "FlickShot" : "PullRelease")} — using setup: {activeSetup?.name ?? "NULL"}");
 
-        Debug.Log("[TutorialGameManager] Initializing tutorial game:");
-        Debug.Log($"  - Starting End: {activeSetup.startingEnd}");
-        Debug.Log($"  - Score: {activeSetup.startingScore.x}-{activeSetup.startingScore.y}");
-        Debug.Log($"  - Player has hammer: {activeSetup.playerHasHammer}");
-        Debug.Log($"  - Rocks per team: {activeSetup.rocksPerTeam}");
+        GameLog.Info("[TutorialGameManager] Initializing tutorial game:");
+        GameLog.Info($"  - Starting End: {activeSetup.startingEnd}");
+        GameLog.Info($"  - Score: {activeSetup.startingScore.x}-{activeSetup.startingScore.y}");
+        GameLog.Info($"  - Player has hammer: {activeSetup.playerHasHammer}");
+        GameLog.Info($"  - Rocks per team: {activeSetup.rocksPerTeam}");
         
         // Get GSP to update runtime team data (if present)
         GameSettingsPersist gsp = Object.FindAnyObjectByType<GameSettingsPersist>();
@@ -221,7 +221,7 @@ public class TutorialGameManager : MonoBehaviour
                     sweepCohesion = stat
                 });
             }
-            Debug.Log($"[TutorialGameManager] Created red team '{playerTeam}' with {gsp.redTeam.players.Count} players");
+            GameLog.Info($"[TutorialGameManager] Created red team '{playerTeam}' with {gsp.redTeam.players.Count} players");
             
             // Yellow team = AI opponent
             gsp.yellowTeam = new Team
@@ -246,10 +246,10 @@ public class TutorialGameManager : MonoBehaviour
                     sweepCohesion = 100
                 });
             }
-            Debug.Log($"[TutorialGameManager] Created yellow team with {gsp.yellowTeam.players.Count} players");
+            GameLog.Info($"[TutorialGameManager] Created yellow team with {gsp.yellowTeam.players.Count} players");
         }
         
-        Debug.Log($"[TutorialGameManager] Team setup: Player={playerTeam}, Opponent={opponentTeam}");
+        GameLog.Info($"[TutorialGameManager] Team setup: Player={playerTeam}, Opponent={opponentTeam}");
         
         // Snapshot the career flags before the tutorial clobbers them so we can restore
         // them when returning to SplashMenu, keeping career continuation working correctly.
@@ -264,7 +264,7 @@ public class TutorialGameManager : MonoBehaviour
                 loadGame        = gsp.loadGame,
                 captured        = true,
             };
-            Debug.Log($"[TutorialGameManager] Snapshotted career gsp state: gameInProgress={_gspSnapshot.gameInProgress}, tournyInProgress={_gspSnapshot.tournyInProgress}, loadGame={_gspSnapshot.loadGame}");
+            GameLog.Info($"[TutorialGameManager] Snapshotted career gsp state: gameInProgress={_gspSnapshot.gameInProgress}, tournyInProgress={_gspSnapshot.tournyInProgress}, loadGame={_gspSnapshot.loadGame}");
         }
 
         // Prevent any career game-in-progress save from resuming during tutorial.
@@ -308,16 +308,16 @@ public class TutorialGameManager : MonoBehaviour
         
         if (activeSetup.prePlacedRocks == null || activeSetup.prePlacedRocks.Length == 0)
         {
-            Debug.Log("[TutorialGameManager] No pre-placed rocks configured");
+            GameLog.Info("[TutorialGameManager] No pre-placed rocks configured");
             yield break;
         }
         
         yield return new WaitForEndOfFrame();
         
-        Debug.Log("[TutorialGameManager] Placing tutorial rocks");
+        GameLog.Info("[TutorialGameManager] Placing tutorial rocks");
         
         int rockCurrent = 16 - (activeSetup.rocksPerTeam * 2);
-        Debug.Log($"[TutorialGameManager] rockCurrent={rockCurrent}, marking rocks 0-{rockCurrent-1} as placed");
+        GameLog.Info($"[TutorialGameManager] rockCurrent={rockCurrent}, marking rocks 0-{rockCurrent-1} as placed");
         
         // First, mark rocks 0 to (rockCurrent-1) as placed and out of play
         for (int i = 0; i < rockCurrent; i++)
@@ -348,7 +348,7 @@ public class TutorialGameManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[TutorialGameManager] Placing {activeSetup.prePlacedRocks.Length} pre-configured rocks");
+        GameLog.Info($"[TutorialGameManager] Placing {activeSetup.prePlacedRocks.Length} pre-configured rocks");
         
         // Now place ONLY the pre-configured rocks
         foreach (var prePlacedRock in activeSetup.prePlacedRocks)
@@ -403,7 +403,7 @@ public class TutorialGameManager : MonoBehaviour
             if (spring != null)
                 spring.enabled = false;
             
-            Debug.Log($"[TutorialGameManager] Placed rock {prePlacedRock.rockIndex} ({(prePlacedRock.isYellow ? "Yellow" : "Red")}) at {prePlacedRock.position}");
+            GameLog.Info($"[TutorialGameManager] Placed rock {prePlacedRock.rockIndex} ({(prePlacedRock.isYellow ? "Yellow" : "Red")}) at {prePlacedRock.position}");
         }
 
         if (runTutorialValidationLogs)
@@ -513,7 +513,7 @@ public class TutorialGameManager : MonoBehaviour
     private void LogTutorialCheck(string label, bool pass, string details)
     {
         if (pass)
-            Debug.Log($"[TutorialCheck PASS] {label} | {details}");
+            GameLog.Info($"[TutorialCheck PASS] {label} | {details}");
         else
             Debug.LogError($"[TutorialCheck FAIL] {label} | {details}");
     }
@@ -544,7 +544,7 @@ public class TutorialGameManager : MonoBehaviour
             if (rockIndex == triggerRockIndex)
             {
                 tutorialId = trigger.tutorialId;
-                Debug.Log($"[TutorialGameManager] Triggering tutorial '{tutorialId}' for rock {rockIndex}" +
+                GameLog.Info($"[TutorialGameManager] Triggering tutorial '{tutorialId}' for rock {rockIndex}" +
                     (trigger.triggerOnFirstPlayerRock ? " (first player rock)" : ""));
                 return true;
             }
@@ -565,7 +565,7 @@ public class TutorialGameManager : MonoBehaviour
         {
             if (suggestion.rockIndex == rockIndex)
             {
-                Debug.Log($"[TutorialGameManager] AI suggestion for rock {rockIndex}: {suggestion.suggestedShotType}");
+                GameLog.Info($"[TutorialGameManager] AI suggestion for rock {rockIndex}: {suggestion.suggestedShotType}");
                 return suggestion;
             }
         }
@@ -581,7 +581,7 @@ public class TutorialGameManager : MonoBehaviour
         if (!isTutorialGame)
             return;
 
-        Debug.Log("[TutorialGameManager] Tutorial game completed - continuing tournament normally");
+        GameLog.Info("[TutorialGameManager] Tutorial game completed - continuing tournament normally");
         isTutorialGame = false;
 
         // Don't mark tutorials complete here - they're marked complete when actually finished
@@ -617,7 +617,7 @@ public class TutorialGameManager : MonoBehaviour
         gsp.redTeamName = "";
         gsp.yellowTeamName = "";
 
-        Debug.Log($"[TutorialGameManager] Restored career gsp state: gameInProgress={gsp.gameInProgress}, tournyInProgress={gsp.tournyInProgress}, loadGame={gsp.loadGame}");
+        GameLog.Info($"[TutorialGameManager] Restored career gsp state: gameInProgress={gsp.gameInProgress}, tournyInProgress={gsp.tournyInProgress}, loadGame={gsp.loadGame}");
         _gspSnapshot.captured = false;
 
         // The tutorial scene's CareerManager persisted via DontDestroyOnLoad and may lack the
@@ -627,13 +627,13 @@ public class TutorialGameManager : MonoBehaviour
         CareerManager cm = Object.FindAnyObjectByType<CareerManager>();
         if (cm != null && cm.week == 0)
         {
-            Debug.Log("[TutorialGameManager] Destroying tutorial CareerManager (week=0) so career flow can create a fresh one");
+            GameLog.Info("[TutorialGameManager] Destroying tutorial CareerManager (week=0) so career flow can create a fresh one");
             CareerManager.instance = null;
             Object.Destroy(cm.gameObject);
         }
         else if (cm != null)
         {
-            Debug.Log($"[TutorialGameManager] Keeping CareerManager (week={cm.week} — existing career)");
+            GameLog.Info($"[TutorialGameManager] Keeping CareerManager (week={cm.week} — existing career)");
         }
     }
 }

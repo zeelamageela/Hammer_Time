@@ -40,7 +40,7 @@ public class TeamManager : MonoBehaviour
             teamYellowColour = gsp.yellowTeamColour;
 
             aiStats = 10;
-            Debug.Log("Ai Stats are " + aiStats + " in Week " + (cm != null ? cm.week.ToString() : "N/A"));
+            GameLog.Info("Ai Stats are " + aiStats + " in Week " + (cm != null ? cm.week.ToString() : "N/A"));
         }
         else
         {
@@ -216,7 +216,7 @@ public class TeamManager : MonoBehaviour
                 sweeperT.sweepCohesion.SetBaseValue(opponentTeam.players[3].sweepCohesion + gsp.oppStats.sweepCohesion);
             }
             
-            Debug.Log($"[TeamManager] AI Sweepers - L: {sweeperL.name}, R: {sweeperR.name}, T: {sweeperT.name}");
+            GameLog.Info($"[TeamManager] AI Sweepers - L: {sweeperL.name}, R: {sweeperR.name}, T: {sweeperT.name}");
         }
         else
         {
@@ -269,7 +269,7 @@ public class TeamManager : MonoBehaviour
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
                 sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
-                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
+                GameLog.Info($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
             else if (rockCurrent > 3)
             {
@@ -286,7 +286,7 @@ public class TeamManager : MonoBehaviour
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[0].sweepCohesion);
                 sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
-                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
+                GameLog.Info($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
             else
             {
@@ -303,7 +303,7 @@ public class TeamManager : MonoBehaviour
                 sweeperL.sweepCohesion.SetBaseValue(cm.activePlayers[1].sweepCohesion);
                 sweeperR.sweepCohesion.SetBaseValue(cm.activePlayers[2].sweepCohesion);
                 sweeperT.sweepCohesion.SetBaseValue(cm.cStats.sweepCohesion);  // Skip's stats
-                Debug.Log($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
+                GameLog.Info($"[TeamManager] Player Skip T-line sweeper: {sweeperT.name} (Strength: {cm.cStats.sweepStrength}, Endurance: {cm.cStats.sweepEndurance})");
             }
 
             // Gear and training (Sweep, Cross) lift every sweeper on the player's team

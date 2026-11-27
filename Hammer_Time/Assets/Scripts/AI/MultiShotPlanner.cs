@@ -39,7 +39,7 @@ public class MultiShotPlanner
             
             if (verboseLogging && currentPlan != null)
             {
-                Debug.Log(currentPlan.GetDebugSummary());
+                GameLog.Info(currentPlan.GetDebugSummary());
             }
         }
         
@@ -57,7 +57,7 @@ public class MultiShotPlanner
             
             if (verboseLogging)
             {
-                Debug.Log($"[MultiShotPlanner] Advanced to step {currentPlan.currentStep}/{currentPlan.plannedIntents.Count}");
+                GameLog.Info($"[MultiShotPlanner] Advanced to step {currentPlan.currentStep}/{currentPlan.plannedIntents.Count}");
             }
         }
     }
@@ -88,13 +88,13 @@ public class MultiShotPlanner
         {
             if (verboseLogging)
             {
-                Debug.Log($"[MultiShotPlanner] ?? Plan invalidated due to shot failure! " +
+                GameLog.Info($"[MultiShotPlanner] ?? Plan invalidated due to shot failure! " +
                           $"Deviation: {result.deviationFromTarget:F2}m, Reason: {failureReason}");
             }
         }
         else if (!result.success && verboseLogging)
         {
-            Debug.Log($"[MultiShotPlanner] ?? Shot suboptimal but plan continues " +
+            GameLog.Info($"[MultiShotPlanner] ?? Shot suboptimal but plan continues " +
                       $"(Deviation: {result.deviationFromTarget:F2}m)");
         }
     }
@@ -128,7 +128,7 @@ public class MultiShotPlanner
             
             if (verboseLogging)
             {
-                Debug.Log($"[MultiShotPlanner] Plan invalidated: {reason}");
+                GameLog.Info($"[MultiShotPlanner] Plan invalidated: {reason}");
             }
         }
     }
@@ -162,7 +162,7 @@ public class MultiShotPlanner
         
         if (verboseLogging)
         {
-            Debug.Log($"[MultiShotPlanner] Planning for rock {rockCurrent}: " +
+            GameLog.Info($"[MultiShotPlanner] Planning for rock {rockCurrent}: " +
                       $"Rocks left={myRocksLeft}, Hammer={hasHammer}, Score diff={scoreDiff}, " +
                       $"My rocks in house={myRocksInHouse}, Opp rocks={oppRocksInHouse}, " +
                       $"Risk={riskTolerance:F2} ({riskCategory})");
@@ -308,7 +308,7 @@ public class MultiShotPlanner
             
             if (verboseLogging)
             {
-                Debug.Log($"[MultiShotPlanner] Selected plan: {plan.strategyName} " +
+                GameLog.Info($"[MultiShotPlanner] Selected plan: {plan.strategyName} " +
                           $"(Confidence: {plan.confidence:F2}, Risk: {riskCategory})");
             }
         }

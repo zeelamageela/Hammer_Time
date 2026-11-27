@@ -73,7 +73,7 @@ public class EquipmentManager : MonoBehaviour
     {
 
         CareerManager cm = FindFirstObjectByType<CareerManager>();
-        Debug.Log("Before SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        GameLog.Info("Before SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
         // 1. Generate or load all equipment arrays. Either way, owned items (per
         // cm.inventoryID) are preserved exactly - only non-owned slots get fresh
         // random stock. This is what actually keeps owned equipment consistent
@@ -123,7 +123,7 @@ public class EquipmentManager : MonoBehaviour
 
         // Set activeEquip from the saved IDs. This must not depend on cm.loadedFromSave: SaveCareer clears that flag,
         // so after any save (a purchase saves) the arena reloaded with the starter kit / the wrong slots equipped.
-        Debug.Log("Set Inventory - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        GameLog.Info("Set Inventory - activeEquipID: " + string.Join(",", cm.activeEquipID ?? new int[0]));
         activeEquip = ResolveActiveEquip(cm.activeEquipID);
 
             //if (cm.activeEquipID != null && cm.activeEquipID.Length == 4)
@@ -154,7 +154,7 @@ public class EquipmentManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            Debug.Log($"activeEquip[{i}]: {(activeEquip[i] != null ? activeEquip[i].name : "null")} " +
+            GameLog.Info($"activeEquip[{i}]: {(activeEquip[i] != null ? activeEquip[i].name : "null")} " +
                 $"(id: {(activeEquip[i] != null ? activeEquip[i].id.ToString() : "null")})");
         }
 
@@ -169,7 +169,7 @@ public class EquipmentManager : MonoBehaviour
                 SetPoints(eq);
 
         RefreshEquipmentBonus();
-        Debug.Log("After SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        GameLog.Info("After SetInventory: " + string.Join(",", cm.activeEquipID ?? new int[0]));
     }
 
     /// <summary>The six stat bonuses of a set of equipped items added together (stats order: weight, finesse, aim, endurance, strength, cohesion).</summary>
@@ -254,7 +254,7 @@ public class EquipmentManager : MonoBehaviour
     {
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        Debug.Log("Before SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        GameLog.Info("Before SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
 
         // 1. Mark owned equipment from inventoryID
         if (cm.inventoryID != null)
@@ -319,7 +319,7 @@ public class EquipmentManager : MonoBehaviour
                 SetPoints(eq);
 
         RefreshEquipmentBonus();
-        Debug.Log("After SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
+        GameLog.Info("After SyncFromCareerManager: " + string.Join(",", cm.activeEquipID ?? new int[0]));
     }
 
     public void MainMenu()
@@ -416,12 +416,12 @@ public class EquipmentManager : MonoBehaviour
         }
 
         if (newEquip != null)
-            Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+            GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
     }
 
     public void InventorySwitch(int n)
     {
-        Debug.Log("n is " + n);
+        GameLog.Info("n is " + n);
 
         if (invDisplay[n].owned)
         {
@@ -461,7 +461,7 @@ public class EquipmentManager : MonoBehaviour
                 inventoryUIs[i].image.color = invDisplay[i].color;
             }
             if (newEquip != null)
-                Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+                GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
         }
         else
         {
@@ -475,7 +475,7 @@ public class EquipmentManager : MonoBehaviour
 
             }
             if (newEquip != null)
-                Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+                GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
             BuyMenu(itemType);
         }
     }
@@ -586,7 +586,7 @@ public class EquipmentManager : MonoBehaviour
             forSaleUIs[i].image.color = forSale[i].color;
         }
         if (newEquip != null)
-            Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+            GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
     }
 
     public void BuyItem(int n)
@@ -608,7 +608,7 @@ public class EquipmentManager : MonoBehaviour
 
         confirmText.text = "Buy this card for $" + newEquip.cost.ToString("n0") + "?";
         if (newEquip != null)
-            Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+            GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
     }
 
     public void Confirm(bool buy)
@@ -680,7 +680,7 @@ public class EquipmentManager : MonoBehaviour
             }
 
             if (newEquip != null)
-                Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+                GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
 
             // The purchase (cash, inventory, equipped ids) is only in memory until now: save it so a kill right
             // after buying can't lose the item or keep it without paying.
@@ -718,7 +718,7 @@ public class EquipmentManager : MonoBehaviour
                     equipUIs[i].image.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -36f);
             }
             if (newEquip != null)
-                Debug.Log("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
+                GameLog.Info("newEquip is " + newEquip.name + " - origEquip is " + origEquip.name);
         }
     }
 

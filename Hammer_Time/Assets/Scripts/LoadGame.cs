@@ -65,7 +65,7 @@ public class LoadGame : MonoBehaviour
                 gm.rockList[i].rockInfo.released = true;
                 gm.rockList[i].rockInfo.stopped = true;
                 gm.rockList[i].rockInfo.rest = true;
-                Debug.Log("i is equal to " + i);
+                GameLog.Info("i is equal to " + i);
             }
             yield return new WaitForEndOfFrame();
         }

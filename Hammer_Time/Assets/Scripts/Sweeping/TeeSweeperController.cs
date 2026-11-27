@@ -40,7 +40,7 @@ public class TeeSweeperController : MonoBehaviour
     
     void Start()
     {
-        Debug.Log("[TeeSweeperController] Start() called - staying active to detect taps");
+        GameLog.Info("[TeeSweeperController] Start() called - staying active to detect taps");
         // DON'T disable GameObject - we need Update() to run for tap detection!
         // Instead, we just keep sweepers inactive until attached
     }
@@ -62,7 +62,7 @@ public class TeeSweeperController : MonoBehaviour
         if (sweeperYellowTee != null) sweeperYellowTee.gameObject.SetActive(false);
         
         UpdateCollider();
-        Debug.Log("[TeeSweeperController] Initialized - sweepers hidden until player taps rock");
+        GameLog.Info("[TeeSweeperController] Initialized - sweepers hidden until player taps rock");
     }
     
     public void UpdateCollider()
@@ -89,7 +89,7 @@ public class TeeSweeperController : MonoBehaviour
         if (sweeperRedTee != null) sweeperRedTee.gameObject.SetActive(false);
         if (sweeperYellowTee != null) sweeperYellowTee.gameObject.SetActive(false);
         
-        Debug.Log("[TeeSweeperController] Force detach - all sweepers hidden");
+        GameLog.Info("[TeeSweeperController] Force detach - all sweepers hidden");
     }
     
     void Update()
@@ -179,7 +179,7 @@ public class TeeSweeperController : MonoBehaviour
         // Main sweepers stopped? Activate tee sweeper!
         if (!mainSweepersSweeping)
         {
-            Debug.Log($"[TeeSweeperController] HANDOFF: Main sweepers STOPPED - activating tee sweeper");
+            GameLog.Info($"[TeeSweeperController] HANDOFF: Main sweepers STOPPED - activating tee sweeper");
             
             // Deactivate main sweepers completely
             if (sm != null)
@@ -257,7 +257,7 @@ public class TeeSweeperController : MonoBehaviour
                 }
             }
             
-            Debug.Log($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE (handoff): {activeSweeper.name}");
+            GameLog.Info($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE (handoff): {activeSweeper.name}");
             
             // Start sweeping with tee sweeper
             StartSweeping();
@@ -379,20 +379,20 @@ public class TeeSweeperController : MonoBehaviour
         if (shouldSweep && !isSweeping)
         {
             // Should be sweeping but isn't - start sweeping!
-            Debug.Log($"[TeeSweeperController] AUTO-SWEEP: {reason}");
+            GameLog.Info($"[TeeSweeperController] AUTO-SWEEP: {reason}");
             StartSweeping();
         }
         else if (!shouldSweep && isSweeping)
         {
             // Should NOT be sweeping but is - stop sweeping!
-            Debug.Log($"[TeeSweeperController] AUTO-WHOA: {reason}");
+            GameLog.Info($"[TeeSweeperController] AUTO-WHOA: {reason}");
             StopSweeping(false);
         }
         
         // Log evaluation every 0.5 seconds to avoid spam
         if (Time.frameCount % 30 == 0) // Every ~0.5s at 60fps
         {
-            Debug.Log($"[TeeSweeperController] Evaluation: {(isFriendlyRock ? "FRIENDLY" : "OPPONENT")} rock, " +
+            GameLog.Info($"[TeeSweeperController] Evaluation: {(isFriendlyRock ? "FRIENDLY" : "OPPONENT")} rock, " +
                       $"MovingToward={movingTowardScoring}, MovingAway={movingAwayFromScoring}, " +
                       $"Sweeping={isSweeping}, Decision: {reason}");
         }
@@ -443,7 +443,7 @@ public class TeeSweeperController : MonoBehaviour
                 if (rockY > TEE_LINE_Y && rockY < TEE_LINE_Y + 0.3f)
                 {
                     // Found an eligible rock that just crossed tee line!
-                    Debug.Log($"[TeeSweeperController] AUTO-ATTACH: Rock {rock.name} crossed tee line at Y={rockY:F2}");
+                    GameLog.Info($"[TeeSweeperController] AUTO-ATTACH: Rock {rock.name} crossed tee line at Y={rockY:F2}");
                     AttachToRock(rock);
                     return; // Only attach to one rock at a time
                 }
@@ -492,42 +492,42 @@ public class TeeSweeperController : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("[TeeSweeperController] Mouse click detected!");
+            GameLog.Info("[TeeSweeperController] Mouse click detected!");
             
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
             
-            Debug.Log($"[TeeSweeperController] Mouse position: {mousePos2D}");
+            GameLog.Info($"[TeeSweeperController] Mouse position: {mousePos2D}");
             
             RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
             
             if (hit.collider != null)
             {
-                Debug.Log($"[TeeSweeperController] Hit: {hit.collider.gameObject.name}, Layer: {hit.collider.gameObject.layer}");
+                GameLog.Info($"[TeeSweeperController] Hit: {hit.collider.gameObject.name}, Layer: {hit.collider.gameObject.layer}");
                 
                 if (hit.collider.gameObject.layer == 3)
                 {
                     GameObject clickedRock = hit.collider.gameObject;
-                    Debug.Log($"[TeeSweeperController] Rock clicked: {clickedRock.name}");
+                    GameLog.Info($"[TeeSweeperController] Rock clicked: {clickedRock.name}");
                     
                     if (IsEligibleForTeeSweep(clickedRock))
                     {
-                        Debug.Log($"[TeeSweeperController] Rock eligible - attempting attach");
+                        GameLog.Info($"[TeeSweeperController] Rock eligible - attempting attach");
                         AttachToRock(clickedRock);
                     }
                     else
                     {
-                        Debug.Log($"[TeeSweeperController] Rock NOT eligible - Y={clickedRock.transform.position.y}");
+                        GameLog.Info($"[TeeSweeperController] Rock NOT eligible - Y={clickedRock.transform.position.y}");
                     }
                 }
                 else
                 {
-                    Debug.Log($"[TeeSweeperController] Hit non-rock object (layer {hit.collider.gameObject.layer})");
+                    GameLog.Info($"[TeeSweeperController] Hit non-rock object (layer {hit.collider.gameObject.layer})");
                 }
             }
             else
             {
-                Debug.Log("[TeeSweeperController] Raycast hit nothing");
+                GameLog.Info("[TeeSweeperController] Raycast hit nothing");
             }
         }
     }
@@ -541,21 +541,21 @@ public class TeeSweeperController : MonoBehaviour
     {
         if (rock == null)
         {
-            Debug.Log("[TeeSweeperController] Eligibility: Rock is NULL");
+            GameLog.Info("[TeeSweeperController] Eligibility: Rock is NULL");
             return false;
         }
         
         Component rockInfo = rock.GetComponent("Rock_Info");
         if (rockInfo == null)
         {
-            Debug.Log("[TeeSweeperController] Eligibility: Rock_Info component not found");
+            GameLog.Info("[TeeSweeperController] Eligibility: Rock_Info component not found");
             return false;
         }
         
         FieldInfo movingField = rockInfo.GetType().GetField("moving");
         if (movingField == null)
         {
-            Debug.Log("[TeeSweeperController] Eligibility: 'moving' field not found");
+            GameLog.Info("[TeeSweeperController] Eligibility: 'moving' field not found");
             return false;
         }
         
@@ -570,12 +570,12 @@ public class TeeSweeperController : MonoBehaviour
         // Must be behind T-line (Y > 6.5)
         if (rockY <= TEE_LINE_Y)
         {
-            Debug.Log($"[TeeSweeperController] Eligibility: FAILED - Rock not past T-line");
+            //Debug.Log($"[TeeSweeperController] Eligibility: FAILED - Rock not past T-line");   // ran every frame: it stuttered the editor
             return false;
         }
         
         // ANY rock past T-line is eligible!
-        Debug.Log("[TeeSweeperController] Eligibility: PASSED - Rock is eligible!");
+        GameLog.Info("[TeeSweeperController] Eligibility: PASSED - Rock is eligible!");
         return true;
     }
     
@@ -656,7 +656,7 @@ public class TeeSweeperController : MonoBehaviour
         if (mainSweepersSweeping)
         {
             // Main sweepers are active - let them continue!
-            Debug.Log($"[TeeSweeperController] Main sweepers are ACTIVE - keeping them, tee sweeper on standby");
+            GameLog.Info($"[TeeSweeperController] Main sweepers are ACTIVE - keeping them, tee sweeper on standby");
             
             // Don't activate tee sweeper yet - main sweepers have priority
             // Tee sweeper will activate only if main sweepers stop
@@ -668,7 +668,7 @@ public class TeeSweeperController : MonoBehaviour
         else
         {
             // Main sweepers are NOT active - remove them and activate tee sweeper
-            Debug.Log($"[TeeSweeperController] Main sweepers INACTIVE - removing them, activating tee sweeper");
+            GameLog.Info($"[TeeSweeperController] Main sweepers INACTIVE - removing them, activating tee sweeper");
             
             // Deactivate main sweepers (they're not sweeping anyway)
             if (sm != null)
@@ -683,7 +683,7 @@ public class TeeSweeperController : MonoBehaviour
                     if (sweeperL != null && sweeperL.gameObject.activeInHierarchy)
                     {
                         sweeperL.gameObject.SetActive(false);
-                        Debug.Log($"[TeeSweeperController] Deactivated left main sweeper");
+                        GameLog.Info($"[TeeSweeperController] Deactivated left main sweeper");
                     }
                 }
                 
@@ -693,7 +693,7 @@ public class TeeSweeperController : MonoBehaviour
                     if (sweeperR != null && sweeperR.gameObject.activeInHierarchy)
                     {
                         sweeperR.gameObject.SetActive(false);
-                        Debug.Log($"[TeeSweeperController] Deactivated right main sweeper");
+                        GameLog.Info($"[TeeSweeperController] Deactivated right main sweeper");
                     }
                 }
             }
@@ -702,7 +702,7 @@ public class TeeSweeperController : MonoBehaviour
             activeSweeper.gameObject.SetActive(true);
             isActive = true;
             
-            Debug.Log($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE: {activeSweeper.name}");
+            GameLog.Info($"[TeeSweeperController] TEE SWEEPER NOW VISIBLE: {activeSweeper.name}");
             
             // ? NEW: TEXT CALLOUT
             // Show callout: "{Team Name} is sweeping behind T-Line"
@@ -732,13 +732,13 @@ public class TeeSweeperController : MonoBehaviour
                         3.0f             // duration (3 seconds)
                     });
                     
-                    Debug.Log($"[TeeSweeperController] TEXT CALLOUT: '{calloutMessage}' at {calloutPos}");
+                    GameLog.Info($"[TeeSweeperController] TEXT CALLOUT: '{calloutMessage}' at {calloutPos}");
                 }
             }
             
             StartSweeping();
             
-            Debug.Log($"[TeeSweeperController] Attached - {(isRedRock ? "Yellow" : "Red")} sweeping rock {rock.name}");
+            GameLog.Info($"[TeeSweeperController] Attached - {(isRedRock ? "Yellow" : "Red")} sweeping rock {rock.name}");
         }
     }
     
@@ -763,7 +763,7 @@ public class TeeSweeperController : MonoBehaviour
         if (sweepButton != null) sweepButton.SetActive(false);
         if (whoaButton != null) whoaButton.SetActive(true);
         
-        Debug.Log($"[TeeSweeperController] Started sweeping - continuous until rock stops");
+        GameLog.Info($"[TeeSweeperController] Started sweeping - continuous until rock stops");
     }
     
     void StopSweeping(bool playerCalled)
@@ -781,7 +781,7 @@ public class TeeSweeperController : MonoBehaviour
         if (whoaButton != null) whoaButton.SetActive(false);
         if (sweepButton != null) sweepButton.SetActive(true);
         
-        Debug.Log("[TeeSweeperController] Stopped sweeping");
+        GameLog.Info("[TeeSweeperController] Stopped sweeping");
     }
     
     void DetachFromRock()
@@ -792,7 +792,7 @@ public class TeeSweeperController : MonoBehaviour
         if (activeSweeper != null)
         {
             activeSweeper.gameObject.SetActive(false);
-            Debug.Log($"[TeeSweeperController] SWEEPER NOW HIDDEN: {activeSweeper.name}");
+            GameLog.Info($"[TeeSweeperController] SWEEPER NOW HIDDEN: {activeSweeper.name}");
         }
         
         if (sweepButton != null) sweepButton.SetActive(false);
@@ -807,7 +807,7 @@ public class TeeSweeperController : MonoBehaviour
         // DON'T disable GameObject - we need Update() to keep running for tap detection!
         // gameObject.SetActive(false);  ? This was the problem!
         
-        Debug.Log("[TeeSweeperController] Detached from rock - ready for next tap");
+        GameLog.Info("[TeeSweeperController] Detached from rock - ready for next tap");
     }
     
     void UpdatePosition()
@@ -846,7 +846,7 @@ public class TeeSweeperController : MonoBehaviour
         float velocity = attachedRockRB.linearVelocity.magnitude;
         if (velocity < RockPhysicsSettings.Speed(VELOCITY_THRESHOLD))
         {
-            Debug.Log($"[TeeSweeperController] Rock stopped - detaching");
+            GameLog.Info($"[TeeSweeperController] Rock stopped - detaching");
             DetachFromRock();
             return;
         }
@@ -857,7 +857,7 @@ public class TeeSweeperController : MonoBehaviour
             FieldInfo movingField = rockInfo.GetType().GetField("moving");
             if (movingField != null && !(bool)movingField.GetValue(rockInfo))
             {
-                Debug.Log("[TeeSweeperController] Rock no longer in play - detaching");
+                GameLog.Info("[TeeSweeperController] Rock no longer in play - detaching");
                 DetachFromRock();
                 return;
             }
@@ -868,7 +868,7 @@ public class TeeSweeperController : MonoBehaviour
         // Sweeper zone: Between T-line (6.5) and back line (8.0)
         if (Mathf.Abs(rockPos.x) > 3f || rockPos.y > BACK_LINE_Y || rockPos.y < TEE_LINE_Y)
         {
-            Debug.Log($"[TeeSweeperController] Rock out of zone (Y={rockPos.y:F2}, zone={TEE_LINE_Y}-{BACK_LINE_Y}) - detaching");
+            GameLog.Info($"[TeeSweeperController] Rock out of zone (Y={rockPos.y:F2}, zone={TEE_LINE_Y}-{BACK_LINE_Y}) - detaching");
             DetachFromRock();
         }
     }
@@ -906,7 +906,7 @@ public class TeeSweeperController : MonoBehaviour
             if (col != null) col.enabled = false;
         }
         
-        Debug.Log("[TeeSweeperController] Colliders disabled for AI sweeping");
+        GameLog.Info("[TeeSweeperController] Colliders disabled for AI sweeping");
     }
     
     /// <summary>
@@ -932,6 +932,6 @@ public class TeeSweeperController : MonoBehaviour
             if (col != null) col.enabled = true;
         }
         
-        Debug.Log("[TeeSweeperController] Colliders enabled for player sweeping");
+        GameLog.Info("[TeeSweeperController] Colliders enabled for player sweeping");
     }
 }

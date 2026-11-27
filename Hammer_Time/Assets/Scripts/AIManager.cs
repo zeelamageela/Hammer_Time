@@ -146,7 +146,7 @@ public class AIManager : MonoBehaviour
         gm.aiTeamRed = true;
         gm.aiTeamYellow = true;
         
-        Debug.Log("[AIManager] AI vs AI mode enabled - Red: AI, Yellow: AI");
+        GameLog.Info("[AIManager] AI vs AI mode enabled - Red: AI, Yellow: AI");
         
         // Wait a frame to ensure settings are applied
         yield return new WaitForEndOfFrame();
@@ -156,12 +156,12 @@ public class AIManager : MonoBehaviour
         {
             if (gm.redHammer)
             {
-                Debug.Log("[AIManager] Starting Yellow AI turn");
+                GameLog.Info("[AIManager] Starting Yellow AI turn");
                 gm.OnYellowTurn();
             }
             else
             {
-                Debug.Log("[AIManager] Starting Red AI turn");
+                GameLog.Info("[AIManager] Starting Red AI turn");
                 gm.OnRedTurn();
             }
         }
@@ -169,12 +169,12 @@ public class AIManager : MonoBehaviour
         {
             if (gm.redHammer)
             {
-                Debug.Log("[AIManager] Starting Red AI turn");
+                GameLog.Info("[AIManager] Starting Red AI turn");
                 gm.OnRedTurn();
             }
             else
             {
-                Debug.Log("[AIManager] Starting Yellow AI turn");
+                GameLog.Info("[AIManager] Starting Yellow AI turn");
                 gm.OnYellowTurn();
             }
         }

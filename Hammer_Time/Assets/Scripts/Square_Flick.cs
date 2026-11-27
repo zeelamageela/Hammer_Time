@@ -41,7 +41,7 @@ public class Square_Flick : MonoBehaviour
 
             if (mouseDelta != Vector3.zero)
             {
-                Debug.Log("Mouse moving");
+                GameLog.Info("Mouse moving");
                 Instantiate(circleTrajPrefab, gameObject.transform);
             }
             // Then we store our mousePosition so that we can check it again next frame.
@@ -81,7 +81,7 @@ public class Square_Flick : MonoBehaviour
     {
         if (collider == hogLine)
         {
-            Debug.Log(collider.gameObject.name);
+            GameLog.Info(collider.gameObject.name);
             isReleased = true;
         }
     }

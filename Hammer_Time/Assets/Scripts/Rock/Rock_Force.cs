@@ -59,7 +59,7 @@ public class Rock_Force : MonoBehaviour
         {
             springTensionMultiplier = 1.0f;
             curlForceMultiplier = 1.0f;
-            Debug.Log($"[Rock_Force] ⚠️ QUICK TEST MODE: Physics multipliers LOCKED to 1.0 (perfect determinism)");
+            GameLog.Info($"[Rock_Force] ⚠️ QUICK TEST MODE: Physics multipliers LOCKED to 1.0 (perfect determinism)");
         }
 
         am = FindFirstObjectByType<AudioManager>();
@@ -88,13 +88,13 @@ public class Rock_Force : MonoBehaviour
         GetComponent<SpriteRenderer>().enabled = true;
 
         // Drag and spin now start (they were off during the launch). RockSlide applies them from here on.
-        Debug.Log($"[Rock_Force Release] Velocity: {body.linearVelocity.magnitude:F2} m/s, flipAxis: {flipAxis}");
+        GameLog.Info($"[Rock_Force Release] Velocity: {body.linearVelocity.magnitude:F2} m/s, flipAxis: {flipAxis}");
 
         // Apply spring tension multiplier if configured (for variance tuning later)
         if (springTensionMultiplier != 1.0f)
         {
             body.linearVelocity *= springTensionMultiplier;
-            Debug.Log($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
+            GameLog.Info($"[Rock_Force] Tension multiplier: {springTensionMultiplier:F2}x - Velocity: {body.linearVelocity.magnitude:F2} m/s");
         }
 
         // In real curling FAST rocks curl LESS and SLOW rocks curl MORE: the strength is picked from the launch speed
@@ -109,7 +109,7 @@ public class Rock_Force : MonoBehaviour
         curl = slide.Curl;
         released = true;
 
-        Debug.Log($"[Rock_Force Curl] flipAxis={flipAxis}, launch speed {body.linearVelocity.magnitude:F2}, curl.x={curl.x:F3}");
+        GameLog.Info($"[Rock_Force Curl] flipAxis={flipAxis}, launch speed {body.linearVelocity.magnitude:F2}, curl.x={curl.x:F3}");
     }
 
     void FixedUpdate()

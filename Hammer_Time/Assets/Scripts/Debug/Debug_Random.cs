@@ -142,13 +142,13 @@ public class Debug_Random : MonoBehaviour
         gm.rockList.Sort();
         foreach (Rock_List rock in gm.rockList)
         {
-            Debug.Log(gm.rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
+            GameLog.Info(gm.rockList.IndexOf(rock) + " " + rock.rockInfo.teamName);
         }
 
         //StartCoroutine(gm.CheckScore());
         --gm.rockCurrent;
 
-        Debug.Log("Current Rock is " + gm.rockCurrent);
+        GameLog.Info("Current Rock is " + gm.rockCurrent);
 
     }
 

@@ -82,7 +82,7 @@ public class SponsorManager : MonoBehaviour
         profileButton.interactable = true;
         gameObject.SetActive(false);
         yield return null;
-        Debug.Log("Clickeddd");
+        GameLog.Info("Clickeddd");
     }
 
     public void AssignPoints(int card)
@@ -97,8 +97,8 @@ public class SponsorManager : MonoBehaviour
         if (cm.week >= idPUList.Length)
             System.Array.Resize(ref idPUList, cm.week + 1);
         idPUList[cm.week] = availPUCards[card].id;
-        Debug.Log("id of played card is " + idPUList[cm.week]);
-        Debug.Log("availPUCards length is " + availPUCards.Count);
+        GameLog.Info("id of played card is " + idPUList[cm.week]);
+        GameLog.Info("availPUCards length is " + availPUCards.Count);
         //int idPUListLength = 0;
         cm.SaveCareer(); // the chosen card is part of the save; without this it was only written by the next autosave
         //for (int i = 0; i < numberOfCards; i++)
@@ -254,7 +254,7 @@ public class SponsorManager : MonoBehaviour
         }
 
         Shuffle(cardsSponsor);
-        Debug.Log("cardsSponsor Length is " + cardsSponsor.Length);
+        GameLog.Info("cardsSponsor Length is " + cardsSponsor.Length);
         //Determine which cards are active
         for (int i = 0; i < activeIdList.Length; i++)
         {
@@ -271,7 +271,7 @@ public class SponsorManager : MonoBehaviour
                     {
                         cardsSponsor[j].duration = activeLengthList[i];
 
-                        Debug.Log(cardsSponsor[j].name + " is " + cardsSponsor[j].duration + " long");
+                        GameLog.Info(cardsSponsor[j].name + " is " + cardsSponsor[j].duration + " long");
                         if (cardsSponsor[j].duration > 0)
                         {
                             cardsSponsor[j].active = true;
@@ -413,7 +413,7 @@ public class SponsorManager : MonoBehaviour
     public void CardClick(int card)
     {
         clickCount++;
-        Debug.Log("click Count is " + clickCount);
+        GameLog.Info("click Count is " + clickCount);
 
         if (clickCount % 2 == 1)
         {
@@ -427,7 +427,7 @@ public class SponsorManager : MonoBehaviour
             else
             {
                 BuyCard(availSponsorCards[card - 1].id, card);
-                Debug.Log("availPUCards[card].id is " + availSponsorCards[card - 1].id);
+                GameLog.Info("availPUCards[card].id is " + availSponsorCards[card - 1].id);
             }
         }
         //CardBuy(card);

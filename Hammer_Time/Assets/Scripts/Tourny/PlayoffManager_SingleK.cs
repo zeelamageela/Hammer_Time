@@ -54,7 +54,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[31];
 
-		Debug.Log($"[SingleK.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
+		GameLog.Info($"[SingleK.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
 
 		// CRITICAL FIX: Handle five distinct scenarios:
 		// 1. Returning from a completed game (justFinishedGame == true, need to advance)
@@ -69,12 +69,12 @@ public class PlayoffManager_SingleK : MonoBehaviour
 	// This handles the case where we just completed a game and bracket should be in gsp.playoffTeams
 	if (gsp.careerLoad && gsp.justFinishedGame && playoffRound > 0 && teamsNotSeeded)
 	{
-		Debug.Log($"[SingleK.Start] SPECIAL: Loading from save after completing game (Round {playoffRound})");
+		GameLog.Info($"[SingleK.Start] SPECIAL: Loading from save after completing game (Round {playoffRound})");
 		
 		// Check if GSP has the bracket data now (loaded by GameSettingsPersist.LoadTourny)
 		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0 && gsp.playoffTeams[0] != null)
 		{
-			Debug.Log($"[SingleK.Start] Found {gsp.playoffTeams.Length} bracket teams in gsp - loading and advancing");
+			GameLog.Info($"[SingleK.Start] Found {gsp.playoffTeams.Length} bracket teams in gsp - loading and advancing");
 			// Bracket was restored from save - proceed with advancing
 			LoadAndAdvancePlayoffs();
 			gsp.justFinishedGame = false;
@@ -106,27 +106,27 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		else if (gsp.justFinishedGame && playoffRound > 0 && !teamsNotSeeded)
 		{
 			// Scenario 1: Just returned from completing a game - need to process result and advance
-			Debug.Log("[SingleK.Start] SCENARIO 1: Returning from completed game - advancing playoffs");
+			GameLog.Info("[SingleK.Start] SCENARIO 1: Returning from completed game - advancing playoffs");
 			LoadAndAdvancePlayoffs();
 			gsp.justFinishedGame = false; // Clear flag after processing
 		}
 		else if (playoffRound == 0 || teamsNotSeeded)
 		{
 			// Scenario 2: Fresh tournament start OR teams not yet seeded
-			Debug.Log("[SingleK.Start] SCENARIO 2: Fresh tournament start - setting seeding");
+			GameLog.Info("[SingleK.Start] SCENARIO 2: Fresh tournament start - setting seeding");
 			gsp.justFinishedGame = false; // Clear stale flag if present
 			StartCoroutine(SetSeeding(tm.teams.Length));
 		}
 		else if (gsp.careerLoad)
 		{
 			// Scenario 3: Loading saved tournament, player is between games - just restore state
-			Debug.Log("[SingleK.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
+			GameLog.Info("[SingleK.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
 			LoadPlayoffs();
 		}
 		else if (playoffTeams != null && playoffTeams.Length > 0 && playoffTeams[0] != null)
 		{
 			// Scenario 4: Normal viewing - teams are seeded, just display current round
-			Debug.Log($"[SingleK.Start] SCENARIO 4: Viewing round {playoffRound} - displaying bracket");
+			GameLog.Info($"[SingleK.Start] SCENARIO 4: Viewing round {playoffRound} - displaying bracket");
 			
 			// Load teams from gsp first if not already loaded
 			if (playoffTeams[0] == tm.tTeamList.nullTeam || playoffTeams[0].name == "")
@@ -389,7 +389,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
     {
         if (playerWon)
         {
-            Debug.Log($"Player won! Advancing to next round at index {nextRoundStart + playerGame}");
+            GameLog.Info($"Player won! Advancing to next round at index {nextRoundStart + playerGame}");
             
             // Copy player's team to next round
             playoffTeams[nextRoundStart + playerGame] = playoffTeams[playerTeam];
@@ -405,7 +405,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Player lost. Opponent advancing to next round at index {nextRoundStart + playerGame}");
+            GameLog.Info($"Player lost. Opponent advancing to next round at index {nextRoundStart + playerGame}");
             
             // Copy opponent's team to next round
             playoffTeams[nextRoundStart + playerGame] = playoffTeams[oppTeam];
@@ -504,7 +504,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
     void LoadAndAdvancePlayoffs()
     {
-        Debug.Log($"[SingleK] Loading playoffs - Round {playoffRound}");
+        GameLog.Info($"[SingleK] Loading playoffs - Round {playoffRound}");
 
         // Load saved teams
         for (int i = 0; i < playoffTeams.Length; i++)
@@ -517,7 +517,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
         int nextRoundStart = config[2];
         int elimRank = SharedTournamentLogic.GetSingleEliminationRank(playoffRound);
 
-        Debug.Log($"[SingleK] Round {playoffRound}: start={startIdx}, matches={matchCount}, next={nextRoundStart}");
+        GameLog.Info($"[SingleK] Round {playoffRound}: start={startIdx}, matches={matchCount}, next={nextRoundStart}");
 
         // Find player in current round
         playerTeam = -1;
@@ -539,7 +539,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[SingleK] Player at {playerTeam} vs {oppTeam}, game {playerGame}");
+        GameLog.Info($"[SingleK] Player at {playerTeam} vs {oppTeam}, game {playerGame}");
 
         // Determine winner and advance
         bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
@@ -547,14 +547,14 @@ public class PlayoffManager_SingleK : MonoBehaviour
         int loserIdx = playerWon ? oppTeam : playerTeam;
         int nextIdx = nextRoundStart + playerGame;
 
-        Debug.Log($"[SingleK] Player {(playerWon ? "WON" : "LOST")} - advancing {playoffTeams[winnerIdx].name}");
+        GameLog.Info($"[SingleK] Player {(playerWon ? "WON" : "LOST")} - advancing {playoffTeams[winnerIdx].name}");
 
         // CRITICAL FIX: Set player flag BEFORE copying, since the copy creates a reference
         // If player won, the Team object needs player=true
         if (playerWon)
         {
             playoffTeams[winnerIdx].player = true;  // Ensure winner team has flag
-            Debug.Log($"[SingleK] Set player flag on winner team: {playoffTeams[winnerIdx].name}");
+            GameLog.Info($"[SingleK] Set player flag on winner team: {playoffTeams[winnerIdx].name}");
         }
         
         // Update wins/losses
@@ -571,12 +571,12 @@ public class PlayoffManager_SingleK : MonoBehaviour
             playoffTeams[playerTeam].player = false;
         }
 
-        Debug.Log($"[SingleK] Advanced {playoffTeams[nextIdx].name} to index {nextIdx} with {playoffTeams[nextIdx].wins} wins (player={playoffTeams[nextIdx].player})");
+        GameLog.Info($"[SingleK] Advanced {playoffTeams[nextIdx].name} to index {nextIdx} with {playoffTeams[nextIdx].wins} wins (player={playoffTeams[nextIdx].player})");
 
         // CRITICAL: Save to gsp BEFORE simulating
         gsp.playoffTeams = playoffTeams;
         
-        Debug.Log($"[SingleK] Calling SimPlayoff to finish Round {playoffRound} (player game {playerGame} already played)");
+        GameLog.Info($"[SingleK] Calling SimPlayoff to finish Round {playoffRound} (player game {playerGame} already played)");
         
         // Continue simulation - this will simulate OTHER games in the CURRENT round
         // IMPORTANT: Don't increment playoffRound yet - SimPlayoff will do it!
@@ -588,8 +588,8 @@ public class PlayoffManager_SingleK : MonoBehaviour
     void LoadPlayoffs()
     {
         gsp.careerLoad = false;
-        Debug.Log($"[LoadPlayoffs] Loading saved playoffs - Round {playoffRound}");
-        Debug.Log($"gsp.playerTeam.nextOpp: {gsp.playerTeam.nextOpp}");
+        GameLog.Info($"[LoadPlayoffs] Loading saved playoffs - Round {playoffRound}");
+        GameLog.Info($"gsp.playerTeam.nextOpp: {gsp.playerTeam.nextOpp}");
 
         // Load teams from persistent storage or initialize from TournyManager
         if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
@@ -608,7 +608,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
             }
 
             gsp.playoffTeams = new Team[playoffTeams.Length];
-            Debug.Log($"gsp.playoffTeams Length is {gsp.playoffTeams.Length}");
+            GameLog.Info($"gsp.playoffTeams Length is {gsp.playoffTeams.Length}");
 
             for (int i = 0; i < playoffTeams.Length; i++)
             {
@@ -631,7 +631,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
             }
         }
 
-        Debug.Log($"OppTeam is {oppTeam}");
+        GameLog.Info($"OppTeam is {oppTeam}");
 
         // Handle tournament completion (Round 5)
         if (playoffRound == 5)
@@ -716,7 +716,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
             playoffRound = 1;
             gsp.playoffRound = playoffRound;
         }
-        Debug.Log("Set Playoffs - Round " + playoffRound);
+        GameLog.Info("Set Playoffs - Round " + playoffRound);
 
         // Handle tournament completion (Case 5)
         if (playoffRound == 5)
@@ -792,7 +792,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
                 }
             }
 
-            Debug.Log("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
+            GameLog.Info("GSP Earnings after calculation - " + gsp.tournyEarnings.ToString());
             careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 
             playButton.gameObject.SetActive(false);
@@ -893,13 +893,13 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
 	IEnumerator SimPlayoff(int playerGame)
 	{
-		Debug.Log("Sim Playoffs - Round " + playoffRound);
+		GameLog.Info("Sim Playoffs - Round " + playoffRound);
 
 		// Get round configuration using SharedTournamentLogic
 		int[] config = SharedTournamentLogic.GetSingleEliminationRoundConfig(playoffRound);
 		if (config[1] == 0)
 		{
-			Debug.Log("Bonk! Need another round");
+			GameLog.Info("Bonk! Need another round");
 			StartCoroutine(SetPlayoffs());
 			yield break;
 		}
@@ -915,7 +915,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 										  finalsDisplay;
 
 		// Simulate matches for this round (skipping player's game)
-		Debug.Log($"[SimPlayoff] About to simulate Round {playoffRound}: playerGame={playerGame}, startIndex={startIndex}, nextRoundStart={nextRoundStart}");
+		GameLog.Info($"[SimPlayoff] About to simulate Round {playoffRound}: playerGame={playerGame}, startIndex={startIndex}, nextRoundStart={nextRoundStart}");
 		SimulateRoundMatches(currentDisplay, startIndex, nextRoundStart, playerGame, eliminationRank);
 		
 		// Log what got populated
@@ -924,7 +924,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 			int idx = nextRoundStart + i;
 			if (idx < playoffTeams.Length && playoffTeams[idx] != null)
 			{
-				Debug.Log($"[SimPlayoff] After simulation - Round {playoffRound + 1} slot {idx}: {playoffTeams[idx].name} (player={playoffTeams[idx].player})");
+				GameLog.Info($"[SimPlayoff] After simulation - Round {playoffRound + 1} slot {idx}: {playoffTeams[idx].name} (player={playoffTeams[idx].player})");
 			}
 			else
 			{
@@ -1020,7 +1020,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		playoffRound++;
 		gsp.playoffRound = playoffRound;
 		tm.playoffRound = playoffRound;
-		Debug.Log($"[SimPlayoff] Advanced to Round {playoffRound}");
+		GameLog.Info($"[SimPlayoff] Advanced to Round {playoffRound}");
 		
 		simButton.gameObject.SetActive(false);
 		contButton.gameObject.SetActive(true);
@@ -1043,7 +1043,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 
     IEnumerator SaveCareer(bool inProgress)
 	{
-		Debug.Log("Saving in PlayoffManager, inProgress is " + inProgress);
+		GameLog.Info("Saving in PlayoffManager, inProgress is " + inProgress);
 
 		myFile = new EasyFileSave("my_player_data");
 
@@ -1065,7 +1065,7 @@ public class PlayoffManager_SingleK : MonoBehaviour
 		//      }
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.tournyInProgress = inProgress;
-		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+		GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
 		myFile.Add("Single Knockout Tourny", gsp.KO1);
 		//myFile.Add("Draw", gsp.weight);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
@@ -1383,7 +1383,7 @@ public static class SharedTournamentLogic
 			float prize = CalculatePrize(team.rank, totalTeams, totalPrize);
 			team.tournamentEarnings += prize;
 
-			Debug.Log($"[SharedTournamentLogic] {team.name} (Rank {team.rank}) receives ${prize:n0}");
+			GameLog.Info($"[SharedTournamentLogic] {team.name} (Rank {team.rank}) receives ${prize:n0}");
 		}
 	}
 
@@ -1392,14 +1392,14 @@ public static class SharedTournamentLogic
 	/// </summary>
 	public static void LogTournamentState(Team[] teams, int currentRound, string tournamentType)
 	{
-		Debug.Log($"=== {tournamentType} - Round {currentRound} ===");
+		GameLog.Info($"=== {tournamentType} - Round {currentRound} ===");
 
 		for (int i = 0; i < teams.Length; i++)
 		{
 			if (teams[i] == null) continue;
 
 			string playerMarker = teams[i].player ? " [PLAYER]" : "";
-			Debug.Log($"[{i}] {teams[i].name}{playerMarker} - " +
+			GameLog.Info($"[{i}] {teams[i].name}{playerMarker} - " +
 					 $"W:{teams[i].tournamentWins} L:{teams[i].tournamentLosses} " +
 					 $"Rank:{teams[i].rank} Earnings:${teams[i].tournamentEarnings:n0}");
 		}

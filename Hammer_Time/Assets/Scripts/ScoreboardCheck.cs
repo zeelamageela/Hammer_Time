@@ -23,7 +23,7 @@ public class ScoreboardCheck : MonoBehaviour
             if (hit.collider == col)
             {
                 gHUD.scoreCheck = true;
-                Debug.Log(hit.collider.gameObject.name);
+                GameLog.Info(hit.collider.gameObject.name);
                 //pm.Pause();
             }
         }

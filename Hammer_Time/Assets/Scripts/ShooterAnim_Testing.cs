@@ -119,7 +119,7 @@ public class ShooterAnim_Testing : MonoBehaviour
 
     IEnumerator Slowdown()
     {
-        Debug.Log("slowdon " + slowdownTimer);
+        GameLog.Info("slowdon " + slowdownTimer);
         rb.linearDamping = 0.1f * slowdownTimer;
 
         yield return new WaitForSeconds(0.1f * slowdownTimer);

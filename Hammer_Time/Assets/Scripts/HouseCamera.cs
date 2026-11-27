@@ -18,7 +18,7 @@ public class HouseCamera : MonoBehaviour
     {
         if (Input.GetKeyDown("space"))
         {
-            Debug.Log("House Look");
+            GameLog.Info("House Look");
             cam.depth = Camera.main.depth + 1;
         }
 

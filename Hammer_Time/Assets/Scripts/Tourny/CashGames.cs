@@ -81,7 +81,7 @@ public class CashGames : MonoBehaviour
 
         List<Standings_List> tempTeam = new List<Standings_List>();
 
-        Debug.Log("GSP teams " + gsp.teams.Length);
+        GameLog.Info("GSP teams " + gsp.teams.Length);
 
         if (gsp.tournyInProgress)
         {
@@ -356,7 +356,7 @@ public class CashGames : MonoBehaviour
             GameScoring(true);
         }
 
-        Debug.Log("Tourny Record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
+        GameLog.Info("Tourny Record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
         //yield return new WaitForEndOfFrame();
     }
 

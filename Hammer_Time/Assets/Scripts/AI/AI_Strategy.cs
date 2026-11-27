@@ -125,10 +125,10 @@ public class AI_Strategy : MonoBehaviour
         // ✅ PHASE 1: Initialize AI Enhancement Systems
         enhancements = new AIEnhancementSystems();
         
-        Debug.Log("[AI_Strategy] Phase 1 Enhancement Systems initialized:");
-        Debug.Log("  ✅ Skill-Based Shot Selection");
-        Debug.Log("  ✅ Clutch Performance Modifiers");
-        Debug.Log("  ✅ Simple Counter-Strategy");
+        GameLog.Info("[AI_Strategy] Phase 1 Enhancement Systems initialized:");
+        GameLog.Info("  ✅ Skill-Based Shot Selection");
+        GameLog.Info("  ✅ Clutch Performance Modifiers");
+        GameLog.Info("  ✅ Simple Counter-Strategy");
         
         // Initialize EV system
         GameObject evObj = new GameObject("EVSystem");
@@ -138,14 +138,14 @@ public class AI_Strategy : MonoBehaviour
         evSystem.evWeight = evWeight;
         evSystem.verboseLogging = evVerboseLogging;
         
-        Debug.Log($"[AI_Strategy] EV System initialized (Enabled: {useEVOptimization}, Weight: {evWeight:F2})");
+        GameLog.Info($"[AI_Strategy] EV System initialized (Enabled: {useEVOptimization}, Weight: {evWeight:F2})");
         
         // Initialize Multi-Shot Planner
         multiShotPlanner = new MultiShotPlanner(gm);
         multiShotPlanner.enableMultiShotPlanning = useMultiShotPlanning;
         multiShotPlanner.verboseLogging = planningVerboseLogging;
         
-        Debug.Log($"[AI_Strategy] Multi-Shot Planner initialized (Enabled: {useMultiShotPlanning})");
+        GameLog.Info($"[AI_Strategy] Multi-Shot Planner initialized (Enabled: {useMultiShotPlanning})");
     }
     
     public void SimpleAIShoot(int rockCurrent)
@@ -415,18 +415,18 @@ public class AI_Strategy : MonoBehaviour
             if (myRocksScoring >= 3)
                 scoreBoost += 1.0f; // Sitting 3+!
             
-            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would sit {myRocksScoring} (shot rock: {iHaveShotRock}) [Boost: +{scoreBoost:F1}]");
+            GameLog.Info($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would sit {myRocksScoring} (shot rock: {iHaveShotRock}) [Boost: +{scoreBoost:F1}]");
         }
         else if (myRocksScoring > oppRocksScoring)
         {
             // Would be winning house (but not shot rock)
             scoreBoost += 0.5f;
-            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would win house {myRocksScoring}-{oppRocksScoring} [Boost: +{scoreBoost:F1}]");
+            GameLog.Info($"[RemovalBenefit] Removing rock #{threatRockIndex} → Would win house {myRocksScoring}-{oppRocksScoring} [Boost: +{scoreBoost:F1}]");
         }
         else
         {
             // No scoring benefit
-            Debug.Log($"[RemovalBenefit] Removing rock #{threatRockIndex} → No scoring benefit (opponent still ahead)");
+            GameLog.Info($"[RemovalBenefit] Removing rock #{threatRockIndex} → No scoring benefit (opponent still ahead)");
         }
         
         return scoreBoost;
@@ -447,40 +447,40 @@ public class AI_Strategy : MonoBehaviour
         // CRITERION 1: Clearly leading (2+ points ahead)
         if (scoreDiff >= 2)
         {
-            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} points");
+            GameLog.Info($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} points");
             return true;
         }
         
         // CRITERION 2: Leading by 1 point in last end
         if (scoreDiff >= 1 && isLastEnd)
         {
-            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} in last end");
+            GameLog.Info($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} in last end");
             return true;
         }
         
         // CRITERION 3: Tied game in late phase (protect position)
         if (scoreDiff == 0 && phase == "late")
         {
-            Debug.Log($"[ShouldPlayDefensive] YES - Tied game in late phase (protect house)");
+            GameLog.Info($"[ShouldPlayDefensive] YES - Tied game in late phase (protect house)");
             return true;
         }
         
         // CRITERION 4: Leading without hammer in late phase (extra defensive)
         if (scoreDiff >= 1 && !hasHammer && phase == "late")
         {
-            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} without hammer in late phase");
+            GameLog.Info($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} without hammer in late phase");
             return true;
         }
         
         // CRITERION 5: Last 3 rocks and ANY lead
         if (scoreDiff >= 1 && rocksRemaining <= 3)
         {
-            Debug.Log($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} with only {rocksRemaining} rocks left");
+            GameLog.Info($"[ShouldPlayDefensive] YES - Leading by {scoreDiff} with only {rocksRemaining} rocks left");
             return true;
         }
         
         // DEFAULT: Offensive (trailing or tied early/middle)
-        Debug.Log($"[ShouldPlayDefensive] NO - Offensive mode (score diff: {scoreDiff}, phase: {phase})");
+        GameLog.Info($"[ShouldPlayDefensive] NO - Offensive mode (score diff: {scoreDiff}, phase: {phase})");
         return false;
     }
     
@@ -503,14 +503,14 @@ public class AI_Strategy : MonoBehaviour
         // HIGH SCORING BENEFIT: Always worth removing (even if not strictly defensive)
         if (removalBenefit >= 2.0f)
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - High scoring benefit ({removalBenefit:F1}) from removing threat!");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - High scoring benefit ({removalBenefit:F1}) from removing threat!");
             return true;
         }
         
         // MEDIUM SCORING BENEFIT: Worth removing in middle/late phases
         if (removalBenefit >= 1.0f && (phase == "middle" || phase == "late"))
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Medium scoring benefit ({removalBenefit:F1}) in {phase} phase");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - Medium scoring benefit ({removalBenefit:F1}) in {phase} phase");
             return true;
         }
         
@@ -519,7 +519,7 @@ public class AI_Strategy : MonoBehaviour
         // CRITICAL: Opponent has shot rock AND we're losing house
         if (!house.amWinningHouse && house.oppRocksInHouse >= 1)
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Losing house (defensive priority)");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - Losing house (defensive priority)");
             return true; // ALWAYS remove when losing
         }
         
@@ -531,7 +531,7 @@ public class AI_Strategy : MonoBehaviour
             {
                 float earlyDist = Vector2.Distance(gm.rockList[house.threatRock].rock.transform.position, new Vector2(0f, 6.5f));
                 bool closeEnoughToRemove = earlyDist < 1.22f; // 8-foot radius
-                Debug.Log($"[ShouldRemoveThreatEnhanced] Early phase — threat dist {earlyDist:F2}m → {(closeEnoughToRemove ? "removing" : "drawing instead")}");
+                GameLog.Info($"[ShouldRemoveThreatEnhanced] Early phase — threat dist {earlyDist:F2}m → {(closeEnoughToRemove ? "removing" : "drawing instead")}");
                 return closeEnoughToRemove;
             }
             return false;
@@ -540,26 +540,26 @@ public class AI_Strategy : MonoBehaviour
         // MIDDLE PHASE: Remove if they have 2+ rocks (multi-point threat)
         if (phase == "middle" && house.oppRocksInHouse >= 2)
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Middle phase, opponent has {house.oppRocksInHouse} rocks");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - Middle phase, opponent has {house.oppRocksInHouse} rocks");
             return true; // Don't let them build big end
         }
         
         // LATE PHASE WITHOUT HAMMER: Remove to steal
         if (phase == "late" && !hasHammer && house.oppRocksInHouse >= 1)
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Late phase without hammer (need to clear)");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - Late phase without hammer (need to clear)");
             return true; // Need to clear to steal
         }
         
         // LATE PHASE WITH HAMMER: Remove if multiple threats
         if (phase == "late" && hasHammer && house.oppRocksInHouse >= 2)
         {
-            Debug.Log($"[ShouldRemoveThreatEnhanced] YES - Late phase with hammer, {house.oppRocksInHouse} opponent rocks");
+            GameLog.Info($"[ShouldRemoveThreatEnhanced] YES - Late phase with hammer, {house.oppRocksInHouse} opponent rocks");
             return true; // Clear for big end
         }
         
         // DEFAULT: Threat exists but not urgent
-        Debug.Log($"[ShouldRemoveThreatEnhanced] NO - Threat exists but no strong removal criteria");
+        GameLog.Info($"[ShouldRemoveThreatEnhanced] NO - Threat exists but no strong removal criteria");
         return false;
     }
     
@@ -633,7 +633,7 @@ public class AI_Strategy : MonoBehaviour
         // Redirect to a draw instead of executing the illegal removal.
         if (intent == ShotIntent.RemoveThreat && gm.IsProtectedFreeGuardZoneRock(targetRock, activeTeamName))
         {
-            Debug.Log($"[AI_Strategy] FGZ WINDOW: rock #{targetRock} is a protected opponent guard - redirecting RemoveThreat to ScorePoints instead of peeling it");
+            GameLog.Info($"[AI_Strategy] FGZ WINDOW: rock #{targetRock} is a protected opponent guard - redirecting RemoveThreat to ScorePoints instead of peeling it");
             intent = ShotIntent.ScorePoints;
             targetRock = -1;
         }
@@ -693,7 +693,7 @@ public class AI_Strategy : MonoBehaviour
                 // Only override if counter-intent is different
                 if (counterIntent != context.intent)
                 {
-                    Debug.Log($"[Counter] OVERRIDING {context.intent} with {counterIntent}");
+                    GameLog.Info($"[Counter] OVERRIDING {context.intent} with {counterIntent}");
                     context.intent = counterIntent;
                     counterActive = true;
                     activeSystems.Add("COUNTER");
@@ -750,7 +750,7 @@ public class AI_Strategy : MonoBehaviour
                     duration: 3.0f
                 );
                 
-                Debug.Log($"[AI Systems] Rock #{rockCurrent}: {string.Join(" + ", activeSystems)}");
+                GameLog.Info($"[AI Systems] Rock #{rockCurrent}: {string.Join(" + ", activeSystems)}");
             }
         }
         
@@ -841,7 +841,7 @@ public class AI_Strategy : MonoBehaviour
         {
             if (planningVerboseLogging)
             {
-                Debug.Log($"[MultiShot] No valid plan for rock {rockCurrent} - using single-shot logic");
+                GameLog.Info($"[MultiShot] No valid plan for rock {rockCurrent} - using single-shot logic");
             }
             return false;
         }
@@ -851,7 +851,7 @@ public class AI_Strategy : MonoBehaviour
         int targetRock = plan.GetCurrentTargetRock();
         Vector2 targetPos = plan.GetCurrentTargetPosition();
         
-        Debug.Log($"[MultiShot] Executing plan '{plan.strategyName}' step {plan.currentStep + 1}/{plan.plannedIntents.Count}: {plannedIntent}");
+        GameLog.Info($"[MultiShot] Executing plan '{plan.strategyName}' step {plan.currentStep + 1}/{plan.plannedIntents.Count}: {plannedIntent}");
         
         // 🎨 SHOW CALLOUT: Display multi-shot plan info
         TextCalloutManager calloutManager = FindObjectOfType<TextCalloutManager>();
@@ -901,17 +901,17 @@ public class AI_Strategy : MonoBehaviour
     {
         Rock_Info rockInfo = gm.rockList[rockCurrent].rockInfo;
         
-        Debug.Log($"[IntentBased] ConservativeSteal - {phase} phase");
+        GameLog.Info($"[IntentBased] ConservativeSteal - {phase} phase");
         
         // 🎯 STEP 1: Check if we have a multi-shot plan to follow
         if (TryExecutePlannedShot(rockCurrent, phase))
         {
-            Debug.Log("[ConservativeSteal] ✅ Following multi-shot strategic plan!");
+            GameLog.Info("[ConservativeSteal] ✅ Following multi-shot strategic plan!");
             return true;
         }
         
         // STEP 2: No plan - use single-shot intent logic
-        Debug.Log("[ConservativeSteal] No plan - using single-shot intent logic");
+        GameLog.Info("[ConservativeSteal] No plan - using single-shot intent logic");
         
         // ✅ REFACTORED: Use cached house analysis and ExecuteShot helper
         var house = GetHouseAnalysis();
@@ -928,7 +928,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
             if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                Debug.Log($"[ConservativeSteal] EARLY: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[ConservativeSteal] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             
@@ -959,11 +959,11 @@ public class AI_Strategy : MonoBehaviour
                 // If we have shot rock, adding another draw is higher-percentage than a takeout
                 if (house.amWinningHouse)
                 {
-                    Debug.Log($"[ConservativeSteal] MIDDLE: We have shot rock — drawing instead of removing #{house.threatRock}");
+                    GameLog.Info($"[ConservativeSteal] MIDDLE: We have shot rock — drawing instead of removing #{house.threatRock}");
                     return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
                 // Opponent has shot rock — remove it
-                Debug.Log($"[ConservativeSteal] MIDDLE: Opponent has shot rock #{house.threatRock} — removing");
+                GameLog.Info($"[ConservativeSteal] MIDDLE: Opponent has shot rock #{house.threatRock} — removing");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent,
                                   acceptRisk: house.myRocksInHouse > 0);
             }
@@ -985,32 +985,32 @@ public class AI_Strategy : MonoBehaviour
             
             if (isDefensive)
             {
-                Debug.Log($"[ConservativeSteal] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                GameLog.Info($"[ConservativeSteal] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
                 
                 // SCENARIO 1: Opponent has rocks - REMOVE THEM!
                 if (house.threatRock >= 0)
                 {
-                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    GameLog.Info($"[ConservativeSteal] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
                     return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
                 
                 // SCENARIO 2: No threats, but we have rocks - protect them
                 else if (house.myRocksInHouse > 0)
                 {
-                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    GameLog.Info($"[ConservativeSteal] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
                     return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
                 
                 // SCENARIO 3: Clean house - conservative draw
                 else
                 {
-                    Debug.Log($"[ConservativeSteal] LATE DEFENSIVE: Clean house, drawing conservatively");
+                    GameLog.Info($"[ConservativeSteal] LATE DEFENSIVE: Clean house, drawing conservatively");
                     return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             
             // OFFENSIVE MODE (trailing or tied) - original steal logic
-            Debug.Log($"[ConservativeSteal] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            GameLog.Info($"[ConservativeSteal] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
             
             // ✅ REFACTORED: Use cached house analysis
             // SCENARIO 1: We have NO rocks, opponent has rock(s)
@@ -1089,7 +1089,7 @@ public class AI_Strategy : MonoBehaviour
     /// </summary>
     private bool TryIntentBasedShot_LastShotScoring(int rockCurrent)
     {
-        Debug.Log($"[LastShotScoring] 🎯 FINAL SHOT - Evaluating scoring options (rock #{rockCurrent}/16)");
+        GameLog.Info($"[LastShotScoring] 🎯 FINAL SHOT - Evaluating scoring options (rock #{rockCurrent}/16)");
         
         Rock_Info currentRockInfo = gm.rockList[rockCurrent].rockInfo;
         Vector2 button = new Vector2(0f, 6.5f);
@@ -1112,7 +1112,7 @@ public class AI_Strategy : MonoBehaviour
             }
         }
         
-        Debug.Log($"[LastShotScoring] My rocks: {myRocksInHouse}, Opponent rocks: {oppRocksInHouse}, Closest opp dist: {closestOpponentDistToButton:F2}");
+        GameLog.Info($"[LastShotScoring] My rocks: {myRocksInHouse}, Opponent rocks: {oppRocksInHouse}, Closest opp dist: {closestOpponentDistToButton:F2}");
         
         ShotContext context;
         
@@ -1132,14 +1132,14 @@ public class AI_Strategy : MonoBehaviour
                 opponentHasShotRock = true;
                 shotRockIndex = shotRockInfo.rockIndex;
                 
-                Debug.Log($"[LastShotScoring] ⚠️ OPPONENT HAS SHOT ROCK (rock #{shotRockIndex} at {shotRock.transform.position})");
+                GameLog.Info($"[LastShotScoring] ⚠️ OPPONENT HAS SHOT ROCK (rock #{shotRockIndex} at {shotRock.transform.position})");
             }
         }
         
         if (opponentHasShotRock && shotRockIndex >= 0  && gm.houseList[0].rockInfo.distance < 1.0f)
         {
             // MUST REMOVE SHOT ROCK (or we lose!)
-            Debug.Log($"[LastShotScoring] 🎯 CRITICAL: Must remove shot rock #{shotRockIndex} to win/tie!");
+            GameLog.Info($"[LastShotScoring] 🎯 CRITICAL: Must remove shot rock #{shotRockIndex} to win/tie!");
             
             context = new ShotContext(ShotIntent.RemoveThreat, shotRockIndex);
             context.acceptRisk = true; // Aggressive - MUST hit it!
@@ -1150,7 +1150,7 @@ public class AI_Strategy : MonoBehaviour
         }
         
         // SCENARIO 2: We have shot rock OR clean house - SCORE!
-        Debug.Log($"[LastShotScoring] ✅ We have shot rock OR clean house - AGGRESSIVE SCORING!");
+        GameLog.Info($"[LastShotScoring] ✅ We have shot rock OR clean house - AGGRESSIVE SCORING!");
         
         // Use NEW LastShotScoring intent (no removal penalties!)
         context = new ShotContext(ShotIntent.LastShotScoring);
@@ -1168,12 +1168,12 @@ public class AI_Strategy : MonoBehaviour
     /// </summary>
     private bool TryIntentBasedShot_AggressiveHammer(int rockCurrent, string phase)
     {
-        Debug.Log($"[IntentBased] AggressiveHammer - {phase} phase");
+        GameLog.Info($"[IntentBased] AggressiveHammer - {phase} phase");
         
         // 🎯 Check if we have a multi-shot plan to follow
         if (TryExecutePlannedShot(rockCurrent, phase))
         {
-            Debug.Log("[AggressiveHammer] ✅ Following multi-shot strategic plan!");
+            GameLog.Info("[AggressiveHammer] ✅ Following multi-shot strategic plan!");
             return true;
         }
         
@@ -1223,7 +1223,7 @@ public class AI_Strategy : MonoBehaviour
                 // Prefer drawing when we already have shot rock — adds to our scoring count
                 if (house.amWinningHouse)
                 {
-                    Debug.Log($"[AggressiveHammer] MIDDLE: We have shot rock — drawing to build end instead of removing #{house.threatRock}");
+                    GameLog.Info($"[AggressiveHammer] MIDDLE: We have shot rock — drawing to build end instead of removing #{house.threatRock}");
                     return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
@@ -1246,7 +1246,7 @@ public class AI_Strategy : MonoBehaviour
             
             if (isLastRock)
             {
-                Debug.Log("[AggressiveHammer] HAMMER LAST ROCK - SMART low-risk strategy!");
+                GameLog.Info("[AggressiveHammer] HAMMER LAST ROCK - SMART low-risk strategy!");
                 
                 // Check for guard interference
                 bool hasGuardInterference = false;
@@ -1271,7 +1271,7 @@ public class AI_Strategy : MonoBehaviour
                 }
                 
                 // DEFAULT: SAFE DRAW TO BUTTON
-                Debug.Log($"[HAMMER LAST ROCK] Drawing to button - accept force of 1, avoid blank!");
+                GameLog.Info($"[HAMMER LAST ROCK] Drawing to button - accept force of 1, avoid blank!");
                 return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
             }
             
@@ -1331,12 +1331,12 @@ public class AI_Strategy : MonoBehaviour
     
     private bool TryIntentBasedShot_ScoreTwoOrBlank(int rockCurrent, string phase)
     {
-        Debug.Log($"[IntentBased] ScoreTwoOrBlank - {phase} phase");
+        GameLog.Info($"[IntentBased] ScoreTwoOrBlank - {phase} phase");
         
         // 🎯 Check if we have a multi-shot plan to follow
         if (TryExecutePlannedShot(rockCurrent, phase))
         {
-            Debug.Log("[ScoreTwoOrBlank] ✅ Following multi-shot strategic plan!");
+            GameLog.Info("[ScoreTwoOrBlank] ✅ Following multi-shot strategic plan!");
             return true;
         }
         
@@ -1352,7 +1352,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
             if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                Debug.Log($"[ScoreTwoOrBlank] EARLY: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[ScoreTwoOrBlank] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else
@@ -1368,7 +1368,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ FIX: Simplified - always remove threats
             if (house.threatRock >= 0)
             {
-                Debug.Log($"[ScoreTwoOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[ScoreTwoOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse >= 2)
@@ -1391,7 +1391,7 @@ public class AI_Strategy : MonoBehaviour
             // LAST ROCK LOGIC: Must score something!
             if (isLastRock)
             {
-                Debug.Log("[ScoreTwoOrBlank] LAST ROCK - must score!");
+                GameLog.Info("[ScoreTwoOrBlank] LAST ROCK - must score!");
                 
                 // Have 2+ rocks already? Add more OR remove threats!
                 if (house.myRocksInHouse >= 1)
@@ -1413,7 +1413,7 @@ public class AI_Strategy : MonoBehaviour
                         // DEFENSIVE + opponent has shot rock = MUST REMOVE!
                         if (isDefensiveLastRock || opponentHasShotRock)
                         {
-                            Debug.Log($"[ScoreTwoOrBlank] LAST ROCK DEFENSIVE: Removing threat #{house.threatRock}!");
+                            GameLog.Info($"[ScoreTwoOrBlank] LAST ROCK DEFENSIVE: Removing threat #{house.threatRock}!");
                             return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                         }
                         else
@@ -1447,32 +1447,32 @@ public class AI_Strategy : MonoBehaviour
             
             if (isDefensive)
             {
-                Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                GameLog.Info($"[ScoreTwoOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
                 
                 // SCENARIO 1: Opponent has rocks - REMOVE THEM!
                 if (house.threatRock >= 0)
                 {
-                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    GameLog.Info($"[ScoreTwoOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
                     return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true, mustScore: true);
                 }
                 
                 // SCENARIO 2: No threats, we have rocks - protect them
                 else if (house.myRocksInHouse >= 1)
                 {
-                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    GameLog.Info($"[ScoreTwoOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
                     return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
                 
                 // SCENARIO 3: Clean house - can still build for 2
                 else
                 {
-                    Debug.Log($"[ScoreTwoOrBlank] LATE DEFENSIVE: Clean house, building for 2");
+                    GameLog.Info($"[ScoreTwoOrBlank] LATE DEFENSIVE: Clean house, building for 2");
                     return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             
             // OFFENSIVE MODE (trailing or tied) - original 2-or-blank logic
-            Debug.Log($"[ScoreTwoOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            GameLog.Info($"[ScoreTwoOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
             
             // Already have 1+? Add more or remove threats!
             if (house.myRocksInHouse >= 1)
@@ -1514,12 +1514,12 @@ public class AI_Strategy : MonoBehaviour
     
     private bool TryIntentBasedShot_AggressiveNotHammer(int rockCurrent, string phase)
     {
-        Debug.Log($"[IntentBased] AggressiveNotHammer - {phase} phase");
+        GameLog.Info($"[IntentBased] AggressiveNotHammer - {phase} phase");
         
         // 🎯 Check if we have a multi-shot plan to follow
         if (TryExecutePlannedShot(rockCurrent, phase))
         {
-            Debug.Log("[AggressiveNotHammer] ✅ Following multi-shot strategic plan!");
+            GameLog.Info("[AggressiveNotHammer] ✅ Following multi-shot strategic plan!");
             return true;
         }
         
@@ -1538,7 +1538,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
             if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                Debug.Log($"[AggressiveNotHammer] EARLY: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[AggressiveNotHammer] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             
@@ -1558,7 +1558,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ FIX: Simplified logic - if threat exists, REMOVE IT (defensive play)
             if (house.threatRock >= 0)
             {
-                Debug.Log($"[AggressiveNotHammer] MIDDLE: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[AggressiveNotHammer] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
             }
             else if (house.myRocksInHouse > 0)
@@ -1581,32 +1581,32 @@ public class AI_Strategy : MonoBehaviour
             
             if (isDefensive)
             {
-                Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                GameLog.Info($"[AggressiveNotHammer] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
                 
                 // SCENARIO 1: Opponent has rocks - REMOVE THEM!
                 if (house.threatRock >= 0)
                 {
-                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    GameLog.Info($"[AggressiveNotHammer] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
                     return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent, acceptRisk: true);
                 }
                 
                 // SCENARIO 2: No threats, but we have rocks - protect them
                 else if (house.myRocksInHouse > 0)
                 {
-                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    GameLog.Info($"[AggressiveNotHammer] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
                     return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
                 
                 // SCENARIO 3: Clean house - conservative draw or force blank
                 else
                 {
-                    Debug.Log($"[AggressiveNotHammer] LATE DEFENSIVE: Clean house, drawing conservatively");
+                    GameLog.Info($"[AggressiveNotHammer] LATE DEFENSIVE: Clean house, drawing conservatively");
                     return ExecuteShot(ShotIntent.ScorePoints, -1, rockCurrent);
                 }
             }
             
             // OFFENSIVE MODE (trailing or tied) - original aggressive logic
-            Debug.Log($"[AggressiveNotHammer] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            GameLog.Info($"[AggressiveNotHammer] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
             
             // SCENARIO 1: No rocks vs threat - desperate removal
             if (house.myRocksInHouse == 0 && house.threatRock >= 0)
@@ -1672,12 +1672,12 @@ public class AI_Strategy : MonoBehaviour
     
     private bool TryIntentBasedShot_StealOrBlank(int rockCurrent, string phase)
     {
-        Debug.Log($"[IntentBased] StealOrBlank - {phase} phase");
+        GameLog.Info($"[IntentBased] StealOrBlank - {phase} phase");
         
         // 🎯 Check if we have a multi-shot plan to follow
         if (TryExecutePlannedShot(rockCurrent, phase))
         {
-            Debug.Log("[StealOrBlank] ✅ Following multi-shot strategic plan!");
+            GameLog.Info("[StealOrBlank] ✅ Following multi-shot strategic plan!");
             return true;
         }
         
@@ -1693,7 +1693,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ ENHANCED: Check threatRock exists AND should remove (with scoring benefit)
             if (house.threatRock >= 0 && ShouldRemoveThreatEnhanced(house, rockCurrent, hasHammer, phase))
             {
-                Debug.Log($"[StealOrBlank] EARLY: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[StealOrBlank] EARLY: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse > 0)
@@ -1714,7 +1714,7 @@ public class AI_Strategy : MonoBehaviour
             // ✅ FIX: Simplified - always remove threats
             if (house.threatRock >= 0)
             {
-                Debug.Log($"[StealOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
+                GameLog.Info($"[StealOrBlank] MIDDLE: Removing threat rock #{house.threatRock}");
                 return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
             }
             else if (house.myRocksInHouse > 0)
@@ -1737,32 +1737,32 @@ public class AI_Strategy : MonoBehaviour
             
             if (isDefensive)
             {
-                Debug.Log($"[StealOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+                GameLog.Info($"[StealOrBlank] LATE DEFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
                 
                 // SCENARIO 1: Opponent has rocks - REMOVE THEM!
                 if (house.threatRock >= 0)
                 {
-                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
+                    GameLog.Info($"[StealOrBlank] LATE DEFENSIVE: Removing threat rock #{house.threatRock} to protect lead!");
                     return ExecuteShot(ShotIntent.RemoveThreat, house.threatRock, rockCurrent);
                 }
                 
                 // SCENARIO 2: No threats, we have rocks - protect them
                 else if (house.myRocksInHouse > 0)
                 {
-                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
+                    GameLog.Info($"[StealOrBlank] LATE DEFENSIVE: Protecting {house.myRocksInHouse} rocks");
                     return ExecuteShot(ShotIntent.ProtectLead, -1, rockCurrent);
                 }
                 
                 // SCENARIO 3: Clean house - blank is acceptable to deny points
                 else
                 {
-                    Debug.Log($"[StealOrBlank] LATE DEFENSIVE: Clean house, forcing blank");
+                    GameLog.Info($"[StealOrBlank] LATE DEFENSIVE: Clean house, forcing blank");
                     return ExecuteShot(ShotIntent.ForceBlank, -1, rockCurrent);
                 }
             }
             
             // OFFENSIVE MODE (tied or trailing) - original steal/blank logic
-            Debug.Log($"[StealOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
+            GameLog.Info($"[StealOrBlank] LATE OFFENSIVE MODE: {activeTeamScore}-{oppTeamScore}");
             
             // Primary goal: Force them to 1 point OR steal OR blank
             
@@ -1927,7 +1927,7 @@ public class AI_Strategy : MonoBehaviour
                 return;
             }
 
-            Debug.Log($"[UNIVERSAL DEFENSIVE] Leading but WE have shot rock — letting strategy decide (draw preferred).");
+            GameLog.Info($"[UNIVERSAL DEFENSIVE] Leading but WE have shot rock — letting strategy decide (draw preferred).");
         }
         
         // 🚨 REMOVAL PRIORITY 2: OFFENSIVE (opponent building too many rocks)
@@ -2045,7 +2045,7 @@ public class AI_Strategy : MonoBehaviour
                 ConservativeScoreTwoOrBlankHammer(rockCurrent, phase);
 
         }
-        Debug.Log("[AI_Strategy]Phase is " + phase);
+        GameLog.Info("[AI_Strategy]Phase is " + phase);
     }
 
     public void ConservativeSteal(int rockCurrent, string phase)
@@ -2059,18 +2059,18 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Conservative Steal - " + phase);
+        GameLog.Info("Conservative Steal - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_ConservativeSteal(rockCurrent, phase))
         {
-            Debug.Log("[ConservativeSteal] ? Intent-based shot selected!");
+            GameLog.Info("[ConservativeSteal] ? Intent-based shot selected!");
             return;
         }
         
-        Debug.Log("[ConservativeSteal] ? Intent-based failed, using legacy logic...");
+        GameLog.Info("[ConservativeSteal] ? Intent-based failed, using legacy logic...");
 
     }
 
@@ -2086,17 +2086,17 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Aggressive Hammer - " + phase);
+        GameLog.Info("Aggressive Hammer - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
         // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
         if (rockCurrent >= 15)
         {
-            Debug.Log("[AggressiveHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            GameLog.Info("[AggressiveHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
             if (TryIntentBasedShot_LastShotScoring(rockCurrent))
             {
-                Debug.Log("[AggressiveHammer] ✅ Last shot scoring executed!");
+                GameLog.Info("[AggressiveHammer] ✅ Last shot scoring executed!");
                 return;
             }
         }
@@ -2104,11 +2104,11 @@ public class AI_Strategy : MonoBehaviour
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_AggressiveHammer(rockCurrent, phase))
         {
-            Debug.Log("[AggressiveHammer] ? Intent-based shot selected!");
+            GameLog.Info("[AggressiveHammer] ? Intent-based shot selected!");
             return;
         }
         
-        Debug.Log("[AggressiveHammer] ? Intent-based failed, using legacy logic...");
+        GameLog.Info("[AggressiveHammer] ? Intent-based failed, using legacy logic...");
 
     }
 
@@ -2123,17 +2123,17 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Score Two or Blank - " + phase);
+        GameLog.Info("Score Two or Blank - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
         // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
         if (rockCurrent >= 15)
         {
-            Debug.Log("[ScoreTwoOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            GameLog.Info("[ScoreTwoOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
             if (TryIntentBasedShot_LastShotScoring(rockCurrent))
             {
-                Debug.Log("[ScoreTwoOrBlank] ✅ Last shot scoring executed!");
+                GameLog.Info("[ScoreTwoOrBlank] ✅ Last shot scoring executed!");
                 return;
             }
         }
@@ -2141,11 +2141,11 @@ public class AI_Strategy : MonoBehaviour
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_ScoreTwoOrBlank(rockCurrent, phase))
         {
-            Debug.Log("[ScoreTwoOrBlank] ? Intent-based shot selected!");
+            GameLog.Info("[ScoreTwoOrBlank] ? Intent-based shot selected!");
             return;
         }
         
-        Debug.Log("[ScoreTwoOrBlank] ? Intent-based failed, using legacy logic...");
+        GameLog.Info("[ScoreTwoOrBlank] ? Intent-based failed, using legacy logic...");
 
     }
 
@@ -2166,10 +2166,10 @@ public class AI_Strategy : MonoBehaviour
         // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
         if (rockCurrent >= 15)
         {
-            Debug.Log("[AggressiveNotHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            GameLog.Info("[AggressiveNotHammer] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
             if (TryIntentBasedShot_LastShotScoring(rockCurrent))
             {
-                Debug.Log("[AggressiveNotHammer] ✅ Last shot scoring executed!");
+                GameLog.Info("[AggressiveNotHammer] ✅ Last shot scoring executed!");
                 return;
             }
         }
@@ -2177,11 +2177,11 @@ public class AI_Strategy : MonoBehaviour
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_AggressiveNotHammer(rockCurrent, phase))
         {
-            Debug.Log("[AggressiveNotHammer] ? Intent-based shot selected! -- phase is " + phase);
+            GameLog.Info("[AggressiveNotHammer] ? Intent-based shot selected! -- phase is " + phase);
             return;
         }
         
-        Debug.Log("[AggressiveNotHammer] ? Intent-based failed, using legacy logic...");
+        GameLog.Info("[AggressiveNotHammer] ? Intent-based failed, using legacy logic...");
 
     }
 
@@ -2196,17 +2196,17 @@ public class AI_Strategy : MonoBehaviour
             closestRockInfo = gm.houseList[0].rockInfo;
         }
 
-        Debug.Log("Steal or Force - " + phase);
+        GameLog.Info("Steal or Force - " + phase);
 
         aiTarg.OnTarget("Guard Reading", rockCurrent, 0);
         
         // ✨ NEW: Check if this is LAST SHOT (rock 15) - use dedicated last-shot logic!
         if (rockCurrent >= 15)
         {
-            Debug.Log("[StealOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
+            GameLog.Info("[StealOrBlank] 🎯 LAST SHOT DETECTED - Using LastShotScoring logic!");
             if (TryIntentBasedShot_LastShotScoring(rockCurrent))
             {
-                Debug.Log("[StealOrBlank] ✅ Last shot scoring executed!");
+                GameLog.Info("[StealOrBlank] ✅ Last shot scoring executed!");
                 return;
             }
         }
@@ -2214,11 +2214,11 @@ public class AI_Strategy : MonoBehaviour
         // ? NEW ARCHITECTURE: Try intent-based shot selection FIRST!
         if (TryIntentBasedShot_StealOrBlank(rockCurrent, phase))
         {
-            Debug.Log("[StealOrBlank] ? Intent-based shot selected!");
+            GameLog.Info("[StealOrBlank] ? Intent-based shot selected!");
             return;
         }
             
-        Debug.Log("[StealOrBlank] ? Intent-based failed, using legacy logic...");
+        GameLog.Info("[StealOrBlank] ? Intent-based failed, using legacy logic...");
 
     }
 }

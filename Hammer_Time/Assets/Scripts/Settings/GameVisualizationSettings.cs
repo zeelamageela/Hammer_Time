@@ -52,7 +52,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(TRAJECTORY_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnTrajectoryVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Trajectory visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Trajectory visibility: {value}");
             }
         }
     }
@@ -68,7 +68,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(COLLISION_LINES_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnCollisionLinesVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Collision lines visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Collision lines visibility: {value}");
             }
         }
     }
@@ -84,7 +84,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(AIM_CIRCLE_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnAimCircleVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Aim circle visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Aim circle visibility: {value}");
             }
         }
     }
@@ -100,7 +100,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(GUIDELINES_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnGuidelinesVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Guidelines visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Guidelines visibility: {value}");
             }
         }
     }
@@ -116,7 +116,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(CURL_LINE_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnCurlLineVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Curl line visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Curl line visibility: {value}");
             }
         }
     }
@@ -132,7 +132,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(COLLISION_WARNING_VISIBLE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnCollisionWarningVisibilityChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Collision warning visibility: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Collision warning visibility: {value}");
             }
         }
     }
@@ -154,7 +154,7 @@ public class GameVisualizationSettings : MonoBehaviour
                 PlayerPrefs.SetInt(FLICK_SHOT_MODE_KEY, value ? 1 : 0);
                 PlayerPrefs.Save();
                 OnFlickShotModeChanged?.Invoke(value);
-                Debug.Log($"[GameVisualizationSettings] Flick shot mode: {value}");
+                GameLog.Info($"[GameVisualizationSettings] Flick shot mode: {value}");
             }
         }
     }
@@ -196,7 +196,7 @@ public class GameVisualizationSettings : MonoBehaviour
         collisionWarningVisible = PlayerPrefs.GetInt(COLLISION_WARNING_VISIBLE_KEY, 1) == 1;
         flickShotMode = PlayerPrefs.GetInt(FLICK_SHOT_MODE_KEY, 0) == 1;
         
-        Debug.Log($"[GameVisualizationSettings] Loaded settings - Trajectory: {trajectoryVisible}, Collision: {collisionLinesVisible}, AimCircle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}, FlickShotMode: {flickShotMode}");
+        GameLog.Info($"[GameVisualizationSettings] Loaded settings - Trajectory: {trajectoryVisible}, Collision: {collisionLinesVisible}, AimCircle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}, FlickShotMode: {flickShotMode}");
     }
 
     /// <summary>

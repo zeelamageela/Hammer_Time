@@ -114,12 +114,12 @@ public class ShotOutcomeEvaluator
         float successRate = baseAccuracy * (1f - difficulty * 0.4f);
         
         // ?? DEBUG LOGGING
-        Debug.Log($"[EV Success] {context.intent}: Accuracy={baseAccuracy:F2}, Difficulty={difficulty:F2}, Success={successRate:F2}");
+        GameLog.Info($"[EV Success] {context.intent}: Accuracy={baseAccuracy:F2}, Difficulty={difficulty:F2}, Success={successRate:F2}");
         
         if (gameState.MustScore() || gameState.IsDesperate())
         {
             successRate *= 0.92f;
-            Debug.Log($"[EV Success] Pressure penalty applied ? {successRate:F2}");
+            GameLog.Info($"[EV Success] Pressure penalty applied ? {successRate:F2}");
         }
         
         return Mathf.Clamp(successRate, 0.1f, 0.98f);
@@ -194,7 +194,7 @@ public class ExpectedValueCalculator
                 float distToButton = Vector2.Distance(context.idealFinalPosition, button);
                 reward = Mathf.Max(0f, 10f - distToButton);
                 
-                Debug.Log($"[EV Reward] Draw base: {reward:F2} (dist to button: {distToButton:F2})");
+                GameLog.Info($"[EV Reward] Draw base: {reward:F2} (dist to button: {distToButton:F2})");
                 
                 // ? NEW: Penalty for drawing when opponent has rocks (CONTEXT AWARE!)
                 // BUT: Don't penalize if it's last shot OR if we must score
@@ -207,50 +207,50 @@ public class ExpectedValueCalculator
                     float drawPenalty = gameState.oppRocksInHouse * 1.5f; // Gentler penalty
                     reward -= drawPenalty;
                     reward = Mathf.Max(0f, reward);
-                    Debug.Log($"[EV Reward] Draw penalty for {gameState.oppRocksInHouse} opp rocks: -{drawPenalty:F2} ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Draw penalty for {gameState.oppRocksInHouse} opp rocks: -{drawPenalty:F2} ? {reward:F2}");
                 }
                 else if (gameState.oppRocksInHouse >= 2 && (isLastShot || mustScore))
                 {
-                    Debug.Log($"[EV Reward] NO draw penalty - last shot or must score situation!");
+                    GameLog.Info($"[EV Reward] NO draw penalty - last shot or must score situation!");
                 }
                 
                 if (gameState.myRocksInHouse >= 1)
                 {
                     reward += 3f;
-                    Debug.Log($"[EV Reward] Draw +3 (my rocks in house) ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Draw +3 (my rocks in house) ? {reward:F2}");
                 }
                 if (!gameState.hasHammer && gameState.oppRocksInHouse == 0)
                 {
                     reward += 5f;
-                    Debug.Log($"[EV Reward] Draw +5 (no hammer, clean house) ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Draw +5 (no hammer, clean house) ? {reward:F2}");
                 }
                 
-                Debug.Log($"[EV Reward] Draw FINAL: {reward:F2}");
+                GameLog.Info($"[EV Reward] Draw FINAL: {reward:F2}");
                 break;
             
             case ShotIntent.RemoveThreat:
                 reward = 15f; // ? INCREASED from 8!
-                Debug.Log($"[EV Reward] Removal base: {reward:F2} (INCREASED from 8!)");
+                GameLog.Info($"[EV Reward] Removal base: {reward:F2} (INCREASED from 8!)");
                 
                 if (gameState.activeTeamScore < gameState.oppTeamScore)
                 {
                     reward += 6f; // ? INCREASED from 4!
-                    Debug.Log($"[EV Reward] Removal +6 (trailing, increased from 4) ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Removal +6 (trailing, increased from 4) ? {reward:F2}");
                 }
                 if (gameState.hasGuardBlocking)
                 {
                     reward += 4f; // ? INCREASED from 3!
-                    Debug.Log($"[EV Reward] Removal +4 (guard blocking, increased from 3) ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Removal +4 (guard blocking, increased from 3) ? {reward:F2}");
                 }
                 
                 // ? NEW: Scale with opponent rocks - removal is CRITICAL!
                 if (gameState.oppRocksInHouse >= 3)
                 {
                     reward += 10f;
-                    Debug.Log($"[EV Reward] Removal +10 (3+ opp rocks - CRITICAL clearing needed!) ? {reward:F2}");
+                    GameLog.Info($"[EV Reward] Removal +10 (3+ opp rocks - CRITICAL clearing needed!) ? {reward:F2}");
                 }
                 
-                Debug.Log($"[EV Reward] Removal FINAL: {reward:F2}");
+                GameLog.Info($"[EV Reward] Removal FINAL: {reward:F2}");
                 break;
             
             case ShotIntent.CreateOpportunity:
@@ -287,7 +287,7 @@ public class ExpectedValueCalculator
                 if (gameState.hasHammer && gameState.rockCurrent >= 14)
                     penalty = 18f;
                 
-                Debug.Log($"[EV Penalty] Draw failure: {penalty:F2}");
+                GameLog.Info($"[EV Penalty] Draw failure: {penalty:F2}");
                 break;
             
             case ShotIntent.RemoveThreat:
@@ -295,7 +295,7 @@ public class ExpectedValueCalculator
                 if (gameState.guardsInPlay > 0)
                     penalty += gameState.guardsInPlay * 1.5f; // ? REDUCED from 2.5!
                 
-                Debug.Log($"[EV Penalty] Removal failure: {penalty:F2} (base 6, reduced from 9!)");
+                GameLog.Info($"[EV Penalty] Removal failure: {penalty:F2} (base 6, reduced from 9!)");
                 break;
             
             case ShotIntent.CreateOpportunity:
@@ -388,10 +388,10 @@ public class EVEvaluationSystem : MonoBehaviour
             return bestAlt;
         }
         
-        Debug.Log($"[EV DEBUG] ? Keeping {intentShot.intent} (EV: {intentEV:F2})");
+        GameLog.Info($"[EV DEBUG] ? Keeping {intentShot.intent} (EV: {intentEV:F2})");
         if (bestAltEV > intentEV)
         {
-            Debug.Log($"[EV DEBUG] Alt was better but within threshold: {bestAltEV:F2} vs {threshold:F2}");
+            GameLog.Info($"[EV DEBUG] Alt was better but within threshold: {bestAltEV:F2} vs {threshold:F2}");
         }
         Debug.LogWarning($"[EV DEBUG] ==========================================");
         
@@ -437,13 +437,13 @@ public class EVEvaluationSystem : MonoBehaviour
     public void SetEVEnabled(bool enabled)
     {
         useEVEvaluation = enabled;
-        Debug.Log($"[EV] System {(enabled ? "ENABLED" : "DISABLED")}");
+        GameLog.Info($"[EV] System {(enabled ? "ENABLED" : "DISABLED")}");
     }
     
     public void SetEVWeight(float weight)
     {
         evWeight = Mathf.Clamp01(weight);
-        Debug.Log($"[EV] Weight set to {evWeight:P0}");
+        GameLog.Info($"[EV] Weight set to {evWeight:P0}");
     }
 }
 
@@ -489,24 +489,24 @@ public class AIEnhancementSystems
             float weight = shooter.weightAccuracy.GetValue();
             float aim = shooter.aimAccuracy.GetValue();
             
-            Debug.Log($"[SkillBased] {shooterName} Skills: Finesse={finesse:F1}, Weight={weight:F1}, Aim={aim:F1}");
+            GameLog.Info($"[SkillBased] {shooterName} Skills: Finesse={finesse:F1}, Weight={weight:F1}, Aim={aim:F1}");
             
             if (finesse >= 75f)
             {
                 shot = BoostFinesseShots(shot, finesse);
-                Debug.Log($"[SkillBased] {shooterName} has HIGH FINESSE ({finesse:F1}) - boosting finesse shots");
+                GameLog.Info($"[SkillBased] {shooterName} has HIGH FINESSE ({finesse:F1}) - boosting finesse shots");
             }
             
             if (weight >= 75f)
             {
                 shot = BoostPowerShots(shot, weight);
-                Debug.Log($"[SkillBased] {shooterName} has HIGH WEIGHT ({weight:F1}) - boosting power shots");
+                GameLog.Info($"[SkillBased] {shooterName} has HIGH WEIGHT ({weight:F1}) - boosting power shots");
             }
             
             if (aim >= 75f)
             {
                 shot = BoostPrecisionShots(shot, aim);
-                Debug.Log($"[SkillBased] {shooterName} has HIGH AIM ({aim:F1}) - boosting precision shots");
+                GameLog.Info($"[SkillBased] {shooterName} has HIGH AIM ({aim:F1}) - boosting precision shots");
             }
             
             if (finesse < 40f)
@@ -564,7 +564,7 @@ public class AIEnhancementSystems
                 // Penalty for low finesse
                 if (shot.intent == ShotIntent.ScorePoints && finesse < 30f)
                 {
-                    Debug.Log("[SkillBased] VERY LOW FINESSE - considering guard instead of draw");
+                    GameLog.Info("[SkillBased] VERY LOW FINESSE - considering guard instead of draw");
                 }
             }
             return shot;
@@ -611,7 +611,7 @@ public class AIEnhancementSystems
             float newRate = (LEARNING_RATE * (success ? 1f : 0f)) + ((1f - LEARNING_RATE) * currentRate);
             characterShotSuccessRates[shooterName][shotType] = newRate;
             
-            Debug.Log($"[SkillBased] {shooterName} {shotType}: {(success ? "SUCCESS" : "FAIL")} ? Success rate: {currentRate:F2} ? {newRate:F2}");
+            GameLog.Info($"[SkillBased] {shooterName} {shotType}: {(success ? "SUCCESS" : "FAIL")} ? Success rate: {currentRate:F2} ? {newRate:F2}");
         }
         
         private ShotContext ApplyLearnedPreferences(ShotContext shot, string shooterName)
@@ -627,7 +627,7 @@ public class AIEnhancementSystems
                 
                 if (successRate > 0.6f)
                 {
-                    Debug.Log($"[SkillBased] {shooterName} is GOOD at {shotType} ({successRate:P0}) - boosting accuracy");
+                    GameLog.Info($"[SkillBased] {shooterName} is GOOD at {shotType} ({successRate:P0}) - boosting accuracy");
                 }
                 else if (successRate < 0.4f)
                 {
@@ -654,7 +654,7 @@ public class AIEnhancementSystems
         public void ResetLearnedData()
         {
             characterShotSuccessRates.Clear();
-            Debug.Log("[SkillBased] Learned shot data RESET");
+            GameLog.Info("[SkillBased] Learned shot data RESET");
         }
     }
     
@@ -679,60 +679,60 @@ public class AIEnhancementSystems
             if (state.endCurrent == state.endTotal)
             {
                 pressure += 30f;
-                Debug.Log("[Clutch] LAST END - Pressure +30");
+                GameLog.Info("[Clutch] LAST END - Pressure +30");
             }
             
             int scoreDiff = Mathf.Abs(state.activeTeamScore - state.oppTeamScore);
             if (scoreDiff == 0)
             {
                 pressure += 25f;
-                Debug.Log("[Clutch] TIED GAME - Pressure +25");
+                GameLog.Info("[Clutch] TIED GAME - Pressure +25");
             }
             else if (scoreDiff == 1)
             {
                 pressure += 20f;
-                Debug.Log("[Clutch] ONE POINT GAME - Pressure +20");
+                GameLog.Info("[Clutch] ONE POINT GAME - Pressure +20");
             }
             else if (scoreDiff == 2)
             {
                 pressure += 10f;
-                Debug.Log("[Clutch] TWO POINT GAME - Pressure +10");
+                GameLog.Info("[Clutch] TWO POINT GAME - Pressure +10");
             }
             
             if (rockCurrent >= 15)
             {
                 pressure += 25f;
-                Debug.Log("[Clutch] LAST SHOT - Pressure +25");
+                GameLog.Info("[Clutch] LAST SHOT - Pressure +25");
             }
             else if (rockCurrent >= 13)
             {
                 pressure += 15f;
-                Debug.Log("[Clutch] LAST 3 SHOTS - Pressure +15");
+                GameLog.Info("[Clutch] LAST 3 SHOTS - Pressure +15");
             }
             else if (rockCurrent >= 10)
             {
                 pressure += 5f;
-                Debug.Log("[Clutch] LATE PHASE - Pressure +5");
+                GameLog.Info("[Clutch] LATE PHASE - Pressure +5");
             }
             
             if (state.activeTeamScore < state.oppTeamScore)
             {
                 pressure += 15f;
-                Debug.Log("[Clutch] TRAILING - Pressure +15");
+                GameLog.Info("[Clutch] TRAILING - Pressure +15");
             }
             else if (state.activeTeamScore > state.oppTeamScore && state.endCurrent == state.endTotal)
             {
                 pressure += 10f;
-                Debug.Log("[Clutch] PROTECTING LEAD (last end) - Pressure +10");
+                GameLog.Info("[Clutch] PROTECTING LEAD (last end) - Pressure +10");
             }
             
             if (!state.hasHammer && state.oppRocksInHouse > state.myRocksInHouse)
             {
                 pressure += 20f;
-                Debug.Log("[Clutch] MUST SCORE (down without hammer) - Pressure +20");
+                GameLog.Info("[Clutch] MUST SCORE (down without hammer) - Pressure +20");
             }
             
-            Debug.Log($"[Clutch] TOTAL PRESSURE: {pressure:F0}/100");
+            GameLog.Info($"[Clutch] TOTAL PRESSURE: {pressure:F0}/100");
             return Mathf.Clamp(pressure, 0f, 100f);
         }
         
@@ -740,19 +740,19 @@ public class AIEnhancementSystems
         {
             if (pressure < 30f)
             {
-                Debug.Log($"[Clutch] LOW PRESSURE ({pressure:F0}) - Normal play");
+                GameLog.Info($"[Clutch] LOW PRESSURE ({pressure:F0}) - Normal play");
                 return shot;
             }
             
             if (pressure < 60f)
             {
                 shot = ApplyMediumPressure(shot, pressure, state);
-                Debug.Log($"[Clutch] MEDIUM PRESSURE ({pressure:F0}) - Slight adjustments");
+                GameLog.Info($"[Clutch] MEDIUM PRESSURE ({pressure:F0}) - Slight adjustments");
             }
             else
             {
                 shot = ApplyHighPressure(shot, pressure, state);
-                Debug.Log($"[Clutch] HIGH PRESSURE ({pressure:F0}) - Significant changes!");
+                GameLog.Info($"[Clutch] HIGH PRESSURE ({pressure:F0}) - Significant changes!");
             }
             
             return shot;
@@ -764,19 +764,19 @@ public class AIEnhancementSystems
             {
                 case AIPersonality.Conservative:
                     shot.acceptRisk = false;
-                    Debug.Log("[Clutch] Conservative AI - playing safer under medium pressure");
+                    GameLog.Info("[Clutch] Conservative AI - playing safer under medium pressure");
                     break;
                     
                 case AIPersonality.Aggressive:
                     if (state.activeTeamScore <= state.oppTeamScore)
                     {
                         shot.acceptRisk = true;
-                        Debug.Log("[Clutch] Aggressive AI - taking risks under medium pressure");
+                        GameLog.Info("[Clutch] Aggressive AI - taking risks under medium pressure");
                     }
                     break;
                     
                 case AIPersonality.Balanced:
-                    Debug.Log("[Clutch] Balanced AI - steady under medium pressure");
+                    GameLog.Info("[Clutch] Balanced AI - steady under medium pressure");
                     break;
             }
             
@@ -793,10 +793,10 @@ public class AIEnhancementSystems
                     
                     if (shot.intent == ShotIntent.ScorePoints)
                     {
-                        Debug.Log("[Clutch] Conservative AI (HIGH PRESSURE) - prefer guards over risky draws");
+                        GameLog.Info("[Clutch] Conservative AI (HIGH PRESSURE) - prefer guards over risky draws");
                     }
                     
-                    Debug.Log("[Clutch] Conservative AI - PLAYING IT SAFE under high pressure!");
+                    GameLog.Info("[Clutch] Conservative AI - PLAYING IT SAFE under high pressure!");
                     break;
                     
                 case AIPersonality.Aggressive:
@@ -805,23 +805,23 @@ public class AIEnhancementSystems
                     if (state.activeTeamScore < state.oppTeamScore)
                     {
                         shot.mustScore = true;
-                        Debug.Log("[Clutch] Aggressive AI - MUST SCORE (trailing under high pressure)");
+                        GameLog.Info("[Clutch] Aggressive AI - MUST SCORE (trailing under high pressure)");
                     }
                     else if (state.activeTeamScore > state.oppTeamScore)
                     {
                         if (shot.intent == ShotIntent.RemoveThreat)
                         {
                             shot.acceptRisk = true;
-                            Debug.Log("[Clutch] Aggressive AI - AGGRESSIVE CLEARING (protecting lead)");
+                            GameLog.Info("[Clutch] Aggressive AI - AGGRESSIVE CLEARING (protecting lead)");
                         }
                     }
                     else
                     {
                         shot.mustScore = true;
-                        Debug.Log("[Clutch] Aggressive AI - GO FOR THE WIN (tied under high pressure)");
+                        GameLog.Info("[Clutch] Aggressive AI - GO FOR THE WIN (tied under high pressure)");
                     }
                     
-                    Debug.Log("[Clutch] Aggressive AI - TAKING RISKS under high pressure!");
+                    GameLog.Info("[Clutch] Aggressive AI - TAKING RISKS under high pressure!");
                     break;
                     
                 case AIPersonality.Balanced:
@@ -829,16 +829,16 @@ public class AIEnhancementSystems
                     {
                         shot.acceptRisk = true;
                         shot.mustScore = true;
-                        Debug.Log("[Clutch] Balanced AI - MUST SCORE (last end, trailing)");
+                        GameLog.Info("[Clutch] Balanced AI - MUST SCORE (last end, trailing)");
                     }
                     else if (state.endCurrent == state.endTotal && state.activeTeamScore > state.oppTeamScore)
                     {
                         shot.acceptRisk = false;
-                        Debug.Log("[Clutch] Balanced AI - PLAY SAFE (last end, leading)");
+                        GameLog.Info("[Clutch] Balanced AI - PLAY SAFE (last end, leading)");
                     }
                     else
                     {
-                        Debug.Log("[Clutch] Balanced AI - STEADY (high pressure, but balanced)");
+                        GameLog.Info("[Clutch] Balanced AI - STEADY (high pressure, but balanced)");
                     }
                     break;
             }
@@ -860,17 +860,17 @@ public class AIEnhancementSystems
             if (weight > 70f && finesse < 60f)
             {
                 personality = AIPersonality.Aggressive;
-                Debug.Log($"[Clutch] AI Personality: AGGRESSIVE (Weight={weight:F0}, Finesse={finesse:F0})");
+                GameLog.Info($"[Clutch] AI Personality: AGGRESSIVE (Weight={weight:F0}, Finesse={finesse:F0})");
             }
             else if (finesse > 70f && weight < 60f)
             {
                 personality = AIPersonality.Conservative;
-                Debug.Log($"[Clutch] AI Personality: CONSERVATIVE (Weight={weight:F0}, Finesse={finesse:F0})");
+                GameLog.Info($"[Clutch] AI Personality: CONSERVATIVE (Weight={weight:F0}, Finesse={finesse:F0})");
             }
             else
             {
                 personality = AIPersonality.Balanced;
-                Debug.Log($"[Clutch] AI Personality: BALANCED (Weight={weight:F0}, Finesse={finesse:F0})");
+                GameLog.Info($"[Clutch] AI Personality: BALANCED (Weight={weight:F0}, Finesse={finesse:F0})");
             }
         }
         
@@ -926,7 +926,7 @@ public class AIEnhancementSystems
                 recentOpponentShots.Dequeue();
             }
             
-            Debug.Log($"[Counter] Recorded opponent shot: {shotType} ({intent}) - Success: {success}");
+            GameLog.Info($"[Counter] Recorded opponent shot: {shotType} ({intent}) - Success: {success}");
             
             AnalyzePattern();
         }
@@ -953,29 +953,29 @@ public class AIEnhancementSystems
                     takeoutCount++;
             }
             
-            Debug.Log($"[Counter] Pattern Analysis: {drawCount} draws, {guardCount} guards, {takeoutCount} takeouts (last {recentOpponentShots.Count} shots)");
+            GameLog.Info($"[Counter] Pattern Analysis: {drawCount} draws, {guardCount} guards, {takeoutCount} takeouts (last {recentOpponentShots.Count} shots)");
             
             int total = recentOpponentShots.Count;
             
             if (drawCount >= total * 0.6f)
             {
                 currentStrategy = DetectedStrategy.BuildingPosition;
-                Debug.Log("[Counter] ?? PATTERN DETECTED: Opponent is BUILDING POSITION (multiple draws)");
+                GameLog.Info("[Counter] ?? PATTERN DETECTED: Opponent is BUILDING POSITION (multiple draws)");
             }
             else if (guardCount >= total * 0.6f)
             {
                 currentStrategy = DetectedStrategy.ProtectingWithGuards;
-                Debug.Log("[Counter] ?? PATTERN DETECTED: Opponent is PROTECTING WITH GUARDS");
+                GameLog.Info("[Counter] ?? PATTERN DETECTED: Opponent is PROTECTING WITH GUARDS");
             }
             else if (takeoutCount >= total * 0.6f)
             {
                 currentStrategy = DetectedStrategy.AggressiveClearing;
-                Debug.Log("[Counter] ?? PATTERN DETECTED: Opponent is AGGRESSIVELY CLEARING");
+                GameLog.Info("[Counter] ?? PATTERN DETECTED: Opponent is AGGRESSIVELY CLEARING");
             }
             else
             {
                 currentStrategy = DetectedStrategy.Mixed;
-                Debug.Log("[Counter] Pattern is MIXED - no clear strategy");
+                GameLog.Info("[Counter] Pattern is MIXED - no clear strategy");
             }
         }
         
@@ -984,21 +984,21 @@ public class AIEnhancementSystems
             switch (strategy)
             {
                 case DetectedStrategy.BuildingPosition:
-                    Debug.Log("[Counter] COUNTER-STRATEGY: Opponent building position ? REMOVE THREATS");
+                    GameLog.Info("[Counter] COUNTER-STRATEGY: Opponent building position ? REMOVE THREATS");
                     return ShotIntent.RemoveThreat;
                     
                 case DetectedStrategy.ProtectingWithGuards:
-                    Debug.Log("[Counter] COUNTER-STRATEGY: Opponent protecting ? PEEL GUARDS or DRAW AROUND");
+                    GameLog.Info("[Counter] COUNTER-STRATEGY: Opponent protecting ? PEEL GUARDS or DRAW AROUND");
                     return ShotIntent.RemoveThreat;
                     
                 case DetectedStrategy.AggressiveClearing:
-                    Debug.Log("[Counter] COUNTER-STRATEGY: Opponent clearing ? CREATE PROTECTED POSITION");
+                    GameLog.Info("[Counter] COUNTER-STRATEGY: Opponent clearing ? CREATE PROTECTED POSITION");
                     return ShotIntent.CreateOpportunity;
                     
                 case DetectedStrategy.Mixed:
                 case DetectedStrategy.Unknown:
                 default:
-                    Debug.Log("[Counter] No clear pattern - using default intent");
+                    GameLog.Info("[Counter] No clear pattern - using default intent");
                     return defaultIntent;
             }
         }
@@ -1026,7 +1026,7 @@ public class AIEnhancementSystems
             
             float successRate = (float)successCount / recentOpponentShots.Count;
             
-            Debug.Log($"[Counter] Opponent success rate: {successRate:P0} ({successCount}/{recentOpponentShots.Count})");
+            GameLog.Info($"[Counter] Opponent success rate: {successRate:P0} ({successCount}/{recentOpponentShots.Count})");
             return successRate;
         }
         
@@ -1034,7 +1034,7 @@ public class AIEnhancementSystems
         {
             recentOpponentShots.Clear();
             currentStrategy = DetectedStrategy.Unknown;
-            Debug.Log("[Counter] Tracking RESET for new end");
+            GameLog.Info("[Counter] Tracking RESET for new end");
         }
     }
 }

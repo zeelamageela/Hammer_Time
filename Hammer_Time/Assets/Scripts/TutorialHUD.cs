@@ -70,7 +70,7 @@ public class TutorialHUD : MonoBehaviour
         {
             yield return null;
         }
-        Debug.Log("ClickedUI");
+        GameLog.Info("ClickedUI");
     }
 
     public void Pause()

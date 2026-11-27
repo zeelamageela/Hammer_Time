@@ -59,7 +59,7 @@ public class TurnAnim : MonoBehaviour
             if (rockForce != null)
             {
                 rockForce.flipAxis = rm.inturn;
-                Debug.Log($"?? [TurnAnim] Updated flipAxis = {rm.inturn} ({(rm.inturn ? "IN-TURN (LEFT)" : "OUT-TURN (RIGHT)")})");
+                GameLog.Info($"?? [TurnAnim] Updated flipAxis = {rm.inturn} ({(rm.inturn ? "IN-TURN (LEFT)" : "OUT-TURN (RIGHT)")})");
             }
             
             // CRITICAL: Force trajectory redraw so player sees immediate visual feedback
@@ -68,9 +68,9 @@ public class TurnAnim : MonoBehaviour
             TrajectoryLine trajLine = FindObjectOfType<TrajectoryLine>();
             if (trajLine != null)
             {
-                Debug.Log($"?? [TurnAnim] Forcing trajectory redraw NOW (toggle clicked)");
+                GameLog.Info($"?? [TurnAnim] Forcing trajectory redraw NOW (toggle clicked)");
                 trajLine.DrawTrajectory();
-                Debug.Log($"?? [TurnAnim] Trajectory redraw COMPLETE");
+                GameLog.Info($"?? [TurnAnim] Trajectory redraw COMPLETE");
             }
             else
             {
@@ -80,7 +80,7 @@ public class TurnAnim : MonoBehaviour
             // Start coroutine ONLY for collider enable/disable timing (animation protection)
             StartCoroutine(ToggleColliderDelay());
             
-            Debug.Log($"[TurnAnim] Turn toggled IMMEDIATELY - rm.inturn={rm.inturn}, flipAxis={rockForce?.flipAxis}, animator={rm.inturn}");
+            GameLog.Info($"[TurnAnim] Turn toggled IMMEDIATELY - rm.inturn={rm.inturn}, flipAxis={rockForce?.flipAxis}, animator={rm.inturn}");
         }
     }
     
@@ -96,6 +96,8 @@ public class TurnAnim : MonoBehaviour
     
     void Update()
     {
+        if (gm == null || rm == null) return;   // a toggle with nothing wired threw every frame
+
         // CRITICAL FIX: Check for negative rockCurrent (before first rock)
         if (gm.rockList.Count != 0 && gm.rockCurrent >= 0 && gm.rockCurrent < gm.rockList.Count)
         {

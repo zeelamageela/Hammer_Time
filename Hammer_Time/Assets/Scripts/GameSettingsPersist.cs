@@ -82,10 +82,10 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 var stackTrace = new System.Diagnostics.StackTrace(1, true);
                 var caller = stackTrace.GetFrame(0);
-                Debug.Log($"[GSP.score] ARRAY REPLACED by {caller.GetMethod().DeclaringType?.Name}.{caller.GetMethod().Name} at line {caller.GetFileLineNumber()}");
+                GameLog.Info($"[GSP.score] ARRAY REPLACED by {caller.GetMethod().DeclaringType?.Name}.{caller.GetMethod().Name} at line {caller.GetFileLineNumber()}");
                 if (_score != null && _score.Length > 0)
                 {
-                    Debug.Log($"[GSP.score]   OLD array: [{_score[0].x},{_score[0].y}]" + (value != null && value.Length > 0 ? $", NEW array: [{value[0].x},{value[0].y}]" : ", NEW array: NULL/EMPTY"));
+                    GameLog.Info($"[GSP.score]   OLD array: [{_score[0].x},{_score[0].y}]" + (value != null && value.Length > 0 ? $", NEW array: [{value[0].x},{value[0].y}]" : ", NEW array: NULL/EMPTY"));
                 }
             }
             _score = value;
@@ -168,14 +168,14 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadGame()
     {
-        Debug.Log("Load Game GSP");
+        GameLog.Info("Load Game GSP");
         loadGame = true;
         myFile = new EasyFileSave("my_game_data");
         //load all the saved values
         if (myFile.Load())
         {
-            Debug.Log("Loading to GSP");
-            Debug.Log("Ends is " + myFile.GetInt("End Total"));
+            GameLog.Info("Loading to GSP");
+            GameLog.Info("Ends is " + myFile.GetInt("End Total"));
 
             bg = myFile.GetInt("Current Tourny BG");
             crowdDensity = myFile.GetInt("Current Tourny Crowd Density");
@@ -192,26 +192,26 @@ public class GameSettingsPersist : MonoBehaviour
 
             redScore = myFile.GetInt("Red Score");
             yellowScore = myFile.GetInt("Yellow Score");
-            Debug.Log("ends is " + ends);
+            GameLog.Info("ends is " + ends);
             score = new Vector2Int[ends + 1];
-            Debug.Log("score length is " + score.Length);
+            GameLog.Info("score length is " + score.Length);
             int[] redScoreList = myFile.GetArray<int>("Red Score List");
             int[] yellowScoreList = myFile.GetArray<int>("Yellow Score List");
 
             for (int i = 0; i < score.Length; i++)
             {
                 score[i] = new Vector2Int(redScoreList[i], yellowScoreList[i]);
-                Debug.Log("Score " + i + " - " + score[i].x + ", " + score[i].y);
+                GameLog.Info("Score " + i + " - " + score[i].x + ", " + score[i].y);
             }
         }
     }
 
     public void LoadFromGM()
     {
-        Debug.Log("Load From GM  GSP");
+        GameLog.Info("Load From GM  GSP");
         GameManager gm = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        Debug.Log("Loading to GSP");
+        GameLog.Info("Loading to GSP");
         
         // Sync data from GameManager
         ends = gm.endTotal;
@@ -238,24 +238,24 @@ public class GameSettingsPersist : MonoBehaviour
             }
         }
         
-        Debug.Log($"[GSP.LoadFromGM] Synced from GameManager - endCurrent: {endCurrent}, redScore: {redScore}, yellowScore: {yellowScore}");
+        GameLog.Info($"[GSP.LoadFromGM] Synced from GameManager - endCurrent: {endCurrent}, redScore: {redScore}, yellowScore: {yellowScore}");
         
         // Log all end scores for debugging
         if (score != null && endCurrent > 0)
         {
-            Debug.Log($"[GSP.LoadFromGM] Score array has {score.Length} ends, showing first {endCurrent} completed:");
+            GameLog.Info($"[GSP.LoadFromGM] Score array has {score.Length} ends, showing first {endCurrent} completed:");
             for (int i = 0; i < Mathf.Min(endCurrent, score.Length); i++)
             {
-                Debug.Log($"  End {i + 1}: Red {score[i].x}, Yellow {score[i].y}");
+                GameLog.Info($"  End {i + 1}: Red {score[i].x}, Yellow {score[i].y}");
             }
         }
     }
 
     public void LoadFromEndMenu()
     {
-        Debug.Log("Load From EM  GSP");
+        GameLog.Info("Load From EM  GSP");
 
-        Debug.Log("Loading to GSP");
+        GameLog.Info("Loading to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         
         //third = gm.target;
@@ -311,7 +311,7 @@ public class GameSettingsPersist : MonoBehaviour
         TournySelector ts = FindFirstObjectByType<TournySelector>();
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        Debug.Log("Loading Tourny Settings to GSP");
+        GameLog.Info("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         teamColour = cm.teamColour;
         tournyEarnings = 0;
@@ -333,7 +333,7 @@ public class GameSettingsPersist : MonoBehaviour
             }
         }
 
-        Debug.Log("Player Team Index in GSP is " + playerTeamIndex);
+        GameLog.Info("Player Team Index in GSP is " + playerTeamIndex);
 
         endCurrent = 0;
         inEndMenu = false;  // Clear end menu flag - starting new tournament
@@ -350,11 +350,11 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTournySettings(TournySettings ts)
     {
-        Debug.Log($"[GSP.LoadTournySettings] BEFORE: games={games}, ts.games={ts.games}");
+        GameLog.Info($"[GSP.LoadTournySettings] BEFORE: games={games}, ts.games={ts.games}");
 
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
-        Debug.Log("Loading Tourny Settings to GSP");
+        GameLog.Info("Loading Tourny Settings to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
         if (cm != null) teamColour = cm.teamColour;
         //earnings = ts.earnings;
@@ -378,32 +378,32 @@ public class GameSettingsPersist : MonoBehaviour
         draw = 0;
         playoffRound = 0;
         
-        Debug.Log($"[GSP.LoadTournySettings] AFTER: games={games}, ends={ends}, rocks={rocks}");
-        Debug.Log($"[GSP.LoadTournySettings] Calling cm.SaveCareer() to persist tournament settings...");
+        GameLog.Info($"[GSP.LoadTournySettings] AFTER: games={games}, ends={ends}, rocks={rocks}");
+        GameLog.Info($"[GSP.LoadTournySettings] Calling cm.SaveCareer() to persist tournament settings...");
 
         //redScore = myFile.GetInt("Red Score");
         //yellowScore = myFile.GetInt("Yellow Score");
         if (cm != null) cm.SaveCareer(this);
 
-        Debug.Log($"[GSP.LoadTournySettings] Save complete - games={games} should now be in save file");
+        GameLog.Info($"[GSP.LoadTournySettings] Save complete - games={games} should now be in save file");
     }
 
     public void TournySetup(int btn = 0, bool forceNewGame = false)
     {
         // ? FIRST LOG - Before anything else!
-        Debug.Log($"[GSP.TournySetup] === ENTRY === btn={btn}, forceNewGame={forceNewGame}");
+        GameLog.Info($"[GSP.TournySetup] === ENTRY === btn={btn}, forceNewGame={forceNewGame}");
         
         // ? Log current state IMMEDIATELY
         if (score != null && score.Length > 0)
         {
-            Debug.Log($"[GSP.TournySetup] ENTRY score array: [{score[0].x},{score[0].y}], [{(score.Length > 1 ? score[1].x : -1)},{(score.Length > 1 ? score[1].y : -1)}], endCurrent={endCurrent}, redScore={redScore}");
+            GameLog.Info($"[GSP.TournySetup] ENTRY score array: [{score[0].x},{score[0].y}], [{(score.Length > 1 ? score[1].x : -1)},{(score.Length > 1 ? score[1].y : -1)}], endCurrent={endCurrent}, redScore={redScore}");
         }
         else
         {
-            Debug.Log($"[GSP.TournySetup] ENTRY score array is NULL or empty, endCurrent={endCurrent}, redScore={redScore}");
+            GameLog.Info($"[GSP.TournySetup] ENTRY score array is NULL or empty, endCurrent={endCurrent}, redScore={redScore}");
         }
         
-        Debug.Log("[GSP] TournySetup called");
+        GameLog.Info("[GSP] TournySetup called");
         TournyManager tm = FindFirstObjectByType<TournyManager>();
         PlayoffManager pm = FindFirstObjectByType<PlayoffManager>();
         PlayoffManager_SingleK pm1k = FindFirstObjectByType<PlayoffManager_SingleK>();
@@ -417,7 +417,7 @@ public class GameSettingsPersist : MonoBehaviour
         // 3. If endCurrent > 0 OR scores > 0 ? CONTINUING game
         bool isContinuingGame = !forceNewGame && ((endCurrent > 0) || (redScore > 0) || (yellowScore > 0));
         
-        Debug.Log($"[GSP.TournySetup] isContinuingGame={isContinuingGame} (forceNewGame={forceNewGame}, endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore})");
+        GameLog.Info($"[GSP.TournySetup] isContinuingGame={isContinuingGame} (forceNewGame={forceNewGame}, endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore})");
         
         // Always reset these flags (they control scene flow, not game state)
         gameInProgress = false;
@@ -426,8 +426,8 @@ public class GameSettingsPersist : MonoBehaviour
         if (isContinuingGame)
         {
             // CONTINUING an existing game - preserve all game state
-            Debug.Log($"[GSP.TournySetup] CONTINUING game - preserving scores: endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore}");
-            Debug.Log($"[GSP.TournySetup]   Score array: End1=({(score != null && score.Length > 0 ? score[0].x : -1)},{(score != null && score.Length > 0 ? score[0].y : -1)}), End2=({(score != null && score.Length > 1 ? score[1].x : -1)},{(score != null && score.Length > 1 ? score[1].y : -1)})");
+            GameLog.Info($"[GSP.TournySetup] CONTINUING game - preserving scores: endCurrent={endCurrent}, redScore={redScore}, yellowScore={yellowScore}");
+            GameLog.Info($"[GSP.TournySetup]   Score array: End1=({(score != null && score.Length > 0 ? score[0].x : -1)},{(score != null && score.Length > 0 ? score[0].y : -1)}), End2=({(score != null && score.Length > 1 ? score[1].x : -1)},{(score != null && score.Length > 1 ? score[1].y : -1)})");
         }
         else
         {
@@ -442,7 +442,7 @@ public class GameSettingsPersist : MonoBehaviour
             // This ensures old scores don't leak into the new game
             if (score != null && score.Length > 0)
             {
-                Debug.Log($"[GSP.TournySetup] NEW game - clearing score array ({score.Length} ends) - was [{score[0].x},{score[0].y}]");
+                GameLog.Info($"[GSP.TournySetup] NEW game - clearing score array ({score.Length} ends) - was [{score[0].x},{score[0].y}]");
                 for (int i = 0; i < score.Length; i++)
                 {
                     score[i] = new Vector2Int(0, 0);
@@ -450,10 +450,10 @@ public class GameSettingsPersist : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[GSP.TournySetup] NEW game - score array will be created in GameManager.SetupGame()");
+                GameLog.Info($"[GSP.TournySetup] NEW game - score array will be created in GameManager.SetupGame()");
             }
             
-            Debug.Log($"[GSP.TournySetup] NEW game - reset game state: endCurrent=0, redScore=0, yellowScore=0, inEndMenu=false");
+            GameLog.Info($"[GSP.TournySetup] NEW game - reset game state: endCurrent=0, redScore=0, yellowScore=0, inEndMenu=false");
         }
         
         // ? Handle score array initialization
@@ -465,12 +465,12 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 score[i] = new Vector2Int(0, 0);
             }
-            Debug.Log($"[GSP.TournySetup] Created new score array for {ends} ends");
+            GameLog.Info($"[GSP.TournySetup] Created new score array for {ends} ends");
         }
         else if (score.Length < ends)
         {
             // Array exists but too small - expand while preserving
-            Debug.Log($"[GSP.TournySetup] Expanding score array from {score.Length} to {ends} ends (preserving existing scores)");
+            GameLog.Info($"[GSP.TournySetup] Expanding score array from {score.Length} to {ends} ends (preserving existing scores)");
             Vector2Int[] newScore = new Vector2Int[ends];
             for (int i = 0; i < score.Length; i++)
             {
@@ -485,29 +485,29 @@ public class GameSettingsPersist : MonoBehaviour
         else if (isContinuingGame)
         {
             // Continuing existing game - preserve array as-is
-            Debug.Log($"[GSP.TournySetup] CONTINUING game - score array ({score.Length} ends) preserved");
+            GameLog.Info($"[GSP.TournySetup] CONTINUING game - score array ({score.Length} ends) preserved");
             
             // Log current scores for debugging
             if (score.Length > 0 && endCurrent > 0 && endCurrent <= score.Length)
             {
                 for (int i = 0; i < endCurrent; i++)
                 {
-                    Debug.Log($"[GSP.TournySetup]   End {i + 1}: Red={score[i].x}, Yellow={score[i].y}");
+                    GameLog.Info($"[GSP.TournySetup]   End {i + 1}: Red={score[i].x}, Yellow={score[i].y}");
                 }
             }
         }
         else
         {
             // NEW game - clear the array
-            Debug.Log($"[GSP.TournySetup] NEW game - clearing score array ({score.Length} ends)");
+            GameLog.Info($"[GSP.TournySetup] NEW game - clearing score array ({score.Length} ends)");
             for (int i = 0; i < score.Length; i++)
             {
                 score[i] = new Vector2Int(0, 0);
             }
         }
         
-        Debug.Log($"[GSP] TournySetup - game state configured (isContinuingGame={isContinuingGame})");
-        Debug.Log($"[GSP] TournySetup - tournament settings: games={games}, ends={ends}, rocks={rocks}");
+        GameLog.Info($"[GSP] TournySetup - game state configured (isContinuingGame={isContinuingGame})");
+        GameLog.Info($"[GSP] TournySetup - tournament settings: games={games}, ends={ends}, rocks={rocks}");
         
         careerLoad = false;
         if (cg != null)
@@ -563,7 +563,7 @@ public class GameSettingsPersist : MonoBehaviour
             // yellowScore = 0;
             tournyInProgress = true;
 
-            Debug.Log("gsp.inProgress is " + tournyInProgress);
+            GameLog.Info("gsp.inProgress is " + tournyInProgress);
 
             //playerGO = tm.playerGO;
             if (pm != null)
@@ -580,9 +580,9 @@ public class GameSettingsPersist : MonoBehaviour
             }
         }
 
-        Debug.Log($"[GSP.TournySetup] Assigning teams — teams.Length={teams?.Length ?? 0}");
+        GameLog.Info($"[GSP.TournySetup] Assigning teams — teams.Length={teams?.Length ?? 0}");
         for (int dbg = 0; dbg < (teams?.Length ?? 0); dbg++)
-            Debug.Log($"[GSP.TournySetup]   teams[{dbg}] = {teams[dbg]?.name ?? "NULL"} (player={teams[dbg]?.player}, nextOpp={teams[dbg]?.nextOpp})");
+            GameLog.Info($"[GSP.TournySetup]   teams[{dbg}] = {teams[dbg]?.name ?? "NULL"} (player={teams[dbg]?.player}, nextOpp={teams[dbg]?.nextOpp})");
 
         if (Random.Range(0f, 1f) < 0.5f)
         {
@@ -663,7 +663,7 @@ public class GameSettingsPersist : MonoBehaviour
 
         }
 
-        Debug.Log($"[GSP.TournySetup] *** FINAL team names set: red='{redTeamName}' yellow='{yellowTeamName}'");
+        GameLog.Info($"[GSP.TournySetup] *** FINAL team names set: red='{redTeamName}' yellow='{yellowTeamName}'");
 
         if (Random.Range(0f, 1f) < 0.5f)
         {
@@ -677,7 +677,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void TournyKOSetup()
     {
-        Debug.Log("Tourny KO Setup GSP");
+        GameLog.Info("Tourny KO Setup GSP");
         PlayoffManager_TripleK pm = FindFirstObjectByType<PlayoffManager_TripleK>();
         careerLoad = false;
         tourny = true;
@@ -767,7 +767,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadCareer()
     {
-        Debug.Log("[GameSettingsPersist] LoadCareer called - delegating to CareerManager");
+        GameLog.Info("[GameSettingsPersist] LoadCareer called - delegating to CareerManager");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         
         if (cm == null)
@@ -785,7 +785,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void LoadTourny()
     {
-        Debug.Log($"[GameSettingsPersist] LoadTourny called — tournyInProgress={tournyInProgress}, ends={ends}, rocks={rocks}, red='{redTeamName}', yellow='{yellowTeamName}'");
+        GameLog.Info($"[GameSettingsPersist] LoadTourny called — tournyInProgress={tournyInProgress}, ends={ends}, rocks={rocks}, red='{redTeamName}', yellow='{yellowTeamName}'");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
 
         // CRITICAL FIX: Don't reload career if tournament is already in progress
@@ -793,7 +793,7 @@ public class GameSettingsPersist : MonoBehaviour
         // Reloading would overwrite them with stale data
         if (!tournyInProgress)
         {
-            Debug.Log("[GameSettingsPersist] tournyInProgress=false — running recovery load for tournament setup");
+            GameLog.Info("[GameSettingsPersist] tournyInProgress=false — running recovery load for tournament setup");
 
             // Capture the player's in-memory selections BEFORE LoadCareer can overwrite them.
             // RestoreGameState uses old save data (e.g. ends=8 from a previous game's autosave),
@@ -802,7 +802,7 @@ public class GameSettingsPersist : MonoBehaviour
             int preLoadRocks = rocks;
             string preLoadRedName    = redTeamName;
             string preLoadYellowName = yellowTeamName;
-            Debug.Log($"[LoadTourny] Recovery: captured pre-load ends={preLoadEnds}, rocks={preLoadRocks}, red='{preLoadRedName}', yellow='{preLoadYellowName}'");
+            GameLog.Info($"[LoadTourny] Recovery: captured pre-load ends={preLoadEnds}, rocks={preLoadRocks}, red='{preLoadRedName}', yellow='{preLoadYellowName}'");
 
             cm.LoadCareer(this);
 
@@ -818,24 +818,24 @@ public class GameSettingsPersist : MonoBehaviour
             if (preLoadRocks > 0 && preLoadRocks <= 8)
             {
                 if (rocks != preLoadRocks)
-                    Debug.Log($"[LoadTourny] Recovery: rocks={preLoadRocks} from pre-load selection (RestoreGameState had set it to {rocks})");
+                    GameLog.Info($"[LoadTourny] Recovery: rocks={preLoadRocks} from pre-load selection (RestoreGameState had set it to {rocks})");
                 rocks = preLoadRocks;
             }
             else if (rocks <= 0 || rocks > 8)
             {
-                Debug.Log($"[LoadTourny] Recovery: reset rocks=8 (was {rocks}, invalid)");
+                GameLog.Info($"[LoadTourny] Recovery: reset rocks=8 (was {rocks}, invalid)");
                 rocks = 8;
             }
 
             if (preLoadEnds > 0 && preLoadEnds <= 10)
             {
                 if (ends != preLoadEnds)
-                    Debug.Log($"[LoadTourny] Recovery: ends={preLoadEnds} from pre-load selection (RestoreGameState had set it to {ends})");
+                    GameLog.Info($"[LoadTourny] Recovery: ends={preLoadEnds} from pre-load selection (RestoreGameState had set it to {ends})");
                 ends = preLoadEnds;
             }
             else if (ends <= 0 || ends > 10)
             {
-                Debug.Log($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
+                GameLog.Info($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
                 ends = 8;
             }
 
@@ -847,7 +847,7 @@ public class GameSettingsPersist : MonoBehaviour
             if (savedTournyRocks > 0 && savedTournyRocks <= 8 && preLoadRocks <= 0)
             {
                 // Only use tournament state as fallback when pre-load was also invalid
-                Debug.Log($"[LoadTourny] Recovery: rocks={savedTournyRocks} from tournament state (pre-load was invalid)");
+                GameLog.Info($"[LoadTourny] Recovery: rocks={savedTournyRocks} from tournament state (pre-load was invalid)");
                 rocks = savedTournyRocks;
             }
 
@@ -857,12 +857,12 @@ public class GameSettingsPersist : MonoBehaviour
             int savedTournyEnds = saveData?.currentTournamentState != null ? saveData.currentTournamentState.ends : 0;
             if (savedTournyEnds > 0 && savedTournyEnds <= 10 && preLoadEnds <= 0)
             {
-                Debug.Log($"[LoadTourny] Recovery: ends={savedTournyEnds} from tournament state (pre-load was invalid)");
+                GameLog.Info($"[LoadTourny] Recovery: ends={savedTournyEnds} from tournament state (pre-load was invalid)");
                 ends = savedTournyEnds;
             }
             else if (ends <= 0 || ends > 10)
             {
-                Debug.Log($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
+                GameLog.Info($"[LoadTourny] Recovery: reset ends=8 (was {ends}, invalid)");
                 ends = 8;
             }
 
@@ -877,7 +877,7 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 redTeamName    = preLoadRedName;
                 yellowTeamName = preLoadYellowName;
-                Debug.Log($"[LoadTourny] Recovery: preserved pre-load team names — red='{redTeamName}' yellow='{yellowTeamName}'");
+                GameLog.Info($"[LoadTourny] Recovery: preserved pre-load team names — red='{redTeamName}' yellow='{yellowTeamName}'");
             }
 
             bool namesFixed = namesAlreadyValid;
@@ -896,7 +896,7 @@ public class GameSettingsPersist : MonoBehaviour
                     if (aiYellow) { redTeamName = playerTD.name; yellowTeamName = oppTD.name; }
                     else          { yellowTeamName = playerTD.name; redTeamName = oppTD.name; }
                     namesFixed = true;
-                    Debug.Log($"[LoadTourny] Recovery: team names from tournament state — red='{redTeamName}' yellow='{yellowTeamName}'");
+                    GameLog.Info($"[LoadTourny] Recovery: team names from tournament state — red='{redTeamName}' yellow='{yellowTeamName}'");
                 }
             }
 
@@ -916,7 +916,7 @@ public class GameSettingsPersist : MonoBehaviour
                         if (aiYellow) { redTeamName = playerT.name; yellowTeamName = oppT.name; }
                         else          { yellowTeamName = playerT.name; redTeamName = oppT.name; }
                         namesFixed = true;
-                        Debug.Log($"[LoadTourny] Recovery: team names from career teams — red='{redTeamName}' yellow='{yellowTeamName}'");
+                        GameLog.Info($"[LoadTourny] Recovery: team names from career teams — red='{redTeamName}' yellow='{yellowTeamName}'");
                     }
                 }
             }
@@ -931,7 +931,7 @@ public class GameSettingsPersist : MonoBehaviour
             int correctStartRock = 16 - (rocks * 2);
             if (rockCurrent != correctStartRock)
             {
-                Debug.Log($"[LoadTourny] Recovery: recalculated rockCurrent={correctStartRock} (was {rockCurrent}, rocks={rocks})");
+                GameLog.Info($"[LoadTourny] Recovery: recalculated rockCurrent={correctStartRock} (was {rockCurrent}, rocks={rocks})");
                 rockCurrent = correctStartRock;
             }
 
@@ -939,7 +939,7 @@ public class GameSettingsPersist : MonoBehaviour
         }
         else
         {
-            Debug.Log("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
+            GameLog.Info("[GameSettingsPersist] Tournament in progress - skipping career reload to preserve flags");
 
             // CRITICAL FIX: Even when skipping full reload, we MUST restore:
             // 1. KO1/KO3 flags and playoff teams (for tournament routing)
@@ -949,19 +949,19 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 KO1 = saveData.currentTournamentState.KO1;
                 KO3 = saveData.currentTournamentState.KO3;
-                Debug.Log($"[GameSettingsPersist] Restored tournament type flags: KO1={KO1}, KO3={KO3}");
+                GameLog.Info($"[GameSettingsPersist] Restored tournament type flags: KO1={KO1}, KO3={KO3}");
 
                 // CRITICAL FIX: Restore playoff bracket teams for Single-K/Triple-K
                 if (saveData.currentTournamentState.playoffTeams != null &&
                     saveData.currentTournamentState.playoffTeams.Count > 0)
                 {
-                    Debug.Log($"[GameSettingsPersist] Found {saveData.currentTournamentState.playoffTeams.Count} playoff teams in save");
+                    GameLog.Info($"[GameSettingsPersist] Found {saveData.currentTournamentState.playoffTeams.Count} playoff teams in save");
                     playoffTeams = new Team[saveData.currentTournamentState.playoffTeams.Count];
                     for (int i = 0; i < saveData.currentTournamentState.playoffTeams.Count; i++)
                     {
                         playoffTeams[i] = cm.DataToTeam(saveData.currentTournamentState.playoffTeams[i]);
                     }
-                    Debug.Log($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from save");
+                    GameLog.Info($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from save");
                 }
                 else if ((saveData.currentTournamentState.KO1 || saveData.currentTournamentState.KO3) &&
                          saveData.currentTournamentState.teams != null &&
@@ -975,11 +975,11 @@ public class GameSettingsPersist : MonoBehaviour
                     {
                         playoffTeams[i] = cm.DataToTeam(saveData.currentTournamentState.teams[i]);
                     }
-                    Debug.Log($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from legacy format");
+                    GameLog.Info($"[GameSettingsPersist] Restored {playoffTeams.Length} playoff bracket teams from legacy format");
                 }
                 else
                 {
-                    Debug.Log("[GameSettingsPersist] No playoff bracket teams in save - regular tournament");
+                    GameLog.Info("[GameSettingsPersist] No playoff bracket teams in save - regular tournament");
                 }
 
                 // CRITICAL FIX: Restore game state (rockPos, rockCurrent, etc.)
@@ -990,7 +990,7 @@ public class GameSettingsPersist : MonoBehaviour
                     // Capture them before RestoreGameState can overwrite with save's "Red"/"Yellow" placeholders.
                     string tournyRed    = redTeamName;
                     string tournyYellow = yellowTeamName;
-                    Debug.Log($"[GameSettingsPersist] Before RestoreGameState: red='{tournyRed}', yellow='{tournyYellow}'");
+                    GameLog.Info($"[GameSettingsPersist] Before RestoreGameState: red='{tournyRed}', yellow='{tournyYellow}'");
 
                     cm.RestoreGameState(saveData.currentGameState, this);
 
@@ -1000,14 +1000,14 @@ public class GameSettingsPersist : MonoBehaviour
                     if (tournyRedReal && (string.IsNullOrEmpty(redTeamName) || redTeamName == "Red" || redTeamName == "Yellow"))
                     {
                         redTeamName = tournyRed;
-                        Debug.Log($"[GameSettingsPersist] Reinstated red team name from TournySetup: '{redTeamName}'");
+                        GameLog.Info($"[GameSettingsPersist] Reinstated red team name from TournySetup: '{redTeamName}'");
                     }
                     if (tournyYellowReal && (string.IsNullOrEmpty(yellowTeamName) || yellowTeamName == "Red" || yellowTeamName == "Yellow"))
                     {
                         yellowTeamName = tournyYellow;
-                        Debug.Log($"[GameSettingsPersist] Reinstated yellow team name from TournySetup: '{yellowTeamName}'");
+                        GameLog.Info($"[GameSettingsPersist] Reinstated yellow team name from TournySetup: '{yellowTeamName}'");
                     }
-                    Debug.Log($"[GameSettingsPersist] After RestoreGameState: red='{redTeamName}', yellow='{yellowTeamName}'");
+                    GameLog.Info($"[GameSettingsPersist] After RestoreGameState: red='{redTeamName}', yellow='{yellowTeamName}'");
                 }
             }
             else
@@ -1026,7 +1026,7 @@ public class GameSettingsPersist : MonoBehaviour
         // This is needed for mid-game loads where TournySetup() hasn't run
         if (teams != null && teams.Length > 0)
         {
-            Debug.Log($"[GameSettingsPersist] Restoring team objects - redTeam: {redTeamName}, yellowTeam: {yellowTeamName}");
+            GameLog.Info($"[GameSettingsPersist] Restoring team objects - redTeam: {redTeamName}, yellowTeam: {yellowTeamName}");
             
             // Find and restore red team
             for (int i = 0; i < teams.Length; i++)
@@ -1034,7 +1034,7 @@ public class GameSettingsPersist : MonoBehaviour
                 if (teams[i] != null && teams[i].name == redTeamName)
                 {
                     redTeam = teams[i];
-                    Debug.Log($"[GameSettingsPersist] Found redTeam: {redTeam.name} with {redTeam.players.Count} players");
+                    GameLog.Info($"[GameSettingsPersist] Found redTeam: {redTeam.name} with {redTeam.players.Count} players");
                     break;
                 }
             }
@@ -1045,7 +1045,7 @@ public class GameSettingsPersist : MonoBehaviour
                 if (teams[i] != null && teams[i].name == yellowTeamName)
                 {
                     yellowTeam = teams[i];
-                    Debug.Log($"[GameSettingsPersist] Found yellowTeam: {yellowTeam.name} with {yellowTeam.players.Count} players");
+                    GameLog.Info($"[GameSettingsPersist] Found yellowTeam: {yellowTeam.name} with {yellowTeam.players.Count} players");
                     break;
                 }
             }
@@ -1066,12 +1066,12 @@ public class GameSettingsPersist : MonoBehaviour
             if (redTeam != null && redTeam.id == cm.playerTeamIndex)
             {
                 playerTeam = redTeam;
-                Debug.Log($"[GameSettingsPersist] Player team is RED: {playerTeam.name}");
+                GameLog.Info($"[GameSettingsPersist] Player team is RED: {playerTeam.name}");
             }
             else if (yellowTeam != null && yellowTeam.id == cm.playerTeamIndex)
             {
                 playerTeam = yellowTeam;
-                Debug.Log($"[GameSettingsPersist] Player team is YELLOW: {playerTeam.name}");
+                GameLog.Info($"[GameSettingsPersist] Player team is YELLOW: {playerTeam.name}");
             }
             else
             {
@@ -1085,13 +1085,13 @@ public class GameSettingsPersist : MonoBehaviour
             {
                 aiRed = false;
                 aiYellow = true;
-                Debug.Log("[GameSettingsPersist] AI flags synced: player=red, AI=yellow");
+                GameLog.Info("[GameSettingsPersist] AI flags synced: player=red, AI=yellow");
             }
             else if (playerTeam == yellowTeam)
             {
                 aiRed = true;
                 aiYellow = false;
-                Debug.Log("[GameSettingsPersist] AI flags synced: player=yellow, AI=red");
+                GameLog.Info("[GameSettingsPersist] AI flags synced: player=yellow, AI=red");
             }
         }
         else
@@ -1099,7 +1099,7 @@ public class GameSettingsPersist : MonoBehaviour
             Debug.LogWarning("[GameSettingsPersist] teams array is null or empty - cannot restore team objects");
         }
 
-        Debug.Log("teamList Count is " + teamList.Count);
+        GameLog.Info("teamList Count is " + teamList.Count);
     }
 
     public void LoadKOTourny()
@@ -1131,7 +1131,7 @@ public class GameSettingsPersist : MonoBehaviour
 
             //Debug.Log("nameList Count is " + nameList.Length);
             //nameList = myFile.GetArray<string>("Tourny Name List");
-            Debug.Log("nameList Item 1 is " + nameList[0]);
+            GameLog.Info("nameList Item 1 is " + nameList[0]);
             winsList = myFile.GetArray<int>("Tourny Wins List");
             lossList = myFile.GetArray<int>("Tourny Loss List");
             rankList = myFile.GetArray<int>("Tourny Rank List");
@@ -1139,7 +1139,7 @@ public class GameSettingsPersist : MonoBehaviour
             strengthList = myFile.GetArray<int>("Tourny Strength List");
             idList = myFile.GetArray<int>("Tourny Team ID List");
             //StartCoroutine(Wait());
-            Debug.Log("nameList Count is " + nameList.Length);
+            GameLog.Info("nameList Count is " + nameList.Length);
 
             teams = new Team[numberOfTeams];
 
@@ -1170,7 +1170,7 @@ public class GameSettingsPersist : MonoBehaviour
             //    pm3k.gameList[i].x = gameListX[i];
             //    pm3k.gameList[i].y = gameListY[i];
             //}
-            Debug.Log("teamList Count is " + teamList.Count);
+            GameLog.Info("teamList Count is " + teamList.Count);
             myFile.Dispose();
         }
     }
@@ -1180,7 +1180,7 @@ public class GameSettingsPersist : MonoBehaviour
         //story = true;
         sm = GameObject.Find("StoryManager").GetComponent<StoryManager>();
 
-        Debug.Log("Loading to GSP");
+        GameLog.Info("Loading to GSP");
         //Debug.Log("Ends is " + myFile.GetInt("End Total"));
 
         ends = sm.ends;
@@ -1201,7 +1201,7 @@ public class GameSettingsPersist : MonoBehaviour
 
     public void AutoSave()
     {
-        Debug.Log("[GameSettingsPersist] AutoSave called - delegating to CareerManager");
+        GameLog.Info("[GameSettingsPersist] AutoSave called - delegating to CareerManager");
         CareerManager cm = FindFirstObjectByType<CareerManager>();
         
         if (cm != null)

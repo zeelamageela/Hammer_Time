@@ -66,7 +66,7 @@ public class XPManager : MonoBehaviour
         if (cm != null)
         {
             SaveToCareerManager(cm);
-            Debug.Log("[XPManager] Saved XP/skillPoints back to CareerManager on disable");
+            GameLog.Info("[XPManager] Saved XP/skillPoints back to CareerManager on disable");
         }
     }
     
@@ -76,7 +76,7 @@ public class XPManager : MonoBehaviour
         if (cm != null)
         {
             SaveToCareerManager(cm);
-            Debug.Log("[XPManager] Saved XP/skillPoints back to CareerManager on destroy");
+            GameLog.Info("[XPManager] Saved XP/skillPoints back to CareerManager on destroy");
         }
     }
     

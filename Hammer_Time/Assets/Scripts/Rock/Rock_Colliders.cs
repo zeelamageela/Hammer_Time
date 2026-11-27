@@ -183,25 +183,25 @@ void OnEnable()
         }
         if (collider == InPlay_Collider)
         {
-            Debug.Log("rock is in play");
+            GameLog.Info("rock is in play");
             inPlay = true;
 
-            Debug.Log("Far Hogline velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
+            GameLog.Info("Far Hogline velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
         }
 
         if (collider == boards_collider)
         {
             outOfPlay = true;
             inPlay = false;
-            Debug.Log("trigger boards");
+            GameLog.Info("trigger boards");
             HapticController.Play(sideHap);
         }
 
         if (collider == house_collider)
         {
             inHouse = true;
-            Debug.Log("In House");
-            Debug.Log("House velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
+            GameLog.Info("In House");
+            GameLog.Info("House velocity is " + GetComponent<Rigidbody2D>().linearVelocity.x + ", " + GetComponent<Rigidbody2D>().linearVelocity.y);
         }
     }
 
@@ -277,7 +277,7 @@ void OnEnable()
         {
             outOfPlay = true;
             inPlay = false;
-            Debug.Log("collider boards");
+            GameLog.Info("collider boards");
             if (isActiveAndEnabled && gameObject.activeInHierarchy)
                 StartCoroutine(OutOfPlay());
             rockSounds[2].enabled = true;
@@ -289,7 +289,7 @@ void OnEnable()
     {
         if (collider == InPlay_Collider)
         {
-            Debug.Log("Out");
+            GameLog.Info("Out");
             inPlay = false;
             inHouse = false;
             if (gameObject.activeSelf)
@@ -300,7 +300,7 @@ void OnEnable()
 
         if (collider == house_collider)
         {
-            Debug.Log("Out of House");
+            GameLog.Info("Out of House");
             inHouse = false;
         }
     }

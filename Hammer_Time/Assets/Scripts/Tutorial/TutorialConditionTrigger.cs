@@ -36,7 +36,7 @@ public class TutorialConditionTrigger : MonoBehaviour
             return;
         }
         
-        Debug.Log($"Tutorial condition met: {conditionId}");
+        GameLog.Info($"Tutorial condition met: {conditionId}");
         OnConditionMet?.Invoke(conditionId);
     }
     

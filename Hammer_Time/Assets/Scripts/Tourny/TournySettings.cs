@@ -111,22 +111,22 @@ public class TournySettings : MonoBehaviour
         // Previously hardcoded to 4 teams (Page Playoff) - now uses actual tournament team count
         if (gsp.KO3)
         {
-            Debug.Log($"[TournySettings] Triple-K format with {gsp.numberOfTeams} teams");
+            GameLog.Info($"[TournySettings] Triple-K format with {gsp.numberOfTeams} teams");
             SceneManager.LoadScene("Tourny_Home_1");
         }
         else if (gsp.KO1)
         {
-            Debug.Log($"[TournySettings] Single-K format with {gsp.numberOfTeams} teams");
+            GameLog.Info($"[TournySettings] Single-K format with {gsp.numberOfTeams} teams");
             SceneManager.LoadScene("Tourny_Home_SingleK");
         }
         else if (gsp.cashGame)
         {
-            Debug.Log($"[TournySettings] Cash game");
+            GameLog.Info($"[TournySettings] Cash game");
             SceneManager.LoadScene("Tourny_Home_2");
         }
         else
         {
-            Debug.Log($"[TournySettings] Standard tournament with {gsp.numberOfTeams} teams");
+            GameLog.Info($"[TournySettings] Standard tournament with {gsp.numberOfTeams} teams");
             SceneManager.LoadScene("Tourny_Home_1");
         }
     }
@@ -151,7 +151,7 @@ public class TournySettings : MonoBehaviour
 			trophy.sprite = cm.currentTourny.image;
 			location = cm.currentTourny.location;
 			
-			Debug.Log($"[TournySettings] Tournament '{cm.currentTourny.name}' has {teams} teams (from Tourny.teams)");
+			GameLog.Info($"[TournySettings] Tournament '{cm.currentTourny.name}' has {teams} teams (from Tourny.teams)");
 		}
 
 		// CRITICAL FIX: If tournament is in progress, restore settings from save
@@ -168,7 +168,7 @@ public class TournySettings : MonoBehaviour
 			rockSlider.value = rocks;
 			gameSlider.value = games;
 			
-			Debug.Log($"[TournySettings] Restored tournament settings from save - ends={ends}, rocks={rocks}, games={games}");
+			GameLog.Info($"[TournySettings] Restored tournament settings from save - ends={ends}, rocks={rocks}, games={games}");
 		}
 		else if (gsp.cashGame)
 		{
@@ -234,7 +234,7 @@ public class TournySettings : MonoBehaviour
                     games = 3;
                 
                 gsp.games = games; // Update gsp with corrected value
-                Debug.Log($"[TournySettings] Corrected games to {games}");
+                GameLog.Info($"[TournySettings] Corrected games to {games}");
             }
         }
 

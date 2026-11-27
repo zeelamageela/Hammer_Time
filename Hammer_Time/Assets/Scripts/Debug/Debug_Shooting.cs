@@ -66,7 +66,7 @@ public class Debug_Shooting : MonoBehaviour
                 rockInfo = rock.GetComponent<Rock_Info>();
                 rockCols = rock.GetComponent<Rock_Colliders>();
 
-                Debug.Log("Debug Stop");
+                GameLog.Info("Debug Stop");
 
                 rb.linearVelocity = Vector2.zero;
             }
@@ -162,7 +162,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(houseForce * 1000f);
-        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
+        GameLog.Info(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -184,7 +184,7 @@ public class Debug_Shooting : MonoBehaviour
 
         rb.AddForce(buttonForce * 1000f);
         yield return new WaitForSeconds(0.1f);
-        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
+        GameLog.Info(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -206,7 +206,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(guardForce * 1000f);
-        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
+        GameLog.Info(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -226,7 +226,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(takeoutForce * 1000f);
-        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
+        GameLog.Info(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;
@@ -247,7 +247,7 @@ public class Debug_Shooting : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         rb.AddForce(customForce * 1000f);
-        Debug.Log(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
+        GameLog.Info(rb.linearVelocity.x + ", " + rb.linearVelocity.y);
         rockCols.shotTaken = true;
 
         tFollowTarget = rock.transform;

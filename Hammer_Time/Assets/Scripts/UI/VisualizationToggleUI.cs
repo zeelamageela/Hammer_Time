@@ -111,7 +111,7 @@ public class VisualizationToggleUI : MonoBehaviour
             Debug.LogWarning("[VisualizationToggleUI] Flick shot mode toggle is not assigned in Inspector!");
         }
         
-        Debug.Log("[VisualizationToggleUI] Initialized - Trajectory: " + visualSettings.TrajectoryVisible + 
+        GameLog.Info("[VisualizationToggleUI] Initialized - Trajectory: " + visualSettings.TrajectoryVisible + 
                   ", Collision: " + visualSettings.CollisionLinesVisible +
                   ", AimCircle: " + visualSettings.AimCircleVisible +
                   ", Guidelines: " + visualSettings.GuidelinesVisible +
@@ -126,7 +126,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnTrajectoryToggleChanged(bool isOn)
     {
         visualSettings.ToggleTrajectoryVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled trajectory dots: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled trajectory dots: {isOn}");
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnCollisionLinesToggleChanged(bool isOn)
     {
         visualSettings.ToggleCollisionLinesVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled collision lines: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled collision lines: {isOn}");
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnAimCircleToggleChanged(bool isOn)
     {
         visualSettings.ToggleAimCircleVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled aim circle: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled aim circle: {isOn}");
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnGuidelinesToggleChanged(bool isOn)
     {
         visualSettings.ToggleGuidelinesVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled guidelines: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled guidelines: {isOn}");
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnCurlLineToggleChanged(bool isOn)
     {
         visualSettings.ToggleCurlLineVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled curl line: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled curl line: {isOn}");
     }
 
     /// <summary>
@@ -171,7 +171,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnCollisionWarningToggleChanged(bool isOn)
     {
         visualSettings.ToggleCollisionWarningVisibility(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled collision warning: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled collision warning: {isOn}");
     }
 
     /// <summary>
@@ -180,7 +180,7 @@ public class VisualizationToggleUI : MonoBehaviour
     private void OnFlickShotModeToggleChanged(bool isOn)
     {
         visualSettings.ToggleFlickShotMode(isOn);
-        Debug.Log($"[VisualizationToggleUI] Player toggled flick shot mode: {isOn}");
+        GameLog.Info($"[VisualizationToggleUI] Player toggled flick shot mode: {isOn}");
     }
 
     void OnDestroy()

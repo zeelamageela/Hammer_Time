@@ -71,7 +71,7 @@ public class TutorialDynamicTargets : MonoBehaviour
         if (rock != null)
         {
             step.spotlightWorldTarget = rock.transform;
-            Debug.Log($"[TutorialDynamicTargets] Assigned rock spotlight target: {rock.name}");
+            GameLog.Info($"[TutorialDynamicTargets] Assigned rock spotlight target: {rock.name}");
         }
     }
     
@@ -80,7 +80,7 @@ public class TutorialDynamicTargets : MonoBehaviour
         if (gameManager.shooterGO != null)
         {
             step.spotlightWorldTarget = gameManager.shooterGO.transform;
-            Debug.Log($"[TutorialDynamicTargets] Assigned shooter spotlight target: {gameManager.shooterGO.name}");
+            GameLog.Info($"[TutorialDynamicTargets] Assigned shooter spotlight target: {gameManager.shooterGO.name}");
         }
         else
         {
@@ -102,7 +102,7 @@ public class TutorialDynamicTargets : MonoBehaviour
         if (opponentRock != null)
         {
             step.spotlightWorldTarget = opponentRock.transform;
-            Debug.Log($"[TutorialDynamicTargets] Assigned opponent rock spotlight target: {opponentRock.name}");
+            GameLog.Info($"[TutorialDynamicTargets] Assigned opponent rock spotlight target: {opponentRock.name}");
         }
         else
         {

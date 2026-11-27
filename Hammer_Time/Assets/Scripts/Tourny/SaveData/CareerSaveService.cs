@@ -101,8 +101,8 @@ public static class CareerSaveService
                 else
                     File.Move(tempPath, SavePath);
                 
-                Debug.Log($"[CareerSaveService] Career saved successfully to: {SavePath}");
-                Debug.Log($"[CareerSaveService] Save size: {fileInfo.Length} bytes ({json.Length} characters)");
+                GameLog.Info($"[CareerSaveService] Career saved successfully to: {SavePath}");
+                GameLog.Info($"[CareerSaveService] Save size: {fileInfo.Length} bytes ({json.Length} characters)");
                 return true;
             }
             catch (IOException ioEx)
@@ -158,7 +158,7 @@ public static class CareerSaveService
                     return TryLoadBackup();
                 }
                 
-                Debug.Log($"[CareerSaveService] Career loaded successfully (Version {data.version}, Saved: {data.saveDate})");
+                GameLog.Info($"[CareerSaveService] Career loaded successfully (Version {data.version}, Saved: {data.saveDate})");
                 return data;
             }
             catch (Exception e)
@@ -182,13 +182,13 @@ public static class CareerSaveService
             
             try
             {
-                Debug.Log("[CareerSaveService] Attempting to load from backup...");
+                GameLog.Info("[CareerSaveService] Attempting to load from backup...");
                 string json = File.ReadAllText(BackupPath);
                 CareerSaveData data = JsonUtility.FromJson<CareerSaveData>(json);
                 
                 if (ValidateSaveData(data))
                 {
-                    Debug.Log("[CareerSaveService] Successfully loaded from backup");
+                    GameLog.Info("[CareerSaveService] Successfully loaded from backup");
                     return data;
                 }
                 
@@ -267,7 +267,7 @@ public static class CareerSaveService
                     }
 
                     File.Copy(SavePath, BackupPath, true);
-                    Debug.Log("[CareerSaveService] Backup created");
+                    GameLog.Info("[CareerSaveService] Backup created");
                 }
                 catch (Exception e)
                 {
@@ -334,7 +334,7 @@ public static class CareerSaveService
                     return false;
 
                 File.Copy(source, Path.Combine(SaveDir, REPLACED_FILE_NAME), true);
-                Debug.Log($"[CareerSaveService] Previous career kept as {REPLACED_FILE_NAME}");
+                GameLog.Info($"[CareerSaveService] Previous career kept as {REPLACED_FILE_NAME}");
                 return true;
             }
             catch (Exception e)
@@ -354,13 +354,13 @@ public static class CareerSaveService
                 if (File.Exists(SavePath))
                 {
                     File.Delete(SavePath);
-                    Debug.Log("[CareerSaveService] Save file deleted");
+                    GameLog.Info("[CareerSaveService] Save file deleted");
                 }
                 
                 if (File.Exists(BackupPath))
                 {
                     File.Delete(BackupPath);
-                    Debug.Log("[CareerSaveService] Backup file deleted");
+                    GameLog.Info("[CareerSaveService] Backup file deleted");
                 }
             }
             catch (Exception e)
@@ -404,7 +404,7 @@ public static class CareerSaveService
             try
             {
                 File.Copy(SavePath, targetPath, true);
-                Debug.Log($"[CareerSaveService] Save exported to: {targetPath}");
+                GameLog.Info($"[CareerSaveService] Save exported to: {targetPath}");
                 return true;
             }
             catch (Exception e)
@@ -470,7 +470,7 @@ public static class CareerSaveService
                 CreateBackup();
                 
                 File.Copy(sourcePath, SavePath, true);
-                Debug.Log($"[CareerSaveService] Save imported from: {sourcePath}");
+                GameLog.Info($"[CareerSaveService] Save imported from: {sourcePath}");
                 return true;
             }
             catch (Exception e)

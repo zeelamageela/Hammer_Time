@@ -109,13 +109,13 @@ public class Story_1 : MonoBehaviour
             sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1.5f);
-        Debug.Log("y = 1.5 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = 1.5 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         if (rockRB.linearVelocity.y >= 2.4f)
             sm.SweepLeft(true);
         else
             sm.SweepWhoa(true);
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 3f);
-        Debug.Log("y = 3 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = 3 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest == true);
@@ -205,14 +205,14 @@ public class Story_1 : MonoBehaviour
         aiTarg.OnTarget("Manual Draw", gm.rockCurrent, 0);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -7f);
-        Debug.Log("y = -7 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = -7 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         if (rockRB.linearVelocity.y >= 5f)
             sm.SweepRight(true);
         else
             sm.SweepWeight(true);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= -1f);
-        Debug.Log("y = -1 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = -1 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         if (rockRB.linearVelocity.y >= 2.7f)
             sm.SweepRight(true);
         else
@@ -380,13 +380,13 @@ public class Story_1 : MonoBehaviour
             sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 1.5f);
-        Debug.Log("y = 1.5 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = 1.5 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         if (rockRB.linearVelocity.y >= 2.4f)
             sm.SweepLeft(true);
         else if (rockRB.linearVelocity.y >= 2f)
             sm.SweepWhoa(true);
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rock.transform.position.y >= 4f);
-        Debug.Log("y = 4 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+        GameLog.Info("y = 4 velocity - " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
         sm.SweepWhoa(true);
 
         yield return new WaitUntil(() => gm.rockList[gm.rockCurrent].rockInfo.rest);

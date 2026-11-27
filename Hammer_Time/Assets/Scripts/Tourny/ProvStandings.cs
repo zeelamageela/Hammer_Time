@@ -28,7 +28,7 @@ public class ProvStandings : MonoBehaviour
 	// Start is called before the first frame update
 	private void Start()
     {
-		Debug.Log("XX----------ProvStandings--XX");
+		GameLog.Info("XX----------ProvStandings--XX");
 		tour = false;
 		if (FindObjectOfType<CareerManager>().provQual)
 			tourButton.SetActive(true);
@@ -59,7 +59,7 @@ public class ProvStandings : MonoBehaviour
 
 		if (tour)
 		{
-			Debug.Log("Printing Rows for Tour Standings");
+			GameLog.Info("Printing Rows for Tour Standings");
 
 			buttonText.text = "<<Overall Standings";
 			headers[2].text = "Points";
@@ -67,7 +67,7 @@ public class ProvStandings : MonoBehaviour
 
 			if (tourRankList != null)
 			{
-				Debug.Log("tourRankList is not Null");
+				GameLog.Info("tourRankList is not Null");
 				//tourRankList.Clear();
 				////teams = cm.teams;
 				//tourRankList = cm.tourRankList;
@@ -158,20 +158,20 @@ public class ProvStandings : MonoBehaviour
             {
                 scrollbar.value = 1f;
 			}
-			Debug.Log("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
+			GameLog.Info("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
 
 			tour = false;
         }
 		else
 		{
-			Debug.Log("Printing Rows for Overall Standings");
+			GameLog.Info("Printing Rows for Overall Standings");
 
 			buttonText.text = "Tour Standings>>";
 			headers[2].text = "Earnings";
 
 			if (provRankList != null)
 			{
-				Debug.Log("provRankList is not Null");
+				GameLog.Info("provRankList is not Null");
 				//teams = cm.teams;
 
 				//if (cm.provRankList.Count > 0)
@@ -182,7 +182,7 @@ public class ProvStandings : MonoBehaviour
 
 				row = new GameObject[provRankList.Count];
 				standDisplay = new StandingDisplay[provRankList.Count];
-				Debug.Log("provRankList Count is " + provRankList.Count + " - cm.prList Count is " + cm.provRankList.Count);
+				GameLog.Info("provRankList Count is " + provRankList.Count + " - cm.prList Count is " + cm.provRankList.Count);
 
 				for (int i = 0; i < provRankList.Count; i++)
 				{
@@ -207,12 +207,12 @@ public class ProvStandings : MonoBehaviour
 					standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
 					provRankList[i].team.rank = i + 1;
 				}
-				Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex);
+				GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex);
 
 			}
 			else
 			{
-				Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex);
+				GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex);
 				provRankList = new List<Standings_List>();
 				teams = cm.teams;
 				for (int i = 0; i < teams.Length; i++)
@@ -253,7 +253,7 @@ public class ProvStandings : MonoBehaviour
             {
                 if (cm.playerTeamIndex == provRankList[i].team.id)
                 {
-                    Debug.Log("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
+                    GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
                     tempRank = i;
                     standDisplay[i].panel.enabled = true;
                 }
@@ -271,7 +271,7 @@ public class ProvStandings : MonoBehaviour
                 scrollbar.value = 1f;
             }
             //scrollbar.value = (1f - (float)tempRank) / (provRankList.Count - 1f);
-            Debug.Log("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
+            GameLog.Info("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
 
             tour = true;
 		}

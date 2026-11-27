@@ -470,7 +470,7 @@ public class TrajectorySimulator
         // Clamp final velocity to range
         velocity = Mathf.Clamp(velocity, minVelocity, maxVelocity);
         
-        Debug.Log($"[Deterministic Launcher] Pullback: {pullbackDistance:F3} (clamped {minPullbackDistance:F2}-{maxPullbackDistance:F2}) → Velocity: {velocity:F2} m/s (range {minVelocity:F2}-{maxVelocity:F2})");
+        GameLog.Info($"[Deterministic Launcher] Pullback: {pullbackDistance:F3} (clamped {minPullbackDistance:F2}-{maxPullbackDistance:F2}) → Velocity: {velocity:F2} m/s (range {minVelocity:F2}-{maxVelocity:F2})");
         
         return displacement.normalized * velocity;
     }
@@ -517,7 +517,7 @@ public class TrajectorySimulator
         // Use the configurable range for calculation
         float springDistance = minVelocity + (powerRatio * (maxVelocity - minVelocity));
         
-        Debug.Log($"[SpringPhysics] Raw: {rawSpringDistance:F4} → Power: {powerRatio:F2} → Remapped: {springDistance:F2}");
+        GameLog.Info($"[SpringPhysics] Raw: {rawSpringDistance:F4} → Power: {powerRatio:F2} → Remapped: {springDistance:F2}");
         
         // PHYSICS-BASED CALCULATION (replaces simple 5.9x multiplier)
         // Unity's SpringJoint2D uses angular frequency: ? = 2? * frequency
@@ -589,7 +589,7 @@ public class TrajectorySimulator
         {
             calibrationFactor = 0.76f; // Very heavy shots
         }
-        Debug.Log($"[Calibration] Distance: {springDistance:F2}, Factor: {calibrationFactor:F2}");
+        GameLog.Info($"[Calibration] Distance: {springDistance:F2}, Factor: {calibrationFactor:F2}");
         */
         
         float velocity = theoreticalVelocity * dampingFactor * calibrationFactor;
@@ -601,7 +601,7 @@ public class TrajectorySimulator
         // - final velocity ? 9.8 m/s (matches observed ~10 m/s in game)
         
         // Enhanced debug logging for tuning
-        Debug.Log($"[SpringPhysics] Dist: {springDistance:F4} | " +
+        GameLog.Info($"[SpringPhysics] Dist: {springDistance:F4} | " +
                   $"?: {angularFrequency:F2} | " +
                   $"k: {springConstant:F1} | " +
                   $"v_theory: {theoreticalVelocity:F2} | " +
@@ -677,7 +677,7 @@ public class TrajectorySimulator
             // Check if we're close enough
             if (distanceError < TOLERANCE)
             {
-                Debug.Log($"[VelocityCalc] ✓ Converged! Speed: {testSpeed:F2}, Error: {distanceError:F3}, Iterations: {iteration + 1}");
+                GameLog.Info($"[VelocityCalc] ✓ Converged! Speed: {testSpeed:F2}, Error: {distanceError:F3}, Iterations: {iteration + 1}");
                 return aimDirection * testSpeed;
             }
             
@@ -695,7 +695,7 @@ public class TrajectorySimulator
         }
         
         // Didn't converge, use best attempt
-        Debug.Log($"[VelocityCalc] ⚠️ Max iterations reached. Best speed: {bestSpeed:F2}, Error: {bestDistanceError:F3}");
+        GameLog.Info($"[VelocityCalc] ⚠️ Max iterations reached. Best speed: {bestSpeed:F2}, Error: {bestDistanceError:F3}");
         return aimDirection * bestSpeed;
     }
 }

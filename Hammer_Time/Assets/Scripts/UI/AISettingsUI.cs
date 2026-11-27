@@ -33,7 +33,7 @@ public class AISettingsUI : MonoBehaviour
     void Start()
     {
         if (debugMode)
-            Debug.Log("[AISettingsUI] Starting initialization...");
+            GameLog.Info("[AISettingsUI] Starting initialization...");
         
         // Find AI_Strategy using reflection (avoids compile-time dependency)
         var aiStrategyTypes = System.AppDomain.CurrentDomain.GetAssemblies()
@@ -55,7 +55,7 @@ public class AISettingsUI : MonoBehaviour
         }
         
         if (debugMode)
-            Debug.Log($"[AISettingsUI] Found AI_Strategy: {aiStrategyComponent.gameObject.name}");
+            GameLog.Info($"[AISettingsUI] Found AI_Strategy: {aiStrategyComponent.gameObject.name}");
         
         // Initialize UI from current AI settings
         InitializeUI();
@@ -65,24 +65,24 @@ public class AISettingsUI : MonoBehaviour
         {
             evOptimizationToggle.onValueChanged.AddListener(OnEVToggleChanged);
             if (debugMode)
-                Debug.Log("[AISettingsUI] EV Optimization toggle listener added");
+                GameLog.Info("[AISettingsUI] EV Optimization toggle listener added");
         }
         
         if (evWeightSlider != null)
         {
             evWeightSlider.onValueChanged.AddListener(OnEVWeightChanged);
             if (debugMode)
-                Debug.Log("[AISettingsUI] EV Weight slider listener added");
+                GameLog.Info("[AISettingsUI] EV Weight slider listener added");
         }
         
         if (evLoggingToggle != null)
         {
             evLoggingToggle.onValueChanged.AddListener(OnEVLoggingChanged);
             if (debugMode)
-                Debug.Log("[AISettingsUI] EV Logging toggle listener added");
+                GameLog.Info("[AISettingsUI] EV Logging toggle listener added");
         }
         
-        Debug.Log("[AISettingsUI] ? Initialized successfully");
+        GameLog.Info("[AISettingsUI] ? Initialized successfully");
     }
     
     
@@ -101,7 +101,7 @@ public class AISettingsUI : MonoBehaviour
             var useEVField = type.GetField("useEVOptimization");
             var weightField = type.GetField("evWeight");
             var logField = type.GetField("evVerboseLogging");
-            Debug.Log($"[AISettingsUI] Initializing UI - useEV={useEVField?.GetValue(aiStrategyComponent)}, weight={weightField?.GetValue(aiStrategyComponent)}, logging={logField?.GetValue(aiStrategyComponent)}");
+            GameLog.Info($"[AISettingsUI] Initializing UI - useEV={useEVField?.GetValue(aiStrategyComponent)}, weight={weightField?.GetValue(aiStrategyComponent)}, logging={logField?.GetValue(aiStrategyComponent)}");
         }
         
         if (evOptimizationToggle != null)
@@ -111,7 +111,7 @@ public class AISettingsUI : MonoBehaviour
             {
                 evOptimizationToggle.isOn = (bool)field.GetValue(aiStrategyComponent);
                 if (debugMode)
-                    Debug.Log($"[AISettingsUI] Set toggle to {evOptimizationToggle.isOn}");
+                    GameLog.Info($"[AISettingsUI] Set toggle to {evOptimizationToggle.isOn}");
             }
         }
         
@@ -127,7 +127,7 @@ public class AISettingsUI : MonoBehaviour
                 evWeightSlider.value = weight;
                 UpdateWeightLabel(weight);
                 if (debugMode)
-                    Debug.Log($"[AISettingsUI] Set slider to {weight}");
+                    GameLog.Info($"[AISettingsUI] Set slider to {weight}");
             }
         }
         
@@ -138,7 +138,7 @@ public class AISettingsUI : MonoBehaviour
             {
                 evLoggingToggle.isOn = (bool)field.GetValue(aiStrategyComponent);
                 if (debugMode)
-                    Debug.Log($"[AISettingsUI] Set logging toggle to {evLoggingToggle.isOn}");
+                    GameLog.Info($"[AISettingsUI] Set logging toggle to {evLoggingToggle.isOn}");
             }
         }
     }
@@ -155,7 +155,7 @@ public class AISettingsUI : MonoBehaviour
         }
         
         if (debugMode)
-            Debug.Log($"[AISettingsUI] Toggle changed to {enabled}");
+            GameLog.Info($"[AISettingsUI] Toggle changed to {enabled}");
         
         // Update AI_Strategy field via reflection
         var type = aiStrategyComponent.GetType();
@@ -164,13 +164,13 @@ public class AISettingsUI : MonoBehaviour
         {
             field.SetValue(aiStrategyComponent, enabled);
             if (debugMode)
-                Debug.Log($"[AISettingsUI] Updated AI_Strategy.useEVOptimization to {enabled}");
+                GameLog.Info($"[AISettingsUI] Updated AI_Strategy.useEVOptimization to {enabled}");
         }
         
         // Also update EVEvaluationSystem if it exists
         FindAndUpdateEVSystem("useEVEvaluation", enabled);
         
-        Debug.Log($"[AISettingsUI] ? EV Optimization {(enabled ? "ENABLED" : "DISABLED")}");
+        GameLog.Info($"[AISettingsUI] ? EV Optimization {(enabled ? "ENABLED" : "DISABLED")}");
     }
     
     /// <summary>
@@ -187,7 +187,7 @@ public class AISettingsUI : MonoBehaviour
         weight = Mathf.Clamp01(weight);
         
         if (debugMode)
-            Debug.Log($"[AISettingsUI] Slider changed to {weight}");
+            GameLog.Info($"[AISettingsUI] Slider changed to {weight}");
         
         // Update AI_Strategy field via reflection
         var type = aiStrategyComponent.GetType();
@@ -196,7 +196,7 @@ public class AISettingsUI : MonoBehaviour
         {
             field.SetValue(aiStrategyComponent, weight);
             if (debugMode)
-                Debug.Log($"[AISettingsUI] Updated AI_Strategy.evWeight to {weight}");
+                GameLog.Info($"[AISettingsUI] Updated AI_Strategy.evWeight to {weight}");
         }
         
         // Also update EVEvaluationSystem if it exists
@@ -206,7 +206,7 @@ public class AISettingsUI : MonoBehaviour
         UpdateWeightLabel(weight);
         
         if (debugMode)
-            Debug.Log($"[AISettingsUI] ? EV Weight set to {(weight * 100f):F0}%");
+            GameLog.Info($"[AISettingsUI] ? EV Weight set to {(weight * 100f):F0}%");
     }
     
     /// <summary>
@@ -221,7 +221,7 @@ public class AISettingsUI : MonoBehaviour
         }
         
         if (debugMode)
-            Debug.Log($"[AISettingsUI] Logging toggle changed to {enabled}");
+            GameLog.Info($"[AISettingsUI] Logging toggle changed to {enabled}");
         
         // Update AI_Strategy field via reflection
         var type = aiStrategyComponent.GetType();
@@ -230,13 +230,13 @@ public class AISettingsUI : MonoBehaviour
         {
             field.SetValue(aiStrategyComponent, enabled);
             if (debugMode)
-                Debug.Log($"[AISettingsUI] Updated AI_Strategy.evVerboseLogging to {enabled}");
+                GameLog.Info($"[AISettingsUI] Updated AI_Strategy.evVerboseLogging to {enabled}");
         }
         
         // Also update EVEvaluationSystem if it exists
         FindAndUpdateEVSystem("verboseLogging", enabled);
         
-        Debug.Log($"[AISettingsUI] ? EV Logging {(enabled ? "ENABLED" : "DISABLED")}");
+        GameLog.Info($"[AISettingsUI] ? EV Logging {(enabled ? "ENABLED" : "DISABLED")}");
     }
     
     /// <summary>
@@ -268,7 +268,7 @@ public class AISettingsUI : MonoBehaviour
             {
                 field.SetValue(evSystemComponent, value);
                 if (debugMode)
-                    Debug.Log($"[AISettingsUI] Updated EVEvaluationSystem.{fieldName} to {value}");
+                    GameLog.Info($"[AISettingsUI] Updated EVEvaluationSystem.{fieldName} to {value}");
             }
         }
         else if (debugMode)

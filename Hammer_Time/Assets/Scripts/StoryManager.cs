@@ -57,6 +57,6 @@ public class StoryManager : MonoBehaviour
         {
             yield return null;
         }
-        Debug.Log("Story Manager - Clickeddd");
+        GameLog.Info("Story Manager - Clickeddd");
     }
 }

@@ -25,7 +25,7 @@ public class AI_Sweeper : MonoBehaviour
             // LEGACY SYSTEM DISABLED
             // Physics-based sweeping is now handled by StartPhysicsBasedSweeping()
             // Called directly from AI_Shooter after rock is released
-            Debug.Log("[AI_Sweeper] OnSweep called - legacy system DISABLED, using physics-based sweeping");
+            GameLog.Info("[AI_Sweeper] OnSweep called - legacy system DISABLED, using physics-based sweeping");
         }
         else
         {
@@ -68,7 +68,7 @@ public class AI_Sweeper : MonoBehaviour
         Rigidbody2D rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
         GameObject rock = gm.rockList[gm.rockCurrent].rock;
 
-        Debug.Log("Auto Sweep - " + aiShotType);
+        GameLog.Info("Auto Sweep - " + aiShotType);
 
         switch (aiShotType)
         {
@@ -79,36 +79,36 @@ public class AI_Sweeper : MonoBehaviour
                 // PHYSICS-BASED GUARDS: Sweeping handled by Guard To Target callback
                 // These legacy names are intercepted and redirected, so this case is never actually reached
                 // But kept for safety - just pass through to Guard To Target logic
-                Debug.Log("[AI_Sweeper] Legacy finesse name detected, should have been redirected. Passing through.");
+                GameLog.Info("[AI_Sweeper] Legacy finesse name detected, should have been redirected. Passing through.");
                 goto case "Guard To Target";
             #endregion
 
             #region Corner Guards
             case "Left Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.75f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.4f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else
@@ -118,36 +118,36 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Left Tight Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.25f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.75f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.5f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.25f)
                     sm.SweepWeight(true);
                 else
@@ -156,22 +156,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Left High Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.3f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.95f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else
@@ -181,29 +181,29 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Right Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.75f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.4f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else
@@ -213,36 +213,36 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Right Tight Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.25f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.75f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.5f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.25f)
                     sm.SweepWeight(true);
                 else
@@ -251,22 +251,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Right High Corner Guard":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.3f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.85f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else
@@ -278,22 +278,22 @@ public class AI_Sweeper : MonoBehaviour
             #region Twelve Foot Draws
             case "Top Twelve Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.58f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.04f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.85f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.48f)
@@ -303,8 +303,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 1.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.25f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.44f)
@@ -314,8 +314,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.34f)
@@ -331,22 +331,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Left Twelve Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.9f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.45f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.3f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -1.62f)
@@ -356,8 +356,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -1.63f)
@@ -367,8 +367,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -1.55f)
@@ -384,22 +384,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Back Twelve Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 5.5f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.8f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.71f)
@@ -409,8 +409,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1.55f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.65f)
@@ -420,8 +420,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 1f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.57f)
@@ -432,8 +432,8 @@ public class AI_Sweeper : MonoBehaviour
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 6.5f);
-                Debug.Log("y = 6.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 6.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 6.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 6.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.5f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.44f)
@@ -449,22 +449,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Right Twelve Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.9f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.45f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.3f)
                     sm.SweepWeight(true);
                 else if (!inturn && rock.transform.position.x <= 1.62f)
@@ -474,8 +474,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (!inturn && rock.transform.position.x <= 1.63f)
@@ -485,8 +485,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (!inturn && rock.transform.position.x <= 1.55f)
@@ -504,22 +504,22 @@ public class AI_Sweeper : MonoBehaviour
             #region Four Foot Draws
             case "Button":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.9f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.45f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.3f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.65f)
@@ -529,8 +529,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.55f)
@@ -540,8 +540,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.4f)
@@ -557,22 +557,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Left Four Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.9f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.45f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.3f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -1f)
@@ -582,8 +582,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.95f)
@@ -593,8 +593,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.83f)
@@ -610,22 +610,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Right Four Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.9f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.45f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.3f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.36f)
@@ -635,8 +635,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.2f)
@@ -646,8 +646,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.3f)
@@ -661,22 +661,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Top Four Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 4.75f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.3f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.2f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.65f)
@@ -686,8 +686,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.85f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.5f)
@@ -697,8 +697,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.4f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.35f)
@@ -711,22 +711,22 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Back Four Foot":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 5f)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 3.6f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 2.4f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.69f)
@@ -736,8 +736,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.95f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.59f)
@@ -747,8 +747,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 if (rockRB.linearVelocity.y <= 0.52f)
                     sm.SweepWeight(true);
                 else if (inturn && rock.transform.position.x <= -0.48f)
@@ -766,7 +766,7 @@ public class AI_Sweeper : MonoBehaviour
             #region Take Outs
             case "Peel":
                 // DISABLED FOR PHYSICS-BASED SHOTS
-                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Peel shot");
+                GameLog.Info("[AI_Sweeper] Sweeping disabled for physics-based Peel shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
@@ -775,21 +775,21 @@ public class AI_Sweeper : MonoBehaviour
                 // DISABLED FOR PHYSICS-BASED SHOTS
                 // Physics-based targeting calculates exact velocity needed
                 // Sweeping interferes with the predicted trajectory
-                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Take Out shot");
+                GameLog.Info("[AI_Sweeper] Sweeping disabled for physics-based Take Out shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
 
             case "Tick":
                 // DISABLED FOR PHYSICS-BASED SHOTS
-                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Tick shot");
+                GameLog.Info("[AI_Sweeper] Sweeping disabled for physics-based Tick shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
 
             case "Raise":
                 // DISABLED FOR PHYSICS-BASED SHOTS
-                Debug.Log("[AI_Sweeper] Sweeping disabled for physics-based Raise shot");
+                GameLog.Info("[AI_Sweeper] Sweeping disabled for physics-based Raise shot");
                 yield return new WaitUntil(() => rock.transform.position.y >= 7.75f);
                 sm.SweepWhoa(true);
                 break;
@@ -797,16 +797,16 @@ public class AI_Sweeper : MonoBehaviour
 
             case "Draw To Target":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
-                Debug.Log("y = -7 velLimit is " + velLimit);
+                GameLog.Info("y = -7 velLimit is " + velLimit);
                 if (rockRB.linearVelocity.y <= velLimit)
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     sm.SweepWeight(true);
@@ -814,8 +814,8 @@ public class AI_Sweeper : MonoBehaviour
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     sm.SweepWeight(true);
@@ -826,8 +826,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     sm.SweepWeight(true);
@@ -838,8 +838,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     sm.SweepWhoa(true);
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     sm.SweepWeight(true);
@@ -860,26 +860,26 @@ public class AI_Sweeper : MonoBehaviour
                 // PHYSICS-BASED GUARD: Light sweeping to help it reach finesse zone (Y=2.5-4.5)
                 // Target velocity should be ~50-70% of button velocity
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 if (rockRB.linearVelocity.y <= 3.5f)  // Guard needs less speed than draws
                     sm.SweepWeight(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 if (rockRB.linearVelocity.y <= 2.2f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
 
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 if (rockRB.linearVelocity.y <= 1.2f)
                     sm.SweepWeight(true);
                 else
                     sm.SweepWhoa(true);
                 
                 yield return new WaitUntil(() => rock.transform.position.y >= 1.5f);
-                Debug.Log("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 1.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 if (rockRB.linearVelocity.y <= 0.6f)
                     sm.SweepWeight(true);
                 else
@@ -887,7 +887,7 @@ public class AI_Sweeper : MonoBehaviour
                 
                 // Guards should stop in finesse zone (Y=2.5-4.5), so whoa at Y=2.5
                 yield return new WaitUntil(() => rock.transform.position.y >= 2.5f);
-                Debug.Log("y = 2.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 2.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
                 sm.SweepWhoa(true);  // STOP! We're in finesse zone
                 break;
 
@@ -902,7 +902,7 @@ public class AI_Sweeper : MonoBehaviour
         Rigidbody2D rockRB = gm.rockList[gm.rockCurrent].rock.GetComponent<Rigidbody2D>();
         GameObject rock = gm.rockList[gm.rockCurrent].rock;
 
-        Debug.Log("sweeperL is " + sm.sweeperL.gameObject.activeSelf);
+        GameLog.Info("sweeperL is " + sm.sweeperL.gameObject.activeSelf);
         //fltText.TargetTransform = rock.transform;
 
         //Debug.Log("Player Speed Callouts - " + playerShotType);
@@ -920,25 +920,25 @@ public class AI_Sweeper : MonoBehaviour
             case "Right Twelve Foot":
             case "Draw To Target":
                 yield return new WaitUntil(() => rock.transform.position.y >= -7f);
-                Debug.Log("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -7 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -7 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -7 xPos is " + rock.transform.position.x);
                 float velLimit = ((5.5f - 4.58f) * ((target.y - 5.225f) / 2.55f)) + 4.58f;
-                Debug.Log("y = -7 velLimit is " + velLimit);
+                GameLog.Info("y = -7 velLimit is " + velLimit);
                 if (rockRB.linearVelocity.y <= velLimit)
                     ShowSweepCallout(rock,"Sweep!!");
                 else
                     ShowSweepCallout(rock,"Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= -3.5f);
-                Debug.Log("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = -3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = -3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = -3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((4f - 3f) * ((target.y - 5.225f) / 2.55f)) + 3f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     ShowSweepCallout(rock,"SWEEP!!");
                 else
                     ShowSweepCallout(rock,"Nope!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 0f);
-                Debug.Log("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 0 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 0 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 0 xPos is " + rock.transform.position.x);
                 velLimit = ((2.8f - 1.85f) * ((target.y - 5.225f) / 2.55f)) + 1.85f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     ShowSweepCallout(rock,"SWEEEEEP!!");
@@ -949,8 +949,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     ShowSweepCallout(rock,"Leave it!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 3.5f);
-                Debug.Log("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 3.5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 3.5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 3.5 xPos is " + rock.transform.position.x);
                 velLimit = ((1.55f - 1.25f) * ((target.y - 5.225f) / 2.55f)) + 1.25f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     ShowSweepCallout(rock,"SWEEEEEEEEEP HARD!!");
@@ -961,8 +961,8 @@ public class AI_Sweeper : MonoBehaviour
                 else
                     ShowSweepCallout(rock,"It's good!!");
                 yield return new WaitUntil(() => rock.transform.position.y >= 5f);
-                Debug.Log("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
-                Debug.Log("y = 5 xPos is " + rock.transform.position.x);
+                GameLog.Info("y = 5 velocity is " + rockRB.linearVelocity.x + ", " + rockRB.linearVelocity.y);
+                GameLog.Info("y = 5 xPos is " + rock.transform.position.x);
                 velLimit = ((1f - 0.5f) * ((target.y - 5.225f) / 2.55f)) + 0.5f;
                 if (rockRB.linearVelocity.y <= velLimit)
                     ShowSweepCallout(rock,"HARRRRRD!! GO GO GO!!!");
@@ -1052,7 +1052,7 @@ public class AI_Sweeper : MonoBehaviour
         currentPositionMarker.sortingOrder = 101;  // Even higher to render on top of trajectories
         currentPositionMarker.enabled = false;
         
-        Debug.Log("[AI_Sweeper] Trajectory visualization initialized - Green=IDEAL, Red=ACTUAL, Yellow=CURRENT (UI layer, order 100+)");
+        GameLog.Info("[AI_Sweeper] Trajectory visualization initialized - Green=IDEAL, Red=ACTUAL, Yellow=CURRENT (UI layer, order 100+)");
     }
     
     /// <summary>
@@ -1069,7 +1069,7 @@ public class AI_Sweeper : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[Trajectory Viz] Updating visualization - Ideal: {idealPath.Count} points, Actual: {actualPath.Count} points");
+        GameLog.Info($"[Trajectory Viz] Updating visualization - Ideal: {idealPath.Count} points, Actual: {actualPath.Count} points");
         
         // GREEN LINE: IDEAL trajectory (perfect physics)
         if (idealTrajectoryLine != null && idealPath.Count > 0)
@@ -1080,7 +1080,7 @@ public class AI_Sweeper : MonoBehaviour
             {
                 idealTrajectoryLine.SetPosition(i, new Vector3(idealPath[i].x, idealPath[i].y, 0f));
             }
-            Debug.Log($"[Trajectory Viz] GREEN line rendered with {idealPath.Count} points");
+            GameLog.Info($"[Trajectory Viz] GREEN line rendered with {idealPath.Count} points");
         }
         
         // RED LINE: ACTUAL trajectory (error-contaminated)
@@ -1092,7 +1092,7 @@ public class AI_Sweeper : MonoBehaviour
             {
                 actualTrajectoryLine.SetPosition(i, new Vector3(actualPath[i].x, actualPath[i].y, 0f));
             }
-            Debug.Log($"[Trajectory Viz] RED line rendered with {actualPath.Count} points");
+            GameLog.Info($"[Trajectory Viz] RED line rendered with {actualPath.Count} points");
         }
         
         // YELLOW CROSSHAIR: Show current position and ideal position (small crosshair)
@@ -1116,7 +1116,7 @@ public class AI_Sweeper : MonoBehaviour
             // Note: This creates a connected line - for a proper crosshair you'd need 2 separate lines
             // But this is simpler and still shows the position clearly
             
-            Debug.Log($"[Trajectory Viz] YELLOW crosshair at ({idealPosAtCurrentY.x:F2}, {idealPosAtCurrentY.y:F2})");
+            GameLog.Info($"[Trajectory Viz] YELLOW crosshair at ({idealPosAtCurrentY.x:F2}, {idealPosAtCurrentY.y:F2})");
         }
         else if (currentPositionMarker != null)
         {
@@ -1227,7 +1227,7 @@ public class AI_Sweeper : MonoBehaviour
                 
                 if (distToTarget < targetRockRadius)
                 {
-                    Debug.Log($"[AI_Sweeper] TAKEOUT: Excluding target rock {rockEntry.rock.name} from collision detection (we want to hit it!)");
+                    GameLog.Info($"[AI_Sweeper] TAKEOUT: Excluding target rock {rockEntry.rock.name} from collision detection (we want to hit it!)");
                     continue; // Skip target rock - we WANT to collide with it!
                 }
             }
@@ -1235,7 +1235,7 @@ public class AI_Sweeper : MonoBehaviour
             rocksInPlay.Add(rockEntry.rock);
         }
         
-        Debug.Log($"[AI_Sweeper] Rocks in play for collision detection: {rocksInPlay.Count} (excluding self{(isTakeoutShot ? " and target" : "")})");
+        GameLog.Info($"[AI_Sweeper] Rocks in play for collision detection: {rocksInPlay.Count} (excluding self{(isTakeoutShot ? " and target" : "")})");
 
 
 
@@ -1261,30 +1261,30 @@ public class AI_Sweeper : MonoBehaviour
             forPlayerPreview: false
         );
 
-        Debug.Log($"[AI_Sweeper] Monitoring started:");
-        Debug.Log($"  Shot type: {shotType}");
-        Debug.Log($"  IDEAL trajectory (sweeping target): {idealTrajectory.Count} points from perfect velocity {idealVelocity}");
-        Debug.Log($"  ACTUAL trajectory (error-contaminated): {actualTrajectory.Count} points from actual velocity {actualVelocity}");
-        Debug.Log($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}°)");
+        GameLog.Info($"[AI_Sweeper] Monitoring started:");
+        GameLog.Info($"  Shot type: {shotType}");
+        GameLog.Info($"  IDEAL trajectory (sweeping target): {idealTrajectory.Count} points from perfect velocity {idealVelocity}");
+        GameLog.Info($"  ACTUAL trajectory (error-contaminated): {actualTrajectory.Count} points from actual velocity {actualVelocity}");
+        GameLog.Info($"  Launch error: {(actualVelocity - idealVelocity).magnitude:F3} m/s ({Vector2.Angle(actualVelocity, idealVelocity):F2}°)");
         
         // TRAJECTORY VERIFICATION: Log first/last points to verify it's not a straight line
         if (idealTrajectory.Count > 10)
         {
-            Debug.Log($"[Trajectory Verification] IDEAL path sample:");
-            Debug.Log($"  Start: ({idealTrajectory[0].x:F2}, {idealTrajectory[0].y:F2})");
-            Debug.Log($"  25%: ({idealTrajectory[idealTrajectory.Count / 4].x:F2}, {idealTrajectory[idealTrajectory.Count / 4].y:F2})");
-            Debug.Log($"  50%: ({idealTrajectory[idealTrajectory.Count / 2].x:F2}, {idealTrajectory[idealTrajectory.Count / 2].y:F2})");
-            Debug.Log($"  75%: ({idealTrajectory[idealTrajectory.Count * 3 / 4].x:F2}, {idealTrajectory[idealTrajectory.Count * 3 / 4].y:F2})");
-            Debug.Log($"  End: ({idealTrajectory[idealTrajectory.Count - 1].x:F2}, {idealTrajectory[idealTrajectory.Count - 1].y:F2})");
+            GameLog.Info($"[Trajectory Verification] IDEAL path sample:");
+            GameLog.Info($"  Start: ({idealTrajectory[0].x:F2}, {idealTrajectory[0].y:F2})");
+            GameLog.Info($"  25%: ({idealTrajectory[idealTrajectory.Count / 4].x:F2}, {idealTrajectory[idealTrajectory.Count / 4].y:F2})");
+            GameLog.Info($"  50%: ({idealTrajectory[idealTrajectory.Count / 2].x:F2}, {idealTrajectory[idealTrajectory.Count / 2].y:F2})");
+            GameLog.Info($"  75%: ({idealTrajectory[idealTrajectory.Count * 3 / 4].x:F2}, {idealTrajectory[idealTrajectory.Count * 3 / 4].y:F2})");
+            GameLog.Info($"  End: ({idealTrajectory[idealTrajectory.Count - 1].x:F2}, {idealTrajectory[idealTrajectory.Count - 1].y:F2})");
         }
         if (actualTrajectory.Count > 10)
         {
-            Debug.Log($"[Trajectory Verification] ACTUAL path sample:");
-            Debug.Log($"  Start: ({actualTrajectory[0].x:F2}, {actualTrajectory[0].y:F2})");
-            Debug.Log($"  25%: ({actualTrajectory[actualTrajectory.Count / 4].x:F2}, {actualTrajectory[actualTrajectory.Count / 4].y:F2})");
-            Debug.Log($"  50%: ({actualTrajectory[actualTrajectory.Count / 2].x:F2}, {actualTrajectory[actualTrajectory.Count / 2].y:F2})");
-            Debug.Log($"  75%: ({actualTrajectory[actualTrajectory.Count * 3 / 4].x:F2}, {actualTrajectory[actualTrajectory.Count * 3 / 4].y:F2})");
-            Debug.Log($"  End: ({actualTrajectory[actualTrajectory.Count - 1].x:F2}, {actualTrajectory[actualTrajectory.Count - 1].y:F2})");
+            GameLog.Info($"[Trajectory Verification] ACTUAL path sample:");
+            GameLog.Info($"  Start: ({actualTrajectory[0].x:F2}, {actualTrajectory[0].y:F2})");
+            GameLog.Info($"  25%: ({actualTrajectory[actualTrajectory.Count / 4].x:F2}, {actualTrajectory[actualTrajectory.Count / 4].y:F2})");
+            GameLog.Info($"  50%: ({actualTrajectory[actualTrajectory.Count / 2].x:F2}, {actualTrajectory[actualTrajectory.Count / 2].y:F2})");
+            GameLog.Info($"  75%: ({actualTrajectory[actualTrajectory.Count * 3 / 4].x:F2}, {actualTrajectory[actualTrajectory.Count * 3 / 4].y:F2})");
+            GameLog.Info($"  End: ({actualTrajectory[actualTrajectory.Count - 1].x:F2}, {actualTrajectory[actualTrajectory.Count - 1].y:F2})");
         }
         
         // CRITICAL: Check collision info to see if simulation stopped early
@@ -1319,7 +1319,7 @@ public class AI_Sweeper : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        Debug.Log($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
+        GameLog.Info($"[AI_Sweeper] Rock crossed hog line - sweeping enabled!");
 
         // ========================================
         // ENABLE AI TRAJECTORY VISUALIZATION
@@ -1347,17 +1347,17 @@ public class AI_Sweeper : MonoBehaviour
             Vector2 approachDirection = (targetPosition - launcherPos).normalized;
             sweepingGoal = targetPosition - (approachDirection * twoRockRadii);
             
-            Debug.Log($"[AI_Sweeper] TAKEOUT sweeping goal: COLLISION POINT at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
-            Debug.Log($"  Target rock center: ({targetPosition.x:F2}, {targetPosition.y:F2})");
-            Debug.Log($"  Collision distance: {twoRockRadii:F3}m (2 × rock radius)");
-            Debug.Log($"  Goal is {(targetPosition.y - sweepingGoal.y):F3}m BEFORE target center");
+            GameLog.Info($"[AI_Sweeper] TAKEOUT sweeping goal: COLLISION POINT at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
+            GameLog.Info($"  Target rock center: ({targetPosition.x:F2}, {targetPosition.y:F2})");
+            GameLog.Info($"  Collision distance: {twoRockRadii:F3}m (2 × rock radius)");
+            GameLog.Info($"  Goal is {(targetPosition.y - sweepingGoal.y):F3}m BEFORE target center");
         }
         else
         {
             // DRAW/GUARD/RAISE: Goal is the exact target position (final resting spot)
             sweepingGoal = targetPosition;
             
-            Debug.Log($"[AI_Sweeper] {shotType} sweeping goal: TARGET POSITION at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
+            GameLog.Info($"[AI_Sweeper] {shotType} sweeping goal: TARGET POSITION at ({sweepingGoal.x:F2}, {sweepingGoal.y:F2})");
         }
 
         // Shot type flags already declared above before trajectory generation
@@ -1381,10 +1381,10 @@ public class AI_Sweeper : MonoBehaviour
             distanceErrorThreshold = 0.10f;  // 10cm distance (ULTRA sensitive - sweep early!)
             predictionLookahead = 15.0f;      // Look 15 units ahead (MASSIVE - detect problems WAY ahead!)
             
-            Debug.Log($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE with ULTRA-TIGHT line control!");
-            Debug.Log($"  Lookahead: {predictionLookahead}m (MASSIVE - detect velocity drops SUPER early!)");
-            Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (ULTRA sensitive - must reach!)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (ULTRA-TIGHT - 33% more sensitive!)");
+            GameLog.Info($"[AI_Sweeper] TAKEOUT MODE: ULTRA-AGGRESSIVE with ULTRA-TIGHT line control!");
+            GameLog.Info($"  Lookahead: {predictionLookahead}m (MASSIVE - detect velocity drops SUPER early!)");
+            GameLog.Info($"  Distance threshold: {distanceErrorThreshold}m (ULTRA sensitive - must reach!)");
+            GameLog.Info($"  Lateral threshold: {lateralErrorThreshold}m (ULTRA-TIGHT - 33% more sensitive!)");
         }
         else if (isDrawShot)
         {
@@ -1396,10 +1396,10 @@ public class AI_Sweeper : MonoBehaviour
             distanceErrorThreshold = 0.20f;  // 20cm distance (important but less critical than takeouts)
             predictionLookahead = 4.0f;      // Look 4 units ahead (balanced)
             
-            Debug.Log($"[AI_Sweeper] DRAW MODE: Precision line/distance control with ULTRA-TIGHT thresholds!");
-            Debug.Log($"  Lookahead: {predictionLookahead}m (balanced prediction)");
-            Debug.Log($"  Distance threshold: {distanceErrorThreshold}m (stopping control)");
-            Debug.Log($"  Lateral threshold: {lateralErrorThreshold}m (HYPER-PRECISE!)");
+            GameLog.Info($"[AI_Sweeper] DRAW MODE: Precision line/distance control with ULTRA-TIGHT thresholds!");
+            GameLog.Info($"  Lookahead: {predictionLookahead}m (balanced prediction)");
+            GameLog.Info($"  Distance threshold: {distanceErrorThreshold}m (stopping control)");
+            GameLog.Info($"  Lateral threshold: {lateralErrorThreshold}m (HYPER-PRECISE!)");
         }
         else if (isRaiseShot)
         {
@@ -1410,7 +1410,7 @@ public class AI_Sweeper : MonoBehaviour
             distanceErrorThreshold = 0.30f;  // 30cm distance (relaxed - just need contact)
             predictionLookahead = 3.0f;      // Look 3 units ahead (short - avoid over-sweeping)
             
-            Debug.Log($"[AI_Sweeper] RAISE MODE: Gentle sweeping for light contact");
+            GameLog.Info($"[AI_Sweeper] RAISE MODE: Gentle sweeping for light contact");
         }
         else
         {
@@ -1419,7 +1419,7 @@ public class AI_Sweeper : MonoBehaviour
             distanceErrorThreshold = 0.25f;  // 25cm distance
             predictionLookahead = 3.5f;      // Look 3.5 units ahead
             
-            Debug.Log($"[AI_Sweeper] DEFAULT MODE: Standard sweeping parameters");
+            GameLog.Info($"[AI_Sweeper] DEFAULT MODE: Standard sweeping parameters");
         }
         
         bool collisionImminent = false;
@@ -1480,7 +1480,7 @@ public class AI_Sweeper : MonoBehaviour
             // DEBUG: Show what we're comparing (every 30 frames to avoid spam)
             if (Time.frameCount % 30 == 0)
             {
-                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: Predicted stop={predictedFinalY:F2}, Goal={sweepingGoal.y:F2}, Shortfall={predictedShortfall:F2}m, Velocity={rockRB.linearVelocity.magnitude:F2}m/s");
+                GameLog.Info($"[AI_Sweeper] Y={currentPos.y:F2}: Predicted stop={predictedFinalY:F2}, Goal={sweepingGoal.y:F2}, Shortfall={predictedShortfall:F2}m, Velocity={rockRB.linearVelocity.magnitude:F2}m/s");
             }
             
             // SANITY CHECK: If predicted shortfall is absurdly large (>20m), something is wrong
@@ -1506,7 +1506,7 @@ public class AI_Sweeper : MonoBehaviour
                     collisionImminent = true;
                     collisionPoint = lookaheadCollision.collisionPoint;
                     
-                    Debug.Log($"[AI_Sweeper] COLLISION IMMINENT! Distance: {collisionDistance:F2}m at {collisionPoint}");
+                    GameLog.Info($"[AI_Sweeper] COLLISION IMMINENT! Distance: {collisionDistance:F2}m at {collisionPoint}");
                 }
             }
 
@@ -1525,14 +1525,14 @@ public class AI_Sweeper : MonoBehaviour
             if (!hasCollided && lookaheadCollision.hasCollision && collisionDistance < 0.1f)
             {
                 hasCollided = true;
-                Debug.Log($"[AI_Sweeper] COLLISION DETECTED - Auto-WHOA activated!");
+                GameLog.Info($"[AI_Sweeper] COLLISION DETECTED - Auto-WHOA activated!");
                 
                 // IMMEDIATE WHOA on collision!
                 if (currentSweepState != "None")
                 {
                     sm.SweepWhoa(true);
                     currentSweepState = "None";
-                    Debug.Log($"[AI_Sweeper] Sweepers STOPPED on collision - rock physics now in control");
+                    GameLog.Info($"[AI_Sweeper] Sweepers STOPPED on collision - rock physics now in control");
                 }
             }
 
@@ -1566,13 +1566,13 @@ public class AI_Sweeper : MonoBehaviour
                 {
                     // IMMEDIATE WHOA: Rock is moving BACKWARD (away from house)
                     desiredState = "None";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving BACKWARD (Y velocity={velocity.y:F2}) → WHOA! Stop sweeping!");
+                    GameLog.Info($"[AI_Sweeper] POST-COLLISION: Moving BACKWARD (Y velocity={velocity.y:F2}) → WHOA! Stop sweeping!");
                 }
                 else if (movingOutSideways)
                 {
                     // IMMEDIATE WHOA: Rock is moving OUT sideways (not toward house)
                     desiredState = "None";
-                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving OUT sideways (X={velocity.x:F2}, Y={velocity.y:F2}) → WHOA! Stop sweeping!");
+                    GameLog.Info($"[AI_Sweeper] POST-COLLISION: Moving OUT sideways (X={velocity.x:F2}, Y={velocity.y:F2}) → WHOA! Stop sweeping!");
                 }
                 else
                 {
@@ -1593,7 +1593,7 @@ public class AI_Sweeper : MonoBehaviour
                     {
                         // SWEEP: Rock is heading toward button, close, AND in scoring zone - maximize distance!
                         desiredState = "Weight";
-                        Debug.Log($"[AI_Sweeper] POST-COLLISION: Moving toward button IN HOUSE (dot={dotProduct:F2}, dist={distToButton:F2}, Y={currentPos.y:F2}) → SWEEP for distance!");
+                        GameLog.Info($"[AI_Sweeper] POST-COLLISION: Moving toward button IN HOUSE (dot={dotProduct:F2}, dist={distToButton:F2}, Y={currentPos.y:F2}) → SWEEP for distance!");
                     }
                     else
                     {
@@ -1617,7 +1617,7 @@ public class AI_Sweeper : MonoBehaviour
                                 if (guardInFront && guardAligned)
                                 {
                                     behindGuard = true;
-                                    Debug.Log($"[AI_Sweeper] POST-COLLISION: Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}), protected scoring position!");
+                                    GameLog.Info($"[AI_Sweeper] POST-COLLISION: Behind guard at ({guardPos.x:F2}, {guardPos.y:F2}), protected scoring position!");
                                     break;
                                 }
                             }
@@ -1627,7 +1627,7 @@ public class AI_Sweeper : MonoBehaviour
                         {
                             // SWEEP: Rock is in protected scoring position - extend it!
                             desiredState = "Weight";
-                            Debug.Log($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) → SWEEP to extend!");
+                            GameLog.Info($"[AI_Sweeper] POST-COLLISION: Protected scoring position (Y={currentPos.y:F2}) → SWEEP to extend!");
                         }
                         else
                         {
@@ -1636,19 +1636,19 @@ public class AI_Sweeper : MonoBehaviour
                             
                             if (!movingTowardButton)
                             {
-                                Debug.Log($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}) → WHOA");
+                                GameLog.Info($"[AI_Sweeper] POST-COLLISION: NOT moving toward button (dot={dotProduct:F2}) → WHOA");
                             }
                             else if (!closeToButton)
                             {
-                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Too far from button (dist={distToButton:F2}) → WHOA");
+                                GameLog.Info($"[AI_Sweeper] POST-COLLISION: Too far from button (dist={distToButton:F2}) → WHOA");
                             }
                             else if (!inScoringZone)
                             {
-                                Debug.Log($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) → WHOA");
+                                GameLog.Info($"[AI_Sweeper] POST-COLLISION: Outside scoring zone (Y={currentPos.y:F2}) → WHOA");
                             }
                             else
                             {
-                                Debug.Log($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) → WHOA");
+                                GameLog.Info($"[AI_Sweeper] POST-COLLISION: No guard protection (exposed) → WHOA");
                             }
                         }
                     }
@@ -1668,26 +1668,26 @@ public class AI_Sweeper : MonoBehaviour
                     {
                         // Obstacle is right of goal - sweep to pull rock LEFT
                         desiredState = isInTurn ? "Curl" : "Line";
-                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line LEFT");
+                        GameLog.Info($"[AI_Sweeper] Collision avoidance - adjusting line LEFT");
                     }
                     else
                     {
                         // Obstacle is left of goal - sweep to push rock RIGHT
                         desiredState = isInTurn ? "Line" : "Curl";
-                        Debug.Log($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT");
+                        GameLog.Info($"[AI_Sweeper] Collision avoidance - adjusting line RIGHT");
                     }
                 }
                 else if (collisionDistance < distanceToGoal * 0.8f)
                 {
                     // Collision is on-path and before goal - try to get past it faster
                     desiredState = "Critical";
-                    Debug.Log($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
+                    GameLog.Info($"[AI_Sweeper] Collision avoidance - HARD SWEEP to get past obstacle!");
                 }
                 else
                 {
                     // Collision is on-path and near/past goal - can't avoid, just optimize
                     desiredState = "Weight";
-                    Debug.Log($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
+                    GameLog.Info($"[AI_Sweeper] Collision unavoidable - sweeping for best outcome");
                 }
             }
             // PRIORITY 1: TAKEOUT SHOTS - LINE/CURL ONLY (NO WEIGHT!)
@@ -1715,7 +1715,7 @@ public class AI_Sweeper : MonoBehaviour
                         // If lateralError > 0 (rock right of ideal), sweep Curl to pull LEFT
                         // If lateralError < 0 (rock left of ideal), sweep Line to pull RIGHT
                         desiredState = (lateralError > 0f) ? "Curl" : "Line";  // ✅ FIXED: Swapped!
-                        Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
+                        GameLog.Info($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
                     else
                     {
@@ -1723,14 +1723,14 @@ public class AI_Sweeper : MonoBehaviour
                         // If lateralError > 0 (rock right of ideal), sweep Line to pull LEFT
                         // If lateralError < 0 (rock left of ideal), sweep Curl to pull RIGHT
                         desiredState = (lateralError > 0f) ? "Line" : "Curl";  // ✅ FIXED: Swapped!
-                        Debug.Log($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
+                        GameLog.Info($"[AI_Sweeper] TAKEOUT LINE CORRECTION: {lateralError:F3}m off-line (threshold={stopThreshold:F3}), sweeping {desiredState}");
                     }
                 }
                 else
                 {
                     // On line - no sweeping needed!
                     desiredState = "None";
-                    Debug.Log($"[AI_Sweeper] TAKEOUT: On line ({lateralError:F3}m < {stopThreshold:F3}m), no sweep needed");
+                    GameLog.Info($"[AI_Sweeper] TAKEOUT: On line ({lateralError:F3}m < {stopThreshold:F3}m), no sweep needed");
                 }
             }
             // PRIORITY 2: NON-TAKEOUT SHOTS - Full logic (weight + line)
@@ -1741,7 +1741,7 @@ public class AI_Sweeper : MonoBehaviour
             {
                 // CRITICAL DISTANCE (rock won't reach target!)
                 desiredState = "Critical";
-                Debug.Log($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
+                GameLog.Info($"[AI_Sweeper] CRITICAL shortfall: {predictedShortfall:F2}m");
             }
             else if (predictedShortfall > distanceThreshold && !guardRestraintApplies)
             {
@@ -1778,7 +1778,7 @@ public class AI_Sweeper : MonoBehaviour
                 ApplySweepState(desiredState, isInTurn);
                 currentSweepState = desiredState;
 
-                Debug.Log($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}, GuardRestraint={guardRestraintApplies}");
+                GameLog.Info($"[AI_Sweeper] Y={currentPos.y:F2}: State={desiredState}, LateralErr={lateralError:F3}, Shortfall={predictedShortfall:F2}, Collision={collisionImminent}, PostCollision={hasCollided}, GuardRestraint={guardRestraintApplies}");
                 
                 // Show callout on rock to visualize AI sweeping decisions
                 ShowAISweepingCallout(rock, desiredState, lateralError, predictedShortfall, hasCollided, isTakeoutShot);
@@ -1791,7 +1791,7 @@ public class AI_Sweeper : MonoBehaviour
         if (currentSweepState != "None")
         {
             sm.SweepWhoa(true);
-            Debug.Log($"[AI_Sweeper] Rock stopped - WHOA");
+            GameLog.Info($"[AI_Sweeper] Rock stopped - WHOA");
         }
         
         // Clear trajectory visualization
@@ -1850,7 +1850,7 @@ public class AI_Sweeper : MonoBehaviour
     /// </summary>
     private void ApplySweepState(string state, bool isInTurn)
     {
-        Debug.Log($"[AI_Sweeper] ApplySweepState called: state={state}, isInTurn={isInTurn}, SweeperManager={(sm != null ? "exists" : "NULL!")}");
+        GameLog.Info($"[AI_Sweeper] ApplySweepState called: state={state}, isInTurn={isInTurn}, SweeperManager={(sm != null ? "exists" : "NULL!")}");
         
         if (sm == null)
         {
@@ -1861,14 +1861,14 @@ public class AI_Sweeper : MonoBehaviour
         switch (state)
         {
             case "None":
-                Debug.Log($"[AI_Sweeper] Calling sm.SweepWhoa(true) - STOP sweeping");
+                GameLog.Info($"[AI_Sweeper] Calling sm.SweepWhoa(true) - STOP sweeping");
                 sm.SweepWhoa(true);
                 break;
 
             case "Weight":
             case "Critical":
                 // Both sweepers - extend distance (linear damping reduction)
-                Debug.Log($"[AI_Sweeper] Calling sm.SweepWeight(true) for {state} - EXTEND DISTANCE");
+                GameLog.Info($"[AI_Sweeper] Calling sm.SweepWeight(true) for {state} - EXTEND DISTANCE");
                 sm.SweepWeight(true);
                 break;
 
@@ -1876,12 +1876,12 @@ public class AI_Sweeper : MonoBehaviour
                 // One sweeper - straighten rock (reduce excessive curl)
                 if (isInTurn)
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Line (IN-TURN) - STRAIGHTEN (reduce left curl)");
+                    GameLog.Info($"[AI_Sweeper] Calling sm.SweepLeft(true) for Line (IN-TURN) - STRAIGHTEN (reduce left curl)");
                     sm.SweepLeft(true);  // IN-TURN curls left, sweep left to straighten
                 }
                 else
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Line (OUT-TURN) - STRAIGHTEN (reduce right curl)");
+                    GameLog.Info($"[AI_Sweeper] Calling sm.SweepRight(true) for Line (OUT-TURN) - STRAIGHTEN (reduce right curl)");
                     sm.SweepRight(true); // OUT-TURN curls right, sweep right to straighten
                 }
                 break;
@@ -1890,18 +1890,18 @@ public class AI_Sweeper : MonoBehaviour
                 // One sweeper - enhance curl (increase curl amount)
                 if (isInTurn)
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepRight(true) for Curl (IN-TURN) - ENHANCE CURL (increase left curl)");
+                    GameLog.Info($"[AI_Sweeper] Calling sm.SweepRight(true) for Curl (IN-TURN) - ENHANCE CURL (increase left curl)");
                     sm.SweepRight(true); // IN-TURN: Right sweeper enhances left curl
                 }
                 else
                 {
-                    Debug.Log($"[AI_Sweeper] Calling sm.SweepLeft(true) for Curl (OUT-TURN) - ENHANCE CURL (increase right curl)");
+                    GameLog.Info($"[AI_Sweeper] Calling sm.SweepLeft(true) for Curl (OUT-TURN) - ENHANCE CURL (increase right curl)");
                     sm.SweepLeft(true);  // OUT-TURN: Left sweeper enhances right curl
                 }
                 break;
         }
         
-        Debug.Log($"[AI_Sweeper] ApplySweepState completed for {state}");
+        GameLog.Info($"[AI_Sweeper] ApplySweepState completed for {state}");
     }
 
     /// <summary>
@@ -2000,7 +2000,7 @@ public class AI_Sweeper : MonoBehaviour
             float amplifiedExcess = Mathf.Pow(excessSkill, 1.5f) * 1.75f;
             averageSkill = 0.6f + amplifiedExcess;
             
-            Debug.Log($"[Sweeper Skill] HIGH SKILL AMPLIFICATION: Base={((leftSkill + rightSkill) * 0.5f):F2} ? Amplified={averageSkill:F2} ({(averageSkill > 1f ? "EXCEPTIONAL!" : "very good")}");
+            GameLog.Info($"[Sweeper Skill] HIGH SKILL AMPLIFICATION: Base={((leftSkill + rightSkill) * 0.5f):F2} ? Amplified={averageSkill:F2} ({(averageSkill > 1f ? "EXCEPTIONAL!" : "very good")}");
         }
         
         return averageSkill; // Can be >1.0 for exceptional sweepers!

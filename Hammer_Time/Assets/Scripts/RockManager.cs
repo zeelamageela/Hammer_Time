@@ -76,14 +76,14 @@ public class RockManager : MonoBehaviour
                 rock.GetComponent<Rock_Force>().flipAxis = false;
             }
             lastRockIndex = currentRockIndex;
-            Debug.Log($"[RockManager] AI Turn - Set rock #{currentRockIndex} flipAxis to: {(inturn ? "IN-TURN" : "OUT-TURN")}");
+            GameLog.Info($"[RockManager] AI Turn - Set rock #{currentRockIndex} flipAxis to: {(inturn ? "IN-TURN" : "OUT-TURN")}");
         }
             
         // For player turns, only update lastRockIndex to prevent re-checking
         if (!isAITurn && lastRockIndex != currentRockIndex)
         {
             lastRockIndex = currentRockIndex;
-            Debug.Log($"[RockManager] Player Turn - rock #{currentRockIndex} - flipAxis controlled by TurnAnim button");
+            GameLog.Info($"[RockManager] Player Turn - rock #{currentRockIndex} - flipAxis controlled by TurnAnim button");
         }
 
         // REMOVED: InPlayZoom during active rock movement

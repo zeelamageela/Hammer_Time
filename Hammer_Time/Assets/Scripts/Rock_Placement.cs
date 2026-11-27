@@ -79,7 +79,7 @@ public class Rock_Placement : MonoBehaviour
 
     IEnumerator OnPlaceRock(string rockPlacement)
     {
-        Debug.Log("Placing a rock on " + rockPlacement);
+        GameLog.Info("Placing a rock on " + rockPlacement);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         rockFlick = rock.GetComponent<Rock_Flick>();
@@ -97,7 +97,7 @@ public class Rock_Placement : MonoBehaviour
         {
             case "Button":
                 rock.transform.position = new Vector2(button.x, button.y);
-                Debug.Log(rock.transform.position.x + ", " + rock.transform.position.y);
+                GameLog.Info(rock.transform.position.x + ", " + rock.transform.position.y);
                 break;
 
             case "Four Foot":

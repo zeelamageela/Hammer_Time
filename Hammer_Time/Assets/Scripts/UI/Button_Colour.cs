@@ -42,7 +42,7 @@ public class Button_Colour : MonoBehaviour
         }
 
         button.interactable = true;
-        Debug.Log("button is interactable? - " + button.interactable);
+        GameLog.Info("button is interactable? - " + button.interactable);
     }
 
     IEnumerator PlayText(string story)

@@ -53,7 +53,7 @@ public class Rock_Flick_Traj : MonoBehaviour
 
             if (mouseDelta != Vector3.zero)
             {
-                Debug.Log("Mouse moving");
+                GameLog.Info("Mouse moving");
                 //Instantiate(circleTrajPrefab, gameObject.transform);
                 if (springDistance > 0.3f)
                 {

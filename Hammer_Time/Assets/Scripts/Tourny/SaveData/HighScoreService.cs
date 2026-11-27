@@ -25,7 +25,7 @@ public static class HighScoreService
         {
             if (!File.Exists(SavePath))
             {
-                Debug.Log("[HighScoreService] No high score file found - creating new");
+                GameLog.Info("[HighScoreService] No high score file found - creating new");
                 return new HighScoreData();
             }
             
@@ -38,7 +38,7 @@ public static class HighScoreService
                 return new HighScoreData();
             }
             
-            Debug.Log($"[HighScoreService] Loaded {data.entries.Count} high score entries");
+            GameLog.Info($"[HighScoreService] Loaded {data.entries.Count} high score entries");
             return data;
         }
         catch (Exception ex)
@@ -66,7 +66,7 @@ public static class HighScoreService
             string json = JsonUtility.ToJson(data, true);
             File.WriteAllText(SavePath, json);
             
-            Debug.Log($"[HighScoreService] Saved {data.entries.Count} high score entries to {SavePath}");
+            GameLog.Info($"[HighScoreService] Saved {data.entries.Count} high score entries to {SavePath}");
             return true;
         }
         catch (Exception ex)
@@ -130,7 +130,7 @@ public static class HighScoreService
             
             SaveHighScores(data);
             
-            Debug.Log($"[HighScoreService] Added career: {playerName} {teamName} - ${earnings:N0}");
+            GameLog.Info($"[HighScoreService] Added career: {playerName} {teamName} - ${earnings:N0}");
         }
         catch (Exception ex)
         {
@@ -166,7 +166,7 @@ public static class HighScoreService
             if (File.Exists(SavePath))
             {
                 File.Delete(SavePath);
-                Debug.Log("[HighScoreService] High scores deleted");
+                GameLog.Info("[HighScoreService] High scores deleted");
             }
         }
         catch (Exception ex)

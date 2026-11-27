@@ -89,7 +89,7 @@ public class CareerSettings : MonoBehaviour
         // Always show Career Settings screen (even if gsp.careerLoad is true)
         // This gives players the option to start a new career if save is corrupted
         // Continue button will call LoadToCM() to route to correct scene
-        Debug.Log("[CareerSettings] Career loaded - showing UI with Continue option");
+        GameLog.Info("[CareerSettings] Career loaded - showing UI with Continue option");
         
         // No save (first launch) behaves like a finished career: straight to the new-career screen, not a Continue
         // card filled from CareerManager's default fields.
@@ -119,29 +119,29 @@ public class CareerSettings : MonoBehaviour
         cm = FindAnyObjectByType<CareerManager>();
         cm.LoadSettings();
         
-        Debug.Log($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}, week: {cm.week}");
-        Debug.Log($"[CareerSettings] Tournament flags - KO3: {gsp.KO3}, KO1: {gsp.KO1}");
+        GameLog.Info($"[CareerSettings] LoadToCM - tournyInProgress: {gsp.tournyInProgress}, gameInProgress: {gsp.gameInProgress}, inEndMenu: {gsp.inEndMenu}, week: {cm.week}");
+        GameLog.Info($"[CareerSettings] Tournament flags - KO3: {gsp.KO3}, KO1: {gsp.KO1}");
         
         // TEMP DEBUG: Log exactly which route we're taking
         if (gsp.gameInProgress && gsp.inEndMenu)
         {
-            Debug.Log("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=true → End_Menu");
+            GameLog.Info("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=true → End_Menu");
         }
         else if (gsp.gameInProgress && !gsp.inEndMenu)
         {
-            Debug.Log("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=false → TournyGame");
+            GameLog.Info("[CareerSettings] ROUTE: gameInProgress=true AND inEndMenu=false → TournyGame");
         }
         else if (gsp.inEndMenu)
         {
-            Debug.Log("[CareerSettings] ROUTE: gameInProgress=false AND inEndMenu=true → End_Menu");
+            GameLog.Info("[CareerSettings] ROUTE: gameInProgress=false AND inEndMenu=true → End_Menu");
         }
         else if (gsp.tournyInProgress)
         {
-            Debug.Log("[CareerSettings] ROUTE: tournyInProgress=true → Tournament Home");
+            GameLog.Info("[CareerSettings] ROUTE: tournyInProgress=true → Tournament Home");
         }
         else
         {
-            Debug.Log("[CareerSettings] ROUTE: Default → Arena_Selector");
+            GameLog.Info("[CareerSettings] ROUTE: Default → Arena_Selector");
         }
 
         // CRITICAL FIX: Check flags in correct priority order:
@@ -156,14 +156,14 @@ public class CareerSettings : MonoBehaviour
             if (gsp.inEndMenu)
             {
                 // In end menu viewing results
-                Debug.Log("[CareerSettings] Loading to end menu (game finished) ? End_Menu_Tourny_1");
+                GameLog.Info("[CareerSettings] Loading to end menu (game finished) ? End_Menu_Tourny_1");
                 gsp.loadGame = false;
                 SceneManager.LoadScene("End_Menu_Tourny_1");
             }
             else
             {
                 // Mid-game save - load directly into game
-                Debug.Log("[CareerSettings] Loading mid-game save ? TournyGame");
+                GameLog.Info("[CareerSettings] Loading mid-game save ? TournyGame");
                 gsp.loadGame = true; // Signal to GameManager to load saved positions
                 SceneManager.LoadScene("TournyGame");
             }
@@ -171,34 +171,34 @@ public class CareerSettings : MonoBehaviour
         else if (gsp.inEndMenu)
         {
             // Viewing end menu - load to end menu scene with saved scores
-            Debug.Log("[CareerSettings] Loading to end menu ? End_Menu_Tourny_1");
+            GameLog.Info("[CareerSettings] Loading to end menu ? End_Menu_Tourny_1");
             gsp.loadGame = false;
             SceneManager.LoadScene("End_Menu_Tourny_1");
         }
         else if (gsp.tournyInProgress)
         {
             // Tournament in progress but between games - load tournament home
-            Debug.Log("[CareerSettings] Loading tournament (between games) ? Tournament Home");
+            GameLog.Info("[CareerSettings] Loading tournament (between games) ? Tournament Home");
             gsp.loadGame = false; // Don't try to load a game, just tournament state
             
             // ? FIX: All tournaments use either Tourny_Home_1 or Tourny_Home_SingleK
             // KO3, regular tournaments, and World Tour events all use Tourny_Home_1
             if (gsp.KO1)
             {
-                Debug.Log("[CareerSettings] ? Tourny_Home_SingleK (Single Knockout)");
+                GameLog.Info("[CareerSettings] ? Tourny_Home_SingleK (Single Knockout)");
                 SceneManager.LoadScene("Tourny_Home_SingleK");
             }
             else
             {
                 // Default: Tourny_Home_1 (used by Triple KO, regular tournaments, and World Tour)
-                Debug.Log("[CareerSettings] ? Tourny_Home_1 (Triple KO / Regular / World Tour)");
+                GameLog.Info("[CareerSettings] ? Tourny_Home_1 (Triple KO / Regular / World Tour)");
                 SceneManager.LoadScene("Tourny_Home_1");
             }
         }
         else
         {
             // No tournament or game in progress - normal Arena Selector route
-            Debug.Log("[CareerSettings] No tournament/game in progress ? Arena Selector");
+            GameLog.Info("[CareerSettings] No tournament/game in progress ? Arena Selector");
             gsp.loadGame = false;
             gsp.gameInProgress = false;
             SceneManager.LoadScene("Arena_Selector");
@@ -216,9 +216,9 @@ public class CareerSettings : MonoBehaviour
             
             // Use cm.record directly - this is the authoritative source for career stats
             record = cm.record;
-            Debug.Log($"[CareerSettings] Loaded career record: {record.x}-{record.y}");
+            GameLog.Info($"[CareerSettings] Loaded career record: {record.x}-{record.y}");
             
-            Debug.Log("Tourny in Progress is " + gsp.tournyInProgress);
+            GameLog.Info("Tourny in Progress is " + gsp.tournyInProgress);
             week = cm.week;
             season = cm.season;
             tourRecord = cm.tourRecord;
@@ -280,7 +280,7 @@ public class CareerSettings : MonoBehaviour
         // Delete existing save before starting new career
         if (cm.SaveFileExists())
         {
-            Debug.Log("[CareerSettings] Deleting existing save for new career");
+            GameLog.Info("[CareerSettings] Deleting existing save for new career");
             cm.DeleteCareerSave();
         }
 
@@ -291,12 +291,12 @@ public class CareerSettings : MonoBehaviour
         // CRITICAL FIX: Clear ALL game/tournament state flags when starting new career
         NewCareerState.ResetGameFlow(gsp);
 
-        Debug.Log("[CareerSettings] New career - cleared all game state flags");
+        GameLog.Info("[CareerSettings] New career - cleared all game state flags");
         
         // Reset tutorial completion for new career
         PlayerPrefs.DeleteKey("CompletedTutorials");
         PlayerPrefs.Save();
-        Debug.Log("[CareerSettings] Reset tutorial completion for new career");
+        GameLog.Info("[CareerSettings] Reset tutorial completion for new career");
         
         record = Vector2.zero;
         week = 0;  // Must be 0 so TournySelector.SetUp() takes the new-career path (ClearAllCompletionFlags + NewSeason)
@@ -370,7 +370,7 @@ public class CareerSettings : MonoBehaviour
                     sweepCohesion = cm.playerPool[i].sweepCohesion
                 };
             }
-            Debug.Log("[CareerSettings] Initialized team from playerPool");
+            GameLog.Info("[CareerSettings] Initialized team from playerPool");
         }
         else
         {
@@ -548,6 +548,6 @@ public class CareerSettings : MonoBehaviour
         teamNameInput.text = lastName;
         playerNameInput.text = firstNames[Random.Range(0, firstNames.Length)];
         
-        Debug.Log($"Generated: {playerNameInput.text} {lastName} (complexity: {complexity}, strongStart: {useStrongStart})");
+        GameLog.Info($"Generated: {playerNameInput.text} {lastName} (complexity: {complexity}, strongStart: {useStrongStart})");
     }
 }

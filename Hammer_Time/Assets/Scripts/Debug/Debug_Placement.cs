@@ -46,7 +46,7 @@ public class Debug_Placement : MonoBehaviour
 
     IEnumerator OnPlaceRock(string rockPlacement)
     {
-        Debug.Log("Placing a rock at " + rockPlacement);
+        GameLog.Info("Placing a rock at " + rockPlacement);
         rock = gm.rockList[gm.rockCurrent].rock;
         rb = rock.GetComponent<Rigidbody2D>();
         rockFlick = rock.GetComponent<Rock_Flick>();
@@ -101,7 +101,7 @@ public class Debug_Placement : MonoBehaviour
     /// </summary>
     IEnumerator SpawnTakeoutTestRocks()
     {
-        Debug.Log("[TAKEOUT TEST] Spawning test rocks across the house...");
+        GameLog.Info("[TAKEOUT TEST] Spawning test rocks across the house...");
         
         GameSettingsPersist gsp = FindObjectOfType<GameSettingsPersist>();
         if (gsp == null)
@@ -177,30 +177,30 @@ public class Debug_Placement : MonoBehaviour
                 info.outOfPlay = false;
                 info.placed = true;
                 
-                Debug.Log($"[TAKEOUT TEST] #{rocksPlaced + 1}: {positionNames[rocksPlaced]} at ({positions[rocksPlaced].x:F2}, {positions[rocksPlaced].y:F2})");
+                GameLog.Info($"[TAKEOUT TEST] #{rocksPlaced + 1}: {positionNames[rocksPlaced]} at ({positions[rocksPlaced].x:F2}, {positions[rocksPlaced].y:F2})");
                 
                 rocksPlaced++;
                 yield return new WaitForEndOfFrame();
             }
         }
         
-        Debug.Log($"[TAKEOUT TEST] ? Spawned {rocksPlaced} red rocks across the house!");
-        Debug.Log("[TAKEOUT TEST] TEST POSITIONS:");
-        Debug.Log("  HOUSE ROCKS (Y > 5.0):");
-        Debug.Log("    1. Center Button (0, 6.5) - Baseline test");
-        Debug.Log("    2. Right Side (+1.0, 6.5) - Lateral factor test");
-        Debug.Log("    3. Left Side (-1.0, 6.5) - Lateral factor test");
-        Debug.Log("    4. Back Right (+0.5, 7.2) - Distance + lateral");
-        Debug.Log("    5. Front Left (-0.5, 5.8) - Short distance + lateral");
-        Debug.Log("  GUARDS (Y < 5.0):");
-        Debug.Log("    6. Center (0, 3.0) - Short distance");
-        Debug.Log("    7. Right Corner (+0.8, 3.5) - Short + lateral");
-        Debug.Log("    8. Left Corner (-0.8, 3.5) - Short + lateral");
-        Debug.Log("[TAKEOUT TEST] INSTRUCTIONS:");
-        Debug.Log("  1. Throw your yellow rock out of play (miss on purpose)");
-        Debug.Log("  2. AI will take out the red rocks one by one");
-        Debug.Log("  3. Watch accuracy: Does it hit dead-on or miss?");
-        Debug.Log("  4. Check BOTH in-turn and out-turn shots");
-        Debug.Log("  5. All 8 positions should be accurate (±0.02 units)");
+        GameLog.Info($"[TAKEOUT TEST] ? Spawned {rocksPlaced} red rocks across the house!");
+        GameLog.Info("[TAKEOUT TEST] TEST POSITIONS:");
+        GameLog.Info("  HOUSE ROCKS (Y > 5.0):");
+        GameLog.Info("    1. Center Button (0, 6.5) - Baseline test");
+        GameLog.Info("    2. Right Side (+1.0, 6.5) - Lateral factor test");
+        GameLog.Info("    3. Left Side (-1.0, 6.5) - Lateral factor test");
+        GameLog.Info("    4. Back Right (+0.5, 7.2) - Distance + lateral");
+        GameLog.Info("    5. Front Left (-0.5, 5.8) - Short distance + lateral");
+        GameLog.Info("  GUARDS (Y < 5.0):");
+        GameLog.Info("    6. Center (0, 3.0) - Short distance");
+        GameLog.Info("    7. Right Corner (+0.8, 3.5) - Short + lateral");
+        GameLog.Info("    8. Left Corner (-0.8, 3.5) - Short + lateral");
+        GameLog.Info("[TAKEOUT TEST] INSTRUCTIONS:");
+        GameLog.Info("  1. Throw your yellow rock out of play (miss on purpose)");
+        GameLog.Info("  2. AI will take out the red rocks one by one");
+        GameLog.Info("  3. Watch accuracy: Does it hit dead-on or miss?");
+        GameLog.Info("  4. Check BOTH in-turn and out-turn shots");
+        GameLog.Info("  5. All 8 positions should be accurate (±0.02 units)");
     }
 }

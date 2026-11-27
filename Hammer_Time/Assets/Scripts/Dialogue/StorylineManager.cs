@@ -48,7 +48,7 @@ public class StorylineManager: MonoBehaviour
         skipTutorials = cm != null ? cm.inProgress : true;
         if (cm == null)
         {
-            Debug.Log("StorylineManager: No CareerManager found, skipping storyline progression.");
+            GameLog.Info("StorylineManager: No CareerManager found, skipping storyline progression.");
         }
     }
 

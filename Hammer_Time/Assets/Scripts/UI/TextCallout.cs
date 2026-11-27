@@ -389,7 +389,7 @@ public class TextCallout : MonoBehaviour
         
         if (debugLogging)
         {
-            Debug.Log($"[TextCallout] Slide up by {worldUnits} world units (= {worldUnits * 100f} in scale). Total offset: {accumulatedSlideOffset}");
+            GameLog.Info($"[TextCallout] Slide up by {worldUnits} world units (= {worldUnits * 100f} in scale). Total offset: {accumulatedSlideOffset}");
         }
         
         // Start slide animation if not already running

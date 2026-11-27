@@ -47,7 +47,7 @@ public class PlayoffManager : MonoBehaviour
 		playoffRound = gsp.playoffRound;
 		playoffTeams = new Team[9];
 
-		Debug.Log($"[PlayoffManager.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
+		GameLog.Info($"[PlayoffManager.Start] playoffRound={playoffRound}, careerLoad={gsp.careerLoad}, gameInProgress={gsp.gameInProgress}, justFinishedGame={gsp.justFinishedGame}");
 
 		// CRITICAL FIX: Handle four distinct scenarios:
 		// 1. Fresh tournament start (playoffRound == 0)
@@ -59,20 +59,20 @@ public class PlayoffManager : MonoBehaviour
 		{
 			// Scenario 2: Just returned from completing a game - need to process result and advance
 			// This takes priority over careerLoad because we MUST process the game result
-			Debug.Log("[PlayoffManager.Start] SCENARIO 2: Returning from completed game - advancing playoffs");
+			GameLog.Info("[PlayoffManager.Start] SCENARIO 2: Returning from completed game - advancing playoffs");
 			LoadAndAdvancePlayoffs();
 			gsp.justFinishedGame = false; // Clear flag after processing
 		}
 		else if (gsp.careerLoad)
 		{
 			// Scenario 3: Loading saved tournament, player is between games - just restore state
-			Debug.Log("[PlayoffManager.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
+			GameLog.Info("[PlayoffManager.Start] SCENARIO 3: Loading saved tournament (between games) - restoring state");
 			LoadPlayoffs();
 		}
 		else if (playoffRound == 0)
 		{
 			// Scenario 1: Fresh tournament start
-			Debug.Log("[PlayoffManager.Start] SCENARIO 1: Fresh tournament start - setting seeding");
+			GameLog.Info("[PlayoffManager.Start] SCENARIO 1: Fresh tournament start - setting seeding");
 			SetSeeding(tm.teams.Length);
 		}
 		else
@@ -94,7 +94,7 @@ public class PlayoffManager : MonoBehaviour
 		// Check if this is a two-pool tournament
 		if (tm.isTwoPoolTournament)
 		{
-			Debug.Log("[PlayoffManager] Two-pool tournament - selecting top 2 from each pool");
+			GameLog.Info("[PlayoffManager] Two-pool tournament - selecting top 2 from each pool");
 			
 			// Separate teams by pool
 			List<Team_List> poolA = new List<Team_List>();
@@ -128,9 +128,9 @@ public class PlayoffManager : MonoBehaviour
 				playoffTeams[3] = poolB[1].team;
 				playoffTeams[3].rank = 4;
 				
-				Debug.Log($"[PlayoffManager] Pool A Top 2: {poolA[0].team.name}, {poolA[1].team.name}");
-				Debug.Log($"[PlayoffManager] Pool B Top 2: {poolB[0].team.name}, {poolB[1].team.name}");
-				Debug.Log($"[PlayoffManager] Playoff seeding: 1-{playoffTeams[0].name}, 2-{playoffTeams[1].name}, 3-{playoffTeams[2].name}, 4-{playoffTeams[3].name}");
+				GameLog.Info($"[PlayoffManager] Pool A Top 2: {poolA[0].team.name}, {poolA[1].team.name}");
+				GameLog.Info($"[PlayoffManager] Pool B Top 2: {poolB[0].team.name}, {poolB[1].team.name}");
+				GameLog.Info($"[PlayoffManager] Playoff seeding: 1-{playoffTeams[0].name}, 2-{playoffTeams[1].name}, 3-{playoffTeams[2].name}, 4-{playoffTeams[3].name}");
 			}
 			else
 			{
@@ -311,13 +311,13 @@ public class PlayoffManager : MonoBehaviour
         {
             tm.teams[playerTeam].wins++;
             tm.teams[oppTeam].loss++;
-            Debug.Log($"[PlayoffManager] Player won! {tm.teams[playerTeam].name}: {tm.teams[playerTeam].wins}W-{tm.teams[playerTeam].loss}L");
+            GameLog.Info($"[PlayoffManager] Player won! {tm.teams[playerTeam].name}: {tm.teams[playerTeam].wins}W-{tm.teams[playerTeam].loss}L");
         }
         else
         {
             tm.teams[oppTeam].wins++;
             tm.teams[playerTeam].loss++;
-            Debug.Log($"[PlayoffManager] Player lost. {tm.teams[playerTeam].name}: {tm.teams[playerTeam].wins}W-{tm.teams[playerTeam].loss}L");
+            GameLog.Info($"[PlayoffManager] Player lost. {tm.teams[playerTeam].name}: {tm.teams[playerTeam].wins}W-{tm.teams[playerTeam].loss}L");
         }
         
         // Move teams to appropriate bracket positions
@@ -379,14 +379,14 @@ public class PlayoffManager : MonoBehaviour
 
 	void LoadAndAdvancePlayoffs()
 	{
-		Debug.Log($"[LoadAndAdvancePlayoffs] Loading playoffs - Round {playoffRound}");
+		GameLog.Info($"[LoadAndAdvancePlayoffs] Loading playoffs - Round {playoffRound}");
 		
 		// CRITICAL FIX: Check if playoff teams exist before loading (can be null from fresh round robin)
 		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
 		{
 			for (int i = 0; i < playoffTeams.Length && i < gsp.playoffTeams.Length; i++)
 				playoffTeams[i] = gsp.playoffTeams[i];
-			Debug.Log($"[LoadAndAdvancePlayoffs] Loaded {gsp.playoffTeams.Length} teams from save");
+			GameLog.Info($"[LoadAndAdvancePlayoffs] Loaded {gsp.playoffTeams.Length} teams from save");
 		}
 		else
 		{
@@ -438,7 +438,7 @@ public class PlayoffManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("OppTeam is " + oppTeam);
+        GameLog.Info("OppTeam is " + oppTeam);
 
         bool playerWon = SharedTournamentLogic.DeterminePlayerWon(gsp);
 	
@@ -496,7 +496,7 @@ public class PlayoffManager : MonoBehaviour
 				{
 					// Player has BYE - no match result to process
 					// Team 4 automatically stays at position 4 and will advance to finals
-					Debug.Log("[LoadAndAdvancePlayoffs] Player has BYE to finals");
+					GameLog.Info("[LoadAndAdvancePlayoffs] Player has BYE to finals");
 					
 					// Still need to simulate the 5v6 match if player wasn't in it
 					if (SharedTournamentLogic.SimulateMatch(playoffTeams[5], playoffTeams[6]) == playoffTeams[5].id)
@@ -528,18 +528,18 @@ public class PlayoffManager : MonoBehaviour
 
     void LoadPlayoffs()
     {
-		Debug.Log($"[LoadPlayoffs] Starting - playoffRound={playoffRound}");
+		GameLog.Info($"[LoadPlayoffs] Starting - playoffRound={playoffRound}");
 
 		// CRITICAL: This method should ONLY restore saved state, NOT advance rounds
 		// Round advancement is handled by LoadAndAdvancePlayoffs() via justFinishedGame flag
         gsp.careerLoad = false;
 
-        Debug.Log($"[LoadPlayoffs] Restoring playoff state for round {playoffRound}");
-		Debug.Log("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
+        GameLog.Info($"[LoadPlayoffs] Restoring playoff state for round {playoffRound}");
+		GameLog.Info("gsp.playerTeam.nextOpp - " + gsp.playerTeam.nextOpp);
 
 		if (gsp.playoffTeams != null && gsp.playoffTeams.Length > 0)
 		{
-			Debug.Log($"[LoadPlayoffs] Loading {gsp.playoffTeams.Length} teams from saved playoff bracket");
+			GameLog.Info($"[LoadPlayoffs] Loading {gsp.playoffTeams.Length} teams from saved playoff bracket");
 			for (int i = 0; i < gsp.playoffTeams.Length; i++)
 			{
 				// CRITICAL: Don't overwrite rank! The saved team already has the correct rank
@@ -549,7 +549,7 @@ public class PlayoffManager : MonoBehaviour
 					gsp.playoffTeams[i].rank = i + 1;
 				}
 				playoffTeams[i] = gsp.playoffTeams[i];
-				Debug.Log($"[LoadPlayoffs] Position {i}: {playoffTeams[i].name} (rank {playoffTeams[i].rank})");
+				GameLog.Info($"[LoadPlayoffs] Position {i}: {playoffTeams[i].name} (rank {playoffTeams[i].rank})");
 			}
 		}
 		else
@@ -563,7 +563,7 @@ public class PlayoffManager : MonoBehaviour
             }
 			teamList.Sort();
 			gsp.playoffTeams = new Team[playoffTeams.Length];
-			Debug.Log("gsp.playoffTeams Length is " + gsp.playoffTeams.Length);
+			GameLog.Info("gsp.playoffTeams Length is " + gsp.playoffTeams.Length);
 
 			for (int i = 0; i < 4; i++)
 			{
@@ -583,7 +583,7 @@ public class PlayoffManager : MonoBehaviour
 			if (gsp.teams[i].name == gsp.teams[playerTeam].nextOpp)
 				oppTeam = i;
 		}
-		Debug.Log("OppTeam is " + oppTeam);
+		GameLog.Info("OppTeam is " + oppTeam);
 
 		for (int i = 0; i < playoffTeams.Length; i++)
 		{
@@ -629,7 +629,7 @@ public class PlayoffManager : MonoBehaviour
 			playoffRound = 1;
 			gsp.playoffRound = playoffRound;
 		}
-		Debug.Log("Set Playoffs - Round " + playoffRound);
+		GameLog.Info("Set Playoffs - Round " + playoffRound);
 		switch (playoffRound)
         {
         case 1:
@@ -775,7 +775,7 @@ public class PlayoffManager : MonoBehaviour
 				}
 			}
 			
-			Debug.Log($"GSP Earnings after calculation - ${gsp.tournyEarnings:n0}");
+			GameLog.Info($"GSP Earnings after calculation - ${gsp.tournyEarnings:n0}");
 			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 
 				//gsp.record = new Vector2(gsp.record.x + tm.teams[playerTeam].wins, gsp.record.y + tm.teams[playerTeam].loss);
@@ -802,7 +802,7 @@ public class PlayoffManager : MonoBehaviour
     IEnumerator SimPlayoff(bool game1, bool game2)
 	{
 
-		Debug.Log("Sim Playoffs - Round " + playoffRound);
+		GameLog.Info("Sim Playoffs - Round " + playoffRound);
 		Team game1X;
 		Team game1Y;
 		Team game2X;
@@ -931,12 +931,12 @@ public class PlayoffManager : MonoBehaviour
 
 	IEnumerator SaveCareer(bool inProgress)
 	{
-		Debug.Log("Saving in PlayoffManager, inProgress is " + inProgress);
+		GameLog.Info("Saving in PlayoffManager, inProgress is " + inProgress);
 
 		myFile = new EasyFileSave("my_player_data");
 
 		//myFile.Add("Career Record", gsp.record);
-		Debug.Log("gsp.record is " + tm.teams[tm.playerTeam].wins + " - " + tm.teams[tm.playerTeam].loss);
+		GameLog.Info("gsp.record is " + tm.teams[tm.playerTeam].wins + " - " + tm.teams[tm.playerTeam].loss);
 		myFile.Add("BG", gsp.bg);
 		//Vector2 tempRecord = new Vector2(gsp.record.x, gsp.record.y);
 		//myFile.Add("Player Name", gsp.firstName);
@@ -953,7 +953,7 @@ public class PlayoffManager : MonoBehaviour
 		//      }
 		myFile.Add("Tourny In Progress", inProgress);
 		gsp.tournyInProgress = inProgress;
-		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+		GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
 		//myFile.Add("Draw", gsp.weight);
 		myFile.Add("Number Of Teams", gsp.numberOfTeams);
 		//myFile.Add("Player Team", gsp.playerTeamIndex);

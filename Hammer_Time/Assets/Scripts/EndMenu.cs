@@ -66,7 +66,7 @@ public class EndMenu : MonoBehaviour
             }
             else
             {
-                Debug.Log($"[EndMenu.Start] Score array exists ({gsp.score.Length} slots) - using as-is");
+                GameLog.Info($"[EndMenu.Start] Score array exists ({gsp.score.Length} slots) - using as-is");
             }
             
             // ? CRITICAL FIX: Recalculate totals from score array FIRST!
@@ -82,7 +82,7 @@ public class EndMenu : MonoBehaviour
             gsp.redScore = (int)recalculatedTotal.x;
             gsp.yellowScore = (int)recalculatedTotal.y;
             
-            Debug.Log($"[EndMenu.Start] Scores recalculated from array - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.endCurrent} completed ends)");
+            GameLog.Info($"[EndMenu.Start] Scores recalculated from array - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.endCurrent} completed ends)");
 
             if (gsp.cashGame)
             {
@@ -101,7 +101,7 @@ public class EndMenu : MonoBehaviour
                 {
                     gsp.score[i] = new Vector2Int(0, 0);
                 }
-                Debug.Log($"[EndMenu] New game - cleared score array ({ends} ends)");
+                GameLog.Info($"[EndMenu] New game - cleared score array ({ends} ends)");
                 
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
@@ -183,7 +183,7 @@ public class EndMenu : MonoBehaviour
                     info.text = "Tie Game!";
                     ends++;
                     gsp.ends = ends;  // sync so LoadTourny preserves the extra end
-                    Debug.Log($"[EndMenu] Tie game — extended ends to {ends}, gsp.ends={gsp.ends}");
+                    GameLog.Info($"[EndMenu] Tie game — extended ends to {ends}, gsp.ends={gsp.ends}");
                     contButton.gameObject.SetActive(true);
                     endButton.gameObject.SetActive(false);
                     simButton.gameObject.SetActive(true);
@@ -300,7 +300,7 @@ public class EndMenu : MonoBehaviour
                 scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
             }
             
-            Debug.Log($"[EndMenu] Team names from gsp — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (endCurrent={gsp.endCurrent}, ends={ends})");
+            GameLog.Info($"[EndMenu] Team names from gsp — red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (endCurrent={gsp.endCurrent}, ends={ends})");
             redTeamName.text = gsp.redTeamName;
             yellowTeamName.text = gsp.yellowTeamName;
 
@@ -353,7 +353,7 @@ public class EndMenu : MonoBehaviour
             redTotalScore.text = tempTotal.x.ToString();
             yellowTotalScore.text = tempTotal.y.ToString();
             
-            Debug.Log($"[EndMenu] Score totals recalculated - Red: {tempTotal.x}, Yellow: {tempTotal.y} (from {gsp.endCurrent} ends)");
+            GameLog.Info($"[EndMenu] Score totals recalculated - Red: {tempTotal.x}, Yellow: {tempTotal.y} (from {gsp.endCurrent} ends)");
             
             // Set end menu flag and auto-save for tournament games
             if (gsp.tourny)
@@ -363,7 +363,7 @@ public class EndMenu : MonoBehaviour
                 gsp.inEndMenu = true;
                 if (cm != null)
                 {
-                    Debug.Log("[EndMenu] Auto-saving career in end menu...");
+                    GameLog.Info("[EndMenu] Auto-saving career in end menu...");
                     cm.SaveCareer();
                 }
             }
@@ -377,7 +377,7 @@ public class EndMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("Quit");
+        GameLog.Info("Quit");
         Application.Quit();
     }
 
@@ -390,14 +390,14 @@ public class EndMenu : MonoBehaviour
         gsp.gameInProgress = true;
         gsp.inEndMenu = false;
         gsp.loadGame = true;  // Tell GameManager to restore team data via LoadTourny()
-        Debug.Log("[EndMenu] Continue - set gameInProgress=true, loadGame=true, cleared inEndMenu, loading TournyGame");
+        GameLog.Info("[EndMenu] Continue - set gameInProgress=true, loadGame=true, cleared inEndMenu, loading TournyGame");
 
         SceneManager.LoadScene("TournyGame");
     }
 
 	public void SimEnd()
 	{
-		Debug.Log("[EndMenu] SimEnd called - simulating to end of game");
+		GameLog.Info("[EndMenu] SimEnd called - simulating to end of game");
         gsp.endCurrent++;
 
         int endsLeft = gsp.ends - gsp.endCurrent;
@@ -405,7 +405,7 @@ public class EndMenu : MonoBehaviour
 
         if (gsp.ends >= gsp.endCurrent)
         {
-            Debug.Log("Game is on!");
+            GameLog.Info("Game is on!");
 
             // CRITICAL FIX: Preserve existing scores, don't create new array from scratch
             Vector2Int[] tempScore = new Vector2Int[gsp.ends];
@@ -443,7 +443,7 @@ public class EndMenu : MonoBehaviour
                         redSkill = playerAvg / 10f;  // Normalize to ~1-10 range (stats are 0-100)
                         yellowSkill = oppTeamStrength / 100f;  // Team strength is typically 100-500
                         
-                        Debug.Log($"[SimEnd] Player (red) cStats avg: {playerAvg} ? skill {redSkill:F2}, Opponent (yellow) strength: {oppTeamStrength} ? skill {yellowSkill:F2}");
+                        GameLog.Info($"[SimEnd] Player (red) cStats avg: {playerAvg} ? skill {redSkill:F2}, Opponent (yellow) strength: {oppTeamStrength} ? skill {yellowSkill:F2}");
                     }
                     else if (gsp.yellowTeam.player)
                     {
@@ -456,14 +456,14 @@ public class EndMenu : MonoBehaviour
                         yellowSkill = playerAvg / 10f;
                         redSkill = oppTeamStrength / 100f;
                         
-                        Debug.Log($"[SimEnd] Player (yellow) cStats avg: {playerAvg} ? skill {yellowSkill:F2}, Opponent (red) strength: {oppTeamStrength} ? skill {redSkill:F2}");
+                        GameLog.Info($"[SimEnd] Player (yellow) cStats avg: {playerAvg} ? skill {yellowSkill:F2}, Opponent (red) strength: {oppTeamStrength} ? skill {redSkill:F2}");
                     }
                     else
                     {
                         // AI vs AI - use team strength for both
                         redSkill = gsp.redTeam.strength / 100f;
                         yellowSkill = gsp.yellowTeam.strength / 100f;
-                        Debug.Log($"[SimEnd] AI vs AI - red strength: {gsp.redTeam.strength} ? {redSkill:F2}, yellow strength: {gsp.yellowTeam.strength} ? {yellowSkill:F2}");
+                        GameLog.Info($"[SimEnd] AI vs AI - red strength: {gsp.redTeam.strength} ? {redSkill:F2}, yellow strength: {gsp.yellowTeam.strength} ? {yellowSkill:F2}");
                     }
                 }
                 else
@@ -484,7 +484,7 @@ public class EndMenu : MonoBehaviour
                 else
                     yellowChance += 1.0f;
                 
-                Debug.Log($"[SimEnd] Final chances - Red: {redChance:F2}, Yellow: {yellowChance:F2}");
+                GameLog.Info($"[SimEnd] Final chances - Red: {redChance:F2}, Yellow: {yellowChance:F2}");
                 
                 // --- Blank end logic ---
                 if (!lastTwoEnds)
@@ -496,7 +496,7 @@ public class EndMenu : MonoBehaviour
                         tempScore[currentEndIndex].x = 0;
                         tempScore[currentEndIndex].y = 0;
                         // Hammer is retained - don't change it
-                        Debug.Log($"[SimEnd] Blank end - hammer retained by {(gsp.redHammer ? "red" : "yellow")}");
+                        GameLog.Info($"[SimEnd] Blank end - hammer retained by {(gsp.redHammer ? "red" : "yellow")}");
                     }
                     else
                     {
@@ -514,13 +514,13 @@ public class EndMenu : MonoBehaviour
             // Update the score array (already has all previous scores preserved)
             gsp.score = tempScore;
             
-            Debug.Log($"[EndMenu.SimEnd] Updated end {currentEndIndex + 1} - preserved all {tempScore.Length} ends");
+            GameLog.Info($"[EndMenu.SimEnd] Updated end {currentEndIndex + 1} - preserved all {tempScore.Length} ends");
         }
         else
         {
             if (gsp.redScore != gsp.yellowScore)
             {
-                Debug.Log("Game is over and not tied");
+                GameLog.Info("Game is over and not tied");
                 Vector2Int[] tempScore = new Vector2Int[gsp.ends];
                 for (int j = 0; j < gsp.endCurrent; j++)
                 {
@@ -543,7 +543,7 @@ public class EndMenu : MonoBehaviour
                     }
                 }
 
-                Debug.Log("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
+                GameLog.Info("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
                 gsp.score = new Vector2Int[gsp.ends];
                 for (int j = 0; j < gsp.score.Length; j++)
                 {
@@ -552,7 +552,7 @@ public class EndMenu : MonoBehaviour
             }
             else
             {
-                Debug.Log("Game is tied and NOT over");
+                GameLog.Info("Game is tied and NOT over");
                 Vector2Int[] tempScore = new Vector2Int[gsp.endCurrent];
                 for (int j = 0; j < gsp.endCurrent; j++)
                 {
@@ -604,7 +604,7 @@ public class EndMenu : MonoBehaviour
                     }
                 }
 
-                Debug.Log("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
+                GameLog.Info("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
                 gsp.score = new Vector2Int[gsp.endCurrent];
                 for (int j = 0; j < gsp.score.Length; j++)
                 {
@@ -624,11 +624,11 @@ public class EndMenu : MonoBehaviour
         gsp.redScore = (int)tempTotal.x;
         gsp.yellowScore = (int)tempTotal.y;
         
-        Debug.Log($"[EndMenu.SimEnd] Total scores recalculated - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.score.Length} ends)");
+        GameLog.Info($"[EndMenu.SimEnd] Total scores recalculated - Red: {gsp.redScore}, Yellow: {gsp.yellowScore} (from {gsp.score.Length} ends)");
 
         if (ends > gsp.endCurrent)
         {
-            Debug.Log("Game is being played");
+            GameLog.Info("Game is being played");
             if (gsp.redHammer)
             {
                 //redHammerPNG.SetActive(true);
@@ -693,7 +693,7 @@ public class EndMenu : MonoBehaviour
         {
             if (gsp.redScore != gsp.yellowScore)
             {
-                Debug.Log("Game is not tied and over");
+                GameLog.Info("Game is not tied and over");
                 if (gsp.redScore > gsp.yellowScore)
                 {
                     info.text = "Team " + gsp.redTeamName + " Wins";
@@ -746,7 +746,7 @@ public class EndMenu : MonoBehaviour
             }
             else
             {
-                Debug.Log("Game is tied and extra end!");
+                GameLog.Info("Game is tied and extra end!");
                 ends++;
                 contButton.gameObject.SetActive(true);
                 endButton.gameObject.SetActive(false);
@@ -774,7 +774,7 @@ public class EndMenu : MonoBehaviour
 
             scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
             scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
-            Debug.Log("I IS " + i);
+            GameLog.Info("I IS " + i);
 
             if (i < gsp.endCurrent)
             {
@@ -821,7 +821,7 @@ public class EndMenu : MonoBehaviour
         // Player clicks it manually to see the result before advancing
         if (gsp.endCurrent >= gsp.ends && gsp.redScore != gsp.yellowScore)
         {
-            Debug.Log("[EndMenu.SimEnd] Game complete after simulation - player must click End Game button");
+            GameLog.Info("[EndMenu.SimEnd] Game complete after simulation - player must click End Game button");
             // The button is already visible from the UI logic above, player clicks it to continue
         }
         
@@ -833,7 +833,7 @@ public class EndMenu : MonoBehaviour
         // Save after simulating the end
         if (cm != null && gsp.tourny)
         {
-            Debug.Log("[EndMenu.SimEnd] Saving career after simulating end (gameInProgress=false, inEndMenu=true)...");
+            GameLog.Info("[EndMenu.SimEnd] Saving career after simulating end (gameInProgress=false, inEndMenu=true)...");
             cm.SaveCareer();
         }
     }
@@ -851,7 +851,7 @@ public class EndMenu : MonoBehaviour
             endScore.x = score;
             endScore.y = 0;
             gsp.redHammer = false;
-            Debug.Log($"[SimEnd] Red scores {score}");
+            GameLog.Info($"[SimEnd] Red scores {score}");
         }
         else if (yellowChance > redChance)
         {
@@ -861,7 +861,7 @@ public class EndMenu : MonoBehaviour
             endScore.y = score;
             endScore.x = 0;
             gsp.redHammer = true;
-            Debug.Log($"[SimEnd] Yellow scores {score}");
+            GameLog.Info($"[SimEnd] Yellow scores {score}");
         }
         else
         {
@@ -880,14 +880,14 @@ public class EndMenu : MonoBehaviour
                     endScore.x = 0;
                     gsp.redHammer = true;
                 }
-                Debug.Log($"[SimEnd] Tie broken - hammer team scores 1");
+                GameLog.Info($"[SimEnd] Tie broken - hammer team scores 1");
             }
             else
             {
                 // Blank end
                 endScore.x = 0;
                 endScore.y = 0;
-                Debug.Log($"[SimEnd] Blank end (tie)");
+                GameLog.Info($"[SimEnd] Blank end (tie)");
             }
         }
     }
@@ -915,7 +915,7 @@ public class EndMenu : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
+        GameLog.Info("Strength is " + gsp.redTeam.strength + " and " + gsp.yellowTeam.strength);
 
         gsp.score = new Vector2Int[tempScore.Length];
         for (int j = 0; j < gsp.score.Length; j++)
@@ -930,17 +930,17 @@ public class EndMenu : MonoBehaviour
         // This ensures playoff managers know to process the game result
         gsp.justFinishedGame = true;
         gsp.inEndMenu = false;
-        Debug.Log("[EndMenu.EndGame] Set justFinishedGame = true");
-        Debug.Log("[EndMenu.EndGame] Cleared inEndMenu flag");
+        GameLog.Info("[EndMenu.EndGame] Set justFinishedGame = true");
+        GameLog.Info("[EndMenu.EndGame] Cleared inEndMenu flag");
 
         if (gsp.cashGame)
         {
             float winnings;
 
             gsp.tournyInProgress = false;
-            Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
-            Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
-            Debug.Log("CM earnings are " + cm.earnings);
+            GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
+            GameLog.Info("CM Record is " + cm.record.x + " - " + cm.record.y);
+            GameLog.Info("CM earnings are " + cm.earnings);
 
             cm.TournyResults();
             cm.LoadCareer();
@@ -967,12 +967,12 @@ public class EndMenu : MonoBehaviour
             {
                 // Playoffs: Update team records in GSP
                 gsp.LoadFromEndMenu();
-                Debug.Log("[EndMenu] Playoff game - updated team records via LoadFromEndMenu");
+                GameLog.Info("[EndMenu] Playoff game - updated team records via LoadFromEndMenu");
             }
             else
             {
                 // Regular tournament: Don't update here - TournyManager will handle it
-                Debug.Log("[EndMenu] Regular tournament - TournyManager will process player match result");
+                GameLog.Info("[EndMenu] Regular tournament - TournyManager will process player match result");
             }
             
             // CRITICAL FIX: Don't simulate other games here!
@@ -982,27 +982,27 @@ public class EndMenu : MonoBehaviour
             
             // Clear gameInProgress flag - we're done with this game
             gsp.gameInProgress = false;
-            Debug.Log("[EndMenu] Game finished - cleared gameInProgress flag");
+            GameLog.Info("[EndMenu] Game finished - cleared gameInProgress flag");
             
             // Keep tournyInProgress = true so we route back to tournament home
             gsp.tournyInProgress = true;
             
             if (gsp.playoffRound > 0)
             {
-                Debug.Log("[EndMenu] Playoff Round - " + gsp.playoffRound);
+                GameLog.Info("[EndMenu] Playoff Round - " + gsp.playoffRound);
             }
             else
             {
                 gsp.draw++;
-                Debug.Log("[EndMenu] Incremented weight to " + gsp.draw);
+                GameLog.Info("[EndMenu] Incremented weight to " + gsp.draw);
             }
             
             // Save with updated team records AND simulated games
             if (cm != null)
             {
-                Debug.Log("[EndMenu] Saving career with all game results...");
+                GameLog.Info("[EndMenu] Saving career with all game results...");
                 cm.SaveCareer();
-                Debug.Log("[EndMenu] Save complete - loading tournament home scene");
+                GameLog.Info("[EndMenu] Save complete - loading tournament home scene");
             }
             else
             {
@@ -1037,7 +1037,7 @@ public class EndMenu : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[EndMenu] Simulating other teams' games for weight {gsp.draw}");
+        GameLog.Info($"[EndMenu] Simulating other teams' games for weight {gsp.draw}");
         
         // Track which teams have been processed to avoid double-counting
         HashSet<string> processedTeams = new HashSet<string>();
@@ -1068,7 +1068,7 @@ public class EndMenu : MonoBehaviour
         {
             processedTeams.Add(playerTeam.name);
             processedTeams.Add(playerOpp.name);
-            Debug.Log($"[EndMenu] Skipping player game: {playerTeam.name} vs {playerOpp.name}");
+            GameLog.Info($"[EndMenu] Skipping player game: {playerTeam.name} vs {playerOpp.name}");
         }
         
         // Simulate remaining games
@@ -1098,13 +1098,13 @@ public class EndMenu : MonoBehaviour
                 {
                     team1.wins++;
                     team2.loss++;
-                    Debug.Log($"[EndMenu] Simulated: {team1.name} defeats {team2.name}");
+                    GameLog.Info($"[EndMenu] Simulated: {team1.name} defeats {team2.name}");
                 }
                 else
                 {
                     team2.wins++;
                     team1.loss++;
-                    Debug.Log($"[EndMenu] Simulated: {team2.name} defeats {team1.name}");
+                    GameLog.Info($"[EndMenu] Simulated: {team2.name} defeats {team1.name}");
                 }
                 
                 // Mark both teams as processed
@@ -1113,7 +1113,7 @@ public class EndMenu : MonoBehaviour
             }
         }
         
-        Debug.Log($"[EndMenu] Simulation complete - processed {processedTeams.Count} teams");
+        GameLog.Info($"[EndMenu] Simulation complete - processed {processedTeams.Count} teams");
     }
 }
 

@@ -35,7 +35,7 @@ public class MainMenu : MonoBehaviour
         // }
         // else
         // {
-            Debug.Log("[MainMenu] No save file - Continue button disabled");
+            GameLog.Info("[MainMenu] No save file - Continue button disabled");
         // }
 
         DisplayHighScores();
@@ -50,7 +50,7 @@ public class MainMenu : MonoBehaviour
         
         if (topScores == null || topScores.Count == 0)
         {
-            Debug.Log("[MainMenu] No high scores found");
+            GameLog.Info("[MainMenu] No high scores found");
             if (topPlayerName != null)
                 topPlayerName.text = "No records yet";
             if (topPlayerEarnings != null)
@@ -76,7 +76,7 @@ public class MainMenu : MonoBehaviour
         List<bool> allTimeTrophies = HighScoreService.GetAllTimeTrophies();
         DisplayAllTimeTrophies(allTimeTrophies);
         
-        Debug.Log($"[MainMenu] Top score: {topEntry.playerName} - ${topEntry.earnings:N0}");
+        GameLog.Info($"[MainMenu] Top score: {topEntry.playerName} - ${topEntry.earnings:N0}");
     }
     
     private void DisplayAllTimeTrophies(List<bool> trophies)
@@ -120,7 +120,7 @@ public class MainMenu : MonoBehaviour
         }
         
         int trophiesWon = trophies.Count(t => t);
-        Debug.Log($"[MainMenu] All-time trophies: {trophiesWon}/{trophies.Count} won");
+        GameLog.Info($"[MainMenu] All-time trophies: {trophiesWon}/{trophies.Count} won");
     }
     
     /// <summary>
@@ -141,7 +141,7 @@ public class MainMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("Quit");
+        GameLog.Info("Quit");
         Application.Quit();
     }
 
@@ -170,7 +170,7 @@ public class MainMenu : MonoBehaviour
     public void Continue()
     {
         // CRITICAL FIX: Set careerLoad flag to trigger auto-load in CareerSettings
-        Debug.Log("[MainMenu] Continue clicked - setting careerLoad flag and loading Career Menu");
+        GameLog.Info("[MainMenu] Continue clicked - setting careerLoad flag and loading Career Menu");
         
         if (gsp != null)
         {

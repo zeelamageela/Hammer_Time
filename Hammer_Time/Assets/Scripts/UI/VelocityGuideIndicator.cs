@@ -66,7 +66,7 @@ public class VelocityGuideIndicator : MonoBehaviour
         lineRenderer.SetPosition(0, new Vector3(0f, startY, 0f));
         lineRenderer.SetPosition(1, new Vector3(0f, startY, 0f));
         
-        Debug.Log($"[VelocityGuide] LineRenderer sorting: Layer='{lineRenderer.sortingLayerName}', Order={lineRenderer.sortingOrder}");
+        GameLog.Info($"[VelocityGuide] LineRenderer sorting: Layer='{lineRenderer.sortingLayerName}', Order={lineRenderer.sortingOrder}");
     }
     
     /// <summary>
@@ -94,7 +94,7 @@ public class VelocityGuideIndicator : MonoBehaviour
         
         animationCoroutine = StartCoroutine(AnimateVelocityGuide());
         
-        Debug.Log($"[VelocityGuide] Started - Velocity: {velocity:F2} m/s, Color: {color}");
+        GameLog.Info($"[VelocityGuide] Started - Velocity: {velocity:F2} m/s, Color: {color}");
     }
     
     /// <summary>
@@ -112,7 +112,7 @@ public class VelocityGuideIndicator : MonoBehaviour
         
         lineRenderer.enabled = false;
         
-        Debug.Log("[VelocityGuide] Stopped");
+        GameLog.Info("[VelocityGuide] Stopped");
     }
     
     /// <summary>
@@ -204,7 +204,7 @@ public class VelocityGuideIndicator : MonoBehaviour
         if (isActive && Mathf.Abs(targetVelocity - newVelocity) > 0.1f)
         {
             targetVelocity = newVelocity;
-            Debug.Log($"[VelocityGuide] Updated velocity to {newVelocity:F2} m/s");
+            GameLog.Info($"[VelocityGuide] Updated velocity to {newVelocity:F2} m/s");
             
             // Restart animation with new velocity
             if (animationCoroutine != null)

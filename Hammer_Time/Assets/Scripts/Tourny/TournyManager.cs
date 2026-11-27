@@ -89,11 +89,11 @@ public class TournyManager : MonoBehaviour
                 gsp.LoadTourny();
 
                 //playoffRound--;
-                Debug.Log("Playoff Round is " + gsp.playoffRound);
+                GameLog.Info("Playoff Round is " + gsp.playoffRound);
             }
             else
             {
-                Debug.Log("In Progress is False");
+                GameLog.Info("In Progress is False");
                 gsp.draw = draw;
                 gsp.playoffRound = 0;
             }
@@ -118,7 +118,7 @@ public class TournyManager : MonoBehaviour
 			careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString();
 
 			int cmTeamCount = (cm != null && cm.currentTournyTeams != null) ? cm.currentTournyTeams.Length : 0;
-			Debug.Log($"[TournyManager.Start] numberOfTeams={numberOfTeams}, cm.currentTournyTeams.Length={cmTeamCount}, gsp.draw={gsp.draw}");
+			GameLog.Info($"[TournyManager.Start] numberOfTeams={numberOfTeams}, cm.currentTournyTeams.Length={cmTeamCount}, gsp.draw={gsp.draw}");
 
 			if (numberOfTeams > 0)
 				teams = new Team[numberOfTeams];
@@ -228,7 +228,7 @@ public class TournyManager : MonoBehaviour
                     teamList.Add(new Team_List(teams[i]));
                 }
             }
-            Debug.Log($"[TournyManager] Rebuilt teamList from save - {teamList.Count} teams");
+            GameLog.Info($"[TournyManager] Rebuilt teamList from save - {teamList.Count} teams");
 
             // CRITICAL: Find player team by player flag, not by index
             for (int i = 0; i < teams.Length; i++)
@@ -236,7 +236,7 @@ public class TournyManager : MonoBehaviour
                 if (teams[i].player)
                 {
                     playerTeam = i;
-                    Debug.Log($"[TournyManager] Found player team at index {playerTeam}: {teams[i].name}");
+                    GameLog.Info($"[TournyManager] Found player team at index {playerTeam}: {teams[i].name}");
                     break;
                 }
             }
@@ -247,13 +247,13 @@ public class TournyManager : MonoBehaviour
                 if (teams[i].name == teams[playerTeam].nextOpp)
                 {
                     oppTeam = i;
-                    Debug.Log($"[TournyManager] Found opponent team at index {oppTeam}: {teams[i].name}");
+                    GameLog.Info($"[TournyManager] Found opponent team at index {oppTeam}: {teams[i].name}");
                     break;
                 }
             }
 
             // Initialize drawFormat
-            Debug.Log($"[TournyManager.SetupStandings] Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
+            GameLog.Info($"[TournyManager.SetupStandings] Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
             
             if (teams.Length == 16)
             {
@@ -288,7 +288,7 @@ public class TournyManager : MonoBehaviour
                     // Update button visibility
                     UpdatePoolButtonVisibility();
                     
-                    Debug.Log($"[TournyManager] Restored two-pool tournament, viewing Pool {(currentPoolView == 0 ? "A" : "B")}");
+                    GameLog.Info($"[TournyManager] Restored two-pool tournament, viewing Pool {(currentPoolView == 0 ? "A" : "B")}");
                 }
                 else
                 {
@@ -303,14 +303,14 @@ public class TournyManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             drawFormat = dfList.currentFormat;
 
-            Debug.Log($"[TournyManager.SetupStandings] weight={draw}, drawFormat.Length={drawFormat?.Length ?? 0}, teamList.Count={teamList.Count}");
+            GameLog.Info($"[TournyManager.SetupStandings] weight={draw}, drawFormat.Length={drawFormat?.Length ?? 0}, teamList.Count={teamList.Count}");
 
             // CRITICAL: Sync cm.record with tournament stats
             if (cm != null)
             {
                 cm.record.x = teams[playerTeam].seasonWins;
                 cm.record.y = teams[playerTeam].seasonLosses;
-                Debug.Log($"[TournyManager] Synced cm.record to {cm.record.x}-{cm.record.y}");
+                GameLog.Info($"[TournyManager] Synced cm.record to {cm.record.x}-{cm.record.y}");
             }
 
             if (playoffRound > 0)
@@ -327,7 +327,7 @@ public class TournyManager : MonoBehaviour
 			else if (gsp.justFinishedGame)
 			{
 				// CRITICAL FIX: Game just finished - process the result and update standings
-				Debug.Log("[TournyManager] Just finished game - processing result");
+				GameLog.Info("[TournyManager] Just finished game - processing result");
 				gsp.justFinishedGame = false;  // Clear the flag
 				
 				// Find player and opponent teams
@@ -341,8 +341,8 @@ public class TournyManager : MonoBehaviour
 					if (teams[i].name == teams[playerTeam].nextOpp)
 						oppTeam = i;
 				}
-				Debug.Log("PlayerTeam is " + playerTeam);
-				Debug.Log("OppTeam is " + oppTeam);
+				GameLog.Info("PlayerTeam is " + playerTeam);
+				GameLog.Info("OppTeam is " + oppTeam);
 
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
@@ -353,7 +353,7 @@ public class TournyManager : MonoBehaviour
 			else if (gsp.gameInProgress)
 			{
 				gsp.tournyInProgress = true;
-				Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+				GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
 				gsp.gameInProgress = false;
 				
 				// Find player and opponent teams
@@ -367,8 +367,8 @@ public class TournyManager : MonoBehaviour
 					if (teams[i].name == teams[playerTeam].nextOpp)
 						oppTeam = i;
 				}
-				Debug.Log("PlayerTeam is " + playerTeam);
-				Debug.Log("OppTeam is " + oppTeam);
+				GameLog.Info("PlayerTeam is " + playerTeam);
+				GameLog.Info("OppTeam is " + oppTeam);
 
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
@@ -379,7 +379,7 @@ public class TournyManager : MonoBehaviour
 			else if (gsp.tournyInProgress)
 			{
 				gsp.careerLoad = false;
-				Debug.Log("Setup Stand inProgress is " + true);
+				GameLog.Info("Setup Stand inProgress is " + true);
 				//playerTeam = gsp.playerTeamIndex;
 				for (int i = 0; i < teams.Length; i++)
                 {
@@ -395,7 +395,7 @@ public class TournyManager : MonoBehaviour
 			else
 			{
 				gsp.tournyInProgress = true;
-				Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+				GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
 				
 				// Find player and opponent teams
 				for (int i = 0; i < teams.Length; i++)
@@ -406,7 +406,7 @@ public class TournyManager : MonoBehaviour
 						playerTeam = i;
 				}
 
-				Debug.Log("OppTeam is " + oppTeam);
+				GameLog.Info("OppTeam is " + oppTeam);
 
 				// Process player's match result and update wins/losses
 				ProcessPlayerMatchResult();
@@ -425,7 +425,7 @@ public class TournyManager : MonoBehaviour
 			}
 			teams = cm.currentTournyTeams;
 			gsp.teams = teams;
-			Debug.Log($"[TournyManager.SetupStandings] NEW tourny — teams.Length={teams.Length}, row.Length={row.Length}, standDisplay.Length={standDisplay.Length}");
+			GameLog.Info($"[TournyManager.SetupStandings] NEW tourny — teams.Length={teams.Length}, row.Length={row.Length}, standDisplay.Length={standDisplay.Length}");
 			if (teams.Length != row.Length)
 				Debug.LogWarning($"[TournyManager.SetupStandings] MISMATCH: teams({teams.Length}) != row({row.Length}) — extra rows will be hidden");
 			cm.teamRecords = new Vector4[teams.Length];
@@ -442,13 +442,13 @@ public class TournyManager : MonoBehaviour
 
 			// CRITICAL FIX: Initialize drawFormat for NEW tournament
 			// For 16-team tournaments, use two-pool format (Pool A and Pool B)
-			Debug.Log($"[TournyManager.SetupStandings] NEW tournament - Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
+			GameLog.Info($"[TournyManager.SetupStandings] NEW tournament - Calling DrawSelector with teams.Length={teams.Length}, games={gsp.games}");
 			
 			if (teams.Length == 16)
 			{
 				// Use two-pool format for 16-team tournaments
 				dfList.DrawSelector_TwoPool(teams.Length, 1, gsp.games);
-				Debug.Log("[TournyManager] Using two-pool format for 16 teams");
+				GameLog.Info("[TournyManager] Using two-pool format for 16 teams");
 			}
 			else
 			{
@@ -458,7 +458,7 @@ public class TournyManager : MonoBehaviour
 			
 			yield return new WaitForEndOfFrame();
 			drawFormat = dfList.currentFormat;
-			Debug.Log($"[TournyManager.SetupStandings] drawFormat.Length={drawFormat?.Length ?? 0}");
+			GameLog.Info($"[TournyManager.SetupStandings] drawFormat.Length={drawFormat?.Length ?? 0}");
 
 			for (int i = 0; i < teams.Length; i++)
 			{
@@ -472,7 +472,7 @@ public class TournyManager : MonoBehaviour
 				teams[i].earnings = 0;
 			}
 
-			Debug.Log("Team Record - " + teams[0].name + " - " + cm.teamRecords[0]);
+			GameLog.Info("Team Record - " + teams[0].name + " - " + cm.teamRecords[0]);
 
 			for (int i = 0; i < teams.Length; i++)
 			{
@@ -556,7 +556,7 @@ public class TournyManager : MonoBehaviour
 					displayTeams.Add(teamList[i]);
 				}
 			}
-			Debug.Log($"[TournyManager] PrintRows - Filtered to {displayTeams.Count} teams for Pool {(currentPoolView == 0 ? "A" : "B")}");
+			GameLog.Info($"[TournyManager] PrintRows - Filtered to {displayTeams.Count} teams for Pool {(currentPoolView == 0 ? "A" : "B")}");
 		}
 
 		// Assign ranks within the pool
@@ -656,11 +656,11 @@ public class TournyManager : MonoBehaviour
 			int differential = playerScore - oppScore;
 			teams[playerTeam].pointDifferential += differential;
 			teams[oppTeam].pointDifferential -= differential;
-			Debug.Log($"[TournyManager] Point differential updated: {teams[playerTeam].name} = {teams[playerTeam].pointDifferential}, {teams[oppTeam].name} = {teams[oppTeam].pointDifferential}");
+			GameLog.Info($"[TournyManager] Point differential updated: {teams[playerTeam].name} = {teams[playerTeam].pointDifferential}, {teams[oppTeam].name} = {teams[oppTeam].pointDifferential}");
 		}
 
-		Debug.Log($"[TournyManager] Player match result: {teams[playerTeam].name} ({playerScore}) vs {teams[oppTeam].name} ({oppScore}) - Player won: {playerWon}");
-		Debug.Log($"[TournyManager] {teams[playerTeam].name}: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L, {teams[oppTeam].name}: {teams[oppTeam].wins}W-{teams[oppTeam].loss}L");
+		GameLog.Info($"[TournyManager] Player match result: {teams[playerTeam].name} ({playerScore}) vs {teams[oppTeam].name} ({oppScore}) - Player won: {playerWon}");
+		GameLog.Info($"[TournyManager] {teams[playerTeam].name}: {teams[playerTeam].wins}W-{teams[playerTeam].loss}L, {teams[oppTeam].name}: {teams[oppTeam].wins}W-{teams[oppTeam].loss}L");
 	}
 
 	/// <summary>
@@ -668,7 +668,7 @@ public class TournyManager : MonoBehaviour
 	/// </summary>
 	void SetupTwoPoolTournament()
 	{
-		Debug.Log("[TournyManager] Setting up two-pool tournament");
+		GameLog.Info("[TournyManager] Setting up two-pool tournament");
 		
 		// Assign teams to pools: 0-7 = Pool A, 8-15 = Pool B
 		for (int i = 0; i < teams.Length; i++)
@@ -681,7 +681,7 @@ public class TournyManager : MonoBehaviour
 			{
 				teams[i].poolId = 1; // Pool B
 			}
-			Debug.Log($"[TournyManager] Team {i}: {teams[i].name} assigned to Pool {(teams[i].poolId == 0 ? "A" : "B")}");
+			GameLog.Info($"[TournyManager] Team {i}: {teams[i].name} assigned to Pool {(teams[i].poolId == 0 ? "A" : "B")}");
 		}
 		
 		// Find which pool the player is in and set it as the current view
@@ -690,7 +690,7 @@ public class TournyManager : MonoBehaviour
 			if (teams[i].player)
 			{
 				currentPoolView = teams[i].poolId;
-				Debug.Log($"[TournyManager] Player team found in Pool {(currentPoolView == 0 ? "A" : "B")}");
+				GameLog.Info($"[TournyManager] Player team found in Pool {(currentPoolView == 0 ? "A" : "B")}");
 				break;
 			}
 		}
@@ -749,7 +749,7 @@ public class TournyManager : MonoBehaviour
 			}
 			UpdatePoolButtonVisibility();
 			PrintRows();
-			Debug.Log("[TournyManager] Switched to Pool A");
+			GameLog.Info("[TournyManager] Switched to Pool A");
 		}
 	}
 
@@ -767,7 +767,7 @@ public class TournyManager : MonoBehaviour
 			}
 			UpdatePoolButtonVisibility();
 			PrintRows();
-			Debug.Log("[TournyManager] Switched to Pool B");
+			GameLog.Info("[TournyManager] Switched to Pool B");
 		}
 	}
 
@@ -863,7 +863,7 @@ public class TournyManager : MonoBehaviour
 		// 	teams[i].record.y = teams[i].loss;
         // }
 
-		Debug.Log("Tourny Record is " + teams[playerTeam].wins + " - " + teams[playerTeam].loss);
+		GameLog.Info("Tourny Record is " + teams[playerTeam].wins + " - " + teams[playerTeam].loss);
 		draw++;
 		//yield return new WaitForEndOfFrame();
 		yield return StartCoroutine(DrawScoring());
@@ -874,7 +874,7 @@ public class TournyManager : MonoBehaviour
 		// Note: gsp.weight was already incremented by EndMenu.EndGame(), so we need to decrement it
 		// to get back to the weight that was just played
 		int tempDraw = draw - 1;
-		Debug.Log($"[SimRestDraw] Starting - weight={draw}, tempDraw={tempDraw}, teams.Length={teams.Length}, drawFormat.Length={drawFormat.Length}");
+		GameLog.Info($"[SimRestDraw] Starting - weight={draw}, tempDraw={tempDraw}, teams.Length={teams.Length}, drawFormat.Length={drawFormat.Length}");
 		Team[] games = new Team[teams.Length];
 		
 		// Build games array from weight format
@@ -905,12 +905,12 @@ public class TournyManager : MonoBehaviour
 
                 if (isPlayerGame)
                 {
-                    Debug.Log($"[SimRestDraw] SKIP player game: teams[{team1Index}] vs teams[{team2Index}]");
+                    GameLog.Info($"[SimRestDraw] SKIP player game: teams[{team1Index}] vs teams[{team2Index}]");
                     continue;
                 }
 
                 // Simulate other games
-                Debug.Log($"[SimRestDraw] Simulating: teams[{team1Index}] vs teams[{team2Index}]");
+                GameLog.Info($"[SimRestDraw] Simulating: teams[{team1Index}] vs teams[{team2Index}]");
                 if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
                 {
                     games[i + 1].loss++;
@@ -929,10 +929,10 @@ public class TournyManager : MonoBehaviour
 
 	IEnumerator DrawScoring()
     {
-		Debug.Log($"[DrawScoring] weight={draw}, drawFormat.Length={drawFormat.Length}");
+		GameLog.Info($"[DrawScoring] weight={draw}, drawFormat.Length={drawFormat.Length}");
 		if (draw < drawFormat.Length)
 		{
-			Debug.Log("Draw number " + draw);
+			GameLog.Info("Draw number " + draw);
 			yield return new WaitForSeconds(0.1f);
 			heading.text = "Draw " + (draw + 1);
 			SetDraw();
@@ -1058,7 +1058,7 @@ public class TournyManager : MonoBehaviour
 		// Restore cumulative team stats (wins/losses/earnings) from before tournament started
 		if (gsp.cashGame == false)
 		{
-			Debug.Log("cm.teamRecords Length is " + cm.teamRecords.Length);
+			GameLog.Info("cm.teamRecords Length is " + cm.teamRecords.Length);
 
 			for (int i = 0; i < teams.Length; i++)
 			{
@@ -1069,19 +1069,19 @@ public class TournyManager : MonoBehaviour
 				teams[i].id = (int)cm.teamRecords[i].w;
 			}
 			
-			Debug.Log($"[TournyManager] Player team cumulative record: {teams[playerTeam].wins}-{teams[playerTeam].loss}, earnings: ${teams[playerTeam].earnings:N0}");
+			GameLog.Info($"[TournyManager] Player team cumulative record: {teams[playerTeam].wins}-{teams[playerTeam].loss}, earnings: ${teams[playerTeam].earnings:N0}");
 		}
 
 		//Debug.Log("PlayerTeam name is " + teams[playerTeam].name);
-		Debug.Log("PlayerTeam record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
+		GameLog.Info("PlayerTeam record is " + gsp.tournyRecord.x + " - " + gsp.tournyRecord.y);
 
         gsp.draw = 0;
 		gsp.playoffRound = 0;
 		gsp.tournyInProgress = false;
-		Debug.Log("gsp.inProgress is " + gsp.tournyInProgress);
+		GameLog.Info("gsp.inProgress is " + gsp.tournyInProgress);
 		gsp.playoffTeams = null;
-		Debug.Log("CM Record is " + cm.record.x + " - " + cm.record.y);
-		Debug.Log("CM earnings are " + cm.earnings);
+		GameLog.Info("CM Record is " + cm.record.x + " - " + cm.record.y);
+		GameLog.Info("CM earnings are " + cm.earnings);
 		
 		cm.TournyResults();
 		cm.LoadCareer();
