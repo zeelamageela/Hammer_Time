@@ -22,6 +22,8 @@ public class GameHUD : MonoBehaviour
     public Image yellowHammerPNG;
     public GameObject panel;
     public bool scoreCheck;
+    [Tooltip("The announcement banner and \"tap anywhere\" sit this much lower than where the scene places them, clear of the shot timer on phones.")]
+    public float bannerDrop = 225f;
 
     public GameObject[] scoreCols;
     public GameObject scorePanel;
@@ -41,10 +43,18 @@ public class GameHUD : MonoBehaviour
         }
 
         clickDisplay.enabled = false;
+        if (panel != null) Lower(panel.transform);
+        // "tap anywhere" is not part of the panel, so it has to come down with it to stay underneath
+        if (clickDisplay != null && (panel == null || !clickDisplay.transform.IsChildOf(panel.transform))) Lower(clickDisplay.transform);
         //foreach (Text scoreCardText in scoreCardsText)
         //{
         //    scoreCardText.enabled = false;
         //}
+    }
+
+    void Lower(Transform t)
+    {
+        if (t is RectTransform rect) rect.anchoredPosition += Vector2.down * bannerDrop;
     }
 
     private void Update()
@@ -208,7 +218,7 @@ public class GameHUD : MonoBehaviour
 
             scoreCols[i].transform.GetChild(1).gameObject.SetActive(false);
             scoreCols[i].transform.GetChild(2).gameObject.SetActive(false);
-            Debug.Log("I IS " + i);
+            GameLog.Info("I IS " + i);
             if (i < (gm.endCurrent - 1))
             {
                 scoreCols[i].transform.GetChild(1).gameObject.SetActive(true);

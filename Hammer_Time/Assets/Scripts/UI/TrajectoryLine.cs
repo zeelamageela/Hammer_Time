@@ -234,7 +234,7 @@ public class TrajectoryLine : MonoBehaviour
             fuzzRolledAim = aim;
             fuzzRolledWeight = weight;
             fuzzRockIndex = gm.rockCurrent;
-            Debug.Log($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
+            GameLog.Info($"[AimFuzz] rock {gm.rockCurrent}: aim skill {aim:F0}, weight skill {weight:F0} -> line error ({fuzzError.x:+0.000;-0.000}, {fuzzError.y:+0.000;-0.000}) m");
         }
         if (fuzzError == Vector2.zero) return initialVelocity;
 
@@ -270,7 +270,7 @@ public class TrajectoryLine : MonoBehaviour
         visualSettings.OnCurlLineVisibilityChanged += OnCurlLineVisibilityChanged;
         visualSettings.OnCollisionWarningVisibilityChanged += OnCollisionWarningVisibilityChanged;
         
-        Debug.Log($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
+        GameLog.Info($"[TrajectoryLine] Visualization settings initialized - Dots: {trajectoryDotsVisible}, Collision: {collisionLinesVisible}, Aim Circle: {aimCircleVisible}, Guidelines: {guidelinesVisible}, CurlLine: {curlLineVisible}, CollisionWarning: {collisionWarningVisible}");
 
         TrainingAids.Refresh();
         bands = gameObject.AddComponent<AimFuzzBands>();
@@ -374,21 +374,21 @@ public class TrajectoryLine : MonoBehaviour
         // Note: For actual dotted appearance, you'd need a dotted texture
         // For now, we'll use opacity and thin width to make it subtle
         
-        Debug.Log("[TrajectoryLine] Collision warning line created");
+        GameLog.Info("[TrajectoryLine] Collision warning line created");
         
         // Initialize physics simulator ONCE at startup for better performance
         UpdateSimulator();
         
-        Debug.Log($"[TrajectoryLine] Physics initialized - trajectory will use tuned damping ratio");
+        GameLog.Info($"[TrajectoryLine] Physics initialized - trajectory will use tuned damping ratio");
     }
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log(collider.name);
+        GameLog.Info(collider.name);
 
         if (collider == rock.GetComponent<Collider2D>())
         {
-            Debug.Log(collider.name);
+            GameLog.Info(collider.name);
         }
         //else trajCollision = true;
     }
@@ -594,10 +594,10 @@ public class TrajectoryLine : MonoBehaviour
             lastIceFriction = iceFriction;
             lastCurlStrength = curlStrength;
             
-            Debug.Log($"⚠️ PHYSICS SETTINGS CHANGED! Updated simulator.");
+            GameLog.Info($"⚠️ PHYSICS SETTINGS CHANGED! Updated simulator.");
         }
         
-        Debug.Log($"[DrawTrajectory] START - springDistance: {springDistance}, usePhysics: {usePhysicsSimulation}, " +
+        GameLog.Info($"[DrawTrajectory] START - springDistance: {springDistance}, usePhysics: {usePhysicsSimulation}, " +
                   $"physicsChanged: {physicsSettingsChanged}");
         
         if (springDistance < 1f)
@@ -606,7 +606,7 @@ public class TrajectoryLine : MonoBehaviour
             lr.positionCount = 2;
             lr.SetPosition(0, launcher.transform.position);
             lr.SetPosition(1, launcher.transform.position);
-            Debug.Log("Spring distance too small, not drawing trajectory");
+            GameLog.Info("Spring distance too small, not drawing trajectory");
             TimingPanel.ClearAim();
             return;
         }
@@ -659,22 +659,22 @@ public class TrajectoryLine : MonoBehaviour
                 maxVelocity
             );
             
-            Debug.Log($"[TrajectoryLine] Preview velocity: {initialVelocity.magnitude:F2} m/s (pullback: {pullbackDistance:F3} units)");
+            GameLog.Info($"[TrajectoryLine] Preview velocity: {initialVelocity.magnitude:F2} m/s (pullback: {pullbackDistance:F3} units)");
             
             // NOW log everything AFTER variables are declared
-            Debug.Log($"🎯 [TrajectoryLine] SIMULATING TRAJECTORY:");
-            Debug.Log($"   rm.inturn = {rm.inturn}");
-            Debug.Log($"   isInTurn (USED FOR SIMULATION) = {isInTurn}");
-            Debug.Log($"   Launcher position: {launcherPos}");
-            Debug.Log($"   Pullback position: {pullbackPos}");
-            Debug.Log($"   Lateral offset (X): {pullbackPos.x:F4} units");
-            Debug.Log($"   Pullback distance (Y): {pullbackPos.y:F4} units");
-            Debug.Log($"   Spring displacement: ({(launcherPos.x - pullbackPos.x):F4}, {(launcherPos.y - pullbackPos.y):F4})");
-            Debug.Log($"   Initial velocity: {initialVelocity}");
-            Debug.Log($"   Velocity magnitude: {initialVelocity.magnitude:F3}");
-            Debug.Log($"   Lateral velocity (X): {initialVelocity.x:F4} units/s");
-            Debug.Log($"   If isInTurn=true → dirMult=-1 → Rock curls in in-turn direction");
-            Debug.Log($"   If isInTurn=false → dirMult=+1 → Rock curls in out-turn direction");
+            GameLog.Info($"🎯 [TrajectoryLine] SIMULATING TRAJECTORY:");
+            GameLog.Info($"   rm.inturn = {rm.inturn}");
+            GameLog.Info($"   isInTurn (USED FOR SIMULATION) = {isInTurn}");
+            GameLog.Info($"   Launcher position: {launcherPos}");
+            GameLog.Info($"   Pullback position: {pullbackPos}");
+            GameLog.Info($"   Lateral offset (X): {pullbackPos.x:F4} units");
+            GameLog.Info($"   Pullback distance (Y): {pullbackPos.y:F4} units");
+            GameLog.Info($"   Spring displacement: ({(launcherPos.x - pullbackPos.x):F4}, {(launcherPos.y - pullbackPos.y):F4})");
+            GameLog.Info($"   Initial velocity: {initialVelocity}");
+            GameLog.Info($"   Velocity magnitude: {initialVelocity.magnitude:F3}");
+            GameLog.Info($"   Lateral velocity (X): {initialVelocity.x:F4} units/s");
+            GameLog.Info($"   If isInTurn=true → dirMult=-1 → Rock curls in in-turn direction");
+            GameLog.Info($"   If isInTurn=false → dirMult=+1 → Rock curls in out-turn direction");
             
             // Debug.Log($"Pullback: {pullbackPos}, Launcher: {launcherPos}, InitVel: {initialVelocity.magnitude}");
             
@@ -732,8 +732,8 @@ public class TrajectoryLine : MonoBehaviour
             // Visualize collision if detected (only if visibility enabled)
             if (collisionInfo.hasCollision && showCollisionPrediction && collisionLinesVisible && TrainingAids.CollisionIndicatorUnlocked)
             {
-                Debug.Log($"[TrajectoryLine] COLLISION DETECTED! Point: {collisionInfo.collisionPoint}, Index: {collisionInfo.collisionIndex}");
-                Debug.Log($"[TrajectoryLine] Thrown rock path count: {collisionInfo.thrownRockPostCollisionPath.Count}, Hit rock path count: {collisionInfo.hitRockPostCollisionPath.Count}");
+                GameLog.Info($"[TrajectoryLine] COLLISION DETECTED! Point: {collisionInfo.collisionPoint}, Index: {collisionInfo.collisionIndex}");
+                GameLog.Info($"[TrajectoryLine] Thrown rock path count: {collisionInfo.thrownRockPostCollisionPath.Count}, Hit rock path count: {collisionInfo.hitRockPostCollisionPath.Count}");
                 
                 // Show collision point marker at impact location
                 if (collisionMarker != null)
@@ -752,7 +752,7 @@ public class TrajectoryLine : MonoBehaviour
                     Collider2D markerCol = currentCollisionMarker.GetComponent<Collider2D>();
                     if (markerCol != null) markerCol.enabled = false;
                     
-                    Debug.Log($"[TrajectoryLine] Collision marker instantiated at {collisionInfo.collisionPoint}");
+                    GameLog.Info($"[TrajectoryLine] Collision marker instantiated at {collisionInfo.collisionPoint}");
                 }
                 else
                 {
@@ -769,7 +769,7 @@ public class TrajectoryLine : MonoBehaviour
             {
                 if (!collisionInfo.hasCollision)
                 {
-                    Debug.Log("[TrajectoryLine] No collision detected in trajectory");
+                    GameLog.Info("[TrajectoryLine] No collision detected in trajectory");
                 }
                 if (!showCollisionPrediction)
                 {
@@ -816,7 +816,7 @@ public class TrajectoryLine : MonoBehaviour
         lr.endWidth = Mathf.Lerp(0f, 0.1f, springDistance / 3.25f);
 
         // Draw dots along trajectory (only if visibility enabled)
-        Debug.Log($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}, visible={trajectoryDotsVisible}");
+        GameLog.Info($"[Dots] Checking dot creation: pos.Count={pos.Count}, dotCount={dotCount}, dot={dot}, visible={trajectoryDotsVisible}");
         
         if (pos.Count > 0 && dotCount > 0 && dot != null && trajectoryDotsVisible && TrainingAids.DotsUnlocked)
         {
@@ -827,7 +827,7 @@ public class TrajectoryLine : MonoBehaviour
             
             int counter = Mathf.Max(1, maxDotIndex / targetDots);
             
-            Debug.Log($"Drawing {dotCount} dots from {maxDotIndex} trajectory points (every {counter} points)");
+            GameLog.Info($"Drawing {dotCount} dots from {maxDotIndex} trajectory points (every {counter} points)");
             
             // Ensure we weight dots all the way to the end
             for (int i = 1; i < maxDotIndex; i += counter)
@@ -879,11 +879,11 @@ public class TrajectoryLine : MonoBehaviour
             }
             
             BeginDotMarch(pos, maxDotIndex);
-            Debug.Log($"Actually created {dots.Count} dot GameObjects");
+            GameLog.Info($"Actually created {dots.Count} dot GameObjects");
         }
         else
         {
-            Debug.LogWarning($"Cannot weight dots - pos.Count: {pos.Count}, dotCount: {dotCount}, dot: {dot}");
+            GameLog.Info($"Cannot weight dots - pos.Count: {pos.Count}, dotCount: {dotCount}, dot: {dot}");
         }
 
         // Store points for later comparison
@@ -1021,7 +1021,8 @@ public class TrajectoryLine : MonoBehaviour
         TimingPredictor.Predict(profile.LaunchVelocityFromWeightVelocity(weightVelocity), isInTurn,
             fuzzActive ? fuzzError.y : 0f, fuzzActive ? AimFuzzBands.WeightHalfHeight(GetShooterWeightAccuracy(), GetShooterConsistency()) : 0f,
             profile, out TimingPredictor.Range split, out TimingPredictor.Range hogToHog);
-        panel.ShowAim(call, TimingPredictor.Format(split), TimingPredictor.Format(hogToHog));
+        panel.ShowAim(call, TimingPredictor.Format(IceClock.Split(split, profile)),
+            TimingPredictor.Format(IceClock.HogToHog(hogToHog, profile)));
     }
 
     // Helper method to recreate the simulator when settings change
@@ -1100,7 +1101,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnTrajectoryVisibilityChanged(bool visible)
     {
         trajectoryDotsVisible = visible;
-        Debug.Log($"[TrajectoryLine] Trajectory dots visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Trajectory dots visibility changed to: {visible}");
         
         // If currently showing trajectory, redraw it with new visibility setting
         if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
@@ -1136,7 +1137,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnCollisionLinesVisibilityChanged(bool visible)
     {
         collisionLinesVisible = visible;
-        Debug.Log($"[TrajectoryLine] Collision lines visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Collision lines visibility changed to: {visible}");
         
         // Immediately hide/show collision visualization if it exists
         if (!visible)
@@ -1178,7 +1179,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnAimCircleVisibilityChanged(bool visible)
     {
         aimCircleVisible = visible;
-        Debug.Log($"[TrajectoryLine] Aim circle visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Aim circle visibility changed to: {visible}");
         
         // Toggle between aim circle and alternative visualization
         if (aimCircle != null)
@@ -1237,7 +1238,7 @@ public class TrajectoryLine : MonoBehaviour
         // HORIZONTAL LINE: Use aim circle's Y position (ideal endpoint without collisions)
         // This shows where the rock WOULD go if no obstacles were present
         float horizontalLineY = aimCircle.transform.position.y;
-        Debug.Log($"[Horizontal Line] Using AIM CIRCLE Y position: Y={horizontalLineY:F2}");
+        GameLog.Info($"[Horizontal Line] Using AIM CIRCLE Y position: Y={horizontalLineY:F2}");
         
         
         
@@ -1250,7 +1251,7 @@ public class TrajectoryLine : MonoBehaviour
             // If aiming above 8.0, use actual trajectory direction for better visual guidance
             // This accounts for curl and gives a more accurate vertical line position
             deltaY = 8.0f - pullbackPos.y;
-            Debug.Log($"[Vertical Line] Aiming above 8.0, using trajectory direction for vertical line X calculation");
+            GameLog.Info($"[Vertical Line] Aiming above 8.0, using trajectory direction for vertical line X calculation");
         }
         if (Mathf.Abs(direction.y) > 0.001f)
         {
@@ -1425,7 +1426,7 @@ public class TrajectoryLine : MonoBehaviour
             // Apply gradient to line renderer
             aimCurlLine.colorGradient = curlGradient;
             
-            Debug.Log($"[Curl Line Enhanced] Weight skill: {weightAccuracy:F0}%, Error: ±{weightMaxError:F2}m\n" +
+            GameLog.Info($"[Curl Line Enhanced] Weight skill: {weightAccuracy:F0}%, Error: ±{weightMaxError:F2}m\n" +
                       $"  Width: {curlLineWidth:F2} (shows weight error range)\n" +
                       $"  Y offset: {shortBias:F2} (30/70 short bias)\n" +
                       $"  Fade starts at: {fadeStartRatio:F0}% ({(weightAccuracy >= 70 ? "SHARP" : weightAccuracy >= 40 ? "MODERATE" : "GRADUAL")} fade)\n" +
@@ -1519,7 +1520,7 @@ public class TrajectoryLine : MonoBehaviour
         collisionWarningLine.SetPosition(0, new Vector3(collisionPoint.x, topY, 0f));
         collisionWarningLine.SetPosition(1, new Vector3(collisionPoint.x, bottomY, 0f));
         
-        Debug.Log($"[Collision Warning] Indicator drawn at ({collisionPoint.x:F2}, {collisionPoint.y:F2}) - height: {indicatorHeight}");
+        GameLog.Info($"[Collision Warning] Indicator drawn at ({collisionPoint.x:F2}, {collisionPoint.y:F2}) - height: {indicatorHeight}");
     }
     
     /// <summary>The player's consistency (saved as finesse), with gear and training; an average 50 without a career.</summary>
@@ -1575,7 +1576,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnGuidelinesVisibilityChanged(bool visible)
     {
         guidelinesVisible = visible;
-        Debug.Log($"[TrajectoryLine] Guidelines visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Guidelines visibility changed to: {visible}");
         
         // If currently showing trajectory, update visualization
         if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
@@ -1598,7 +1599,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnCurlLineVisibilityChanged(bool visible)
     {
         curlLineVisible = visible;
-        Debug.Log($"[TrajectoryLine] Curl line visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Curl line visibility changed to: {visible}");
         
         // If currently showing trajectory, update visualization
         if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)
@@ -1621,7 +1622,7 @@ public class TrajectoryLine : MonoBehaviour
     private void OnCollisionWarningVisibilityChanged(bool visible)
     {
         collisionWarningVisible = visible;
-        Debug.Log($"[TrajectoryLine] Collision warning visibility changed to: {visible}");
+        GameLog.Info($"[TrajectoryLine] Collision warning visibility changed to: {visible}");
         
         // If currently showing trajectory, update visualization
         if (gm != null && gm.rockList != null && gm.rockCurrent < gm.rockList.Count)

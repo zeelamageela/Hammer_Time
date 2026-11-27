@@ -136,11 +136,11 @@ public class GameManager : MonoBehaviour
         GameSettingsPersist gspCheck = FindObjectOfType<GameSettingsPersist>();
         if (gspCheck != null && gspCheck.score != null && gspCheck.score.Length > 0)
         {
-            Debug.Log($"[GameManager.Start] === ENTRY === score array: End1=({gspCheck.score[0].x},{gspCheck.score[0].y}), End2=({(gspCheck.score.Length > 1 ? gspCheck.score[1].x : -1)},{(gspCheck.score.Length > 1 ? gspCheck.score[1].y : -1)})");
+            GameLog.Info($"[GameManager.Start] === ENTRY === score array: End1=({gspCheck.score[0].x},{gspCheck.score[0].y}), End2=({(gspCheck.score.Length > 1 ? gspCheck.score[1].x : -1)},{(gspCheck.score.Length > 1 ? gspCheck.score[1].y : -1)})");
         }
         else
         {
-            Debug.Log($"[GameManager.Start] === ENTRY === score array is NULL or empty!");
+            GameLog.Info($"[GameManager.Start] === ENTRY === score array is NULL or empty!");
         }
         
         state = GameState.START;
@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour
         // If running standalone (tutorial) scene, create a minimal runtime GSP to avoid NREs
         if (gsp == null)
         {
-            Debug.Log("GameManager: No GameSettingsPersist found, creating runtime instance with tutorial defaults.");
+            GameLog.Info("GameManager: No GameSettingsPersist found, creating runtime instance with tutorial defaults.");
             GameObject gspGO = new GameObject("GameSettingsPersist_Runtime");
             gsp = gspGO.AddComponent<GameSettingsPersist>();
             // Only mark as tutorial if we're actually in the tutorial scene.
@@ -218,7 +218,7 @@ public class GameManager : MonoBehaviour
             gsp.oppStats = new CareerStats();
         }
         //gHUD.SetHUD(redRock);
-        Debug.Log("[GameManager] Game Start - loadGame: " + (gsp.loadGame ? "TRUE" : "FALSE"));
+        GameLog.Info("[GameManager] Game Start - loadGame: " + (gsp.loadGame ? "TRUE" : "FALSE"));
 
 
         Rock_Placement rp = FindFirstObjectByType<Rock_Placement>();
@@ -229,20 +229,20 @@ public class GameManager : MonoBehaviour
         if (!gsp.loadGame)
         {
             gsp.gameInProgress = true;
-            Debug.Log("[GameManager] NEW game - set gameInProgress = true");
+            GameLog.Info("[GameManager] NEW game - set gameInProgress = true");
         }
         else
         {
             gsp.LoadTourny();
-            Debug.Log("[GameManager] LOADING game - gameInProgress preserved from save: " + gsp.gameInProgress);
+            GameLog.Info("[GameManager] LOADING game - gameInProgress preserved from save: " + gsp.gameInProgress);
         }
         endCurrent = gsp.endCurrent;
         rockCurrent = gsp.rockCurrent;
         rocksPerTeam = gsp.rocks;
-        Debug.Log($"[GameManager] After load/setup: rocksPerTeam={rocksPerTeam}, gsp.rocks={gsp.rocks}, rockCurrent={rockCurrent}, gsp.ends={gsp.ends}");
+        GameLog.Info($"[GameManager] After load/setup: rocksPerTeam={rocksPerTeam}, gsp.rocks={gsp.rocks}, rockCurrent={rockCurrent}, gsp.ends={gsp.ends}");
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
-        Debug.Log($"[GameManager] endTotal set to {endTotal} from gsp.ends");
+        GameLog.Info($"[GameManager] endTotal set to {endTotal} from gsp.ends");
         //rockTotal = 16;
         aiTeamYellow = gsp.aiYellow;
         aiTeamRed = gsp.aiRed;
@@ -258,18 +258,18 @@ public class GameManager : MonoBehaviour
             int firstPlayerRock = 16 - (gsp.rocks * 2);
             rockCurrent = firstPlayerRock;
             gsp.rockCurrent = rockCurrent;
-            Debug.Log($"[GameManager] NEW game - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
+            GameLog.Info($"[GameManager] NEW game - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
         }
         else
         {
-            Debug.Log($"[GameManager] LOADED game - rockCurrent preserved from save: {rockCurrent}");
+            GameLog.Info($"[GameManager] LOADED game - rockCurrent preserved from save: {rockCurrent}");
         }
         
         // CRITICAL FIX: Initialize score array at start of NEW game only!
         // Don't clear it when continuing to next end (endCurrent > 0)
         if (gsp.score == null || gsp.score.Length < (endTotal + 1))
         {
-            Debug.Log($"[GameManager] Score array needs resize - current: {(gsp.score == null ? "NULL" : gsp.score.Length.ToString())}, needed: {endTotal + 1}");
+            GameLog.Info($"[GameManager] Score array needs resize - current: {(gsp.score == null ? "NULL" : gsp.score.Length.ToString())}, needed: {endTotal + 1}");
             
             // CRITICAL: PRESERVE existing scores when resizing!
             Vector2Int[] newArray = new Vector2Int[endTotal + 1];
@@ -280,7 +280,7 @@ public class GameManager : MonoBehaviour
                 {
                     newArray[i] = gsp.score[i];
                 }
-                Debug.Log($"[GameManager] Copied {gsp.score.Length} existing scores to new array");
+                GameLog.Info($"[GameManager] Copied {gsp.score.Length} existing scores to new array");
             }
             gsp.score = newArray;
         }
@@ -288,7 +288,7 @@ public class GameManager : MonoBehaviour
         {
             // Only clear when starting a NEW game (endCurrent == 0)
             // Don't clear when continuing to next end!
-            Debug.Log($"[GameManager] Clearing score array for NEW game (endCurrent=0)");
+            GameLog.Info($"[GameManager] Clearing score array for NEW game (endCurrent=0)");
             for (int i = 0; i < gsp.score.Length; i++)
             {
                 gsp.score[i] = new Vector2Int(0, 0);
@@ -297,8 +297,8 @@ public class GameManager : MonoBehaviour
         else
         {
             // Preserve existing scores
-            Debug.Log($"[GameManager] Preserving score array for end {gsp.endCurrent + 1}");
-            Debug.Log($"[GameManager]   Current scores: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
+            GameLog.Info($"[GameManager] Preserving score array for end {gsp.endCurrent + 1}");
+            GameLog.Info($"[GameManager]   Current scores: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
         }
 
         if (gsp.redScore > 0 | gsp.yellowScore > 0)
@@ -308,13 +308,13 @@ public class GameManager : MonoBehaviour
             cm.ui.enabled = false;
         }
 
-        Debug.Log($"[GameManager] *** TEAM NAMES at line 295: red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (loadGame was {gsp.loadGame})");
+        GameLog.Info($"[GameManager] *** TEAM NAMES at line 295: red='{gsp.redTeamName}' yellow='{gsp.yellowTeamName}' (loadGame was {gsp.loadGame})");
         redTeamName = gsp.redTeamName;
         yellowTeamName = gsp.yellowTeamName;
 
         debug = gsp.debug;
 
-        Debug.Log("redHammer is " + redHammer);
+        GameLog.Info("redHammer is " + redHammer);
         am.PlayBG(0);
         am.Play("Ambience");
         targetAi.SetActive(false);
@@ -379,7 +379,7 @@ public class GameManager : MonoBehaviour
             {
                 yield return StartCoroutine(TournyIntro());
                 gsp.tournyIntroShown = true;  // Mark intro as shown
-                Debug.Log("[GameManager] Tourny intro shown and flag set");
+                GameLog.Info("[GameManager] Tourny intro shown and flag set");
             }
 
             if (rockCurrent > 0)
@@ -575,7 +575,7 @@ public class GameManager : MonoBehaviour
         int firstPlayerRock = 16 - (rocksPerTeam * 2);
         rockCurrent = firstPlayerRock;
         gsp.rockCurrent = rockCurrent;
-        Debug.Log($"[GM.CheckScore] New end {endCurrent} - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
+        GameLog.Info($"[GM.CheckScore] New end {endCurrent} - rockCurrent={rockCurrent} (firstPlayerRock={firstPlayerRock})");
         gHUD.SetHammer(redHammer);
 
         yield return StartCoroutine(SetupRocks());
@@ -595,7 +595,7 @@ public class GameManager : MonoBehaviour
                 DialogueController.Instance.Show(selectedDialogue);
                 // Wait for dialogue to complete before continuing
                 yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
-                Debug.Log("[GameManager] Announcer dialogue shown at start of end " + endCurrent);
+                GameLog.Info("[GameManager] Announcer dialogue shown at start of end " + endCurrent);
             }
         }
 
@@ -643,7 +643,7 @@ public class GameManager : MonoBehaviour
         if (!aiTeamRed)
         {
             rm.inturn = false;  // Default to out-turn for player turns
-            Debug.Log($"[GameManager] Player Red Turn - initialized rm.inturn=false (OUT-TURN default)");
+            GameLog.Info($"[GameManager] Player Red Turn - initialized rm.inturn=false (OUT-TURN default)");
         }
         
         // Clear trajectory from previous turn
@@ -659,7 +659,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        cm.ShotSetup();
+        cm.ShotSetup(aiTeamRed);
 
         state = GameState.REDTURN;
         //Debug.Log("Red Turn");
@@ -693,7 +693,7 @@ public class GameManager : MonoBehaviour
             if (redRockForce != null)
             {
                 redRockForce.flipAxis = rm.inturn;
-                Debug.Log($"[GameManager.OnRedTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
+                GameLog.Info($"[GameManager.OnRedTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
             }
         }
         
@@ -709,7 +709,7 @@ public class GameManager : MonoBehaviour
         GameObject redRock_1 = rockList[rockCurrent].rock;
 
         redRock = redRock_1.GetComponent<Rock_Info>();
-        Debug.Log(redRock_1.name);
+        GameLog.Info(redRock_1.name);
 
         //Debug.Log("Current Rock is " + rockCurrent);
         rockBar.ActiveRock(true, rockCurrent);
@@ -769,6 +769,11 @@ public class GameManager : MonoBehaviour
 
         SnapshotFreeGuardZone(redTeamName);
 
+        // the camera goes with the rock the moment it is let go (shotTaken only comes once it reaches the launch line)
+        Rock_Flick redRockThrown = redRock_1.GetComponent<Rock_Flick>();
+        yield return new WaitUntil(() => redRockThrown.springReleased || redRock.shotTaken);
+        cm.RockFollow(redRock_1.transform);
+
         yield return new WaitUntil(() => redRock.shotTaken == true);
 
         if (target)
@@ -778,7 +783,6 @@ public class GameManager : MonoBehaviour
         }
         
         //am.Play("RockScrape");
-        cm.RockFollow(redRock_1.transform);
         boardCollider.enabled = true;
 
         rockBar.ActiveRock(true, rockCurrent);
@@ -803,7 +807,7 @@ public class GameManager : MonoBehaviour
         //am.Stop("RockScrape");
         rm.GetComponent<Sweep>().ExitSweepZone();
 
-        Debug.Log("redRock at Rest");
+        GameLog.Info("redRock at Rest");
         
         // Hide trajectory line at end of turn (will be redrawn when next player turn starts)
         TrajectoryLine trajectoryLine = FindAnyObjectByType<TrajectoryLine>();
@@ -842,7 +846,7 @@ public class GameManager : MonoBehaviour
         if (!aiTeamYellow)
         {
             rm.inturn = false;  // Default to out-turn for player turns
-            Debug.Log($"[GameManager] Player Yellow Turn - initialized rm.inturn=false (OUT-TURN default)");
+            GameLog.Info($"[GameManager] Player Yellow Turn - initialized rm.inturn=false (OUT-TURN default)");
         }
         
         // Clear trajectory from previous turn
@@ -859,13 +863,13 @@ public class GameManager : MonoBehaviour
         }
         
         state = GameState.YELLOWTURN;
-        Debug.Log("Yellow Turn");
+        GameLog.Info("Yellow Turn");
 
         redTurn = false;
 
         am.PlayBG(0);
 
-        cm.ShotSetup();
+        cm.ShotSetup(aiTeamYellow);
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)
         {
@@ -892,7 +896,7 @@ public class GameManager : MonoBehaviour
             if (yellowRockForce != null)
             {
                 yellowRockForce.flipAxis = rm.inturn;
-                Debug.Log($"[GameManager.OnYellowTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
+                GameLog.Info($"[GameManager.OnYellowTurn] ? SYNCED: rm.inturn={rm.inturn}, rock.flipAxis={rm.inturn}");
             }
         }
         
@@ -909,7 +913,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log("rmInturn is " + rm.inturn);
 
         yellowRock = yellowRock_1.GetComponent<Rock_Info>();
-        Debug.Log(yellowRock_1.name);
+        GameLog.Info(yellowRock_1.name);
 
         rockBar.ActiveRock(false, rockCurrent);
         if (debug)
@@ -968,6 +972,11 @@ public class GameManager : MonoBehaviour
 
         SnapshotFreeGuardZone(yellowTeamName);
 
+        // the camera goes with the rock the moment it is let go (shotTaken only comes once it reaches the launch line)
+        Rock_Flick yellowRockThrown = yellowRock_1.GetComponent<Rock_Flick>();
+        yield return new WaitUntil(() => yellowRockThrown.springReleased || yellowRock.shotTaken);
+        cm.RockFollow(yellowRock_1.transform);
+
         yield return new WaitUntil(() => yellowRock.shotTaken == true);
 
         if (target)
@@ -976,7 +985,6 @@ public class GameManager : MonoBehaviour
             targetPlayer.SetActive(false);
         }
         
-        cm.RockFollow(yellowRock_1.transform);
         //am.Play("RockScrape");
         boardCollider.enabled = true;
         rockBar.ActiveRock(false, rockCurrent);
@@ -1034,14 +1042,14 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            Debug.Log("Out Of Play is " + yellowRock.outOfPlay);
-            Debug.Log("Rock Current is " + rockCurrent);
+            GameLog.Info("Out Of Play is " + yellowRock.outOfPlay);
+            GameLog.Info("Rock Current is " + rockCurrent);
             rockBar.IdleRock(rockCurrent);
         }
         else
         {
-            Debug.Log("Out Of Play is " + yellowRock.outOfPlay);
-            Debug.Log("Rock Current is " + rockCurrent);
+            GameLog.Info("Out Of Play is " + yellowRock.outOfPlay);
+            GameLog.Info("Rock Current is " + rockCurrent);
             rockBar.DeadRock(rockCurrent);
         }
 
@@ -1132,7 +1140,7 @@ public class GameManager : MonoBehaviour
 
         if (violation)
         {
-            Debug.Log($"[GameManager] FGZ violation on rock {rockCurrent} - removing shot, restoring {fgzSnapshot.Count} rocks");
+            GameLog.Info($"[GameManager] FGZ violation on rock {rockCurrent} - removing shot, restoring {fgzSnapshot.Count} rocks");
 
             // Use the floating callout system, not gHUD.Message() - CheckScore() overwrites
             // mainDisplay with the "X is Sitting Y" house review a few lines after this runs,
@@ -1185,7 +1193,7 @@ public class GameManager : MonoBehaviour
 
         yield return StartCoroutine(AllStopped());
 
-        Debug.Log("All Stopped");
+        GameLog.Info("All Stopped");
 
         // Notify tutorial that the throw phase is over — any step still waiting on a
         // grab/drag/pullback/release condition gets force-advanced so the sequence can continue.
@@ -1207,7 +1215,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[CheckScore] Skipping ShotUpdate - rockCurrent={rockCurrent} (no rocks placed yet)");
+            GameLog.Info($"[CheckScore] Skipping ShotUpdate - rockCurrent={rockCurrent} (no rocks placed yet)");
         }
 
         houseList.Clear();
@@ -1249,7 +1257,7 @@ public class GameManager : MonoBehaviour
                 foreach (House_List rock in houseList)
                 {
                     counter++;
-                    Debug.Log("House List " + counter + " - " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
+                    GameLog.Info("House List " + counter + " - " + rock.rockInfo.name + " - " + rock.rockInfo.distance);
                 }
             }
 
@@ -1308,14 +1316,14 @@ public class GameManager : MonoBehaviour
         // ? DIAGNOSTIC: Check score array integrity at start of NextTurn
         if (gsp.score != null && gsp.score.Length > 0)
         {
-            Debug.Log($"[GM.NextTurn] ENTRY - score array: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
+            GameLog.Info($"[GM.NextTurn] ENTRY - score array: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
         }
         else
         {
             Debug.LogWarning($"[GM.NextTurn] ENTRY - score array is NULL or empty!");
         }
         
-        Debug.Log("Next Turn");
+        GameLog.Info("Next Turn");
 
         // CRITICAL FIX: Save rock positions BEFORE incrementing rockCurrent
         // This ensures we save the CURRENT state (rocks 0 to rockCurrent that have been played)
@@ -1338,7 +1346,7 @@ public class GameManager : MonoBehaviour
             // Don't increment it yet - that happens AFTER save
             gsp.rockCurrent = rockCurrent;
             
-            Debug.Log($"[GM.NextTurn] Saving game state: rockCurrent={rockCurrent}, rocksPlayed={rockCurrent + 1}");
+            GameLog.Info($"[GM.NextTurn] Saving game state: rockCurrent={rockCurrent}, rocksPlayed={rockCurrent + 1}");
             
             SaveGame();
         }
@@ -1402,10 +1410,10 @@ public class GameManager : MonoBehaviour
     #region Scoring and End of Game
     IEnumerator Scoring()
     {
-        Debug.Log("Current rock is " + rockCurrent);
+        GameLog.Info("Current rock is " + rockCurrent);
 
         state = GameState.SCORE;
-        Debug.Log("Scoring");
+        GameLog.Info("Scoring");
 
         if (redHammer)
         {
@@ -1422,7 +1430,7 @@ public class GameManager : MonoBehaviour
 
         if (houseList.Count != 0)
         {
-            Debug.Log("Rocks in house");
+            GameLog.Info("Rocks in house");
             houseList.Clear();
 
             foreach (Rock_List rock in rockList)
@@ -1482,7 +1490,7 @@ public class GameManager : MonoBehaviour
             {
                 gHUD.ScoringUI(yellowTeamName, winningTeamName, houseScore);
             }
-            Debug.Log("End Current is " + gsp.endCurrent);
+            GameLog.Info("End Current is " + gsp.endCurrent);
 
             if (gsp.score.Length < 1)
                 gsp.score = new Vector2Int[endTotal];
@@ -1494,7 +1502,7 @@ public class GameManager : MonoBehaviour
                     if (i < gsp.score.Length)
                         tempScore[i] = gsp.score[i];
                 }
-                Debug.Log("Temp Score Length is " + tempScore.Length);
+                GameLog.Info("Temp Score Length is " + tempScore.Length);
                 gsp.score = new Vector2Int[tempScore.Length];
                 gsp.score = tempScore;
             }
@@ -1522,10 +1530,10 @@ public class GameManager : MonoBehaviour
             // ? CRITICAL: Save score with extra validation
             if (winningTeamName == redTeamName)
             {
-                Debug.Log($"[GameManager.Scoring] Attempting to save Red score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
+                GameLog.Info($"[GameManager.Scoring] Attempting to save Red score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
                 gsp.score[endCurrent] = new Vector2Int(houseScore, 0);
-                Debug.Log($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = ({houseScore}, 0) for {redTeamName}");
-                Debug.Log($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
+                GameLog.Info($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = ({houseScore}, 0) for {redTeamName}");
+                GameLog.Info($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
                 redScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = false;
@@ -1533,10 +1541,10 @@ public class GameManager : MonoBehaviour
             }
             else if (winningTeamName == yellowTeamName)
             {
-                Debug.Log($"[GameManager.Scoring] Attempting to save Yellow score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
+                GameLog.Info($"[GameManager.Scoring] Attempting to save Yellow score: endCurrent={endCurrent}, houseScore={houseScore}, array length={gsp.score.Length}");
                 gsp.score[endCurrent] = new Vector2Int(0, houseScore);
-                Debug.Log($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = (0, {houseScore}) for {yellowTeamName}");
-                Debug.Log($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
+                GameLog.Info($"[GameManager.Scoring] ? SAVED to gsp.score[{endCurrent}] = (0, {houseScore}) for {yellowTeamName}");
+                GameLog.Info($"[GameManager.Scoring] Verification: gsp.score[{endCurrent}] now equals ({gsp.score[endCurrent].x}, {gsp.score[endCurrent].y})");
                 yellowScore += houseScore;
                 //gHUD.ScoringPanel();
                 redHammer = true;
@@ -1580,7 +1588,7 @@ public class GameManager : MonoBehaviour
             
             // Save blank end
             gsp.score[endCurrent] = new Vector2Int(0, 0);
-            Debug.Log($"[GameManager.Scoring] SAVED blank end to gsp.score[{endCurrent}] = (0, 0)");
+            GameLog.Info($"[GameManager.Scoring] SAVED blank end to gsp.score[{endCurrent}] = (0, 0)");
             
             if (redHammer)
             {
@@ -1623,11 +1631,11 @@ public class GameManager : MonoBehaviour
             // CRITICAL: Reset rockCurrent for next end
             int firstPlayerRock = 16 - (gsp.rocks * 2);
             gsp.rockCurrent = firstPlayerRock;
-            Debug.Log($"[GameManager] Cleared rockPos and reset rockCurrent={gsp.rockCurrent} for end transition");
+            GameLog.Info($"[GameManager] Cleared rockPos and reset rockCurrent={gsp.rockCurrent} for end transition");
             
             // CRITICAL FIX: When end finishes (not game), keep gameInProgress = true for next end
             gsp.gameInProgress = true;
-            Debug.Log("[GameManager] End finished - gameInProgress remains true for next end");
+            GameLog.Info("[GameManager] End finished - gameInProgress remains true for next end");
             
             SaveGame();
             yield return new WaitForEndOfFrame();
@@ -1665,8 +1673,8 @@ public class GameManager : MonoBehaviour
         // CRITICAL FIX: Clear game state when game ends
         gsp.loadGame = false;
         gsp.gameInProgress = false;
-        Debug.Log("[GameManager] Game ended - cleared gameInProgress, loadGame flags, and rockPos");
-        Debug.Log($"[GameManager] Final score: {redTeamName} {redScore} - {yellowTeamName} {yellowScore}");
+        GameLog.Info("[GameManager] Game ended - cleared gameInProgress, loadGame flags, and rockPos");
+        GameLog.Info($"[GameManager] Final score: {redTeamName} {redScore} - {yellowTeamName} {yellowScore}");
 
         SaveGame();
 
@@ -1693,11 +1701,11 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("[WaitForClick] Clicked to advance");
+            GameLog.Info("[WaitForClick] Clicked to advance");
         }
         else
         {
-            Debug.Log("[WaitForClick] Auto-advanced after 5 seconds");
+            GameLog.Info("[WaitForClick] Auto-advanced after 5 seconds");
         }
     }
 
@@ -1724,7 +1732,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator LoadGame()
     {
-        Debug.Log("Loading Game!!!!!!!");
+        GameLog.Info("Loading Game!!!!!!!");
         
         redHammer = gsp.redHammer;
         endTotal = gsp.ends;
@@ -1742,7 +1750,7 @@ public class GameManager : MonoBehaviour
         // This code was creating EMPTY arrays and overwriting the loaded scores with zeros!
         // DO NOT reload scores here - they're already correct in gsp.score[]
         
-        Debug.Log($"[GameManager.LoadGame] Score array preserved from save: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
+        GameLog.Info($"[GameManager.LoadGame] Score array preserved from save: End1=({gsp.score[0].x},{gsp.score[0].y}), End2=({(gsp.score.Length > 1 ? gsp.score[1].x : -1)},{(gsp.score.Length > 1 ? gsp.score[1].y : -1)})");
 
         for (int i = 1; i < endCurrent; i++)
         {
@@ -1759,8 +1767,8 @@ public class GameManager : MonoBehaviour
         // When loading, always use the saved rockCurrent value
         // It was already set correctly by SetupGame (new game) or CheckScore (new end)
         rockCurrent = gsp.rockCurrent;
-        Debug.Log($"[GameManager.LoadGame] Restored rockCurrent from save: {rockCurrent}");
-        Debug.Log($"[GameManager.LoadGame] This means rocks 0-{rockCurrent} were already played. Next rock will be {rockCurrent + 1}");
+        GameLog.Info($"[GameManager.LoadGame] Restored rockCurrent from save: {rockCurrent}");
+        GameLog.Info($"[GameManager.LoadGame] This means rocks 0-{rockCurrent} were already played. Next rock will be {rockCurrent + 1}");
 
         //yield return StartCoroutine(WaitForClick());
         //gsp.loadGame = false;
@@ -1772,7 +1780,7 @@ public class GameManager : MonoBehaviour
         {
             yield return StartCoroutine(TournyIntro());
             gsp.tournyIntroShown = true;  // Mark intro as shown
-            Debug.Log("[GameManager] Tourny intro shown and flag set (loaded game)");
+            GameLog.Info("[GameManager] Tourny intro shown and flag set (loaded game)");
         }
 
         // Show announcer dialogue at the START of the end (before placing rocks)
@@ -1790,7 +1798,7 @@ public class GameManager : MonoBehaviour
                 DialogueController.Instance.Show(selectedDialogue);
                 // Wait for dialogue to complete before continuing
                 yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
-                Debug.Log("[GameManager] Announcer dialogue shown at start of loaded end " + endCurrent);
+                GameLog.Info("[GameManager] Announcer dialogue shown at start of loaded end " + endCurrent);
             }
         }
 
@@ -1802,7 +1810,7 @@ public class GameManager : MonoBehaviour
             
             // After restoring rocks, start the next turn directly
             // Don't call CheckScore - rocks are already in final positions
-            Debug.Log($"[GameManager.LoadGame] Rocks restored, starting next turn (rock {rockCurrent + 1})");
+            GameLog.Info($"[GameManager.LoadGame] Rocks restored, starting next turn (rock {rockCurrent + 1})");
             NextTurn();
             yield break; // Don't call CheckScore
         }
@@ -1810,7 +1818,7 @@ public class GameManager : MonoBehaviour
         {
             // CRITICAL FIX: Fresh end - need to place rocks 0 through rockCurrent-1
             // This simulates the first N rocks based on gsp.rocks setting
-            Debug.Log($"[GameManager.LoadGame] Fresh end - placing rocks 0 to {rockCurrent - 1} (gsp.rocks={gsp.rocks})");
+            GameLog.Info($"[GameManager.LoadGame] Fresh end - placing rocks 0 to {rockCurrent - 1} (gsp.rocks={gsp.rocks})");
             
             cm.HouseView();
             rockBar.ResetBar(redHammer);
@@ -1846,12 +1854,12 @@ public class GameManager : MonoBehaviour
             
             rockCurrent--; // CRITICAL: Decrement so NextTurn() increments to correct first rock
             rm.rrp.placed = true;
-            Debug.Log($"[GameManager.LoadGame] Completed placing {rockCurrent + 1} rocks, decremented rockCurrent to {rockCurrent}");
+            GameLog.Info($"[GameManager.LoadGame] Completed placing {rockCurrent + 1} rocks, decremented rockCurrent to {rockCurrent}");
         }
         else if (rockCurrent == 0)
         {
             // Fresh end with no sims - rockCurrent is 0, start first turn directly
-            Debug.Log($"[GameManager.LoadGame] Fresh end, no sims - starting first turn directly");
+            GameLog.Info($"[GameManager.LoadGame] Fresh end, no sims - starting first turn directly");
             rockBar.ResetBar(redHammer);
             rockBar.EndUpdate(yellowScore, redScore);
             yield return new WaitUntil(() => rockBar.rockListUI.Count == 16);
@@ -1872,7 +1880,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator StoryLoad()
     {
-        Debug.Log("Story Game!!!!!!!");
+        GameLog.Info("Story Game!!!!!!!");
         redHammer = storyM.redHammer;
         endTotal = storyM.ends;
         endCurrent = storyM.endCurrent;
@@ -1895,7 +1903,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
             rockCurrent = storyM.rockCurrent - 1;
 
-        Debug.Log("Current Rock is " + rockCurrent);
+        GameLog.Info("Current Rock is " + rockCurrent);
         for (int i = 0; i <= rockCurrent; i++)
         {
             rockList[i].rockInfo.placed = true;
@@ -1917,7 +1925,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i <= rockCurrent; i++)
         {
             Vector2 rockTrans = storyM.rockPos[i];
-            Debug.Log("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
+            GameLog.Info("Rock Position " + i + " " + rockTrans.x + ", " + rockTrans.y);
             rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
 
             if (storyM.rockPos[i].y >= 8f)
@@ -1940,7 +1948,7 @@ public class GameManager : MonoBehaviour
                 rockList[i].rockInfo.released = true;
                 rockList[i].rockInfo.stopped = true;
                 rockList[i].rockInfo.rest = true;
-                Debug.Log("i is equal to " + i);
+                GameLog.Info("i is equal to " + i);
 
                 yield return new WaitForEndOfFrame();
             }
@@ -1975,11 +1983,11 @@ public class GameManager : MonoBehaviour
             yield break;
         }
         
-        Debug.Log($"[GameManager] PlaceRocks() - Restoring {rockCurrent + 1} rocks from save");
-        Debug.Log($"[GameManager] gsp.loadGame = {gsp.loadGame}");
-        Debug.Log($"[GameManager] gsp.rockPos.Length = {gsp.rockPos.Length}");
-        Debug.Log($"[GameManager] gsp.rockInPlay.Length = {gsp.rockInPlay.Length}");
-        Debug.Log($"[GameManager] rockList.Count = {rockList.Count}");
+        GameLog.Info($"[GameManager] PlaceRocks() - Restoring {rockCurrent + 1} rocks from save");
+        GameLog.Info($"[GameManager] gsp.loadGame = {gsp.loadGame}");
+        GameLog.Info($"[GameManager] gsp.rockPos.Length = {gsp.rockPos.Length}");
+        GameLog.Info($"[GameManager] gsp.rockInPlay.Length = {gsp.rockInPlay.Length}");
+        GameLog.Info($"[GameManager] rockList.Count = {rockList.Count}");
 
         // Mark rocks as placed
         for (int i = 0; i <= rockCurrent; i++)
@@ -2016,7 +2024,7 @@ public class GameManager : MonoBehaviour
                 {
                     // Rock is IN PLAY - restore position
                     Vector2 rockTrans = gsp.rockPos[i];
-                    Debug.Log($"[GameManager] Restoring Rock {i}: pos=({rockTrans.x:F2}, {rockTrans.y:F2}), inPlay=true");
+                    GameLog.Info($"[GameManager] Restoring Rock {i}: pos=({rockTrans.x:F2}, {rockTrans.y:F2}), inPlay=true");
                     
                     rockList[i].rock.GetComponent<Rigidbody2D>().position = rockTrans;
                     rockList[i].rock.GetComponent<SpriteRenderer>().enabled = true;
@@ -2039,7 +2047,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     // Rock is OUT OF PLAY - hide it
-                    Debug.Log($"[GameManager] Rock {i} is OUT OF PLAY - hiding");
+                    GameLog.Info($"[GameManager] Rock {i} is OUT OF PLAY - hiding");
                     rockList[i].rock.SetActive(false);
                     rockList[i].rockInfo.inPlay = false;
                     rockList[i].rockInfo.outOfPlay = true;
@@ -2063,14 +2071,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         rm.rrp.placed = true;
         
-        Debug.Log("[GameManager] PlaceRocks() complete - all rocks restored");
+        GameLog.Info("[GameManager] PlaceRocks() complete - all rocks restored");
     }
 
     IEnumerator TournyIntro()
     {
         CareerManager careerM = FindFirstObjectByType<CareerManager>();
         if (careerM != null)
-            Debug.Log("ID is " + careerM.currentTourny.id);
+            GameLog.Info("ID is " + careerM.currentTourny.id);
 
         // Check if tourny intro components exist
         if (tournyIntroGO == null)
@@ -2115,7 +2123,7 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("[TournyIntro] Skipped by click at " + elapsed.ToString("F2") + "s");
+            GameLog.Info("[TournyIntro] Skipped by click at " + elapsed.ToString("F2") + "s");
         }
 
         tournyIntroGO.SetActive(false);
@@ -2129,13 +2137,13 @@ public class GameManager : MonoBehaviour
             if (careerM.currentTourny != null && careerM.currentTourny.introDialogue != null)
             {
                 introToShow = careerM.currentTourny.introDialogue;
-                Debug.Log($"[GameManager] Showing tournament-specific intro for {careerM.currentTourny.name}");
+                GameLog.Info($"[GameManager] Showing tournament-specific intro for {careerM.currentTourny.name}");
             }
             // Fallback to generic Coach_Welcome if no tournament intro assigned
             else if (Coach_Welcome != null)
             {
                 introToShow = Coach_Welcome;
-                Debug.Log("[GameManager] No tournament intro assigned, using Coach_Welcome");
+                GameLog.Info("[GameManager] No tournament intro assigned, using Coach_Welcome");
             }
             
             // Show the dialogue and wait for it to complete
@@ -2147,7 +2155,7 @@ public class GameManager : MonoBehaviour
                     
                 DialogueController.Instance.Show(introToShow);
                 yield return new WaitUntil(() => !DialogueController.Instance.IsShowing);
-                Debug.Log("[GameManager] Intro dialogue completed");
+                GameLog.Info("[GameManager] Intro dialogue completed");
             }
             else
             {

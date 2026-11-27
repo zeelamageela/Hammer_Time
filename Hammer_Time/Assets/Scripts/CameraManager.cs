@@ -23,13 +23,21 @@ public class CameraManager : MonoBehaviour
 
     public HouseClick houseClick;
 
-    // Composition easing state
-    private bool isEasingComposition = false;
-    private float compositionEaseStartY;
-    private float compositionEaseStartScreenY;
-    private float compositionEaseTargetScreenY = 0.35f;
-    private Transform currentFollowTarget;
-    private Coroutine deadZoneShrinkCoroutine;
+    // Following a rock (see RockFollow) and framing the next shot (see ShotSetup): the virtual camera sits exactly on
+    // an anchor that this script moves
+    const float ShotSize = 8.5f;          // orthographic size while aiming
+    const float ShotViewLead = 1f;        // camera height over the launcher while aiming: hack mid-screen, room below to pull back
+    const int LivePriority = 20;          // above the scene's other virtual camera ("CM vcam2", which tracks the aim circle)
+    const float FollowSize = 7f;          // orthographic size while following
+    const float FollowLead = 4.2f;        // how far above the rock the camera settles (a fifth up the screen, over the score bar)
+    const float FollowSettleDistance = 10f; // a thrown rock is framed after travelling this far...
+    const float FollowSettleSeconds = 1f;   // ...one picked up further down the ice, after this long
+    const float ThrownFromY = -20f;         // a follow starting below this is a delivery
+    const float FurthestBehindHack = 1f;    // about as far behind the launcher as the shooter is ever drawn holding the rock
+    CinemachineConfiner2D confiner;
+    float confinerDamping;
+    Transform followed, followAnchor;
+    float followStartY, followStartLead, followStartSize, followStartTime;
 
     private void Start()
     {
@@ -48,6 +56,8 @@ public class CameraManager : MonoBehaviour
         house.depth = -1;
         ui.depth = 3;
         top.depth = 2;
+
+        if (vcam != null) vcam.Priority = LivePriority;
     }
 
     private void Update()
@@ -88,49 +98,96 @@ public class CameraManager : MonoBehaviour
             }
         }
         
-        // Smooth composition easing during rock follow
-        // CRITICAL: Only ease when rock is in the transition zone (between start and y=-3)
-        // Stop easing once InPlayZoom takes over or rock passes y=-3
-        if (isEasingComposition && currentFollowTarget != null && vcam_ft != null)
-        {
-            float rockY = currentFollowTarget.position.y;
-            
-            // Ease from start position to target (0.35f) as rock moves from start to y=-3
-            // This creates a smooth transition instead of a snap
-            if (rockY <= -3f)
-            {
-                // Reached target Y, lock to final composition and stop easing
-                var composition = vcam_ft.Composition;
-                composition.ScreenPosition = new Vector2(0f, compositionEaseTargetScreenY);
-                vcam_ft.Composition = composition;
-                isEasingComposition = false;
-                Debug.Log("[CameraManager] Composition easing complete at y=-3");
-            }
-            else if (rockY < compositionEaseStartY)
-            {
-                // Ease based on rock's Y position
-                float t = Mathf.InverseLerp(compositionEaseStartY, -3f, rockY);
-                t = Mathf.SmoothStep(0f, 1f, t); // Smooth easing curve
-                
-                float easedScreenY = Mathf.Lerp(compositionEaseStartScreenY, compositionEaseTargetScreenY, t);
-                
-                var composition = vcam_ft.Composition;
-                composition.ScreenPosition = new Vector2(0f, easedScreenY);
-                vcam_ft.Composition = composition;
-            }
-        }
+        FollowRock();
     }
 
-    public void ShotSetup()
+    /// <summary>
+    /// Hands the camera to the anchor: it sits exactly on it, X centred, with nothing else (screen offset, dead zone, limits,
+    /// damping) pulling it about. The edge confiner still keeps it on the ice, but without its damping, which carried one
+    /// view's correction into the next and let it go over seconds.
+    /// </summary>
+    void RideAnchor()
     {
-        vcam.enabled = false;
-        
-        // Cinemachine 3.x: Lens properties
+        if (vcam_ft != null)
+        {
+            var composition = vcam_ft.Composition;
+            composition.ScreenPosition = Vector2.zero;
+            composition.DeadZone = new ScreenComposerSettings.DeadZoneSettings { Enabled = false, Size = Vector2.zero };
+            composition.HardLimits = new ScreenComposerSettings.HardLimitSettings { Enabled = false, Size = Vector2.one, Offset = Vector2.zero };
+            vcam_ft.Composition = composition;
+            vcam_ft.Damping = Vector3.zero;
+            vcam_ft.CameraDistance = 10f;
+            vcam_ft.TargetOffset = Vector3.zero;
+        }
+
+        if (confiner == null)
+        {
+            confiner = vcam.GetComponent<CinemachineConfiner2D>();
+            if (confiner != null) confinerDamping = confiner.Damping;
+        }
+        if (confiner != null) confiner.Damping = 0f;
+
+        vcam.Target.TrackingTarget = followAnchor;
+        vcam.transform.rotation = Quaternion.identity;
+        // This has to be the camera on screen. It used to win that by being switched off and on again for every shot.
+        vcam.Priority = LivePriority;
+        vcam.enabled = true;
+    }
+
+    /// <summary>
+    /// Moves the anchor with the rock. It starts exactly where the camera is, so there is no jump and no wait, and eases the
+    /// rock into its place on screen as it travels.
+    /// </summary>
+    void FollowRock()
+    {
+        if (followed == null) return;
+        float y = FollowY(followed);
+        float t = followStartY < ThrownFromY
+            ? Mathf.InverseLerp(followStartY, followStartY + FollowSettleDistance, y)
+            : Mathf.Clamp01((Time.time - followStartTime) / FollowSettleSeconds);
+        t = Mathf.SmoothStep(0f, 1f, t);
+
+        followAnchor.position = new Vector3(0f, y + Mathf.Lerp(followStartLead, FollowLead, t), followed.position.z);
+
         var lens = vcam.Lens;
-        lens.OrthographicSize = 8.5f;
+        lens.OrthographicSize = Mathf.Lerp(followStartSize, FollowSize, t);
         vcam.Lens = lens;
-        
-        Debug.Log("Shot Setup");
+    }
+
+    /// <summary>
+    /// The height the camera frames a rock at. A pulled-back rock can sit well behind the hack until the push-off moves it
+    /// up to where the shooter is drawn holding it (see RockSlide.PushOff); the camera ignores that stretch, so it never jumps.
+    /// </summary>
+    float FollowY(Transform rock)
+    {
+        return Mathf.Max(rock.position.y, launcher.position.y - FurthestBehindHack);
+    }
+
+    /// <summary>Hands the camera back to whatever frames it next.</summary>
+    void StopFollowing()
+    {
+        followed = null;
+        if (confiner != null) confiner.Damping = confinerDamping;
+    }
+
+    /// <summary>
+    /// Cuts straight to the view for the next shot. A player gets the hack mid-screen, with room below it to pull back. A
+    /// computer turn needs no room, so it opens on the view the rock is followed with: the hack near the bottom.
+    /// </summary>
+    public void ShotSetup(bool computerTurn = false)
+    {
+        StopFollowing();
+        if (followAnchor == null) followAnchor = new GameObject("Camera Follow Anchor").transform;
+
+        float lead = computerTurn ? FollowLead : ShotViewLead;
+        followAnchor.position = new Vector3(0f, launcher.position.y + lead, launcher.position.z);
+        var lens = vcam.Lens;
+        lens.OrthographicSize = computerTurn ? FollowSize : ShotSize;
+        vcam.Lens = lens;
+        RideAnchor();
+        vcam.PreviousStateIsValid = false;   // a cut: nothing carries over from the view before
+
+        GameLog.Info("Shot Setup");
         main.depth = 1;
         house.depth = -1;
         ui.depth = 3;
@@ -138,26 +195,11 @@ public class CameraManager : MonoBehaviour
         aim.depth = -1;
 
         main.rect = new Rect(new Vector2(0f, 0f), new Vector2(1f, 1f));
-        
-        // Smooth 0.8s transition from rock stopped position to shot setup
-        if (vcam_ft != null)
-        {
-            // Damping of 1.2 gives approximately 0.8s smooth transition
-            vcam_ft.Damping = new Vector3(1.2f, 1.2f, 1.2f);
-        }
-
-        vcam_ft.TargetOffset = new Vector3(0f, -12.5f, 0f); // Offset to keep rock centered
-
-        vcam.Target.TrackingTarget = launcher;
-        
-        // Disable composition easing (not needed during setup)
-        isEasingComposition = false;
-        
-        vcam.enabled = true;
     }
 
     public void PowerPhaseSetup()
     {
+        StopFollowing();
         // Configure camera for flick shot power phase (drag input from launcher to hog line)
         // Shows Y=-25 (launcher) to Y=-16 (hog line) = 9 units vertical span
         vcam.enabled = false;
@@ -168,7 +210,7 @@ public class CameraManager : MonoBehaviour
         lens.OrthographicSize = 6.5f;
         vcam.Lens = lens;
         
-        Debug.Log("[CameraManager] Power Phase Setup - Framing drag zone (Y=-25 to Y=-16)");
+        GameLog.Info("[CameraManager] Power Phase Setup - Framing drag zone (Y=-25 to Y=-16)");
         
         // Configure camera depths
         main.depth = 1;
@@ -215,12 +257,9 @@ public class CameraManager : MonoBehaviour
         // Track launcher position (where player starts power drag)
         vcam.Target.TrackingTarget = launcher;
         
-        // Disable composition easing (not needed during power phase)
-        isEasingComposition = false;
-        
         vcam.enabled = true;
         
-        Debug.Log($"[CameraManager] Power phase camera active - Ortho size: {lens.OrthographicSize}, Screen Y: 0.20");
+        GameLog.Info($"[CameraManager] Power phase camera active - Ortho size: {lens.OrthographicSize}, Screen Y: 0.20");
     }
     
     // Power phase constants (match FlickShotController values)
@@ -277,97 +316,29 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    /// <summary>Follows a rock up and down the ice, starting at once from wherever the camera is now.</summary>
     public void RockFollow(Transform tFollowTarget)
     {
-        Debug.Log($"[CameraManager] RockFollow - setting house.depth=-1 (was {house.depth})");
-        
-        // CRITICAL: Lock camera X position to 0 IMMEDIATELY
-        // This prevents Cinemachine from tracking rock's X position
-        Vector3 camPos = vcam.transform.position;
-        camPos.x = 0f;
-        vcam.transform.position = camPos;
-        
-        // Cinemachine 3.x: Configure to follow rock AND keep entire play area visible!
-        if (vcam_ft != null)
-        {
-            // LOCKED X-AXIS: Camera stays centered (X=0), only follows Y-axis
-            // Damping X=9999 means camera will NEVER follow X axis
-            vcam_ft.Damping = new Vector3(9999f, 0f, 9999f); // X/Z locked completely, Y follows instantly
-            
-            // Configure composition to keep entire play area in frame
-            var composition = vcam_ft.Composition;
-            
-            // START EASING: Calculate where rock currently is on screen
-            Vector3 rockScreenPos = main.WorldToViewportPoint(tFollowTarget.position);
-            compositionEaseStartScreenY = rockScreenPos.y;
-            compositionEaseStartY = tFollowTarget.position.y;
-            compositionEaseTargetScreenY = 0.35f; // Target: lower third of screen
-            currentFollowTarget = tFollowTarget;
-            isEasingComposition = true;
-            
-            // Start at current position, will ease to target in Update()
-            composition.ScreenPosition = new Vector2(0f, compositionEaseStartScreenY);
-            
-            // LARGER INITIAL DEAD ZONE: Prevents hitch when transitioning from pullback to follow
-            // This gives the rock some "breathing room" before camera starts chasing
-            composition.DeadZone = new ScreenComposerSettings.DeadZoneSettings
-            {
-                Enabled = true,
-                Size = new Vector2(0.3f, 0.3f) // Larger dead zone on release (was 0.05f)
-            };
-            
-            // Wide hard limits - let rock move across screen freely
-            composition.HardLimits = new ScreenComposerSettings.HardLimitSettings
-            {
-                Enabled = true,
-                Size = new Vector2(0.95f, 0.95f), // Almost full screen
-                Offset = Vector2.zero
-            };
-            
-            vcam_ft.Composition = composition;
-            
-            // Set orthographic size to show full play area (hog line to back of house)
-            // Distance from hog line (y=-4) to back of house (y=8) = 12 units
-            // Add buffer: ortho size = 7 shows ~14 units vertically
-            vcam_ft.CameraDistance = 10f;
-            
-            var lens = vcam.Lens;
-            lens.OrthographicSize = 7f; // Shows full play area!
-            vcam.Lens = lens;
-            
-            // CRITICAL: No target offset (prevents rotation following!)
-            vcam_ft.TargetOffset = Vector3.zero;
-        }
-        
+        if (followAnchor == null) followAnchor = new GameObject("Camera Follow Anchor").transform;
+
+        followed = tFollowTarget;
+        followStartY = FollowY(tFollowTarget);
+        followStartLead = main.transform.position.y - followStartY;
+        followStartSize = main.orthographicSize;
+        followStartTime = Time.time;
+        FollowRock();
+        RideAnchor();
+
         aim.depth = -1;
         main.depth = 1;
         house.depth = -1;
         top.depth = -1;
         ui.depth = 3;
-
-        // Cinemachine 3.x: Track POSITION only (not rotation!)
-        vcam.Target.TrackingTarget = tFollowTarget;
-        
-        // CRITICAL: Lock camera rotation to prevent spinning with rock!
-        if (vcam != null)
-        {
-            vcam.transform.rotation = Quaternion.identity; // Lock to world up
-        }
-        
-        vcam.enabled = true;
-        
-        // Start dead zone shrinking coroutine for smooth transition
-        if (deadZoneShrinkCoroutine != null)
-        {
-            StopCoroutine(deadZoneShrinkCoroutine);
-        }
-        deadZoneShrinkCoroutine = StartCoroutine(ShrinkDeadZone());
-        
-        Debug.Log($"[CameraManager] RockFollow started - initial screen Y: {compositionEaseStartScreenY:F2}, will ease to {compositionEaseTargetScreenY:F2}");
     }
 
     public void RockZoom(Transform tFollowTarget)
     {
+        StopFollowing();
         main.depth = 1;
         house.depth = -1;
         top.depth = -1;
@@ -383,38 +354,6 @@ public class CameraManager : MonoBehaviour
         vcam.Lens = lens;
     }
     
-    private IEnumerator ShrinkDeadZone()
-    {
-        // Gradually shrink dead zone from large (0.3) to small (0.05) over 1 second
-        // This prevents the initial hitch while still allowing responsive tracking later
-        float elapsed = 0f;
-        float duration = 1.0f;
-        float startSize = 0.3f;
-        float endSize = 0.05f;
-        
-        while (elapsed < duration && vcam_ft != null)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-            
-            // Ease-out curve for smooth shrinking
-            t = 1f - Mathf.Pow(1f - t, 2f);
-            
-            float currentSize = Mathf.Lerp(startSize, endSize, t);
-            
-            var composition = vcam_ft.Composition;
-            composition.DeadZone = new ScreenComposerSettings.DeadZoneSettings
-            {
-                Enabled = true,
-                Size = new Vector2(currentSize, currentSize)
-            };
-            vcam_ft.Composition = composition;
-            
-            yield return null;
-        }
-        
-        Debug.Log("[CameraManager] Dead zone shrink complete - now using tight tracking");
-    }
     public void ZoomOutTrack(float dist)
     {
         // Cinemachine 3.x: Lens is a struct, must get/set
@@ -424,9 +363,7 @@ public class CameraManager : MonoBehaviour
     }
     public void InPlayZoom(float dist)
     {
-        // CRITICAL: Disable composition easing when InPlayZoom takes over
-        // This prevents fighting between easing logic and zoom logic
-        isEasingComposition = false;
+        StopFollowing();
         
         // Cinemachine 3.x: Smooth zoom based on distance from house
         var lens = vcam.Lens;
@@ -465,7 +402,7 @@ public class CameraManager : MonoBehaviour
 
     public void HouseView()
     {
-        Debug.Log("House View");
+        GameLog.Info("House View");
 
         if (house.depth == 5)
         {
@@ -481,21 +418,21 @@ public class CameraManager : MonoBehaviour
 
     public void HouseViewOn()
     {
-        Debug.Log("[CameraManager] HouseViewOn");
+        GameLog.Info("[CameraManager] HouseViewOn");
         house.depth = 5;
         ui.depth = 6;
     }
 
     public void HouseViewOff()
     {
-        Debug.Log("[CameraManager] HouseViewOff");
+        GameLog.Info("[CameraManager] HouseViewOff");
         house.depth = -1;
         ui.depth = 3;
     }
 
     public void TopViewAuto()
     {
-        Debug.Log("Top View Auto");
+        GameLog.Info("Top View Auto");
 
         if (top.depth == 2)
         {
@@ -509,7 +446,7 @@ public class CameraManager : MonoBehaviour
 
     public void TopView()
     {
-        Debug.Log("Top View");
+        GameLog.Info("Top View");
 
         if (top.depth == 2)
         {

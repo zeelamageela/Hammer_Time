@@ -138,13 +138,23 @@ public class TeamMenu : MonoBehaviour
             enduranceSlider.value = teamBaseEndurance;
             healthSlider.value = teamBaseCohesion;
 
-            // Mod sliders show TEAM total + equipment/sponsor bonuses
-            drawModSlider.value = teamBaseAim + cm.modStats.aimAccuracy;
-            guardModSlider.value = teamBaseFinesse + cm.modStats.finesseAccuracy;
-            takeOutModSlider.value = teamBaseWeight + cm.modStats.weightAccuracy;
-            strengthModSlider.value = teamBaseStrength + cm.modStats.sweepStrength;
-            enduranceModSlider.value = teamBaseEndurance + cm.modStats.sweepEndurance;
-            healthModSlider.value = teamBaseCohesion + cm.modStats.sweepCohesion;
+            // Mod sliders show TEAM total + what gear and training add (the same bonus matches use)
+            CareerStats bonus = cm.SkillBonus;
+            // In the scene drawModSlider sits on the Weight row and takeOutModSlider on the Aim row (the other way round from the
+            // plain bars), so those two are fed to match the row they are on.
+            drawModSlider.value = teamBaseWeight + bonus.weightAccuracy;
+            guardModSlider.value = teamBaseFinesse + bonus.finesseAccuracy;
+            takeOutModSlider.value = teamBaseAim + bonus.aimAccuracy;
+            strengthModSlider.value = teamBaseStrength + bonus.sweepStrength;
+            enduranceModSlider.value = teamBaseEndurance + bonus.sweepEndurance;
+            healthModSlider.value = teamBaseCohesion + bonus.sweepCohesion;
+
+            ShowBonus(drawModSlider, bonus.weightAccuracy);
+            ShowBonus(guardModSlider, bonus.finesseAccuracy);
+            ShowBonus(takeOutModSlider, bonus.aimAccuracy);
+            ShowBonus(strengthModSlider, bonus.sweepStrength);
+            ShowBonus(enduranceModSlider, bonus.sweepEndurance);
+            ShowBonus(healthModSlider, bonus.sweepCohesion);
 
             xp = cm.xp;
             cash = cm.cash;
@@ -165,9 +175,41 @@ public class TeamMenu : MonoBehaviour
         }
     }
 
+    [Header("Gear and training bonus beside each stat bar")]
+    public Color bonusTextColor = new Color(0.196f, 0.196f, 0.196f, 1f);
+    public int bonusTextSize = 44;
+
+    readonly Dictionary<Slider, Text> bonusTexts = new Dictionary<Slider, Text>();
+
+    /// <summary>"+5" at the right-hand end of a stat bar (nothing when there is no bonus). The label is made the first time it is needed.</summary>
+    void ShowBonus(Slider bar, int bonus)
+    {
+        if (bar == null) return;
+        if (!bonusTexts.TryGetValue(bar, out Text label) || label == null)
+        {
+            var go = new GameObject("Bonus", typeof(RectTransform));
+            go.layer = bar.gameObject.layer;
+            var rect = (RectTransform)go.transform;
+            rect.SetParent(bar.transform, false);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1f, 0.5f);
+            rect.anchoredPosition = new Vector2(-12f, 0f);
+            rect.sizeDelta = new Vector2(150f, 56f);
+            label = go.AddComponent<Text>();
+            label.font = cashText != null ? cashText.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            label.fontSize = bonusTextSize;
+            label.alignment = TextAnchor.MiddleRight;
+            label.horizontalOverflow = HorizontalWrapMode.Overflow;
+            label.verticalOverflow = VerticalWrapMode.Overflow;
+            label.color = bonusTextColor;
+            label.raycastTarget = false;
+            bonusTexts[bar] = label;
+        }
+        label.text = bonus != 0 ? bonus.ToString("+0;-0") : "";
+    }
+
     public void CashDeltaText(float cashDeltaIn)
     {
-        Debug.Log("Cash Delta Text is pressed");
+        GameLog.Info("Cash Delta Text is pressed");
         Animator textAnim = cashDeltaText.GetComponent<Animator>();
         if (cashDeltaIn != 0)
         {
@@ -190,7 +232,7 @@ public class TeamMenu : MonoBehaviour
     }
     public void ExpenseDeltaText(float deltaIn)
     {
-        Debug.Log("Expense Delta Text is pressed");
+        GameLog.Info("Expense Delta Text is pressed");
         Animator textAnim = expenseDeltaText.GetComponent<Animator>();
         if (cdCount > 0 && deltaIn != 0)
         {
@@ -212,7 +254,7 @@ public class TeamMenu : MonoBehaviour
     }
     public void IncomeDeltaText(float deltaIn)
     {
-        Debug.Log("Income Delta Text is pressed");
+        GameLog.Info("Income Delta Text is pressed");
         Animator textAnim = incomeDeltaText.GetComponent<Animator>();
         if (cdCount > 0 && deltaIn != 0)
         {
@@ -310,7 +352,7 @@ public class TeamMenu : MonoBehaviour
 
             if (cm.week == 2)
             {
-                Debug.Log("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
+                GameLog.Info("TEAM MENU - Player Rank is " + cm.playerTeam.rank);
             }
             cm.teamPaid = false;
 
@@ -456,7 +498,7 @@ public class TeamMenu : MonoBehaviour
             replaceMemberDisplay.charName.transform.parent.GetChild(4).GetComponent<Text>().text = "Third";
 
         float moneyToSpend = cm.cash - pm.costPerWeek;
-        Debug.Log("Money to spend preTeam is " + moneyToSpend);
+        GameLog.Info("Money to spend preTeam is " + moneyToSpend);
 
         for (int i = 0; i < activePlayers.Length; i++)
         {
@@ -465,7 +507,7 @@ public class TeamMenu : MonoBehaviour
                 moneyToSpend -= (activePlayers[i].cost);
             }
         }
-        Debug.Log("Money to Spend postTeam is " + moneyToSpend);
+        GameLog.Info("Money to Spend postTeam is " + moneyToSpend);
         for (int i = 0; i < freeAgentDisplay.Length; i++)
         {
             freeAgentDisplay[i].charName.text = freeAgents[i].name;
@@ -574,12 +616,12 @@ public class TeamMenu : MonoBehaviour
                 // IMPORTANT: Update team skills from the new player roster
                 cm.teams[i].UpdateTeamSkillsFromPlayers();
                 
-                Debug.Log($"[TeamMenu] Team skills updated: weight={cm.teams[i].weight}, strength={cm.teams[i].strength}");
+                GameLog.Info($"[TeamMenu] Team skills updated: weight={cm.teams[i].weight}, strength={cm.teams[i].strength}");
                 break; // Only one player team expected
             }
         }
 
-        Debug.Log("Team Cost is " + teamCost);
+        GameLog.Info("Team Cost is " + teamCost);
         
         cm.teamPaid = true;
         //teamMenu.SetActive(false);
@@ -685,7 +727,7 @@ public class TeamMenu : MonoBehaviour
 
     void Shuffle(Player[] a)
     {
-        Debug.Log("Shuffling");
+        GameLog.Info("Shuffling");
         // Loops through array
         for (int i = a.Length - 1; i > 0; i--)
         {

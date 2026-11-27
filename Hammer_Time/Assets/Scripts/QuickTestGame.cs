@@ -50,6 +50,12 @@ public class QuickTestGame : MonoBehaviour
     [Range(0, 100)]
     public int playerConsistency = 50;
 
+    [Header("Pull-back (applies live while a quick test is running)")]
+    [Tooltip("The small circle under your thumb. Off is the new look.")]
+    public bool thumbCircle = false;
+    [Tooltip("How far sideways the rock can be pulled. 0.34 is the old limit; wider aims further for the same thumb travel.")]
+    [Range(0.34f, 0.55f)] public float aimCap = 0.40f;
+
     [Header("Training levels (apply live while a quick test is running)")]
     [Tooltip("Sweep Training: 1 carving, 2 endurance, 3 strength, 4 cohesion")]
     [Range(0, 4)] public int sweepLevel = 4;
@@ -89,7 +95,7 @@ public class QuickTestGame : MonoBehaviour
         PlayerPrefs.SetInt("QuickTestMode", 0);
         PlayerPrefs.SetInt("DisableSweeping", 0);
         PlayerPrefs.Save();
-        Debug.Log("[QuickTestGame] Quick Test Mode flags CLEARED - normal game mode restored");
+        GameLog.Info("[QuickTestGame] Quick Test Mode flags CLEARED - normal game mode restored");
     }
     
     private void OnDestroy()
@@ -147,7 +153,7 @@ public class QuickTestGame : MonoBehaviour
                 CopyInto(cm.oppStats, snapOpp);
                 cm.equipmentBonus = snapEquip != null ? snapEquip : new CareerStats();
                 cm.trainingLevels = snapTraining;
-                Debug.Log("[QuickTestGame] Session over: the career's own stats and training are back");
+                GameLog.Info("[QuickTestGame] Session over: the career's own stats and training are back");
             }
             haveSnapshot = false;
         }
@@ -180,7 +186,7 @@ public class QuickTestGame : MonoBehaviour
             }
             else
             {
-                Debug.Log("[QuickTestGame] ?? Takeout practice mode (W) only works during a game! Press Q to start a test game first.");
+                GameLog.Info("[QuickTestGame] ?? Takeout practice mode (W) only works during a game! Press Q to start a test game first.");
             }
         }
         
@@ -194,7 +200,7 @@ public class QuickTestGame : MonoBehaviour
             }
             else
             {
-                Debug.Log("[QuickTestGame] ?? Runback practice mode (E) only works during a game! Press Q to start a test game first.");
+                GameLog.Info("[QuickTestGame] ?? Runback practice mode (E) only works during a game! Press Q to start a test game first.");
             }
         }
     }
@@ -219,6 +225,8 @@ public class QuickTestGame : MonoBehaviour
             cm.trainingLevels = levels;
             TrainingAids.Refresh();   // the aids read the levels once when a match starts; do it again now
         }
+        PullbackSettings.ShowThumbCircle = thumbCircle;
+        PullbackSettings.AimCap = aimCap;
         AimFuzzBands.ConeStrength = coneStrength;
         AimFuzzBands.OvalFill = ovalFill;
         AimFuzzBands.OvalOutline = ovalOutline;
@@ -230,7 +238,7 @@ public class QuickTestGame : MonoBehaviour
     /// </summary>
     public void StartQuickTestGame()
     {
-        Debug.Log("[QuickTestGame] Starting instant test game - Press Q to restart anytime!");
+        GameLog.Info("[QuickTestGame] Starting instant test game - Press Q to restart anytime!");
         SessionActive = true;   // from now on the career is not saved (see CareerManager.SaveCareer) and its stats are restored at the end
         
         // Find or create GameSettingsPersist
@@ -267,13 +275,13 @@ public class QuickTestGame : MonoBehaviour
         {
             gsp.aiRed = true;
             gsp.aiYellow = true;
-            Debug.Log("[QuickTestGame] AI vs AI mode - both teams controlled by AI");
+            GameLog.Info("[QuickTestGame] AI vs AI mode - both teams controlled by AI");
         }
         else
         {
             gsp.aiRed = false;  // Player is red
             gsp.aiYellow = true; // AI is yellow
-            Debug.Log("[QuickTestGame] Player vs AI mode");
+            GameLog.Info("[QuickTestGame] Player vs AI mode");
         }
         
         if (randomizeScores)
@@ -299,7 +307,7 @@ public class QuickTestGame : MonoBehaviour
         }
         else
             gsp.redHammer = false;
-        Debug.Log($"[QuickTestGame] ?? LOCKED: Score {gsp.redScore}-{gsp.yellowScore}, {(gsp.redHammer ? "RED" : "YELLOW")} has hammer");
+        GameLog.Info($"[QuickTestGame] ?? LOCKED: Score {gsp.redScore}-{gsp.yellowScore}, {(gsp.redHammer ? "RED" : "YELLOW")} has hammer");
         
         // Scores
         gsp.score = new Vector2Int[endsToPlay];
@@ -418,11 +426,11 @@ public class QuickTestGame : MonoBehaviour
         // Load the game scene
         SceneManager.LoadScene("TournyGame");
         
-        Debug.Log($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
-        Debug.Log($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill}, weight {playerWeightSkill} and consistency {playerConsistency} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
-        Debug.Log($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
-        Debug.Log($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
-        Debug.Log($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
+        GameLog.Info($"[QuickTestGame] ? DETERMINISTIC MODE ENABLED!");
+        GameLog.Info($"[QuickTestGame] Player stats: 85/100, except aim {playerAimSkill}, weight {playerWeightSkill} and consistency {playerConsistency} (+ training {cm?.TrainingBonus.aimAccuracy}/{cm?.TrainingBonus.weightAccuracy})"); //(NO randomness, NO skill penalties)");
+        GameLog.Info($"[QuickTestGame] Physics multipliers: LOCKED to 1.0 (perfect)");
+        GameLog.Info($"[QuickTestGame] ? SWEEPING DISABLED for perfect distance consistency");
+        GameLog.Info($"[QuickTestGame] Test game started: {rocksPerTeam} rocks, {endsToPlay} ends, opponent stats: {opponentStatValue}");
     }
     
     /// <summary>
@@ -440,9 +448,9 @@ public class QuickTestGame : MonoBehaviour
     /// </summary>
     private IEnumerator ActivateTakeoutPracticeMode(GameManager gm)
     {
-        Debug.Log("?? [TAKEOUT PRACTICE MODE] Activated! Setting up 4 red rocks in house...");
-        Debug.Log("?? Yellow AI will now attempt takeouts on all red rocks!");
-        Debug.Log("?? Press W again to reset and try more takeouts");
+        GameLog.Info("?? [TAKEOUT PRACTICE MODE] Activated! Setting up 4 red rocks in house...");
+        GameLog.Info("?? Yellow AI will now attempt takeouts on all red rocks!");
+        GameLog.Info("?? Press W again to reset and try more takeouts");
         
         // 1. CLEAR THE HOUSE - Remove all rocks currently in play
         foreach (var rockEntry in gm.rockList)
@@ -514,7 +522,7 @@ public class QuickTestGame : MonoBehaviour
                     rb.angularVelocity = 0f;
                 }
                 
-                Debug.Log($"?? Placed {rockEntry.rockInfo.teamName} Rock #{rockEntry.rockInfo.rockNumber} at {redRockPositions[placedRocks]}");
+                GameLog.Info($"?? Placed {rockEntry.rockInfo.teamName} Rock #{rockEntry.rockInfo.rockNumber} at {redRockPositions[placedRocks]}");
                 placedRocks++;
             }
         }
@@ -552,16 +560,16 @@ public class QuickTestGame : MonoBehaviour
                 }
             }
             
-            Debug.Log($"?? House list rebuilt with {gm.houseList.Count} red rocks");
-            Debug.Log($"?? Forcing Yellow AI to shoot rock #{yellowRockToShoot}...");
+            GameLog.Info($"?? House list rebuilt with {gm.houseList.Count} red rocks");
+            GameLog.Info($"?? Forcing Yellow AI to shoot rock #{yellowRockToShoot}...");
             
             // Force yellow turn
             gm.aiTeamYellow = true; // Ensure yellow is AI controlled
             gm.OnYellowTurn();
             
-            Debug.Log("?? [TAKEOUT PRACTICE] Yellow AI will now attempt takeout!");
-            Debug.Log("?? Watch the diagnostics to see hit quality and accuracy");
-            Debug.Log("?? Press W again after shot completes to practice more takeouts");
+            GameLog.Info("?? [TAKEOUT PRACTICE] Yellow AI will now attempt takeout!");
+            GameLog.Info("?? Watch the diagnostics to see hit quality and accuracy");
+            GameLog.Info("?? Press W again after shot completes to practice more takeouts");
         }
         else
         {
@@ -576,9 +584,9 @@ public class QuickTestGame : MonoBehaviour
     /// </summary>
     private IEnumerator ActivateRunbackPracticeMode(GameManager gm)
     {
-        Debug.Log("?? [RUNBACK PRACTICE MODE] Activated! Setting up finesse-protected target...");
-        Debug.Log("?? Yellow AI will attempt to HIT THE GUARD THROUGH to remove the target!");
-        Debug.Log("?? Press E again to reset and try different alignments");
+        GameLog.Info("?? [RUNBACK PRACTICE MODE] Activated! Setting up finesse-protected target...");
+        GameLog.Info("?? Yellow AI will attempt to HIT THE GUARD THROUGH to remove the target!");
+        GameLog.Info("?? Press E again to reset and try different alignments");
         
         // 1. CLEAR THE HOUSE - Remove all rocks currently in play
         foreach (var rockEntry in gm.rockList)
@@ -645,7 +653,7 @@ public class QuickTestGame : MonoBehaviour
                 rb.angularVelocity = 0f;
             }
             
-            Debug.Log($"?? Placed RED TARGET at {targetPosition} (the rock we want to remove)");
+            GameLog.Info($"?? Placed RED TARGET at {targetPosition} (the rock we want to remove)");
         }
         
         yield return new WaitForFixedUpdate();
@@ -705,7 +713,7 @@ public class QuickTestGame : MonoBehaviour
                 rb.angularVelocity = 0f;
             }
             
-            Debug.Log($"?? Placed RED GUARD at {guardPosition} (AI must hit THIS rock to run back)");
+            GameLog.Info($"?? Placed RED GUARD at {guardPosition} (AI must hit THIS rock to run back)");
         }
         
         yield return new WaitForFixedUpdate();
@@ -751,19 +759,19 @@ public class QuickTestGame : MonoBehaviour
                 }
             }
             
-            Debug.Log($"?? House list: {gm.houseList.Count} rocks (target)");
-            Debug.Log($"?? Guard list: {gm.gList.Count} rocks (obstruction)");
-            Debug.Log($"?? Forcing Yellow AI to shoot rock #{yellowRockToShoot}...");
+            GameLog.Info($"?? House list: {gm.houseList.Count} rocks (target)");
+            GameLog.Info($"?? Guard list: {gm.gList.Count} rocks (obstruction)");
+            GameLog.Info($"?? Forcing Yellow AI to shoot rock #{yellowRockToShoot}...");
             
             // Force yellow turn
             gm.aiTeamYellow = true; // Ensure yellow is AI controlled
             gm.OnYellowTurn();
             
-            Debug.Log("?? [RUNBACK PRACTICE] Yellow AI will now evaluate runback shot!");
-            Debug.Log("?? Watch for: 'Option 5: Runback' in console logs");
-            Debug.Log("?? AI should hit the GUARD (red rock at y=3.5) with extra velocity");
-            Debug.Log("?? to drive through and remove the TARGET (red rock at button)");
-            Debug.Log("?? Press E again after shot completes to practice more!");
+            GameLog.Info("?? [RUNBACK PRACTICE] Yellow AI will now evaluate runback shot!");
+            GameLog.Info("?? Watch for: 'Option 5: Runback' in console logs");
+            GameLog.Info("?? AI should hit the GUARD (red rock at y=3.5) with extra velocity");
+            GameLog.Info("?? to drive through and remove the TARGET (red rock at button)");
+            GameLog.Info("?? Press E again after shot completes to practice more!");
         }
         else
         {

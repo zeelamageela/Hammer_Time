@@ -56,7 +56,7 @@ public class RockSlideLateAudit : MonoBehaviour
     Rigidbody2D body;
     RockSlide slide;
     void Awake() { body = GetComponent<Rigidbody2D>(); slide = GetComponent<RockSlide>(); }
-    void FixedUpdate() { if (body != null && slide != null && !body.isKinematic) ShotAudit.Phase(gameObject, "FixedUpdate-late", body.linearVelocity.magnitude); }
+    void FixedUpdate() { if (body != null && slide != null && slide.InFreeFlight) ShotAudit.Phase(gameObject, "FixedUpdate-late", body.linearVelocity.magnitude); }
 }
 
 /// <summary>
@@ -124,6 +124,7 @@ public class RockSlide : MonoBehaviour
     }
 
     public bool AtRest { get { Init(); return state.atRest; } }
+    public bool InFreeFlight { get { Init(); return state.freeFlight; } }
     public Vector2 Curl { get { Init(); return Law.IsLegacy ? new Vector2(state.curlX, 0f) : new Vector2(state.curlAccel, 0f); } }
     /// <summary>Where the model says this rock will stop, worked out from the state it actually had at the hog line (for ShotAudit).</summary>
     public Vector2 PredictedRest { get; private set; }
@@ -160,25 +161,61 @@ public class RockSlide : MonoBehaviour
         RockPhysics.BeginFlight(ref state, RockPhysicsSettings.Current);
         externalCurlMultiplier = 1f;
         angularCurlFactor = 1f;
-        handoffPending = false;
         body.linearDamping = 0f;
         body.angularDamping = 0f;
+        pushing = false;
         SplitTimer.Arm(gameObject);
     }
 
-    bool handoffPending;
-    Vector2 handoffVelocity;
-    float handoffY;
+    /// <summary>The share of its thrown speed a rock has as the push out of the hack begins.</summary>
+    public const float PushStartShare = 0.35f;
+
+    bool pushing;
+    Vector2 pushVelocity;
+    float pushFromY, pushToY;
+
+    /// <summary>The velocity the rock was thrown with, also while it is still building up to it in the push-off.</summary>
+    public Vector2 ThrownVelocity { get { Init(); return pushing ? pushVelocity : body.linearVelocity; } }
 
     /// <summary>
-    /// The rock was launched faster than its real speed so the shooter's kick plays at the usual pace (Real-time pace only): once it reaches
-    /// atY it is given `realVelocity`.
+    /// The delivery's push out of the hack, for a rock just thrown: it is brought forward along its line to fromY (where the
+    /// shooter is drawn holding it, if it was pulled back further) and builds evenly from PushStartShare of its speed to all of
+    /// it by toY. There is no friction before the hog line, so the line and where the rock ends up are what they were; only
+    /// the timing behind the shooter changes. A second call during the same push does nothing.
     /// </summary>
-    public void ScheduleLaunchHandoff(Vector2 realVelocity, float atY)
+    public void PushOff(float fromY, float toY)
     {
-        handoffPending = true;
-        handoffVelocity = realVelocity;
-        handoffY = atY;
+        Init();
+        if (pushing || !state.freeFlight) return;
+        Vector2 velocity = body.linearVelocity;
+        Vector2 position = body.position;
+        if (velocity.y <= 0.01f || position.y >= toY) return;
+
+        if (position.y < fromY)
+        {
+            position += velocity * ((fromY - position.y) / velocity.y);
+            body.position = position;
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
+        }
+        pushVelocity = velocity;
+        pushFromY = position.y;
+        pushToY = toY;
+        pushing = true;
+        ApplyPush();
+    }
+
+    /// <summary>Share of full speed at this point (0..1 of the way) of a push at constant acceleration.</summary>
+    public static float PushShare(float progress)
+    {
+        float start = PushStartShare * PushStartShare;
+        return Mathf.Sqrt(start + (1f - start) * Mathf.Clamp01(progress));
+    }
+
+    void ApplyPush()
+    {
+        float progress = Mathf.InverseLerp(pushFromY, pushToY, body.position.y);
+        body.linearVelocity = pushVelocity * PushShare(progress);
+        if (progress >= 1f) pushing = false;
     }
 
     /// <summary>The rock left the near hog line: friction and curl start.</summary>
@@ -212,7 +249,7 @@ public class RockSlide : MonoBehaviour
         Init();
         RockState s = state;
         s.position = body.position;
-        s.velocity = body.linearVelocity;
+        s.velocity = ThrownVelocity;
         s.curlMultiplier = Law.IsLegacy ? 1f : angularCurlFactor;
         return s;
     }
@@ -226,12 +263,7 @@ public class RockSlide : MonoBehaviour
         if (ready && body != null && state.freeFlight) ShotAudit.Phase(gameObject, "FixedUpdate-start", body.linearVelocity.magnitude);
         if (!ready || body == null || body.bodyType != RigidbodyType2D.Dynamic) return;
 
-        if (handoffPending && body.position.y >= handoffY)
-        {
-            handoffPending = false;
-            body.linearVelocity = handoffVelocity;
-            ShotAudit.ExpectSpeedChange();
-        }
+        if (pushing) ApplyPush();
 
         state.position = body.position;
         state.velocity = body.linearVelocity;

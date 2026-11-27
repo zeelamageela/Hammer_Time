@@ -346,6 +346,21 @@ Sweeper animations should visually reflect the equipped handle, always with team
 - **Sponsors:** audit in `SPONSOR_AUDIT.md`; decision is to scrap the stat bonuses and tune availability.
 - Uncommitted on purpose: Unity churn (prefabs NC_*, slnx, Packages, ProjectSettings, UserSettings, `.claude/`).
 
+**Clocks.** The split and hog-to-hog readouts (live, final and expected ranges) show real-ice seconds on every pace: `IceClock` reads off how far the rock was going on the current pace and gives the Real-time law's time for it, scaled so a button draw is 3.80 / 14.50. Display only. `SplitTimer.Split`/`HogToHog` hold the shown values.
+
+**Delivery, camera and banner.** At release `RockSlide.PushOff` brings a pulled-back rock forward along its line to
+where the shooter holds it and accelerates it from 35% to full speed by the end of the push-off (cosmetic: no friction before the hog
+line; use `ThrownVelocity` for the thrown speed during the push). During the push the character layers are shifted so the body travels evenly between poses (`ShooterAnim.BodyAt`, measured per pose). `ShooterAnim.Deliver` runs at the rock's pace: the shooter stays put while its pose is
+picked from where the rock is (`PoseFor`, using the rock positions measured from `Shooter_Yellow/Red_135_1`: forward swing, kick,
+slide), then travels with the rock at the same speed and lets go; the release clip plays once at 12 fps and the shooter coasts about
+`CoastDistance`. The sheet's drawn rock is kept on the real one. Per-layer `RelativeJoint2D` stays off; the Real-time kick slowdown is
+gone. The banner and "tap anywhere" are dropped by `GameHUD.bannerDrop` (225). `CameraManager.RockFollow` moves from the moment of
+release (`GameManager` calls it on `Rock_Flick.springReleased`; the virtual camera tracks an anchor moved with the rock, framed after 10 units).
+`ShotSetup` cuts the same anchor straight to `launcher.y + ShotViewLead` (1; the confiner holds it at the bottom of the ice, leaving room for the 5.5 pull); no composer offsets or damping in either view. Computer turns cut to the follow framing instead (`ShotSetup(true)`: hack near the bottom), and `RockFollow` ignores anything more than 1 behind the launcher so the push-off never jolts it. `AI_Shooter.DrawBack` pulls the AI's rock back over 0.6 to 1.1 s by pull distance, and `ShooterAnim` poses to it as for a player.
+
+**Logging.** Chatty logs go through `GameLog.Info`, compiled out unless `HAMMER_LOGS` is in the scripting define symbols (that includes
+`[ShotAudit]` and `[SplitTimer]`). Use `Debug.LogWarning`/`LogError` only for real problems.
+
 ### Working list (next up, in order)
 
 1. **Timing readout and weight call:** done and played (top-left panel, prefab `Resources/TimingPanel`, names in `WeightNames.cs`). Still to confirm:
@@ -354,14 +369,15 @@ Sweeper animations should visually reflect the equipped handle, always with team
 3. **Design gaps:** built, needs a career play test (cohesion in `SweepStats.cs`, finesse is now consistency in `AimFuzz.cs`, training $500-$4,000, gear 20 points max,
    sponsors money-only in `SponsorRules.cs`). Open: tune prices against weekly income.
 4. **Training screen layout:** done (three rows; `Editor/TrainingScreenLayout`). Open: final icons for Tactics and On-Ice (placeholders now).
-5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (drop the thumb circle, widen the 0.34 cap behind a switch); consider removing the Classic physics mode.
+5. **Polish:** tier icon art (`Track_n/Panel/Image` in Arena_Selector); pause-menu locked-aid hint; copy the new two-panel pause menu to the other 11 pause-menu scenes; pull-back circles (built: `PullbackSettings.cs`, thumb circle off, cap 0.40, compare in Quick Test; needs a play test); Classic physics is no longer offered (code still there, remove if wanted).
+   **Game Pace** slider (Arcade/Pro/Real-time, every player, every build) is in TournyGame's pause menu (`Editor/PauseMenuPaceSlider`); the other scenes only have the dev-only PHYSICS button. Open: Real-time slide animation has too few frames; a swept rock keeps the lower friction after the sweep stops (asked, not decided). Sweep fatigue is rebuilt in `SweepFatigue.cs` (seconds, scales with pace, endurance 0 = half a run, 100 = a whole run); needs a play test.
 6. **Playtests:** AI-vs-AI with the corrected collision model; Real-time/Pro kick pace and all new aids on a phone; confirm the line reach past the near hog actually shows.
 
 ---
 
 ## Physics rebuild (Nov 2026) — merged to `main`
 
-One physics model now drives both the live rock and the aim-line simulator (`RockPhysics`, `RockPhysicsProfile`, `RockSlide`, `RockCollision`, `TrajectorySimulator`). Profiles: Classic (original), **Arcade** (shipping default, same pace, soft stop), Real-time (real-world seconds, no `Time.timeScale`). Pause-menu tester buttons (profile + Arcade stop curve) exist only when `DevOptions.Enabled` (Editor/dev builds). Flick mode is hidden. Also in: the 2% launch-speed bug fix (shooter bodies' mass), aim-line fuzz from skill, hack-to-hog / hog-to-hog split clocks, Box2D-matched rock collisions with chains and frozen pairs.
+One physics model now drives both the live rock and the aim-line simulator (`RockPhysics`, `RockPhysicsProfile`, `RockSlide`, `RockCollision`, `TrajectorySimulator`). Profiles: **Arcade** (default, soft stop), Pro (half speed), Real-time (real-world seconds, no `Time.timeScale`); Classic (original) is no longer offered. Players choose with the Game Pace slider; the Arcade stop curve stays a tester option (`DevOptions.Enabled`). Flick mode is hidden. Also in: the 2% launch-speed bug fix (shooter bodies' mass), aim-line fuzz from skill, hack-to-hog / hog-to-hog split clocks, Box2D-matched rock collisions with chains and frozen pairs.
 
 - Design, numbers and the not-verified list: `PHYSICS_REBUILD.md`. Collision measurements: `PHYSICS_COLLISIONS.md`. Baselines: `PHYSICS_PHASE0.md`.
 - Harnesses live in `AgentScripts/` (run with `unity command run_script`): `Measure.cs`, `Collide.cs`, `Probe.cs`.

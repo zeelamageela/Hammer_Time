@@ -101,6 +101,8 @@ maps to the rock's +-0.34 range, and the 0.34 limit is the real cap. So I did **
 (a) drop the small thumb circle and let the coloured pull line do the work; (b) widen the 0.34 cap a little and see if the aim line
 still reads well. Say the word and I will do (a) first, behind a switch so you can compare.
 
+Update (Nov 26): (a) and (b) are built in [PullbackSettings.cs](Assets/Scripts/UI/PullbackSettings.cs): circle off, cap 0.40, same thumb travel. Both are live in Quick Test.
+
 ## What is wired
 
 - Saved with the career (old saves load fine), the Training screen on the hub, buying with cash and the level gate.
@@ -164,7 +166,7 @@ Gear and training are added together (`CareerManager.SkillBonus`); gear is recom
 | Weight | the shooter (aim fuzz) | the line's length error, sigma 0.9 m x (1 - skill/100)^2 |
 | Aim | the shooter (aim fuzz) | the line's sideways error, sigma 0.5 m x (1 - skill/100)^2 |
 | Sweep strength | all three player-team sweepers | how much a sweep changes friction and curl |
-| Sweep endurance | all three player-team sweepers | shorter sweep cooldown, slower fatigue |
+| Sweep endurance | all three player-team sweepers | how long a sweeper lasts (half a run at 0, a whole run at 100) and how fast they recover (`SweepFatigue`) |
 | Sweep cohesion | the two sweepers | two-broom sweeps x0.85 (cohesion 0) to x1.15 (100), 1.0 at 50 (`SweepStats`) |
 | Consistency (saved as finesse) | the shooter (aim fuzz), and the AI's shot choices | the worst miss and the oval: 2.5 sigmas at 0, 2 at 50, 1.5 at 100 (`AimFuzz.MaxSigmasFor`) |
 

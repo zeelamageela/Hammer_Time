@@ -13234,7 +13234,6 @@ RectTransform:
   - {fileID: 1387359546}
   - {fileID: 1207386685}
   - {fileID: 672812053}
-  - {fileID: 2027467173}
   - {fileID: 1859703536}
   m_Father: {fileID: 1763863164}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17385,12 +17384,14 @@ RectTransform:
   - {fileID: 1327419317}
   - {fileID: 680808645}
   - {fileID: 1815833737}
+  - {fileID: 1290865842}
+  - {fileID: 2027467173}
   - {fileID: 1279377130}
   m_Father: {fileID: 1763863164}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 150}
+  m_AnchoredPosition: {x: 0, y: 250}
   m_SizeDelta: {x: 1107.273, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &719370487
@@ -32364,6 +32365,85 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1290865841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290865842}
+  - component: {fileID: 1290865844}
+  - component: {fileID: 1290865843}
+  m_Layer: 5
+  m_Name: Game Pace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1290865842
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290865841}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 719370485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 553.6365, y: -637.5}
+  m_SizeDelta: {x: 800, y: 75}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1290865843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290865841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9490197, g: 0.91372555, b: 0.86666673, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: bb00f233eb12f43b48f1fb2bd33ce771, type: 3}
+    m_FontSize: 100
+    m_FontStyle: 0
+    m_BestFit: 1
+    m_MinSize: 0
+    m_MaxSize: 125
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Game Pace
+--- !u!222 &1290865844
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290865841}
+  m_CullTransparentMesh: 1
 --- !u!1 &1292586554
 GameObject:
   m_ObjectHideFlags: 0
@@ -41514,6 +41594,7 @@ MonoBehaviour:
   activeCardIDList: 
   playedCardIDList: 
   activeCardLengthList: 
+  sponsorIncome: 0
   activeEquipID: 
   inventoryID: 
   activeHandleTier: 0
@@ -50372,7 +50453,7 @@ GameObject:
   - component: {fileID: 2027467173}
   - component: {fileID: 2027467174}
   m_Layer: 5
-  m_Name: Physics Slider
+  m_Name: Game Pace Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50394,7 +50475,7 @@ RectTransform:
   - {fileID: 578489108}
   - {fileID: 1572034089}
   - {fileID: 2090171832}
-  m_Father: {fileID: 528192834}
+  m_Father: {fileID: 719370485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}

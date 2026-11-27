@@ -96,9 +96,9 @@ public class PauseMenu : MonoBehaviour
         FixLabels(advancedButton, "Advanced");
         FixLabels(back, "Back");
 
-        // the physics pace has three settings and the Arcade stop curve four: whole-number sliders
-        physicsSlider = SliderIn("Physics Slider");
-        stopSlider = SliderIn("Stop Slider");
+        // Game Pace (every player) has three settings and the stop curve (testers) four: whole-number sliders
+        physicsSlider = SliderIn(playerOptions, "Game Pace Slider");
+        stopSlider = SliderIn(advancedOptions, "Stop Slider");
         SetupSlider(physicsSlider, RockPhysicsBootstrap.Order.Length - 1, OnPhysicsSlider);
         SetupSlider(stopSlider, RockPhysicsBootstrap.StopPowers.Length - 1, OnStopSlider);
 
@@ -117,9 +117,9 @@ public class PauseMenu : MonoBehaviour
         ShowAdvanced(false);
     }
 
-    Slider SliderIn(string name)
+    static Slider SliderIn(Transform root, string name)
     {
-        var t = advancedOptions.Find(name);
+        var t = root.Find(name);
         return t != null ? t.GetComponent<Slider>() : null;
     }
 
@@ -431,7 +431,7 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("Quit");
+        GameLog.Info("Quit");
         Application.Quit();
     }
 }

@@ -43,14 +43,14 @@ public static class ShotAudit
         bool freshPreview = Time.unscaledTime - predictedAt < 3f;
         if (!freshPreview)
         {
-            Debug.Log($"[ShotAudit] LAUNCH from {position}: v={velocity} |v|={velocity.magnitude:F3} turn={(inTurn ? "IN" : "OUT")} (no recent aim preview - AI shot?)");
+            GameLog.Info($"[ShotAudit] LAUNCH from {position}: v={velocity} |v|={velocity.magnitude:F3} turn={(inTurn ? "IN" : "OUT")} (no recent aim preview - AI shot?)");
             return;
         }
 
         Vector2 dv = velocity - predictedVelocity;
         string flags = (inTurn != predictedInTurn ? " TURN-MISMATCH(preview " + (predictedInTurn ? "IN" : "OUT") + ")" : "")
                      + (dv.magnitude > 0.05f ? " VELOCITY-MISMATCH" : "");
-        Debug.Log($"[ShotAudit] LAUNCH from {position}: v={velocity} |v|={velocity.magnitude:F3} turn={(inTurn ? "IN" : "OUT")} | preview v={predictedVelocity} (diff {dv.magnitude:F3}) predicted end {predictedEnd}{(predictedCollision ? " (preview shows a collision)" : "")}{flags}");
+        GameLog.Info($"[ShotAudit] LAUNCH from {position}: v={velocity} |v|={velocity.magnitude:F3} turn={(inTurn ? "IN" : "OUT")} | preview v={predictedVelocity} (diff {dv.magnitude:F3}) predicted end {predictedEnd}{(predictedCollision ? " (preview shows a collision)" : "")}{flags}");
     }
 
     /// <summary>Rock_Force calls this once, when the rock first comes to rest.</summary>
@@ -59,28 +59,28 @@ public static class ShotAudit
         if (!armed || rock != launchedRock) return;
         armed = false;
         Vector2 modelMiss = position - modelPredictionFromRelease;
-        Debug.Log($"[ShotAudit] MODEL-FROM-ACTUAL-RELEASE predicted rest {modelPredictionFromRelease}; actual {position}; difference ({modelMiss.x:F2}, {modelMiss.y:F2}) - if this is ~0 the difference is BEFORE the hog line, if not it is the friction after it");
+        GameLog.Info($"[ShotAudit] MODEL-FROM-ACTUAL-RELEASE predicted rest {modelPredictionFromRelease}; actual {position}; difference ({modelMiss.x:F2}, {modelMiss.y:F2}) - if this is ~0 the difference is BEFORE the hog line, if not it is the friction after it");
 
         bool freshPreview = launchedAt - predictedAt < 3f && launchedAt >= predictedAt;
         if (!freshPreview || predictedCollision)
         {
-            Debug.Log($"[ShotAudit] REST at {position} ({Time.unscaledTime - launchedAt:F1}s after launch)");
+            GameLog.Info($"[ShotAudit] REST at {position} ({Time.unscaledTime - launchedAt:F1}s after launch)");
             return;
         }
 
         Vector2 miss = position - predictedEnd;
-        Debug.Log($"[ShotAudit] REST at {position}: preview said {predictedEnd}, off by ({miss.x:F2}, {miss.y:F2}) = {miss.magnitude:F2} units ({Time.unscaledTime - launchedAt:F1}s after launch)");
+        GameLog.Info($"[ShotAudit] REST at {position}: preview said {predictedEnd}, off by ({miss.x:F2}, {miss.y:F2}) = {miss.magnitude:F2} units ({Time.unscaledTime - launchedAt:F1}s after launch)");
     }
 
     /// <summary>Rock_Force calls this at the near hog line, when friction starts.</summary>
     public static void LogRelease(GameObject rock, Vector2 position, Vector2 velocity, float spin, Rigidbody2D body)
     {
         if (!armed || rock != launchedRock) return;
-        Debug.Log($"[ShotAudit] HOG LINE at {position}: v={velocity} |v|={velocity.magnitude:F3} (launched at weight |v|={launchVelocity.magnitude:F3}, expected launch speed {RockPhysicsSettings.Current.LaunchSpeedFromWeight(launchVelocity.magnitude):F3}); box2d damping lin={body.linearDamping:F3} ang={body.angularDamping:F3}; " +
+        GameLog.Info($"[ShotAudit] HOG LINE at {position}: v={velocity} |v|={velocity.magnitude:F3} (launched at weight |v|={launchVelocity.magnitude:F3}, expected launch speed {RockPhysicsSettings.Current.LaunchSpeedFromWeight(launchVelocity.magnitude):F3}); box2d damping lin={body.linearDamping:F3} ang={body.angularDamping:F3}; " +
                   $"fixedDt={Time.fixedDeltaTime:F4} timeScale={Time.timeScale:F2} interp={body.interpolation} collision={body.collisionDetectionMode} mass={body.mass:F1} t+{Time.unscaledTime - launchedAt:F2}s");
         var sb = new System.Text.StringBuilder("[ShotAudit] FLIGHT speed by y (hack to hog): ");
         for (int i = 0; i < flightCount; i++) sb.Append($"{flightY[i]:F1}:{flightSpeed[i]:F3}  ");
-        Debug.Log(sb.ToString());
+        GameLog.Info(sb.ToString());
     }
 
     // ---- speed samples during free flight (every ~1 unit of y) so a speed loss before the hog line can be located ----
@@ -110,7 +110,7 @@ public static class ShotAudit
     {
         if (!armed || rock != launchedRock) return;
         if (lastPhaseSpeed > 0f && speed < lastPhaseSpeed * 0.999f)
-            Debug.Log($"[ShotAudit] PHASE of speed drop: between '{lastPhase}' and '{phase}': {lastPhaseSpeed:F4} -> {speed:F4} (x{speed / lastPhaseSpeed:F4}) frame={Time.frameCount}");
+            GameLog.Info($"[ShotAudit] PHASE of speed drop: between '{lastPhase}' and '{phase}': {lastPhaseSpeed:F4} -> {speed:F4} (x{speed / lastPhaseSpeed:F4}) frame={Time.frameCount}");
         lastPhaseSpeed = speed; lastPhase = phase;
     }
 
@@ -123,9 +123,6 @@ public static class ShotAudit
     /// RockSlide calls this each step of free flight. If the speed falls, it logs the step, the Box2D damping, and everything the rock
     /// is touching or overlapping, to identify what slows a rock that no physics code should be slowing.
     /// </summary>
-    /// <summary>A deliberate speed change (the Real-time launch handoff) is coming: don't report it as a drop.</summary>
-    public static void ExpectSpeedChange() { lastFlightSpeed = 0f; }
-
     public static void WatchSpeed(GameObject rock, Rigidbody2D body)
     {
         if (!armed || rock != launchedRock) return;
@@ -139,7 +136,7 @@ public static class ShotAudit
                     sb.Append($"{c.gameObject.name}[{(c.isTrigger ? "trigger" : "SOLID")}] ");
             var contacts = new ContactPoint2D[8];
             int n = body.GetContacts(contacts);
-            Debug.Log($"[ShotAudit] SPEED DROP in free flight at y={body.position.y:F2}: {lastFlightSpeed:F4} -> {speed:F4} (x{speed / lastFlightSpeed:F4}); box2d damping lin={body.linearDamping:F3}; " +
+            GameLog.Info($"[ShotAudit] SPEED DROP in free flight at y={body.position.y:F2}: {lastFlightSpeed:F4} -> {speed:F4} (x{speed / lastFlightSpeed:F4}); box2d damping lin={body.linearDamping:F3}; " +
                       $"touching {n} collider(s); nearby: {sb}; frame={Time.frameCount} fixedTime={Time.fixedTime:F2}");
         }
         lastFlightSpeed = speed;
@@ -149,7 +146,7 @@ public static class ShotAudit
     public static void LogBody(Rigidbody2D body, SpringJoint2D spring)
     {
         flightCount = 0; lastSampleY = -999f; lastFlightSpeed = 0f;
-        Debug.Log($"[ShotAudit] BODY at launch: bodyType={body.bodyType} gravityScale={body.gravityScale} gravity={Physics2D.gravity} constraints={body.constraints} simulated={body.simulated} " +
+        GameLog.Info($"[ShotAudit] BODY at launch: bodyType={body.bodyType} gravityScale={body.gravityScale} gravity={Physics2D.gravity} constraints={body.constraints} simulated={body.simulated} " +
                   $"damping lin={body.linearDamping:F3} ang={body.angularDamping:F3} spring={(spring != null ? (spring.enabled ? "ENABLED" : "disabled") : "none")} sleepMode={body.sleepMode} " +
                   $"profile={RockPhysicsSettings.Current.law} power={RockPhysicsSettings.Current.stopPower:F2} stretch={RockPhysicsSettings.Current.timeStretch:F2}");
     }

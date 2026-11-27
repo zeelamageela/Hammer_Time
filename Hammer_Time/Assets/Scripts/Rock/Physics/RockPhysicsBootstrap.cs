@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Which rock physics the player is using. Persisted; chosen from the pause menu in dev builds.</summary>
+/// <summary>Which rock physics the player is using. Persisted; the player picks the Game Pace in the pause menu.</summary>
 public enum PhysicsChoice
 {
     /// <summary>The original exponential rock (creeps for ~19 s).</summary>
@@ -18,7 +18,7 @@ public static class RockPhysicsBootstrap
 {
     const string Key = "PhysicsProfile";
 
-    /// <summary>What a player gets when no tester option is available (a release build).</summary>
+    /// <summary>The pace a player starts with.</summary>
     public const PhysicsChoice Shipping = PhysicsChoice.Arcade;
 
     const string StopKey = "StopPower";
@@ -26,8 +26,9 @@ public static class RockPhysicsBootstrap
     public static readonly float[] StopPowers = { 0.5f, 0.6f, 0.7f, 0.8f };
     public static readonly string[] StopNames = { "Firm", "Soft", "Mellow", "Extra mellow" };
 
-    /// <summary>The choices from fastest to slowest (the saved numbers stay as they were; this is only the order they are offered in).</summary>
-    public static readonly PhysicsChoice[] Order = { PhysicsChoice.Classic, PhysicsChoice.Arcade, PhysicsChoice.Pro, PhysicsChoice.RealTime };
+    /// <summary>The paces on offer, fastest to slowest (the saved numbers stay as they were; this is only the order). Classic is no
+    /// longer offered.</summary>
+    public static readonly PhysicsChoice[] Order = { PhysicsChoice.Arcade, PhysicsChoice.Pro, PhysicsChoice.RealTime };
 
     public static int IndexOf(PhysicsChoice choice) { return System.Array.IndexOf(Order, choice); }
 
@@ -47,10 +48,14 @@ public static class RockPhysicsBootstrap
         RockPhysicsSettings.Use(Make(Current));
     }
 
+    /// <summary>The saved pace, in every build. Anything no longer offered (an old Classic save) becomes the default.</summary>
     public static PhysicsChoice Load()
     {
-        if (!DevOptions.Enabled) return Shipping;
-        try { return (PhysicsChoice)Mathf.Clamp(PlayerPrefs.GetInt(Key, (int)Shipping), 0, 3); }
+        try
+        {
+            var saved = (PhysicsChoice)PlayerPrefs.GetInt(Key, (int)Shipping);
+            return IndexOf(saved) >= 0 ? saved : Shipping;
+        }
         catch { return Shipping; }
     }
 

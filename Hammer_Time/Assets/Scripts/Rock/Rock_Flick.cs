@@ -42,8 +42,6 @@ public class Rock_Flick : MonoBehaviour
 
     Vector3 lastMouseCoordinate = Vector3.zero;
 
-    Vector2 posScale = new Vector2(1f / 16f, 1f);
-
     public bool story;
     AudioSource[] rockSounds;
 
@@ -87,7 +85,7 @@ public class Rock_Flick : MonoBehaviour
         {
             isFlickShotMode = GameVisualizationSettings.Instance.FlickShotMode;
             GameVisualizationSettings.Instance.OnFlickShotModeChanged += OnFlickShotModeChanged;
-            Debug.Log($"[Rock_Flick] FlickShotController found - Mode: {(isFlickShotMode ? "ENABLED" : "DISABLED")}");
+            GameLog.Info($"[Rock_Flick] FlickShotController found - Mode: {(isFlickShotMode ? "ENABLED" : "DISABLED")}");
             
             // If flick shot mode is enabled, start it automatically
             if (isFlickShotMode)
@@ -109,19 +107,19 @@ public class Rock_Flick : MonoBehaviour
     private void OnFlickShotModeChanged(bool enabled)
     {
         isFlickShotMode = enabled;
-        Debug.Log($"[Rock_Flick] Flick shot mode changed to: {(enabled ? "ENABLED" : "DISABLED")}");
+        GameLog.Info($"[Rock_Flick] Flick shot mode changed to: {(enabled ? "ENABLED" : "DISABLED")}");
     }
 
     void Update()
     {
         if (isPressed)
         {
-            rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), posScale);
+            rb.position = Vector2.Scale(Camera.main.ScreenToWorldPoint(Input.mousePosition), new Vector2(PullbackSettings.XScale, 1f));
             // Sync rb.position → transform.position immediately so DrawTrajectory and parented
             // objects (ShootingKnob) see the current position, not last physics step's value.
             Physics2D.SyncTransforms();
             shootKnob.mouseCircle.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
+            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = PullbackSettings.ShowThumbCircle;
             trajLine.DrawTrajectory();
 
             shootKnob.ParentToRock();
@@ -146,10 +144,10 @@ public class Rock_Flick : MonoBehaviour
         {
             isPressed = false;
             rb.isKinematic = false;
-            Debug.Log("Release Pullback is " + rb.position.x + ", " + rb.position.y);
+            GameLog.Info("Release Pullback is " + rb.position.x + ", " + rb.position.y);
             GetComponent<CircleCollider2D>().radius = 0.14f;
             StartCoroutine(Release());
-            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+            GameLog.Info("Pullback is " + transform.position.x + ", " + transform.position.y);
             trajLine.Release();
             shootKnob.UnParentandHide();
         }
@@ -177,7 +175,7 @@ public class Rock_Flick : MonoBehaviour
                     // In AimSet phase: Allow clicking rock to re-aim!
                     if (phaseName == "AimSet")
                     {
-                        Debug.Log("[Rock_Flick] Click detected in AimSet - returning to aim adjustment mode");
+                        GameLog.Info("[Rock_Flick] Click detected in AimSet - returning to aim adjustment mode");
                         
                         // Reset to AimingPhase via reflection
                         System.Reflection.MethodInfo resetMethod = flickShotController.GetType().GetMethod("ResetToAiming");
@@ -192,7 +190,7 @@ public class Rock_Flick : MonoBehaviour
                     // In PowerPhase or Released: Block all clicks
                     else if (phaseName == "PowerPhase" || phaseName == "Released")
                     {
-                        Debug.Log($"[Rock_Flick] Ignoring click - in {phaseName} phase (aim locked)");
+                        GameLog.Info($"[Rock_Flick] Ignoring click - in {phaseName} phase (aim locked)");
                         return; // Block clicks during power phase!
                     }
                 }
@@ -202,7 +200,7 @@ public class Rock_Flick : MonoBehaviour
             // (Don't skip the normal pullback logic!)
             
             //if red has hammer
-            Debug.Log("Clicked on Rock");
+            GameLog.Info("Clicked on Rock");
             if (gm.redHammer)
             {
                 //if the rock is red
@@ -258,7 +256,7 @@ public class Rock_Flick : MonoBehaviour
                 }
             }
 
-            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = true;
+            shootKnob.mouseCircle.GetComponent<SpriteRenderer>().enabled = PullbackSettings.ShowThumbCircle;
             shootKnobGO.GetComponent<SpriteRenderer>().enabled = true;
         }
     }
@@ -303,7 +301,7 @@ public class Rock_Flick : MonoBehaviour
                     spring.enabled = false;
                 }
                 
-                Debug.Log($"[Rock_Flick] Flick shot mode: Aim set at position {aimPosition}. Click launcher to start power flick, or click rock to re-aim.");
+                GameLog.Info($"[Rock_Flick] Flick shot mode: Aim set at position {aimPosition}. Click launcher to start power flick, or click rock to re-aim.");
                 
                 // KEEP rock collider enabled so player can click to re-aim!
                 // CircleCollider2D remains enabled for re-aiming
@@ -331,7 +329,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        else if (Mathf.Abs(rb.position.x) >= PullbackSettings.AimCap)
                         {
                             RockReset();
                         }
@@ -343,7 +341,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             GetComponent<CircleCollider2D>().radius = 0.14f;
                             StartCoroutine(Release());
-                            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            GameLog.Info("Pullback is " + transform.position.x + ", " + transform.position.y);
                             trajLine.Release();
                             shootKnob.UnParentandHide();
                         }
@@ -358,12 +356,12 @@ public class Rock_Flick : MonoBehaviour
                         isPressed = false;
                         rb.isKinematic = false;
 
-                        Debug.Log("What the fuckkkk");
+                        GameLog.Info("What the fuckkkk");
                         if (rb.position.y >= -24f)
                         {
                             RockReset();
                         }
-                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        else if (Mathf.Abs(rb.position.x) >= PullbackSettings.AimCap)
                         {
                             RockReset();
                         }
@@ -375,7 +373,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             GetComponent<CircleCollider2D>().radius = 0.14f;
                             StartCoroutine(Release());
-                            Debug.Log("Pullback is " + transform.position.x + ", " + transform.position.y);
+                            GameLog.Info("Pullback is " + transform.position.x + ", " + transform.position.y);
                             trajLine.Release();
                             shootKnob.UnParentandHide();
                         }
@@ -398,7 +396,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        else if (Mathf.Abs(rb.position.x) >= PullbackSettings.AimCap)
                         {
                             RockReset();
                         }
@@ -429,7 +427,7 @@ public class Rock_Flick : MonoBehaviour
                         {
                             RockReset();
                         }
-                        else if (Mathf.Abs(rb.position.x) >= 0.34f)
+                        else if (Mathf.Abs(rb.position.x) >= PullbackSettings.AimCap)
                         {
                             RockReset();
                         }
@@ -482,7 +480,7 @@ public class Rock_Flick : MonoBehaviour
         mouseUp = false;
         springReleased = true;
 
-        Debug.Log($"[Rock_Flick START] rb.isKinematic: {rb.isKinematic}, linearDamping: {rb.linearDamping}");
+        GameLog.Info($"[Rock_Flick START] rb.isKinematic: {rb.isKinematic}, linearDamping: {rb.linearDamping}");
         
         // CRITICAL: Make sure kinematic is OFF!
         rb.isKinematic = false;
@@ -505,7 +503,7 @@ public class Rock_Flick : MonoBehaviour
             trajLine.maxVelocity
         );
         
-        Debug.Log($"[Rock_Flick] CALCULATED velocity: {velocity.magnitude:F2} m/s from pullback distance: {springDistance:F3} (using TrajectoryLine params)");
+        GameLog.Info($"[Rock_Flick] CALCULATED velocity: {velocity.magnitude:F2} m/s from pullback distance: {springDistance:F3} (using TrajectoryLine params)");
         
         // Show detailed feedback callout for normal shot (4 separate stacking callouts!)
         if (TextCalloutManager.Instance != null)
@@ -556,36 +554,22 @@ public class Rock_Flick : MonoBehaviour
             //     duration: 4.2f
             // );
             
-            Debug.Log($"[Rock_Flick] Normal shot: 4 stacked callouts displayed at {rockPosition}");
+            GameLog.Info($"[Rock_Flick] Normal shot: 4 stacked callouts displayed at {rockPosition}");
         }
         
         // CRITICAL: Disable spring FIRST to prevent it from interfering!
         GetComponent<SpringJoint2D>().enabled = false;
         
-        Debug.Log($"[Rock_Flick] Spring disabled, damping disabled (will restore at hog line)");
+        GameLog.Info($"[Rock_Flick] Spring disabled, damping disabled (will restore at hog line)");
         
         // Set velocity directly - no spring physics!
         ShotAudit.LogLaunch(gameObject, rb.position, velocity, GetComponent<Rock_Force>().flipAxis);
         // `velocity` is a weight velocity (what the aim line and the AI speak); the rock gets the speed the current physics profile needs to travel that far.
         Vector2 launchVelocity = RockPhysicsSettings.Current.LaunchVelocityFromWeightVelocity(velocity);
-        // Real-time only: the shooter's kick (pull-back point up to the release point) is tied to the rock's position, so its pace is set
-        // here (ShooterAnim.KickSlowdown) and the rock gets its real speed at the release point. Free flight has no forces, so only the
-        // timing of those ~2 m changes.
-        float kickSlowdown = ShooterAnim.KickSlowdown(RockPhysicsSettings.Current.timeStretch);
-        Vector2 kickVelocity = kickSlowdown > 0f ? velocity / kickSlowdown : launchVelocity;
-        var slideForHandoff = GetComponent<RockSlide>();
-        if (slideForHandoff != null && kickSlowdown > 0f && rb.position.y < ShooterAnim.DefaultReleasePointY)
-        {
-            rb.linearVelocity = kickVelocity;
-            slideForHandoff.ScheduleLaunchHandoff(launchVelocity, ShooterAnim.DefaultReleasePointY);
-        }
-        else
-        {
-            rb.linearVelocity = launchVelocity;
-        }
+        rb.linearVelocity = launchVelocity;
         ShotAudit.LogBody(rb, GetComponent<SpringJoint2D>());
 
-        Debug.Log($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");
+        GameLog.Info($"[Rock_Flick] ACTUAL rb.linearVelocity AFTER setting: {rb.linearVelocity.magnitude:F2} m/s");
         
         launcher.GetComponent<Collider2D>().enabled = true;
         
@@ -594,7 +578,7 @@ public class Rock_Flick : MonoBehaviour
         if (timerDisplay != null)
         {
             timerDisplay.StartTimer();
-            Debug.Log("[Rock_Flick] Rock timer started!");
+            GameLog.Info("[Rock_Flick] Rock timer started!");
         }
         
         yield return new WaitForSeconds(releaseTime);
@@ -603,7 +587,7 @@ public class Rock_Flick : MonoBehaviour
 
         yield return new WaitForFixedUpdate();
         
-        Debug.Log($"[Rock_Flick] rb.linearVelocity AFTER FixedUpdate: {rb.linearVelocity.magnitude:F2} m/s | Pos: ({rb.position.x:F3}, {rb.position.y:F3})");
+        GameLog.Info($"[Rock_Flick] rb.linearVelocity AFTER FixedUpdate: {rb.linearVelocity.magnitude:F2} m/s | Pos: ({rb.position.x:F3}, {rb.position.y:F3})");
     }
 
     void ShotLocation()

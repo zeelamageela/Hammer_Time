@@ -4,21 +4,20 @@ using UnityEngine;
 /// Times a thrown rock: the SPLIT (back line to near hog line) and the HOG-TO-HOG time (near hog to far hog). It only measures;
 /// TimingPanel shows the numbers in the top-left corner.
 ///
-/// Times are game time (physics time), so they follow the pace profile (Real-time shows real-world seconds) and not the frame
-/// rate, and each line crossing is interpolated inside the physics step. Works for player and AI rocks alike: RockSlide arms it at launch.
+/// It measures physics time (so the frame rate does not matter), interpolating each line crossing inside the physics step, and shows
+/// it in real-ice seconds (see IceClock), the same on every pace. Works for player and AI rocks alike: RockSlide arms it at launch.
 /// </summary>
 public class SplitTimer : MonoBehaviour
 {
     /// <summary>Tester/shipping switch for the live clocks.</summary>
     public static bool Enabled = true;
 
-    /// <summary>The back line at the throwing end. It is where the shooter lets go (ShooterAnim.DefaultReleasePointY), so from here
-    /// to the near hog the rock runs at one steady speed in every pace.</summary>
+    /// <summary>The back line at the throwing end: the split starts here.</summary>
     public const float BackLineY = ShooterAnim.DefaultReleasePointY;
     public const float NearHogY = -16.15f; // near hog line (same line the rock's friction starts at)
     public const float FarHogY = 0f;       // far hog line
 
-    /// <summary>Last finished times of this rock, seconds (negative = not measured).</summary>
+    /// <summary>Last finished times of this rock as shown, real-ice seconds (negative = not measured).</summary>
     public float Split { get; private set; } = -1f;
     public float HogToHog { get; private set; } = -1f;
 
@@ -31,6 +30,7 @@ public class SplitTimer : MonoBehaviour
     float prevY, prevT;
     bool havePrev;
     float backTime, hogTime;
+    float rate = 1f;   // shown seconds per game second, for the running clock
 
     /// <summary>Called at launch (RockSlide.BeginFlight): starts the clocks for this throw.</summary>
     public static void Arm(GameObject rock)
@@ -77,8 +77,8 @@ public class SplitTimer : MonoBehaviour
     {
         if (panel == null) return;
         // live count while a clock runs (physics time, so it matches where the rock really is)
-        if (stage == Stage.Split) panel.SetSplit(this, Time.fixedTime - backTime, finished: false);
-        if (stage == Stage.HogToHog) panel.SetHogToHog(this, Time.fixedTime - hogTime, finished: false);
+        if (stage == Stage.Split) panel.SetSplit(this, (Time.fixedTime - backTime) * rate, finished: false);
+        if (stage == Stage.HogToHog) panel.SetHogToHog(this, (Time.fixedTime - hogTime) * rate, finished: false);
     }
 
     void FixedUpdate()
@@ -90,28 +90,29 @@ public class SplitTimer : MonoBehaviour
         if (!havePrev)
         {
             prevY = y; prevT = t; havePrev = true;
-            if (y >= BackLineY) { backTime = t; stage = Stage.Split; }   // armed past the back line: count from now
+            if (y >= BackLineY) { backTime = t; StartSplit(); }   // armed past the back line: count from now
             return;
         }
 
         if (stage == Stage.WaitingForBackLine && prevY < BackLineY && y >= BackLineY)
         {
             backTime = CrossingTime(prevY, prevT, y, t, BackLineY);
-            stage = Stage.Split;
+            StartSplit();
         }
 
         if (stage == Stage.Split && prevY < NearHogY && y >= NearHogY)
         {
             hogTime = CrossingTime(prevY, prevT, y, t, NearHogY);
-            Split = hogTime - backTime;
+            Split = IceClock.Split(hogTime - backTime, RockPhysicsSettings.Current);
+            rate = IceClock.HogRate(body.linearVelocity.magnitude, RockPhysicsSettings.Current);
             if (panel != null) panel.SetSplit(this, Split, finished: true);
             stage = Stage.HogToHog;
         }
 
         if (stage == Stage.HogToHog && prevY < FarHogY && y >= FarHogY)
         {
-            HogToHog = CrossingTime(prevY, prevT, y, t, FarHogY) - hogTime;
-            Debug.Log($"[SplitTimer] {name}: split {Format(Split)}  hog to hog {Format(HogToHog)}  ({Split:F3} s, {HogToHog:F3} s)");
+            HogToHog = IceClock.HogToHog(CrossingTime(prevY, prevT, y, t, FarHogY) - hogTime, RockPhysicsSettings.Current);
+            GameLog.Info($"[SplitTimer] {name}: split {Format(Split)}  hog to hog {Format(HogToHog)}  ({Split:F3} s, {HogToHog:F3} s)");
             if (panel != null) panel.SetHogToHog(this, HogToHog, finished: true);
             Stop();
         }
@@ -122,6 +123,14 @@ public class SplitTimer : MonoBehaviour
 
         prevY = y;
         prevT = t;
+    }
+
+    void StartSplit()
+    {
+        stage = Stage.Split;
+        // the speed it was thrown at: during the push-off it is not quite up to it yet
+        float speed = slide != null ? slide.ThrownVelocity.magnitude : body.linearVelocity.magnitude;
+        rate = IceClock.SplitRate(speed, RockPhysicsSettings.Current);
     }
 
     void Stop()

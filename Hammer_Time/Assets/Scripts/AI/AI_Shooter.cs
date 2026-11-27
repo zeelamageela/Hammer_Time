@@ -84,7 +84,7 @@ public class AI_Shooter : MonoBehaviour
         if (rockForce != null)
         {
             rockForce.flipAxis = rm.inturn;
-            Debug.Log($"[AI_Shooter.OnShot] LOCKED flipAxis = {rm.inturn} immediately for {aiShotType}");
+            GameLog.Info($"[AI_Shooter.OnShot] LOCKED flipAxis = {rm.inturn} immediately for {aiShotType}");
         }
 
         StartCoroutine(Shot(aiShotType, rm.inturn));
@@ -92,7 +92,7 @@ public class AI_Shooter : MonoBehaviour
 
     IEnumerator Shot(string aiShotType, bool inturn)
     {
-        Debug.Log("AI Shot " + aiShotType);
+        GameLog.Info("AI Shot " + aiShotType);
         gm.dbText.text = aiShotType;
         rockFlick.isPressedAI = true;
         takeOutX = aiTarg.takeOutX;
@@ -108,7 +108,7 @@ public class AI_Shooter : MonoBehaviour
         {
             rockForce.flipAxis = inturn;
             rm.inturn = inturn;
-            Debug.Log($"[AI_Shooter] Set flipAxis AND rm.inturn = {inturn} for {aiShotType}");
+            GameLog.Info($"[AI_Shooter] Set flipAxis AND rm.inturn = {inturn} for {aiShotType}");
         }
         
         // Show AI shot decision callout on launcher
@@ -132,7 +132,7 @@ public class AI_Shooter : MonoBehaviour
             shotX = takeOutX;
             shotY = takeOutY;
             
-            Debug.Log($"[AI_Shooter] {aiShotType} - Using physics position: ({shotX:F3}, {shotY:F3})");
+            GameLog.Info($"[AI_Shooter] {aiShotType} - Using physics position: ({shotX:F3}, {shotY:F3})");
         }
         else
         {
@@ -148,11 +148,12 @@ public class AI_Shooter : MonoBehaviour
             shotY = button.y + error.y;
         }
         
-        // Execute shot: Set position and trigger release
+        // Execute shot: Draw the rock back, then trigger release
         rockFlick.rb.isKinematic = true;
+        yield return DrawBack(new Vector2(shotX, shotY));
         rockRB.position = new Vector2(shotX, shotY);
         
-        Debug.Log($"[AI_Shooter] {aiShotType} final position: ({rockRB.position.x:F3}, {rockRB.position.y:F3})");
+        GameLog.Info($"[AI_Shooter] {aiShotType} final position: ({rockRB.position.x:F3}, {rockRB.position.y:F3})");
         
         yield return new WaitForFixedUpdate();
         rockFlick.mouseUp = true;
@@ -165,7 +166,7 @@ public class AI_Shooter : MonoBehaviour
         if (gm != null && rm != null && aiSweep.sm != null)
         {
             // Get ACTUAL velocity (includes accuracy errors from pullback offset)
-            Vector2 actualVelocity = RockPhysicsSettings.Current.WeightVelocityFromLaunchVelocity(rockRB.linearVelocity); // weight units, like perfectVelocity
+            Vector2 actualVelocity = RockPhysicsSettings.Current.WeightVelocityFromLaunchVelocity(rockRB.GetComponent<RockSlide>().ThrownVelocity); // weight units, like perfectVelocity
             
             // Get PERFECT velocity (before accuracy errors) from AI_Target
             Vector2 perfectVelocity = aiTarg.lastPerfectVelocity;
@@ -184,16 +185,44 @@ public class AI_Shooter : MonoBehaviour
             float launchError = (actualVelocity - perfectVelocity).magnitude;
             float angleError = Vector2.Angle(actualVelocity, perfectVelocity);
 
-            Debug.Log($"[AI_Shooter] Starting physics-based sweeping:");
-            Debug.Log($"  Perfect velocity: {perfectVelocity.magnitude:F2} m/s @ {Mathf.Atan2(perfectVelocity.y, perfectVelocity.x) * Mathf.Rad2Deg:F1}° (ideal target)");
-            Debug.Log($"  Actual velocity: {actualVelocity.magnitude:F2} m/s @ {Mathf.Atan2(actualVelocity.y, actualVelocity.x) * Mathf.Rad2Deg:F1}° (includes errors)");
-            Debug.Log($"  Launch error: {launchError:F3} m/s ({angleError:F2}° off-angle)");
-            Debug.Log($"  Target: {targetPosition}, Turn: {(isInTurn ? "IN" : "OUT")}");
+            GameLog.Info($"[AI_Shooter] Starting physics-based sweeping:");
+            GameLog.Info($"  Perfect velocity: {perfectVelocity.magnitude:F2} m/s @ {Mathf.Atan2(perfectVelocity.y, perfectVelocity.x) * Mathf.Rad2Deg:F1}° (ideal target)");
+            GameLog.Info($"  Actual velocity: {actualVelocity.magnitude:F2} m/s @ {Mathf.Atan2(actualVelocity.y, actualVelocity.x) * Mathf.Rad2Deg:F1}° (includes errors)");
+            GameLog.Info($"  Launch error: {launchError:F3} m/s ({angleError:F2}° off-angle)");
+            GameLog.Info($"  Target: {targetPosition}, Turn: {(isInTurn ? "IN" : "OUT")}");
 
             aiSweep.StartPhysicsBasedSweeping(rockRB, actualVelocity, perfectVelocity, isInTurn, targetPosition, aiShotType, currentRockNumber);
         }
     }
 
+
+    // the computer's backswing: how long it takes for the lightest and the heaviest pull, and the pause at the back
+    const float LightPull = 1.5f, HeavyPull = 5.5f;
+    const float LightBackswingSeconds = 0.6f, HeavyBackswingSeconds = 1.1f;
+    const float TopOfBackswingSeconds = 0.25f;
+
+    /// <summary>
+    /// Pulls the rock back to its release point the way a player would. The shooter poses to the distance pulled (see
+    /// ShooterAnim), so a harder throw gets a deeper, longer backswing.
+    /// </summary>
+    IEnumerator DrawBack(Vector2 to)
+    {
+        Vector2 from = rockRB.position;
+        Transform rock = rockRB.transform;
+        float seconds = Mathf.Lerp(LightBackswingSeconds, HeavyBackswingSeconds,
+            Mathf.InverseLerp(LightPull, HeavyPull, Vector2.Distance(from, to)));
+
+        for (float time = 0f; time < seconds; time += Time.deltaTime)
+        {
+            Vector2 at = Vector2.Lerp(from, to, Mathf.SmoothStep(0f, 1f, time / seconds));
+            rockRB.position = at;
+            rock.position = new Vector3(at.x, at.y, rock.position.z);
+            yield return null;
+        }
+        rockRB.position = to;
+        rock.position = new Vector3(to.x, to.y, rock.position.z);
+        yield return new WaitForSeconds(TopOfBackswingSeconds);
+    }
 
     /// <summary>
     /// Show AI shot decision callout on launcher before shot
@@ -277,7 +306,7 @@ public class AI_Shooter : MonoBehaviour
             duration: 3f  // Show for 3 seconds
         );
         
-        Debug.Log($"[AI_Shooter] Shot callout shown: {message}");
+        GameLog.Info($"[AI_Shooter] Shot callout shown: {message}");
     }
     
     /// <summary>
@@ -345,7 +374,7 @@ public class AI_Shooter : MonoBehaviour
         {
             // FORCE better accuracy this shot (prevent frustrating streaks)
             maxError *= 0.3f;  // Reduce error to 30% (nearly perfect shot)
-            Debug.Log($"[AI_Shooter] ERROR SMOOTHING: Forcing better accuracy after {aiTarg.consecutiveBigErrors} big misses (maxError reduced to {maxError:F3})");
+            GameLog.Info($"[AI_Shooter] ERROR SMOOTHING: Forcing better accuracy after {aiTarg.consecutiveBigErrors} big misses (maxError reduced to {maxError:F3})");
         }
         
         // Use circular distribution for natural shot spread
@@ -356,14 +385,14 @@ public class AI_Shooter : MonoBehaviour
         if (errorMagnitude > AI_Target.BIG_ERROR_THRESHOLD)
         {
             aiTarg.consecutiveBigErrors++;
-            Debug.Log($"[AI_Shooter] BIG ERROR detected ({errorMagnitude:F3}m) - consecutive count: {aiTarg.consecutiveBigErrors}");
+            GameLog.Info($"[AI_Shooter] BIG ERROR detected ({errorMagnitude:F3}m) - consecutive count: {aiTarg.consecutiveBigErrors}");
         }
         else
         {
             // Reset streak on good shot
             if (aiTarg.consecutiveBigErrors > 0)
             {
-                Debug.Log($"[AI_Shooter] Good shot - resetting big error streak (was {aiTarg.consecutiveBigErrors})");
+                GameLog.Info($"[AI_Shooter] Good shot - resetting big error streak (was {aiTarg.consecutiveBigErrors})");
             }
             aiTarg.consecutiveBigErrors = 0;
         }
