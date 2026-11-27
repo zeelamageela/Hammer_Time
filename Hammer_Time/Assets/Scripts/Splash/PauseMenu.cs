@@ -51,6 +51,7 @@ public class PauseMenu : MonoBehaviour
             IceReadPanel.OnTurn(FindFirstObjectByType<GameManager>());
             RefreshExperimentLabels();
         });
+        BuildExperimentToggle("AI Read Toggle", () => "AI Reads Ice", () => AiRead.Enabled, on => { AiRead.Enabled = on; });
         TidyMenu();
     }
 

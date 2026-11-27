@@ -69,6 +69,9 @@ public class AI_Target : MonoBehaviour
     public const int MAX_BIG_ERRORS = 1;   // Max big errors before forcing accuracy boost
     public const float BIG_ERROR_THRESHOLD = 0.15f;  // What counts as "big" error (15cm+)
     
+    /// <summary>The ice the shot being thrown was planned on; null = the real ice (see AiRead).</summary>
+    public RockPhysicsProfile planningIce { get; private set; }
+
     void Start()
     {
         // CRITICAL: AI must use the SAME physics as player trajectory!
@@ -994,6 +997,12 @@ public class AI_Target : MonoBehaviour
         rockInfo = gm.rockList[rockCurrent].rockInfo;
         rockFlick = gm.rockList[rockCurrent].rock.GetComponent<Rock_Flick>();
         rockRB = gm.rockList[rockCurrent].rock.GetComponent<Rigidbody2D>();
+
+        // plan this shot on the team's read of the ice (null = the real ice; see AiRead)
+        CharacterStats reader = GetShooterStats(rockCurrent);
+        float readingSkill = reader != null ? 0.5f * (reader.aimAccuracy.GetValue() + reader.weightAccuracy.GetValue()) : 60f;
+        planningIce = AiRead.For(gm, rockCurrent, readingSkill);
+        if (trajectorySimulator != null) trajectorySimulator.Ice = planningIce;
 
         switch (target)
         {

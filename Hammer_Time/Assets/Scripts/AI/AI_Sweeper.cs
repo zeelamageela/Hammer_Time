@@ -1240,7 +1240,10 @@ public class AI_Sweeper : MonoBehaviour
 
 
         // IDEAL TRAJECTORY: Perfect physics calculation (NO accuracy errors)
-        // This is what sweepers will try to ACHIEVE by correcting errors
+        // This is what sweepers will try to ACHIEVE by correcting errors. It is the path the shot was planned to take, on the team's
+        // read of the ice (see AiRead); everything about the rock itself below runs on the real ice.
+        AI_Target planner = FindFirstObjectByType<AI_Target>();
+        trajectorySimulator.Ice = planner != null ? planner.planningIce : null;
         List<Vector2> idealTrajectory = trajectorySimulator.SimulateTrajectory(
             launcherPos,
             idealVelocity,  // ? PERFECT velocity from physics (before errors)
@@ -1250,6 +1253,8 @@ public class AI_Sweeper : MonoBehaviour
             forPlayerPreview: false
         );
         
+        trajectorySimulator.Ice = null;
+
         // ACTUAL TRAJECTORY: Error-contaminated launch (what rock actually got)
         // Used for collision detection and real-time prediction
         List<Vector2> actualTrajectory = trajectorySimulator.SimulateTrajectory(

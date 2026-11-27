@@ -55,14 +55,21 @@ public static class IceConditions
         Refresh();
     }
 
+    /// <summary>The conditions games are being played on right now (1, 1 = normal ice).</summary>
+    public static bool InForce(out float speed, out float curl)
+    {
+        speed = curl = 1f;
+        bool venue = VenueIce.Enabled;
+        if ((!venue && !Enabled) || !Allowed) return false;
+        if (venue) VenueIce.Current(out speed, out curl);
+        else { speed = Speed; curl = Curl; }
+        return true;
+    }
+
     /// <summary>The profile as it plays on the conditions in force.</summary>
     public static RockPhysicsProfile Apply(RockPhysicsProfile pace)
     {
-        bool venue = VenueIce.Enabled;
-        if ((!venue && !Enabled) || !Allowed) return pace;
-        float speed = Speed, curl = Curl;
-        if (venue) VenueIce.Current(out speed, out curl);
-        return pace.WithIce(speed, curl);
+        return InForce(out float speed, out float curl) ? pace.WithIce(speed, curl) : pace;
     }
 
     /// <summary>Puts the conditions in force: at once if the sheet is still, otherwise at the next throw.</summary>
