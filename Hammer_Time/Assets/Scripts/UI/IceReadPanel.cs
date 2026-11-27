@@ -3,8 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// The player's ice menu (see PlayerRead): an ICE button during their turn that opens speed and curl settings, and the question
-/// about last visit's notes. Built in code so no scene has to contain it; move things by the numbers in Build.
+/// The player's ice menu (see PlayerRead): an ICE button, there whenever the sheet is quiet (after a shot as much as before one),
+/// that opens speed and curl settings, and the question about last visit's notes. Built in code so no scene has to contain it; move things by the numbers in Build.
 /// </summary>
 public class IceReadPanel : MonoBehaviour
 {
@@ -46,22 +46,51 @@ public class IceReadPanel : MonoBehaviour
         return rect.gameObject.activeInHierarchy && RectTransformUtility.RectangleContainsScreenPoint(rect, screen, null);
     }
 
-    /// <summary>The player is about to shoot: their turn, the rock still in the hack, not paused.</summary>
+    /// <summary>The state of a game in play: a team's turn, or the moment after it while the shot is scored.</summary>
+    static bool InPlay(GameState state)
+    {
+        return state == GameState.REDTURN || state == GameState.YELLOWTURN || state == GameState.CHECKSCORE;
+    }
+
+    /// <summary>Whether the ICE button is offered: during play, no rock running, and the player's own rock not in hand.</summary>
+    public static bool Offered(GameState state, bool inHand, bool rockMoving) { return InPlay(state) && !inHand && !rockMoving; }
+
+    /// <summary>Whether this is a game in play that isn't paused. An open menu stays open as long as this holds.</summary>
+    bool Playing() { return gm != null && PlayerRead.Active && Time.timeScale != 0f && InPlay(gm.state) && gm.rockList != null; }
+
     bool PlayersTurn()
     {
-        if (gm == null || !PlayerRead.Active || Time.timeScale == 0f) return false;
-        bool theirs = (gm.state == GameState.REDTURN && !gm.aiTeamRed) || (gm.state == GameState.YELLOWTURN && !gm.aiTeamYellow);
-        if (!theirs || gm.rockList == null || gm.rockCurrent < 0 || gm.rockCurrent >= gm.rockList.Count) return false;
+        return (gm.state == GameState.REDTURN && !gm.aiTeamRed) || (gm.state == GameState.YELLOWTURN && !gm.aiTeamYellow);
+    }
+
+    /// <summary>The player is pulling their rock back, or has let go and it has yet to leave their hand.</summary>
+    bool InHand()
+    {
+        if (!PlayersTurn() || gm.rockCurrent < 0 || gm.rockCurrent >= gm.rockList.Count) return false;
         GameObject rock = gm.rockList[gm.rockCurrent].rock;
-        if (rock == null) return false;
+        if (rock == null || gm.rockList[gm.rockCurrent].rockInfo.released) return false;
         var flick = rock.GetComponent<Rock_Flick>();
-        return !gm.rockList[gm.rockCurrent].rockInfo.released && (flick == null || (!flick.isPressed && !flick.springReleased));
+        return flick != null && (flick.isPressed || flick.springReleased);
+    }
+
+    bool RockMoving()
+    {
+        foreach (var entry in gm.rockList)
+        {
+            if (entry.rock == null || !entry.rock.activeInHierarchy || !entry.rockInfo.released || entry.rockInfo.outOfPlay) continue;
+            var body = entry.rock.GetComponent<Rigidbody2D>();
+            if (body != null && body.linearVelocity.sqrMagnitude > 0.01f) return true;
+        }
+        return false;
     }
 
     void Update()
     {
-        bool turn = PlayersTurn();
-        bool asking = turn && PlayerRead.NotesWaiting;
+        bool playing = Playing();
+        bool inHand = playing && InHand();
+        bool offered = playing && Offered(gm.state, inHand, RockMoving());
+        // the notes are asked about before the player's own shot, and until then there is nothing to adjust
+        bool asking = offered && PlayersTurn() && PlayerRead.NotesWaiting;
         if (asking && !dialog.gameObject.activeSelf)
         {
             var note = PlayerRead.LastNotes;
@@ -69,8 +98,9 @@ public class IceReadPanel : MonoBehaviour
                 + Bend(IceUnits.Feet(note.curl));
         }
         dialog.gameObject.SetActive(asking);
-        if (!turn || asking) panel.gameObject.SetActive(false);
-        openButton.gameObject.SetActive(turn && !asking && !panel.gameObject.activeSelf);
+        // once open it stays open through the other team's shot, until Done or the player picks up their rock
+        if (!playing || inHand || asking) panel.gameObject.SetActive(false);
+        openButton.gameObject.SetActive(offered && !PlayerRead.NotesWaiting && !panel.gameObject.activeSelf);
     }
 
     static string Weight(float seconds) { return "weight " + seconds.ToString("0.0") + " s"; }

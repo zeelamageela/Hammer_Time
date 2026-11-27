@@ -33,4 +33,16 @@ public class PlayerReadTests
         var actual = simulator.SimulateTrajectory(new Vector2(0f, -25f), throwIt, true);
         Assert.Greater(actual[actual.Count - 1].y - guessed[guessed.Count - 1].y, 2f);   // the faster sheet carries it further
     }
+
+    [Test]
+    public void TheIceButtonIsOfferedWheneverTheSheetIsQuiet()
+    {
+        Assert.IsTrue(IceReadPanel.Offered(GameState.REDTURN, false, false));
+        Assert.IsTrue(IceReadPanel.Offered(GameState.YELLOWTURN, false, false));
+        Assert.IsTrue(IceReadPanel.Offered(GameState.CHECKSCORE, false, false), "after a shot");
+        Assert.IsFalse(IceReadPanel.Offered(GameState.CHECKSCORE, false, true), "rocks still moving");
+        Assert.IsFalse(IceReadPanel.Offered(GameState.REDTURN, true, false), "rock in hand");
+        Assert.IsFalse(IceReadPanel.Offered(GameState.SCORE, false, false));
+        Assert.IsFalse(IceReadPanel.Offered(GameState.END, false, false));
+    }
 }
