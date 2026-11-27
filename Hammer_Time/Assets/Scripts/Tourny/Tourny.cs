@@ -21,6 +21,7 @@ public class Tourny
 
     public bool ko3;
     public bool ko1;
+    public bool clubNight;   // set for the selector's locals (see ClubNight)
     public int BG;
     public int crowdDensity;
 

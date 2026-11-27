@@ -17,6 +17,7 @@ public class Team
     public string nextOpp;         // Next opponent in current tournament
     public int poolId;             // 0 for Pool A, 1 for Pool B (-1 for no pool)
     public int pointDifferential;  // For-Against points scored (for tie-breaking)
+    public int pointsFor;          // points scored (second tie-breaker)
     
     // SEASON CUMULATIVE (reset each season)
     public int seasonWins;
@@ -135,6 +136,7 @@ public class Team
         nextOpp = "";
         poolId = -1;
         pointDifferential = 0;
+        pointsFor = 0;
     }
     
     /// <summary>

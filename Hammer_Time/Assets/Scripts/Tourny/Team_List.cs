@@ -38,7 +38,12 @@ public class Team_List : IComparable<Team_List>
             {
                 return 1;
             }
-            // Tie-breaker 2: Player team gets priority
+            // Tie-breaker 2: more points scored
+            else if (team.pointsFor != other.team.pointsFor)
+            {
+                return team.pointsFor > other.team.pointsFor ? -1 : 1;
+            }
+            // Tie-breaker 3: Player team gets priority
             else
             {
                 if (team.player)

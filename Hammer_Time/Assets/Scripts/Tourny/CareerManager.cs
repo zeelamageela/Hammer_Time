@@ -1294,18 +1294,7 @@ public class CareerManager : MonoBehaviour
             else
                 gsp.KO1 = false;
 
-            for (int i = 0; i < tSel.locals.Length; i++)
-            {
-                if (currentTourny.name == tSel.locals[i].name)
-                {
-                    gsp.cashGame = true;
-                    break;
-                }
-                else
-                {
-                    gsp.cashGame = false;
-                }
-            }
+            gsp.cashGame = false;   // cash games are gone: the locals are club nights (see ClubNight)
 
             for (int i = 0; i < currentTourny.teams; i++)
             {
@@ -1372,7 +1361,7 @@ public class CareerManager : MonoBehaviour
         gsp.tournyInProgress = true;
         gsp.KO1 = currentTourny.ko1;
         gsp.KO3 = currentTourny.ko3;
-        gsp.cashGame = currentTourny.championship ? false : gsp.cashGame;
+        gsp.cashGame = false;
         gsp.numberOfTeams = currentTourny.teams;
         gsp.prize = currentTourny.prizeMoney;
         gsp.draw = 0;
@@ -1398,7 +1387,11 @@ public class CareerManager : MonoBehaviour
         
         // CRITICAL FIX: Mark tournament as complete in CM arrays IMMEDIATELY
         // This must happen BEFORE any other logic to ensure it's saved
-        if (currentTourny != null)
+        bool clubNight = currentTourny != null && currentTourny.clubNight;
+
+        // club nights come round again, so they are never marked complete
+        if (clubNight) { }
+        else if (currentTourny != null)
         {
             GameLog.Info($"[CareerManager] TournyResults - Marking tournament '{currentTourny.name}' (ID {currentTourny.id}) as complete in CM arrays");
             
@@ -1502,7 +1495,7 @@ public class CareerManager : MonoBehaviour
                     xpChange += currentTournyTeams[i].wins * 3f;
                     xpChange += currentTournyTeams[i].loss;
 
-                    if (currentTournyTeams[i].rank == 1)
+                    if (currentTournyTeams[i].rank == 1 && !clubNight)
                     {
                         if (currentTourny.tour)
                         {
@@ -1701,7 +1694,7 @@ public class CareerManager : MonoBehaviour
         GameLog.Info("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
         provRankList.Sort();
-        if (!gsp.cashGame)
+        if (!gsp.cashGame && !clubNight)
         {
             float bonus = SponsorRules.ResultBonus(sponsorIncome, GetPlayerRank());
             if (bonus > 0f)
@@ -2961,6 +2954,7 @@ public class CareerManager : MonoBehaviour
             nextOpp = team.nextOpp,
             poolId = team.poolId,
             pointDifferential = team.pointDifferential,
+            pointsFor = team.pointsFor,
             
             // Season cumulative
             seasonWins = team.seasonWins,
@@ -3014,6 +3008,7 @@ public class CareerManager : MonoBehaviour
             nextOpp = data.nextOpp ?? "",
             poolId = data.poolId,
             pointDifferential = data.pointDifferential,
+            pointsFor = data.pointsFor,
             
             // Season cumulative
             seasonWins = data.seasonWins,
@@ -3141,6 +3136,7 @@ public class CareerManager : MonoBehaviour
             tournamentState.isTourEvent = currentTourny.tour;
             tournamentState.isQualifier = currentTourny.qualifier;
             tournamentState.isChampionship = currentTourny.championship;
+            tournamentState.isClubNight = currentTourny.clubNight;
             tournamentState.prizeMoney = currentTourny.prizeMoney;
             tournamentState.backgroundId = currentTourny.BG;
             tournamentState.crowdDensity = currentTourny.crowdDensity;
@@ -3343,6 +3339,7 @@ public class CareerManager : MonoBehaviour
         currentTourny.tour = tournamentState.isTourEvent;
         currentTourny.qualifier = tournamentState.isQualifier;
         currentTourny.championship = tournamentState.isChampionship;
+        currentTourny.clubNight = tournamentState.isClubNight;
         currentTourny.prizeMoney = tournamentState.prizeMoney;
         currentTourny.BG = tournamentState.backgroundId;
         currentTourny.crowdDensity = tournamentState.crowdDensity;

@@ -190,13 +190,21 @@ public class TournySettings : MonoBehaviour
             endSlider.value = 4;
         }
 
-        if (gsp.KO1)
+        // a knockout and a club night have a set number of games
+        bool clubNight = cm != null && cm.currentTourny != null && cm.currentTourny.clubNight;
+        bool fixedGames = gsp.KO1 || clubNight;
+        gameText.gameObject.SetActive(!fixedGames);
+        gameSlider.gameObject.SetActive(!fixedGames);
+        gameSlider.transform.parent.gameObject.SetActive(!fixedGames && !gsp.cashGame);
+
+        if (clubNight)
         {
-            gameText.gameObject.SetActive(false);
-            gameSlider.gameObject.SetActive(false);
-            gameSlider.transform.parent.gameObject.SetActive(false);
+            games = ClubNight.Draws;
+            gameSlider.minValue = ClubNight.Draws - 1;
+            gameSlider.maxValue = ClubNight.Draws;
+            gameSlider.value = ClubNight.Draws;
         }
-        else
+        else if (!gsp.KO1)
         {
             // Set slider min/max values and DEFAULT games value
             // CRITICAL: Only set the DEFAULT if tournament is NOT in progress!

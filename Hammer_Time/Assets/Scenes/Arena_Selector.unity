@@ -34121,6 +34121,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 97433e32695a74785ae741ce24671019, type: 3}
+    - target: {fileID: 3801651046811609448, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 244.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3801651046811609448, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 15.4
+      objectReference: {fileID: 0}
     - target: {fileID: 3845210855104905288, guid: e6cf7f71af65b415db450fa58f991558, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -39045,7 +39053,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15.15, y: -363}
+  m_AnchoredPosition: {x: 15.15, y: -426.65}
   m_SizeDelta: {x: 1093.7, y: 1088.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &966302005
@@ -42776,7 +42784,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 562.8199, y: -853.5221}
+  m_AnchoredPosition: {x: 562.8199, y: -758.5221}
   m_SizeDelta: {x: 1124, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1052130293
@@ -59145,6 +59153,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 4
     crowdDensity: 1
     trophyWon: 0
@@ -59173,6 +59182,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 1
     crowdDensity: 1
     trophyWon: 0
@@ -59201,6 +59211,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 5
     crowdDensity: 9
     trophyWon: 0
@@ -59230,6 +59241,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 4
     crowdDensity: 1
     trophyWon: 0
@@ -59258,6 +59270,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 2
     trophyWon: 0
@@ -59286,6 +59299,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 2
     crowdDensity: 6
     trophyWon: 0
@@ -59314,6 +59328,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 1
     crowdDensity: 2
     trophyWon: 0
@@ -59342,6 +59357,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 5
     crowdDensity: 6
     trophyWon: 0
@@ -59370,6 +59386,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 4
     crowdDensity: 4
     trophyWon: 0
@@ -59398,6 +59415,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 3
     trophyWon: 0
@@ -59426,6 +59444,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 1
     crowdDensity: 5
     trophyWon: 0
@@ -59454,6 +59473,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -59482,6 +59502,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -59510,6 +59531,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 2
     crowdDensity: 5
     trophyWon: 0
@@ -59538,6 +59560,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 4
     crowdDensity: 9
     trophyWon: 0
@@ -59568,6 +59591,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 4
     trophyWon: 0
@@ -59596,6 +59620,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 5
     trophyWon: 0
@@ -59624,6 +59649,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 4
     trophyWon: 0
@@ -59652,6 +59678,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -59680,6 +59707,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 5
     trophyWon: 0
@@ -59708,6 +59736,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 10
     trophyWon: 0
@@ -59737,6 +59766,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 2
     crowdDensity: 3
     trophyWon: 0
@@ -59765,6 +59795,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 1
     crowdDensity: 2
     trophyWon: 0
@@ -59793,6 +59824,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 2
     crowdDensity: 4
     trophyWon: 0
@@ -59821,6 +59853,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 1
     crowdDensity: 7
     trophyWon: 0
@@ -59850,6 +59883,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 2
     crowdDensity: 6
     trophyWon: 0
@@ -59878,6 +59912,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 1
     crowdDensity: 5
     trophyWon: 0
@@ -59906,6 +59941,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -59934,6 +59970,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 5
     crowdDensity: 8
     trophyWon: 0
@@ -59963,6 +60000,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 5
     crowdDensity: 2
     trophyWon: 0
@@ -59991,6 +60029,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 5
     crowdDensity: 6
     trophyWon: 0
@@ -60019,6 +60058,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 4
     crowdDensity: 4
     trophyWon: 0
@@ -60047,6 +60087,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -60075,6 +60116,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 1
+    clubNight: 0
     BG: 3
     crowdDensity: 8
     trophyWon: 0
@@ -60104,6 +60146,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 11
     trophyWon: 0
@@ -60133,6 +60176,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 3
     crowdDensity: 9
     trophyWon: 0
@@ -60164,6 +60208,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -60192,6 +60237,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -60220,6 +60266,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -60253,6 +60300,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -60282,6 +60330,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -73946,6 +73995,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -73971,6 +74021,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -74011,6 +74062,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -74635,7 +74687,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1881337416
 RectTransform:
   m_ObjectHideFlags: 0
@@ -74651,9 +74703,9 @@ RectTransform:
   - {fileID: 1236789129}
   m_Father: {fileID: 5135489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 562.8199, y: -409}
   m_SizeDelta: {x: 1125, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1881337417
@@ -85171,6 +85223,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85193,6 +85246,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85215,6 +85269,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85237,6 +85292,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85259,6 +85315,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85281,6 +85338,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85303,6 +85361,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85325,6 +85384,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85347,6 +85407,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85369,6 +85430,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85391,6 +85453,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85413,6 +85476,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85435,6 +85499,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85457,6 +85522,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85479,6 +85545,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85501,6 +85568,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85523,6 +85591,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85545,6 +85614,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85567,6 +85637,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85589,6 +85660,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85611,6 +85683,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85633,6 +85706,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85655,6 +85729,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85677,6 +85752,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85699,6 +85775,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85721,6 +85798,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85743,6 +85821,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85765,6 +85844,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85787,6 +85867,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85809,6 +85890,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85831,6 +85913,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85853,6 +85936,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85875,6 +85959,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85897,6 +85982,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85919,6 +86005,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85941,6 +86028,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85963,6 +86051,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -85985,6 +86074,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -86007,6 +86097,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -86029,6 +86120,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -86057,6 +86149,7 @@ MonoBehaviour:
     nextOpp: 
     poolId: 0
     pointDifferential: 0
+    pointsFor: 0
     seasonWins: 0
     seasonLosses: 0
     seasonEarnings: 0
@@ -86086,6 +86179,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -86119,6 +86213,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0
@@ -86147,6 +86242,7 @@ MonoBehaviour:
     complete: 0
     ko3: 0
     ko1: 0
+    clubNight: 0
     BG: 0
     crowdDensity: 0
     trophyWon: 0

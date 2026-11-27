@@ -470,6 +470,8 @@ public class TournyManager : MonoBehaviour
 				teams[i].wins = 0;
 				teams[i].loss = 0;
 				teams[i].earnings = 0;
+				teams[i].pointDifferential = 0;
+				teams[i].pointsFor = 0;
 			}
 
 			GameLog.Info("Team Record - " + teams[0].name + " - " + cm.teamRecords[0]);
@@ -650,8 +652,12 @@ public class TournyManager : MonoBehaviour
 			teams[playerTeam].loss++;
 		}
 		
+		if (IsClubNight)
+		{
+			ClubNight.AddScore(teams[playerTeam], teams[oppTeam], playerScore, oppScore);
+		}
 		// Update point differential for two-pool tournaments
-		if (isTwoPoolTournament)
+		else if (isTwoPoolTournament)
 		{
 			int differential = playerScore - oppScore;
 			teams[playerTeam].pointDifferential += differential;
@@ -825,6 +831,13 @@ public class TournyManager : MonoBehaviour
 			{
 				int team1Score = Random.Range(0, games[i].strength + 1);
 				int team2Score = Random.Range(0, games[i + 1].strength + 1);
+
+				if (IsClubNight)
+				{
+					// a real-looking score with no ties, since it settles tie-breaks
+					ClubNight.SimScore(team1Score > team2Score, Random.Range, out team1Score, out team2Score);
+					ClubNight.AddScore(games[i], games[i + 1], team1Score, team2Score);
+				}
 				
 				if (team1Score > team2Score)
 				{
@@ -911,7 +924,13 @@ public class TournyManager : MonoBehaviour
 
                 // Simulate other games
                 GameLog.Info($"[SimRestDraw] Simulating: teams[{team1Index}] vs teams[{team2Index}]");
-                if (Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength))
+                bool firstWon = Random.Range(0, games[i].strength) > Random.Range(0, games[i + 1].strength);
+                if (IsClubNight)
+                {
+                    ClubNight.SimScore(firstWon, Random.Range, out int firstScore, out int secondScore);
+                    ClubNight.AddScore(games[i], games[i + 1], firstScore, secondScore);
+                }
+                if (firstWon)
                 {
                     games[i + 1].loss++;
                     games[i].wins++;
@@ -948,7 +967,11 @@ public class TournyManager : MonoBehaviour
             }
 
 			//SetDraw();
-			if (cm.currentTourny != null && cm.currentTourny.qualifier)
+			if (IsClubNight)
+			{
+				FinishClubNight();
+			}
+			else if (cm.currentTourny != null && cm.currentTourny.qualifier)
 			{
 				vsTitle.text = "Results";
 				if (teams[playerTeam].rank <= 4)
@@ -1006,6 +1029,33 @@ public class TournyManager : MonoBehaviour
 
 	}
 	#endregion
+
+	bool IsClubNight { get { return cm != null && cm.currentTourny != null && cm.currentTourny.clubNight; } }
+
+	/// <summary>No playoffs: the top of the table takes the pot, and the next button goes back to the career.</summary>
+	void FinishClubNight()
+	{
+		List<Team> winners = ClubNight.Winners(teams);
+		float share = ClubNight.Share(cm.currentTourny.prizeMoney, winners);
+		gsp.tournyEarnings = share;   // set, not added: this screen can be loaded again
+		careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
+
+		bool playerWon = winners.Contains(teams[playerTeam]);
+		if (playerWon) heading.text = winners.Count > 1 ? "Shared Win!" : "You Win!";
+		else heading.text = "Club Night Over";
+
+		vsTitle.text = "Results";
+		vs.SetActive(true);
+		vsVS.text = "wins";
+		Team shown = playerWon ? teams[playerTeam] : winners[0];
+		vsDisplay[0].name.text = shown.name;
+		vsDisplay[0].rank.text = shown.rank.ToString();
+		vsDisplay[1].name.text = "$" + Mathf.Floor(cm.currentTourny.prizeMoney / (float)winners.Count).ToString("n0");
+		vsDisplay[1].rank.gameObject.SetActive(false);
+
+		contButton.gameObject.SetActive(false);
+		if (pm != null) pm.nextButton.gameObject.SetActive(true);
+	}
 
 	public void OnSim()
 	{

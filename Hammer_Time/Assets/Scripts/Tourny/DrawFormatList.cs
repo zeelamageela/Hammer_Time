@@ -28,6 +28,12 @@ public class DrawFormatList : MonoBehaviour
     {
         GameLog.Info($"[DrawFormatList] DrawSelector called - numberOfTeams={numberOfTeams}, gameLength={gameLength}, games={games}");
         
+        if (numberOfTeams == ClubNight.Teams)
+        {
+            currentFormat = ClubNight.Schedule();
+            return;
+        }
+
         // CRITICAL: Verify that the team arrays are populated in the Inspector
         if (numberOfTeams == 8 && (team8 == null || team8.Length == 0))
         {

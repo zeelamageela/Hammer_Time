@@ -2096,7 +2096,12 @@ public class GameManager : MonoBehaviour
         // Only set animator if it exists and has a controller
         if (tournyIntro != null && tournyIntro.runtimeAnimatorController != null)
         {
-            if (careerM.currentTourny.id < 50 | careerM.currentTourny.id == 100 | careerM.currentTourny.id == 101)
+            if (careerM.currentTourny.clubNight)
+            {
+                tournyIntro.SetInteger("Tourny", 50);
+                yield return new WaitForEndOfFrame();
+            }
+            else if (careerM.currentTourny.id < 50 | careerM.currentTourny.id == 100 | careerM.currentTourny.id == 101)
             {
                 tournyIntro.SetInteger("Tourny", careerM.currentTourny.id);
                 yield return new WaitForEndOfFrame();

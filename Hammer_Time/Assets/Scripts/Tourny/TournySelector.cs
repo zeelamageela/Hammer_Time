@@ -497,6 +497,7 @@ public class TournySelector : MonoBehaviour
     {
         weekText.text = "Week " + cm.week.ToString();
         mode = cm.debug;
+        foreach (var club in locals) ClubNight.Prepare(club);
         
         // CRITICAL FIX: Use seeded random based on week number
         // This ensures the same week always generates the same tournaments
@@ -607,7 +608,7 @@ public class TournySelector : MonoBehaviour
 
         StorylineManager slm = FindFirstObjectByType<StorylineManager>();
 
-        int localSelect = UnityEngine.Random.Range(0, locals.Length);
+        int localSelect = ClubNight.Pick(cm.week, locals.Length);   // the club nights take turns
         //Debug.Log("local Select is " + localSelect);
 
         if (cm.provQual)
