@@ -19,6 +19,8 @@ public class CharacterStats : MonoBehaviour
 
     public float sweepHealth;
     float sweepMax;
+    [Tooltip("Worn out: no sweeping until some energy is back (SweepFatigue.ReadyAgain).")]
+    public bool spent;
     public bool sweeping;
     public bool sweepingHard;
     public bool shooting;
@@ -31,7 +33,8 @@ public class CharacterStats : MonoBehaviour
     private void OnEnable()
     {
         sweepHealth = 100f;
-        sweepMax = 100f;
+        sweepMax = SweepFatigue.Full;
+        spent = false;
         // Don't call OnShoot() here - it should be called explicitly when the character is shooting
     }
 
@@ -41,11 +44,11 @@ public class CharacterStats : MonoBehaviour
         {
             if (sweeper.sweep)
             {
-                OnSweepFatigue(1);
+                OnSweepFatigue(false);
             }
             else if (sweeper.hard)
             {
-                OnSweepFatigue(2);
+                OnSweepFatigue(true);
             }
             else if (sweeper.whoa)
             {
@@ -53,16 +56,16 @@ public class CharacterStats : MonoBehaviour
             }
         }
     }
-    public void OnSweepFatigue(float fatigue)
+    public void OnSweepFatigue(bool hard)
     {
-        fatigue -= 0.005f * (100f - sweepEndurance.GetValue());
-        //Debug.Log("Fatigue is " + fatigue);
-        sweepHealth -= fatigue;
-        //Debug.Log("Sweep Health is " + fatigue);
+        float run = SweepFatigue.RunSeconds(RockPhysicsSettings.Current);
+        float lasts = SweepFatigue.SweepSeconds(sweepEndurance.GetValue(), hard, run);
+        sweepHealth -= sweepMax * Time.deltaTime / lasts;
 
         if (sweepHealth <= 0)
         {
             sweepHealth = 0f;
+            spent = true;
             sweeper.Whoa();
         }
     }
@@ -70,7 +73,12 @@ public class CharacterStats : MonoBehaviour
     public void OnSweepRecover()
     {
         if (sweepHealth < sweepMax)
-            sweepHealth += (1 - (sweepEndurance.GetValue() * 0.01f));
+        {
+            float run = SweepFatigue.RunSeconds(RockPhysicsSettings.Current);
+            float rest = SweepFatigue.RestSeconds(sweepEndurance.GetValue(), run);
+            sweepHealth = Mathf.Min(sweepMax, sweepHealth + sweepMax * Time.deltaTime / rest);
+        }
+        if (spent && sweepHealth >= SweepFatigue.ReadyAgain) spent = false;
     }
 
     public void OnShoot()
@@ -78,7 +86,7 @@ public class CharacterStats : MonoBehaviour
         aim = FindFirstObjectByType<AIManager>();
         AI_Shooter aiShoot = aim.gameObject.GetComponent<AI_Shooter>();
 
-        Debug.Log("AI Aim Accuracy is " + aimAccuracy.GetValue());
+        GameLog.Info("AI Aim Accuracy is " + aimAccuracy.GetValue());
 
         // Legacy AI_Shooter compatibility (will be removed later)
         aiShoot.drawAccu = new Vector2(0.1f - (0.001f * weightAccuracy.GetValue()), 0.1f - (0.001f * weightAccuracy.GetValue()));

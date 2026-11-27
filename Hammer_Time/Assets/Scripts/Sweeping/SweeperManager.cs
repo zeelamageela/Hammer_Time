@@ -75,6 +75,10 @@ public class SweeperManager : MonoBehaviour
         //sweepTimer = sweepEndur * 0.02f;
     }
 
+    bool wasSpentL, wasSpentR;
+    bool SpentL { get { return swprLStats != null && swprLStats.spent; } }
+    bool SpentR { get { return swprRStats != null && swprRStats.spent; } }
+
     private void Update()
     {
         if (sweeperL && sweeperL.transform.parent.gameObject.activeSelf)
@@ -82,14 +86,14 @@ public class SweeperManager : MonoBehaviour
             swprLStats = sweeperL.gameObject.GetComponent<CharacterStats>();
             swprRStats = sweeperR.gameObject.GetComponent<CharacterStats>();
 
-            if (swprRStats.sweepHealth <= 0f)
+            // a sweeper who has just worn out stops the sweep (once), including a tapped one
+            bool woreOut = (swprLStats.spent && !wasSpentL) || (swprRStats.spent && !wasSpentR);
+            wasSpentL = swprLStats.spent;
+            wasSpentR = swprRStats.spent;
+            if (woreOut)
             {
-                swprRStats.sweepHealth = 0f;
-                SweepWhoa(false);
-            }
-            if (swprLStats.sweepHealth <= 0f)
-            {
-                swprLStats.sweepHealth = 0f;
+                if (isSweeping) HapticController.Stop();
+                isSweeping = false;
                 SweepWhoa(false);
             }
 
@@ -101,7 +105,7 @@ public class SweeperManager : MonoBehaviour
             if (timeLeft < 0)
             {
                 //timeLeft = 0f;
-                Debug.Log("Whoa called in Tap Timer");
+                GameLog.Info("Whoa called in Tap Timer");
                 rockSounds[0].enabled = false;
                 rockSounds[1].enabled = false;
                 HapticController.Stop();
@@ -224,7 +228,7 @@ public class SweeperManager : MonoBehaviour
             Collider2D sweeperRCol = sweeperR.GetComponent<Collider2D>();
             if (sweeperLCol != null) sweeperLCol.enabled = false;
             if (sweeperRCol != null) sweeperRCol.enabled = false;
-            Debug.Log("[SweeperManager] AI turn - regular sweeper colliders DISABLED");
+            GameLog.Info("[SweeperManager] AI turn - regular sweeper colliders DISABLED");
         }
         else
         {
@@ -232,7 +236,7 @@ public class SweeperManager : MonoBehaviour
             Collider2D sweeperRCol = sweeperR.GetComponent<Collider2D>();
             if (sweeperLCol != null) sweeperLCol.enabled = true;
             if (sweeperRCol != null) sweeperRCol.enabled = true;
-            Debug.Log("[SweeperManager] Player turn - regular sweeper colliders ENABLED");
+            GameLog.Info("[SweeperManager] Player turn - regular sweeper colliders ENABLED");
         }
 
         sweepSel.SetColliders();
@@ -241,7 +245,7 @@ public class SweeperManager : MonoBehaviour
         // CRITICAL: Keep tSweepParent ACTIVE so TeeSweeperController Update() runs!
         // TeeSweeperController needs Update() to detect player taps on rocks
         sweepSel.tSweepParent.SetActive(true);
-        Debug.Log("[SweeperManager] tSweepParent ACTIVE for tap detection");
+        GameLog.Info("[SweeperManager] tSweepParent ACTIVE for tap detection");
         
         // Initialize TeeSweeperController
         if (teeController == null)
@@ -270,15 +274,15 @@ public class SweeperManager : MonoBehaviour
         if (isAITurn)
         {
             teeController.DisableColliders();
-            Debug.Log("[SweeperManager] AI turn - tee sweeper colliders DISABLED");
+            GameLog.Info("[SweeperManager] AI turn - tee sweeper colliders DISABLED");
         }
         else
         {
             teeController.EnableColliders();
-            Debug.Log("[SweeperManager] Player turn - tee sweeper colliders ENABLED");
+            GameLog.Info("[SweeperManager] Player turn - tee sweeper colliders ENABLED");
         }
         
-        Debug.Log("[SweeperManager] TeeSweeperController initialized");
+        GameLog.Info("[SweeperManager] TeeSweeperController initialized");
         
         sweeperL.sweep = false;
         sweeperL.hard = false;
@@ -422,12 +426,13 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepTap()
     {
+        if (SpentL || SpentR) return;   // worn out
         //Tap on the sweep target
         float sweepTimer = 0.25f;  // Match sweepTapDuration from Sweep.cs
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
-        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+        GameLog.Info("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
 
         if (Random.Range(0f, 1f) < 0.25f)
             CallOut("Sweep");
@@ -464,6 +469,7 @@ public class SweeperManager : MonoBehaviour
     {
         // Carving (tapping one sweeper) is learned in Sweep Training (level 1); until then a tap on a sweeper is the ordinary both-sweepers sweep
         if (!TrainingAids.CarvingUnlocked) { SweepTap(); return; }
+        if (SpentL) return;   // worn out
         sweep.CarveScale = 1f;
         //Tap on the sweep target
 
@@ -471,7 +477,7 @@ public class SweeperManager : MonoBehaviour
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
-        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+        GameLog.Info("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
 
         if (Random.Range(0f, 1f) < 0.25f)
             CallOut("Sweep");
@@ -511,13 +517,14 @@ public class SweeperManager : MonoBehaviour
     {
         // Carving (tapping one sweeper) is learned in Sweep Training (level 1); until then a tap on a sweeper is the ordinary both-sweepers sweep
         if (!TrainingAids.CarvingUnlocked) { SweepTap(); return; }
+        if (SpentR) return;   // worn out
         sweep.CarveScale = 1f;
         //Tap on the sweep target
         float sweepTimer = 0.25f;  // Match sweepTapDuration from Sweep.cs
 
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
-        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+        GameLog.Info("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
 
         if (Random.Range(0f, 1f) < 0.25f)
             CallOut("Sweep");
@@ -558,12 +565,12 @@ public class SweeperManager : MonoBehaviour
     {
         float sweepEndur = swprLStats.sweepEndurance.GetValue() + swprRStats.sweepEndurance.GetValue();
         float sweepTimer = sweepEndur * 0.02f;
-        Debug.Log("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
+        GameLog.Info("Sweep Timer is " + sweepTimer + " seconds, and isSweeping is " + isSweeping);
         yield return new WaitForSeconds(sweepTimer);
 
         if (isSweeping == false)
         {
-            Debug.Log("Whoa called in Tap Timer");
+            GameLog.Info("Whoa called in Tap Timer");
             rockSounds[0].enabled = false;
             rockSounds[1].enabled = false;
             SweepL_Whoa();
@@ -575,6 +582,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepWeight(bool aiTurn)
     {
+        if (SpentL || SpentR) return;   // worn out
         CallOut("Sweep");
 
         rockSounds[0].enabled = true;
@@ -595,6 +603,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepHard(bool aiTurn)
     {
+        if (SpentL || SpentR) return;   // worn out
         CallOut("Hard");
 
         rockSounds[0].enabled = true;
@@ -658,6 +667,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepLeft(bool aiTurn)
     {
+        if (SpentL) return;   // worn out
         sweep.CarveScale = 1f;
 
         rockSounds[0].enabled = true;
@@ -685,6 +695,7 @@ public class SweeperManager : MonoBehaviour
 
     public void SweepRight(bool aiTurn)
     {
+        if (SpentR) return;   // worn out
         sweep.CarveScale = 1f;
         rockSounds[0].enabled = false;
         rockSounds[1].enabled = true;
@@ -884,7 +895,7 @@ public class SweeperManager : MonoBehaviour
     /// </summary>
     public void ActivateTeeSweepers(GameObject opponentRock, bool isRedRock)
     {
-        Debug.Log("[SweeperManager] ActivateTeeSweepers called - redirecting to TeeSweeperController");
+        GameLog.Info("[SweeperManager] ActivateTeeSweepers called - redirecting to TeeSweeperController");
         
         // This method kept for backwards compatibility
         // TeeSweeperController now handles all T-line sweeping via tap detection
@@ -909,7 +920,7 @@ public class SweeperManager : MonoBehaviour
         sweepButton.SetActive(false);
         whoaButton.SetActive(false);
         
-        Debug.Log("[T-Line Sweep] Deactivated T-line sweepers");
+        GameLog.Info("[T-Line Sweep] Deactivated T-line sweepers");
     }
     
     /// <summary>
@@ -939,7 +950,7 @@ public class SweeperManager : MonoBehaviour
         if (timeLeft < sweepTimer)
             timeLeft = sweepTimer;
         
-        Debug.Log($"[T-Line Sweep] Sweep Timer is {sweepTimer} seconds, isTeeSweeping={isTeeSweeping}");
+        GameLog.Info($"[T-Line Sweep] Sweep Timer is {sweepTimer} seconds, isTeeSweeping={isTeeSweeping}");
         
         // Random callout
         if (Random.Range(0f, 1f) < 0.25f)
@@ -995,6 +1006,6 @@ public class SweeperManager : MonoBehaviour
         sweepButton.SetActive(true);
         hardButton.SetActive(false);
         
-        Debug.Log("[T-Line Sweep] Player called Whoa on T-line sweep");
+        GameLog.Info("[T-Line Sweep] Player called Whoa on T-line sweep");
     }
 }
