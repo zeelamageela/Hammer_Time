@@ -77,9 +77,12 @@ public class TrajectorySimulator
         return Simulate(rock, PrepareProfile(), isInTurn, maxPoints, rocksInPlay);
     }
 
+    /// <summary>Ice to predict on instead of the real one (the aim line on the player's read); null = the real ice.</summary>
+    public RockPhysicsProfile Ice;
+
     private RockPhysicsProfile PrepareProfile()
     {
-        RockPhysicsProfile profile = RockPhysicsSettings.Current;
+        RockPhysicsProfile profile = Ice ?? RockPhysicsSettings.Current;
         if (trajLine == null) trajLine = GameObject.FindFirstObjectByType<TrajectoryLine>();
         if (trajLine != null)
         {

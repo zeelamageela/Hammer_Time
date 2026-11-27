@@ -98,7 +98,13 @@ public static class RockPhysicsBootstrap
         RockPhysicsSettings.Request(Make(choice));
     }
 
+    /// <summary>The profile for a pace, on the ice in force (see IceConditions).</summary>
     public static RockPhysicsProfile Make(PhysicsChoice choice)
+    {
+        return IceConditions.Apply(MakeOnNormalIce(choice));
+    }
+
+    public static RockPhysicsProfile MakeOnNormalIce(PhysicsChoice choice)
     {
         switch (choice)
         {

@@ -58,7 +58,7 @@ public class TrajectoryLine : MonoBehaviour
             float speed = trajectorySpeed != null && idx < trajectorySpeed.Count ? trajectorySpeed[idx] : 5f;
             d.transform.localScale = Vector3.one * Mathf.Lerp(0.35f * 0.25f, 0.35f, Mathf.Clamp01(speed / 15f));
             var sr = d.GetComponent<SpriteRenderer>();
-            if (sr != null) { var c = knobColour; c.a = DotMarch.Fade(arc, dotTotal); sr.color = c; }
+            if (sr != null) { var c = DotColour; c.a = DotMarch.Fade(arc, dotTotal); sr.color = c; }
         }
     }
 
@@ -239,14 +239,71 @@ public class TrajectoryLine : MonoBehaviour
         if (fuzzError == Vector2.zero) return initialVelocity;
 
         fuzzActive = true;
-        RockPhysicsProfile p = RockPhysicsSettings.Current;
+        RockPhysicsProfile p = LineIce;
         Vector2 bent = AimFuzz.BendThrow(launcherPos, p.LaunchVelocityFromWeightVelocity(initialVelocity), isInTurn, fuzzError, p);
         return p.WeightVelocityFromLaunchVelocity(bent);
     }
 
+    // ---- the player's aim colours: violet, and a grade after the throw while reading the ice (see PlayerRead) ----
+
+    // The aiming line and its dots are violet, which stands out on the ice and is none of the grading colours: paler for a shot
+    // that stops short, more vibrant the further it goes. These are the two ends and the finishing heights they belong to.
+    static readonly Color PaleViolet = new Color(0.74f, 0.58f, 0.92f);
+    static readonly Color VividViolet = new Color(0.52f, 0.00f, 1.00f);
+    const float PaleStopY = 1f;      // a high guard
+    const float VividStopY = 14f;    // takeout weight and beyond
+
+    Color readShade = PaleViolet;
+
+    static Color VioletFor(Vector2 weightVelocity, RockPhysicsProfile ice)
+    {
+        float stopY = RockPhysics.ReleaseY + ice.StopDistance(ice.LaunchSpeedFromWeight(weightVelocity.magnitude));
+        return Color.Lerp(PaleViolet, VividViolet, Mathf.InverseLerp(PaleStopY, VividStopY, stopY));
+    }
+    static readonly Color ReadActualColour = new Color(0.12f, 0.14f, 0.18f, 0.7f);   // where the rock really went, to compare with
+
+    bool Reading { get { return !aiTurn && PlayerRead.Active; } }
+    Color DotColour { get { return aiTurn ? knobColour : readShade; } }
+
+    /// <summary>The violet of the aim a player is drawing (the pull line wears it too); false on the computer's turn.</summary>
+    public bool AimShade(out Color violet)
+    {
+        violet = readShade;
+        return !aiTurn;
+    }
+
+    Color lineStartColour, lineEndColour;   // the line's own colours, for the computer's turns
+    Vector2 aimedThrow;                     // the throw last drawn, with no shooter error, for grading it
+    bool aimedInTurn, aimed;
+
+    void PaintLine(bool own, Color colour)
+    {
+        lr.startColor = own ? colour : lineStartColour;
+        lr.endColor = own ? colour : lineEndColour;
+    }
+
+    /// <summary>The throw is away: the line that was aimed turns green, yellow or red by how good the read was (see ReadGrade).</summary>
+    void GradeRead()
+    {
+        float miss = ReadGrade.MissFeet(launcher.transform.position, aimedThrow, aimedInTurn, PlayerRead.Profile, RockPhysicsSettings.Current);
+        Color grade = ReadGrade.Colour(miss);
+        PaintLine(true, grade);
+        foreach (var d in dots)
+        {
+            var sr = d != null ? d.GetComponent<SpriteRenderer>() : null;
+            if (sr != null) { Color c = grade; c.a = sr.color.a; sr.color = c; }
+        }
+        GameLog.Info($"[ReadGrade] the read was {miss:F1} ft out on this throw");
+    }
+
+    /// <summary>The ice the aim line is drawn on: the player's read of it (see PlayerRead), or else the real ice.</summary>
+    RockPhysicsProfile LineIce { get { return !aiTurn && PlayerRead.Active ? PlayerRead.Profile : RockPhysicsSettings.Current; } }
+
     void Start()
     {
         lr = GetComponent<LineRenderer>();
+        lineStartColour = lr.startColor;
+        lineEndColour = lr.endColor;
         edgeCol = GetComponent<EdgeCollider2D>();
 
         dots = new List<GameObject>();
@@ -597,6 +654,8 @@ public class TrajectoryLine : MonoBehaviour
             GameLog.Info($"⚠️ PHYSICS SETTINGS CHANGED! Updated simulator.");
         }
         
+        if (trajectorySimulator != null) trajectorySimulator.Ice = LineIce;
+
         GameLog.Info($"[DrawTrajectory] START - springDistance: {springDistance}, usePhysics: {usePhysicsSimulation}, " +
                   $"physicsChanged: {physicsSettingsChanged}");
         
@@ -608,6 +667,7 @@ public class TrajectoryLine : MonoBehaviour
             lr.SetPosition(1, launcher.transform.position);
             GameLog.Info("Spring distance too small, not drawing trajectory");
             TimingPanel.ClearAim();
+            readShade = PaleViolet;
             return;
         }
 
@@ -691,7 +751,14 @@ public class TrajectoryLine : MonoBehaviour
                 }
             }
             
+            aimedThrow = initialVelocity;
+            aimedInTurn = isInTurn;
+            aimed = true;
+            actualPathLine.startColor = actualPathLine.endColor = Reading ? ReadActualColour : TRAJECTORY_COLOR;
+
             Vector2 shownVelocity = FuzzedVelocity(launcherPos, initialVelocity, isInTurn);
+            readShade = VioletFor(shownVelocity, LineIce);   // from the throw as drawn, so it tells no more than the line does
+            PaintLine(!aiTurn, readShade);
 
             // Simulate the trajectory with collision detection
             // CRITICAL: Pass forPlayerPreview = true so curl matches visual expectation
@@ -708,7 +775,7 @@ public class TrajectoryLine : MonoBehaviour
             TrajectorySimulator.CollisionInfo collisionInfo = trajectorySimulator.GetCollisionInfo();
             trajectorySpeed = trajectorySimulator.GetTrajectorySpeed();
             shotCollision = collisionInfo;
-            if (simulatedPath.Count > 0 && !fuzzActive)   // the audit compares a TRUE preview with where the rock really goes
+            if (simulatedPath.Count > 0 && !fuzzActive && !PlayerRead.Active)   // the audit compares a TRUE preview with where the rock really goes
                 ShotAudit.RecordPreview(initialVelocity, isInTurn, simulatedPath[simulatedPath.Count - 1], collisionInfo.hasCollision);
 
             // Convert to Vector3 for rendering
@@ -761,7 +828,7 @@ public class TrajectoryLine : MonoBehaviour
                 
                 // Hit arrows: each starts on its rock (the shooter where it makes contact, the struck rock where it sits), points the
                 // way that rock leaves the hit, and is as long as it will travel. A rock that hardly moves gets none.
-                RockPhysicsProfile law = RockPhysicsSettings.Current;
+                RockPhysicsProfile law = LineIce;
                 DrawHitArrow(postCollisionLine, collisionInfo.shooterCenterAtCollision, collisionInfo.shooterVelocityAfter, law);
                 DrawHitArrow(hitRockPostCollisionLine, collisionInfo.hitRockCenter, collisionInfo.hitRockVelocityAfter, law);
             }
@@ -855,7 +922,7 @@ public class TrajectoryLine : MonoBehaviour
                 SpriteRenderer dotRenderer = dotPlace.GetComponent<SpriteRenderer>();
                 if (dotRenderer != null)
                 {
-                    dotRenderer.color = knobColour;
+                    dotRenderer.color = DotColour;
                 }
                 
                 dots.Add(dotPlace);
@@ -872,7 +939,7 @@ public class TrajectoryLine : MonoBehaviour
                 SpriteRenderer lastDotRenderer = lastDot.GetComponent<SpriteRenderer>();
                 if (lastDotRenderer != null)
                 {
-                    lastDotRenderer.color = knobColour;
+                    lastDotRenderer.color = DotColour;
                 }
                 
                 dots.Add(lastDot);
@@ -1017,7 +1084,7 @@ public class TrajectoryLine : MonoBehaviour
             thrown.transform.position, launcher.transform.position,
             velocityMultiplier, minPullbackDistance, maxPullbackDistance, minVelocity, maxVelocity);
 
-        RockPhysicsProfile profile = RockPhysicsSettings.Current;
+        RockPhysicsProfile profile = LineIce;
         TimingPredictor.Predict(profile.LaunchVelocityFromWeightVelocity(weightVelocity), isInTurn,
             fuzzActive ? fuzzError.y : 0f, fuzzActive ? AimFuzzBands.WeightHalfHeight(GetShooterWeightAccuracy(), GetShooterConsistency()) : 0f,
             profile, out TimingPredictor.Range split, out TimingPredictor.Range hogToHog);
@@ -1042,6 +1109,8 @@ public class TrajectoryLine : MonoBehaviour
         //lr.enabled = true;
         lr.startWidth = 0.075f;
         lr.endWidth = 0.075f;
+        if (Reading && aimed) GradeRead();
+        aimed = false;
         
         // KEEP trajectory dots visible during rock movement
         // They will be cleared when DrawTrajectory() is called for the next turn

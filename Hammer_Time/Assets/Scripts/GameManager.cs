@@ -659,6 +659,8 @@ public class GameManager : MonoBehaviour
             }
         }
         
+        IceConditions.Refresh();   // the game's venue is settled by now, however the scene was entered
+        IceReadPanel.OnTurn(this);
         cm.ShotSetup(aiTeamRed);
 
         state = GameState.REDTURN;
@@ -869,6 +871,8 @@ public class GameManager : MonoBehaviour
 
         am.PlayBG(0);
 
+        IceConditions.Refresh();
+        IceReadPanel.OnTurn(this);
         cm.ShotSetup(aiTeamYellow);
 
         if (GameObject.FindGameObjectsWithTag("Player").Length >= 1)

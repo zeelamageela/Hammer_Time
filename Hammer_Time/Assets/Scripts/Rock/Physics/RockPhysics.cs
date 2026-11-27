@@ -32,6 +32,10 @@ public class RockPhysicsProfile
     public FrictionLaw law = FrictionLaw.LegacyExponential;
     [Tooltip("1 = game pace. Real() sets this so reports/tools know the profile was stretched.")]
     public float timeStretch = 1f;
+    [Tooltip("The ice (see WithIce): how far a weight travels against normal ice.")]
+    public float iceSpeed = 1f;
+    [Tooltip("The ice (see WithIce): throw speeds stay what they are on normal ice, which is this many times the speeds in this profile.")]
+    public float iceThrow = 1f;
 
     [Header("Legacy exponential law")]
     [Tooltip("Viscous drag, 1/s: speed lost is proportional to speed. This is the old Rigidbody linearDamping.")]
@@ -159,6 +163,23 @@ public class RockPhysicsProfile
         return p;
     }
 
+    /// <summary>
+    /// This rock on different ice. speed: how far a given weight travels past the release point (above 1 = faster ice); curl: how
+    /// much a shot bends on its way to the same spot. The throw does not change: a weight still leaves the hand at the same speed.
+    /// Everything else is the time stretch that takes a rock to the same place more slowly, so with curl 1 the paths are those of
+    /// normal ice, reached with less weight on fast ice. The old exponential rock is left as it is.
+    /// </summary>
+    public RockPhysicsProfile WithIce(float speed, float curl)
+    {
+        if (IsLegacy) return this;
+        float stretch = Mathf.Pow(speed, 1f / (2f - stopPower));
+        RockPhysicsProfile p = WithTimeStretch(stretch);
+        p.iceSpeed = iceSpeed * speed;
+        p.iceThrow = iceThrow * stretch;
+        p.curlStrength *= curl;
+        return p;
+    }
+
     public bool IsLegacy { get { return law == FrictionLaw.LegacyExponential; } }
 
     /// <summary>
@@ -180,16 +201,23 @@ public class RockPhysicsProfile
     {
         if (IsLegacy) return weight;
         float distance = Mathf.Max(0.01f, stopDistanceSlope * weight + stopDistanceOffset);
-        return Mathf.Pow(stopStrength * (2f - stopPower) * distance, 1f / (2f - stopPower));
+        return iceThrow * Mathf.Pow(stopStrength * (2f - stopPower) * distance, 1f / (2f - stopPower));
     }
 
     /// <summary>The weight a rock released at this speed has (inverse of LaunchSpeedFromWeight).</summary>
     public float WeightFromLaunchSpeed(float speed)
     {
-        if (IsLegacy) return speed;
-        float distance = StopDistance(speed);
-        return (distance - stopDistanceOffset) / stopDistanceSlope;
+        return IsLegacy ? speed : WeightForDistance(StopDistance(speed / iceThrow));
     }
+
+    /// <summary>The weight that, on normal ice, travels as far as a rock released at this speed does on this ice. The curl goes by it,
+    /// so a shot to a given spot bends the same however fast the ice is.</summary>
+    public float PathWeight(float speed)
+    {
+        return IsLegacy ? speed : WeightForDistance(StopDistance(speed));
+    }
+
+    float WeightForDistance(float distance) { return (distance - stopDistanceOffset) / stopDistanceSlope; }
 
     /// <summary>Keeps a velocity's direction, replaces its length: weight -> speed.</summary>
     public Vector2 LaunchVelocityFromWeightVelocity(Vector2 weightVelocity)
@@ -358,7 +386,7 @@ public static class RockPhysics
         s.angularDamping = p.angularDamping;
         s.frictionScale = 1f;
         s.dirMult = inTurn ? -1 : 1;
-        float weight = p.WeightFromLaunchSpeed(s.velocity.magnitude);
+        float weight = p.PathWeight(s.velocity.magnitude);
         s.curlX = -p.CurlMagnitude(weight);
         s.curlAccel = -s.dirMult * p.CurlAcceleration(weight);
         s.releaseSpeed = Mathf.Max(0.0001f, s.velocity.magnitude);

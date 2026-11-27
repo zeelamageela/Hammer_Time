@@ -158,10 +158,15 @@ public class Rock_Flick : MonoBehaviour
         }
     }
 
+    bool touchWasForMenu;   // a press on the ice menu, which sits over the rock's big touch area
+
     void OnMouseDown()
     {
         if (!GetComponent<Rock_Info>().released)
         {
+            touchWasForMenu = IceReadPanel.Blocks(Input.mousePosition);
+            if (touchWasForMenu) return;
+
             // CRITICAL: In flick shot mode, handle clicks based on phase
             if (isFlickShotMode && flickShotController != null)
             {
@@ -273,6 +278,7 @@ public class Rock_Flick : MonoBehaviour
 
     public void OnMouseUp()
     {
+        if (touchWasForMenu) { touchWasForMenu = false; return; }
         if (!GetComponent<Rock_Info>().released)
         {
             // CRITICAL: In flick shot mode, don't fire on release - just hold position

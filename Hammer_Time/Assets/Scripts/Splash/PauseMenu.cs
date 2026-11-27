@@ -42,7 +42,94 @@ public class PauseMenu : MonoBehaviour
             BuildPhysicsButton();
             BuildStopCurveButton();
         }
+        IceConditions.Refresh();   // a new game scene: the tutorial plays on normal ice, the others on what is set
+        BuildExperimentToggle("Venue Ice Toggle", VenueIceLabel, () => VenueIce.Enabled, on => { VenueIce.Enabled = on; RefreshExperimentLabels(); });
+        BuildExperimentToggle("Test Ice Toggle", TestIceLabel, () => IceConditions.Enabled, on => { IceConditions.Enabled = on; RefreshExperimentLabels(); });
+        BuildExperimentToggle("Adjustable Line Toggle", () => "Adjustable Line", () => PlayerRead.Enabled, on =>
+        {
+            PlayerRead.Enabled = on;
+            IceReadPanel.OnTurn(FindFirstObjectByType<GameManager>());
+            RefreshExperimentLabels();
+        });
         TidyMenu();
+    }
+
+    // ---- experiments: a checkbox each (testers only), so a new feature can be switched on and off during a game -------------
+
+    const float ExperimentRowHeight = 90f, ExperimentWidth = 1100f;
+    RectTransform experiments;   // the checkboxes, two to a row so the list can grow
+    readonly List<KeyValuePair<Text, System.Func<string>>> experimentLabels = new List<KeyValuePair<Text, System.Func<string>>>();
+
+    static string VenueIceLabel()
+    {
+        if (!VenueIce.Enabled || PlayerRead.Enabled) return "Venue Ice";   // reading the ice: don't give it away
+        float speed, curl;
+        VenueIce.Current(out speed, out curl);
+        return "Venue Ice (" + ((VenueBackground)VenueIce.Background(FindFirstObjectByType<CareerManager>(), GameSettingsPersist.instance))
+            + " " + IceUnits.Describe(speed, curl) + ")";
+    }
+
+    static string TestIceLabel()
+    {
+        if (VenueIce.Enabled) return "Test Ice (venue wins)";
+        return PlayerRead.Enabled ? "Test Ice" : "Test Ice (" + IceUnits.Describe(IceConditions.Speed, IceConditions.Curl) + ")";
+    }
+
+    /// <summary>A copy of the Debug checkbox in the experiments block under it.</summary>
+    void BuildExperimentToggle(string name, System.Func<string> label, System.Func<bool> get, UnityEngine.Events.UnityAction<bool> set)
+    {
+        if (!DevOptions.Enabled) return;
+        var host = Modern ? advancedOptions : ListRoot;
+        var template = host != null ? host.Find("Debug Toggle") : null;
+        if (template == null) return;
+        if (experiments == null) experiments = BuildExperimentBlock(host, template);
+
+        var copy = Instantiate(template.gameObject, experiments);
+        copy.name = name;
+        var toggle = copy.GetComponent<Toggle>();
+        for (int i = 0; i < toggle.onValueChanged.GetPersistentEventCount(); i++)
+            toggle.onValueChanged.SetPersistentListenerState(i, UnityEngine.Events.UnityEventCallState.Off);
+        toggle.SetIsOnWithoutNotify(get());
+        toggle.onValueChanged.AddListener(set);
+
+        var text = copy.GetComponentInChildren<Text>(true);
+        if (text != null)
+        {
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 10;
+            text.resizeTextMaxSize = text.fontSize;
+            experimentLabels.Add(new KeyValuePair<Text, System.Func<string>>(text, label));
+        }
+
+        int rows = (experiments.childCount + 1) / 2;
+        float grown = rows * ExperimentRowHeight - experiments.sizeDelta.y;
+        experiments.sizeDelta = new Vector2(ExperimentWidth, rows * ExperimentRowHeight);
+        // move the tester panel up by what it grew, so its bottom stays on screen
+        if (Modern && grown > 0f) ((RectTransform)advancedOptions).anchoredPosition += new Vector2(0f, grown);
+        RefreshExperimentLabels();
+    }
+
+    static RectTransform BuildExperimentBlock(Transform host, Transform after)
+    {
+        var go = new GameObject("Experiments", typeof(RectTransform), typeof(GridLayoutGroup), typeof(LayoutElement));
+        go.transform.SetParent(host, false);
+        go.transform.SetSiblingIndex(after.GetSiblingIndex() + 1);
+        var rect = (RectTransform)go.transform;
+        rect.sizeDelta = new Vector2(ExperimentWidth, 0f);
+        var grid = go.GetComponent<GridLayoutGroup>();
+        grid.cellSize = new Vector2(ExperimentWidth / 2f, ExperimentRowHeight);
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        grid.constraintCount = 2;
+        var element = go.GetComponent<LayoutElement>();   // for older menus, whose layout asks for a size
+        element.preferredWidth = ExperimentWidth;
+        element.preferredHeight = ExperimentRowHeight;
+        return rect;
+    }
+
+    void RefreshExperimentLabels()
+    {
+        foreach (var l in experimentLabels)
+            if (l.Key != null) l.Key.text = l.Value();
     }
 
     // ---- the two-panel pause menu: PlayerOptions (what a player sees) and AdvancedOptions (testers only, behind the Advanced button) ----
@@ -191,7 +278,7 @@ public class PauseMenu : MonoBehaviour
     }
 
     // Everything a player should never see: AI tuning, debug switches and the physics pace buttons. Names are the scene's own.
-    static readonly string[] TesterItemNames = { "AI Settings", "EV Optimization Toggle", "EV Influence Slider", "Show EV Logs", "Debug Toggle" };
+    static readonly string[] TesterItemNames = { "AI Settings", "EV Optimization Toggle", "EV Influence Slider", "Show EV Logs", "Debug Toggle", "Experiments" };
 
     bool testerOpen;
     Text testerLabel;
@@ -414,6 +501,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(true);
         ShowAdvanced(false);
         TidyMenu();
+        RefreshExperimentLabels();
         GameIsPaused = true;
         gHUD.scoreCheck = true;
         volumeSlider.value = am.maxVol;

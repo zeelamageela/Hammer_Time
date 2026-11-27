@@ -123,6 +123,10 @@ public class CareerManager : MonoBehaviour
     /// <summary>Gear plus training: what a match adds to the player team's skills (the sweepers, and the shooter's aim and weight).</summary>
     public CareerStats SkillBonus { get { return SkillBonuses.Combine(equipmentBonus, TrainingBonus); } }
 
+    // what gives this career's venues their own ice (see VenueIce); 0 until first needed
+    [SerializeField] int iceSeed;
+    public int IceSeed { get { if (iceSeed == 0) iceSeed = UnityEngine.Random.Range(1, int.MaxValue); return iceSeed; } }
+
     public bool inProgress;
     public int season;
     public bool loadedFromSave;
@@ -1875,6 +1879,7 @@ public class CareerManager : MonoBehaviour
         lastEquipmentSnapshot = null;
         activeHandleTier = 0;
         trainingLevels = null;
+        iceSeed = 0;
 
         // Clear all sponsor/card data
         activeCardIDList = null;
@@ -2426,6 +2431,7 @@ public class CareerManager : MonoBehaviour
         if (inventoryID != null) data.inventoryIDs.AddRange(inventoryID);
         data.activeHandleTier = activeHandleTier;
         if (trainingLevels != null) data.trainingLevels.AddRange(trainingLevels);
+        data.iceSeed = IceSeed;
 
         // Serialize all equipment if EquipmentManager exists
         EquipmentManager em = FindFirstObjectByType<EquipmentManager>();
@@ -2834,6 +2840,7 @@ public class CareerManager : MonoBehaviour
         activeEquipID = data.activeEquipIDs.ToArray();
         inventoryID = data.inventoryIDs.ToArray();
         activeHandleTier = data.activeHandleTier;
+        iceSeed = data.iceSeed; // 0 in saves from before venue ice: a seed is picked when first needed
         trainingLevels = data.trainingLevels != null ? TrainingCatalog.MigrateLegacy(data.trainingLevels.ToArray()) : null; // absent in saves from before training existed
 
         // Restore equipment collections if available

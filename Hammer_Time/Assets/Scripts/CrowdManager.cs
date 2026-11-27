@@ -58,6 +58,8 @@ public class CrowdManager : MonoBehaviour
             bgIndex = 0;
         }
 
+        if (VenueIce.TestBackground >= 0) bgIndex = VenueIce.TestBackground;
+
         switch (bgIndex)
         {
             case 0:

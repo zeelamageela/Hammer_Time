@@ -36,6 +36,7 @@ public class BGManager : MonoBehaviour
         {
             gsp.bg = bgIndex;
         }
+        bgIndex = VenueIce.Background(carM, gsp);   // as above, unless Quick Test picked a background
 
         if (bgIndex >= 0 && bgIndex < boards.Length)
         {

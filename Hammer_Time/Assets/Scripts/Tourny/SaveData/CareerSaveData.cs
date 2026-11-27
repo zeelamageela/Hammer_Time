@@ -55,6 +55,7 @@ public class CareerSaveData
         public List<int> inventoryIDs;
         public int activeHandleTier; // 0 if absent (saves from before this field existed)
         public List<int> trainingLevels; // one level (0-4) per TrainingTrack; null in saves from before training existed
+        public int iceSeed; // gives the career's venues their own ice (VenueIce); 0 in older saves
         public EquipmentCollectionData allEquipment;
         
         // Cards/Sponsors

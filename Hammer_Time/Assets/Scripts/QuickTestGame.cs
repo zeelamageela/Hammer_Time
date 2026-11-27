@@ -29,7 +29,7 @@ public class QuickTestGame : MonoBehaviour
     public KeyCode runbackPracticeKey = KeyCode.E;
     
     [Tooltip("Number of rocks per team")]
-    public int rocksPerTeam = 4;
+    public int rocksPerTeam = 8;
     
     [Tooltip("Number of ends to play")]
     public int endsToPlay = 1;
@@ -55,6 +55,16 @@ public class QuickTestGame : MonoBehaviour
     public bool thumbCircle = false;
     [Tooltip("How far sideways the rock can be pulled. 0.34 is the old limit; wider aims further for the same thumb travel.")]
     [Range(0.34f, 0.55f)] public float aimCap = 0.40f;
+
+    [Header("Venue (read when Q is pressed)")]
+    [Tooltip("The background to play in. With Venue Ice on (pause menu, under Advanced) the ice goes with it, a little different each time.")]
+    public VenueBackground venue = VenueBackground.Club;
+
+    [Header("Test Ice (turn on Test Ice in the pause menu, under Advanced; applies from the next throw)")]
+    [Tooltip("Hog-to-hog seconds of a button draw (higher = faster). Outdoor about 13.4, club 14.5, big event 15.5.")]
+    [Range(IceUnits.MinSeconds, IceUnits.MaxSeconds)] public float iceSeconds = 15.5f;
+    [Tooltip("Feet of curl on a button draw. Outdoor about 2.3, club 3.6, big event 4.9.")]
+    [Range(IceUnits.MinFeet, IceUnits.MaxFeet)] public float iceFeet = 4.9f;
 
     [Header("Training levels (apply live while a quick test is running)")]
     [Tooltip("Sweep Training: 1 carving, 2 endurance, 3 strength, 4 cohesion")]
@@ -157,6 +167,11 @@ public class QuickTestGame : MonoBehaviour
             }
             haveSnapshot = false;
         }
+        if (SessionActive)
+        {
+            VenueIce.TestBackground = -1;
+            IceConditions.Set(IceConditions.DefaultSpeed, IceConditions.DefaultCurl);
+        }
         SessionActive = false;
         sawGameScene = false;
     }
@@ -227,6 +242,7 @@ public class QuickTestGame : MonoBehaviour
         }
         PullbackSettings.ShowThumbCircle = thumbCircle;
         PullbackSettings.AimCap = aimCap;
+        IceConditions.Set(IceUnits.SpeedFromSeconds(iceSeconds), IceUnits.CurlFromFeet(iceFeet));
         AimFuzzBands.ConeStrength = coneStrength;
         AimFuzzBands.OvalFill = ovalFill;
         AimFuzzBands.OvalOutline = ovalOutline;
@@ -240,6 +256,8 @@ public class QuickTestGame : MonoBehaviour
     {
         GameLog.Info("[QuickTestGame] Starting instant test game - Press Q to restart anytime!");
         SessionActive = true;   // from now on the career is not saved (see CareerManager.SaveCareer) and its stats are restored at the end
+        VenueIce.TestBackground = (int)venue;
+        VenueIce.TestVisit = Random.Range(0, 100000);
         
         // Find or create GameSettingsPersist
         GameSettingsPersist gsp = FindFirstObjectByType<GameSettingsPersist>();

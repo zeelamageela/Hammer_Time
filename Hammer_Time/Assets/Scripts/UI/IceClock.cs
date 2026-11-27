@@ -6,7 +6,8 @@ using UnityEngine;
 ///
 /// A measured time says how far that rock was going to travel on the current pace. The reading is the time real ice (constant
 /// friction, the Real-time profile) gives for the same distance, scaled so the button draw lands on the figures below. Sweeping and
-/// bumps still show, as a rock that was effectively heavier or lighter.
+/// bumps still show, as a rock that was effectively heavier or lighter. On faster ice the same shot reads longer on both clocks, as
+/// on real ice (see IceConditions).
 /// </summary>
 public static class IceClock
 {
@@ -22,6 +23,9 @@ public static class IceClock
     static RockPhysicsProfile realIce;
     static RockPhysicsProfile RealIce { get { return realIce ?? (realIce = RockPhysicsProfile.Real()); } }
 
+    // on real ice, the time to reach a given spot grows with the square root of the ice's speed
+    static float IceStretch(RockPhysicsProfile p) { return Mathf.Sqrt(p.iceSpeed); }
+
     static float ButtonDistance(RockPhysicsProfile p) { return p.stopDistanceSlope * ButtonWeight + p.stopDistanceOffset; }
 
     /// <summary>The split to show for one measured (or expected) on pace p. Negative (no time) stays as it is.</summary>
@@ -30,7 +34,7 @@ public static class IceClock
         if (seconds <= 0f || p.IsLegacy) return seconds;
         float speed = (SplitTimer.NearHogY - SplitTimer.BackLineY) / seconds;
         // the split is run at one speed, and on real ice speed goes with the square root of the distance the rock will travel
-        return ButtonSplit * Mathf.Sqrt(ButtonDistance(p) / p.StopDistance(speed));
+        return ButtonSplit * IceStretch(p) * Mathf.Sqrt(ButtonDistance(p) / p.StopDistance(speed));
     }
 
     /// <summary>The hog-to-hog time to show for one measured (or expected) on pace p. Negative (no time) stays as it is.</summary>
@@ -45,7 +49,7 @@ public static class IceClock
             float middle = 0.5f * (near + far);
             if (HogTime(middle, p) > seconds) near = middle; else far = middle;
         }
-        return ButtonHogToHog * HogTime(0.5f * (near + far), RealIce) / HogTime(ButtonDistance(RealIce), RealIce);
+        return ButtonHogToHog * IceStretch(p) * HogTime(0.5f * (near + far), RealIce) / HogTime(ButtonDistance(RealIce), RealIce);
     }
 
     /// <summary>How fast the shown clock runs against the game's while a rock is between the lines, from its speed at the first.</summary>

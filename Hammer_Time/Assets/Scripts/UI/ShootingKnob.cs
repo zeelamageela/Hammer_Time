@@ -182,6 +182,12 @@ public class ShootingKnob : MonoBehaviour
                 sr.color = redTrans;
             }
 
+            // a player's pull line and circle wear the aim line's violet (keeping the zone's see-through for too light or heavy)
+            if (trajLine.AimShade(out Color violet))
+            {
+                violet.a = sr.color.a;
+                sr.color = violet;
+            }
 
             mouseCircle.GetComponent<SpriteRenderer>().color = sr.color;
         }
