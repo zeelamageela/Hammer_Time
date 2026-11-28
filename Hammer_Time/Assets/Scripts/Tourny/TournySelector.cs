@@ -493,11 +493,32 @@ public class TournySelector : MonoBehaviour
         }
     }
 
+    /// <summary>A club night at the home club is on offer every week after the first.</summary>
+    void OfferClubNight(int select)
+    {
+        if (cm.week <= 1 || locals == null || locals.Length == 0) return;
+        foreach (var offered in activeTournies)
+            if (offered != null && offered.clubNight) return;
+
+        // not in a championship week, so nobody gives up a championship by picking it; unless none can be afforded
+        bool championship = false;
+        foreach (var offered in activeTournies)
+            championship |= offered != null && offered.championship;
+        if (championship && TournyFees.AnyAffordable(activeTournies, emptyTourny, cm.costPerWeek, cm.cash)) return;
+
+        bool Empty(int i) => activeTournies[i] == null || activeTournies[i].name == emptyTourny.name;
+        activeTournies[ClubNight.Slot(Empty(0), Empty(1), Empty(2))] = locals[select];
+    }
+
     public void SetActiveTournies()
     {
         weekText.text = "Week " + cm.week.ToString();
         mode = cm.debug;
-        foreach (var club in locals) ClubNight.Prepare(club);
+        foreach (var club in locals)
+        {
+            ClubNight.Prepare(club);
+            ClubNight.At(club, cm.homeClub);
+        }
         
         // CRITICAL FIX: Use seeded random based on week number
         // This ensures the same week always generates the same tournaments
@@ -708,19 +729,9 @@ public class TournySelector : MonoBehaviour
                         }
                         else tourChampionship.complete = true;
 
-                        bool champQual = false;
-                        for (int i = 0; i < provStandings.teams.Length; i++)
-                        {
-                            if (provStandings.teams[i].player)
-                            {
-                                if (i < 16)
-                                {
-                                    champQual = true;
-                                    break;
-                                }
-
-                            }
-                        }
+                        // the top 16 on the money list
+                        int place = global::Standings.Place(global::Standings.Money(cm.teams), cm.playerTeamIndex);
+                        bool champQual = place > 0 && place <= 16;
 
                         if (cm.tourQual)
                             tourChampionship.complete = false;
@@ -784,13 +795,9 @@ public class TournySelector : MonoBehaviour
                     }
 
 
-                    if (activeTournies[1].name == emptyTourny.name)
-                        activeTournies[1] = locals[localSelect];
-                    else if (activeTournies[0].name == emptyTourny.name)
-                        activeTournies[0] = locals[localSelect];
-                    else if (activeTournies[2].name == emptyTourny.name)
-                        activeTournies[2] = locals[localSelect];
                 }
+
+                OfferClubNight(localSelect);
 
                 // Only check for bankruptcy if the game has progressed (not a fresh start).
                 // Game over when nothing on offer is affordable (fee + weekly cost); anything affordable keeps the run alive.
@@ -983,19 +990,9 @@ public class TournySelector : MonoBehaviour
                         }
                         else tourChampionship.complete = true;
 
-                        bool champQual = false;
-                        for (int i = 0; i < provStandings.teams.Length; i++)
-                        {
-                            if (provStandings.teams[i].player)
-                            {
-                                if (i < 16)
-                                {
-                                    champQual = true;
-                                    break;
-                                }
-
-                            }
-                        }
+                        // the top 16 on the money list
+                        int place = global::Standings.Place(global::Standings.Money(cm.teams), cm.playerTeamIndex);
+                        bool champQual = place > 0 && place <= 16;
 
                         if (cm.tourQual)
                             tourChampionship.complete = false;
@@ -1059,13 +1056,9 @@ public class TournySelector : MonoBehaviour
                     }
 
 
-                    if (activeTournies[1].name == emptyTourny.name)
-                        activeTournies[1] = locals[localSelect];
-                    else if (activeTournies[0].name == emptyTourny.name)
-                        activeTournies[0] = locals[localSelect];
-                    else if (activeTournies[2].name == emptyTourny.name)
-                        activeTournies[2] = locals[localSelect];
                 }
+
+                OfferClubNight(localSelect);
 
                 // Only check for bankruptcy if the game has progressed (not a fresh start).
                 // Game over when nothing on offer is affordable (fee + weekly cost); anything affordable keeps the run alive.
@@ -1349,6 +1342,26 @@ public class TournySelector : MonoBehaviour
         }
     }
 
+    // The Standings button sits in a row that is switched off in the scene, low enough to be covered by the skill bars.
+    // It is moved to the free place above Quit (the unused Options button's).
+    void ShowStandingsButton()
+    {
+        Transform panel = profPanelGO.transform;
+        Transform found = panel.Find("StandingsButton");
+        if (found == null) found = panel.Find("Buttons/StandingsButton");
+        RectTransform button = found as RectTransform;
+        RectTransform place = panel.Find("OptionsButton") as RectTransform;
+        if (button == null || place == null) return;
+
+        button.SetParent(panel, false);
+        button.anchorMin = place.anchorMin;
+        button.anchorMax = place.anchorMax;
+        button.pivot = place.pivot;
+        button.anchoredPosition = place.anchoredPosition;
+        button.sizeDelta = place.sizeDelta;
+        button.gameObject.SetActive(true);
+    }
+
     public void Profile(Button button)
     {
         cm = FindFirstObjectByType<CareerManager>();
@@ -1373,7 +1386,7 @@ public class TournySelector : MonoBehaviour
             teamPanel.SetActive(false);
             powerUpPanel.SetActive(false);
             skillbars.SetActive(true);
-
+            ShowStandingsButton();
 
             for (int i = 0; i < menuButtons.Length; i++)
             {
@@ -1486,6 +1499,7 @@ public class TournySelector : MonoBehaviour
             mainMenuGO.SetActive(false);
             profPanelGO.SetActive(false);
             provStandings.gameObject.SetActive(true);
+            provStandings.SetUp();
             tourStandings.gameObject.SetActive(false);
             playerMenu.SetActive(false);
             xpWindow.SetActive(false);

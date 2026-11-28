@@ -14,6 +14,8 @@ public class TourStandings_List : IComparable<TourStandings_List>
 
     public int CompareTo(TourStandings_List other)
     {
+        if (other != null)
+            return Standings.CompareTour(team, other.team);
         if (other == null)
         {
             return 1;

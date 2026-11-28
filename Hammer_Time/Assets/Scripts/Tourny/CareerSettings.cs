@@ -27,8 +27,12 @@ public class CareerSettings : MonoBehaviour
     public InputField teamNameInput;
     [Tooltip("Optional. The player types their club or home town here.")]
     public InputField homeClubInput;
-    [Tooltip("Optional. Shows the chosen country; buttons call NextCountry and PreviousCountry.")]
+    [Tooltip("Optional. Shows the chosen country's name.")]
     public Text homeCountryLabel;
+    [Tooltip("Slides through the countries. Its steps and events are set up here.")]
+    public Slider countrySlider;
+    [Tooltip("The picture in the slider's handle; shows the chosen country's flag (Resources/Flags).")]
+    public Image countryFlag;
     public Text nextButton;
 
     public Text nameLoad;
@@ -64,6 +68,7 @@ public class CareerSettings : MonoBehaviour
         cm = FindAnyObjectByType<CareerManager>();
         gsp = FindAnyObjectByType<GameSettingsPersist>();
         gradient = new Gradient();
+        SetUpCountrySlider();
 
         // Populate the color keys at the relative time 0 and 1 (0 and 100%)
         colorKey = new GradientColorKey[5];
@@ -420,21 +425,49 @@ public class CareerSettings : MonoBehaviour
         //NameGenerator();
     }
 
-    public void NextCountry() => StepCountry(1);
-
-    public void PreviousCountry() => StepCountry(-1);
-
-    void StepCountry(int step)
+    void SetUpCountrySlider()
     {
-        int count = League.Countries.Length;
-        int i = System.Array.IndexOf(League.Countries, League.ValidCountry(homeCountry));
-        homeCountry = League.Countries[(i + step + count) % count];
+        if (countrySlider == null) return;
+        countrySlider.wholeNumbers = true;
+        countrySlider.minValue = 0;
+        countrySlider.maxValue = League.Countries.Length - 1;
+        countrySlider.onValueChanged.AddListener(SetCountry);
+    }
+
+    public void SetCountry(float index)
+    {
+        homeCountry = League.Countries[Mathf.Clamp(Mathf.RoundToInt(index), 0, League.Countries.Length - 1)];
         ShowCountry();
     }
 
     void ShowCountry()
     {
-        if (homeCountryLabel != null) homeCountryLabel.text = League.CountryName(homeCountry);
+        string code = League.ValidCountry(homeCountry);
+        if (homeCountryLabel != null) homeCountryLabel.text = League.CountryName(code);
+        if (countrySlider != null) countrySlider.SetValueWithoutNotify(System.Array.IndexOf(League.Countries, code));
+        if (countryFlag != null)
+        {
+            Sprite flag = Flag(code);
+            if (flag != null)
+            {
+                countryFlag.sprite = flag;
+                countryFlag.color = Color.white;
+                countryFlag.preserveAspect = true;
+            }
+        }
+    }
+
+    readonly Dictionary<string, Sprite> flags = new Dictionary<string, Sprite>();
+
+    // made from the texture, so the images work however Unity imports them
+    Sprite Flag(string code)
+    {
+        if (flags.TryGetValue(code, out Sprite sprite)) return sprite;
+        var picture = Resources.Load<Texture2D>("Flags/" + code);
+        if (picture != null)
+            sprite = Sprite.Create(picture, new Rect(0, 0, picture.width, picture.height), new Vector2(0.5f, 0.5f));
+        flags[code] = sprite;
+        return sprite;
     }
 
     public void MainMenu()

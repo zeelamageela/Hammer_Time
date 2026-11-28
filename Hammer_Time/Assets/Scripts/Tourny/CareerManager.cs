@@ -639,6 +639,13 @@ public class CareerManager : MonoBehaviour
         GameLog.Info("[CareerManager] ? Tournament completion restored from ID lists");
     }
 
+    /// <summary>The money list and tour list the profile and the championship places are read from.</summary>
+    public void RebuildRankLists()
+    {
+        provRankList = Standings.Money(teams).Select(t => new Standings_List(t)).ToList();
+        tourRankList = Standings.Tour(tourTeams).Select(t => new TourStandings_List(t)).ToList();
+    }
+
     private void ClearRankLists()
     {
         provRankList?.Clear();
@@ -1256,7 +1263,16 @@ public class CareerManager : MonoBehaviour
         
         // ? FIX: World Tour events are NO LONGER KO3 format!
         // They now use Page Playoff system like regular tournaments
-        if (currentTourny.tour)
+        if (currentTourny.clubNight)
+        {
+            // the player and three others from the home club
+            gsp.KO3 = false;
+            gsp.KO1 = false;
+            gsp.cashGame = false;
+            currentTournyTeams = ClubNight.Field(teams, playerTeamIndex, currentTourny.teams,
+                                                 n => UnityEngine.Random.Range(0, n));
+        }
+        else if (currentTourny.tour)
         {
             // World Tour events - use tourTeams array
             gsp.KO3 = false;  // ? Tour events are NOT Triple Knockout anymore!
@@ -1697,6 +1713,13 @@ public class CareerManager : MonoBehaviour
 
         GameLog.Info("allTimeTrophyList2 Count - " + currentTrophyList.Count);
         xp += xpChange;
+
+        // the event may have been played on copies of the teams: copy their season records into the league
+        if (!gsp.cashGame)
+        {
+            Standings.Merge(currentTournyTeams, teams, tourTeams);
+            RebuildRankLists();
+        }
         provRankList.Sort();
         if (!gsp.cashGame && !clubNight)
         {
@@ -2039,6 +2062,7 @@ public class CareerManager : MonoBehaviour
         // the player first, then the tour teams
         tourTeams = teams.Where(t => t.onTour).OrderByDescending(t => t.id == playerTeamIndex)
                          .Take(League.TourTeams).ToArray();
+        RebuildRankLists();
 
         activeCardIDList = null;
         cardPUIDList = null;
@@ -2798,6 +2822,8 @@ public class CareerManager : MonoBehaviour
         {
             tourTeams[i] = DataToTeam(data.tourTeams[i]);
         }
+        Standings.Link(teams, tourTeams);
+        RebuildRankLists();
         
         // Team Records
         teamRecords = new Vector4[data.teamRecords.Count];

@@ -1038,6 +1038,8 @@ public class TournyManager : MonoBehaviour
 		List<Team> winners = ClubNight.Winners(teams);
 		float share = ClubNight.Share(cm.currentTourny.prizeMoney, winners);
 		gsp.tournyEarnings = share;   // set, not added: this screen can be loaded again
+		float each = Mathf.Floor(cm.currentTourny.prizeMoney / (float)winners.Count);
+		foreach (var winner in winners) winner.earnings = each;   // this event's money, for the standings
 		careerEarningsText.text = "$ " + gsp.tournyEarnings.ToString("n0");
 
 		bool playerWon = winners.Contains(teams[playerTeam]);
@@ -1110,14 +1112,8 @@ public class TournyManager : MonoBehaviour
 		{
 			GameLog.Info("cm.teamRecords Length is " + cm.teamRecords.Length);
 
-			for (int i = 0; i < teams.Length; i++)
-			{
-				// Add back the cumulative stats that were saved before tournament
-				teams[i].wins += (int)cm.teamRecords[i].x;
-				teams[i].loss += (int)cm.teamRecords[i].y;
-				teams[i].earnings += cm.teamRecords[i].z;
-				teams[i].id = (int)cm.teamRecords[i].w;
-			}
+			// Add back the cumulative stats that were saved before tournament
+			Standings.AddHistory(teams, cm.teamRecords);
 			
 			GameLog.Info($"[TournyManager] Player team cumulative record: {teams[playerTeam].wins}-{teams[playerTeam].loss}, earnings: ${teams[playerTeam].earnings:N0}");
 		}

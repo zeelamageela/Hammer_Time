@@ -14,6 +14,8 @@ public class Standings_List : IComparable<Standings_List>
 
     public int CompareTo(Standings_List other)
     {
+        if (other != null)
+            return Standings.CompareMoney(team, other.team);
         if (other == null)
         {
             return 1;

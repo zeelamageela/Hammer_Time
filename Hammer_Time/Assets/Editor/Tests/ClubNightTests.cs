@@ -106,4 +106,45 @@ public class ClubNightTests
         list.Sort();
         Assert.AreEqual("B", list[0].team.name);
     }
+
+    static Team[] Club(int mates, int others, string club = "Gimli")
+    {
+        var list = new List<Team> { new Team { id = 0, name = "Me", player = true, club = club } };
+        for (int i = 0; i < mates; i++) list.Add(new Team { id = 1 + i, name = "Mate" + i, club = club });
+        for (int i = 0; i < others; i++) list.Add(new Team { id = 100 + i, name = "Other" + i, club = "Brandon" });
+        return list.ToArray();
+    }
+
+    [Test]
+    public void FieldIsThePlayerAndThreeClubmates()
+    {
+        for (int seed = 0; seed < 50; seed++)
+        {
+            var field = ClubNight.Field(Club(8, 23), 0, 4, new System.Random(seed).Next);
+            Assert.AreEqual(4, field.Length);
+            Assert.AreEqual(0, field[0].id);
+            Assert.IsTrue(System.Array.TrueForAll(field, t => t.club == "Gimli"));
+            CollectionAssert.AllItemsAreUnique(field);
+        }
+    }
+
+    [Test]
+    public void ShortOrMissingClubIsFilledFromTheLeague()
+    {
+        var short_ = ClubNight.Field(Club(1, 10), 0, 4, new System.Random(2).Next);
+        Assert.AreEqual(4, short_.Length);
+        Assert.AreEqual(2, System.Array.FindAll(short_, t => t.club == "Gimli").Length);
+        var none = ClubNight.Field(Club(8, 23, ""), 0, 4, new System.Random(2).Next);
+        Assert.AreEqual(4, none.Length);
+        CollectionAssert.AllItemsAreUnique(none);
+    }
+
+    [Test]
+    public void ClubNightTakesAnEmptySlotFirst()
+    {
+        Assert.AreEqual(0, ClubNight.Slot(true, false, true));
+        Assert.AreEqual(2, ClubNight.Slot(false, false, true));
+        Assert.AreEqual(1, ClubNight.Slot(false, true, false));
+        Assert.AreEqual(2, ClubNight.Slot(false, false, false));
+    }
 }

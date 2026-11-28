@@ -8,9 +8,7 @@ public class ProvStandings : MonoBehaviour
 
 	public StandingDisplay[] standDisplay;
 	public Team[] teams;
-	public List<Standings_List> provRankList;
 
-	public List<TourStandings_List> tourRankList;
 
 	public Scrollbar scrollbar;
 
@@ -44,240 +42,52 @@ public class ProvStandings : MonoBehaviour
 		PrintRows();
     }
 
+    /// <summary>
+    /// Shows the money list, or the tour table if <see cref="tour"/> is set, then flips so the button shows the other.
+    /// Built afresh from the career each time.
+    /// </summary>
     public void PrintRows()
     {
-
-		CareerManager cm = FindObjectOfType<CareerManager>();
+		CareerManager cm = FindFirstObjectByType<CareerManager>();
+		if (cm == null || cm.teams == null) return;
 
 		if (row != null)
 		{
 			for (int i = 0; i < row.Length; i++)
-			{
 				Destroy(row[i]);
-			}
 		}
 
-		if (tour)
+		bool showTour = tour;
+		buttonText.text = showTour ? "<<Overall Standings" : "Tour Standings>>";
+		headers[2].text = showTour ? "Points" : "Earnings";
+
+		List<Team> table = showTour ? Standings.Tour(cm.tourTeams) : Standings.Money(cm.teams);
+		teams = table.ToArray();
+		row = new GameObject[table.Count];
+		standDisplay = new StandingDisplay[table.Count];
+
+		for (int i = 0; i < table.Count; i++)
 		{
-			GameLog.Info("Printing Rows for Tour Standings");
+			Team team = table[i];
+			row[i] = Instantiate(standTextRow, standTextParent);
+			row[i].name = "Row " + (i + 1);
+			row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
 
-			buttonText.text = "<<Overall Standings";
-			headers[2].text = "Points";
-
-
-			if (tourRankList != null)
-			{
-				GameLog.Info("tourRankList is not Null");
-				//tourRankList.Clear();
-				////teams = cm.teams;
-				//tourRankList = cm.tourRankList;
-				row = new GameObject[tourRankList.Count];
-				standDisplay = new StandingDisplay[tourRankList.Count];
-
-				tourRankList.Sort();
-
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					row[i] = Instantiate(standTextRow, standTextParent);
-					row[i].name = "Row " + (i + 1);
-					row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-					//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-					RowVariables rv = row[i].GetComponent<RowVariables>();
-					//yield return new WaitForEndOfFrame();
-
-					standDisplay[i] = rv.standDisplay;
-				}
-
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					//Debug.Log("Counting to tourRankLimit - " + i);
-					standDisplay[i].name.text = tourRankList[i].team.rank.ToString() + " - " + tourRankList[i].team.name;
-					standDisplay[i].wins.text = tourRankList[i].team.tourRecord.x.ToString();
-					standDisplay[i].loss.text = tourRankList[i].team.tourRecord.y.ToString();
-					standDisplay[i].nextOpp.text = tourRankList[i].team.tourPoints.ToString();
-					tourRankList[i].team.rank = i + 1;
-				}
-			}
-			else
-			{
-				tourRankList = new List<TourStandings_List>();
-				teams = cm.tourTeams;
-				for (int i = 0; i < teams.Length; i++)
-				{
-					tourRankList.Add(new TourStandings_List(teams[i]));
-				}
-				row = new GameObject[tourRankList.Count];
-				standDisplay = new StandingDisplay[tourRankList.Count];
-
-				tourRankList.Sort();
-
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					row[i] = Instantiate(standTextRow, standTextParent);
-					row[i].name = "Row " + (i + 1);
-					row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-					//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-					RowVariables rv = row[i].GetComponent<RowVariables>();
-					//yield return new WaitForEndOfFrame();
-
-					standDisplay[i] = rv.standDisplay;
-				}
-
-				for (int i = 0; i < tourRankList.Count; i++)
-				{
-					//Debug.Log("Counting to tourRankLimit - " + i);
-					standDisplay[i].name.text = (i + 1) + " - " + tourRankList[i].team.name;
-					standDisplay[i].wins.text = tourRankList[i].team.tourRecord.x.ToString();
-					standDisplay[i].loss.text = tourRankList[i].team.tourRecord.y.ToString();
-					standDisplay[i].nextOpp.text = tourRankList[i].team.tourPoints.ToString();
-					tourRankList[i].team.rank = i + 1;
-				}
-
-            }
-
-            int tempRank = 0;
-            for (int i = 0; i < tourRankList.Count; i++)
-            {
-                if (cm.playerTeamIndex == tourRankList[i].team.id)
-                {
-                    tempRank = i;
-                    standDisplay[i].panel.enabled = true;
-                    //Debug.Log("Scrollbar Value is " + scrollbar.value);
-                }
-                else
-                    standDisplay[i].panel.enabled = false;
-            }
-            scrollbar.value = 1f - ((float)tempRank / (tourRankList.Count - 1));
-            if (scrollbar.value < 0f)
-            {
-                scrollbar.value = 0f;
-            }
-            else if (scrollbar.value > 1f)
-            {
-                scrollbar.value = 1f;
-			}
-			GameLog.Info("Scrollbar Value is " + scrollbar.value + " i is " + tempRank);
-
-			tour = false;
-        }
-		else
-		{
-			GameLog.Info("Printing Rows for Overall Standings");
-
-			buttonText.text = "Tour Standings>>";
-			headers[2].text = "Earnings";
-
-			if (provRankList != null)
-			{
-				GameLog.Info("provRankList is not Null");
-				//teams = cm.teams;
-
-				//if (cm.provRankList.Count > 0)
-				//{
-				//	provRankList.Clear();
-				//	provRankList = cm.provRankList;
-				//}
-
-				row = new GameObject[provRankList.Count];
-				standDisplay = new StandingDisplay[provRankList.Count];
-				GameLog.Info("provRankList Count is " + provRankList.Count + " - cm.prList Count is " + cm.provRankList.Count);
-
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					row[i] = Instantiate(standTextRow, standTextParent);
-					row[i].name = "Row " + (i + 1);
-					row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-					//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-					RowVariables rv = row[i].GetComponent<RowVariables>();
-					//yield return new WaitForEndOfFrame();
-
-					standDisplay[i] = rv.standDisplay;
-				}
-
-				provRankList.Sort();
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					//Debug.Log("Counting to provRankLimit - " + i);
-					standDisplay[i].name.text = (i + 1) + " - " + provRankList[i].team.name;
-					standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
-					standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
-					standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
-					provRankList[i].team.rank = i + 1;
-				}
-				GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex);
-
-			}
-			else
-			{
-				GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex);
-				provRankList = new List<Standings_List>();
-				teams = cm.teams;
-				for (int i = 0; i < teams.Length; i++)
-				{
-					provRankList.Add(new Standings_List(teams[i]));
-				}
-
-				row = new GameObject[provRankList.Count];
-				standDisplay = new StandingDisplay[provRankList.Count];
-
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					row[i] = Instantiate(standTextRow, standTextParent);
-					row[i].name = "Row " + (i + 1);
-					row[i].GetComponent<RectTransform>().position = new Vector2(0f, i * -125f);
-					//Text[] tList = row.transform.GetComponentsInChildren<Text>();
-
-					RowVariables rv = row[i].GetComponent<RowVariables>();
-					//yield return new WaitForEndOfFrame();
-
-					standDisplay[i] = rv.standDisplay;
-				}
-
-				provRankList.Sort();
-				for (int i = 0; i < provRankList.Count; i++)
-				{
-					//Debug.Log("Counting to provRankLimit - " + i);
-					standDisplay[i].name.text = (i + 1) + " - " + provRankList[i].team.name;
-					standDisplay[i].wins.text = provRankList[i].team.wins.ToString();
-					standDisplay[i].loss.text = provRankList[i].team.loss.ToString();
-					standDisplay[i].nextOpp.text = "$ " + provRankList[i].team.earnings.ToString("n0");
-					provRankList[i].team.rank = i + 1;
-				}
-			}
-
-            int tempRank = 0;
-            for (int i = 0; i < provRankList.Count; i++)
-            {
-                if (cm.playerTeamIndex == provRankList[i].team.id)
-                {
-                    GameLog.Info("cm.playerTeamIndex is " + cm.playerTeamIndex + " - i is " + i);
-                    tempRank = i;
-                    standDisplay[i].panel.enabled = true;
-                }
-                else
-                    standDisplay[i].panel.enabled = false;
-            }
-
-            scrollbar.value = 1f - ((float)tempRank / (provRankList.Count - 1));
-            if (scrollbar.value < 0f)
-            {
-                scrollbar.value = 0f;
-            }
-            else if (scrollbar.value > 1f)
-            {
-                scrollbar.value = 1f;
-            }
-            //scrollbar.value = (1f - (float)tempRank) / (provRankList.Count - 1f);
-            GameLog.Info("Scrollbar.value is " + scrollbar.value + " - i is " + tempRank);
-
-            tour = true;
+			standDisplay[i] = row[i].GetComponent<RowVariables>().standDisplay;
+			standDisplay[i].name.text = (i + 1) + " - " + team.name;
+			standDisplay[i].wins.text = team.seasonWins.ToString();
+			standDisplay[i].loss.text = team.seasonLosses.ToString();
+			standDisplay[i].nextOpp.text = showTour ? team.tourPoints.ToString() : "$ " + team.seasonEarnings.ToString("n0");
+			standDisplay[i].panel.enabled = team.id == cm.playerTeamIndex;
 		}
 
+		int place = Standings.Place(table, cm.playerTeamIndex);
+		if (table.Count > 1)
+			scrollbar.value = Mathf.Clamp01(1f - (Mathf.Max(place, 1) - 1f) / (table.Count - 1));
 
-		if (gameObject.activeSelf)
+		tour = !showTour;
+
+		if (gameObject.activeInHierarchy)
 			StartCoroutine(RefreshPanel());
 	}
 

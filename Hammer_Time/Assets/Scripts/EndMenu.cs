@@ -963,9 +963,10 @@ public class EndMenu : MonoBehaviour
         {
             // CRITICAL FIX: Only call LoadFromEndMenu for PLAYOFFS
             // Regular tournaments handle wins/losses in TournyManager.ProcessPlayerMatchResult()
-            if (gsp.playoffRound > 0)
+            // The page playoff records the result itself (PlayoffManager), so adding it here as well counted it twice.
+            if (gsp.playoffRound > 0 && gsp.KO1)
             {
-                // Playoffs: Update team records in GSP
+                // Single knockout playoffs: update team records in GSP
                 gsp.LoadFromEndMenu();
                 GameLog.Info("[EndMenu] Playoff game - updated team records via LoadFromEndMenu");
             }

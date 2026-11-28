@@ -9,13 +9,15 @@ Last updated Nov 27 2026. Tick things off here; detail lives in `SESSION_HANDOFF
 
 ## 1. Career truth: records, standings, fields
 
-- [ ] Check every way a result is recorded: played, simulated, round robin, Page playoff, single knockout, quit and resume.
-- [ ] **Suspected:** a playoff game may count twice (`EndMenu` calls `GameSettingsPersist.LoadFromEndMenu`, and the playoff manager adds the win too).
-- [ ] **Likely bug:** World Tour standings show wins and losses from `tourRecord`, which current events never update.
+- [ ] Check every way a result is recorded: played, simulated, round robin, Page playoff, single knockout, quit and resume. (Step 2, Nov 27: results are now copied back into the league, history is matched by team id, and the tour list shares the league's teams. Needs play testing; single knockout not checked.)
+- [ ] A playoff game counted twice: fixed for the Page playoff (Nov 27, found by reading the code; confirm by playing). Single knockout still to check.
+- [x] Standings show season wins and losses (the tour table used a record that was never updated).
 - [ ] Event records are stored by borrowing the season win-loss fields and adding the old totals back at the end. Confirm this survives quitting mid-event.
 - [ ] Provincial standings (ranked by earnings) and tour standings (points) are accurate after each event.
 - [ ] Simulated results are believable (stronger teams win more; the player's team is rated on the same scale as the others).
-- [ ] **Standings in the profile:** tap the player's name in the Arena Selector to see them.
+- [ ] **Standings in the profile** (built Nov 27, check the layout): tap the player's name, then Standings; tap the name again to go back.
+- [ ] Only teams in the player's events gain wins and money; the rest of the league stands still.
+- [ ] Sponsor bonuses count in the profile earnings but not on the money list.
 - [ ] Profile rank display may read the wrong list and fail to open (`AUDIT.md` A-11).
 - [ ] **Right teams in each event.** Today, as the code reads: tour events take the first teams in the tour list, so the same field each time; everything else, championships included, draws at random from the whole league.
     - **The World Championship** (16 teams): the year's top money earners. (User's rule.)
@@ -30,14 +32,18 @@ Last updated Nov 27 2026. Tick things off here; detail lives in `SESSION_HANDOFF
 ## 2. Features to build
 
 - [ ] **Club nights** (built, uncommitted): play test, add the user's list, decide on the three existing ones. Remove the unused cash-game code and `Tourny_Home_2` afterwards.
-- [ ] **A club night every week**, **always at your local club** (decided Nov 27): you and 3 of your 8 clubmates, 3 games, winner takes the four entry fees. Today it rotates through the Locals list and is only offered in some weeks. Unplayed events do **not** come back.
+- [ ] **A club night every week** at your club (built Nov 27, play test): you and 3 clubmates, from week 2. When a week has three other events, the third is held over.
+- [x] No club night in championship weeks, unless none of the championships is affordable (decided Nov 27).
 - [ ] **Club path** (decided Nov 27): at career start pick a club (or type a hometown) and a nationality. Club wins qualify you for the Club Championship mid-season, then Nationals, then the World Championship.
-    - Three championships: World (win Nationals), Players' (top money), Tour (top tour points).
+    - Five championships (confirmed Nov 27): Club (your hometown club), National (best in your country), World (the national champions), Players' (top money from all over), Tour (best after the tour circuit).
+    - Fields (Nov 27): Club 4, National 12, Players' 8, Tour 6, World to confirm (we have 14 countries). Order after the regular season: National, Tour, Players', World; Club is mid-season.
+    - Missing a championship does not end the season: it is played out without the player (needs event simulation). Missing the Club Championship means no Nationals or Worlds that season.
+    - [ ] Set a week-by-week calendar; recycle trophy art for the new championships.
     - Your club has 8 other teams. Countries: Canada, United States, Japan, South Korea, Norway, Switzerland, Scotland, Denmark, Sweden, Finland, China, England, Italy, Germany (14). **World Championship: 8 teams** (assumed: you plus the 7 strongest other national teams).
     - Names: `TEAM_NAMES.csv` (118 surnames, approved Nov 27) and `CHARACTERS.csv` (the 40 characters and their countries, reviewed Nov 27). Neither is in the game yet; the renamed characters need swapping in too. Show the user every name list before it is published.
     - Clubmates: 8 characters eligible for the home country (that country's own first); fill the rest with local surnames. There is no "anywhere" group. Characters are the rivals and tour faces. League stays at 32 unless the user asks for 48.
     - Proposed 32 teams: 16 home (9 in your club, 7 champions of other clubs), 16 foreign (at least one per country). Tour 16: 6 home, 10 foreign. Foreign championships are not simulated.
-    - [ ] **Step 1, league (built Nov 27, uncommitted):** new careers get 32 teams with a country, club and tour place; saved with the career. Older careers keep their old league. 18 more surnames approved and added (118). Waiting on: the setup controls in `Career_Menu` (`homeClubInput`, `homeCountryLabel`, `NextCountry` / `PreviousCountry`). Not played in Unity.
+    - [ ] **Step 1, league** (committed Nov 27): new careers get 32 teams with a country, club and tour place; saved with the career. Older careers keep their old league. `Career_Menu` has the hometown field, a flag slider for nationality and the colour slider connected (flags in `Assets/Resources/Flags`). Play test.
     - [ ] Until a way onto the tour is built, the player counts as one of its 16 teams.
     - [ ] **Hometown is the club** (decided Nov 27): the player types it or uses the generator, which fills name, team name and hometown (not colour or country). The other 7 clubs come from the same town list.
     - [x] `TOWNS.csv` (8 per country, approved Nov 27) is in the game; the generator picks a town from the chosen country. The club audit's suggestions are applied.
