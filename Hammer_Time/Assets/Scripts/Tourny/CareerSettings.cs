@@ -13,6 +13,8 @@ public class CareerSettings : MonoBehaviour
 
     public string playerName;
     public string teamName;
+    public string homeCountry = League.DefaultCountry;
+    public string homeClub = "";
     public int season;
     public int week;
     public float earnings;
@@ -23,6 +25,10 @@ public class CareerSettings : MonoBehaviour
     public GameObject load;
     public InputField playerNameInput;
     public InputField teamNameInput;
+    [Tooltip("Optional. The player types their club or home town here.")]
+    public InputField homeClubInput;
+    [Tooltip("Optional. Shows the chosen country; buttons call NextCountry and PreviousCountry.")]
+    public Text homeCountryLabel;
     public Text nextButton;
 
     public Text nameLoad;
@@ -102,6 +108,7 @@ public class CareerSettings : MonoBehaviour
         {
             teamName = teamNameInput.text;
             playerName = playerNameInput.text;
+            if (homeClubInput != null) homeClub = homeClubInput.text;
 
             teamHandleSlider.color = teamColour;
 
@@ -211,6 +218,8 @@ public class CareerSettings : MonoBehaviour
         { 
             playerName = cm.playerName;
             teamName = cm.teamName;
+            homeCountry = cm.homeCountry;
+            homeClub = cm.homeClub;
             teamColour = cm.teamColour;
             earnings = cm.earnings;
             
@@ -404,8 +413,28 @@ public class CareerSettings : MonoBehaviour
 
         playerNameInput.text = cm.playerName;
         teamNameInput.text = cm.teamName;
+        homeCountry = League.ValidCountry(homeCountry);
+        if (homeClubInput != null) homeClubInput.text = homeClub;
+        ShowCountry();
 
         //NameGenerator();
+    }
+
+    public void NextCountry() => StepCountry(1);
+
+    public void PreviousCountry() => StepCountry(-1);
+
+    void StepCountry(int step)
+    {
+        int count = League.Countries.Length;
+        int i = System.Array.IndexOf(League.Countries, League.ValidCountry(homeCountry));
+        homeCountry = League.Countries[(i + step + count) % count];
+        ShowCountry();
+    }
+
+    void ShowCountry()
+    {
+        if (homeCountryLabel != null) homeCountryLabel.text = League.CountryName(homeCountry);
     }
 
     public void MainMenu()
@@ -547,6 +576,10 @@ public class CareerSettings : MonoBehaviour
         
         teamNameInput.text = lastName;
         playerNameInput.text = firstNames[Random.Range(0, firstNames.Length)];
+
+        // home town from the chosen country; colour and country are the player's to pick
+        homeClub = League.RandomTown(homeCountry, n => Random.Range(0, n));
+        if (homeClubInput != null) homeClubInput.text = homeClub;
         
         GameLog.Info($"Generated: {playerNameInput.text} {lastName} (complexity: {complexity}, strongStart: {useStrongStart})");
     }

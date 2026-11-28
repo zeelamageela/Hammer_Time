@@ -69,6 +69,8 @@ public class CareerManager : MonoBehaviour
     public int seasonLength;
     public string playerName;
     public string teamName;
+    public string homeCountry = League.DefaultCountry;   // code, see League.Countries
+    public string homeClub = League.DefaultClub;
     public Color teamColour;
     public int playerTeamIndex;
     public float earnings;
@@ -334,6 +336,8 @@ public class CareerManager : MonoBehaviour
 
         playerName = cs.playerName;
         teamName = cs.teamName;
+        homeCountry = League.ValidCountry(cs.homeCountry);
+        homeClub = cs.homeClub;
         teamColour = cs.teamColour;
         season = cs.season;
         week = cs.week;
@@ -1882,7 +1886,6 @@ public class CareerManager : MonoBehaviour
         activeCardLengthList = null;
         sponsorIncome = 0f;
 
-        Shuffle(teamPool);
         if (em != null)
         {
             em.EnsureDefaultActiveEquip();
@@ -1915,11 +1918,24 @@ public class CareerManager : MonoBehaviour
         new float[] { 0.22f, 0.22f, 0.22f, 0.11f, 0.11f, 0.12f }
         };
 
+        var league = League.Build(teamName, homeCountry, homeClub, rand.Next);
+        totalTeams = league.Count;
+        teams = new Team[totalTeams];
         for (int i = 0; i < totalTeams; i++)
         {
-            teams[i] = teamPool[i];
-            teams[i].players = new List<Player>();
+            var entry = league[i];
+            teams[i] = new Team
+            {
+                id = i,
+                name = entry.name,
+                country = entry.country,
+                club = entry.club,
+                onTour = entry.onTour || entry.kind == League.Kind.Player,
+                strength = Mathf.Max(entry.strength, 10),
+                players = new List<Player>()
+            };
         }
+        homeClub = league[0].club;
 
         // Find min and max strength in the league for scaling
         int minStrength = teams.Min(t => t.strength);
@@ -2020,37 +2036,9 @@ public class CareerManager : MonoBehaviour
             }
         }
         
-        bool inList = true;
-
-        for (int i = 0; i < totalTourTeams; i++)
-        {
-            tourTeams[i] = teams[i];
-        }
-
-        for (int i = 0; i < totalTourTeams; i++)
-        {
-            if (tourTeams[i].id != playerTeamIndex)
-            {
-                inList = false;
-            }
-            else
-            {
-                inList = true;
-                break;
-            }
-        }
-
-        if (!inList)
-        {
-            GameLog.Info("inList is " + inList);
-            for (int i = 0; i < totalTeams; i++)
-            {
-                if (teams[i].id == playerTeamIndex)
-                {
-                    tourTeams[0] = teams[i];
-                }
-            }
-        }
+        // the player first, then the tour teams
+        tourTeams = teams.Where(t => t.onTour).OrderByDescending(t => t.id == playerTeamIndex)
+                         .Take(League.TourTeams).ToArray();
 
         activeCardIDList = null;
         cardPUIDList = null;
@@ -2314,6 +2302,8 @@ public class CareerManager : MonoBehaviour
         // Player Identity
         data.playerName = playerName;
         data.teamName = teamName;
+        data.homeCountry = homeCountry;
+        data.homeClub = homeClub;
         data.teamColour = new SerializableColor(teamColour);
         data.playerTeamIndex = playerTeamIndex;
         
@@ -2759,6 +2749,8 @@ public class CareerManager : MonoBehaviour
         // Player Identity
         playerName = data.playerName;
         teamName = data.teamName;
+        homeCountry = data.homeCountry;
+        homeClub = data.homeClub;
         teamColour = data.teamColour.ToColor();
         playerTeamIndex = data.playerTeamIndex;
         
@@ -2955,6 +2947,9 @@ public class CareerManager : MonoBehaviour
             poolId = team.poolId,
             pointDifferential = team.pointDifferential,
             pointsFor = team.pointsFor,
+            country = team.country,
+            club = team.club,
+            onTour = team.onTour,
             
             // Season cumulative
             seasonWins = team.seasonWins,
@@ -2999,6 +2994,9 @@ public class CareerManager : MonoBehaviour
             id = data.id,
             name = data.name,
             player = data.isPlayer,
+            country = data.country,
+            club = data.club,
+            onTour = data.onTour,
             
             // Tournament state
             tournamentWins = data.tournamentWins,

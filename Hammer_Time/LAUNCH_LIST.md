@@ -34,10 +34,14 @@ Last updated Nov 27 2026. Tick things off here; detail lives in `SESSION_HANDOFF
 - [ ] **Club path** (decided Nov 27): at career start pick a club (or type a hometown) and a nationality. Club wins qualify you for the Club Championship mid-season, then Nationals, then the World Championship.
     - Three championships: World (win Nationals), Players' (top money), Tour (top tour points).
     - Your club has 8 other teams. Countries: Canada, United States, Japan, South Korea, Norway, Switzerland, Scotland, Denmark, Sweden, Finland, China, England, Italy, Germany (14). **World Championship: 8 teams** (assumed: you plus the 7 strongest other national teams).
-    - Names: `TEAM_NAMES.csv` (100 surnames, approved Nov 27) and `CHARACTERS.csv` (the 40 characters and their countries, reviewed Nov 27). Neither is in the game yet; the renamed characters need swapping in too. Show the user every name list before it is published.
+    - Names: `TEAM_NAMES.csv` (118 surnames, approved Nov 27) and `CHARACTERS.csv` (the 40 characters and their countries, reviewed Nov 27). Neither is in the game yet; the renamed characters need swapping in too. Show the user every name list before it is published.
     - Clubmates: 8 characters eligible for the home country (that country's own first); fill the rest with local surnames. There is no "anywhere" group. Characters are the rivals and tour faces. League stays at 32 unless the user asks for 48.
     - Proposed 32 teams: 16 home (9 in your club, 7 champions of other clubs), 16 foreign (at least one per country). Tour 16: 6 home, 10 foreign. Foreign championships are not simulated.
-    - Teams have no nationality or club yet; the World Championship, season endings and name pool (40) need rework.
+    - [ ] **Step 1, league (built Nov 27, uncommitted):** new careers get 32 teams with a country, club and tour place; saved with the career. Older careers keep their old league. 18 more surnames approved and added (118). Waiting on: the setup controls in `Career_Menu` (`homeClubInput`, `homeCountryLabel`, `NextCountry` / `PreviousCountry`). Not played in Unity.
+    - [ ] Until a way onto the tour is built, the player counts as one of its 16 teams.
+    - [ ] **Hometown is the club** (decided Nov 27): the player types it or uses the generator, which fills name, team name and hometown (not colour or country). The other 7 clubs come from the same town list.
+    - [x] `TOWNS.csv` (8 per country, approved Nov 27) is in the game; the generator picks a town from the chosen country. The club audit's suggestions are applied.
+    - [ ] The World Championship and season endings need rework.
 - [ ] **Practice session** before an event: optional, about four rocks, ICE button after each.
 - [ ] **Daily puzzle:** set situations, one shot first, aim line with hit arrows by default, per-puzzle requirements, solvability check, attempts and streak.
 - [ ] **Career intro:** alternate takes the injured skip's two rocks in last year's final; a miss still moves on; skippable. Remove the old tutorial. Teach guards and sweeping with tips in the first event.

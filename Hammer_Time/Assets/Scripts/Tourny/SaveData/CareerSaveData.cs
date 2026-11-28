@@ -16,6 +16,8 @@ public class CareerSaveData
         // Player Identity
         public string playerName;
         public string teamName;
+        public string homeCountry;      // empty in careers started before countries were added
+        public string homeClub;
         public SerializableColor teamColour;
         public int playerTeamIndex;
         
@@ -158,6 +160,9 @@ public class CareerSaveData
         public int id;
         public string name;
         public bool isPlayer;
+        public string country;
+        public string club;
+        public bool onTour;
         
         // TOURNAMENT STATE (reset each tournament)
         public int tournamentWins;

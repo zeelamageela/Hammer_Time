@@ -8,6 +8,11 @@ public class Team
     public string name;
     public int id;
     public bool player;
+
+    // Where the team is from (see League). Empty in careers started before countries were added.
+    public string country;
+    public string club;
+    public bool onTour;
     
     // TOURNAMENT STATE (reset each tournament)
     public int tournamentWins;
